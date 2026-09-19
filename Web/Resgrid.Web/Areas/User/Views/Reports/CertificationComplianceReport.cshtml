@@ -1,0 +1,87 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+	Layout = null;
+	var today = Model.RunOn.Date;
+	var horizon = Model.Settings?.GetNotifyLeadDays().DefaultIfEmpty(60).Max() ?? 60;
+	string Cell(Resgrid.Model.CertificationDashboardCell c, bool unit)
+	{
+		var expired = c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry < 0 || (unit ? c.Status == (int)Resgrid.Model.UnitCertificationStatuses.Expired : c.Status == (int)Resgrid.Model.PersonnelCertificationStatuses.Expired || c.Status == (int)Resgrid.Model.PersonnelCertificationStatuses.Revoked);
+		var warn = !expired && (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry <= horizon || (unit ? c.Status != (int)Resgrid.Model.UnitCertificationStatuses.Active : c.Status != (int)Resgrid.Model.PersonnelCertificationStatuses.Active));
+		return expired ? "danger" : warn ? "warning" : "success";
+	}
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>@localizer["ComplianceReport"]</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="author" content="Resgrid">
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<style>
+		body { font-size: 12px; }
+		table { page-break-inside: auto; }
+		tr { page-break-inside: avoid; }
+		td.success { background-color: #dff0d8 !important; }
+		td.warning { background-color: #fcf8e3 !important; }
+		td.danger { background-color: #f2dede !important; }
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<h2>@localizer["ComplianceReport"] <small>@Model.Department?.Name</small></h2>
+		<p class="text-muted">@string.Format(localizer["ReportRunOn"].Value, Model.RunOn.ToString("yyyy-MM-dd HH:mm")) · @string.Format(localizer["ExpiringWithin"].Value, horizon): @Model.Dashboard.ExpiringCount · @localizer["Expired"]: @Model.Dashboard.ExpiredCount</p>
+
+		<h3>@localizer["People"]</h3>
+		@if (Model.Dashboard.PersonTypes.Count == 0 || !Model.Dashboard.PersonCells.Any())
+		{
+			<p class="text-muted">@localizer["NoRecordsYet"]</p>
+		}
+		else
+		{
+			<table class="table table-bordered table-condensed">
+				<thead><tr><th>@localizer["Member"]</th>@foreach (var t in Model.Dashboard.PersonTypes) { <th class="text-center"><abbr title="@t.Type">@t.Code</abbr></th> }</tr></thead>
+				<tbody>
+					@foreach (var row in Model.PersonRows)
+					{
+						var cells = row.ToDictionary(c => c.DepartmentCertificationTypeId);
+						<tr><td>@row.First().SubjectName</td>
+							@foreach (var t in Model.Dashboard.PersonTypes)
+							{
+								if (cells.TryGetValue(t.DepartmentCertificationTypeId, out var c)) { <td class="text-center @Cell(c, false)">@(c.NeverExpires ? "∞" : c.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")<br /><small>@localizer["Status" + (Resgrid.Model.PersonnelCertificationStatuses)c.Status]</small></td> }
+								else { <td class="text-center text-muted">—</td> }
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+
+		<h3>@localizer["Units"]</h3>
+		@if (Model.Dashboard.UnitTypes.Count == 0 || !Model.Dashboard.UnitCells.Any())
+		{
+			<p class="text-muted">@localizer["NoRecordsYet"]</p>
+		}
+		else
+		{
+			<table class="table table-bordered table-condensed">
+				<thead><tr><th>@localizer["Unit"]</th>@foreach (var t in Model.Dashboard.UnitTypes) { <th class="text-center"><abbr title="@t.Type">@t.Code</abbr></th> }</tr></thead>
+				<tbody>
+					@foreach (var row in Model.UnitRows)
+					{
+						var cells = row.ToDictionary(c => c.DepartmentCertificationTypeId);
+						<tr><td>@row.First().SubjectName</td>
+							@foreach (var t in Model.Dashboard.UnitTypes)
+							{
+								if (cells.TryGetValue(t.DepartmentCertificationTypeId, out var c)) { <td class="text-center @Cell(c, true)">@(c.NeverExpires ? "∞" : c.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")<br /><small>@localizer["UnitStatus" + (Resgrid.Model.UnitCertificationStatuses)c.Status]</small></td> }
+								else { <td class="text-center text-muted">—</td> }
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+</body>
+</html>

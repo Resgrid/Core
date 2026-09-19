@@ -1,0 +1,153 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.UnitCertificationsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["UnitCertifications"];
+    ViewData["Tab"] = "Dashboard";
+    ViewData["Title"] = string.Format(localizer["UnitCertificationsFor"].Value, Model.Unit.Name);
+    ViewData["Subtitle"] = localizer["UnitCertificationsIntro"].Value;
+    var types = Model.TypeMap;
+    var today = DateTime.UtcNow.Date;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["CertificationsAndInspections"]</h5>
+            <div class="ibox-tools">
+                <a asp-controller="Units" asp-action="EditUnit" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId" class="btn btn-default btn-xs">@localizer["BackToUnit"]</a>
+                @if (Model.CanManage && Model.Types.Count > 0)
+                {
+                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#recordModal" data-id="0"><i class="fa fa-plus"></i> @localizer["AddRecord"]</button>
+                }
+            </div>
+        </div>
+        <div class="ibox-content">
+            @if (Model.Types.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoUnitTypes"] @if (Model.CanSetup) { <a asp-controller="Certifications" asp-action="Types" asp-route-area="User">@localizer["CertificationTypes"]</a> }</p>
+            }
+            else if (Model.Records.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoRecordsYet"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>@localizer["TypeName"]</th><th>@localizer["Number"]</th><th>@localizer["IssuedBy"]</th><th>@localizer["IssuedOn"]</th><th>@localizer["ExpiresOn"]</th><th>@localizer["Status"]</th><th>@localizer["File"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var r in Model.Records)
+                        {
+                            types.TryGetValue(r.DepartmentCertificationTypeId, out var type);
+                            var days = Resgrid.Model.Certifications.CertificationRequirementEvaluator.DaysUntilExpiry(r.ExpiresOn, type?.NeverExpires == true, today);
+                            var status = (Resgrid.Model.UnitCertificationStatuses)r.Status;
+                            var css = status == Resgrid.Model.UnitCertificationStatuses.Expired || days < 0 ? "label-danger" : status == Resgrid.Model.UnitCertificationStatuses.Suspended ? "label-warning" : "label-primary";
+                            <tr>
+                                <td>@(type?.Type ?? "—") <br /><small class="text-muted">@type?.Code</small></td>
+                                <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</td>
+                                <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</td>
+                                <td>@r.IssuedOn?.ToString("yyyy-MM-dd")</td>
+                                <td>@(type?.NeverExpires == true ? localizer["NeverExpires"].Value : r.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—") @if (days.HasValue && days >= 0 && days <= 60) { <br /><small class="text-warning">@string.Format(localizer["DaysLeft"].Value, days)</small> }</td>
+                                <td><span class="label @css">@localizer["UnitStatus" + status]</span> @if (!string.IsNullOrWhiteSpace(r.StatusReason) && r.StatusReason != "expired") { <br /><small>@r.StatusReason</small> }</td>
+                                <td>@if (!string.IsNullOrWhiteSpace(r.FileName) || r.FileSize > 0) { <a asp-controller="Certifications" asp-action="UnitCertificationFile" asp-route-area="User" asp-route-id="@r.UnitCertificationId"><i class="fa fa-download"></i> @Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.FileName)</a> }</td>
+                                <td class="text-right">
+                                    @if (Model.CanManage)
+                                    {
+                                        <button type="button" class="btn btn-xs btn-default edit-record" data-toggle="modal" data-target="#recordModal"
+                                                data-id="@r.UnitCertificationId" data-type="@r.DepartmentCertificationTypeId" data-number="@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)" data-issuedby="@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)"
+                                                data-issuedon="@r.IssuedOn?.ToString("yyyy-MM-dd")" data-expireson="@r.ExpiresOn?.ToString("yyyy-MM-dd")" data-notes="@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Notes)"><i class="fa fa-pencil"></i></button>
+                                        if (status == Resgrid.Model.UnitCertificationStatuses.Suspended)
+                                        {
+                                            <form method="post" asp-controller="Certifications" asp-action="SetUnitStatus" asp-route-area="User" asp-route-id="@r.UnitCertificationId" style="display: inline;">@Html.AntiForgeryToken()<input type="hidden" name="status" value="0" /><button type="submit" class="btn btn-xs btn-default">@localizer["Reinstate"]</button></form>
+                                        }
+                                        else if (status == Resgrid.Model.UnitCertificationStatuses.Active)
+                                        {
+                                            <button type="button" class="btn btn-xs btn-warning suspend-record" data-toggle="modal" data-target="#suspendModal" data-id="@r.UnitCertificationId">@localizer["Suspend"]</button>
+                                        }
+                                        <form method="post" asp-controller="Certifications" asp-action="DeleteUnitCertification" asp-route-area="User" asp-route-id="@r.UnitCertificationId" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteRecordConfirm"]');"><i class="fa fa-trash"></i></button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.CanManage)
+{
+    <div class="modal fade" id="recordModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form method="post" enctype="multipart/form-data" asp-controller="Certifications" asp-action="SaveUnitCertification" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="UnitId" value="@Model.Unit.UnitId" />
+                <input type="hidden" name="UnitCertificationId" id="rec-id" value="0" />
+                <div class="modal-content">
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title">@localizer["UnitCertification"]</h4></div>
+                    <div class="modal-body">
+                        <div class="form-group"><label>@localizer["TypeName"]</label>
+                            <select name="DepartmentCertificationTypeId" id="rec-type" class="form-control" required>
+                                @foreach (var t in Model.Types) { <option value="@t.DepartmentCertificationTypeId" data-months="@t.DefaultValidityMonths" data-never="@t.NeverExpires.ToString().ToLowerInvariant()">@t.Type (@t.Code)</option> }
+                            </select></div>
+                        <div class="row">
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["Number"]</label><input type="text" name="Number" id="rec-number" class="form-control" maxlength="200" /></div></div>
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["IssuedBy"]</label><input type="text" name="IssuedBy" id="rec-issuedby" class="form-control" maxlength="200" /></div></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["IssuedOn"]</label><input type="date" name="IssuedOn" id="rec-issuedon" class="form-control" /></div></div>
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["ExpiresOn"]</label><input type="date" name="ExpiresOn" id="rec-expireson" class="form-control" /></div></div>
+                        </div>
+                        <div class="form-group"><label>@localizer["Notes"]</label><textarea name="Notes" id="rec-notes" class="form-control" rows="2" maxlength="2000"></textarea></div>
+                        <div class="form-group"><label>@localizer["File"]</label><input type="file" name="fileToUpload" class="form-control" /><span class="help-block m-b-none">@localizer["FileHint"]</span></div>
+                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="suspendModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <form method="post" asp-controller="Certifications" asp-action="SetUnitStatus" asp-route-area="User" id="suspendForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="status" value="2" />
+                <div class="modal-content">
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title">@localizer["Suspend"]</h4></div>
+                    <div class="modal-body"><div class="form-group"><label>@localizer["Reason"]</label><input type="text" name="reason" class="form-control" maxlength="500" required /></div></div>
+                    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-warning">@localizer["Suspend"]</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#recordModal').on('show.bs.modal', function (e) {
+                var b = $(e.relatedTarget);
+                $('#rec-id').val(b.data('id') || 0);
+                $('#rec-type').val(b.data('type') || $('#rec-type option:first').val());
+                $('#rec-number').val(b.data('number') || ''); $('#rec-issuedby').val(b.data('issuedby') || '');
+                $('#rec-issuedon').val(b.data('issuedon') || ''); $('#rec-expireson').val(b.data('expireson') || ''); $('#rec-notes').val(b.data('notes') || '');
+            });
+            // Pre-fill the expiry from the type's default validity when the issue date is set on a new record.
+            $('#rec-issuedon').on('change', function () {
+                var opt = $('#rec-type option:selected'); var months = parseInt(opt.data('months'), 10);
+                if ($('#rec-id').val() !== '0' || !this.value || opt.data('never') === true || opt.data('never') === 'true' || isNaN(months)) return;
+                var d = new Date(this.value); d.setMonth(d.getMonth() + months);
+                $('#rec-expireson').val(d.toISOString().substring(0, 10));
+            });
+            $('#suspendModal').on('show.bs.modal', function (e) {
+                var id = $(e.relatedTarget).data('id');
+                $('#suspendForm').attr('action', '@Url.Action("SetUnitStatus", "Certifications", new { area = "User" })' + '/' + id);
+            });
+        });
+    </script>
+}

@@ -18,6 +18,8 @@ namespace Resgrid.Model.Services
 		Task<ContactCategory> GetContactCategoryByIdAsync(string contactCategoryId);
 		Task<bool> DeleteContactCategoryAsync(ContactCategory contactCategory, CancellationToken cancellationToken = default(CancellationToken));
 		Task<Contact> GetContactByIdAsync(string contactId);
+		/// <summary>The department's contacts for the given ids in one query, keyed by id (case-insensitive); deleted contacts are included so historical references still resolve.</summary>
+		Task<Dictionary<string, Contact>> GetContactsByIdsAsync(int departmentId, IEnumerable<string> contactIds);
 		Task<List<ContactNote>> GetContactNotesByContactIdAsync(string contactId, int departmentId, bool getDeleted = false);
 		Task<List<ContactNoteType>> GetContactNoteTypesByDepartmentIdAsync(int departmentId);
 		Task<ContactNoteType> SaveContactNoteTypeAsync(ContactNoteType type, CancellationToken cancellationToken = default(CancellationToken));

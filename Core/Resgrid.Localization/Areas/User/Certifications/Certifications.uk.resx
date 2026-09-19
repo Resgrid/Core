@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Certifications" xml:space="preserve"><value>Сертифікати</value></data>
+  <data name="ManageCertifications" xml:space="preserve"><value>Керувати сертифікатами</value></data>
+  <data name="ViewCertifications" xml:space="preserve"><value>Переглядати сертифікати</value></data>
+  <data name="ManageCertificationSetup" xml:space="preserve"><value>Керувати налаштуванням сертифікатів</value></data>
+  <data name="ManageCertificationsNote" xml:space="preserve"><value>Створювати, редагувати, призупиняти, підтверджувати та видаляти записи сертифікатів і кредити інших членів, а також записи сертифікатів підрозділів.</value></data>
+  <data name="ViewCertificationsNote" xml:space="preserve"><value>Переглядати записи сертифікатів інших членів, сертифікати підрозділів і панель термінів дії. Члени завжди бачать власні записи.</value></data>
+  <data name="ManageCertificationSetupNote" xml:space="preserve"><value>Керувати типами сертифікатів, вимогами до ролей і налаштуваннями сертифікатів підрозділу.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Панель</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Хто що має, що спливає і що прострочено, для людей і підрозділів.</value></data>
+  <data name="CertificationTypes" xml:space="preserve"><value>Типи сертифікатів</value></data>
+  <data name="Settings" xml:space="preserve"><value>Налаштування</value></data>
+  <data name="ComplianceReport" xml:space="preserve"><value>Звіт про відповідність</value></data>
+  <data name="ComplianceReportDescription" xml:space="preserve"><value>Друковані матриці особа × тип і підрозділ × тип зі станом терміну дії.</value></data>
+  <data name="ReportRunOn" xml:space="preserve"><value>Сформовано {0}</value></data>
+  <data name="Saved" xml:space="preserve"><value>Збережено.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Не вдалося зберегти зміну.</value></data>
+  <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="Edit" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="Active" xml:space="preserve"><value>Активний</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Неактивний</value></data>
+  <data name="Description" xml:space="preserve"><value>Опис</value></data>
+  <data name="Notes" xml:space="preserve"><value>Нотатки</value></data>
+  <data name="Status" xml:space="preserve"><value>Стан</value></data>
+  <data name="Date" xml:space="preserve"><value>Дата</value></data>
+  <data name="Hours" xml:space="preserve"><value>Години</value></data>
+  <data name="File" xml:space="preserve"><value>Файл</value></data>
+  <data name="FileHint" xml:space="preserve"><value>PDF, зображення або офісний документ до 10 МБ.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Причина</value></data>
+  <data name="Number" xml:space="preserve"><value>Номер</value></data>
+  <data name="IssuedBy" xml:space="preserve"><value>Видано</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Дата видачі</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Спливає</value></data>
+  <data name="ReceivedOn" xml:space="preserve"><value>Отримано</value></data>
+  <data name="NeverExpires" xml:space="preserve"><value>Не спливає</value></data>
+  <data name="DaysUntilExpiry" xml:space="preserve"><value>Днів до закінчення</value></data>
+  <data name="DaysLeft" xml:space="preserve"><value>залишилося {0} дн.</value></data>
+  <data name="DaysAgo" xml:space="preserve"><value>{0} дн. тому</value></data>
+  <data name="Expired" xml:space="preserve"><value>Прострочено</value></data>
+  <data name="ExpiringWithin" xml:space="preserve"><value>Спливає протягом {0} дн.</value></data>
+  <data name="SuspendedOrRevoked" xml:space="preserve"><value>Призупинено або відкликано</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Експорт CSV</value></data>
+  <data name="Scope" xml:space="preserve"><value>Область</value></data>
+  <data name="People" xml:space="preserve"><value>Люди</value></data>
+  <data name="Units" xml:space="preserve"><value>Підрозділи</value></data>
+  <data name="Unit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="Member" xml:space="preserve"><value>Член</value></data>
+  <data name="Category" xml:space="preserve"><value>Категорія</value></data>
+  <data name="AllCategories" xml:space="preserve"><value>Усі категорії</value></data>
+  <data name="Group" xml:space="preserve"><value>Група</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>Усі групи</value></data>
+  <data name="Role" xml:space="preserve"><value>Роль</value></data>
+  <data name="AllRoles" xml:space="preserve"><value>Усі ролі</value></data>
+  <data name="NoTypesYet" xml:space="preserve"><value>Типів сертифікатів ще немає.</value></data>
+  <data name="NoRecordsYet" xml:space="preserve"><value>Записів сертифікатів ще немає.</value></data>
+  <data name="LegendValid" xml:space="preserve"><value>Дійсний</value></data>
+  <data name="LegendExpiring" xml:space="preserve"><value>Незабаром спливає</value></data>
+  <data name="LegendExpired" xml:space="preserve"><value>Прострочено, призупинено або відкликано</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Активний</value></data>
+  <data name="StatusExpired" xml:space="preserve"><value>Прострочений</value></data>
+  <data name="StatusSuspended" xml:space="preserve"><value>Призупинений</value></data>
+  <data name="StatusRevoked" xml:space="preserve"><value>Відкликаний</value></data>
+  <data name="StatusPendingVerification" xml:space="preserve"><value>Очікує підтвердження</value></data>
+  <data name="StatusTrainee" xml:space="preserve"><value>Стажер</value></data>
+  <data name="UnitStatusActive" xml:space="preserve"><value>Активний</value></data>
+  <data name="UnitStatusExpired" xml:space="preserve"><value>Прострочений</value></data>
+  <data name="UnitStatusSuspended" xml:space="preserve"><value>Призупинений</value></data>
+  <data name="CategoryFire" xml:space="preserve"><value>Пожежна</value></data>
+  <data name="CategoryEMS" xml:space="preserve"><value>Швидка допомога</value></data>
+  <data name="CategorySAR" xml:space="preserve"><value>Пошук і порятунок</value></data>
+  <data name="CategoryWildland" xml:space="preserve"><value>Лісові пожежі</value></data>
+  <data name="CategoryEmergencyManagement" xml:space="preserve"><value>Управління надзвичайними ситуаціями</value></data>
+  <data name="CategoryIndustrial" xml:space="preserve"><value>Промислові</value></data>
+  <data name="CategorySecurity" xml:space="preserve"><value>Охорона</value></data>
+  <data name="CategoryMedical" xml:space="preserve"><value>Медичні</value></data>
+  <data name="CategoryDriver" xml:space="preserve"><value>Водій</value></data>
+  <data name="CategoryVehicle" xml:space="preserve"><value>Транспортний засіб</value></data>
+  <data name="CategoryOther" xml:space="preserve"><value>Інше</value></data>
+  <data name="TypesIntro" xml:space="preserve"><value>Каталог сертифікатів, ліцензій, оглядів і дозволів, які відстежує ваш підрозділ.</value></data>
+  <data name="HelpTypes" xml:space="preserve"><value>Тип має сталий код, категорію, область (особа чи підрозділ), типовий термін дії та необов’язкові правила підтвердження чи кредитних годин. Поширені типи виберіть із галереї шаблонів.</value></data>
+  <data name="HideInactive" xml:space="preserve"><value>Сховати неактивні</value></data>
+  <data name="ShowInactive" xml:space="preserve"><value>Показати неактивні</value></data>
+  <data name="TemplateGallery" xml:space="preserve"><value>Галерея шаблонів</value></data>
+  <data name="TemplateGalleryIntro" xml:space="preserve"><value>Поширені кваліфікації для пожежної, швидкої допомоги, пошуку і порятунку, лісових пожеж, управління НС, промисловості, охорони, водіїв DOT та відповідності транспорту. Кожна стає типом, яким володіє й може редагувати ваш підрозділ.</value></data>
+  <data name="FilterTemplates" xml:space="preserve"><value>Фільтрувати шаблони…</value></data>
+  <data name="AlreadyAdded" xml:space="preserve"><value>Уже у вашому каталозі</value></data>
+  <data name="AddSelected" xml:space="preserve"><value>Додати вибрані</value></data>
+  <data name="TemplatesSkipped" xml:space="preserve"><value>Додано {0}; пропущено (уже є або відхилено): {1}</value></data>
+  <data name="NewType" xml:space="preserve"><value>Новий тип</value></data>
+  <data name="EditType" xml:space="preserve"><value>Редагувати тип</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Код</value></data>
+  <data name="TypeName" xml:space="preserve"><value>Тип</value></data>
+  <data name="AppliesTo" xml:space="preserve"><value>Стосується</value></data>
+  <data name="AppliesToPerson" xml:space="preserve"><value>Особа</value></data>
+  <data name="AppliesToUnit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="Validity" xml:space="preserve"><value>Термін дії</value></data>
+  <data name="Months" xml:space="preserve"><value>{0} міс.</value></data>
+  <data name="Records" xml:space="preserve"><value>Записи</value></data>
+  <data name="Requirements" xml:space="preserve"><value>Вимоги</value></data>
+  <data name="DeleteTypeConfirm" xml:space="preserve"><value>Видалити цей тип сертифіката?</value></data>
+  <data name="IssuingAuthority" xml:space="preserve"><value>Орган видачі</value></data>
+  <data name="CodeAuto" xml:space="preserve"><value>Утворюється з назви, якщо порожньо</value></data>
+  <data name="CodeHint" xml:space="preserve"><value>Сталий ідентифікатор для вимог ролей та інтеграцій; літери, цифри, крапки й дефіси.</value></data>
+  <data name="CodeLockedHint" xml:space="preserve"><value>На цей тип посилається вимога ролі, тому його код більше не можна змінити.</value></data>
+  <data name="DefaultValidityMonths" xml:space="preserve"><value>Типовий термін дії (місяців)</value></data>
+  <data name="RenewalCreditHoursRequired" xml:space="preserve"><value>Кредитні години на поновлення</value></data>
+  <data name="RequiresVerification" xml:space="preserve"><value>Потребує підтвердження керівника</value></data>
+  <data name="RequiresVerificationHint" xml:space="preserve"><value>Нові записи залишаються в очікуванні, доки їх не підтвердить особа з правами керування.</value></data>
+  <data name="ManageTypedCatalog" xml:space="preserve"><value>Типізований каталог і шаблони</value></data>
+  <data name="CertificationSettings" xml:space="preserve"><value>Налаштування сертифікатів</value></data>
+  <data name="SettingsIntro" xml:space="preserve"><value>Як застосовуються вимоги ролей і коли надсилаються сповіщення про закінчення терміну.</value></data>
+  <data name="Enforcement" xml:space="preserve"><value>Застосування</value></data>
+  <data name="EnforcementMode" xml:space="preserve"><value>Режим застосування</value></data>
+  <data name="EnforcementOff" xml:space="preserve"><value>Вимкнено – вимоги лише інформаційні</value></data>
+  <data name="EnforcementWarnOnly" xml:space="preserve"><value>Лише попереджати – дозволяти зміни ролей, показувати попередження, сповіщати</value></data>
+  <data name="EnforcementEnforce" xml:space="preserve"><value>Застосовувати – блокувати некваліфіковані призначення ролей і вилучати членів після пільгового періоду</value></data>
+  <data name="EnforcementHint" xml:space="preserve"><value>Режим застосування вилучає членів із ролей, обов’язкові сертифікати яких прострочено; вилучення аудитується, член отримує сповіщення.</value></data>
+  <data name="EnforceConfirm" xml:space="preserve"><value>Режим застосування вилучатиме членів із ролей після завершення пільгового періоду. Налаштовано обов’язкових вимог: {0}. Продовжити?</value></data>
+  <data name="certifications_enforce_confirm" xml:space="preserve"><value>Підтвердьте перемикання на режим застосування перед збереженням.</value></data>
+  <data name="RoleRemovalGraceDays" xml:space="preserve"><value>Пільговий період (днів)</value></data>
+  <data name="RoleRemovalGraceDaysHint" xml:space="preserve"><value>Кількість днів після прострочення обов’язкового сертифіката до вилучення члена з ролі. Кожна вимога може перевизначити значення.</value></data>
+  <data name="TreatPendingVerificationAsValid" xml:space="preserve"><value>Вважати записи, що очікують підтвердження, дійсними для вимог ролей</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Сповіщення</value></data>
+  <data name="NotifyLeadDays" xml:space="preserve"><value>Сповіщати (днів до закінчення)</value></data>
+  <data name="NotifyLeadDaysHint" xml:space="preserve"><value>Через кому, наприклад 60,30,14,7,1. Одне сповіщення на запис у кожен зазначений день.</value></data>
+  <data name="NotifyCertificationHolder" xml:space="preserve"><value>Сповіщати власника напряму</value></data>
+  <data name="SendAdminDigest" xml:space="preserve"><value>Надсилати адміністраторам підрозділу нічний дайджест</value></data>
+  <data name="NotificationsHint" xml:space="preserve"><value>Одержувачі подій «Сертифікат спливає / прострочено / роль вилучено» та «Сертифікат підрозділу» налаштовуються в</value></data>
+  <data name="NotificationSettings" xml:space="preserve"><value>Налаштування сповіщень</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>Обов’язкові сертифікати</value></data>
+  <data name="RequiredCertificationsFor" xml:space="preserve"><value>Обов’язкові сертифікати – {0}</value></data>
+  <data name="RoleRequirementsIntro" xml:space="preserve"><value>Які типи сертифікатів має мати член для цієї ролі. Рядки зі спільним номером групи є альтернативами; обов’язкові блокують або вилучають у режимі застосування.</value></data>
+  <data name="BackToRoles" xml:space="preserve"><value>Назад до ролей</value></data>
+  <data name="EnforcementOffNotice" xml:space="preserve"><value>Застосування вимкнено: ці вимоги інформаційні, доки адміністратор підрозділу не ввімкне «Лише попереджати» або «Застосовувати» в</value></data>
+  <data name="NoPersonTypes" xml:space="preserve"><value>Типів сертифікатів для осіб ще немає.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>Обов’язково</value></data>
+  <data name="AnyOfGroup" xml:space="preserve"><value>Група альтернатив</value></data>
+  <data name="AnyOfGroupHint" xml:space="preserve"><value>Рядки з однаковим номером групи задовольняє будь-який із них (EMT або AEMT або Paramedic); залиште порожнім для окремої вимоги.</value></data>
+  <data name="AllowTrainee" xml:space="preserve"><value>Дозволити стажерів</value></data>
+  <data name="GraceOverride" xml:space="preserve"><value>Власний пільговий період (днів)</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>Додати вимогу</value></data>
+  <data name="MemberEligibility" xml:space="preserve"><value>Відповідність членів</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>У цієї ролі немає членів.</value></data>
+  <data name="MissingOrLapsed" xml:space="preserve"><value>Відсутній або прострочений</value></data>
+  <data name="Qualified" xml:space="preserve"><value>Кваліфікований</value></data>
+  <data name="OptionalMissing" xml:space="preserve"><value>Бракує необов’язкових</value></data>
+  <data name="NotQualified" xml:space="preserve"><value>Не кваліфікований</value></data>
+  <data name="RemovalDue" xml:space="preserve"><value>Вилучення {0}</value></data>
+  <data name="RoleMembersBlocked" xml:space="preserve"><value>Ці члени не мають сертифікатів, яких вимагає роль, і не були додані: {0}</value></data>
+  <data name="RoleMembersWarned" xml:space="preserve"><value>Додано з попередженням – бракує сертифікатів для цієї ролі: {0}</value></data>
+  <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Члена створено, але одну чи кілька ролей не призначено: він не має сертифікатів, яких вимагають ці ролі.</value></data>
+  <data name="UnitCertifications" xml:space="preserve"><value>Сертифікати підрозділу</value></data>
+  <data name="UnitCertificationsFor" xml:space="preserve"><value>Сертифікати та огляди – {0}</value></data>
+  <data name="UnitCertificationsIntro" xml:space="preserve"><value>Огляди, реєстрація, страхування, дозволи та свідоцтва випробувань із терміном дії для цього підрозділу.</value></data>
+  <data name="CertificationsAndInspections" xml:space="preserve"><value>Сертифікати та огляди</value></data>
+  <data name="BackToUnit" xml:space="preserve"><value>Назад до підрозділу</value></data>
+  <data name="AddRecord" xml:space="preserve"><value>Додати запис</value></data>
+  <data name="NoUnitTypes" xml:space="preserve"><value>Типів сертифікатів для підрозділів ще немає.</value></data>
+  <data name="UnitCertification" xml:space="preserve"><value>Сертифікат підрозділу</value></data>
+  <data name="Reinstate" xml:space="preserve"><value>Поновити</value></data>
+  <data name="Suspend" xml:space="preserve"><value>Призупинити</value></data>
+  <data name="Revoke" xml:space="preserve"><value>Відкликати</value></data>
+  <data name="DeleteRecordConfirm" xml:space="preserve"><value>Видалити цей запис?</value></data>
+  <data name="CertificationRecord" xml:space="preserve"><value>Запис сертифіката</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Цей запис захищено; ідентифікаційні значення показуються як REDACTED без дозволу на розкриття.</value></data>
+  <data name="Untyped" xml:space="preserve"><value>Без типу</value></data>
+  <data name="VerifiedBy" xml:space="preserve"><value>Підтвердив</value></data>
+  <data name="VerifyRecord" xml:space="preserve"><value>Підтвердити</value></data>
+  <data name="Renew" xml:space="preserve"><value>Поновити термін</value></data>
+  <data name="RenewHint" xml:space="preserve"><value>Встановлює новий термін дії (і за потреби новий номер), поновлюючи прострочений запис.</value></data>
+  <data name="NewExpiresOn" xml:space="preserve"><value>Нова дата закінчення</value></data>
+  <data name="NewNumber" xml:space="preserve"><value>Новий номер</value></data>
+  <data name="KeepCurrent" xml:space="preserve"><value>Залиште порожнім, щоб зберегти поточний</value></data>
+  <data name="MarkTrainee" xml:space="preserve"><value>Позначити стажером</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Змінити стан</value></data>
+  <data name="Credits" xml:space="preserve"><value>Кредити безперервної освіти</value></data>
+  <data name="AddCredit" xml:space="preserve"><value>Додати кредит</value></data>
+  <data name="CreditProgress" xml:space="preserve"><value>{0} з {1} годин до наступного поновлення</value></data>
+  <data name="CreditTotal" xml:space="preserve"><value>Зафіксовано годин: {0}</value></data>
+  <data name="NoCredits" xml:space="preserve"><value>Кредитів не зафіксовано.</value></data>
+  <data name="DeleteCreditConfirm" xml:space="preserve"><value>Видалити цей запис кредиту?</value></data>
+  <data name="CertificationExpiring" xml:space="preserve"><value>Сертифікат спливає</value></data>
+  <data name="CertificationAdded" xml:space="preserve"><value>Сертифікат додано</value></data>
+  <data name="CertificationRenewed" xml:space="preserve"><value>Сертифікат поновлено</value></data>
+  <data name="CertificationExpired" xml:space="preserve"><value>Сертифікат прострочено</value></data>
+  <data name="CertificationRoleRemoved" xml:space="preserve"><value>Роль вилучено через прострочений сертифікат</value></data>
+  <data name="CertificationStatusChanged" xml:space="preserve"><value>Стан сертифіката змінено</value></data>
+  <data name="UnitCertificationExpiring" xml:space="preserve"><value>Сертифікат підрозділу спливає</value></data>
+  <data name="UnitCertificationExpired" xml:space="preserve"><value>Сертифікат підрозділу прострочено</value></data>
+  <data name="certifications_type_in_use" xml:space="preserve"><value>На цей тип посилається вимога ролі або активний запис; його не можна видалити — натомість деактивуйте.</value></data>
+  <data name="certifications_type_not_found" xml:space="preserve"><value>Тип сертифіката не знайдено.</value></data>
+  <data name="certifications_type_scope" xml:space="preserve"><value>Цей тип сертифіката стосується іншої області (особа або підрозділ).</value></data>
+  <data name="certifications_type_name_required" xml:space="preserve"><value>Тип потребує назви.</value></data>
+  <data name="certifications_type_validity_invalid" xml:space="preserve"><value>Типовий термін дії має бути від 1 до 600 місяців.</value></data>
+  <data name="certifications_type_credits_invalid" xml:space="preserve"><value>Кредитні години не можуть бути від’ємними.</value></data>
+  <data name="certifications_type_code_taken" xml:space="preserve"><value>Інший тип у цьому підрозділі вже використовує цей код.</value></data>
+  <data name="certifications_type_code_locked" xml:space="preserve"><value>Код не можна змінити, доки на цей тип посилається вимога ролі.</value></data>
+  <data name="certifications_type_scope_locked" xml:space="preserve"><value>Область не можна змінити, коли вже існують записи цього типу.</value></data>
+  <data name="certifications_template_not_found" xml:space="preserve"><value>Шаблон не знайдено.</value></data>
+  <data name="certifications_record_not_found" xml:space="preserve"><value>Запис сертифіката не знайдено.</value></data>
+  <data name="certifications_status_invalid" xml:space="preserve"><value>Цей стан не можна встановити вручну.</value></data>
+  <data name="certifications_not_pending" xml:space="preserve"><value>Підтвердити можна лише запис, що очікує підтвердження.</value></data>
+  <data name="certifications_expiry_required" xml:space="preserve"><value>Цей тип спливає, тому потрібна нова дата закінчення.</value></data>
+  <data name="certifications_expiry_not_later" xml:space="preserve"><value>Нова дата закінчення має бути пізнішою за поточну.</value></data>
+  <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Кредитні години мають бути більшими за нуль.</value></data>
+  <data name="certifications_credit_not_found" xml:space="preserve"><value>Запис кредиту не знайдено.</value></data>
+  <data name="certifications_unit_not_found" xml:space="preserve"><value>Підрозділ у цьому відділі не знайдено.</value></data>
+  <data name="certifications_role_not_found" xml:space="preserve"><value>Роль у цьому підрозділі не знайдено.</value></data>
+  <data name="certifications_grace_invalid" xml:space="preserve"><value>Пільгові дні мають бути від 0 до 3650.</value></data>
+  <data name="certifications_enforcement_invalid" xml:space="preserve"><value>Невідомий режим застосування.</value></data>
+  <data name="certifications_lead_days_invalid" xml:space="preserve"><value>Дні попередження мають бути додатними й не більшими за рік.</value></data>
+  <data name="certifications_protected_write_refused" xml:space="preserve"><value>Захищені дані цього запису не вдалося убезпечити, тому зміну не збережено.</value></data>
+  <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Член не має сертифікатів, яких вимагає ця роль.</value></data>
+  <data name="certifications_file_type" xml:space="preserve"><value>Цей тип файлу не можна завантажити.</value></data>
+  <data name="certifications_file_too_large" xml:space="preserve"><value>Файл більший за 10 МБ.</value></data>
+</root>

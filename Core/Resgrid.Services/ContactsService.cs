@@ -159,6 +159,21 @@ namespace Resgrid.Services
 			return await _contactsRepository.GetByIdAsync(contactId);
 		}
 
+		public async Task<Dictionary<string, Contact>> GetContactsByIdsAsync(int departmentId, IEnumerable<string> contactIds)
+		{
+			var ids = (contactIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var result = new Dictionary<string, Contact>(StringComparer.OrdinalIgnoreCase);
+			if (ids.Count == 0)
+				return result;
+
+			foreach (var contact in (await _contactsRepository.GetContactsByIdsAsync(departmentId, ids)) ?? Enumerable.Empty<Contact>())
+			{
+				if (contact != null && contact.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(contact.ContactId))
+					result[contact.ContactId] = contact;
+			}
+			return result;
+		}
+
 		public async Task<List<ContactNote>> GetContactNotesByContactIdAsync(string contactId, int departmentId, bool getDeleted = false)
 		{
 			var notes = await _contactNotesRepository.GetContactNotesByContactIdAsync(contactId);
@@ -772,15 +787,12 @@ namespace Resgrid.Services
 
 		private async Task<Dictionary<string, Contact>> LoadContactsAsync(int departmentId, IEnumerable<string> contactIds)
 		{
-			var contacts = new Dictionary<string, Contact>();
-
-			foreach (var contactId in contactIds.Distinct())
+			var contacts = new Dictionary<string, Contact>(StringComparer.OrdinalIgnoreCase);
+			foreach (var pair in await GetContactsByIdsAsync(departmentId, contactIds))
 			{
-				var contact = await _contactsRepository.GetByIdAsync(contactId);
-				if (contact != null && !contact.IsDeleted && contact.DepartmentId == departmentId)
-					contacts[contactId] = contact;
+				if (!pair.Value.IsDeleted)
+					contacts[pair.Key] = pair.Value;
 			}
-
 			return contacts;
 		}
 

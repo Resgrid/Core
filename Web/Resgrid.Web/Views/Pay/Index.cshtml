@@ -1,0 +1,48 @@
+@model Resgrid.Model.Invoicing.PayPageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    Layout = "_RecoveryLayout";
+    ViewData["Title"] = localizer["PayPageTitle"].Value + (Model.InvoiceNumber > 0 ? " #" + Model.InvoiceNumber : "");
+    var token = (string)ViewData["PayToken"];
+}
+<div class="panel panel-default" style="margin-top: 20px;">
+    <div class="panel-body" style="padding: 30px;">
+        <h2 style="margin-top: 0;">@localizer["PayPageTitle"]@(Model.InvoiceNumber > 0 ? " #" + Model.InvoiceNumber : "")</h2>
+        @if (!string.IsNullOrWhiteSpace(Model.DepartmentName))
+        {
+            <p class="lead">@Model.DepartmentName</p>
+        }
+
+        @if (Model.InvoiceNumber > 0)
+        {
+            <dl class="dl-horizontal" style="margin-bottom: 25px;">
+                <dt>@localizer["AmountDue"]</dt>
+                <dd><strong>@Model.AmountDue.ToString("N2") @Model.Currency</strong></dd>
+                @if (Model.DueOn.HasValue)
+                {
+                    <dt>@localizer["DueOn"]</dt>
+                    <dd>@Model.DueOn.Value.ToString("yyyy-MM-dd")</dd>
+                }
+            </dl>
+        }
+
+        @if (Model.Available)
+        {
+            <form method="post" action="/pay/@token">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary btn-lg">@localizer["PayNow"] @Model.AmountDue.ToString("N2") @Model.Currency</button>
+            </form>
+            @if (!string.IsNullOrWhiteSpace(Model.OpenHostedUrl))
+            {
+                <p class="text-muted" style="margin-top: 15px;">@localizer["ResumePayment"]</p>
+            }
+            <p class="text-muted small" style="margin-top: 20px;">@string.Format(localizer["PayPageIntro"].Value, Model.DepartmentName)</p>
+        }
+        else
+        {
+            <div class="alert @(Model.Paid ? "alert-success" : "alert-warning")">
+                @localizer[string.IsNullOrWhiteSpace(Model.UnavailableReason) ? "pay_not_offered" : Model.UnavailableReason]
+            </div>
+        }
+    </div>
+</div>

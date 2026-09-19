@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Insatsplaner för den här organisationen underhålls nu som objekt i Register. Sidan är skrivskyddad; redigera objektet under Register.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Kontakten kan inte tas bort så länge den har en faktureringsprofil med fakturor som inte är makulerade. Makulera eller reglera fakturorna först.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Öppna objekt</value>
   </data>

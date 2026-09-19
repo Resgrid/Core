@@ -282,9 +282,86 @@ namespace Resgrid.Services
 					var evt = TryDeserialize<CertificationExpiringEvent>(eventPayloadJson);
 					if (evt?.Certification != null)
 					{
-						MapCertificationVariables(scriptObject, evt.Certification, evt.DaysUntilExpiry);
+						MapCertificationVariables(scriptObject, evt.Certification, evt.DaysUntilExpiry, evt.TypeCode, evt.TypeName);
 						triggeringUserId = evt.Certification.UserId;
 					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationAdded:
+				{
+					var evt = TryDeserialize<CertificationAddedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapCertificationVariables(scriptObject, evt.Certification, DaysUntil(evt.Certification.ExpiresOn), evt.TypeCode, evt.TypeName);
+						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationRenewed:
+				{
+					var evt = TryDeserialize<CertificationRenewedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapCertificationVariables(scriptObject, evt.Certification, DaysUntil(evt.Certification.ExpiresOn), evt.TypeCode, evt.TypeName);
+						((ScriptObject)scriptObject["certification"])["previous_expires_on"] = evt.PreviousExpiresOn;
+						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationExpired:
+				{
+					var evt = TryDeserialize<CertificationExpiredEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapCertificationVariables(scriptObject, evt.Certification, DaysUntil(evt.Certification.ExpiresOn), evt.TypeCode, evt.TypeName);
+						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationStatusChanged:
+				{
+					var evt = TryDeserialize<CertificationStatusChangedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapCertificationVariables(scriptObject, evt.Certification, DaysUntil(evt.Certification.ExpiresOn), evt.TypeCode, evt.TypeName);
+						var c = (ScriptObject)scriptObject["certification"];
+						c["old_status"] = evt.OldStatus;
+						c["new_status"] = evt.NewStatus;
+						c["reason"] = evt.Reason ?? string.Empty;
+						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationRoleRemoved:
+				{
+					var evt = TryDeserialize<CertificationRoleRemovedEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var r = new ScriptObject();
+						r["user_id"] = evt.UserId ?? string.Empty;
+						r["role_id"] = evt.PersonnelRoleId;
+						r["role_name"] = evt.RoleName ?? string.Empty;
+						r["type_code"] = evt.TypeCode ?? string.Empty;
+						r["type_name"] = evt.TypeName ?? string.Empty;
+						r["expires_on"] = evt.ExpiresOn;
+						r["grace_deadline"] = evt.GraceDeadline;
+						scriptObject["removal"] = r;
+						triggeringUserId = evt.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.UnitCertificationExpiring:
+				{
+					var evt = TryDeserialize<UnitCertificationExpiringEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+						MapUnitCertificationVariables(scriptObject, evt.Certification, evt.UnitName, evt.TypeCode, evt.TypeName, evt.DaysUntilExpiry);
+					break;
+				}
+				case WorkflowTriggerEventType.UnitCertificationExpired:
+				{
+					var evt = TryDeserialize<UnitCertificationExpiredEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+						MapUnitCertificationVariables(scriptObject, evt.Certification, evt.UnitName, evt.TypeCode, evt.TypeName, DaysUntil(evt.Certification.ExpiresOn));
 					break;
 				}
 				case WorkflowTriggerEventType.FormSubmitted:
@@ -430,7 +507,9 @@ namespace Resgrid.Services
 					var invoicePayload = invoiceEvent?.Payload ?? new JObject(); var invoice = new ScriptObject();
 					foreach (var pair in Resgrid.Model.Invoicing.InvoiceWorkflowPayload.Variables) invoice[pair.Variable] = ToScriptValue(invoicePayload[pair.Property]);
 					var invoiceId = invoicePayload["InvoiceId"]?.Type == JTokenType.String ? invoicePayload["InvoiceId"].Value<string>() : null;
-					invoice["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Invoicing/View/{invoiceId}";
+					invoice["url"] = string.IsNullOrWhiteSpace(invoiceId)
+						? string.Empty
+						: $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Invoicing/View/{invoiceId}";
 					scriptObject["invoice"] = invoice;
 					break;
 				}
@@ -1248,7 +1327,27 @@ namespace Resgrid.Services
 			obj["inventory"] = i;
 		}
 
-		private static void MapCertificationVariables(ScriptObject obj, PersonnelCertification cert, int daysUntilExpiry)
+		private static int DaysUntil(DateTime? expiresOn)
+			=> expiresOn.HasValue ? (int)(expiresOn.Value.Date - DateTime.UtcNow.Date).TotalDays : 0;
+
+		private static void MapUnitCertificationVariables(ScriptObject obj, UnitCertification cert, string unitName, string typeCode, string typeName, int daysUntilExpiry)
+		{
+			// Catalog 27 (plan D2): Number is enveloped in a protected department and renders as the placeholder.
+			var u = new ScriptObject();
+			u["id"] = cert.UnitCertificationId;
+			u["unit_id"] = cert.UnitId;
+			u["unit_name"] = unitName ?? string.Empty;
+			u["type_code"] = typeCode ?? string.Empty;
+			u["type_name"] = typeName ?? string.Empty;
+			u["number"] = ProtectedDataEnvelope.SafeDisplay(cert.Number) ?? string.Empty;
+			u["issued_on"] = cert.IssuedOn;
+			u["expires_on"] = cert.ExpiresOn;
+			u["days_until_expiry"] = daysUntilExpiry;
+			u["status"] = cert.Status;
+			obj["unit_certification"] = u;
+		}
+
+		private static void MapCertificationVariables(ScriptObject obj, PersonnelCertification cert, int daysUntilExpiry, string typeCode = null, string typeName = null)
 		{
 			// Cataloged since v6 (plan 5.1). Workflow variables feed outbound email, SMS and
 			// webhooks with no reveal step, so a protected department's certification renders as the
@@ -1264,6 +1363,10 @@ namespace Resgrid.Services
 			c["expires_on"] = cert.ExpiresOn;
 			c["received_on"] = cert.RecievedOn;
 			c["days_until_expiry"] = daysUntilExpiry;
+			c["type_code"] = typeCode ?? string.Empty;
+			c["type_name"] = typeName ?? string.Empty;
+			c["status"] = cert.Status;
+			c["user_id"] = cert.UserId ?? string.Empty;
 			obj["certification"] = c;
 		}
 

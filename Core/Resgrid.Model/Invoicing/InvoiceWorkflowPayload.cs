@@ -16,7 +16,7 @@ namespace Resgrid.Model.Invoicing
 			("currency", "Currency"), ("sub_total", "SubTotal"), ("discount_amount", "DiscountAmount"), ("tax_amount", "TaxAmount"),
 			("total", "Total"), ("amount_paid", "AmountPaid"), ("balance", "Balance"), ("issued_on", "IssuedOn"), ("due_on", "DueOn"),
 			("sent_on", "SentOn"), ("paid_on", "PaidOn"), ("payment_amount", "PaymentAmount"), ("payment_method", "PaymentMethod"),
-			("payment_id", "PaymentId"), ("old_status", "OldStatus")
+			("payment_id", "PaymentId"), ("old_status", "OldStatus"), ("pay_url", "PayUrl")
 		};
 
 		public static readonly int[] Triggers = { 52, 53, 54, 55, 56, 57, 94, 95 };

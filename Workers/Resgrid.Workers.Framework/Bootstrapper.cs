@@ -56,6 +56,7 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new MessagingProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
+				builder.RegisterModule(new Resgrid.Providers.Payments.PaymentsProviderModule());
 
 				// Chatbot stack — required so the worker can resolve IChatbotIngressService to process
 				// inbound chatbot messages (e.g. Twilio SMS) off the webhook thread. Mirrors the modules

@@ -1,0 +1,117 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationTypesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CertificationTypes"];
+    ViewData["Tab"] = "Types";
+    ViewData["Title"] = localizer["CertificationTypes"].Value;
+    ViewData["Subtitle"] = localizer["TypesIntro"].Value;
+    var templates = Resgrid.Model.Certifications.CertificationTypeTemplateCatalog.All;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["CertificationTypes"]</h5>
+            <div class="ibox-tools">
+                <a asp-controller="Certifications" asp-action="Types" asp-route-area="User" asp-route-showInactive="@(!Model.ShowInactive)" class="btn btn-default btn-xs">@(Model.ShowInactive ? localizer["HideInactive"] : localizer["ShowInactive"])</a>
+                <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#templateGallery"><i class="fa fa-magic"></i> @localizer["TemplateGallery"]</button>
+                <a asp-controller="Certifications" asp-action="EditType" asp-route-area="User" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewType"]</a>
+            </div>
+        </div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpTypes"]</div>
+            @if (Model.Types.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoTypesYet"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>@localizer["TypeCode"]</th><th>@localizer["TypeName"]</th><th>@localizer["Category"]</th><th>@localizer["AppliesTo"]</th><th>@localizer["Validity"]</th><th class="text-center">@localizer["Records"]</th><th class="text-center">@localizer["Requirements"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var type in Model.Types)
+                        {
+                            <tr class="@(type.IsActive ? null : "text-muted")">
+                                <td><code>@type.Code</code></td>
+                                <td><a asp-controller="Certifications" asp-action="EditType" asp-route-area="User" asp-route-id="@type.DepartmentCertificationTypeId">@type.Type</a> @if (!type.IsActive) { <span class="label label-default">@localizer["Inactive"]</span> }</td>
+                                <td>@localizer["Category" + (Resgrid.Model.CertificationCategories)type.Category]</td>
+                                <td>@localizer[type.IsUnitScoped ? "AppliesToUnit" : "AppliesToPerson"]</td>
+                                <td>@(type.NeverExpires ? localizer["NeverExpires"].Value : type.DefaultValidityMonths.HasValue ? string.Format(localizer["Months"].Value, type.DefaultValidityMonths) : "—")</td>
+                                <td class="text-center">@(Model.RecordCounts.TryGetValue(type.DepartmentCertificationTypeId, out var records) ? records : 0)</td>
+                                <td class="text-center">@(Model.RequirementCounts.TryGetValue(type.DepartmentCertificationTypeId, out var reqs) ? reqs : 0)</td>
+                                <td class="text-right">
+                                    <a asp-controller="Certifications" asp-action="EditType" asp-route-area="User" asp-route-id="@type.DepartmentCertificationTypeId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                                    <form method="post" asp-controller="Certifications" asp-action="DeleteType" asp-route-area="User" asp-route-id="@type.DepartmentCertificationTypeId" style="display: inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteTypeConfirm"]');"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="templateGallery" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" asp-controller="Certifications" asp-action="AddFromTemplate" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">@localizer["TemplateGallery"]</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">@localizer["TemplateGalleryIntro"]</p>
+                    <input type="text" class="form-control m-b-sm" id="templateFilter" placeholder="@localizer["FilterTemplates"]" />
+                    <div style="max-height: 420px; overflow-y: auto;">
+                        <table class="table table-condensed" id="templateTable">
+                            <thead><tr><th></th><th>@localizer["TypeCode"]</th><th>@localizer["TypeName"]</th><th>@localizer["Category"]</th><th>@localizer["AppliesTo"]</th><th>@localizer["Validity"]</th><th>@localizer["IssuingAuthority"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var t in templates)
+                                {
+                                    var exists = Model.ExistingCodes.Contains(t.Code);
+                                    <tr data-search="@(t.Code + " " + t.Name + " " + t.Category + " " + t.AppliesTo + " " + t.IssuingAuthority + " " + string.Join(" ", t.Keywords)).ToLowerInvariant()" class="@(exists ? "text-muted" : null)">
+                                        <td>@if (!exists) { <input type="checkbox" name="templateIds" value="@t.Id" /> } else { <i class="fa fa-check text-navy" title="@localizer["AlreadyAdded"]"></i> }</td>
+                                        <td><code>@t.Code</code></td>
+                                        <td>@t.Name</td>
+                                        <td>@localizer["Category" + t.Category]</td>
+                                        <td>@localizer[t.AppliesTo == Resgrid.Model.CertificationAppliesTo.Unit ? "AppliesToUnit" : "AppliesToPerson"]</td>
+                                        <td>@(t.NeverExpires ? localizer["NeverExpires"].Value : t.DefaultValidityMonths.HasValue ? string.Format(localizer["Months"].Value, t.DefaultValidityMonths) : "—")</td>
+                                        <td><small>@t.IssuingAuthority</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> @localizer["AddSelected"]</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#templateFilter').on('input', function () {
+                var q = $(this).val().toLowerCase().split(/\s+/).filter(function (s) { return s.length; });
+                $('#templateTable tbody tr').each(function () {
+                    var text = $(this).data('search') || '';
+                    var show = q.every(function (term) { return text.indexOf(term) >= 0; });
+                    $(this).toggle(show);
+                });
+            });
+        });
+    </script>
+}

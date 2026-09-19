@@ -27,6 +27,11 @@ namespace Resgrid.Web.Areas.User.Models.Contacts
 		/// <summary>Billing tab (Workforce &amp; Business Operations plan, Phase B): shown when invoicing is on for the department and the member may view it.</summary>
 		public bool InvoicingAvailable { get; set; }
 		public CustomerBillingProfile BillingProfile { get; set; }
+		/// <summary>How many of the newest invoices the Billing tab lists; <see cref="InvoiceCount"/> carries the full count.</summary>
+		public const int InvoicesShown = 25;
 		public List<Invoice> Invoices { get; set; } = new List<Invoice>();
+		public int InvoiceCount { get; set; }
+		/// <summary>One-shot notice for this page (a delete the billing profile refused, for example).</summary>
+		public string Message { get; set; }
 	}
 }

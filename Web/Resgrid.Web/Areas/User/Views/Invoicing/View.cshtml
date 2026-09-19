@@ -1,6 +1,12 @@
 @model Resgrid.Web.Areas.User.Models.Invoicing.InvoiceDetailView
 @using Resgrid.Model.Invoicing
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@functions {
+    public static class InvoicePaymentStatusesHelper
+    {
+        public static string RequestStatus(int status) => System.Enum.IsDefined(typeof(PaymentRequestStatuses), status) ? ((PaymentRequestStatuses)status).ToString() : "Unknown";
+    }
+}
 @{
     var invoice = Model.Invoice;
     ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " #" + invoice.InvoiceNumber;
@@ -93,7 +99,7 @@
                     else
                     {
                         <table class="table table-condensed">
-                            <thead><tr><th>@localizer["PaidOn"]</th><th>@localizer["Method"]</th><th>@localizer["Reference"]</th><th>@localizer["PaymentStatus"]</th><th class="text-right">@localizer["Amount"]</th></tr></thead>
+                            <thead><tr><th>@localizer["PaidOn"]</th><th>@localizer["Method"]</th><th>@localizer["Reference"]</th><th>@localizer["PaymentStatus"]</th><th class="text-right">@localizer["Fee"]</th><th class="text-right">@localizer["Amount"]</th><th></th></tr></thead>
                             <tbody>
                                 @foreach (var payment in payments)
                                 {
@@ -102,7 +108,9 @@
                                         <td>@localizer["Method" + (InvoicePaymentMethods)payment.Method] @payment.PaymentMethodSummary</td>
                                         <td>@payment.Reference</td>
                                         <td>@localizer["PaymentStatus" + (InvoicePaymentStatuses)payment.Status]@(payment.RefundedAmount > 0 ? " (-" + payment.RefundedAmount.ToString("N2") + ")" : "")</td>
+                                        <td class="text-right">@(payment.ProviderFeeAmount?.ToString("N2") ?? "—")</td>
                                         <td class="text-right">@payment.Amount.ToString("N2")</td>
+                                        <td>@if (!string.IsNullOrWhiteSpace(payment.ReceiptUrl) && payment.ReceiptUrl.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase)) { <a href="@payment.ReceiptUrl" target="_blank" rel="noopener noreferrer" title="@localizer["Receipt"]"><i class="fa fa-external-link"></i></a> }</td>
                                     </tr>
                                 }
                             </tbody>
@@ -152,6 +160,61 @@
                     <a asp-controller="Invoicing" asp-action="BillingProfile" asp-route-area="User" asp-route-contactId="@invoice.ContactId" class="btn btn-white btn-block">@localizer["BillingProfile"]</a>
                 </div>
             </div>
+
+            @if (Model.OnlinePayments != null)
+            {
+                var op = Model.OnlinePayments;
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-credit-card"></i> @localizer["PayOnline"]</h5></div>
+                    <div class="ibox-content">
+                        @if (!string.IsNullOrWhiteSpace(Model.PayUrl))
+                        {
+                            <label for="payUrl">@localizer["PayLink"]</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="payUrl" value="@Model.PayUrl" readonly />
+                                <span class="input-group-btn"><button type="button" class="btn btn-default" id="copyPayUrl" title="@localizer["CopyLink"]"><i class="fa fa-copy"></i></button></span>
+                            </div>
+                            <p class="help-block">@localizer["PayLinkHint"]</p>
+                            @if (Model.OpenRequest != null)
+                            {
+                                <p class="m-b-xs">@localizer["OpenRequest"]: <span class="label label-info">@localizer["RequestStatus" + (InvoicePaymentStatusesHelper.RequestStatus(Model.OpenRequest.Status))]</span> <small class="text-muted">@localizer["ExpiresOn"] @Model.OpenRequest.ExpiresOn.ToString("yyyy-MM-dd HH:mm") UTC</small></p>
+                            }
+                            @if (isOpen && write)
+                            {
+                                <form method="post" asp-controller="Invoicing" asp-action="CreatePayLink" asp-route-area="User" asp-route-id="@invoice.InvoiceId">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> @(Model.OpenRequest == null ? localizer["OpenPaymentRequest"] : localizer["RefreshPaymentRequest"])</button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">@localizer["PayOnlineNotOffered"] @(op.BlockedReason == null ? "" : localizer[op.BlockedReason].Value)</p>
+                            @if (!op.EnabledByDepartment && Model.CanManage)
+                            {
+                                <a asp-controller="Invoicing" asp-action="Settings" asp-route-area="User" asp-route-tab="online" class="btn btn-xs btn-default">@localizer["OnlinePayments"]</a>
+                            }
+                        }
+                        @if (Model.PaymentRequests != null && Model.PaymentRequests.Count > 0)
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <table class="table table-condensed m-b-none">
+                                <thead><tr><th>@localizer["Started"]</th><th>@localizer["Status"]</th><th class="text-right">@localizer["Amount"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var request in Model.PaymentRequests.Take(10))
+                                    {
+                                        <tr>
+                                            <td>@request.AddedOn.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>@localizer["RequestStatus" + InvoicePaymentStatusesHelper.RequestStatus(request.Status)]</td>
+                                            <td class="text-right">@request.Amount.ToString("N2") @request.Currency</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -250,4 +313,18 @@
             </form>
         </div>
     </div>
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#copyPayUrl').on('click', function () {
+                var input = document.getElementById('payUrl');
+                if (!input) return;
+                input.select();
+                try { navigator.clipboard.writeText(input.value); toastr.success('@localizer["LinkCopied"]'); }
+                catch (e) { document.execCommand('copy'); }
+            });
+        });
+    </script>
 }

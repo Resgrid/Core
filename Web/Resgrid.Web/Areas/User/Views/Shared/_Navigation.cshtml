@@ -5,6 +5,7 @@
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -62,6 +63,13 @@
 			<li class="@Html.IsSelected(controller: "Units")">
 				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@commonLocalizer["UnitsModule"]</span></a>
 			</li>
+			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications())
+			{
+				@* Workforce & Business Operations plan, Phase D: free feature; the dashboard needs ViewCertifications (admins by default). *@
+				<li class="@Html.IsSelected(controller: "Certifications")">
+					<a asp-controller="Certifications" asp-action="Index" asp-route-area="User"><i class="fa fa-certificate"></i> <span class="nav-label">@certificationLocalizer["Certifications"]</span></a>
+				</li>
+			}
 			@if (ClaimsAuthorizationHelper.CanViewContacts())
 			{
 				<li class="@Html.IsSelected(controller: "Contacts")">

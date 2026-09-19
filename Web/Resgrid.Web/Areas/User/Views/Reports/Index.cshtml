@@ -6,6 +6,7 @@
 @model Resgrid.Web.Areas.User.Models.Logs.LogsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.FlaggedReport> flaggedReportLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["ReportingTitle"];
 }
@@ -94,6 +95,17 @@
                                 </td>
                                 <td>
                                     <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("CertificationComplianceReport", "Reports", new { Area = "User" })">@certificationLocalizer["ComplianceReport"]</a>
+                                </td>
+                                <td>
+                                    @certificationLocalizer["ComplianceReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("CertificationComplianceReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             <tr>

@@ -75,6 +75,16 @@ namespace Resgrid.Model
 		InvoicePaymentRefunded = 94,
 		InvoicePaymentDisputed = 95,
 
+		// Workforce & Business Operations plan Phase D: certifications & role qualification (registry 87-93; plan D7).
+		// CertificationExpiring = 23 (above) is activated by the same worker.
+		CertificationAdded = 87,
+		CertificationRenewed = 88,
+		CertificationExpired = 89,
+		CertificationRoleRemoved = 90,
+		CertificationStatusChanged = 91,
+		UnitCertificationExpiring = 92,
+		UnitCertificationExpired = 93,
+
 		// -- Records (RMS) block 100-115 -- Identifier Allocation Registry section 3.2. Values 52-99 are
 		// reserved by other pending plans and must not be taken here. Workflow definitions persist the
 		// integer, so these are append-only and never renumbered. 103 (RecordApproved) and 113-114 are

@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>I piani preventivi di questo dipartimento sono ora gestiti come occupazioni nei Registri. Questa pagina è di sola lettura; modifica l'occupazione nei Registri.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Questo contatto non può essere eliminato finché ha un profilo di fatturazione con fatture non annullate. Annulla o salda prima le fatture.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Apri occupazione</value>
   </data>

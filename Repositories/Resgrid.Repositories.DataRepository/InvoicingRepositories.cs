@@ -224,7 +224,7 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("DepartmentId", departmentId);
 			parameters.Add("Statuses", OpenStatuses);
 			return QueryAsync<InvoiceAgingRow>(
-				$"SELECT {Cols("InvoiceId", "InvoiceNumber", "ContactId", "Status", "DueOn", "Total", "AmountPaid")} FROM {Tbl("Invoices")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("Status", "Statuses")} AND {Col("IsDeleted")} = {False} ORDER BY {Col("DueOn")}",
+				$"SELECT {Cols("InvoiceId", "InvoiceNumber", "ContactId", "Status", "DueOn", "Currency", "Total", "AmountPaid")} FROM {Tbl("Invoices")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("Status", "Statuses")} AND {Col("IsDeleted")} = {False} ORDER BY {Col("DueOn")}",
 				parameters);
 		}
 
@@ -364,9 +364,19 @@ namespace Resgrid.Repositories.DataRepository
 			if (updated == 0)
 			{
 				var all = new[] { "DepartmentId" }.Concat(columns).ToArray();
-				await ExecuteAsync(
-					$"INSERT INTO {Tbl("DepartmentBillingIdentities")} ({string.Join(", ", all.Select(Col))}) VALUES ({string.Join(", ", all.Select(c => P + c))})",
-					identity, cancellationToken);
+				try
+				{
+					await ExecuteAsync(
+						$"INSERT INTO {Tbl("DepartmentBillingIdentities")} ({string.Join(", ", all.Select(Col))}) VALUES ({string.Join(", ", all.Select(c => P + c))})",
+						identity, cancellationToken);
+				}
+				catch (Exception ex) when (SearchProjectionsRepository.IsUniqueViolation(ex))
+				{
+					// Two first saves for the department raced past the update; the loser applies its values over the winner's row.
+					await ExecuteAsync(
+						$"UPDATE {Tbl("DepartmentBillingIdentities")} SET {setList} WHERE {Col("DepartmentId")} = {P}DepartmentId",
+						identity, cancellationToken);
+				}
 			}
 
 			return await GetByDepartmentIdAsync(identity.DepartmentId);

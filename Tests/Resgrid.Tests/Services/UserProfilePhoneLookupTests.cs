@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -199,6 +201,32 @@ namespace Resgrid.Tests.Services
 
 			result.Should().BeNull();
 			_repository.Verify(x => x.GetProfileByHomeNumberAsync(It.IsAny<string>()), Times.Never);
+		}
+		[Test]
+		public async Task SaveProfileAsync_clears_the_department_profile_list_cache_for_every_live_membership()
+		{
+			// A profile row is shared by every department the user belongs to; each department's cached list must go.
+			var cache = new Mock<ICacheProvider>();
+			var members = new Mock<IDepartmentMembersRepository>();
+			members.Setup(m => m.GetAllDepartmentMemberByUserIdAsync("user-1")).ReturnsAsync(new List<DepartmentMember>
+			{
+				new DepartmentMember { DepartmentId = 7, UserId = "user-1", IsActive = true },
+				new DepartmentMember { DepartmentId = 8, UserId = "user-1" },
+				new DepartmentMember { DepartmentId = 9, UserId = "user-1", IsDisabled = true },
+				new DepartmentMember { DepartmentId = 10, UserId = "user-1", IsDeleted = true }
+			});
+			_repository.Setup(r => r.GetProfileByUserIdAsync("user-1")).ReturnsAsync((UserProfile)null);
+			_repository.Setup(r => r.SaveOrUpdateAsync(It.IsAny<UserProfile>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((UserProfile p, CancellationToken _, bool __) => p);
+			var service = new UserProfileService(_repository.Object, cache.Object, new Mock<IChatbotIdentityRepository>().Object, members.Object);
+
+			await service.SaveProfileAsync(7, new UserProfile { UserId = "user-1", FirstName = "Ada" });
+
+			cache.Verify(c => c.Remove("UserProfile_user-1"), Times.Once);
+			cache.Verify(c => c.Remove("AllDepUserProfile_7"), Times.Once);
+			cache.Verify(c => c.Remove("AllDepUserProfile_8"), Times.Once);
+			cache.Verify(c => c.Remove("AllDepUserProfile_9"), Times.Never, "a disabled membership serves no profile list");
+			cache.Verify(c => c.Remove("AllDepUserProfile_10"), Times.Never);
 		}
 	}
 }

@@ -39,6 +39,8 @@
   <data name="DefaultRateCardHint" xml:space="preserve"><value>Προεπιλογή τμήματος (όταν ο πελάτης δεν έχει ορισμένο τιμοκατάλογο)</value></data>
   <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Διαγραφή αυτού του τιμοκαταλόγου;</value></data>
   <data name="DeleteItemConfirm" xml:space="preserve"><value>Διαγραφή αυτού του στοιχείου;</value></data>
+  <data name="DeleteRateCard" xml:space="preserve"><value>Διαγραφή τιμοκαταλόγου</value></data>
+  <data name="DeleteItem" xml:space="preserve"><value>Διαγραφή στοιχείου</value></data>
   <data name="RateCardDeleted" xml:space="preserve"><value>Ο τιμοκατάλογος διαγράφηκε.</value></data>
   <data name="ItemType" xml:space="preserve"><value>Τύπος</value></data>
   <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Ωριαία – χρόνος μονάδας επί τόπου</value></data>
@@ -257,9 +259,101 @@
   <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Εξοφλημένο τιμολόγιο δεν μπορεί να ακυρωθεί.</value></data>
   <data name="invoicing_invoice_void" xml:space="preserve"><value>Το τιμολόγιο είναι ακυρωμένο.</value></data>
   <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Δεν έχει οριστεί e-mail χρέωσης για τον πελάτη.</value></data>
+  <data name="invoicing_email_not_sent" xml:space="preserve"><value>Το e-mail του τιμολογίου δεν ήταν δυνατό να σταλεί. Ελέγξτε τη διεύθυνση και δοκιμάστε ξανά.</value></data>
+  <data name="invoicing_payment_conflict" xml:space="preserve"><value>Αυτή η συναλλαγή του παρόχου έχει ήδη καταχωρηθεί σε τιμολόγιο άλλου τμήματος.</value></data>
   <data name="invoicing_payment_not_found" xml:space="preserve"><value>Η πληρωμή δεν βρέθηκε.</value></data>
   <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Δεν ήταν δυνατή η δημιουργία του PDF τιμολογίου.</value></data>
   <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Το προφίλ χρέωσης έχει τιμολόγια και δεν μπορεί να διαγραφεί.</value></data>
   <data name="invoicing_profile_required" xml:space="preserve"><value>Ο πελάτης χρειάζεται πρώτα ενεργό προφίλ χρέωσης.</value></data>
   <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Ο τιμοκατάλογος δεν βρέθηκε.</value></data>
+  <data name="AdminRequired" xml:space="preserve"><value>Μόνο διαχειριστής τμήματος μπορεί να το κάνει αυτό.</value></data>
+  <data name="OnlinePaymentsIntro" xml:space="preserve"><value>Επιτρέψτε στους πελάτες να πληρώνουν τιμολόγια online μέσω του δικού σας λογαριασμού Stripe. Τα χρήματα πηγαίνουν κατευθείαν στον λογαριασμό σας· το Resgrid δεν τα κρατά ποτέ, δεν χρεώνει προμήθεια και δεν μπορεί να επιστρέψει.</value></data>
+  <data name="YourStripeAccount" xml:space="preserve"><value>Ο λογαριασμός σας Stripe</value></data>
+  <data name="NoConnectionYet" xml:space="preserve"><value>Δεν έχει συνδεθεί ακόμη λογαριασμός Stripe.</value></data>
+  <data name="ConnectStripe" xml:space="preserve"><value>Σύνδεση με Stripe</value></data>
+  <data name="ReconnectStripe" xml:space="preserve"><value>Επανασύνδεση με Stripe</value></data>
+  <data name="ConnectStripeIntro" xml:space="preserve"><value>Θα συνδεθείτε στο Stripe και θα επιτρέψετε στο Resgrid να δημιουργεί σελίδες πληρωμής στον λογαριασμό σας. Το Resgrid αποθηκεύει μόνο το id του λογαριασμού, ποτέ τα διαπιστευτήρια Stripe.</value></data>
+  <data name="ConnectAdminOnly" xml:space="preserve"><value>Μόνο ο διαχειριστής τμήματος μπορεί να συνδέσει ή να αποσυνδέσει τον λογαριασμό Stripe.</value></data>
+  <data name="ConnectedAccount" xml:space="preserve"><value>Συνδεδεμένος λογαριασμός</value></data>
+  <data name="BusinessName" xml:space="preserve"><value>Επωνυμία</value></data>
+  <data name="ConnectedOn" xml:space="preserve"><value>Συνδέθηκε στις</value></data>
+  <data name="LastVerified" xml:space="preserve"><value>Τελευταία επαλήθευση</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>Δυνατότητες</value></data>
+  <data name="LastError" xml:space="preserve"><value>Τελευταίο σφάλμα</value></data>
+  <data name="LiveMode" xml:space="preserve"><value>Ζωντανό</value></data>
+  <data name="SandboxMode" xml:space="preserve"><value>Δοκιμαστικό</value></data>
+  <data name="Disconnect" xml:space="preserve"><value>Αποσύνδεση</value></data>
+  <data name="DisconnectConfirm" xml:space="preserve"><value>Αποσύνδεση του λογαριασμού Stripe; Οι ανοικτοί σύνδεσμοι πληρωμής σταματούν να λειτουργούν και νέοι δεν δημιουργούνται μέχρι να συνδεθεί ξανά λογαριασμός.</value></data>
+  <data name="CollectionSettings" xml:space="preserve"><value>Ρυθμίσεις είσπραξης</value></data>
+  <data name="OnlinePaymentsEnabledLabel" xml:space="preserve"><value>Προσφορά διαδικτυακής πληρωμής στα τιμολόγια</value></data>
+  <data name="AllowedPaymentMethods" xml:space="preserve"><value>Αποδεκτοί τρόποι πληρωμής</value></data>
+  <data name="PaymentMethodCard" xml:space="preserve"><value>Κάρτες και πορτοφόλια</value></data>
+  <data name="PaymentMethodAch" xml:space="preserve"><value>Τραπεζική χρέωση (ACH, λογαριασμοί ΗΠΑ)</value></data>
+  <data name="PaymentMethodsHint" xml:space="preserve"><value>Η διαθεσιμότητα ακολουθεί όσα δέχεται ο λογαριασμός σας Stripe· ένας τρόπος που δεν δέχεται δεν προσφέρεται.</value></data>
+  <data name="PayLinksReady" xml:space="preserve"><value>Σύνδεσμοι πληρωμής</value></data>
+  <data name="SuspendedByOperator" xml:space="preserve"><value>Η διαδικτυακή είσπραξη έχει ανασταλεί από τον διαχειριστή σε αυτή την περιοχή. Η σύνδεσή σας διατηρείται· νέοι σύνδεσμοι πληρωμής δεν προσφέρονται μέχρι να ενεργοποιηθεί ξανά.</value></data>
+  <data name="OnlinePaymentsFlagOff" xml:space="preserve"><value>Οι διαδικτυακές πληρωμές δεν έχουν ενεργοποιηθεί ακόμη για το τμήμα σας. Επικοινωνήστε με την υποστήριξη Resgrid για να τις ενεργοποιήσετε.</value></data>
+  <data name="PaymentConnected" xml:space="preserve"><value>Ο λογαριασμός Stripe {0} συνδέθηκε. Ενεργοποιήστε «Προσφορά διαδικτυακής πληρωμής στα τιμολόγια» για να προσφέρετε συνδέσμους πληρωμής.</value></data>
+  <data name="PaymentDisconnected" xml:space="preserve"><value>Ο λογαριασμός Stripe αποσυνδέθηκε.</value></data>
+  <data name="PayOnline" xml:space="preserve"><value>Πληρωμή online</value></data>
+  <data name="PayLink" xml:space="preserve"><value>Σύνδεσμος πληρωμής</value></data>
+  <data name="PayLinkHint" xml:space="preserve"><value>Μοιραστείτε τον σύνδεσμο με τον πελάτη· εκτυπώνεται στο τιμολόγιο και περιλαμβάνεται στο e-mail. Ισχύει για το διάστημα λήξης που ορίζεται στις ρυθμίσεις χρέωσης.</value></data>
+  <data name="CopyLink" xml:space="preserve"><value>Αντιγραφή συνδέσμου</value></data>
+  <data name="LinkCopied" xml:space="preserve"><value>Ο σύνδεσμος αντιγράφηκε.</value></data>
+  <data name="OpenRequest" xml:space="preserve"><value>Ανοικτό αίτημα πληρωμής</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Λήγει</value></data>
+  <data name="OpenPaymentRequest" xml:space="preserve"><value>Άνοιγμα σελίδας πληρωμής τώρα</value></data>
+  <data name="RefreshPaymentRequest" xml:space="preserve"><value>Ανανέωση σελίδας πληρωμής</value></data>
+  <data name="PayLinkCreated" xml:space="preserve"><value>Η σελίδα πληρωμής είναι ανοικτή· ο σύνδεσμος πληρωμής οδηγεί απευθείας εκεί.</value></data>
+  <data name="PayOnlineNotOffered" xml:space="preserve"><value>Η διαδικτυακή πληρωμή δεν προσφέρεται για αυτό το τιμολόγιο αυτή τη στιγμή.</value></data>
+  <data name="Started" xml:space="preserve"><value>Ξεκίνησε</value></data>
+  <data name="Fee" xml:space="preserve"><value>Προμήθεια</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Απόδειξη</value></data>
+  <data name="RequestStatusCreated" xml:space="preserve"><value>Δημιουργήθηκε</value></data>
+  <data name="RequestStatusOpened" xml:space="preserve"><value>Αναμονή πληρωμής</value></data>
+  <data name="RequestStatusProcessing" xml:space="preserve"><value>Πληρωμή σε εκκρεμότητα (εκκαθάριση τραπεζικής χρέωσης)</value></data>
+  <data name="RequestStatusCompleted" xml:space="preserve"><value>Πληρώθηκε</value></data>
+  <data name="RequestStatusExpired" xml:space="preserve"><value>Έληξε</value></data>
+  <data name="RequestStatusCancelled" xml:space="preserve"><value>Ακυρώθηκε</value></data>
+  <data name="RequestStatusFailed" xml:space="preserve"><value>Απέτυχε</value></data>
+  <data name="RequestStatusUnknown" xml:space="preserve"><value>Άγνωστο</value></data>
+  <data name="ConnectionStatusPending" xml:space="preserve"><value>Σε εκκρεμότητα</value></data>
+  <data name="ConnectionStatusConnected" xml:space="preserve"><value>Συνδεδεμένος</value></data>
+  <data name="ConnectionStatusActionRequired" xml:space="preserve"><value>Απαιτείται ενέργεια στο Stripe</value></data>
+  <data name="ConnectionStatusDisconnected" xml:space="preserve"><value>Αποσυνδεδεμένος</value></data>
+  <data name="ConnectionStatusRevoked" xml:space="preserve"><value>Η πρόσβαση ανακλήθηκε</value></data>
+  <data name="PayPageTitle" xml:space="preserve"><value>Πληρωμή τιμολογίου</value></data>
+  <data name="AmountDue" xml:space="preserve"><value>Οφειλόμενο ποσό</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Πληρωμή</value></data>
+  <data name="PayPageIntro" xml:space="preserve"><value>Η πληρωμή διεκπεραιώνεται από το Stripe για λογαριασμό του {0}. Τα στοιχεία κάρτας ή τράπεζας εισάγονται στην ασφαλή σελίδα του Stripe και το Resgrid δεν τα βλέπει ποτέ.</value></data>
+  <data name="ResumePayment" xml:space="preserve"><value>Μια σελίδα πληρωμής είναι ήδη ανοικτή για αυτό το τιμολόγιο· η νέα πληρωμή τη συνεχίζει.</value></data>
+  <data name="pay_link_invalid" xml:space="preserve"><value>Αυτός ο σύνδεσμος πληρωμής δεν είναι έγκυρος.</value></data>
+  <data name="pay_link_expired" xml:space="preserve"><value>Αυτός ο σύνδεσμος πληρωμής έληξε. Ζητήστε νέο από το τμήμα.</value></data>
+  <data name="pay_invoice_unavailable" xml:space="preserve"><value>Αυτό το τιμολόγιο δεν είναι πλέον διαθέσιμο για πληρωμή.</value></data>
+  <data name="pay_invoice_paid" xml:space="preserve"><value>Αυτό το τιμολόγιο έχει εξοφληθεί. Ευχαριστούμε.</value></data>
+  <data name="pay_not_offered" xml:space="preserve"><value>Η διαδικτυακή πληρωμή δεν είναι διαθέσιμη για αυτό το τιμολόγιο. Επικοινωνήστε με το τμήμα για άλλους τρόπους πληρωμής.</value></data>
+  <data name="pay_processing" xml:space="preserve"><value>Μια τραπεζική πληρωμή για αυτό το τιμολόγιο επιβεβαιώνεται. Δεν απαιτείται άλλη ενέργεια τώρα.</value></data>
+  <data name="PayReturnTitle" xml:space="preserve"><value>Ευχαριστούμε — η πληρωμή σας επιβεβαιώνεται</value></data>
+  <data name="PayReturnText" xml:space="preserve"><value>Το τμήμα θα δει την πληρωμή μόλις την επιβεβαιώσει το Stripe, συνήθως μέσα σε ένα λεπτό· οι τραπεζικές πληρωμές μπορεί να χρειαστούν λίγες εργάσιμες ημέρες. Θα λάβετε την απόδειξη του Stripe με e-mail.</value></data>
+  <data name="PayCancelTitle" xml:space="preserve"><value>Η πληρωμή ακυρώθηκε</value></data>
+  <data name="PayCancelText" xml:space="preserve"><value>Δεν χρεώθηκε τίποτα. Μπορείτε να επιστρέψετε σε αυτή τη σελίδα και να πληρώσετε όποτε θέλετε.</value></data>
+  <data name="BackToInvoice" xml:space="preserve"><value>Επιστροφή στο τιμολόγιο</value></data>
+  <data name="TooManyRequests" xml:space="preserve"><value>Πάρα πολλά αιτήματα. Περιμένετε ένα λεπτό και δοκιμάστε ξανά.</value></data>
+  <data name="payments_not_available_in_region" xml:space="preserve"><value>Η διαδικτυακή είσπραξη δεν είναι διαθέσιμη σε αυτή την περιοχή.</value></data>
+  <data name="payments_flag_off" xml:space="preserve"><value>Οι διαδικτυακές πληρωμές δεν είναι ενεργοποιημένες για αυτό το τμήμα.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Οι διαδικτυακές πληρωμές απαιτούν ενεργό πρόσθετο Business Operations.</value></data>
+  <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Η διαδικτυακή πληρωμή είναι απενεργοποιημένη στις ρυθμίσεις χρέωσης.</value></data>
+  <data name="payments_no_connection" xml:space="preserve"><value>Δεν υπάρχει συνδεδεμένος λογαριασμός Stripe.</value></data>
+  <data name="payments_connection_not_ready" xml:space="preserve"><value>Ο συνδεδεμένος λογαριασμός Stripe δεν μπορεί ακόμη να δεχθεί χρεώσεις. Ολοκληρώστε τις απαιτήσεις του Stripe και δοκιμάστε ξανά.</value></data>
+  <data name="payments_invoice_not_payable" xml:space="preserve"><value>Ένα πρόχειρο ή ακυρωμένο τιμολόγιο δεν πληρώνεται online.</value></data>
+  <data name="payments_invoice_paid" xml:space="preserve"><value>Αυτό το τιμολόγιο έχει ήδη εξοφληθεί.</value></data>
+  <data name="payments_zero_balance" xml:space="preserve"><value>Δεν υπάρχει υπόλοιπο προς είσπραξη σε αυτό το τιμολόγιο.</value></data>
+  <data name="payments_currency_mismatch" xml:space="preserve"><value>Το νόμισμα του τιμολογίου δεν εκκαθαρίζεται από τον συνδεδεμένο λογαριασμό Stripe.</value></data>
+  <data name="payments_provider_unavailable" xml:space="preserve"><value>Το Stripe δεν είναι προσβάσιμο αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.</value></data>
+  <data name="payments_connect_failed" xml:space="preserve"><value>Το Stripe δεν ολοκλήρωσε τη σύνδεση. Δοκιμάστε να συνδεθείτε ξανά.</value></data>
+  <data name="payments_connect_declined" xml:space="preserve"><value>Η σύνδεση απορρίφθηκε στο Stripe. Δεν άλλαξε τίποτα.</value></data>
+  <data name="payments_state_invalid" xml:space="preserve"><value>Αυτή η απόπειρα σύνδεσης δεν ισχύει πλέον. Ξεκινήστε ξανά από τη σελίδα ρυθμίσεων.</value></data>
+  <data name="payments_disabled" xml:space="preserve"><value>Η διαδικτυακή είσπραξη είναι απενεργοποιημένη σε αυτόν τον διακομιστή.</value></data>
+  <data name="payments_connection_revoked" xml:space="preserve"><value>Το Stripe αναφέρει ότι το Resgrid δεν έχει πλέον πρόσβαση σε αυτόν τον λογαριασμό. Συνδέστε τον ξανά για συνέχεια.</value></data>
+  <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Τα προστατευμένα δεδομένα αυτής της εγγραφής δεν ήταν δυνατό να ασφαλιστούν, οπότε η αλλαγή δεν αποθηκεύτηκε.</value></data>
 </root>

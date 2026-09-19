@@ -35,6 +35,16 @@
             stations and break the scoping the caller asked for by emailing that address.
             </param>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.PaymentWebhooksController">
+            <summary>
+            Connect webhook receiver for department-connected payment accounts (Workforce &amp; Business Operations plan,
+            B2.5). A sibling of the SaaS StripeHandlerController that never shares its secret: this endpoint is registered
+            at Stripe as a Connect endpoint with its own signing secret. 503 while PaymentConnectConfig.Enabled is false
+            (the EU cluster at launch), 400 on a bad signature or live-mode mismatch (audited, hashed body), 500 when a
+            verified event failed to apply so the provider retries, 200 once the event is recorded (applied, ignored or
+            duplicate). Routes for v2 providers arrive with their adapters.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.ValidateSignalWireRequest">
             <summary>
             Validates the inbound SignalWire webhook signature. SignalWire's Compatibility API uses
@@ -507,6 +517,24 @@
             <param name="callVideoFeedId">The video feed Id to delete</param>
             <param name="cancellationToken">The cancellation token</param>
             <returns>ActionResult.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CertificationsController">
+            <summary>
+            Certification catalog, personnel and unit records, role requirements and settings (Workforce &amp; Business
+            Operations plan, Phase D9). Phase D is free: no add-on or flag gate. A member always sees and edits their own
+            records; other members' records need Certifications_View / Certifications_Create / Certifications_Update;
+            catalog, requirements and settings need Certifications_Setup. Protected values (ADP catalog 6 / 27) read
+            REDACTED without a grant header, and file bytes never ride these endpoints.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CertificationsController.GetUserCertifications(System.String)">
+            <summary>The caller's records, or another member's with Certifications_View.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CertificationsController.GetExpiringCertifications(System.Int32)">
+            <summary>Person and unit records expiring within <paramref name="days"/> (or already expired), typed discriminator on each row.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CertificationsController.GetRoleEligibility(System.Int32)">
+            <summary>Every current member of the role evaluated against its requirements (D1.7).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ChatbotController">
             <summary>
@@ -2370,6 +2398,15 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.RecordPayment(Resgrid.Web.Services.Models.v4.Invoicing.RecordPaymentInput)">
             <summary>Record a manual payment (check, cash, ACH, external card, other). Online payments arrive through the provider path only.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetOnlinePaymentsStatus">
+            <summary>Phase B2: whether online payment collection is offered to this department and through which connection (masked).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetPaymentConnections">
+            <summary>Phase B2: the department's payment-provider connections, masked. No OAuth on a phone (plan B2.5).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.CreatePaymentLink(Resgrid.Web.Services.Models.v4.Invoicing.CreatePaymentLinkInput)">
+            <summary>Phase B2: opens (or reuses) the invoice's online payment request and returns the shareable pay-page link. 400 with Status=Failure and the payments_* code when not offered.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
             <summary>
@@ -8624,6 +8661,45 @@
             User Defined Field values for this contact
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.CertificationTypeData.Category">
+            <summary>CertificationCategories value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.CertificationTypeData.AppliesTo">
+            <summary>CertificationAppliesTo value: 0 person, 1 unit.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Certifications.CertificationData">
+            <summary>A personnel certification record. Name/Number/Area/IssuedBy are ADP catalog 6 fields and read REDACTED in a protected department without a grant.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.CertificationData.Status">
+            <summary>PersonnelCertificationStatuses value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.SaveCertificationInput.UserId">
+            <summary>Self when empty; another member needs Certifications_Create/Update.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.SaveCertificationInput.FileData">
+            <summary>Base64 file bytes; null keeps the stored file.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.SetCertificationStatusInput.Status">
+            <summary>PersonnelCertificationStatuses value (Expired is worker-only).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Certifications.ExpiringCertificationData">
+            <summary>One expiring or expired record, person or unit (Scope discriminator).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.ExpiringCertificationData.Scope">
+            <summary>"Person" or "Unit".</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Certifications.UnitCertificationData">
+            <summary>A unit certification record. Number/IssuedBy/Notes are ADP catalog 27 fields and read REDACTED in a protected department without a grant.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.UnitCertificationData.Status">
+            <summary>UnitCertificationStatuses value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.SetUnitCertificationStatusInput.Status">
+            <summary>UnitCertificationStatuses value (Expired is worker-only).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.CertificationSettingsData.EnforcementMode">
+            <summary>CertificationEnforcementModes value: 0 off, 1 warn only, 2 enforce.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatChannelsResult">
             <summary>
             Gets the chat channels for the current user
@@ -11862,6 +11938,27 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.RecordPaymentInput.PaidOn">
             <summary>UTC; defaults to now.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.OnlinePaymentsStatusData.AvailableInCluster">
+            <summary>Payment collection is offered in this cluster (config switch and Payments.StripeConnect flag).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.OnlinePaymentsStatusData.FlagEnabled">
+            <summary>Invoicing.OnlinePayments evaluates true for the department.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.OnlinePaymentsStatusData.EnabledByDepartment">
+            <summary>The department turned online payments on in its billing settings.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.OnlinePaymentsStatusData.CanCollect">
+            <summary>A pay link can be created right now.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.OnlinePaymentsStatusData.BlockedReason">
+            <summary>The first failing gate (payments_*), or null.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.PaymentConnectionData">
+            <summary>A connection as the apps may see it: masked account id, no secrets (plan B2.6).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.PaymentLinkData.PayUrl">
+            <summary>The stable Resgrid pay page for the invoice (share this; it survives provider session expiry).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapRegionsGeoJSONResult.GeoJson">
             <summary>

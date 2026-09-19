@@ -1,4 +1,5 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Personnel.EditRoleModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
 		ViewBag.Title = "Resgrid | " + @localizer["EditRoleHeader"];
@@ -34,6 +35,11 @@
 						@Html.HiddenFor(x => x.Role.PersonnelRoleId)
 						@Html.AntiForgeryToken()
 						<div asp-validation-summary="All" class="text-danger"></div>
+						@if (TempData["RoleMembersWarning"] is string roleWarning)
+						{
+							<div class="alert alert-warning">@roleWarning</div>
+						}
+						<p><a asp-controller="Certifications" asp-action="RoleRequirements" asp-route-area="User" asp-route-roleId="@Model.Role.PersonnelRoleId"><i class="fa fa-certificate"></i> @certificationLocalizer["RequiredCertifications"]</a></p>
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@commonLocalizer["Name"]</label>

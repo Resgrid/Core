@@ -901,7 +901,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var roles = form["roles"].ToString().Split(char.Parse(","));
 
 					if (roles.Any())
-						await _personnelRolesService.SetRolesForUserAsync(DepartmentId, model.UserId, roles, cancellationToken);
+					{
+						try { await _personnelRolesService.SetRolesForUserAsync(DepartmentId, model.UserId, roles, cancellationToken, UserId); }
+						catch (InvalidOperationException ex) when (ex.Message == "certifications_role_requirements_unmet")
+						{
+							// Phase D4 Enforce: the profile saved; the roles the member is not certified for were not applied.
+							TempData["RoleMembersWarning"] = "One or more roles were not assigned: the member does not hold the certifications those roles require.";
+						}
+					}
 				}
 
 				// Addresses are NOT written back to the shared Addresses table or relinked on the

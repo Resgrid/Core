@@ -117,7 +117,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#region Reporting
-		private static string ChecklistReportName(ReportTypes type) => (int)type >= 6 && (int)type <= 13 ? Resgrid.Services.InventoryReportDocuments.Title((Resgrid.Model.Inventories.InventoryReportKind)((int)type - 6)) : type == ReportTypes.ChecklistCompliance ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistComplianceReport") : type == ReportTypes.ChecklistMissed ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistMissedReport") : type.ToString();
+		private static string ChecklistReportName(ReportTypes type) => (int)type >= 6 && (int)type <= 13 ? Resgrid.Services.InventoryReportDocuments.Title((Resgrid.Model.Inventories.InventoryReportKind)((int)type - 6)) : type == ReportTypes.ChecklistCompliance ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistComplianceReport") : type == ReportTypes.ChecklistMissed ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistMissedReport") : type == ReportTypes.CertificationCompliance ? "Certification Compliance" : type.ToString();
 		private static Microsoft.AspNetCore.Mvc.Rendering.SelectList ChecklistReportTypes(ReportTypes selected) => new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enum.GetValues<ReportTypes>().Select(t => new { Value = (int)t, Text = ChecklistReportName(t) }), "Value", "Text", (int)selected);
 
 		[HttpGet]
@@ -881,7 +881,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					ModelState.AddModelError("fileToUpload", "Document is too large, must be smaller then 10MB.");
 			}
 
-			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			var types = await PersonCertificationTypesAsync();
 			model.CertificationTypes = new SelectList(types, "Type", "Type");
 
 			if (ModelState.IsValid)
@@ -896,6 +896,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				cert.ExpiresOn = model.ExpiresOn;
 				cert.RecievedOn = model.RecievedOn;
 				cert.Type = model.Type;
+				// Phase D: a catalog match types the record; free text stays an untyped legacy record.
+				cert.DepartmentCertificationTypeId = types.FirstOrDefault(t => t.Type == (model.Type ?? string.Empty).Trim())?.DepartmentCertificationTypeId;
 
 				if (fileToUpload != null && fileToUpload.Length > 0)
 				{
@@ -971,6 +973,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				cert.ExpiresOn = model.ExpiresOn;
 				cert.RecievedOn = model.RecievedOn;
 				cert.Type = model.Type;
+				// Phase D: re-link the catalog type from the picked name; an untyped legacy record stays untyped when the name has no match.
+				var personTypes = await PersonCertificationTypesAsync();
+				cert.DepartmentCertificationTypeId = personTypes.FirstOrDefault(t => t.Type == (model.Type ?? string.Empty).Trim())?.DepartmentCertificationTypeId ?? cert.DepartmentCertificationTypeId;
 
 				if (fileToUpload != null && fileToUpload.Length > 0)
 				{
@@ -991,9 +996,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return RedirectToAction("Certifications", "Profile", new { area = "User", userId = cert.UserId });
 			}
 
-			var certificationTypes = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			var certificationTypes = await PersonCertificationTypesAsync();
 			model.CertificationTypes = new SelectList(certificationTypes, "Type", "Type");
 			return View(model);
+		}
+
+		/// <summary>Person-scoped, active, non-deleted catalog types for the certification pickers (plan D9).</summary>
+		private async Task<List<DepartmentCertificationType>> PersonCertificationTypesAsync()
+		{
+			return (await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId))
+				.Where(t => !t.IsDeleted && t.IsActive && !t.IsUnitScoped).OrderBy(t => t.Type).ToList();
 		}
 
 		[HttpGet]

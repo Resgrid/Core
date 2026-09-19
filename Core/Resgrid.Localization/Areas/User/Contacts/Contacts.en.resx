@@ -696,6 +696,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Pre-plans for this department are now maintained as Records occupancies. This page is read-only; edit the occupancy under Records.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>This contact cannot be deleted while it has a billing profile with invoices that are not void. Void or settle the invoices first.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Open occupancy</value>
   </data>

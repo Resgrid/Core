@@ -1,4 +1,5 @@
 @model Resgrid.Web.Areas.User.Models.Invoicing.InvoiceAgingView
+@using Resgrid.Web.Areas.User.Models.Invoicing
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["Aging"];
@@ -30,11 +31,11 @@
                         @foreach (var bucket in report.Buckets)
                         {
                             <td class="text-center">
-                                <h3 class="@(bucket.Label != "Current" && bucket.Balance > 0 ? "text-danger" : "")">@bucket.Balance.ToString("N2")</h3>
+                                <h3 class="@(bucket.Label != "Current" && bucket.Balance > 0 ? "text-danger" : "")">@InvoiceIndexView.FormatBalances(bucket.BalancesByCurrency)</h3>
                                 <small>@bucket.Count @localizer["InvoicesLower"]</small>
                             </td>
                         }
-                        <td class="text-center"><h3>@report.TotalBalance.ToString("N2")</h3><small>@report.TotalCount @localizer["InvoicesLower"]</small></td>
+                        <td class="text-center"><h3>@InvoiceIndexView.FormatBalances(report.BalancesByCurrency)</h3><small>@report.TotalCount @localizer["InvoicesLower"]</small></td>
                     </tr>
                 </tbody>
             </table>
@@ -51,8 +52,8 @@
                                 <td><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@row.InvoiceId">#@row.InvoiceNumber</a></td>
                                 <td>@(Model.ContactName(row.ContactId) ?? "—")</td>
                                 <td>@(row.DueOn?.ToString("yyyy-MM-dd") ?? "—")</td>
-                                <td class="text-right">@row.Total.ToString("N2")</td>
-                                <td class="text-right">@row.Balance.ToString("N2")</td>
+                                <td class="text-right">@row.Total.ToString("N2") @row.Currency</td>
+                                <td class="text-right">@row.Balance.ToString("N2") @row.Currency</td>
                             </tr>
                         }
                     </tbody>

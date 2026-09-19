@@ -61,6 +61,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IRecordsService _recordsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> _certificationLocalizer;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IProtectedReadService _protectedReadService;
@@ -74,8 +75,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService,
-			IDepartmentMemberSensitiveDataService memberSensitiveDataService, IRecordsService recordsService)
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService, IRecordsService recordsService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer = null)
 		{
+			_certificationLocalizer = certificationLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -688,7 +691,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var roles = form["roles"].ToString().Split(char.Parse(","));
 
 						if (roles.Any())
-							await _personnelRolesService.SetRolesForUserAsync(DepartmentId, user.UserId, roles, cancellationToken);
+						{
+							try { await _personnelRolesService.SetRolesForUserAsync(DepartmentId, user.UserId, roles, cancellationToken, UserId); }
+							catch (InvalidOperationException ex) when (ex.Message == "certifications_role_requirements_unmet")
+							{
+								// Phase D4 Enforce: the member exists; the roles they are not yet certified for were not applied.
+								TempData["RoleMembersWarning"] = _certificationLocalizer["RoleAssignmentBlocked"].Value;
+							}
+						}
 					}
 
 					_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
@@ -2048,33 +2058,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (existingRole != null && existingRole.PersonnelRoleId != model.Role.PersonnelRoleId)
 				ModelState.AddModelError("Role.Name", "Role with that name already exists in the department.");
 
+			// Phase D4: members the role is gaining are checked against its certification requirements before anything is
+			// removed. Enforce blocks the save and names the members; WarnOnly lets it through with a notice.
+			var incomingUsers = collection.ContainsKey("users") ? collection["users"].ToString().Split(char.Parse(","), StringSplitOptions.RemoveEmptyEntries).Distinct().ToList() : new List<string>();
+			var currentUsers = new HashSet<string>(role.Users.Select(u => u.UserId), StringComparer.OrdinalIgnoreCase);
+			var blocked = new List<string>(); var warned = new List<string>();
+			foreach (var userId in incomingUsers.Where(u => !currentUsers.Contains(u)))
+			{
+				var check = await _personnelRolesService.CheckRoleMembershipAsync(DepartmentId, userId, new[] { role.PersonnelRoleId });
+				if (check.IsBlocked) blocked.Add(userId);
+				else if (check.Warnings.Count > 0) warned.Add(userId);
+			}
+			if (blocked.Count > 0)
+				ModelState.AddModelError("Role.Users", string.Format(_certificationLocalizer["RoleMembersBlocked"].Value, string.Join(", ", await PersonnelDisplayNamesAsync(blocked))));
+
 			if (ModelState.IsValid)
 			{
+				if (warned.Count > 0)
+					TempData["RoleMembersWarning"] = string.Format(_certificationLocalizer["RoleMembersWarned"].Value, string.Join(", ", await PersonnelDisplayNamesAsync(warned)));
+
 				//using (var scope = new TransactionScope())
 				//{
 				await _personnelRolesService.DeleteRoleUsersAsync(role.Users.ToList(), cancellationToken);
 
-				if (collection.ContainsKey("users"))
+				if (incomingUsers.Any())
 				{
-					var users = collection["users"].ToString().Split(char.Parse(","));
-
-					if (users.Any())
+					foreach (var user in incomingUsers)
 					{
-						foreach (var user in users)
-						{
-							PersonnelRoleUser pru = new PersonnelRoleUser();
-							string userId = user;
-							pru.UserId = userId;
+						PersonnelRoleUser pru = new PersonnelRoleUser();
+						string userId = user;
+						pru.UserId = userId;
 
-							role.Users.Add(pru);
-						}
+						role.Users.Add(pru);
 					}
 				}
 
 				//	scope.Complete();
 				//}
 
-				await _personnelRolesService.SaveRoleAsync(role, cancellationToken);
+				await _personnelRolesService.SaveRoleAsync(role, cancellationToken, UserId);
 
 				//_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
@@ -2086,7 +2108,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Roles");
 			}
 
+			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			return View(model);
+		}
+
+		private async Task<List<string>> PersonnelDisplayNamesAsync(IEnumerable<string> userIds)
+		{
+			var names = (await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>()).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
+			return userIds.Select(id => names.TryGetValue(id, out var name) ? name : id).ToList();
 		}
 
 		[HttpGet]

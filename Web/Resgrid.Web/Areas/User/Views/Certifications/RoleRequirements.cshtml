@@ -1,0 +1,137 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.RoleRequirementsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RequiredCertifications"];
+    ViewData["Tab"] = "Types";
+    ViewData["Title"] = string.Format(localizer["RequiredCertificationsFor"].Value, Model.Role.Name);
+    ViewData["Subtitle"] = localizer["RoleRequirementsIntro"].Value;
+    var typeMap = Model.Types.ToDictionary(t => t.DepartmentCertificationTypeId);
+    var rows = Model.Requirements;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["RequiredCertifications"]</h5>
+                    <div class="ibox-tools"><a asp-controller="Personnel" asp-action="Roles" asp-route-area="User" class="btn btn-default btn-xs">@localizer["BackToRoles"]</a></div>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.EnforcementMode == 0)
+                    {
+                        <div class="alert alert-warning"><i class="fa fa-info-circle"></i> @localizer["EnforcementOffNotice"] @if (Model.CanSetup) { <a asp-controller="Certifications" asp-action="Settings" asp-route-area="User">@localizer["Settings"]</a> }</div>
+                    }
+                    @if (Model.Types.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoPersonTypes"] @if (Model.CanSetup) { <a asp-controller="Certifications" asp-action="Types" asp-route-area="User">@localizer["CertificationTypes"]</a> }</p>
+                    }
+                    else
+                    {
+                        <form method="post" asp-controller="Certifications" asp-action="RoleRequirements" asp-route-area="User" asp-route-roleId="@Model.Role.PersonnelRoleId" id="reqForm">
+                            @Html.AntiForgeryToken()
+                            <table class="table table-condensed" id="reqTable">
+                                <thead><tr><th>@localizer["TypeName"]</th><th class="text-center">@localizer["Mandatory"]</th><th class="text-center" title="@localizer["AnyOfGroupHint"]">@localizer["AnyOfGroup"]</th><th class="text-center">@localizer["AllowTrainee"]</th><th class="text-center">@localizer["GraceOverride"]</th><th></th></tr></thead>
+                                <tbody>
+                                    @for (var i = 0; i < rows.Count; i++)
+                                    {
+                                        var r = rows[i];
+                                        <tr>
+                                            <td>
+                                                <select name="requirements[@i].TypeId" class="form-control input-sm">
+                                                    @foreach (var t in Model.Types)
+                                                    {
+                                                        <option value="@t.DepartmentCertificationTypeId" selected="@(t.DepartmentCertificationTypeId == r.DepartmentCertificationTypeId)">@t.Type (@t.Code)</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td class="text-center"><input type="checkbox" name="requirements[@i].IsMandatory" value="true" checked="@r.IsMandatory" /></td>
+                                            <td class="text-center"><input type="number" name="requirements[@i].AnyOfGroup" value="@r.AnyOfGroup" class="form-control input-sm" min="1" max="99" style="width: 70px; display: inline-block;" /></td>
+                                            <td class="text-center"><input type="checkbox" name="requirements[@i].AllowTrainee" value="true" checked="@r.AllowTrainee" /></td>
+                                            <td class="text-center"><input type="number" name="requirements[@i].GraceDaysOverride" value="@r.GraceDaysOverride" class="form-control input-sm" min="0" max="3650" style="width: 80px; display: inline-block;" /></td>
+                                            <td><button type="button" class="btn btn-xs btn-danger remove-row" @(Model.CanSetup ? null : "disabled")><i class="fa fa-times"></i></button></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <p class="text-muted small">@localizer["AnyOfGroupHint"]</p>
+                            @if (Model.CanSetup)
+                            {
+                                <button type="button" class="btn btn-default btn-sm" id="addRow"><i class="fa fa-plus"></i> @localizer["AddRequirement"]</button>
+                                <button type="submit" class="btn btn-primary btn-sm">@localizer["Save"]</button>
+                            }
+                        </form>
+                        <table style="display:none"><tbody id="rowTemplate">
+                            <tr>
+                                <td>
+                                    <select name="requirements[__i__].TypeId" class="form-control input-sm">
+                                        @foreach (var t in Model.Types)
+                                        {
+                                            <option value="@t.DepartmentCertificationTypeId">@t.Type (@t.Code)</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td class="text-center"><input type="checkbox" name="requirements[__i__].IsMandatory" value="true" checked /></td>
+                                <td class="text-center"><input type="number" name="requirements[__i__].AnyOfGroup" class="form-control input-sm" min="1" max="99" style="width: 70px; display: inline-block;" /></td>
+                                <td class="text-center"><input type="checkbox" name="requirements[__i__].AllowTrainee" value="true" /></td>
+                                <td class="text-center"><input type="number" name="requirements[__i__].GraceDaysOverride" class="form-control input-sm" min="0" max="3650" style="width: 80px; display: inline-block;" /></td>
+                                <td><button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button></td>
+                            </tr>
+                        </tbody></table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["MemberEligibility"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Evaluations.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoMembers"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["Member"]</th><th>@localizer["Status"]</th><th>@localizer["MissingOrLapsed"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var e in Model.Evaluations.OrderBy(x => x.Qualified).ThenBy(x => Model.MemberNames.TryGetValue(x.UserId, out var n) ? n : x.UserId))
+                                {
+                                    <tr>
+                                        <td>@(Model.MemberNames.TryGetValue(e.UserId, out var name) ? name : e.UserId)</td>
+                                        <td>
+                                            @if (e.Qualified && e.Violations.Count == 0) { <span class="label label-primary">@localizer["Qualified"]</span> }
+                                            else if (e.Qualified) { <span class="label label-warning">@localizer["OptionalMissing"]</span> }
+                                            else { <span class="label label-danger">@localizer["NotQualified"]</span> @if (e.RemovalDueOn.HasValue) { <br /><small>@string.Format(localizer["RemovalDue"].Value, e.RemovalDueOn.Value.AddDays(1).ToString("yyyy-MM-dd"))</small> } }
+                                        </td>
+                                        <td><small>@string.Join(", ", e.Violations.Select(v => v.TypeName ?? v.TypeCode))</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            function reindex() {
+                $('#reqTable tbody tr').each(function (i) {
+                    $(this).find('[name]').each(function () { this.name = this.name.replace(/requirements\[\d+\]|requirements\[__i__\]/, 'requirements[' + i + ']'); });
+                });
+            }
+            $('#addRow').on('click', function () {
+                var row = $('#rowTemplate tr').first().clone();
+                $('#reqTable tbody').append(row); reindex();
+            });
+            $('#reqTable').on('click', '.remove-row', function () { $(this).closest('tr').remove(); reindex(); });
+        });
+    </script>
+}

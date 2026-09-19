@@ -51,7 +51,7 @@
                                     {
                                         <form method="post" asp-controller="Invoicing" asp-action="DeleteRateCard" asp-route-area="User" asp-route-id="@card.RateCardId" style="display: inline;">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteRateCardConfirm"]');"><i class="fa fa-trash"></i></button>
+                                            <button type="submit" class="btn btn-xs btn-danger" aria-label="@localizer["DeleteRateCard"]" title="@localizer["DeleteRateCard"]" onclick="return confirm('@localizer["DeleteRateCardConfirm"]');"><i class="fa fa-trash"></i></button>
                                         </form>
                                     }
                                 </td>

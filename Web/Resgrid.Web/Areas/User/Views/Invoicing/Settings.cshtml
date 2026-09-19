@@ -7,6 +7,11 @@
     ViewData["Subtitle"] = localizer["BillingSettingsIntro"].Value;
     var identity = Model.Identity;
     var write = Model.CanWrite && Model.CanManage;
+    var op = Model.OnlinePayments ?? new Resgrid.Model.Invoicing.OnlinePaymentsStatus();
+    // The Online payments tab is absent while the cluster does not offer collection and nothing was ever connected (plan B2.5).
+    var showOnlineTab = op.AvailableInCluster || op.Connection != null;
+    var onlineActive = showOnlineTab && Model.ActiveTab == "online";
+    var connection = op.Connection;
 }
 
 @await Html.PartialAsync("_Shell")
@@ -26,11 +31,14 @@
             @await Html.PartialAsync("_Tabs")
 
             <ul class="nav nav-pills m-b-md">
-                <li class="active"><a data-toggle="tab" href="#identity">@localizer["BillingIdentity"]</a></li>
-                <li><a data-toggle="tab" href="#online">@localizer["OnlinePayments"]</a></li>
+                <li class="@(onlineActive ? null : "active")"><a data-toggle="tab" href="#identity">@localizer["BillingIdentity"]</a></li>
+                @if (showOnlineTab)
+                {
+                    <li class="@(onlineActive ? "active" : null)"><a data-toggle="tab" href="#online">@localizer["OnlinePayments"]</a></li>
+                }
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="identity">
+                <div class="tab-pane @(onlineActive ? null : "active")" id="identity">
                     <p class="text-muted">@localizer["BillingIdentityIntro"]</p>
                     <form method="post" asp-controller="Invoicing" asp-action="Settings" asp-route-area="User" class="form-horizontal">
                         @Html.AntiForgeryToken()
@@ -97,16 +105,99 @@
                         }
                     </form>
                 </div>
-                <div class="tab-pane" id="online">
-                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["OnlinePaymentsComingSoon"]</div>
-                    <dl class="dl-horizontal">
-                        <dt>@localizer["OnlinePaymentsCluster"]</dt>
-                        <dd>@(Model.OnlinePaymentsClusterEnabled ? localizer["Available"] : localizer["NotAvailableInRegion"])</dd>
-                        <dt>@localizer["OnlinePaymentsFlag"]</dt>
-                        <dd>@(Model.OnlinePaymentsFlagEnabled ? localizer["Enabled"] : localizer["Disabled"])</dd>
-                    </dl>
-                    <p class="text-muted">@localizer["OnlinePaymentsStripeNote"]</p>
+                @if (showOnlineTab)
+                {
+                <div class="tab-pane @(onlineActive ? "active" : null)" id="online">
+                    @if (!op.AvailableInCluster)
+                    {
+                        <div class="alert alert-warning"><i class="fa fa-pause-circle"></i> @localizer["SuspendedByOperator"]</div>
+                    }
+                    else if (!op.FlagEnabled)
+                    {
+                        <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["OnlinePaymentsFlagOff"]</div>
+                    }
+                    <p class="text-muted">@localizer["OnlinePaymentsIntro"]</p>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>@localizer["YourStripeAccount"]</h4>
+                            @if (connection == null)
+                            {
+                                <p>@localizer["NoConnectionYet"]</p>
+                                @if (Model.IsDepartmentAdmin && write && op.AvailableInCluster)
+                                {
+                                    <form method="post" asp-controller="Invoicing" asp-action="BeginPaymentConnect" asp-route-area="User" asp-route-provider="stripe">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-cc-stripe"></i> @localizer["ConnectStripe"]</button>
+                                    </form>
+                                    <p class="help-block">@localizer["ConnectStripeIntro"]</p>
+                                }
+                                else if (!Model.IsDepartmentAdmin)
+                                {
+                                    <p class="help-block">@localizer["ConnectAdminOnly"]</p>
+                                }
+                            }
+                            else
+                            {
+                                var status = (Resgrid.Model.Invoicing.PaymentConnectionStatuses)connection.Status;
+                                var statusCss = status == Resgrid.Model.Invoicing.PaymentConnectionStatuses.Connected ? "label-primary" : status == Resgrid.Model.Invoicing.PaymentConnectionStatuses.ActionRequired ? "label-warning" : "label-default";
+                                <dl class="dl-horizontal">
+                                    <dt>@localizer["ConnectedAccount"]</dt><dd><code>@connection.ExternalAccountId</code> <span class="label @statusCss">@localizer["ConnectionStatus" + status]</span> <span class="label label-default">@(connection.Environment == (int)Resgrid.Model.Invoicing.PaymentEnvironments.Live ? localizer["LiveMode"] : localizer["SandboxMode"])</span></dd>
+                                    <dt>@localizer["BusinessName"]</dt><dd>@(connection.DisplayName ?? "—") @(string.IsNullOrWhiteSpace(connection.Country) ? "" : "(" + connection.Country + (string.IsNullOrWhiteSpace(connection.DefaultCurrency) ? "" : ", " + connection.DefaultCurrency) + ")")</dd>
+                                    <dt>@localizer["ConnectedOn"]</dt><dd>@connection.ConnectedOn.ToString("yyyy-MM-dd HH:mm") UTC</dd>
+                                    <dt>@localizer["LastVerified"]</dt><dd>@(connection.LastVerifiedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</dd>
+                                    <dt>@localizer["Capabilities"]</dt>
+                                    <dd>
+                                        @foreach (var capability in op.Capabilities)
+                                        {
+                                            <span class="label @(capability.Value ? "label-primary" : "label-default")">@capability.Key</span>
+                                        }
+                                    </dd>
+                                    @if (!string.IsNullOrWhiteSpace(connection.LastError))
+                                    {
+                                        <dt>@localizer["LastError"]</dt><dd class="text-danger">@connection.LastError</dd>
+                                    }
+                                </dl>
+                                @if (Model.IsDepartmentAdmin && write)
+                                {
+                                    <form method="post" asp-controller="Invoicing" asp-action="DisconnectPayment" asp-route-area="User" asp-route-id="@connection.DepartmentPaymentConnectionId" style="display: inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('@localizer["DisconnectConfirm"]');"><i class="fa fa-unlink"></i> @localizer["Disconnect"]</button>
+                                    </form>
+                                    @if (!connection.IsUsable && op.AvailableInCluster)
+                                    {
+                                        <form method="post" asp-controller="Invoicing" asp-action="BeginPaymentConnect" asp-route-area="User" asp-route-provider="stripe" style="display: inline;" class="m-l-sm">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-cc-stripe"></i> @localizer["ReconnectStripe"]</button>
+                                        </form>
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <h4>@localizer["CollectionSettings"]</h4>
+                            <form method="post" asp-controller="Invoicing" asp-action="SaveOnlinePayments" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <div class="checkbox"><label><input type="checkbox" name="OnlinePaymentsEnabled" value="true" checked="@op.EnabledByDepartment" disabled="@(!write)" /> @localizer["OnlinePaymentsEnabledLabel"]</label></div>
+                                <label class="m-t-sm">@localizer["AllowedPaymentMethods"]</label>
+                                <div class="checkbox"><label><input type="checkbox" name="AllowedPaymentMethods" value="card" checked="@op.AllowedPaymentMethods.Contains("card")" disabled="@(!write)" /> @localizer["PaymentMethodCard"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" name="AllowedPaymentMethods" value="us_bank_account" checked="@op.AllowedPaymentMethods.Contains("us_bank_account")" disabled="@(!write)" /> @localizer["PaymentMethodAch"]</label></div>
+                                <p class="help-block">@localizer["PaymentMethodsHint"]</p>
+                                @if (write)
+                                {
+                                    <button type="submit" class="btn btn-primary btn-sm m-t-sm"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+                                }
+                            </form>
+                            <div class="hr-line-dashed"></div>
+                            <dl class="dl-horizontal">
+                                <dt>@localizer["PayLinksReady"]</dt>
+                                <dd>@(op.CanCollect ? localizer["Available"].Value : localizer[op.BlockedReason ?? "pay_not_offered"].Value)</dd>
+                            </dl>
+                            <p class="text-muted small">@localizer["OnlinePaymentsStripeNote"]</p>
+                        </div>
+                    </div>
                 </div>
+                }
             </div>
         </div>
     </div>

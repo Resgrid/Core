@@ -500,6 +500,14 @@ namespace Resgrid.Services
 			var certs = await _certificationService.GetCertificationsByUserIdAsync(userId);
 			if (certs != null)
 			{
+				// Phase D: the typed status and the member's continuing-education entries are personal data too.
+				var creditsByRecord = new Dictionary<int, List<object>>();
+				foreach (var cert in certs)
+				{
+					var credits = await _certificationService.GetCertificationCreditsAsync(cert.PersonnelCertificationId);
+					creditsByRecord[cert.PersonnelCertificationId] = (credits ?? new List<PersonnelCertificationCredit>())
+						.Select(x => (object)new { x.PersonnelCertificationCreditId, x.CreditDate, x.Hours, x.Category, x.Description }).ToList();
+				}
 				return certs.Select(c => new
 				{
 					c.PersonnelCertificationId,
@@ -509,7 +517,12 @@ namespace Resgrid.Services
 					c.Number,
 					c.ExpiresOn,
 					c.RecievedOn,
-					c.Type
+					c.Type,
+					c.DepartmentCertificationTypeId,
+					c.Status,
+					c.StatusReason,
+					c.VerifiedOn,
+					Credits = creditsByRecord[c.PersonnelCertificationId]
 				});
 			}
 			return new List<object>();

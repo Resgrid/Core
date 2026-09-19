@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Les plans d'intervention de ce service sont désormais gérés comme des occupations dans les Dossiers. Cette page est en lecture seule ; modifiez l'occupation dans les Dossiers.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Ce contact ne peut pas être supprimé tant qu'il possède un profil de facturation avec des factures non annulées. Annulez ou réglez d'abord les factures.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Ouvrir l'occupation</value>
   </data>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Certifications" xml:space="preserve"><value>الشهادات</value></data>
+  <data name="ManageCertifications" xml:space="preserve"><value>إدارة الشهادات</value></data>
+  <data name="ViewCertifications" xml:space="preserve"><value>عرض الشهادات</value></data>
+  <data name="ManageCertificationSetup" xml:space="preserve"><value>إدارة إعداد الشهادات</value></data>
+  <data name="ManageCertificationsNote" xml:space="preserve"><value>إنشاء سجلات شهادات الأعضاء الآخرين ونقاطهم وسجلات شهادات الوحدات وتعديلها وتعليقها والتحقق منها وحذفها.</value></data>
+  <data name="ViewCertificationsNote" xml:space="preserve"><value>عرض سجلات شهادات الأعضاء الآخرين وشهادات الوحدات ولوحة انتهاء الصلاحية. يرى الأعضاء دائمًا سجلاتهم الخاصة.</value></data>
+  <data name="ManageCertificationSetupNote" xml:space="preserve"><value>إدارة أنواع الشهادات ومتطلبات الأدوار وإعدادات الشهادات في القسم.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>لوحة المعلومات</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>من يحمل ماذا، وما الذي يوشك على الانتهاء، وما الذي انتهى، للأشخاص والوحدات.</value></data>
+  <data name="CertificationTypes" xml:space="preserve"><value>أنواع الشهادات</value></data>
+  <data name="Settings" xml:space="preserve"><value>الإعدادات</value></data>
+  <data name="ComplianceReport" xml:space="preserve"><value>تقرير الامتثال</value></data>
+  <data name="ComplianceReportDescription" xml:space="preserve"><value>مصفوفات قابلة للطباعة شخص × نوع ووحدة × نوع مع حالة انتهاء الصلاحية.</value></data>
+  <data name="ReportRunOn" xml:space="preserve"><value>أُنشئ في {0}</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>تعذر حفظ التغيير.</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Notes" xml:space="preserve"><value>ملاحظات</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Hours" xml:space="preserve"><value>الساعات</value></data>
+  <data name="File" xml:space="preserve"><value>الملف</value></data>
+  <data name="FileHint" xml:space="preserve"><value>ملف PDF أو صورة أو مستند مكتبي، حتى 10 ميغابايت.</value></data>
+  <data name="Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="Number" xml:space="preserve"><value>الرقم</value></data>
+  <data name="IssuedBy" xml:space="preserve"><value>صادر عن</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>تاريخ الإصدار</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>ينتهي في</value></data>
+  <data name="ReceivedOn" xml:space="preserve"><value>تم الاستلام في</value></data>
+  <data name="NeverExpires" xml:space="preserve"><value>لا ينتهي أبدًا</value></data>
+  <data name="DaysUntilExpiry" xml:space="preserve"><value>الأيام حتى الانتهاء</value></data>
+  <data name="DaysLeft" xml:space="preserve"><value>متبقٍ {0} يومًا</value></data>
+  <data name="DaysAgo" xml:space="preserve"><value>قبل {0} يومًا</value></data>
+  <data name="Expired" xml:space="preserve"><value>منتهية</value></data>
+  <data name="ExpiringWithin" xml:space="preserve"><value>تنتهي خلال {0} يومًا</value></data>
+  <data name="SuspendedOrRevoked" xml:space="preserve"><value>معلّقة أو ملغاة</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>تصدير CSV</value></data>
+  <data name="Scope" xml:space="preserve"><value>النطاق</value></data>
+  <data name="People" xml:space="preserve"><value>الأشخاص</value></data>
+  <data name="Units" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="Member" xml:space="preserve"><value>العضو</value></data>
+  <data name="Category" xml:space="preserve"><value>الفئة</value></data>
+  <data name="AllCategories" xml:space="preserve"><value>كل الفئات</value></data>
+  <data name="Group" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>كل المجموعات</value></data>
+  <data name="Role" xml:space="preserve"><value>الدور</value></data>
+  <data name="AllRoles" xml:space="preserve"><value>كل الأدوار</value></data>
+  <data name="NoTypesYet" xml:space="preserve"><value>لا توجد أنواع شهادات بعد.</value></data>
+  <data name="NoRecordsYet" xml:space="preserve"><value>لا توجد سجلات شهادات بعد.</value></data>
+  <data name="LegendValid" xml:space="preserve"><value>ساري</value></data>
+  <data name="LegendExpiring" xml:space="preserve"><value>ينتهي قريبًا</value></data>
+  <data name="LegendExpired" xml:space="preserve"><value>منتهية أو معلّقة أو ملغاة</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="StatusExpired" xml:space="preserve"><value>منتهٍ</value></data>
+  <data name="StatusSuspended" xml:space="preserve"><value>معلّق</value></data>
+  <data name="StatusRevoked" xml:space="preserve"><value>ملغى</value></data>
+  <data name="StatusPendingVerification" xml:space="preserve"><value>بانتظار التحقق</value></data>
+  <data name="StatusTrainee" xml:space="preserve"><value>متدرب</value></data>
+  <data name="UnitStatusActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="UnitStatusExpired" xml:space="preserve"><value>منتهٍ</value></data>
+  <data name="UnitStatusSuspended" xml:space="preserve"><value>معلّق</value></data>
+  <data name="CategoryFire" xml:space="preserve"><value>الإطفاء</value></data>
+  <data name="CategoryEMS" xml:space="preserve"><value>الإسعاف</value></data>
+  <data name="CategorySAR" xml:space="preserve"><value>البحث والإنقاذ</value></data>
+  <data name="CategoryWildland" xml:space="preserve"><value>حرائق الغابات</value></data>
+  <data name="CategoryEmergencyManagement" xml:space="preserve"><value>إدارة الطوارئ</value></data>
+  <data name="CategoryIndustrial" xml:space="preserve"><value>صناعي</value></data>
+  <data name="CategorySecurity" xml:space="preserve"><value>الأمن</value></data>
+  <data name="CategoryMedical" xml:space="preserve"><value>طبي</value></data>
+  <data name="CategoryDriver" xml:space="preserve"><value>السائق</value></data>
+  <data name="CategoryVehicle" xml:space="preserve"><value>المركبة</value></data>
+  <data name="CategoryOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="TypesIntro" xml:space="preserve"><value>كتالوج الشهادات والتراخيص والفحوصات والتصاريح التي يتابعها قسمك.</value></data>
+  <data name="HelpTypes" xml:space="preserve"><value>لكل نوع رمز ثابت وفئة ونطاق (شخص أو وحدة) وصلاحية افتراضية وقواعد اختيارية للتحقق أو ساعات النقاط. اختر الأنواع الشائعة من معرض القوالب.</value></data>
+  <data name="HideInactive" xml:space="preserve"><value>إخفاء غير النشطة</value></data>
+  <data name="ShowInactive" xml:space="preserve"><value>إظهار غير النشطة</value></data>
+  <data name="TemplateGallery" xml:space="preserve"><value>معرض القوالب</value></data>
+  <data name="TemplateGalleryIntro" xml:space="preserve"><value>اعتمادات شائعة في الإطفاء والإسعاف والبحث والإنقاذ وحرائق الغابات وإدارة الطوارئ والصناعة والأمن وسائقي DOT وامتثال المركبات. يصبح كل منها نوعًا يملكه قسمك ويمكنه تعديله.</value></data>
+  <data name="FilterTemplates" xml:space="preserve"><value>تصفية القوالب…</value></data>
+  <data name="AlreadyAdded" xml:space="preserve"><value>موجود بالفعل في الكتالوج</value></data>
+  <data name="AddSelected" xml:space="preserve"><value>إضافة المحدد</value></data>
+  <data name="TemplatesSkipped" xml:space="preserve"><value>تمت إضافة {0}؛ تم التخطي (موجود بالفعل أو مرفوض): {1}</value></data>
+  <data name="NewType" xml:space="preserve"><value>نوع جديد</value></data>
+  <data name="EditType" xml:space="preserve"><value>تعديل النوع</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>الرمز</value></data>
+  <data name="TypeName" xml:space="preserve"><value>النوع</value></data>
+  <data name="AppliesTo" xml:space="preserve"><value>ينطبق على</value></data>
+  <data name="AppliesToPerson" xml:space="preserve"><value>شخص</value></data>
+  <data name="AppliesToUnit" xml:space="preserve"><value>وحدة</value></data>
+  <data name="Validity" xml:space="preserve"><value>الصلاحية</value></data>
+  <data name="Months" xml:space="preserve"><value>{0} شهرًا</value></data>
+  <data name="Records" xml:space="preserve"><value>السجلات</value></data>
+  <data name="Requirements" xml:space="preserve"><value>المتطلبات</value></data>
+  <data name="DeleteTypeConfirm" xml:space="preserve"><value>هل تريد حذف نوع الشهادة هذا؟</value></data>
+  <data name="IssuingAuthority" xml:space="preserve"><value>الجهة المصدرة</value></data>
+  <data name="CodeAuto" xml:space="preserve"><value>يُشتق من الاسم عند تركه فارغًا</value></data>
+  <data name="CodeHint" xml:space="preserve"><value>معرّف ثابت تستخدمه متطلبات الأدوار والتكاملات؛ أحرف وأرقام ونقاط وشرطات.</value></data>
+  <data name="CodeLockedHint" xml:space="preserve"><value>يشير أحد متطلبات الأدوار إلى هذا النوع، لذا لا يمكن تغيير رمزه.</value></data>
+  <data name="DefaultValidityMonths" xml:space="preserve"><value>الصلاحية الافتراضية (بالأشهر)</value></data>
+  <data name="RenewalCreditHoursRequired" xml:space="preserve"><value>ساعات النقاط لكل تجديد</value></data>
+  <data name="RequiresVerification" xml:space="preserve"><value>يتطلب تحقق المشرف</value></data>
+  <data name="RequiresVerificationHint" xml:space="preserve"><value>تبقى السجلات الجديدة معلّقة حتى يوقّع عليها شخص لديه صلاحيات الإدارة.</value></data>
+  <data name="ManageTypedCatalog" xml:space="preserve"><value>الكتالوج المصنّف والقوالب</value></data>
+  <data name="CertificationSettings" xml:space="preserve"><value>إعدادات الشهادات</value></data>
+  <data name="SettingsIntro" xml:space="preserve"><value>كيفية فرض متطلبات الأدوار ومتى تُرسل إشعارات انتهاء الصلاحية.</value></data>
+  <data name="Enforcement" xml:space="preserve"><value>الفرض</value></data>
+  <data name="EnforcementMode" xml:space="preserve"><value>وضع الفرض</value></data>
+  <data name="EnforcementOff" xml:space="preserve"><value>إيقاف – المتطلبات للعلم فقط</value></data>
+  <data name="EnforcementWarnOnly" xml:space="preserve"><value>تحذير فقط – السماح بتغيير الأدوار مع إظهار التحذيرات والإشعار</value></data>
+  <data name="EnforcementEnforce" xml:space="preserve"><value>فرض – منع إضافة الأدوار غير المؤهلة وإزالة الأعضاء بعد فترة السماح</value></data>
+  <data name="EnforcementHint" xml:space="preserve"><value>يزيل وضع الفرض الأعضاء من الأدوار التي انتهت شهاداتها الإلزامية؛ تُسجَّل الإزالة ويُخطر العضو.</value></data>
+  <data name="EnforceConfirm" xml:space="preserve"><value>سيزيل وضع الفرض الأعضاء من الأدوار بعد انتهاء فترة السماح. تم ضبط {0} من المتطلبات الإلزامية. هل تريد المتابعة؟</value></data>
+  <data name="certifications_enforce_confirm" xml:space="preserve"><value>أكّد التبديل إلى وضع الفرض قبل الحفظ.</value></data>
+  <data name="RoleRemovalGraceDays" xml:space="preserve"><value>فترة السماح (بالأيام)</value></data>
+  <data name="RoleRemovalGraceDaysHint" xml:space="preserve"><value>عدد الأيام بعد انتهاء شهادة إلزامية قبل إزالة العضو من الدور. يمكن لكل متطلب تجاوز هذه القيمة.</value></data>
+  <data name="TreatPendingVerificationAsValid" xml:space="preserve"><value>اعتبار السجلات بانتظار التحقق سارية لمتطلبات الأدوار</value></data>
+  <data name="Notifications" xml:space="preserve"><value>الإشعارات</value></data>
+  <data name="NotifyLeadDays" xml:space="preserve"><value>إشعار (أيام قبل الانتهاء)</value></data>
+  <data name="NotifyLeadDaysHint" xml:space="preserve"><value>مفصولة بفواصل، مثل 60,30,14,7,1. إشعار واحد لكل سجل في كل يوم مدرج.</value></data>
+  <data name="NotifyCertificationHolder" xml:space="preserve"><value>إخطار الحامل مباشرة</value></data>
+  <data name="SendAdminDigest" xml:space="preserve"><value>إرسال ملخص ليلي لمسؤولي القسم</value></data>
+  <data name="NotificationsHint" xml:space="preserve"><value>يتم ضبط جمهور أحداث انتهاء الشهادة / انتهت / إزالة الدور وشهادة الوحدة في</value></data>
+  <data name="NotificationSettings" xml:space="preserve"><value>إعدادات الإشعارات</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>الشهادات المطلوبة</value></data>
+  <data name="RequiredCertificationsFor" xml:space="preserve"><value>الشهادات المطلوبة – {0}</value></data>
+  <data name="RoleRequirementsIntro" xml:space="preserve"><value>أنواع الشهادات التي يجب أن يحملها العضو لهذا الدور. الصفوف التي تشترك في رقم مجموعة هي بدائل؛ الصفوف الإلزامية تمنع أو تزيل في وضع الفرض.</value></data>
+  <data name="BackToRoles" xml:space="preserve"><value>العودة إلى الأدوار</value></data>
+  <data name="EnforcementOffNotice" xml:space="preserve"><value>الفرض متوقف: هذه المتطلبات للعلم فقط حتى يقوم مسؤول القسم بتفعيل التحذير فقط أو الفرض في</value></data>
+  <data name="NoPersonTypes" xml:space="preserve"><value>لا توجد بعد أنواع شهادات خاصة بالأشخاص.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>إلزامي</value></data>
+  <data name="AnyOfGroup" xml:space="preserve"><value>مجموعة بدائل</value></data>
+  <data name="AnyOfGroupHint" xml:space="preserve"><value>الصفوف ذات رقم المجموعة نفسه يحققها أي منها (EMT أو AEMT أو Paramedic)؛ اتركه فارغًا لمتطلب مستقل.</value></data>
+  <data name="AllowTrainee" xml:space="preserve"><value>السماح للمتدربين</value></data>
+  <data name="GraceOverride" xml:space="preserve"><value>فترة سماح خاصة (أيام)</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>إضافة متطلب</value></data>
+  <data name="MemberEligibility" xml:space="preserve"><value>أهلية الأعضاء</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>لا يوجد أعضاء في هذا الدور.</value></data>
+  <data name="MissingOrLapsed" xml:space="preserve"><value>مفقود أو منتهٍ</value></data>
+  <data name="Qualified" xml:space="preserve"><value>مؤهل</value></data>
+  <data name="OptionalMissing" xml:space="preserve"><value>اختيارية مفقودة</value></data>
+  <data name="NotQualified" xml:space="preserve"><value>غير مؤهل</value></data>
+  <data name="RemovalDue" xml:space="preserve"><value>الإزالة في {0}</value></data>
+  <data name="RoleMembersBlocked" xml:space="preserve"><value>هؤلاء الأعضاء لا يحملون الشهادات التي يتطلبها هذا الدور ولم تتم إضافتهم: {0}</value></data>
+  <data name="RoleMembersWarned" xml:space="preserve"><value>تمت الإضافة مع تحذير – شهادات مفقودة لهذا الدور: {0}</value></data>
+  <data name="RoleAssignmentBlocked" xml:space="preserve"><value>تم إنشاء العضو، لكن لم يتم تعيين دور أو أكثر: لا يحمل العضو الشهادات التي تتطلبها تلك الأدوار.</value></data>
+  <data name="UnitCertifications" xml:space="preserve"><value>شهادات الوحدة</value></data>
+  <data name="UnitCertificationsFor" xml:space="preserve"><value>الشهادات والفحوصات – {0}</value></data>
+  <data name="UnitCertificationsIntro" xml:space="preserve"><value>الفحوصات والتسجيل والتأمين والتصاريح وشهادات الاختبار ذات تاريخ انتهاء لهذه الوحدة.</value></data>
+  <data name="CertificationsAndInspections" xml:space="preserve"><value>الشهادات والفحوصات</value></data>
+  <data name="BackToUnit" xml:space="preserve"><value>العودة إلى الوحدة</value></data>
+  <data name="AddRecord" xml:space="preserve"><value>إضافة سجل</value></data>
+  <data name="NoUnitTypes" xml:space="preserve"><value>لا توجد بعد أنواع شهادات خاصة بالوحدات.</value></data>
+  <data name="UnitCertification" xml:space="preserve"><value>شهادة الوحدة</value></data>
+  <data name="Reinstate" xml:space="preserve"><value>إعادة التفعيل</value></data>
+  <data name="Suspend" xml:space="preserve"><value>تعليق</value></data>
+  <data name="Revoke" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="DeleteRecordConfirm" xml:space="preserve"><value>هل تريد حذف هذا السجل؟</value></data>
+  <data name="CertificationRecord" xml:space="preserve"><value>سجل الشهادة</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>هذا السجل محمي؛ تظهر القيم التعريفية كـ REDACTED دون إذن كشف.</value></data>
+  <data name="Untyped" xml:space="preserve"><value>بدون نوع</value></data>
+  <data name="VerifiedBy" xml:space="preserve"><value>تم التحقق بواسطة</value></data>
+  <data name="VerifyRecord" xml:space="preserve"><value>تحقق</value></data>
+  <data name="Renew" xml:space="preserve"><value>تجديد</value></data>
+  <data name="RenewHint" xml:space="preserve"><value>يحدد تاريخ انتهاء جديدًا (ورقمًا جديدًا اختياريًا)، ويعيد تفعيل سجل منتهٍ.</value></data>
+  <data name="NewExpiresOn" xml:space="preserve"><value>تاريخ الانتهاء الجديد</value></data>
+  <data name="NewNumber" xml:space="preserve"><value>الرقم الجديد</value></data>
+  <data name="KeepCurrent" xml:space="preserve"><value>اتركه فارغًا للاحتفاظ بالحالي</value></data>
+  <data name="MarkTrainee" xml:space="preserve"><value>وضع علامة متدرب</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>تغيير الحالة</value></data>
+  <data name="Credits" xml:space="preserve"><value>نقاط التعليم المستمر</value></data>
+  <data name="AddCredit" xml:space="preserve"><value>إضافة نقاط</value></data>
+  <data name="CreditProgress" xml:space="preserve"><value>{0} من {1} ساعة نحو التجديد التالي</value></data>
+  <data name="CreditTotal" xml:space="preserve"><value>تم تسجيل {0} ساعة</value></data>
+  <data name="NoCredits" xml:space="preserve"><value>لم يتم تسجيل نقاط.</value></data>
+  <data name="DeleteCreditConfirm" xml:space="preserve"><value>هل تريد حذف إدخال النقاط هذا؟</value></data>
+  <data name="CertificationExpiring" xml:space="preserve"><value>شهادة توشك على الانتهاء</value></data>
+  <data name="CertificationAdded" xml:space="preserve"><value>تمت إضافة شهادة</value></data>
+  <data name="CertificationRenewed" xml:space="preserve"><value>تم تجديد الشهادة</value></data>
+  <data name="CertificationExpired" xml:space="preserve"><value>انتهت صلاحية الشهادة</value></data>
+  <data name="CertificationRoleRemoved" xml:space="preserve"><value>تمت إزالة الدور بسبب انتهاء الشهادة</value></data>
+  <data name="CertificationStatusChanged" xml:space="preserve"><value>تغيرت حالة الشهادة</value></data>
+  <data name="UnitCertificationExpiring" xml:space="preserve"><value>شهادة وحدة توشك على الانتهاء</value></data>
+  <data name="UnitCertificationExpired" xml:space="preserve"><value>انتهت صلاحية شهادة الوحدة</value></data>
+  <data name="certifications_type_in_use" xml:space="preserve"><value>يشير إلى هذا النوع متطلب دور أو سجل نشط ولا يمكن حذفه؛ قم بإلغاء تفعيله بدلاً من ذلك.</value></data>
+  <data name="certifications_type_not_found" xml:space="preserve"><value>لم يتم العثور على نوع الشهادة.</value></data>
+  <data name="certifications_type_scope" xml:space="preserve"><value>ينطبق نوع الشهادة هذا على النطاق الآخر (شخص أو وحدة).</value></data>
+  <data name="certifications_type_name_required" xml:space="preserve"><value>يحتاج النوع إلى اسم.</value></data>
+  <data name="certifications_type_validity_invalid" xml:space="preserve"><value>يجب أن تكون الصلاحية الافتراضية بين 1 و600 شهر.</value></data>
+  <data name="certifications_type_credits_invalid" xml:space="preserve"><value>لا يمكن أن تكون ساعات النقاط سالبة.</value></data>
+  <data name="certifications_type_code_taken" xml:space="preserve"><value>يستخدم نوع آخر في هذا القسم هذا الرمز بالفعل.</value></data>
+  <data name="certifications_type_code_locked" xml:space="preserve"><value>لا يمكن تغيير الرمز بينما يشير متطلب دور إلى هذا النوع.</value></data>
+  <data name="certifications_type_scope_locked" xml:space="preserve"><value>لا يمكن تغيير النطاق بعد وجود سجلات من هذا النوع.</value></data>
+  <data name="certifications_template_not_found" xml:space="preserve"><value>لم يتم العثور على القالب.</value></data>
+  <data name="certifications_record_not_found" xml:space="preserve"><value>لم يتم العثور على سجل الشهادة.</value></data>
+  <data name="certifications_status_invalid" xml:space="preserve"><value>لا يمكن تعيين هذه الحالة يدويًا.</value></data>
+  <data name="certifications_not_pending" xml:space="preserve"><value>يمكن التحقق فقط من سجل بانتظار التحقق.</value></data>
+  <data name="certifications_expiry_required" xml:space="preserve"><value>هذا النوع ينتهي، لذا يلزم تاريخ انتهاء جديد.</value></data>
+  <data name="certifications_expiry_not_later" xml:space="preserve"><value>يجب أن يكون تاريخ الانتهاء الجديد بعد الحالي.</value></data>
+  <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>يجب أن تكون ساعات النقاط أكبر من الصفر.</value></data>
+  <data name="certifications_credit_not_found" xml:space="preserve"><value>لم يتم العثور على إدخال النقاط.</value></data>
+  <data name="certifications_unit_not_found" xml:space="preserve"><value>لم يتم العثور على الوحدة في هذا القسم.</value></data>
+  <data name="certifications_role_not_found" xml:space="preserve"><value>لم يتم العثور على الدور في هذا القسم.</value></data>
+  <data name="certifications_grace_invalid" xml:space="preserve"><value>يجب أن تكون أيام السماح بين 0 و3650.</value></data>
+  <data name="certifications_enforcement_invalid" xml:space="preserve"><value>وضع فرض غير معروف.</value></data>
+  <data name="certifications_lead_days_invalid" xml:space="preserve"><value>يجب أن تكون أيام الإشعار المسبق موجبة ولا تتجاوز سنة.</value></data>
+  <data name="certifications_protected_write_refused" xml:space="preserve"><value>تعذر تأمين البيانات المحمية في هذا السجل، لذا لم يتم حفظ التغيير.</value></data>
+  <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>لا يحمل العضو الشهادات التي يتطلبها هذا الدور.</value></data>
+  <data name="certifications_file_type" xml:space="preserve"><value>لا يمكن رفع هذا النوع من الملفات.</value></data>
+  <data name="certifications_file_too_large" xml:space="preserve"><value>حجم الملف أكبر من 10 ميغابايت.</value></data>
+</root>

@@ -514,6 +514,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(15),
 					stoppingToken);
 
+				// Worker ID 34 (Identifier Allocation Registry, Workforce & Business Operations plan D5): certification expiry
+				// sweep. Hourly tick; each department runs once per local day at CertificationConfig.SweepLocalHour.
+				_logger.Log(LogLevel.Information, "Scheduling Certification Expiry");
+				await Client.ScheduleAsync("Certification Expiry",
+					new Commands.CertificationExpiryCommand(34),
+					Cron.MinuteIntervals(60),
+					stoppingToken);
+
 				// Worker ID 70 (Identifier Allocation Registry section 4F, Unified Search): global search index maintenance. Same
 				// single-writer process as 44; no-op while SearchConfig.Enabled is off; departments enter lazily via their state row.
 				_logger.Log(LogLevel.Information, "Scheduling Search Index");

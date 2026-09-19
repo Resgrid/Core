@@ -33,13 +33,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IBusinessOperationsAccessService _access;
 		private readonly IFeatureToggleService _flags;
 		private readonly IContactsService _contacts;
+		private readonly IInvoicePaymentsService _payments;
 
-		public InvoicesController(IInvoicingService invoicing, IBusinessOperationsAccessService access, IFeatureToggleService flags, IContactsService contacts)
+		public InvoicesController(IInvoicingService invoicing, IBusinessOperationsAccessService access, IFeatureToggleService flags, IContactsService contacts, IInvoicePaymentsService payments)
 		{
 			_invoicing = invoicing;
 			_access = access;
 			_flags = flags;
 			_contacts = contacts;
+			_payments = payments;
 		}
 
 		/// <summary>Whether invoicing is available to this department and what the add-on costs. Always answers.</summary>
@@ -170,6 +172,123 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return await GetInvoice(invoice.InvoiceId);
 		}
 
+		/// <summary>Phase B2: whether online payment collection is offered to this department and through which connection (masked).</summary>
+		[HttpGet("GetOnlinePaymentsStatus")]
+		[Authorize(Policy = ResgridResources.Invoicing_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<OnlinePaymentsStatusResult>> GetOnlinePaymentsStatus()
+		{
+			if (!await EnabledAsync())
+				return NotFound();
+
+			var status = await _payments.GetStatusAsync(DepartmentId);
+			var result = new OnlinePaymentsStatusResult
+			{
+				Data = new OnlinePaymentsStatusData
+				{
+					AvailableInCluster = status.AvailableInCluster,
+					FlagEnabled = status.FlagEnabled,
+					EnabledByDepartment = status.EnabledByDepartment,
+					CanCollect = status.CanCollect,
+					BlockedReason = status.BlockedReason,
+					AllowedPaymentMethods = status.AllowedPaymentMethods.ToArray(),
+					Connection = status.Connection == null ? null : ConvertConnection(status.Connection)
+				},
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Phase B2: the department's payment-provider connections, masked. No OAuth on a phone (plan B2.5).</summary>
+		[HttpGet("GetPaymentConnections")]
+		[Authorize(Policy = ResgridResources.Invoicing_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<PaymentConnectionsResult>> GetPaymentConnections()
+		{
+			if (!await EnabledAsync())
+				return NotFound();
+
+			var result = new PaymentConnectionsResult { Data = (await _payments.GetConnectionsAsync(DepartmentId)).Select(ConvertConnection).ToList() };
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Phase B2: opens (or reuses) the invoice's online payment request and returns the shareable pay-page link. 400 with Status=Failure and the payments_* code when not offered.</summary>
+		[HttpPost("CreatePaymentLink")]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<PaymentLinkResult>> CreatePaymentLink([FromBody] CreatePaymentLinkInput input)
+		{
+			if (!await EnabledAsync())
+				return NotFound();
+			if (input == null || string.IsNullOrWhiteSpace(input.InvoiceId))
+				return BadRequest();
+
+			var invoice = await _invoicing.GetInvoiceByIdAsync(input.InvoiceId, DepartmentId);
+			if (invoice == null)
+				return NotFound();
+
+			try
+			{
+				var request = await _payments.CreatePaymentRequestAsync(invoice.InvoiceId, DepartmentId, (int)PaymentRequestSources.Api, UserId,
+					Request.HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers["User-Agent"].ToString());
+				var payUrl = await _payments.BuildPayPageUrlAsync(invoice.InvoiceId, DepartmentId);
+				var result = new PaymentLinkResult
+				{
+					Data = new PaymentLinkData
+					{
+						InvoiceId = invoice.InvoiceId,
+						PayUrl = payUrl,
+						InvoicePaymentRequestId = request.InvoicePaymentRequestId,
+						RequestStatus = request.Status,
+						RequestStatusName = ((PaymentRequestStatuses)request.Status).ToString(),
+						Amount = request.Amount,
+						Currency = request.Currency,
+						ExpiresOn = request.ExpiresOn
+					},
+					PageSize = 1,
+					Status = ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (InvalidOperationException ex) when (ex.Message.StartsWith("payments_", StringComparison.Ordinal) || ex.Message.StartsWith("invoicing_", StringComparison.Ordinal))
+			{
+				var failed = new PaymentLinkResult { PageSize = 0, Status = ResponseHelper.Failure, Data = new PaymentLinkData { InvoiceId = invoice.InvoiceId } };
+				ResponseHelper.PopulateV4ResponseData(failed);
+				Response.Headers["X-Resgrid-Reason"] = ex.Message;
+				return BadRequest(failed);
+			}
+		}
+
+		private static PaymentConnectionData ConvertConnection(DepartmentPaymentConnection c)
+		{
+			return new PaymentConnectionData
+			{
+				DepartmentPaymentConnectionId = c.DepartmentPaymentConnectionId,
+				Provider = c.Provider,
+				ProviderName = Enum.IsDefined(typeof(PaymentProviders), c.Provider) ? ((PaymentProviders)c.Provider).ToString() : null,
+				Status = c.Status,
+				StatusName = Enum.IsDefined(typeof(PaymentConnectionStatuses), c.Status) ? ((PaymentConnectionStatuses)c.Status).ToString() : null,
+				Environment = c.Environment,
+				MaskedAccountId = c.ExternalAccountId,
+				DisplayName = c.DisplayName,
+				Country = c.Country,
+				DefaultCurrency = c.DefaultCurrency,
+				IsDefault = c.IsDefault,
+				ConnectedOn = c.ConnectedOn,
+				LastVerifiedOn = c.LastVerifiedOn
+			};
+		}
+
 		private async Task<bool> EnabledAsync()
 		{
 			if (!await _flags.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, DepartmentId))
@@ -179,13 +298,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<Dictionary<string, string>> ContactNamesAsync(IEnumerable<string> contactIds)
 		{
+			// One query for the page's contacts rather than a lookup per invoice.
 			var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var id in contactIds.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct())
-			{
-				var contact = await _contacts.GetContactByIdAsync(id);
-				if (contact != null && contact.DepartmentId == DepartmentId)
-					names[id] = contact.Name;
-			}
+			foreach (var pair in await _contacts.GetContactsByIdsAsync(DepartmentId, contactIds))
+				names[pair.Key] = pair.Value.Name;
 			return names;
 		}
 

@@ -142,26 +142,45 @@ namespace Resgrid.Services
 			var savedProfile = await _userProfileRepository.SaveOrUpdateAsync(profile, cancellationToken);
 
 			ClearUserProfileFromCache(savedProfile.UserId);
-			ClearAllUserProfilesFromCache(DepartmentId);
 
-			await ProjectProfileAsync(DepartmentId, savedProfile, cancellationToken);
+			// A profile row is shared by every department the user belongs to: each live membership's cached profile
+			// list would otherwise serve the old profile for up to a day. The caller's department is always cleared
+			// (the fallback when memberships cannot be read).
+			var memberships = await LiveMembershipsAsync(savedProfile.UserId);
+			var departments = new HashSet<int> { DepartmentId };
+			foreach (var membership in memberships ?? new List<DepartmentMember>())
+				departments.Add(membership.DepartmentId);
+			foreach (var departmentId in departments.Where(d => d > 0))
+				ClearAllUserProfilesFromCache(departmentId);
+
+			await ProjectProfileAsync(DepartmentId, savedProfile, memberships, cancellationToken);
 			return savedProfile;
 		}
 
+		/// <summary>The user's memberships that are not deleted, disabled or hidden (the rule DepartmentsService applies); null when they cannot be read.</summary>
+		private async Task<List<DepartmentMember>> LiveMembershipsAsync(string userId)
+		{
+			try
+			{
+				return (await _departmentMembersRepository.GetAllDepartmentMemberByUserIdAsync(userId))?
+					.Where(m => m != null && m.DepartmentId > 0 && !m.IsDeleted && !m.IsDisabled.GetValueOrDefault() && !m.IsHidden.GetValueOrDefault())
+					.ToList();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Profile {userId}: memberships could not be read; refreshing the caller's department only.");
+				return null;
+			}
+		}
+
 		/// <summary>
-		/// A profile row is shared by every department the user belongs to, so the personnel projection is refreshed in
-		/// each live membership (not deleted, disabled or hidden: the same rule DepartmentsService applies), otherwise
-		/// the other departments keep the old name until their next rebuild. The caller's department is the fallback
-		/// when the memberships cannot be read.
+		/// The personnel projection is refreshed in each live membership, otherwise the other departments keep the old
+		/// name until their next rebuild. The caller's department is the fallback when the memberships could not be read.
 		/// </summary>
-		private async Task ProjectProfileAsync(int callerDepartmentId, UserProfile savedProfile, CancellationToken cancellationToken)
+		private async Task ProjectProfileAsync(int callerDepartmentId, UserProfile savedProfile, List<DepartmentMember> memberships, CancellationToken cancellationToken)
 		{
 			if (_searchProjections == null || savedProfile == null || string.IsNullOrWhiteSpace(savedProfile.UserId))
 				return;
-
-			List<DepartmentMember> memberships = null;
-			try { memberships = (await _departmentMembersRepository.GetAllDepartmentMemberByUserIdAsync(savedProfile.UserId))?.ToList(); }
-			catch (Exception ex) { Logging.LogException(ex, $"Search projection for profile {savedProfile.UserId}: memberships could not be read; projecting the caller's department only."); }
 
 			if (memberships == null)
 			{
@@ -170,7 +189,7 @@ namespace Resgrid.Services
 				return;
 			}
 
-			foreach (var membership in memberships.Where(m => m != null && m.DepartmentId > 0 && !m.IsDeleted && !m.IsDisabled.GetValueOrDefault() && !m.IsHidden.GetValueOrDefault()))
+			foreach (var membership in memberships)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 				await _searchProjections.Value.ProjectPersonnelAsync(membership.DepartmentId, savedProfile, null, membership.IsActive, cancellationToken);

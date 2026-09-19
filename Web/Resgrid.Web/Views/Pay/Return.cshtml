@@ -1,0 +1,18 @@
+@model Resgrid.Model.Invoicing.PayPageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    Layout = "_RecoveryLayout";
+    ViewData["Title"] = localizer["PayReturnTitle"].Value;
+    var token = (string)ViewData["PayToken"];
+}
+<div class="panel panel-default" style="margin-top: 20px;">
+    <div class="panel-body" style="padding: 30px;">
+        <h2 style="margin-top: 0;"><i class="fa fa-check-circle text-success"></i> @localizer["PayReturnTitle"]</h2>
+        @if (!string.IsNullOrWhiteSpace(Model.DepartmentName))
+        {
+            <p class="lead">@Model.DepartmentName@(Model.InvoiceNumber > 0 ? " — #" + Model.InvoiceNumber : "")</p>
+        }
+        <p>@localizer["PayReturnText"]</p>
+        <p><a href="/pay/@token" class="btn btn-default">@localizer["BackToInvoice"]</a></p>
+    </div>
+</div>

@@ -24,6 +24,8 @@ namespace Resgrid.Providers.Claims
 			public const string Reassign = "Reassign";
 			/// <summary>RMS-5: administer prevention data (occupancies, inspections, hydrants, permits, CRR).</summary>
 			public const string PreventionAdmin = "PreventionAdmin";
+			/// <summary>Configure a feature's catalog/rules/settings (Phase D certification setup).</summary>
+			public const string Setup = "Setup";
 		}
 
 		public static class Memberships
@@ -60,6 +62,7 @@ namespace Resgrid.Providers.Claims
 		{
 			public const string WorkOrder = "WorkOrder";
 			public const string Invoicing = "Invoicing";
+			public const string Certifications = "Certifications";
 			public const string Checklist = "Checklist";
 			public const string ChecklistResults = "ChecklistResults";
 			// Resources

@@ -81,6 +81,23 @@ namespace Resgrid.Model.Events
 		[NotMapped]
 		ModerationRequestCompleted = 24,
 
+		// Workforce & Business Operations plan Phase D (registry 25-29; plan D6). Department broadcasts raised by the
+		// certification expiry worker (34); 25-27 resolve the holder's group, 28-29 the unit's station group.
+		[Display(Name = "Certification Expiring")]
+		CertificationExpiring = 25,
+
+		[Display(Name = "Certification Expired")]
+		CertificationExpired = 26,
+
+		[Display(Name = "Role Removed for Certification")]
+		CertificationRoleRemoved = 27,
+
+		[Display(Name = "Unit Certification Expiring")]
+		UnitCertificationExpiring = 28,
+
+		[Display(Name = "Unit Certification Expired")]
+		UnitCertificationExpired = 29,
+
 		// -- Records (RMS) block 31-33 -- Identifier Allocation Registry section 3.5. 25-29 belong to
 		// Certifications and 30 is the buffer; neither may be taken here. 31 is raised by
 		// RecordsService.ReturnForCorrectionAsync and delivered to the author by IRecordsNotificationService
@@ -109,7 +126,13 @@ namespace Resgrid.Model.Events
 			EventTypes.PersonnelStaffingChanged,
 			EventTypes.UserAssignedToGroup,
 			EventTypes.RolesInGroupAvailabilityAlert,
-			EventTypes.UnitTypesInGroupAvailabilityAlert
+			EventTypes.UnitTypesInGroupAvailabilityAlert,
+			// Phase D: LockToGroup resolves the holder's group (25-27) or the unit's station group (28-29).
+			EventTypes.CertificationExpiring,
+			EventTypes.CertificationExpired,
+			EventTypes.CertificationRoleRemoved,
+			EventTypes.UnitCertificationExpiring,
+			EventTypes.UnitCertificationExpired
 		};
 
 		public static HashSet<EventTypes> PreviousDataEnabled = new HashSet<EventTypes>()

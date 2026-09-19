@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.Units.NewUnitView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["EditUnitHeader"];
 }
@@ -159,6 +160,10 @@
                                    asp-route-area="User"
                                    asp-route-unitId="@Model.Unit.UnitId">
                                     <i class="fa fa-map-marker"></i> @localizer["HardwareTracking"]
+                                </a>
+                                @* Workforce & Business Operations plan Phase D1.8: unit-scoped certifications, inspections, registration, insurance, permits. *@
+                                <a class="btn btn-info" asp-controller="Certifications" asp-action="Unit" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">
+                                    <i class="fa fa-certificate"></i> @certificationLocalizer["CertificationsAndInspections"]
                                 </a>
                                 <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
                             </div>

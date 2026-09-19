@@ -10,6 +10,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Invoicing
@@ -39,14 +40,20 @@ namespace Resgrid.Services.Invoicing
 		private readonly IEmailService _emailService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IAddressService _addressService;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public InvoicingService(ICustomerBillingProfileRepository profiles, IRateCardRepository rateCards, IRateCardItemRepository rateCardItems,
 			IInvoiceRepository invoices, IInvoiceLineItemRepository lineItems, IInvoicePaymentRepository payments,
 			IInvoiceNumberSequenceRepository sequence, IDepartmentBillingIdentityRepository identities,
 			IContactsService contactsService, ICallsService callsService, IUnitsService unitsService,
 			IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
-			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService)
+			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService, IUnitOfWork unitOfWork,
+			Lazy<IInvoicePaymentsService> paymentsService = null, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null)
 		{
+			_unitOfWork = unitOfWork;
+			_paymentsService = paymentsService;
+			_protectedWrite = protectedWrite;
+			_protectedRead = protectedRead;
 			_pdfProvider = pdfProvider;
 			_emailService = emailService;
 			_departmentsService = departmentsService;
@@ -68,14 +75,26 @@ namespace Resgrid.Services.Invoicing
 
 		#region Billing profiles
 
-		public Task<CustomerBillingProfile> GetBillingProfileByContactIdAsync(string contactId, int departmentId) =>
-			_profiles.GetByContactIdAsync(contactId, departmentId);
+		public async Task<CustomerBillingProfile> GetBillingProfileByContactIdAsync(string contactId, int departmentId)
+		{
+			var profile = await _profiles.GetByContactIdAsync(contactId, departmentId);
+			await ResolveReadAsync(profile);
+			return profile;
+		}
 
-		public Task<CustomerBillingProfile> GetBillingProfileByIdAsync(string customerBillingProfileId, int departmentId) =>
-			_profiles.GetByIdForDepartmentAsync(customerBillingProfileId, departmentId);
+		public async Task<CustomerBillingProfile> GetBillingProfileByIdAsync(string customerBillingProfileId, int departmentId)
+		{
+			var profile = await _profiles.GetByIdForDepartmentAsync(customerBillingProfileId, departmentId);
+			await ResolveReadAsync(profile);
+			return profile;
+		}
 
-		public async Task<List<CustomerBillingProfile>> GetBillingProfilesForDepartmentAsync(int departmentId) =>
-			(await _profiles.GetAllForDepartmentAsync(departmentId))?.ToList() ?? new List<CustomerBillingProfile>();
+		public async Task<List<CustomerBillingProfile>> GetBillingProfilesForDepartmentAsync(int departmentId)
+		{
+			var profiles = (await _profiles.GetAllForDepartmentAsync(departmentId))?.ToList() ?? new List<CustomerBillingProfile>();
+			await ResolveReadAsync(profiles, departmentId);
+			return profiles;
+		}
 
 		public async Task<CustomerBillingProfile> SaveBillingProfileAsync(CustomerBillingProfile profile, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
@@ -120,7 +139,7 @@ namespace Resgrid.Services.Invoicing
 			}
 			profile.IsDeleted = false;
 
-			var saved = await _profiles.SaveOrUpdateAsync(profile, cancellationToken);
+			var saved = await SaveProtectedAsync(_profiles, profile, existing, p => p.CustomerBillingProfileId, InvoicingProtectedFields.BillingProfile, MarkProtected, profile.DepartmentId, cancellationToken);
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return saved;
@@ -299,20 +318,30 @@ namespace Resgrid.Services.Invoicing
 
 		#region Invoices
 
-		public async Task<List<Invoice>> GetInvoicesForDepartmentAsync(int departmentId, InvoiceListFilter filter) =>
-			(await _invoices.GetForDepartmentAsync(departmentId, filter ?? new InvoiceListFilter()))?.ToList() ?? new List<Invoice>();
+		public async Task<List<Invoice>> GetInvoicesForDepartmentAsync(int departmentId, InvoiceListFilter filter)
+		{
+			var invoices = (await _invoices.GetForDepartmentAsync(departmentId, filter ?? new InvoiceListFilter()))?.ToList() ?? new List<Invoice>();
+			await ResolveReadAsync(invoices, departmentId);
+			return invoices;
+		}
 
 		public Task<int> CountInvoicesForDepartmentAsync(int departmentId, InvoiceListFilter filter) =>
 			_invoices.CountForDepartmentAsync(departmentId, filter ?? new InvoiceListFilter());
 
-		public async Task<List<Invoice>> GetInvoicesByContactIdAsync(string contactId, int departmentId) =>
-			(await _invoices.GetByContactIdAsync(contactId, departmentId))?.ToList() ?? new List<Invoice>();
+		public async Task<List<Invoice>> GetInvoicesByContactIdAsync(string contactId, int departmentId)
+		{
+			var invoices = (await _invoices.GetByContactIdAsync(contactId, departmentId))?.ToList() ?? new List<Invoice>();
+			await ResolveReadAsync(invoices, departmentId);
+			return invoices;
+		}
 
 		public async Task<Invoice> GetInvoiceByIdAsync(string invoiceId, int departmentId)
 		{
 			var invoice = await _invoices.GetByIdForDepartmentAsync(invoiceId, departmentId);
 			if (invoice == null) return null;
 			await LoadChildrenAsync(invoice);
+			await ResolveReadAsync(invoice);
+			await ResolveReadAsync(invoice.Payments, departmentId);
 			return invoice;
 		}
 
@@ -351,6 +380,7 @@ namespace Resgrid.Services.Invoicing
 		{
 			if (invoice == null) throw new ArgumentNullException(nameof(invoice));
 			var existing = await RequireDraftAsync(invoice.InvoiceId, invoice.DepartmentId);
+			var pristine = existing.CloneJson();
 			ValidatePercent(invoice.DiscountPercent, nameof(invoice.DiscountPercent));
 
 			var audit = NewAuditEvent(existing.DepartmentId, userId, AuditLogTypes.InvoiceUpdated, ipAddress, userAgent);
@@ -366,36 +396,62 @@ namespace Resgrid.Services.Invoicing
 			existing.EditedOn = DateTime.UtcNow;
 			existing.EditedByUserId = userId;
 
-			await _invoices.SaveOrUpdateAsync(existing, cancellationToken);
+			await SaveProtectedAsync(_invoices, existing, pristine, i => i.InvoiceId, InvoicingProtectedFields.Invoice, MarkProtected, existing.DepartmentId, cancellationToken);
 			var recalculated = await RecalculateTotalsAsync(existing.InvoiceId, existing.DepartmentId, cancellationToken);
 			audit.After = Snapshot(recalculated);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return recalculated;
 		}
 
-		public async Task<Invoice> SaveInvoiceLineItemsAsync(string invoiceId, int departmentId, List<InvoiceLineItem> lineItems, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		public Task<Invoice> SaveDraftAsync(Invoice invoice, List<InvoiceLineItem> lineItems, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
-			var invoice = await RequireDraftAsync(invoiceId, departmentId);
-			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceUpdated, ipAddress, userAgent);
-			audit.Before = Snapshot(invoice);
-
-			await _lineItems.DeleteByInvoiceIdAsync(invoiceId, departmentId, cancellationToken);
-			var sort = 0;
-			foreach (var line in (lineItems ?? new List<InvoiceLineItem>()).Where(x => x != null))
+			if (invoice == null) throw new ArgumentNullException(nameof(invoice));
+			// Header and lines commit together: a line failure after the header write would otherwise leave the
+			// draft with new header fields over stale lines and totals.
+			return TransactionAsync(async () =>
 			{
-				if (string.IsNullOrWhiteSpace(line.Description)) throw new ArgumentException("Every line needs a description.", nameof(lineItems));
-				line.InvoiceLineItemId = null;
-				line.InvoiceId = invoiceId;
-				line.DepartmentId = departmentId;
-				line.Amount = RoundMoney(line.Quantity * line.UnitRate);
-				line.SortOrder = sort++;
-				await _lineItems.SaveOrUpdateAsync(line, cancellationToken);
-			}
+				await SaveInvoiceAsync(invoice, userId, ipAddress, userAgent, cancellationToken);
+				return await SaveInvoiceLineItemsAsync(invoice.InvoiceId, invoice.DepartmentId, lineItems, userId, ipAddress, userAgent, cancellationToken);
+			}, cancellationToken);
+		}
 
-			var recalculated = await RecalculateTotalsAsync(invoiceId, departmentId, cancellationToken);
-			audit.After = Snapshot(recalculated);
-			_eventAggregator.SendMessage<AuditEvent>(audit);
-			return recalculated;
+		public Task<Invoice> SaveInvoiceLineItemsAsync(string invoiceId, int departmentId, List<InvoiceLineItem> lineItems, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		{
+			// Delete-then-insert must not be observable half done: one transaction, joined when the caller already owns one.
+			return TransactionAsync(async () =>
+			{
+				var invoice = await RequireDraftAsync(invoiceId, departmentId);
+				var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceUpdated, ipAddress, userAgent);
+				audit.Before = Snapshot(invoice);
+
+				await _lineItems.DeleteByInvoiceIdAsync(invoiceId, departmentId, cancellationToken);
+				var sort = 0;
+				var minimums = new Dictionary<string, decimal?>(StringComparer.OrdinalIgnoreCase);
+				foreach (var line in (lineItems ?? new List<InvoiceLineItem>()).Where(x => x != null))
+				{
+					if (string.IsNullOrWhiteSpace(line.Description)) throw new ArgumentException("Every line needs a description.", nameof(lineItems));
+					line.InvoiceLineItemId = null;
+					line.InvoiceId = invoiceId;
+					line.DepartmentId = departmentId;
+					line.Amount = RoundMoney(line.Quantity * line.UnitRate);
+					// The rate card item's minimum charge is a floor the generator applies; the line carries no copy of
+					// it, so it is re-applied here or every save (and the clerk's edit page) would silently under-bill.
+					if (!string.IsNullOrWhiteSpace(line.RateCardItemId) && line.Quantity > 0)
+					{
+						if (!minimums.TryGetValue(line.RateCardItemId, out var minimum))
+							minimums[line.RateCardItemId] = minimum = (await _rateCardItems.GetByIdForDepartmentAsync(line.RateCardItemId, departmentId))?.MinimumCharge;
+						if (minimum.HasValue && line.Amount < RoundMoney(minimum.Value))
+							line.Amount = RoundMoney(minimum.Value);
+					}
+					line.SortOrder = sort++;
+					await _lineItems.SaveOrUpdateAsync(line, cancellationToken);
+				}
+
+				var recalculated = await RecalculateTotalsAsync(invoiceId, departmentId, cancellationToken);
+				audit.After = Snapshot(recalculated);
+				_eventAggregator.SendMessage<AuditEvent>(audit);
+				return recalculated;
+			}, cancellationToken);
 		}
 
 		public async Task<List<InvoiceLineItem>> GenerateLineItemsFromCallAsync(int callId, string rateCardId, int departmentId)
@@ -528,6 +584,8 @@ namespace Resgrid.Services.Invoicing
 			if (lines.Count == 0) throw new InvalidOperationException("invoicing_invoice_has_no_lines");
 
 			var profile = await _profiles.GetByIdForDepartmentAsync(invoice.CustomerBillingProfileId, departmentId);
+			await ResolveWorkloadAsync(profile);
+			var pristine = invoice.CloneJson();
 			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceSent, ipAddress, userAgent);
 			audit.Before = Snapshot(invoice);
 
@@ -541,7 +599,7 @@ namespace Resgrid.Services.Invoicing
 			invoice.EditedOn = now;
 			invoice.EditedByUserId = userId;
 
-			await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+			await SaveProtectedAsync(_invoices, invoice, pristine, i => i.InvoiceId, InvoicingProtectedFields.Invoice, MarkProtected, departmentId, cancellationToken);
 			audit.After = Snapshot(invoice);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			await PublishAsync(invoice, WorkflowTriggerEventType.InvoiceSent, oldStatus: (int)InvoiceStatus.Draft, cancellationToken: cancellationToken);
@@ -584,10 +642,12 @@ namespace Resgrid.Services.Invoicing
 			if (invoice == null) throw new InvalidOperationException("invoicing_invoice_not_found");
 			if (invoice.Status is (int)InvoiceStatus.Draft or (int)InvoiceStatus.Void) throw new InvalidOperationException("invoicing_invoice_not_payable");
 
-			// Online payments are idempotent on the provider's transaction id (Phase B2: the webhook may replay).
-			if (!string.IsNullOrWhiteSpace(payment.GatewayTransactionId) && payment.Provider.HasValue)
+			// Online payments are idempotent on the provider's transaction id (Phase B2: the webhook may replay). A
+			// transaction already recorded under another department is a conflict, never this department's payment.
+			var online = !string.IsNullOrWhiteSpace(payment.GatewayTransactionId) && payment.Provider.HasValue;
+			if (online)
 			{
-				var duplicate = await _payments.GetByGatewayTransactionIdAsync(payment.Provider.Value, payment.GatewayTransactionId);
+				var duplicate = await FindGatewayDuplicateAsync(payment);
 				if (duplicate != null) return duplicate;
 			}
 
@@ -602,7 +662,18 @@ namespace Resgrid.Services.Invoicing
 			payment.RecordedByUserId = userId;
 			payment.AddedOn = now;
 			if (payment.PaidOn == default) payment.PaidOn = now;
-			var saved = await _payments.SaveOrUpdateAsync(payment, cancellationToken);
+			InvoicePayment saved;
+			try
+			{
+				saved = await InsertProtectedAsync(_payments, payment, p => p.InvoicePaymentId, InvoicingProtectedFields.Payment, MarkProtected, payment.DepartmentId, cancellationToken);
+			}
+			catch (Exception ex) when (online && IsUniqueViolation(ex))
+			{
+				// Two deliveries passed the lookup together; the unique index (M0212) let exactly one insert through.
+				var winner = await FindGatewayDuplicateAsync(payment);
+				if (winner == null) throw;
+				return winner;
+			}
 
 			var oldStatus = invoice.Status;
 			await ApplyPaymentStateAsync(invoice, userId, now, cancellationToken);
@@ -688,6 +759,8 @@ namespace Resgrid.Services.Invoicing
 				bucket.Invoices.Add(row);
 				bucket.Count++;
 				bucket.Balance = RoundMoney(bucket.Balance + row.Balance);
+				InvoiceAgingReport.Accumulate(bucket.BalancesByCurrency, row.Currency, RoundMoney(row.Balance));
+				InvoiceAgingReport.Accumulate(report.BalancesByCurrency, row.Currency, RoundMoney(row.Balance));
 			}
 			report.Buckets.AddRange(buckets);
 			report.TotalCount = rows.Count;
@@ -725,6 +798,45 @@ namespace Resgrid.Services.Invoicing
 		{
 			invoice.LineItems = (await _lineItems.GetByInvoiceIdAsync(invoice.InvoiceId, invoice.DepartmentId))?.ToList() ?? new List<InvoiceLineItem>();
 			invoice.Payments = (await _payments.GetByInvoiceIdAsync(invoice.InvoiceId, invoice.DepartmentId))?.ToList() ?? new List<InvoicePayment>();
+		}
+
+		/// <summary>Runs <paramref name="action"/> in the scope's transaction, joining one the caller already opened (tests pass no unit of work and run unwrapped).</summary>
+		private async Task<T> TransactionAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
+		{
+			if (_unitOfWork == null || _unitOfWork.Transaction != null)
+				return await action();
+
+			try
+			{
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+				var result = await action();
+				_unitOfWork.CommitChanges();
+				return result;
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
+		}
+
+		/// <summary>The payment already recorded for this provider transaction in this department; a match owned by another department is a conflict.</summary>
+		private async Task<InvoicePayment> FindGatewayDuplicateAsync(InvoicePayment payment)
+		{
+			var duplicate = await _payments.GetByGatewayTransactionIdAsync(payment.Provider.Value, payment.GatewayTransactionId);
+			if (duplicate == null) return null;
+			if (duplicate.DepartmentId != payment.DepartmentId) throw new InvalidOperationException("invoicing_payment_conflict");
+			return duplicate;
+		}
+
+		/// <summary>PostgreSQL 23505 or SQL Server 2601/2627: the only insert failure the idempotent payment path absorbs.</summary>
+		private static bool IsUniqueViolation(Exception ex)
+		{
+			if (ex is Npgsql.PostgresException postgres)
+				return postgres.SqlState == "23505";
+			if (ex is Microsoft.Data.SqlClient.SqlException sql)
+				return sql.Number == 2601 || sql.Number == 2627;
+			return false;
 		}
 
 		private async Task<Invoice> RequireDraftAsync(string invoiceId, int departmentId)
@@ -830,6 +942,7 @@ namespace Resgrid.Services.Invoicing
 				catch (Exception ex) { Logging.LogException(ex, "Invoice workflow payload: contact name could not be read."); }
 			}
 
+			var payUrl = await PayUrlAsync(invoice);
 			try
 			{
 				await _outbox.EnqueueAsync(invoice.DepartmentId, InvoiceWorkflowPayload.Producer, new DomainEventEnvelope
@@ -848,7 +961,8 @@ namespace Resgrid.Services.Invoicing
 						invoice.Currency, invoice.SubTotal, invoice.DiscountAmount, invoice.TaxAmount, invoice.Total, invoice.AmountPaid, invoice.Balance,
 						invoice.IssuedOn, invoice.DueOn, invoice.SentOn, invoice.PaidOn,
 						PaymentAmount = payment?.Amount, PaymentMethod = payment == null ? null : ((InvoicePaymentMethods)payment.Method).ToString(), PaymentId = payment?.InvoicePaymentId,
-						OldStatus = oldStatus
+						OldStatus = oldStatus,
+						PayUrl = payUrl
 					}
 				}, cancellationToken);
 			}

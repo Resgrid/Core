@@ -1,0 +1,167 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationDashboardView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Certifications"];
+    ViewData["Tab"] = "Dashboard";
+    ViewData["Title"] = localizer["Certifications"].Value;
+    ViewData["Subtitle"] = localizer["DashboardIntro"].Value;
+    var unit = Model.Scope == "unit";
+    var types = Model.VisibleTypes;
+    var today = DateTime.UtcNow.Date;
+    string CellClass(Resgrid.Model.CertificationDashboardCell c)
+    {
+        if (unit)
+        {
+            if (c.Status == (int)Resgrid.Model.UnitCertificationStatuses.Suspended) return "warning";
+            if (c.Status == (int)Resgrid.Model.UnitCertificationStatuses.Expired || (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry < 0)) return "danger";
+        }
+        else
+        {
+            var s = (Resgrid.Model.PersonnelCertificationStatuses)c.Status;
+            if (s == Resgrid.Model.PersonnelCertificationStatuses.Suspended || s == Resgrid.Model.PersonnelCertificationStatuses.PendingVerification || s == Resgrid.Model.PersonnelCertificationStatuses.Trainee) return "warning";
+            if (s == Resgrid.Model.PersonnelCertificationStatuses.Expired || s == Resgrid.Model.PersonnelCertificationStatuses.Revoked || (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry < 0)) return "danger";
+        }
+        if (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry <= Model.Horizon) return "warning";
+        return "success";
+    }
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
+    <div class="row">
+        <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-danger">@Model.Dashboard.ExpiredCount</h1><small>@localizer["Expired"]</small></div></div></div>
+        <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-warning">@Model.Dashboard.ExpiringCount</h1><small>@string.Format(localizer["ExpiringWithin"].Value, Model.Horizon)</small></div></div></div>
+        <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins">@Model.Dashboard.SuspendedCount</h1><small>@localizer["SuspendedOrRevoked"]</small></div></div></div>
+        <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-info">@Model.Dashboard.PendingVerificationCount</h1><small>@localizer["StatusPendingVerification"]</small></div></div></div>
+    </div>
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["Dashboard"]</h5>
+            <div class="ibox-tools">
+                <a asp-controller="Certifications" asp-action="DashboardCsv" asp-route-area="User" asp-route-scope="@Model.Scope" asp-route-category="@Model.Category" asp-route-groupId="@Model.GroupId" asp-route-roleId="@Model.RoleId" class="btn btn-default btn-xs"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
+            </div>
+        </div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            <form method="get" class="form-inline m-b-md" asp-controller="Certifications" asp-action="Index" asp-route-area="User">
+                <div class="form-group m-r-sm">
+                    <label class="m-r-xs">@localizer["Scope"]</label>
+                    <select name="scope" class="form-control" onchange="this.form.submit()">
+                        <option value="person" selected="@(!unit)">@localizer["People"]</option>
+                        <option value="unit" selected="@unit">@localizer["Units"]</option>
+                    </select>
+                </div>
+                <div class="form-group m-r-sm">
+                    <label class="m-r-xs">@localizer["Category"]</label>
+                    <select name="category" class="form-control" onchange="this.form.submit()">
+                        <option value="">@localizer["AllCategories"]</option>
+                        @foreach (Resgrid.Model.CertificationCategories category in Enum.GetValues(typeof(Resgrid.Model.CertificationCategories)))
+                        {
+                            <option value="@((int)category)" selected="@(Model.Category == (int)category)">@localizer["Category" + category]</option>
+                        }
+                    </select>
+                </div>
+                @if (!unit)
+                {
+                    <div class="form-group m-r-sm">
+                        <label class="m-r-xs">@localizer["Group"]</label>
+                        <select name="groupId" class="form-control" onchange="this.form.submit()">
+                            <option value="">@localizer["AllGroups"]</option>
+                            @foreach (var group in Model.Groups)
+                            {
+                                <option value="@group.DepartmentGroupId" selected="@(Model.GroupId == group.DepartmentGroupId)">@group.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group m-r-sm">
+                        <label class="m-r-xs">@localizer["Role"]</label>
+                        <select name="roleId" class="form-control" onchange="this.form.submit()">
+                            <option value="">@localizer["AllRoles"]</option>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role.PersonnelRoleId" selected="@(Model.RoleId == role.PersonnelRoleId)">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+            </form>
+            @if (types.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoTypesYet"] @if (Model.CanSetup) { <a asp-controller="Certifications" asp-action="Types" asp-route-area="User">@localizer["CertificationTypes"]</a> }</p>
+            }
+            else
+            {
+                var rows = unit ? Model.UnitRows.ToList() : Model.PersonRows.ToList();
+                if (rows.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoRecordsYet"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>@localizer[unit ? "Unit" : "Member"]</th>
+                                    @foreach (var type in types)
+                                    {
+                                        <th class="text-center" title="@type.Type"><abbr title="@type.Type">@type.Code</abbr></th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in rows)
+                                {
+                                    var cells = row.ToDictionary(c => c.DepartmentCertificationTypeId);
+                                    <tr>
+                                        <td>
+                                            @if (unit)
+                                            {
+                                                <a asp-controller="Certifications" asp-action="Unit" asp-route-area="User" asp-route-unitId="@row.Key">@row.First().SubjectName</a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@row.Key">@row.First().SubjectName</a>
+                                            }
+                                        </td>
+                                        @foreach (var type in types)
+                                        {
+                                            if (cells.TryGetValue(type.DepartmentCertificationTypeId, out var cell))
+                                            {
+                                                <td class="text-center @CellClass(cell)">
+                                                    @if (unit)
+                                                    {
+                                                        <a asp-controller="Certifications" asp-action="Unit" asp-route-area="User" asp-route-unitId="@row.Key" class="text-inherit">@(cell.NeverExpires ? "∞" : cell.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a asp-controller="Certifications" asp-action="Record" asp-route-area="User" asp-route-id="@cell.RecordId" class="text-inherit">@(cell.NeverExpires ? "∞" : cell.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")</a>
+                                                    }
+                                                    @if (cell.DaysUntilExpiry.HasValue && cell.DaysUntilExpiry >= 0 && cell.DaysUntilExpiry <= Model.Horizon)
+                                                    {
+                                                        <br /><small>@string.Format(localizer["DaysLeft"].Value, cell.DaysUntilExpiry)</small>
+                                                    }
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-center text-muted">—</td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted small">
+                        <span class="label label-success">&nbsp;</span> @localizer["LegendValid"] &nbsp;
+                        <span class="label label-warning">&nbsp;</span> @localizer["LegendExpiring"] &nbsp;
+                        <span class="label label-danger">&nbsp;</span> @localizer["LegendExpired"]
+                    </p>
+                }
+            }
+        </div>
+    </div>
+</div>

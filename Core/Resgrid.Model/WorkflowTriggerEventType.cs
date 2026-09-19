@@ -64,6 +64,17 @@ namespace Resgrid.Model
 		DispatchShortfallDetected = 50,
 		StationCoverageGapDetected = 51,
 
+		// Workforce & Business Operations plan Phase B: customer invoice lifecycle (registry 52-57; plan decision 22).
+		InvoiceCreated = 52,
+		InvoiceSent = 53,
+		InvoicePaymentRecorded = 54,
+		InvoicePaid = 55,
+		InvoiceOverdue = 56,
+		InvoiceVoided = 57,
+		// Phase B2 online payments (registry 94-95, taken from the buffer on 2026-09-18).
+		InvoicePaymentRefunded = 94,
+		InvoicePaymentDisputed = 95,
+
 		// -- Records (RMS) block 100-115 -- Identifier Allocation Registry section 3.2. Values 52-99 are
 		// reserved by other pending plans and must not be taken here. Workflow definitions persist the
 		// integer, so these are append-only and never renumbered. 103 (RecordApproved) and 113-114 are

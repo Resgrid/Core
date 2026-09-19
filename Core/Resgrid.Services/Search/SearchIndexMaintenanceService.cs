@@ -300,11 +300,13 @@ namespace Resgrid.Services.Search
 				foreach (var member in members)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					if (member.IsDeleted || string.IsNullOrWhiteSpace(member.UserId)) continue;
+					// Same membership rule as DepartmentsService.SaveDepartmentMemberAsync: disabled and hidden members are
+					// off the personnel list, so they stay out of the index too (SoftDeleteStaleAsync retires their row).
+					if (member.IsDeleted || member.IsDisabled.GetValueOrDefault() || member.IsHidden.GetValueOrDefault() || string.IsNullOrWhiteSpace(member.UserId)) continue;
 					profiles.TryGetValue(member.UserId, out var profile);
 					if (profile == null) continue;
 					groups.TryGetValue(member.UserId, out var group);
-					var p = await _projectionService.BuildPersonnelAsync(departmentId, profile, group?.DepartmentGroupId, member.IsActive && !member.IsDeleted);
+					var p = await _projectionService.BuildPersonnelAsync(departmentId, profile, group?.DepartmentGroupId, member.IsActive);
 					if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
 				}
 				return n;
@@ -349,23 +351,18 @@ namespace Resgrid.Services.Search
 
 			count += await Family(departmentId, SearchEntityTypes.Message, async () =>
 			{
-				// Messages have no department-wide list; walk the members' sent and inbox folders once, de-duplicated.
-				var members = await _departments.GetAllMembersForDepartmentAsync(departmentId) ?? new List<DepartmentMember>();
+				// One department-scoped read (M0137 owner column) instead of two folder queries per member. A message
+				// that was never attributed to a department has no projection either way: BuildMessageAsync needs
+				// the owner, and the per-member walk this replaces filtered on the same column.
 				var seen = new HashSet<int>();
 				var n = 0;
-				foreach (var member in members.Where(m => !m.IsDeleted && !string.IsNullOrWhiteSpace(m.UserId)))
+				foreach (var message in await _messages.GetAllMessagesForDepartmentAsync(departmentId) ?? new List<Message>())
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					var folders = new List<Message>();
-					try { folders.AddRange(await _messages.GetSentMessagesByUserIdAsync(member.UserId) ?? new List<Message>()); } catch (Exception ex) { Logging.LogException(ex); }
-					try { folders.AddRange(await _messages.GetInboxMessagesByUserIdAsync(member.UserId) ?? new List<Message>()); } catch (Exception ex) { Logging.LogException(ex); }
-					foreach (var message in folders)
-					{
-						if (message == null || !message.DepartmentId.HasValue || message.DepartmentId.Value != departmentId || message.IsDeleted || !seen.Add(message.MessageId))
-							continue;
-						var p = await _projectionService.BuildMessageAsync(message);
-						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
-					}
+					if (message == null || message.IsDeleted || !seen.Add(message.MessageId))
+						continue;
+					var p = await _projectionService.BuildMessageAsync(message);
+					if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
 				}
 				return n;
 			}, started, cancellationToken);

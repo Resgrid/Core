@@ -387,6 +387,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%MESSAGESTABLE% m
 					LEFT JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON mr.MessageId =  m.MessageId
 					WHERE m.SendingUserId = %USERID% AND m.IsDeleted = false";
+			SelectMessagesByDIdQuery = @"
+					SELECT m.*, mr.*
+					FROM %SCHEMA%.%MESSAGESTABLE% m
+					LEFT JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON mr.MessageId =  m.MessageId
+					WHERE m.DepartmentId = %DID% AND m.IsDeleted = false";
 			UpdateRecievedMessagesAsDeletedQuery = @"
 					UPDATE %SCHEMA%.%TABLENAME%
 					SET IsDeleted = true

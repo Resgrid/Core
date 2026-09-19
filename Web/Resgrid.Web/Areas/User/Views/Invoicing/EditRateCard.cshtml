@@ -1,0 +1,243 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.RateCardEditView
+@using Resgrid.Model.Invoicing
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    var card = Model.RateCard;
+    var isNew = string.IsNullOrWhiteSpace(card.RateCardId);
+    ViewBag.Title = "Resgrid | " + (isNew ? localizer["NewRateCard"] : card.Name);
+    ViewData["Tab"] = "RateCards";
+    ViewData["Title"] = isNew ? localizer["NewRateCard"].Value : card.Name;
+    ViewData["ParentText"] = localizer["RateCards"].Value;
+    ViewData["ParentAction"] = "RateCards";
+    var write = Model.CanWrite && Model.CanManage;
+    var hourly = new[] { RateCardItemTypes.HourlyUnit, RateCardItemTypes.HourlyPersonnel };
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-info">@Model.Message</div>
+    }
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["RateCard"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-controller="Invoicing" asp-action="SaveRateCard" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="RateCardId" value="@card.RateCardId" />
+                        <div class="form-group">
+                            <label for="Name">@localizer["Name"]</label>
+                            <input type="text" class="form-control" id="Name" name="Name" value="@card.Name" maxlength="200" required disabled="@(!write)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Description">@localizer["Description"]</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="3" maxlength="2000" disabled="@(!write)">@card.Description</textarea>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="IsDefault" value="true" checked="@card.IsDefault" disabled="@(!write)" /> @localizer["DefaultRateCardHint"]</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="Active" value="true" checked="@card.Active" disabled="@(!write)" /> @localizer["Active"]</label>
+                        </div>
+                        @if (write)
+                        {
+                            <div class="m-t-md">
+                                <a asp-controller="Invoicing" asp-action="RateCards" asp-route-area="User" class="btn btn-white">@commonLocalizer["Cancel"]</a>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["RateCardItems"]</h5>
+                    @if (write && !isNew)
+                    {
+                        <div class="ibox-tools">
+                            <button type="button" class="btn btn-primary btn-xs" id="newItem"><i class="fa fa-plus"></i> @localizer["NewItem"]</button>
+                        </div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    @if (isNew)
+                    {
+                        <p class="text-muted">@localizer["SaveCardBeforeItems"]</p>
+                    }
+                    else if (Model.Items.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoRateCardItems"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-striped table-hover" id="itemsTable">
+                            <thead><tr><th>@localizer["Name"]</th><th>@localizer["ItemType"]</th><th class="text-right">@localizer["Rate"]</th><th>@localizer["Rounding"]</th><th>@localizer["UnitTypeFilter"]</th><th class="text-center">@localizer["Taxable"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    var type = (RateCardItemTypes)item.ItemType;
+                                    <tr class="@(item.Active ? null : "text-muted")"
+                                        data-item='@Newtonsoft.Json.JsonConvert.SerializeObject(new { item.RateCardItemId, item.ItemType, item.Name, item.Description, item.Rate, item.UnitLabel, item.MinimumMinutes, item.RoundingMinutes, item.MinimumCharge, item.UnitTypeFilter, item.Taxable, item.SortOrder, item.Active }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml })'>
+                                        <td>@item.Name @if (!item.Active) { <span class="label label-default">@localizer["Inactive"]</span> }</td>
+                                        <td>@localizer["ItemType" + type]</td>
+                                        <td class="text-right">@item.Rate.ToString("N2") @(string.IsNullOrWhiteSpace(item.UnitLabel) ? "" : "/ " + item.UnitLabel)</td>
+                                        <td>
+                                            @if (hourly.Contains(type))
+                                            {
+                                                <small>@localizer["Minimum"] @(item.MinimumMinutes ?? 0)m, @localizer["RoundTo"] @(item.RoundingMinutes ?? 0)m</small>
+                                            }
+                                        </td>
+                                        <td>@item.UnitTypeFilter</td>
+                                        <td class="text-center">@if (item.Taxable) { <i class="fa fa-check text-navy"></i> }</td>
+                                        <td class="text-right">
+                                            @if (write)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-default edit-item"><i class="fa fa-pencil"></i></button>
+                                                <form method="post" asp-controller="Invoicing" asp-action="DeleteRateCardItem" asp-route-area="User" asp-route-rateCardId="@card.RateCardId" asp-route-id="@item.RateCardItemId" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteItemConfirm"]');"><i class="fa fa-trash"></i></button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (write && !isNew)
+{
+    <div class="modal inmodal" id="itemModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="post" asp-controller="Invoicing" asp-action="SaveRateCardItem" asp-route-area="User" class="modal-content" id="itemForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="RateCardId" value="@card.RateCardId" />
+                <input type="hidden" name="RateCardItemId" id="item-RateCardItemId" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">@localizer["RateCardItem"]</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-7 form-group">
+                            <label for="item-Name">@localizer["Name"]</label>
+                            <input type="text" class="form-control" id="item-Name" name="Name" maxlength="200" required />
+                        </div>
+                        <div class="col-sm-5 form-group">
+                            <label for="item-ItemType">@localizer["ItemType"]</label>
+                            <select class="form-control" id="item-ItemType" name="ItemType">
+                                @foreach (var t in Enum.GetValues<RateCardItemTypes>())
+                                {
+                                    <option value="@((int)t)">@localizer["ItemType" + t]</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-Description">@localizer["Description"]</label>
+                        <input type="text" class="form-control" id="item-Description" name="Description" maxlength="1000" />
+                        <span class="help-block m-b-none">@localizer["ItemDescriptionHint"]</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 form-group">
+                            <label for="item-Rate">@localizer["Rate"]</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="item-Rate" name="Rate" required />
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="item-UnitLabel">@localizer["UnitLabel"]</label>
+                            <input type="text" class="form-control" id="item-UnitLabel" name="UnitLabel" maxlength="50" placeholder="hour" />
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="item-MinimumCharge">@localizer["MinimumCharge"]</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="item-MinimumCharge" name="MinimumCharge" />
+                        </div>
+                    </div>
+                    <div class="row hourly-only">
+                        <div class="col-sm-4 form-group">
+                            <label for="item-MinimumMinutes">@localizer["MinimumMinutes"]</label>
+                            <input type="number" step="1" min="0" class="form-control" id="item-MinimumMinutes" name="MinimumMinutes" />
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="item-RoundingMinutes">@localizer["RoundingMinutes"]</label>
+                            <input type="number" step="1" min="0" class="form-control" id="item-RoundingMinutes" name="RoundingMinutes" />
+                        </div>
+                        <div class="col-sm-4 form-group unit-only">
+                            <label for="item-UnitTypeFilter">@localizer["UnitTypeFilter"]</label>
+                            <select class="form-control" id="item-UnitTypeFilter" name="UnitTypeFilter">
+                                <option value="">@localizer["AnyUnitType"]</option>
+                                @foreach (var unitType in Model.UnitTypes)
+                                {
+                                    <option value="@unitType">@unitType</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 form-group">
+                            <label for="item-SortOrder">@localizer["SortOrder"]</label>
+                            <input type="number" step="1" class="form-control" id="item-SortOrder" name="SortOrder" value="0" />
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox"><label><input type="checkbox" id="item-Taxable" name="Taxable" value="true" checked /> @localizer["Taxable"]</label></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox"><label><input type="checkbox" id="item-Active" name="Active" value="true" checked /> @localizer["Active"]</label></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    @if (write && !isNew)
+    {
+    <script>
+        $(function () {
+            var hourlyTypes = [@((int)RateCardItemTypes.HourlyUnit), @((int)RateCardItemTypes.HourlyPersonnel)];
+            function refreshType() {
+                var type = Number($('#item-ItemType').val());
+                $('.hourly-only').toggle(hourlyTypes.indexOf(type) >= 0);
+                $('.unit-only').toggle(type === @((int)RateCardItemTypes.HourlyUnit));
+            }
+            function open(item) {
+                item = item || {};
+                $('#item-RateCardItemId').val(item.RateCardItemId || '');
+                $('#item-Name').val(item.Name || '');
+                $('#item-ItemType').val(item.ItemType != null ? item.ItemType : @((int)RateCardItemTypes.HourlyUnit));
+                $('#item-Description').val(item.Description || '');
+                $('#item-Rate').val(item.Rate != null ? item.Rate : '');
+                $('#item-UnitLabel').val(item.UnitLabel || '');
+                $('#item-MinimumCharge').val(item.MinimumCharge != null ? item.MinimumCharge : '');
+                $('#item-MinimumMinutes').val(item.MinimumMinutes != null ? item.MinimumMinutes : '');
+                $('#item-RoundingMinutes').val(item.RoundingMinutes != null ? item.RoundingMinutes : '');
+                $('#item-UnitTypeFilter').val(item.UnitTypeFilter || '');
+                $('#item-SortOrder').val(item.SortOrder != null ? item.SortOrder : 0);
+                $('#item-Taxable').prop('checked', item.Taxable !== false);
+                $('#item-Active').prop('checked', item.Active !== false);
+                refreshType();
+                $('#itemModal').modal('show');
+            }
+            $('#item-ItemType').on('change', refreshType);
+            $('#newItem').on('click', function () { open(null); });
+            $('#itemsTable').on('click', '.edit-item', function () { open($(this).closest('tr').data('item')); });
+        });
+    </script>
+    }
+}

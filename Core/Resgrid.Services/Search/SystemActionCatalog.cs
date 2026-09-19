@@ -32,6 +32,7 @@ namespace Resgrid.Services.Search
 		private const string Record = "Record";
 		private const string Checklist = "Checklist";
 		private const string WorkOrder = "WorkOrder";
+		private const string Invoicing = "Invoicing";
 		private const string Group = "Group";
 		private const string Protocols = "Protocols";
 		private const string Forms = "Forms";
@@ -136,6 +137,13 @@ namespace Resgrid.Services.Search
 			Nav("checklist-templates", "Checklist Templates", "Start from a checklist template", "/User/Checklists/Templates", new[] { "templates", "library" }, Checklist, View, null, FeatureFlagKeys.ChecklistsSystem),
 			Nav("work-orders", "Work Orders", "Maintenance and repair work orders", "/User/WorkOrders", new[] { "maintenance", "repair", "service", "fleet", "defect" }, WorkOrder, View, SystemActionModules.Maintenance, FeatureFlagKeys.MaintenanceWorkOrders),
 			Act("new-work-order", "New Work Order", "Open a maintenance work order", "/User/WorkOrders/New", SystemActionCategories.Create, new[] { "repair", "defect", "maintenance request" }, WorkOrder, Update, SystemActionModules.Maintenance, FeatureFlagKeys.MaintenanceWorkOrders),
+
+			// ---- Business operations (Workforce & Business Operations plan, Phase B)
+			Nav("invoices", "Invoices", "Customer invoices and payments", "/User/Invoicing", new[] { "invoice", "billing", "accounts receivable", "customer", "payment" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
+			Act("new-invoice", "New Invoice", "Draft an invoice for a customer", "/User/Invoicing/New", SystemActionCategories.Create, new[] { "invoice", "bill", "charge" }, Invoicing, Create, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
+			Nav("rate-cards", "Rate Cards", "Billing rates for units, personnel and fees", "/User/Invoicing/RateCards", new[] { "rates", "pricing", "hourly", "fees" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
+			Nav("invoice-aging", "Accounts Receivable Aging", "Outstanding invoice balances by age", "/User/Invoicing/Aging", new[] { "aging", "overdue", "receivables", "outstanding" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
+			Act("billing-settings", "Billing Settings", "Legal name, remit-to address and tax registrations printed on invoices", "/User/Invoicing/Settings", SystemActionCategories.Manage, new[] { "remit to", "tax id", "vat", "invoice footer" }, Invoicing, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
 
 			// ---- Messaging / chat
 			Nav("inbox", "Inbox", "Your messages inbox", "/User/Messages/Inbox", new[] { "messages", "mail", "read" }, Messages, View, SystemActionModules.Messaging),

@@ -1,0 +1,152 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.InvoiceIndexView
+@using Resgrid.Model.Invoicing
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Invoicing"];
+    ViewData["Tab"] = "Index";
+    ViewData["Subtitle"] = localizer["InvoicingIntro"].Value;
+    var message = ViewBag.Message as string;
+    var currency = Model.Invoices.FirstOrDefault()?.Currency ?? "USD";
+    var pages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <div class="alert alert-info">@message</div>
+    }
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="widget style1 navy-bg">
+                <div class="row">
+                    <div class="col-xs-4 text-center"><i class="fa fa-money fa-4x"></i></div>
+                    <div class="col-xs-8 text-right">
+                        <span>@localizer["OutstandingBalance"]</span>
+                        <h2 class="font-bold">@Model.OutstandingBalance.ToString("N2")</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="widget style1 @(Model.OverdueCount > 0 ? "red-bg" : "lazur-bg")">
+                <div class="row">
+                    <div class="col-xs-4 text-center"><i class="fa fa-exclamation-triangle fa-4x"></i></div>
+                    <div class="col-xs-8 text-right">
+                        <span>@localizer["OverdueBalance"]</span>
+                        <h2 class="font-bold">@Model.OverdueBalance.ToString("N2")</h2>
+                        <small>@Model.OverdueCount @localizer["InvoicesLower"]</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="widget style1 gray-bg">
+                <div class="row">
+                    <div class="col-xs-4 text-center"><i class="fa fa-file-text-o fa-4x"></i></div>
+                    <div class="col-xs-8 text-right">
+                        <span>@localizer["Invoices"]</span>
+                        <h2 class="font-bold">@Model.TotalCount</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["Invoices"]</h5>
+            @if (Model.CanWrite && Model.CanManage)
+            {
+                <div class="ibox-tools">
+                    <a asp-controller="Invoicing" asp-action="New" asp-route-area="User" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewInvoice"]</a>
+                </div>
+            }
+        </div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+
+            <form method="get" asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="form-inline m-b-md">
+                <div class="form-group">
+                    <label for="filter-status" class="m-r-xs">@localizer["Status"]</label>
+                    <select class="form-control" id="filter-status" name="status">
+                        <option value="">@localizer["All"]</option>
+                        @foreach (var s in Enum.GetValues<InvoiceStatus>())
+                        {
+                            <option value="@((int)s)" selected="@(Model.Status == (int)s)">@localizer["Status" + s]</option>
+                        }
+                    </select>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.ContactId))
+                {
+                    <input type="hidden" name="contactId" value="@Model.ContactId" />
+                    <span class="m-l-sm">@localizer["Customer"]: <strong>@(Model.ContactName(Model.ContactId) ?? Model.ContactId)</strong>
+                        <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="m-l-xs"><i class="fa fa-times"></i></a>
+                    </span>
+                }
+                <button type="submit" class="btn btn-default m-l-sm"><i class="fa fa-filter"></i> @localizer["Filter"]</button>
+            </form>
+
+            @if (Model.Invoices.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoInvoices"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Number"]</th>
+                                <th>@localizer["Customer"]</th>
+                                <th>@localizer["Status"]</th>
+                                <th>@localizer["IssuedOn"]</th>
+                                <th>@localizer["DueOn"]</th>
+                                <th class="text-right">@localizer["Total"]</th>
+                                <th class="text-right">@localizer["Balance"]</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var invoice in Model.Invoices)
+                            {
+                                <tr>
+                                    <td><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a></td>
+                                    <td>@(Model.ContactName(invoice.ContactId) ?? "—")</td>
+                                    <td>@await Html.PartialAsync("_Status", invoice.Status)</td>
+                                    <td>@(invoice.IssuedOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                    <td>@(invoice.DueOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                    <td class="text-right">@invoice.Total.ToString("N2") @invoice.Currency</td>
+                                    <td class="text-right">@invoice.Balance.ToString("N2")</td>
+                                    <td class="text-right">
+                                        @if (invoice.Status == (int)InvoiceStatus.Draft && Model.CanWrite && Model.CanManage)
+                                        {
+                                            <a asp-controller="Invoicing" asp-action="Edit" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                                        }
+                                        <a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-xs btn-default"><i class="fa fa-eye"></i> @localizer["Open"]</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (pages > 1)
+                {
+                    <div class="text-center">
+                        <ul class="pagination">
+                            <li class="@(Model.Page == 0 ? "disabled" : null)">
+                                <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-status="@Model.Status" asp-route-contactId="@Model.ContactId" asp-route-page="@(Math.Max(0, Model.Page - 1))">&laquo;</a>
+                            </li>
+                            <li class="disabled"><a>@(Model.Page + 1) / @pages</a></li>
+                            <li class="@(Model.Page + 1 >= pages ? "disabled" : null)">
+                                <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-status="@Model.Status" asp-route-contactId="@Model.ContactId" asp-route-page="@(Model.Page + 1)">&raquo;</a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

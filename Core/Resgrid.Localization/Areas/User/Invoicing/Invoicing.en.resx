@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>Invoicing</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>Manage invoicing</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>View invoicing</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>Create, edit, send and void invoices, record payments, and manage rate cards and billing profiles.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>View invoices, accounts-receivable aging and invoice PDFs.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>Invoice created</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>Invoice sent</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>Invoice payment recorded</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>Invoice paid</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>Invoice overdue</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>Invoice voided</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>Invoice payment refunded</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>Invoice payment disputed</value></data>
+  <data name="Billing" xml:space="preserve"><value>Billing</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Invoices</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>invoices</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Invoice</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>Customer invoices, payments and accounts receivable.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>The Business Operations add-on is not active for this department. Existing invoices stay readable; creating or changing anything needs an active add-on.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Invoicing, rate cards and billing profiles. The pages also need the Business Operations add-on.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>Rate Cards</value></data>
+  <data name="RateCard" xml:space="preserve"><value>Rate card</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>Billing rates applied when calls are added to an invoice.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>A rate card lists what you charge: hourly unit or personnel time, flat fees per call, fixed fees, mileage and materials. Mark one card as the department default; a customer billing profile can pin another.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>New rate card</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>No rate cards yet.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>Rate card items</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>Rate card item</value></data>
+  <data name="NewItem" xml:space="preserve"><value>New item</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>This rate card has no items yet.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>Save the rate card before adding items.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>Department default (used when a customer has no pinned rate card)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Delete this rate card?</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>Delete this item?</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>Rate card deleted.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>Type</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Hourly – unit time on scene</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>Hourly – personnel time</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>Flat fee per call</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>Fixed fee</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>Mileage</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>Material</value></data>
+  <data name="Rate" xml:space="preserve"><value>Rate</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Unit label</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>Minimum charge</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>Minimum minutes</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Round up to (minutes)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>Rounding</value></data>
+  <data name="Minimum" xml:space="preserve"><value>Min.</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>round to</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>Unit type</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>Any unit type</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>Printed on the invoice line; defaults to the item name.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Sort order</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Taxable</value></data>
+  <data name="Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Default" xml:space="preserve"><value>Default</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="All" xml:space="preserve"><value>All</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="Loading" xml:space="preserve"><value>Loading…</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Draft</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>Sent</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>Partially paid</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Paid</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>Overdue</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Void</value></data>
+  <data name="Number" xml:space="preserve"><value>Number</value></data>
+  <data name="Customer" xml:space="preserve"><value>Customer</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Issued</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Due</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>Leave empty to use the profile terms: net days</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Sent</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>Voided</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Paid on</value></data>
+  <data name="Total" xml:space="preserve"><value>Total</value></data>
+  <data name="Totals" xml:space="preserve"><value>Totals</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>Subtotal</value></data>
+  <data name="Discount" xml:space="preserve"><value>Discount</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Discount %</value></data>
+  <data name="Tax" xml:space="preserve"><value>Tax</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>Amount paid</value></data>
+  <data name="Balance" xml:space="preserve"><value>Balance</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>Outstanding balance</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>Overdue balance</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>New invoice</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>Pick the customer; the draft takes its terms, discount and rate card from the billing profile.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>Select a customer…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>Customers with a billing profile</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>Other contacts</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>This contact has no billing profile yet.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>Set up billing profile</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>Choose a customer with an active billing profile.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Currency</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Create draft</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>Edit the draft, add calls from a rate card, then preview and send.</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Terms" xml:space="preserve"><value>Terms</value></data>
+  <data name="LineItems" xml:space="preserve"><value>Line items</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>No line items.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Qty</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>Rate</value></data>
+  <data name="Amount" xml:space="preserve"><value>Amount</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Add line</value></data>
+  <data name="AddCall" xml:space="preserve"><value>Add call</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>Lines are generated from the rate card and the call's unit time on scene; edit them before saving.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>Call #</value></data>
+  <data name="CallName" xml:space="preserve"><value>Call</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>Logged</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>No calls are linked to this customer.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>On this invoice</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>Call lines added. Save the invoice to keep them.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Could not load the data.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>The change could not be saved.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Saved.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>The submitted values are not valid.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>A name is required.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>This needs an active Business Operations add-on.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Discount and tax are recalculated when you save.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>Preview &amp; send</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>Back to invoices</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Terms (net days)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>Tax exempt</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>Tax rate %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>Billing profile</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>Where invoices go, the payment terms, tax treatment and the rate card used for this customer.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>No billing profile yet. Save one to start invoicing this contact.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>Open contact</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>Billing e-mail</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>Invoices are e-mailed here; defaults to the contact's e-mail.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>Default discount %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>Rate card</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>Use the department default</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>Purchase order number required on invoices</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>Active (new invoices may be created)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>Billing address</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>Use the contact's mailing address</value></data>
+  <data name="Address" xml:space="preserve"><value>Address</value></data>
+  <data name="City" xml:space="preserve"><value>City</value></data>
+  <data name="State" xml:space="preserve"><value>State / province</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postal code</value></data>
+  <data name="Country" xml:space="preserve"><value>Country</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>Flat rate applied to taxable lines when no components are listed below.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>Tax components</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>Up to three named taxes (for example GST and PST), each printed with its own registration number.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>Rate %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>Registration number</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>All invoices for this customer</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>No invoices.</value></data>
+  <data name="Payments" xml:space="preserve"><value>Payments</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>No payments recorded.</value></data>
+  <data name="Method" xml:space="preserve"><value>Method</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>Check</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>Cash</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>Bank transfer / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>Card (outside Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>Other</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>Online</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>Payment status</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>Partially refunded</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>Disputed</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>Dispute lost</value></data>
+  <data name="Reference" xml:space="preserve"><value>Reference</value></data>
+  <data name="Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>Edit draft</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Download PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>Send invoice</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>Re-send invoice</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>E-mails the invoice PDF to the customer and marks a draft as sent.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Send to</value></data>
+  <data name="Send" xml:space="preserve"><value>Send</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>Mark as sent (no e-mail)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>Mark this invoice as sent without e-mailing it?</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Record payment</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>Manual payments only; online payments are recorded automatically.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>Payment recorded.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>Void invoice</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>A voided invoice keeps its number and cannot be edited or paid.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Reason</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>Invoice sent.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>Invoice marked as sent.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>Invoice voided.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>The PDF could not be generated right now.</value></data>
+  <data name="Aging" xml:space="preserve"><value>Aging</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>Accounts receivable aging</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>Open balances grouped by how far past due they are.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>As of</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>Current</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>days past due</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>No outstanding invoices.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>Billing settings</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>What your invoices say about your department, and online payment options.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>Billing identity</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>Printed on every invoice and PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>Legal business name</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>Remit-to address</value></data>
+  <data name="Registrations" xml:space="preserve"><value>Registrations</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>Tax registration number</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>Secondary tax registration</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>CAGE code</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>Workers' comp account</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>Invoice footer</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>Payment instructions, thank-you note or legal text printed under the totals.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>Pay link expiry (days)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>Show a "Pay online" link on invoices</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>Online payments</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>Online payment collection (Stripe) is not available yet. Invoices can be paid by check, cash, bank transfer or card outside Resgrid and recorded manually.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>Region availability</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>Department flag</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>When available, your department connects its own Stripe account; Resgrid never holds the funds.</value></data>
+  <data name="Available" xml:space="preserve"><value>Available</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>Not available in this region</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business Operations add-on</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>A monthly add-on for departments that bill customers and manage contracts. Only the department's managing member can buy or cancel it.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Customer invoicing, rate cards, payments and accounts-receivable aging</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Contractor rate schedules, contracts and cost recovery (coming later)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Workforce pay data and field costing (coming later)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>The add-on is active for your department.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>month</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Your department does not hold this add-on yet.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Paid through</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Renewal cancelled; access continues until the paid period ends.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Buy</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Cancel renewal</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Cancel the Business Operations renewal?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Billing is unavailable right now. Please try again later.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Manage subscription</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>Module settings</value></data>
+  <data name="Links" xml:space="preserve"><value>Links</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>The call was not found.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>The contact was not found.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>Add at least one line item before sending.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>An invoice with payments cannot be voided.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>Only a draft invoice can be edited.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>The invoice was not found.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>This invoice cannot take a payment in its current status.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>A paid invoice cannot be voided.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>This invoice is void.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>No billing e-mail is set for this customer.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>The payment was not found.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>The invoice PDF could not be generated.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>This billing profile has invoices and cannot be deleted.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>The customer needs an active billing profile first.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>The rate card was not found.</value></data>
+</root>

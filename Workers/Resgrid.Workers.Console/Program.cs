@@ -506,6 +506,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 29 (Identifier Allocation Registry, Workforce & Business Operations plan B5): invoice maintenance —
+				// overdue sweep now; Phase B2 payment-request reconciliation, connection re-verification and event purge later.
+				_logger.Log(LogLevel.Information, "Scheduling Invoice Maintenance");
+				await Client.ScheduleAsync("Invoice Maintenance",
+					new Commands.InvoiceMaintenanceCommand(29),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
+
 				// Worker ID 70 (Identifier Allocation Registry section 4F, Unified Search): global search index maintenance. Same
 				// single-writer process as 44; no-op while SearchConfig.Enabled is off; departments enter lazily via their state row.
 				_logger.Log(LogLevel.Information, "Scheduling Search Index");

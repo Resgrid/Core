@@ -16,7 +16,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Schedules(string id, int page = 0)
 		{
 			var rows = await _checklists.SchedulesAsync(Actor, id, page, includeNext: true);
-			return View("Schedules", new ChecklistSchedulesView { DefinitionId = id, Schedules = rows.Take(50).ToList(), Page = page, HasMore = rows.Count > 50, CanEdit = await ChecklistsEnabledAsync() });
+			// Same ceiling as the v4 endpoint: SchedulesAsync rejects page 10001, so the last allowed page gets no Next link.
+			return View("Schedules", new ChecklistSchedulesView { DefinitionId = id, Schedules = rows.Take(50).ToList(), Page = page, HasMore = rows.Count > 50 && page < 10000, CanEdit = await ChecklistsEnabledAsync() });
 		}
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> EditSchedule(string id = null, string definitionId = null)

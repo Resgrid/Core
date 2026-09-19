@@ -45,14 +45,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IContactPreplanOwnershipGate _preplanOwnership;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> _localizer;
+		private readonly IInvoicingService _invoicingService;
+		private readonly IFeatureToggleService _featureToggleService;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
 			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			IProtectedReadService protectedReadService, IContactPreplanOwnershipGate preplanOwnership,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer,
+			IInvoicingService invoicingService = null, IFeatureToggleService featureToggleService = null)
 		{
+			_invoicingService = invoicingService;
+			_featureToggleService = featureToggleService;
 			_preplanOwnership = preplanOwnership;
 			_localizer = localizer;
 			_contactsService = contactsService;
@@ -173,6 +178,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				new List<Contact> { model.Contact }, null, UserId);
 			await _protectedReadService.ResolveContactNotesForReadAsync(DepartmentId, model.Notes, null, UserId);
 			model.IsProtectedContact = protectedRead.IsProtected;
+
+			// Workforce & Business Operations plan, Phase B: the Billing tab mirrors the Invoicing controller's gate (flag + module + view claim).
+			if (_invoicingService != null && _featureToggleService != null && ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled()
+				&& await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, DepartmentId))
+			{
+				model.InvoicingAvailable = true;
+				model.BillingProfile = await _invoicingService.GetBillingProfileByContactIdAsync(contactId, DepartmentId);
+				model.Invoices = (await _invoicingService.GetInvoicesByContactIdAsync(contactId, DepartmentId) ?? new List<Resgrid.Model.Invoicing.Invoice>()).OrderByDescending(x => x.InvoiceNumber).ToList();
+			}
 
 			model.RouteStops = await _routeService.GetRouteStopsForContactAsync(contactId, DepartmentId) ?? new List<RouteStop>();
 			if (model.RouteStops.Count > 0)

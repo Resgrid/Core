@@ -79,9 +79,12 @@ namespace Resgrid.Search
 			_host.MaybeRefresh();
 
 			var lucene = BuildQuery(departmentId, query);
-			var take = query.Take <= 0 ? 50 : Math.Min(query.Take, Math.Max(1, SearchConfig.MaxResults));
-			var skip = Math.Max(0, query.Skip);
-			var window = Math.Min(skip + take, Math.Max(1, SearchConfig.MaxResults));
+			// Skip is clamped to the candidate ceiling before the addition: an unbounded offset would overflow the window
+			// negative and IndexSearcher.Search rejects a non-positive hit count instead of returning an empty page.
+			var max = Math.Max(1, SearchConfig.MaxResults);
+			var take = query.Take <= 0 ? 50 : Math.Min(query.Take, max);
+			var skip = Math.Min(Math.Max(0, query.Skip), max);
+			var window = Math.Min(skip + take, max);
 
 			var searcher = manager.Acquire();
 			try

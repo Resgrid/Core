@@ -80,6 +80,19 @@ namespace Resgrid.Services
 		{
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.InvoiceCreated:
+				case WorkflowTriggerEventType.InvoiceSent:
+				case WorkflowTriggerEventType.InvoicePaymentRecorded:
+				case WorkflowTriggerEventType.InvoicePaid:
+				case WorkflowTriggerEventType.InvoiceOverdue:
+				case WorkflowTriggerEventType.InvoiceVoided:
+				case WorkflowTriggerEventType.InvoicePaymentRefunded:
+				case WorkflowTriggerEventType.InvoicePaymentDisputed:
+					obj["invoice"] = new ScriptObject { ["id"] = "7a1d2c3b-4e5f-4a6b-8c7d-9e0f1a2b3c4d", ["number"] = 1042, ["status"] = 1, ["contact_id"] = "c9e8d7f6-5a4b-4c3d-9e2f-1a0b9c8d7e6f", ["contact_name"] = "Acme Logistics", ["currency"] = "USD", ["sub_total"] = 1250.00m, ["discount_amount"] = 125.00m, ["tax_amount"] = 90.00m, ["total"] = 1215.00m, ["amount_paid"] = 0m, ["balance"] = 1215.00m, ["issued_on"] = "2026-09-18T15:00:00Z", ["due_on"] = "2026-10-18T15:00:00Z", ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Invoicing/View/7a1d2c3b-4e5f-4a6b-8c7d-9e0f1a2b3c4d" };
+					var sampleInvoice = (ScriptObject)obj["invoice"];
+					foreach (var variable in Resgrid.Model.Invoicing.InvoiceWorkflowPayload.Variables) if (!sampleInvoice.ContainsKey(variable.Variable)) sampleInvoice[variable.Variable] = null;
+					if (eventType is WorkflowTriggerEventType.InvoicePaymentRecorded or WorkflowTriggerEventType.InvoicePaid or WorkflowTriggerEventType.InvoicePaymentRefunded or WorkflowTriggerEventType.InvoicePaymentDisputed) { sampleInvoice["payment_amount"] = 1215.00m; sampleInvoice["payment_method"] = "Online"; sampleInvoice["payment_id"] = "0b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e"; sampleInvoice["amount_paid"] = 1215.00m; sampleInvoice["balance"] = 0m; sampleInvoice["status"] = 3; }
+					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

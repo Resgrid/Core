@@ -25,6 +25,14 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Message>> GetSentMessagesByUserIdAsync(string userId);
 
 		/// <summary>
+		/// Every non-deleted message owned by a department (M0137 column), recipients attached. Used by the
+		/// search projection rebuild; messages that predate the column and were never backfilled are not returned.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Message&gt;&gt;.</returns>
+		Task<IEnumerable<Message>> GetMessagesByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
 		/// Gets the unread message count asynchronous.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>

@@ -170,12 +170,11 @@ namespace Resgrid.Services.Search
 				}
 			}
 
+			// One sequence, index hits then the records federation, paged as a whole: special-casing the first page
+			// dropped the Records family from every later page.
 			var skip = Math.Max(0, request.Skip);
 			var take = Math.Max(1, Math.Min(100, request.Take));
-			var page = authorized.Skip(skip).Take(take).ToList();
-			if (page.Count < take && skip == 0)
-				page.AddRange(recordHits.Take(take - page.Count));
-			result.Hits = page;
+			result.Hits = authorized.Concat(recordHits).Skip(skip).Take(take).ToList();
 			result.Truncated = truncated;
 
 			// Totals only when they can be proven from authorized results (plan 2026-08-15 correction).
@@ -312,8 +311,10 @@ namespace Resgrid.Services.Search
 			var loaded = (await _records.GetProjectionsByIdsAsync(principal.DepartmentId, ids) ?? new List<RmsRecordSearchProjection>())
 				.ToDictionary(p => p.RmsRecordSearchProjectionId, StringComparer.OrdinalIgnoreCase);
 
+			// Only record-source hits were loaded above, so only those can be judged: any other source type reaching
+			// here is not a dropped hit, and counting it as one would null the totals for every query in the department.
 			var dropped = 0;
-			foreach (var hit in search.Hits)
+			foreach (var hit in search.Hits.Where(h => h.SourceType == recordSource))
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 				if (!loaded.TryGetValue(hit.SourceId ?? string.Empty, out var projection) || !await _recordsAuthorization.CanUserViewRecordAsync(principal.UserId, hit.SourceId, principal.DepartmentId))

@@ -1,0 +1,275 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.InvoiceEditView
+@using Newtonsoft.Json
+@using Resgrid.Model.Invoicing
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    var invoice = Model.Invoice;
+    ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " #" + invoice.InvoiceNumber;
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["Invoice"].Value + " #" + invoice.InvoiceNumber;
+    ViewData["Subtitle"] = localizer["EditInvoiceIntro"].Value;
+    var lines = (invoice.LineItems ?? new List<InvoiceLineItem>()).OrderBy(x => x.SortOrder)
+        .Select(x => new { invoiceLineItemId = x.InvoiceLineItemId, callId = x.CallId, rateCardItemId = x.RateCardItemId, description = x.Description, quantity = x.Quantity, unitRate = x.UnitRate, taxable = x.Taxable }).ToList();
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-info">@Model.Message</div>
+    }
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["Invoice"] #@invoice.InvoiceNumber &mdash; @(Model.ContactName(invoice.ContactId) ?? "—")</h5>
+                    <div class="ibox-tools">@await Html.PartialAsync("_Status", invoice.Status)</div>
+                </div>
+                <div class="ibox-content">
+                    <form id="invoiceForm" class="form-horizontal" method="post" asp-controller="Invoicing" asp-action="Save" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="InvoiceId" value="@invoice.InvoiceId" />
+                        <input type="hidden" name="LinesJson" id="linesJson" />
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Currency">@localizer["Currency"]</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" id="Currency" name="Currency">
+                                    @foreach (var code in new[] { "USD", "EUR", "GBP", "CAD", "AUD", "NZD" })
+                                    {
+                                        <option value="@code" selected="@(code == invoice.Currency)">@code</option>
+                                    }
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="DueOn">@localizer["DueOn"]</label>
+                            <div class="col-sm-4">
+                                <input type="date" class="form-control" id="DueOn" name="DueOn" value="@(invoice.DueOn?.ToString("yyyy-MM-dd"))" />
+                                <span class="help-block m-b-none">@localizer["DueOnHint"] @(Model.Profile?.TermsNetDays ?? 30)</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="DiscountPercent">@localizer["DiscountPercent"]</label>
+                            <div class="col-sm-3">
+                                <input type="number" step="0.01" min="0" max="100" class="form-control" id="DiscountPercent" name="DiscountPercent" value="@(invoice.DiscountPercent?.ToString(System.Globalization.CultureInfo.InvariantCulture))" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Notes">@localizer["Notes"]</label>
+                            <div class="col-sm-9"><textarea class="form-control" id="Notes" name="Notes" rows="2" maxlength="4000">@invoice.Notes</textarea></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="TermsText">@localizer["Terms"]</label>
+                            <div class="col-sm-9"><textarea class="form-control" id="TermsText" name="TermsText" rows="2" maxlength="4000">@invoice.TermsText</textarea></div>
+                        </div>
+                    </form>
+
+                    <div class="hr-line-dashed"></div>
+
+                    <h4>@localizer["LineItems"]</h4>
+                    <div class="table-responsive">
+                        <table class="table table-condensed" id="linesTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 45%;">@localizer["Description"]</th>
+                                    <th>@localizer["Quantity"]</th>
+                                    <th>@localizer["UnitRate"]</th>
+                                    <th class="text-center">@localizer["Taxable"]</th>
+                                    <th class="text-right">@localizer["Amount"]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <button type="button" class="btn btn-default btn-sm" id="addLine"><i class="fa fa-plus"></i> @localizer["AddLine"]</button>
+                        <button type="button" class="btn btn-default btn-sm" id="addCall"><i class="fa fa-phone"></i> @localizer["AddCall"]</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Totals"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-condensed m-b-none">
+                        <tr><td>@localizer["SubTotal"]</td><td class="text-right" id="totSubTotal">@invoice.SubTotal.ToString("N2")</td></tr>
+                        <tr><td>@localizer["Discount"]</td><td class="text-right" id="totDiscount">@invoice.DiscountAmount.ToString("N2")</td></tr>
+                        <tr><td>@localizer["Tax"]</td><td class="text-right" id="totTax">@invoice.TaxAmount.ToString("N2")</td></tr>
+                        <tr class="font-bold"><td>@localizer["Total"]</td><td class="text-right" id="totTotal">@invoice.Total.ToString("N2")</td></tr>
+                    </table>
+                    <small class="text-muted">@localizer["TotalsUpdateOnSave"]</small>
+                    <div class="hr-line-dashed"></div>
+                    <button type="button" class="btn btn-primary btn-block" id="saveInvoice"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+                    <a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-white btn-block">@localizer["PreviewAndSend"]</a>
+                    <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="btn btn-white btn-block">@localizer["BackToInvoices"]</a>
+                </div>
+            </div>
+            @if (Model.Profile != null)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Customer"]</h5></div>
+                    <div class="ibox-content">
+                        <p><strong>@(Model.ContactName(invoice.ContactId) ?? "—")</strong><br />@Model.Profile.BillingEmail</p>
+                        <p class="m-b-none">
+                            @localizer["TermsNetDays"]: @Model.Profile.TermsNetDays<br />
+                            @if (Model.Profile.TaxExempt)
+                            {
+                                <span class="label label-info">@localizer["TaxExempt"]</span>
+                            }
+                            else if (Model.Profile.TaxRate.HasValue)
+                            {
+                                <span>@localizer["TaxRate"]: @Model.Profile.TaxRate%</span>
+                            }
+                        </p>
+                        <a asp-controller="Invoicing" asp-action="BillingProfile" asp-route-area="User" asp-route-contactId="@invoice.ContactId" class="btn btn-xs btn-default m-t-sm">@localizer["BillingProfile"]</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="callModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">@localizer["AddCall"]</h4>
+                <small>@localizer["AddCallIntro"]</small>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rateCardId">@localizer["RateCard"]</label>
+                    <select class="form-control" id="rateCardId">
+                        @foreach (var card in Model.RateCards)
+                        {
+                            <option value="@card.RateCardId" selected="@(card.RateCardId == Model.DefaultRateCardId)">@card.Name@(card.IsDefault ? " ★" : "")</option>
+                        }
+                    </select>
+                    @if (Model.RateCards.Count == 0)
+                    {
+                        <span class="help-block text-danger">@localizer["NoRateCards"] <a asp-controller="Invoicing" asp-action="EditRateCard" asp-route-area="User">@localizer["NewRateCard"]</a></span>
+                    }
+                </div>
+                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <table class="table table-condensed table-hover" id="callsTable">
+                        <thead><tr><th>@localizer["CallNumber"]</th><th>@localizer["CallName"]</th><th>@localizer["LoggedOn"]</th><th></th></tr></thead>
+                        <tbody><tr><td colspan="4" class="text-muted">@localizer["Loading"]</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">@commonLocalizer["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="application/json" id="invoiceLines">@Html.Raw(JsonConvert.SerializeObject(lines, jsonSettings))</script>
+    <script>
+        $(function () {
+            var lines = JSON.parse(document.getElementById('invoiceLines').textContent);
+            var token = $('#invoiceForm input[name="__RequestVerificationToken"]').val();
+            var invoiceId = '@invoice.InvoiceId';
+            var urls = {
+                calls: '@Url.Action("CallsForInvoice", "Invoicing", new { area = "User" })',
+                preview: '@Url.Action("PreviewCallLines", "Invoicing", new { area = "User" })'
+            };
+            var text = {
+                remove: '@localizer["Remove"]',
+                add: '@localizer["Add"]',
+                added: '@localizer["CallAdded"]',
+                noCalls: '@localizer["NoCallsForCustomer"]',
+                loadFailed: '@localizer["LoadFailed"]',
+                saveFailed: '@localizer["SaveFailed"]',
+                invoiced: '@localizer["AlreadyInvoiced"]'
+            };
+
+            function money(v) { return (Math.round((Number(v) || 0) * 100) / 100).toFixed(2); }
+            function esc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+
+            function render() {
+                var body = $('#linesTable tbody').empty();
+                var subTotal = 0;
+                lines.forEach(function (l, i) {
+                    var amount = (Number(l.quantity) || 0) * (Number(l.unitRate) || 0);
+                    subTotal += amount;
+                    body.append(
+                        '<tr data-index="' + i + '">' +
+                        '<td><input type="text" class="form-control input-sm line-desc" maxlength="500" value="' + esc(l.description) + '">' + (l.callId ? '<small class="text-muted">Call ' + esc(l.callId) + '</small>' : '') + '</td>' +
+                        '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-qty" value="' + esc(l.quantity) + '"></td>' +
+                        '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-rate" value="' + esc(l.unitRate) + '"></td>' +
+                        '<td class="text-center"><input type="checkbox" class="line-tax"' + (l.taxable ? ' checked' : '') + '></td>' +
+                        '<td class="text-right line-amount">' + money(amount) + '</td>' +
+                        '<td class="text-right"><button type="button" class="btn btn-xs btn-danger line-remove" title="' + text.remove + '"><i class="fa fa-trash"></i></button></td>' +
+                        '</tr>');
+                });
+                $('#totSubTotal').text(money(subTotal));
+            }
+
+            function sync() {
+                $('#linesTable tbody tr').each(function () {
+                    var i = $(this).data('index'), l = lines[i];
+                    l.description = $(this).find('.line-desc').val();
+                    l.quantity = Number($(this).find('.line-qty').val()) || 0;
+                    l.unitRate = Number($(this).find('.line-rate').val()) || 0;
+                    l.taxable = $(this).find('.line-tax').is(':checked');
+                });
+            }
+
+            $('#linesTable').on('input change', 'input', function () {
+                sync();
+                var row = $(this).closest('tr'), l = lines[row.data('index')];
+                row.find('.line-amount').text(money(l.quantity * l.unitRate));
+                $('#totSubTotal').text(money(lines.reduce(function (s, x) { return s + x.quantity * x.unitRate; }, 0)));
+            });
+            $('#linesTable').on('click', '.line-remove', function () { sync(); lines.splice($(this).closest('tr').data('index'), 1); render(); });
+            $('#addLine').on('click', function () { sync(); lines.push({ description: '', quantity: 1, unitRate: 0, taxable: true }); render(); $('#linesTable tbody tr:last .line-desc').focus(); });
+
+            $('#saveInvoice').on('click', function () {
+                sync();
+                $('#linesJson').val(JSON.stringify(lines));
+                var button = $(this).prop('disabled', true);
+                $.ajax({
+                    url: $('#invoiceForm').attr('action'), type: 'POST', data: $('#invoiceForm').serialize(),
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (r) {
+                        $('#totSubTotal').text(money(r.subTotal)); $('#totDiscount').text(money(r.discountAmount)); $('#totTax').text(money(r.taxAmount)); $('#totTotal').text(money(r.total));
+                        toastr.success(r.message);
+                    },
+                    error: function (xhr) { toastr.error((xhr.responseJSON && xhr.responseJSON.message) || text.saveFailed); },
+                    complete: function () { button.prop('disabled', false); }
+                });
+            });
+
+            $('#addCall').on('click', function () {
+                $('#callModal').modal('show');
+                $.getJSON(urls.calls, { id: invoiceId }).done(function (calls) {
+                    var body = $('#callsTable tbody').empty();
+                    if (!calls.length) { body.append('<tr><td colspan="4" class="text-muted">' + text.noCalls + '</td></tr>'); return; }
+                    calls.forEach(function (c) {
+                        body.append('<tr><td>' + esc(c.Number || c.number) + '</td><td>' + esc(c.Name || c.name) + '</td><td>' + esc((c.LoggedOn || c.loggedOn || '').toString().substring(0, 16).replace('T', ' ')) + '</td>' +
+                            '<td class="text-right">' + ((c.AlreadyInvoiced || c.alreadyInvoiced) ? '<span class="label label-default">' + text.invoiced + '</span> ' : '') +
+                            '<button type="button" class="btn btn-xs btn-primary pick-call" data-id="' + esc(c.CallId || c.callId) + '">' + text.add + '</button></td></tr>');
+                    });
+                }).fail(function () { toastr.error(text.loadFailed); });
+            });
+
+            $('#callsTable').on('click', '.pick-call', function () {
+                var button = $(this).prop('disabled', true);
+                $.getJSON(urls.preview, { id: invoiceId, callId: button.data('id'), rateCardId: $('#rateCardId').val() }).done(function (generated) {
+                    sync();
+                    generated.forEach(function (g) { lines.push({ callId: g.callId, rateCardItemId: g.rateCardItemId, description: g.description, quantity: g.quantity, unitRate: g.unitRate, taxable: g.taxable }); });
+                    render();
+                    $('#callModal').modal('hide');
+                    toastr.success(text.added);
+                }).fail(function (xhr) { toastr.error((xhr.responseJSON && xhr.responseJSON.message) || text.loadFailed); }).always(function () { button.prop('disabled', false); });
+            });
+
+            render();
+        });
+    </script>
+}

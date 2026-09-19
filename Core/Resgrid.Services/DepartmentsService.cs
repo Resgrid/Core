@@ -724,7 +724,7 @@ namespace Resgrid.Services
 		public async Task<DepartmentMember> SaveDepartmentMemberAsync(DepartmentMember departmentMember, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(departmentMember, cancellationToken);
-			if (_searchProjections != null && saved != null && (saved.IsDeleted || !saved.IsActive)) await _searchProjections.Value.RemoveAsync(saved.DepartmentId, SearchEntityTypes.Personnel, saved.UserId, cancellationToken);
+			await ProjectMembershipAsync(saved, cancellationToken);
 
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
@@ -732,6 +732,31 @@ namespace Resgrid.Services
 			SendMembershipVisibilityRefresh(departmentMember.DepartmentId);
 
 			return saved;
+		}
+
+		/// <summary>
+		/// Keeps the personnel search projection in step with the membership row. IsActive only marks the user's
+		/// currently selected department (a multi-department user has exactly one), so it is projected as metadata
+		/// rather than treated as a removal; only a deleted, disabled or hidden membership leaves the index, matching
+		/// the personnel list and the rebuild sweep. A live membership is re-projected so un-hiding or re-enabling a
+		/// member does not wait for the next rebuild.
+		/// </summary>
+		private async Task ProjectMembershipAsync(DepartmentMember saved, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || saved == null || saved.DepartmentId <= 0 || string.IsNullOrWhiteSpace(saved.UserId))
+				return;
+
+			if (saved.IsDeleted || saved.IsDisabled.GetValueOrDefault() || saved.IsHidden.GetValueOrDefault())
+			{
+				await _searchProjections.Value.RemoveAsync(saved.DepartmentId, SearchEntityTypes.Personnel, saved.UserId, cancellationToken);
+				return;
+			}
+
+			UserProfile profile = null;
+			try { profile = await _userProfileRepository.GetProfileByUserIdAsync(saved.UserId); }
+			catch (Exception ex) { Logging.LogException(ex, $"Search projection skipped for member {saved.UserId} in department {saved.DepartmentId}: profile could not be loaded."); }
+			if (profile != null)
+				await _searchProjections.Value.ProjectPersonnelAsync(saved.DepartmentId, profile, null, saved.IsActive, cancellationToken);
 		}
 
 		public async Task<DepartmentCallEmail> GetDepartmentEmailSettingsAsync(int departmentId)

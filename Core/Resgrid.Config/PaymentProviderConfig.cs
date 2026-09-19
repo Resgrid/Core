@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Resgrid.Config
@@ -48,6 +48,11 @@ namespace Resgrid.Config
 		// configured separately; a missing sandbox price must never fall back to production.
 		public static string PaddleReadinessProAddon = "pri_01m20xy5x54j0sp4mcydcm4q6m";
 		public static string PaddleReadinessProAddonTest = "";
+
+		// Business Operations: EUR 295/month, Paddle product pro_01m2vrcv37k2pnqseb22d8r244 (plan decision 42). Stripe
+		// USD 250/month (price_0UHEA6qJFDZJcnkVnj0ZaAFw) is seeded on PlanAddons by M0211; the test-mode ids are still empty.
+		public static string PaddleBusinessOperationsAddon = "pri_01m2vrdycmx8kfhys5xxcjgqnx";
+		public static string PaddleBusinessOperationsAddonTest = "";
 		public static string PaddleProductionEnvironment = "production";
 		public static string PaddleTestEnvironment = "sandbox";
 		public static string PaddleProductionClientToken = "";
@@ -162,6 +167,11 @@ namespace Resgrid.Config
 		public static string GetPaddleReadinessProAddonPriceId()
 		{
 			return NormalizeConfigValue(IsTestMode ? PaddleReadinessProAddonTest : PaddleReadinessProAddon);
+		}
+
+		public static string GetPaddleBusinessOperationsAddonPriceId()
+		{
+			return NormalizeConfigValue(IsTestMode ? PaddleBusinessOperationsAddonTest : PaddleBusinessOperationsAddon);
 		}
 
 		public static string GetPaddleEnvironment()

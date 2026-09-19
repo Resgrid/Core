@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>Виставлення рахунків</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>Керування рахунками</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>Перегляд рахунків</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>Створення, редагування, надсилання та анулювання рахунків, реєстрація платежів, керування тарифами та профілями виставлення рахунків.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>Перегляд рахунків, аналізу простроченої дебіторської заборгованості та PDF рахунків.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>Рахунок створено</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>Рахунок надіслано</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>Платіж за рахунком зареєстровано</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>Рахунок оплачено</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>Рахунок прострочено</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>Рахунок анульовано</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>Платіж за рахунком повернуто</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>Платіж за рахунком оскаржено</value></data>
+  <data name="Billing" xml:space="preserve"><value>Виставлення рахунків</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Рахунки</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>рахунків</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Рахунок</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>Рахунки клієнтам, платежі та дебіторська заборгованість.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Доповнення Business Operations не активне для цього підрозділу. Наявні рахунки залишаються доступними для читання; створення або зміни потребують активного доповнення.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Виставлення рахунків, тарифи та профілі оплати. Сторінки також потребують доповнення Business Operations.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>Тарифи</value></data>
+  <data name="RateCard" xml:space="preserve"><value>Тариф</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>Тарифи, що застосовуються під час додавання викликів до рахунку.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>Тариф містить ваші ставки: погодинний час підрозділів або персоналу, фіксовану плату за виклик, сталі збори, пробіг і матеріали. Позначте один тариф як типовий; профіль оплати клієнта може закріпити інший.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>Новий тариф</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>Тарифів ще немає.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>Позиції тарифу</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>Позиція тарифу</value></data>
+  <data name="NewItem" xml:space="preserve"><value>Нова позиція</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>Цей тариф ще не має позицій.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>Збережіть тариф, перш ніж додавати позиції.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>Типовий для підрозділу (коли клієнт не має закріпленого тарифу)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Видалити цей тариф?</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>Видалити цю позицію?</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>Тариф видалено.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>Тип</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Погодинно – час підрозділу на місці</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>Погодинно – час персоналу</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>Фіксована плата за виклик</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>Сталий збір</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>Пробіг</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>Матеріал</value></data>
+  <data name="Rate" xml:space="preserve"><value>Ставка</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Позначка одиниці</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>Мінімальна плата</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>Мінімум хвилин</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Округлювати до (хвилин)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>Округлення</value></data>
+  <data name="Minimum" xml:space="preserve"><value>Мін.</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>округлити до</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>Тип підрозділу</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>Будь-який тип підрозділу</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>Друкується в рядку рахунку; типово назва позиції.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Порядок сортування</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Оподатковується</value></data>
+  <data name="Active" xml:space="preserve"><value>Активний</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Неактивний</value></data>
+  <data name="Default" xml:space="preserve"><value>Типовий</value></data>
+  <data name="Name" xml:space="preserve"><value>Назва</value></data>
+  <data name="Description" xml:space="preserve"><value>Опис</value></data>
+  <data name="Edit" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="Open" xml:space="preserve"><value>Відкрити</value></data>
+  <data name="Add" xml:space="preserve"><value>Додати</value></data>
+  <data name="Remove" xml:space="preserve"><value>Вилучити</value></data>
+  <data name="All" xml:space="preserve"><value>Усі</value></data>
+  <data name="Filter" xml:space="preserve"><value>Фільтр</value></data>
+  <data name="Loading" xml:space="preserve"><value>Завантаження…</value></data>
+  <data name="Status" xml:space="preserve"><value>Стан</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Чернетка</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>Надіслано</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>Частково оплачено</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Оплачено</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>Прострочено</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Анульовано</value></data>
+  <data name="Number" xml:space="preserve"><value>Номер</value></data>
+  <data name="Customer" xml:space="preserve"><value>Клієнт</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Виставлено</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Термін оплати</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>Залиште порожнім для умов профілю: днів нетто</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Надіслано</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>Анульовано</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Дата оплати</value></data>
+  <data name="Total" xml:space="preserve"><value>Разом</value></data>
+  <data name="Totals" xml:space="preserve"><value>Підсумки</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>Проміжний підсумок</value></data>
+  <data name="Discount" xml:space="preserve"><value>Знижка</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Знижка %</value></data>
+  <data name="Tax" xml:space="preserve"><value>Податок</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>Сплачена сума</value></data>
+  <data name="Balance" xml:space="preserve"><value>Залишок</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>Несплачений залишок</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>Прострочений залишок</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>Новий рахунок</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>Оберіть клієнта; чернетка бере умови, знижку й тариф із профілю оплати.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>Оберіть клієнта…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>Клієнти з профілем оплати</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>Інші контакти</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>Цей контакт ще не має профілю оплати.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>Налаштувати профіль оплати</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>Оберіть клієнта з активним профілем оплати.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Валюта</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Створити чернетку</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>Відредагуйте чернетку, додайте виклики з тарифу, потім перегляньте й надішліть.</value></data>
+  <data name="Notes" xml:space="preserve"><value>Примітки</value></data>
+  <data name="Terms" xml:space="preserve"><value>Умови</value></data>
+  <data name="LineItems" xml:space="preserve"><value>Позиції</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>Немає позицій.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>К-сть</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>Ставка</value></data>
+  <data name="Amount" xml:space="preserve"><value>Сума</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Додати позицію</value></data>
+  <data name="AddCall" xml:space="preserve"><value>Додати виклик</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>Позиції формуються з тарифу та часу підрозділів на місці; відредагуйте їх перед збереженням.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>№ виклику</value></data>
+  <data name="CallName" xml:space="preserve"><value>Виклик</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>Зареєстровано</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>Немає викликів, пов’язаних із цим клієнтом.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>Уже в цьому рахунку</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>Позиції виклику додано. Збережіть рахунок, щоб зберегти їх.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Не вдалося завантажити дані.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Не вдалося зберегти зміну.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Збережено.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>Надіслані значення недійсні.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Потрібна назва.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Потрібне активне доповнення Business Operations.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Знижка й податок перераховуються під час збереження.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>Перегляд і надсилання</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>Назад до рахунків</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Умови (днів нетто)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>Звільнено від податку</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>Ставка податку %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>Профіль оплати</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>Куди надходять рахунки, умови оплати, оподаткування та тариф для цього клієнта.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>Профілю оплати ще немає. Збережіть його, щоб виставляти рахунки цьому контакту.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>Відкрити контакт</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>Ел. пошта для рахунків</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>Сюди надсилаються рахунки; типово ел. пошта контакту.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>Типова знижка %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>Тариф</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>Використати типовий для підрозділу</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>На рахунках потрібен номер замовлення</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>Активний (можна створювати нові рахунки)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>Адреса для рахунків</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>Використати поштову адресу контакту</value></data>
+  <data name="Address" xml:space="preserve"><value>Адреса</value></data>
+  <data name="City" xml:space="preserve"><value>Місто</value></data>
+  <data name="State" xml:space="preserve"><value>Область</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Поштовий індекс</value></data>
+  <data name="Country" xml:space="preserve"><value>Країна</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>Єдина ставка для оподатковуваних позицій, якщо нижче не вказано складників.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>Складники податку</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>До трьох іменованих податків (наприклад GST і PST), кожен із власним реєстраційним номером.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>Ставка %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>Реєстраційний номер</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>Усі рахунки цього клієнта</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>Немає рахунків.</value></data>
+  <data name="Payments" xml:space="preserve"><value>Платежі</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>Платежів не зареєстровано.</value></data>
+  <data name="Method" xml:space="preserve"><value>Спосіб</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>Чек</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>Готівка</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>Банківський переказ / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>Картка (поза Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>Інше</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>Онлайн</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>Стан платежу</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>Успішно</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>Повернуто</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>Частково повернуто</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>Оскаржено</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>Спір програно</value></data>
+  <data name="Reference" xml:space="preserve"><value>Посилання</value></data>
+  <data name="Preview" xml:space="preserve"><value>Попередній перегляд</value></data>
+  <data name="Actions" xml:space="preserve"><value>Дії</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>Редагувати чернетку</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Завантажити PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>Надіслати рахунок</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>Надіслати рахунок повторно</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>Надсилає PDF рахунку клієнту ел. поштою та позначає чернетку як надіслану.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Надіслати до</value></data>
+  <data name="Send" xml:space="preserve"><value>Надіслати</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>Позначити як надіслану (без ел. пошти)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>Позначити цей рахунок як надісланий без надсилання ел. поштою?</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Зареєструвати платіж</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>Лише ручні платежі; онлайн-платежі реєструються автоматично.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>Платіж зареєстровано.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>Анулювати рахунок</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>Анульований рахунок зберігає номер і не може бути змінений чи оплачений.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Причина</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>Рахунок надіслано.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>Рахунок позначено як надісланий.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>Рахунок анульовано.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>Наразі не вдалося створити PDF.</value></data>
+  <data name="Aging" xml:space="preserve"><value>Прострочення</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>Прострочення дебіторської заборгованості</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>Відкриті залишки, згруповані за терміном прострочення.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>Станом на</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>Поточні</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>днів прострочення</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>Немає несплачених рахунків.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>Налаштування виставлення рахунків</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>Що ваші рахунки повідомляють про підрозділ, та варіанти онлайн-оплати.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>Реквізити для рахунків</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>Друкується на кожному рахунку та PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>Юридична назва</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>Адреса для сплати</value></data>
+  <data name="Registrations" xml:space="preserve"><value>Реєстрації</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>Податковий номер</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>Додатковий податковий номер</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>Код CAGE</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>Рахунок страхування працівників</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>Нижній колонтитул рахунку</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>Інструкції з оплати, подяка або юридичний текст під підсумками.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>Термін дії посилання на оплату (днів)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>Показувати посилання «Сплатити онлайн» на рахунках</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>Онлайн-платежі</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>Онлайн-оплата (Stripe) ще недоступна. Рахунки можна оплачувати чеком, готівкою, переказом або карткою поза Resgrid і реєструвати вручну.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>Доступність у регіоні</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>Прапорець підрозділу</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>Коли стане доступно, ваш підрозділ підключить власний рахунок Stripe; Resgrid ніколи не утримує кошти.</value></data>
+  <data name="Available" xml:space="preserve"><value>Доступно</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>Недоступно в цьому регіоні</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Увімкнено</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Вимкнено</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Доповнення Business Operations</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Щомісячне доповнення для підрозділів, які виставляють рахунки клієнтам і керують контрактами. Придбати або скасувати його може лише керівний член підрозділу.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Виставлення рахунків клієнтам, тарифи, платежі та прострочення заборгованості</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Тарифні сітки підрядників, контракти та відшкодування витрат (згодом)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Дані про оплату праці та польові витрати (згодом)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Доповнення активне для вашого підрозділу.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>місяць</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Ваш підрозділ ще не має цього доповнення.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Оплачено до</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Поновлення скасовано; доступ триває до кінця оплаченого періоду.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Придбати</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Скасувати поновлення</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Скасувати поновлення Business Operations?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Оплата наразі недоступна. Спробуйте пізніше.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Керувати підпискою</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>Налаштування модулів</value></data>
+  <data name="Links" xml:space="preserve"><value>Посилання</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>Виклик не знайдено.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>Контакт не знайдено.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>Додайте хоча б одну позицію перед надсиланням.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>Рахунок із платежами не можна анулювати.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>Редагувати можна лише чернетку рахунку.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>Рахунок не знайдено.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>Цей рахунок не може прийняти платіж у поточному стані.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Оплачений рахунок не можна анулювати.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>Цей рахунок анульовано.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Для цього клієнта не вказано ел. пошту для рахунків.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>Платіж не знайдено.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Не вдалося створити PDF рахунку.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Цей профіль оплати має рахунки й не може бути видалений.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>Клієнту спочатку потрібен активний профіль оплати.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Тариф не знайдено.</value></data>
+</root>

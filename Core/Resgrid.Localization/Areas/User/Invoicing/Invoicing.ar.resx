@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>الفوترة</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>إدارة الفوترة</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>عرض الفوترة</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>إنشاء الفواتير وتعديلها وإرسالها وإلغاؤها، وتسجيل المدفوعات، وإدارة بطاقات الأسعار وملفات الفوترة.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>عرض الفواتير وتقادم الذمم المدينة وملفات PDF للفواتير.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>تم إنشاء الفاتورة</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>تم إرسال الفاتورة</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>تم تسجيل دفعة الفاتورة</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>تم دفع الفاتورة</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>الفاتورة متأخرة</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>تم إلغاء الفاتورة</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>تم رد دفعة الفاتورة</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>تم الاعتراض على دفعة الفاتورة</value></data>
+  <data name="Billing" xml:space="preserve"><value>الفوترة</value></data>
+  <data name="Invoices" xml:space="preserve"><value>الفواتير</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>فواتير</value></data>
+  <data name="Invoice" xml:space="preserve"><value>فاتورة</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>فواتير العملاء والمدفوعات والذمم المدينة.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>إضافة Business Operations غير نشطة لهذا القسم. تبقى الفواتير الحالية قابلة للقراءة؛ يتطلب الإنشاء أو التغيير إضافة نشطة.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>الفوترة وبطاقات الأسعار وملفات الفوترة. تتطلب الصفحات أيضًا إضافة Business Operations.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>بطاقات الأسعار</value></data>
+  <data name="RateCard" xml:space="preserve"><value>بطاقة الأسعار</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>أسعار الفوترة المطبقة عند إضافة البلاغات إلى فاتورة.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>تسرد بطاقة الأسعار ما تفرضه: وقت الوحدات أو الأفراد بالساعة، رسوم ثابتة لكل بلاغ، رسوم محددة، المسافة والمواد. حدد بطاقة كافتراضية للقسم؛ يمكن لملف فوترة العميل تثبيت بطاقة أخرى.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>بطاقة أسعار جديدة</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>لا توجد بطاقات أسعار بعد.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>عناصر بطاقة الأسعار</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>عنصر بطاقة الأسعار</value></data>
+  <data name="NewItem" xml:space="preserve"><value>عنصر جديد</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>لا تحتوي بطاقة الأسعار هذه على عناصر بعد.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>احفظ بطاقة الأسعار قبل إضافة العناصر.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>افتراضي القسم (يُستخدم عندما لا يكون للعميل بطاقة أسعار مثبتة)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>هل تريد حذف بطاقة الأسعار هذه؟</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>هل تريد حذف هذا العنصر؟</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>تم حذف بطاقة الأسعار.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>النوع</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>بالساعة – وقت الوحدة في الموقع</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>بالساعة – وقت الأفراد</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>رسوم ثابتة لكل بلاغ</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>رسوم محددة</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>المسافة</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>مواد</value></data>
+  <data name="Rate" xml:space="preserve"><value>السعر</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>تسمية الوحدة</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>الحد الأدنى للرسوم</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>الحد الأدنى للدقائق</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>التقريب إلى (دقائق)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>التقريب</value></data>
+  <data name="Minimum" xml:space="preserve"><value>الحد الأدنى</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>التقريب إلى</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>نوع الوحدة</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>أي نوع وحدة</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>يُطبع في سطر الفاتورة؛ الافتراضي هو اسم العنصر.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>ترتيب الفرز</value></data>
+  <data name="Taxable" xml:space="preserve"><value>خاضع للضريبة</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
+  <data name="Default" xml:space="preserve"><value>افتراضي</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Open" xml:space="preserve"><value>فتح</value></data>
+  <data name="Add" xml:space="preserve"><value>إضافة</value></data>
+  <data name="Remove" xml:space="preserve"><value>إزالة</value></data>
+  <data name="All" xml:space="preserve"><value>الكل</value></data>
+  <data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+  <data name="Loading" xml:space="preserve"><value>جارٍ التحميل…</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>مرسلة</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>مدفوعة جزئيًا</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>مدفوعة</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>متأخرة</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>ملغاة</value></data>
+  <data name="Number" xml:space="preserve"><value>الرقم</value></data>
+  <data name="Customer" xml:space="preserve"><value>العميل</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>تاريخ الإصدار</value></data>
+  <data name="DueOn" xml:space="preserve"><value>تاريخ الاستحقاق</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>اتركه فارغًا لاستخدام شروط الملف: أيام صافية</value></data>
+  <data name="SentOn" xml:space="preserve"><value>أُرسلت في</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>أُلغيت في</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>تاريخ الدفع</value></data>
+  <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="Totals" xml:space="preserve"><value>الإجماليات</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>المجموع الفرعي</value></data>
+  <data name="Discount" xml:space="preserve"><value>الخصم</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>الخصم %</value></data>
+  <data name="Tax" xml:space="preserve"><value>الضريبة</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>المبلغ المدفوع</value></data>
+  <data name="Balance" xml:space="preserve"><value>الرصيد</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>الرصيد المستحق</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>الرصيد المتأخر</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>فاتورة جديدة</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>اختر العميل؛ تأخذ المسودة الشروط والخصم وبطاقة الأسعار من ملف الفوترة.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>اختر عميلًا…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>عملاء لديهم ملف فوترة</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>جهات اتصال أخرى</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>لا يملك جهة الاتصال هذه ملف فوترة بعد.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>إعداد ملف الفوترة</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>اختر عميلًا لديه ملف فوترة نشط.</value></data>
+  <data name="Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>إنشاء مسودة</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>حرر المسودة، أضف البلاغات من بطاقة أسعار، ثم عاين وأرسل.</value></data>
+  <data name="Notes" xml:space="preserve"><value>ملاحظات</value></data>
+  <data name="Terms" xml:space="preserve"><value>الشروط</value></data>
+  <data name="LineItems" xml:space="preserve"><value>البنود</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>لا توجد بنود.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>الكمية</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>السعر</value></data>
+  <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
+  <data name="AddLine" xml:space="preserve"><value>إضافة بند</value></data>
+  <data name="AddCall" xml:space="preserve"><value>إضافة بلاغ</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>تُنشأ البنود من بطاقة الأسعار ووقت الوحدات في الموقع؛ عدّلها قبل الحفظ.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>رقم البلاغ</value></data>
+  <data name="CallName" xml:space="preserve"><value>البلاغ</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>وقت التسجيل</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>لا توجد بلاغات مرتبطة بهذا العميل.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>موجود في هذه الفاتورة</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>تمت إضافة بنود البلاغ. احفظ الفاتورة للاحتفاظ بها.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>تعذر تحميل البيانات.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>تعذر حفظ التغيير.</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>القيم المرسلة غير صالحة.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>الاسم مطلوب.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>يتطلب ذلك إضافة Business Operations نشطة.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>يُعاد حساب الخصم والضريبة عند الحفظ.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>معاينة وإرسال</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>العودة إلى الفواتير</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>الشروط (أيام صافية)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>معفى من الضريبة</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>نسبة الضريبة %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>ملف الفوترة</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>إلى أين تُرسل الفواتير، وشروط الدفع، والمعاملة الضريبية، وبطاقة الأسعار لهذا العميل.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>لا يوجد ملف فوترة بعد. احفظ واحدًا لبدء فوترة جهة الاتصال هذه.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>فتح جهة الاتصال</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>البريد الإلكتروني للفوترة</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>تُرسل الفواتير هنا؛ الافتراضي هو بريد جهة الاتصال.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>الخصم الافتراضي %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>بطاقة الأسعار</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>استخدام افتراضي القسم</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>رقم أمر الشراء مطلوب في الفواتير</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>نشط (يمكن إنشاء فواتير جديدة)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>عنوان الفوترة</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>استخدام العنوان البريدي لجهة الاتصال</value></data>
+  <data name="Address" xml:space="preserve"><value>العنوان</value></data>
+  <data name="City" xml:space="preserve"><value>المدينة</value></data>
+  <data name="State" xml:space="preserve"><value>الولاية / المقاطعة</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>الرمز البريدي</value></data>
+  <data name="Country" xml:space="preserve"><value>الدولة</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>نسبة موحدة تُطبق على البنود الخاضعة للضريبة عندما لا تُدرج مكونات أدناه.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>مكونات الضريبة</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>حتى ثلاث ضرائب مسماة (مثل GST وPST)، تُطبع كل منها برقم تسجيلها.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>النسبة %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>رقم التسجيل</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>كل فواتير هذا العميل</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>لا توجد فواتير.</value></data>
+  <data name="Payments" xml:space="preserve"><value>المدفوعات</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>لم تُسجل أي مدفوعات.</value></data>
+  <data name="Method" xml:space="preserve"><value>الطريقة</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>شيك</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>نقدًا</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>تحويل بنكي / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>بطاقة (خارج Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>عبر الإنترنت</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>حالة الدفع</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>ناجح</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>مسترد</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>مسترد جزئيًا</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>متنازع عليه</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>خسارة النزاع</value></data>
+  <data name="Reference" xml:space="preserve"><value>المرجع</value></data>
+  <data name="Preview" xml:space="preserve"><value>معاينة</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>تعديل المسودة</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>تنزيل PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>إرسال الفاتورة</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>إعادة إرسال الفاتورة</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>يرسل ملف PDF للفاتورة بالبريد الإلكتروني إلى العميل ويحدد المسودة كمرسلة.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>إرسال إلى</value></data>
+  <data name="Send" xml:space="preserve"><value>إرسال</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>وضع علامة كمرسلة (بدون بريد إلكتروني)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>هل تريد وضع علامة على هذه الفاتورة كمرسلة دون إرسالها بالبريد الإلكتروني؟</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>تسجيل دفعة</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>المدفوعات اليدوية فقط؛ تُسجل المدفوعات عبر الإنترنت تلقائيًا.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>تم تسجيل الدفعة.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>إلغاء الفاتورة</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>تحتفظ الفاتورة الملغاة برقمها ولا يمكن تعديلها أو دفعها.</value></data>
+  <data name="Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>تم إرسال الفاتورة.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>تم وضع علامة على الفاتورة كمرسلة.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>تم إلغاء الفاتورة.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>تعذر إنشاء ملف PDF الآن.</value></data>
+  <data name="Aging" xml:space="preserve"><value>أعمار الديون</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>أعمار الذمم المدينة</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>الأرصدة المفتوحة مجمعة حسب مدة التأخر.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>اعتبارًا من</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>جارية</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>يوم تأخير</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>لا توجد فواتير مستحقة.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>إعدادات الفوترة</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>ما تعرضه فواتيرك عن قسمك، وخيارات الدفع عبر الإنترنت.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>هوية الفوترة</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>يُطبع على كل فاتورة وملف PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>الاسم القانوني للمنشأة</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>عنوان السداد</value></data>
+  <data name="Registrations" xml:space="preserve"><value>التسجيلات</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>رقم التسجيل الضريبي</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>تسجيل ضريبي ثانوي</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>رمز CAGE</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>حساب تعويض العمال</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>تذييل الفاتورة</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>تعليمات الدفع أو عبارة شكر أو نص قانوني يُطبع أسفل الإجماليات.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>انتهاء رابط الدفع (أيام)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>إظهار رابط "ادفع عبر الإنترنت" في الفواتير</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>المدفوعات عبر الإنترنت</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>تحصيل المدفوعات عبر الإنترنت (Stripe) غير متاح بعد. يمكن دفع الفواتير بشيك أو نقدًا أو تحويل بنكي أو بطاقة خارج Resgrid وتسجيلها يدويًا.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>التوفر في المنطقة</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>علامة القسم</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>عند التوفر، يربط قسمك حساب Stripe الخاص به؛ Resgrid لا تحتفظ بالأموال أبدًا.</value></data>
+  <data name="Available" xml:space="preserve"><value>متاح</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>غير متاح في هذه المنطقة</value></data>
+  <data name="Enabled" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="Disabled" xml:space="preserve"><value>معطّل</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>إضافة Business Operations</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>إضافة شهرية للأقسام التي تفوتر العملاء وتدير العقود. يمكن فقط للعضو المدير للقسم شراؤها أو إلغاؤها.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>فوترة العملاء وبطاقات الأسعار والمدفوعات وأعمار الذمم المدينة</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>جداول أسعار المقاولين والعقود واسترداد التكاليف (لاحقًا)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>بيانات رواتب القوى العاملة وتكاليف الميدان (لاحقًا)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>الإضافة نشطة لقسمك.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>شهر</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>لا يملك قسمك هذه الإضافة بعد.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>مدفوع حتى</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>تم إلغاء التجديد؛ يستمر الوصول حتى نهاية الفترة المدفوعة.</value></data>
+  <data name="Buy" xml:space="preserve"><value>شراء</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>إلغاء التجديد</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>هل تريد إلغاء تجديد Business Operations؟</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>الفوترة غير متاحة الآن. يرجى المحاولة لاحقًا.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>إدارة الاشتراك</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>إعدادات الوحدات</value></data>
+  <data name="Links" xml:space="preserve"><value>روابط</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>لم يتم العثور على البلاغ.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>لم يتم العثور على جهة الاتصال.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>أضف بندًا واحدًا على الأقل قبل الإرسال.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>لا يمكن إلغاء فاتورة لها مدفوعات.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>يمكن تعديل مسودة الفاتورة فقط.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>لم يتم العثور على الفاتورة.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>لا يمكن لهذه الفاتورة قبول دفعة في حالتها الحالية.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>لا يمكن إلغاء فاتورة مدفوعة.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>هذه الفاتورة ملغاة.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>لم يُحدد بريد إلكتروني للفوترة لهذا العميل.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>لم يتم العثور على الدفعة.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>تعذر إنشاء ملف PDF للفاتورة.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>ملف الفوترة هذا له فواتير ولا يمكن حذفه.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>يحتاج العميل أولًا إلى ملف فوترة نشط.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>لم يتم العثور على بطاقة الأسعار.</value></data>
+</root>

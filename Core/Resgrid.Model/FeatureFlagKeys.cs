@@ -87,5 +87,28 @@ namespace Resgrid.Model
 
 		/// <summary>Unified Search: cross-entity search over the global Lucene index plus the system-functionality command palette. Requires SearchConfig.Enabled in every process. Seeded off by M0208 (registry §4F).</summary>
 		public const string SearchUnified = "Search.Unified";
+
+		/// <summary>
+		/// Operator-only, per-cluster availability switch for department-connected Stripe payment collection on
+		/// invoices (Workforce &amp; Business Operations plan, Phase B2). Prerequisite of Invoicing.OnlinePayments.
+		/// Only its global state counts — a department override never enables it — and ordinary department
+		/// administrators cannot see or change it (the Security.DepartmentProtectedDataEnrollment pattern). On in the
+		/// US cluster at launch, off in the EU cluster. Seeded off and permanent by M0212 (pending); until that
+		/// migration lands the flag row does not exist and the switch evaluates off everywhere.
+		/// </summary>
+		public const string PaymentsStripeConnect = "Payments.StripeConnect";
+
+		/// <summary>
+		/// Operator master toggle for the paid Business Operations add-on surfaces (Workforce &amp; Business Operations
+		/// plan, decision 11): the FeatureFlagPrerequisite of every paid flag below. Seeded off by M0211. The customer's
+		/// purchase is the PlanAddonTypes.BusinessOperations entitlement; this flag is only the rollout/kill switch.
+		/// </summary>
+		public const string BusinessOperations = "Business.Operations";
+
+		/// <summary>Phase B customer invoicing (billing profiles, rate cards, invoices, payments, aging). Child of Business.Operations. Seeded off by M0211.</summary>
+		public const string CustomerInvoicing = "Invoicing.CustomerInvoicing";
+
+		/// <summary>Phase B2 online payment collection through a department's own Stripe account. Child of Invoicing.CustomerInvoicing and Payments.StripeConnect. Seeded off by M0212.</summary>
+		public const string OnlinePayments = "Invoicing.OnlinePayments";
 	}
 }

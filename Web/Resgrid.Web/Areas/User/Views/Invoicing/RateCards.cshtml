@@ -1,0 +1,65 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.RateCardsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RateCards"];
+    ViewData["Tab"] = "RateCards";
+    ViewData["Title"] = localizer["RateCards"].Value;
+    ViewData["Subtitle"] = localizer["RateCardsIntro"].Value;
+    var message = ViewBag.Message as string;
+    var write = Model.CanWrite && Model.CanManage;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <div class="alert alert-info">@message</div>
+    }
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["RateCards"]</h5>
+            @if (write)
+            {
+                <div class="ibox-tools">
+                    <a asp-controller="Invoicing" asp-action="EditRateCard" asp-route-area="User" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewRateCard"]</a>
+                </div>
+            }
+        </div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpRateCards"]</div>
+            @if (Model.RateCards.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoRateCards"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Description"]</th><th class="text-center">@localizer["Default"]</th><th class="text-center">@localizer["Active"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var card in Model.RateCards)
+                        {
+                            <tr>
+                                <td><a asp-controller="Invoicing" asp-action="EditRateCard" asp-route-area="User" asp-route-id="@card.RateCardId">@card.Name</a></td>
+                                <td>@card.Description</td>
+                                <td class="text-center">@if (card.IsDefault) { <span class="label label-primary">@localizer["Default"]</span> }</td>
+                                <td class="text-center">@if (card.Active) { <i class="fa fa-check text-navy"></i> } else { <span class="text-muted">@localizer["Inactive"]</span> }</td>
+                                <td class="text-right">
+                                    <a asp-controller="Invoicing" asp-action="EditRateCard" asp-route-area="User" asp-route-id="@card.RateCardId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @(write ? localizer["Edit"] : localizer["Open"])</a>
+                                    @if (write)
+                                    {
+                                        <form method="post" asp-controller="Invoicing" asp-action="DeleteRateCard" asp-route-area="User" asp-route-id="@card.RateCardId" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteRateCardConfirm"]');"><i class="fa fa-trash"></i></button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

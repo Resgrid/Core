@@ -114,6 +114,7 @@ namespace Resgrid.Model.Search
 		public const string Training = "Training";
 		public const string Inventory = "Inventory";
 		public const string Maintenance = "Maintenance";
+		public const string BusinessOperations = "BusinessOperations";
 	}
 
 	/// <summary>

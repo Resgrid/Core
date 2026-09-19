@@ -8,6 +8,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Search;
+using Resgrid.Framework;
 using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
@@ -17,6 +18,16 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		public SearchProjectionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		/// <summary>PostgreSQL 23505 or SQL Server 2601/2627: the only failures the insert-then-update race is allowed to absorb.</summary>
+		internal static bool IsUniqueViolation(Exception ex)
+		{
+			if (ex is Npgsql.PostgresException postgres)
+				return postgres.SqlState == "23505";
+			if (ex is Microsoft.Data.SqlClient.SqlException sql)
+				return sql.Number == 2601 || sql.Number == 2627;
+			return false;
+		}
 
 		public Task<SearchProjection> GetAsync(int departmentId, string entityType, string entityId)
 		{
@@ -44,9 +55,11 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					return await InsertAsync(projection, cancellationToken, true);
 				}
-				catch (Exception)
+				catch (Exception ex) when (IsUniqueViolation(ex))
 				{
 					// Two writers raced on the unique (DepartmentId, EntityType, EntityId) index; fall through to update.
+					// Only that conflict is a race: a connection or permission failure propagates to the caller's guard.
+					Logging.LogException(ex, $"Search projection insert conflicted for {projection.EntityType} {projection.EntityId} in department {projection.DepartmentId}; retrying as an update.");
 					existing = await GetAsync(projection.DepartmentId, projection.EntityType, projection.EntityId);
 					if (existing == null) throw;
 				}
@@ -188,9 +201,11 @@ namespace Resgrid.Repositories.DataRepository
 					new { IndexName = indexName, Owner = owner, Until = until, Now = now }, cancellationToken);
 				return true;
 			}
-			catch (Exception)
+			catch (Exception ex) when (SearchProjectionsRepository.IsUniqueViolation(ex))
 			{
-				// Lost the insert race; the other writer holds it.
+				// Lost the insert race; the other writer holds it. Any other database failure propagates so the
+				// publish is reported as failed rather than as "lease held elsewhere".
+				Logging.LogException(ex, $"Search index lease insert for '{indexName}' lost the race to another writer.");
 				return false;
 			}
 		}

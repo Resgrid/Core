@@ -44,6 +44,10 @@ namespace Resgrid.Model.Providers
 		Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
 			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl, DepartmentEmailBranding branding);
 
+		/// <summary>Customer invoice with the PDF attached (Workforce &amp; Business Operations plan, Phase B). payUrl is null until online payments are enabled (Phase B2).</summary>
+		Task<bool> SendInvoiceMail(string email, string subject, string messageBody, string sentOn,
+			string invoiceLabel, string attachmentFilename, byte[] attachmentData, string invoiceUrl, string payUrl, DepartmentEmailBranding branding);
+
 		Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content);
 
 

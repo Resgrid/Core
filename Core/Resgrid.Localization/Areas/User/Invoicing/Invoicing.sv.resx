@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>Fakturering</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>Hantera fakturering</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>Visa fakturering</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>Skapa, redigera, skicka och makulera fakturor, registrera betalningar samt hantera prislistor och faktureringsprofiler.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>Visa fakturor, kundfordringars åldersanalys och faktura-PDF:er.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>Faktura skapad</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>Faktura skickad</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>Fakturabetalning registrerad</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>Faktura betald</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>Faktura förfallen</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>Faktura makulerad</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>Fakturabetalning återbetald</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>Fakturabetalning bestriden</value></data>
+  <data name="Billing" xml:space="preserve"><value>Fakturering</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Fakturor</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>fakturor</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Faktura</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>Kundfakturor, betalningar och kundfordringar.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Tillägget Business Operations är inte aktivt för denna avdelning. Befintliga fakturor kan fortfarande läsas; att skapa eller ändra kräver ett aktivt tillägg.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Fakturering, prislistor och faktureringsprofiler. Sidorna kräver även tillägget Business Operations.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>Prislistor</value></data>
+  <data name="RateCard" xml:space="preserve"><value>Prislista</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>Debiteringssatser som tillämpas när larm läggs till på en faktura.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>En prislista anger vad ni debiterar: timtid för enheter eller personal, fast avgift per larm, fasta avgifter, körsträcka och material. Markera en lista som standard; en faktureringsprofil kan välja en annan.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>Ny prislista</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>Inga prislistor ännu.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>Poster i prislistan</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>Post i prislistan</value></data>
+  <data name="NewItem" xml:space="preserve"><value>Ny post</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>Denna prislista har inga poster ännu.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>Spara prislistan innan du lägger till poster.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>Avdelningens standard (används när kunden saknar vald prislista)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Ta bort denna prislista?</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>Ta bort denna post?</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>Prislistan togs bort.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>Typ</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Per timme – enhetens tid på plats</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>Per timme – personaltid</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>Fast avgift per larm</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>Fast avgift</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>Körsträcka</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>Material</value></data>
+  <data name="Rate" xml:space="preserve"><value>Sats</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Enhetsetikett</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>Minimiavgift</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>Minsta antal minuter</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Avrunda uppåt till (minuter)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>Avrundning</value></data>
+  <data name="Minimum" xml:space="preserve"><value>Min.</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>avrunda till</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>Enhetstyp</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>Alla enhetstyper</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>Skrivs på fakturaraden; standard är postens namn.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Sorteringsordning</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Skattepliktig</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
+  <data name="Default" xml:space="preserve"><value>Standard</value></data>
+  <data name="Name" xml:space="preserve"><value>Namn</value></data>
+  <data name="Description" xml:space="preserve"><value>Beskrivning</value></data>
+  <data name="Edit" xml:space="preserve"><value>Redigera</value></data>
+  <data name="Open" xml:space="preserve"><value>Öppna</value></data>
+  <data name="Add" xml:space="preserve"><value>Lägg till</value></data>
+  <data name="Remove" xml:space="preserve"><value>Ta bort</value></data>
+  <data name="All" xml:space="preserve"><value>Alla</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrera</value></data>
+  <data name="Loading" xml:space="preserve"><value>Laddar…</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Utkast</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>Skickad</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>Delvis betald</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Betald</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>Förfallen</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Makulerad</value></data>
+  <data name="Number" xml:space="preserve"><value>Nummer</value></data>
+  <data name="Customer" xml:space="preserve"><value>Kund</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Utfärdad</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Förfaller</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>Lämna tomt för profilens villkor: nettodagar</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Skickad</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>Makulerad</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Betald den</value></data>
+  <data name="Total" xml:space="preserve"><value>Totalt</value></data>
+  <data name="Totals" xml:space="preserve"><value>Summor</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>Delsumma</value></data>
+  <data name="Discount" xml:space="preserve"><value>Rabatt</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Rabatt %</value></data>
+  <data name="Tax" xml:space="preserve"><value>Skatt</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>Betalt belopp</value></data>
+  <data name="Balance" xml:space="preserve"><value>Saldo</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>Utestående saldo</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>Förfallet saldo</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>Ny faktura</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>Välj kund; utkastet hämtar villkor, rabatt och prislista från faktureringsprofilen.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>Välj kund…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>Kunder med faktureringsprofil</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>Övriga kontakter</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>Kontakten saknar faktureringsprofil.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>Skapa faktureringsprofil</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>Välj en kund med aktiv faktureringsprofil.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Valuta</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Skapa utkast</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>Redigera utkastet, lägg till larm från en prislista, förhandsgranska och skicka.</value></data>
+  <data name="Notes" xml:space="preserve"><value>Anteckningar</value></data>
+  <data name="Terms" xml:space="preserve"><value>Villkor</value></data>
+  <data name="LineItems" xml:space="preserve"><value>Rader</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>Inga rader.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Antal</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>Sats</value></data>
+  <data name="Amount" xml:space="preserve"><value>Belopp</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Lägg till rad</value></data>
+  <data name="AddCall" xml:space="preserve"><value>Lägg till larm</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>Raderna skapas från prislistan och enheternas tid på plats; redigera dem innan du sparar.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>Larm nr</value></data>
+  <data name="CallName" xml:space="preserve"><value>Larm</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>Loggad</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>Inga larm är kopplade till denna kund.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>Redan på fakturan</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>Larmrader tillagda. Spara fakturan för att behålla dem.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Kunde inte läsa in data.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Ändringen kunde inte sparas.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Sparat.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>De angivna värdena är inte giltiga.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Ett namn krävs.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Detta kräver ett aktivt Business Operations-tillägg.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Rabatt och skatt räknas om när du sparar.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>Förhandsgranska &amp; skicka</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>Tillbaka till fakturor</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Villkor (nettodagar)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>Skattebefriad</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>Skattesats %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>Faktureringsprofil</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>Vart fakturor skickas, betalningsvillkor, skattehantering och kundens prislista.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>Ingen faktureringsprofil ännu. Spara en för att börja fakturera kontakten.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>Öppna kontakt</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>Faktura-e-post</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>Fakturor skickas hit; standard är kontaktens e-post.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>Standardrabatt %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>Prislista</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>Använd avdelningens standard</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>Inköpsordernummer krävs på fakturor</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>Aktiv (nya fakturor kan skapas)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>Faktureringsadress</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>Använd kontaktens postadress</value></data>
+  <data name="Address" xml:space="preserve"><value>Adress</value></data>
+  <data name="City" xml:space="preserve"><value>Ort</value></data>
+  <data name="State" xml:space="preserve"><value>Län</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postnummer</value></data>
+  <data name="Country" xml:space="preserve"><value>Land</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>Enhetlig sats för skattepliktiga rader när inga komponenter anges nedan.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>Skattekomponenter</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>Upp till tre namngivna skatter (till exempel GST och PST), var och en med eget registreringsnummer.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>Sats %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>Registreringsnummer</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>Alla fakturor för kunden</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>Inga fakturor.</value></data>
+  <data name="Payments" xml:space="preserve"><value>Betalningar</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>Inga betalningar registrerade.</value></data>
+  <data name="Method" xml:space="preserve"><value>Metod</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>Check</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>Kontant</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>Banköverföring / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>Kort (utanför Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>Annat</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>Online</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>Betalningsstatus</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>Genomförd</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>Återbetald</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>Delvis återbetald</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>Bestriden</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>Tvist förlorad</value></data>
+  <data name="Reference" xml:space="preserve"><value>Referens</value></data>
+  <data name="Preview" xml:space="preserve"><value>Förhandsgranskning</value></data>
+  <data name="Actions" xml:space="preserve"><value>Åtgärder</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>Redigera utkast</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Ladda ned PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>Skicka faktura</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>Skicka fakturan igen</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>Skickar faktura-PDF:en till kunden via e-post och markerar utkastet som skickat.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Skicka till</value></data>
+  <data name="Send" xml:space="preserve"><value>Skicka</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>Markera som skickad (ingen e-post)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>Markera fakturan som skickad utan att e-posta den?</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Registrera betalning</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>Endast manuella betalningar; onlinebetalningar registreras automatiskt.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>Betalning registrerad.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>Makulera faktura</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>En makulerad faktura behåller sitt nummer och kan inte redigeras eller betalas.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Orsak</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>Fakturan skickad.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>Fakturan markerad som skickad.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>Fakturan makulerad.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>PDF:en kunde inte skapas just nu.</value></data>
+  <data name="Aging" xml:space="preserve"><value>Åldersanalys</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>Åldersanalys av kundfordringar</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>Öppna saldon grupperade efter hur länge de varit förfallna.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>Per</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>Ej förfallet</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>dagar förfallet</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>Inga utestående fakturor.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>Faktureringsinställningar</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>Vad fakturorna säger om er avdelning, samt alternativ för onlinebetalning.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>Faktureringsidentitet</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>Skrivs ut på varje faktura och PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>Juridiskt namn</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>Betalningsadress</value></data>
+  <data name="Registrations" xml:space="preserve"><value>Registreringar</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>Skatteregistreringsnummer</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>Sekundär skatteregistrering</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>CAGE-kod</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>Konto för arbetsskadeförsäkring</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>Fakturasidfot</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>Betalningsinstruktioner, tack eller juridisk text under summorna.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>Betallänkens giltighet (dagar)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>Visa länken ”Betala online” på fakturor</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>Onlinebetalningar</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>Onlinebetalning (Stripe) är inte tillgänglig ännu. Fakturor kan betalas med check, kontant, banköverföring eller kort utanför Resgrid och registreras manuellt.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>Tillgänglighet i regionen</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>Avdelningsflagga</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>När det blir tillgängligt kopplar avdelningen sitt eget Stripe-konto; Resgrid håller aldrig pengarna.</value></data>
+  <data name="Available" xml:space="preserve"><value>Tillgänglig</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>Inte tillgänglig i denna region</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Aktiverad</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Inaktiverad</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Tillägget Business Operations</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Ett månadstillägg för avdelningar som fakturerar kunder och hanterar avtal. Endast avdelningens ansvariga medlem kan köpa eller avsluta det.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Kundfakturering, prislistor, betalningar och åldersanalys</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Entreprenörstaxor, avtal och kostnadsåtervinning (kommer senare)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Lönedata och fältkostnader (kommer senare)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Tillägget är aktivt för er avdelning.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>månad</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Er avdelning har inte detta tillägg ännu.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Betald till</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Förnyelsen avbruten; åtkomsten fortsätter till betalperiodens slut.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Köp</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Avbryt förnyelse</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Avbryta förnyelsen av Business Operations?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Fakturering är inte tillgänglig just nu. Försök igen senare.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Hantera prenumeration</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>Modulinställningar</value></data>
+  <data name="Links" xml:space="preserve"><value>Länkar</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>Larmet hittades inte.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>Kontakten hittades inte.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>Lägg till minst en rad innan du skickar.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>En faktura med betalningar kan inte makuleras.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>Endast ett fakturautkast kan redigeras.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>Fakturan hittades inte.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>Fakturan kan inte ta emot betalning i sin nuvarande status.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>En betald faktura kan inte makuleras.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>Fakturan är makulerad.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Ingen faktura-e-post är angiven för kunden.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>Betalningen hittades inte.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Faktura-PDF:en kunde inte skapas.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Faktureringsprofilen har fakturor och kan inte tas bort.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>Kunden behöver först en aktiv faktureringsprofil.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Prislistan hittades inte.</value></data>
+</root>

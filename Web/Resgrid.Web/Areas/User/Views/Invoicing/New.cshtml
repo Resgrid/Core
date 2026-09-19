@@ -1,0 +1,91 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.InvoiceNewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["NewInvoice"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["NewInvoice"].Value;
+    ViewData["Subtitle"] = localizer["NewInvoiceIntro"].Value;
+    var withProfile = Model.Customers.Where(c => c.HasBillingProfile).ToList();
+    var withoutProfile = Model.Customers.Where(c => !c.HasBillingProfile).ToList();
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["NewInvoice"]</h5></div>
+        <div class="ibox-content">
+            @if (!string.IsNullOrWhiteSpace(Model.Message))
+            {
+                <div class="alert alert-danger">@Model.Message</div>
+            }
+            <form method="post" asp-controller="Invoicing" asp-action="New" asp-route-area="User" class="form-horizontal" id="newInvoiceForm">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="contactId">@localizer["Customer"]</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="contactId" name="contactId" required>
+                            <option value="">@localizer["SelectCustomer"]</option>
+                            @if (withProfile.Count > 0)
+                            {
+                                <optgroup label="@localizer["CustomersWithProfile"]">
+                                    @foreach (var c in withProfile)
+                                    {
+                                        <option value="@c.ContactId" data-profile="true" selected="@(c.ContactId == Model.ContactId)">@c.Name</option>
+                                    }
+                                </optgroup>
+                            }
+                            @if (withoutProfile.Count > 0)
+                            {
+                                <optgroup label="@localizer["OtherContacts"]">
+                                    @foreach (var c in withoutProfile)
+                                    {
+                                        <option value="@c.ContactId" data-profile="false" selected="@(c.ContactId == Model.ContactId)">@c.Name</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                        <span class="help-block" id="profileHint" hidden>
+                            @localizer["ProfileRequiredHint"]
+                            <a href="#" id="profileLink">@localizer["SetUpBillingProfile"]</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="currency">@localizer["Currency"]</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" id="currency" name="currency">
+                            @foreach (var code in new[] { "USD", "EUR", "GBP", "CAD", "AUD", "NZD" })
+                            {
+                                <option value="@code" selected="@(code == Model.Currency)">@code</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6 col-sm-offset-2">
+                        <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="btn btn-white">@commonLocalizer["Cancel"]</a>
+                        <button type="submit" class="btn btn-primary" id="createButton"><i class="fa fa-plus"></i> @localizer["CreateDraft"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var profileUrl = '@Url.Action("BillingProfile", "Invoicing", new { area = "User" })';
+            function refresh() {
+                var option = $('#contactId option:selected');
+                var needsProfile = option.val() && option.data('profile') === false;
+                $('#profileHint').prop('hidden', !needsProfile);
+                $('#profileLink').attr('href', profileUrl + '?contactId=' + encodeURIComponent(option.val() || ''));
+                $('#createButton').prop('disabled', !!needsProfile);
+            }
+            $('#contactId').on('change', refresh);
+            refresh();
+        });
+    </script>
+}

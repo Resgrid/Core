@@ -4,6 +4,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -65,6 +66,13 @@
 			{
 				<li class="@Html.IsSelected(controller: "Contacts")">
 					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@commonLocalizer["ContactsModule"]</span></a>
+				</li>
+			}
+			@if (ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, ClaimsAuthorizationHelper.GetDepartmentId()))
+			{
+				@* Workforce & Business Operations plan, Phase B: visible whenever the flag and module are on; a lapsed add-on leaves the pages read-only. *@
+				<li class="@Html.IsSelected(controller: "Invoicing")">
+					<a asp-controller="Invoicing" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> <span class="nav-label">@invoicingLocalizer["Invoicing"]</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsMappingEnabled())

@@ -1,0 +1,81 @@
+@model Resgrid.Web.Areas.User.Models.Deployments.DeploymentEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    ViewBag.Title = "Resgrid | " + (Model.IsNew ? localizer["NewDeployment"] : localizer["EditDeployment"]);
+    ViewData["Title"] = (Model.IsNew ? localizer["NewDeployment"] : localizer["EditDeployment"]).Value;
+    ViewData["Subtitle"] = localizer["EditIntro"].Value;
+    var d = Model.Deployment;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
+    <form method="post" asp-action="Edit" asp-route-area="User" class="form-horizontal">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="DeploymentId" value="@d.DeploymentId" />
+        <div class="row">
+            <div class="col-md-8">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Deployment"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Name"] *</label><div class="col-sm-9"><input type="text" name="Name" class="form-control" maxlength="250" required value="@d.Name" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["FinanceMode"]</label><div class="col-sm-9">
+                            <select name="FinanceMode" class="form-control">
+                                @foreach (Resgrid.Model.Invoicing.DeploymentFinanceModes mode in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentFinanceModes)))
+                                {
+                                    <option value="@((int)mode)" selected="@((int)mode == d.FinanceMode)">@localizer["Finance" + mode]</option>
+                                }
+                            </select>
+                            <span class="help-block">@localizer["FinanceModeHelp"]</span>
+                        </div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Contact"]</label><div class="col-sm-9">
+                            <select name="ContactId" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var contact in Model.Contacts.OrderBy(c => c.Name))
+                                {
+                                    <option value="@contact.ContactId" selected="@(string.Equals(contact.ContactId, d.ContactId, StringComparison.OrdinalIgnoreCase))">@contact.Name</option>
+                                }
+                            </select>
+                        </div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["CallId"]</label><div class="col-sm-9"><input type="number" name="CallId" class="form-control" value="@d.CallId" /><span class="help-block">@localizer["CallIdHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Window"]</label><div class="col-sm-4"><input type="datetime-local" name="StartOn" class="form-control" value="@(d.StartOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div><div class="col-sm-4"><input type="datetime-local" name="EndOn" class="form-control" value="@(d.EndOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div><div class="col-sm-1"><input type="number" name="MaxDays" class="form-control" placeholder="@localizer["MaxDays"]" value="@d.MaxDays" min="1" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Notes"]</label><div class="col-sm-9"><textarea name="Notes" class="form-control" rows="3">@d.Notes</textarea></div></div>
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["AgencyIdentifiers"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["IncidentNumber"]</label><div class="col-sm-9"><input type="text" name="IncidentNumber" class="form-control" maxlength="100" value="@d.IncidentNumber" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["ServiceRequestNumber"]</label><div class="col-sm-9"><input type="text" name="ServiceRequestNumber" class="form-control" maxlength="100" value="@d.ServiceRequestNumber" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["ResourceOrderNumber"]</label><div class="col-sm-4"><input type="text" name="ResourceOrderNumber" class="form-control" maxlength="100" value="@d.ResourceOrderNumber" /></div><label class="col-sm-2 control-label">@localizer["RequestNumber"]</label><div class="col-sm-3"><input type="text" name="RequestNumber" class="form-control" maxlength="100" value="@d.RequestNumber" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["CostCode"]</label><div class="col-sm-4"><input type="text" name="CostCode" class="form-control" maxlength="100" value="@d.CostCode" /></div><label class="col-sm-2 control-label">@localizer["PointOfHire"]</label><div class="col-sm-3"><input type="text" name="PointOfHire" class="form-control" maxlength="250" value="@d.PointOfHire" /></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Jurisdiction"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["HomeCountry"]</label><div class="col-sm-8"><input type="text" name="HomeCountry" class="form-control" maxlength="2" placeholder="US" value="@d.HomeCountry" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["HomeSubdivision"]</label><div class="col-sm-8"><input type="text" name="HomeSubdivision" class="form-control" maxlength="10" placeholder="CA" value="@d.HomeSubdivision" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["HostCountry"]</label><div class="col-sm-8"><input type="text" name="HostCountry" class="form-control" maxlength="2" value="@d.HostCountry" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["HostSubdivision"]</label><div class="col-sm-8"><input type="text" name="HostSubdivision" class="form-control" maxlength="10" value="@d.HostSubdivision" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["TimeZone"]</label><div class="col-sm-8"><input type="text" name="LocalTimeZoneId" class="form-control" maxlength="100" value="@d.LocalTimeZoneId" /><span class="help-block">@localizer["TimeZoneHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["Currency"]</label><div class="col-sm-8"><input type="text" name="Currency" class="form-control" maxlength="3" placeholder="USD" value="@d.Currency" /></div></div>
+                        <div class="form-group"><div class="col-sm-offset-4 col-sm-8">
+                            <div class="checkbox"><label><input type="checkbox" name="OutOfProvince" value="true" checked="@d.OutOfProvince" /> @localizer["OutOfProvince"]</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="TravelViaAir" value="true" checked="@d.TravelViaAir" /> @localizer["TravelViaAir"]</label></div>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @localizer["Save"]</button>
+                        <a asp-action="@(Model.IsNew ? "Index" : "View")" asp-route-id="@d.DeploymentId" class="btn btn-default">@localizer["Cancel"]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

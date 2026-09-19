@@ -100,8 +100,14 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("TreatPendingVerificationAsValid").AsBoolean().NotNullable().WithDefaultValue(false)
 					.WithColumn("SendAdminDigest").AsBoolean().NotNullable().WithDefaultValue(true)
 					.WithColumn("UpdatedOn").AsDateTime2().NotNullable()
-					.WithColumn("UpdatedByUserId").AsString(128).Nullable();
+					.WithColumn("UpdatedByUserId").AsString(128).Nullable()
+					.WithColumn("LastSweepLocalDate").AsDateTime2().Nullable();
 			}
+			// The worker's per-department sweep claim (one sweep per department-local day, survives a repeated or skipped hour).
+			// Schema checks run when Up() is evaluated while Create.Table above is deferred, so a fresh database takes the
+			// column from the create and only a database that already carries the table gets the alter.
+			if (Schema.Table("DepartmentCertificationSettings").Exists() && !Schema.Table("DepartmentCertificationSettings").Column("LastSweepLocalDate").Exists())
+				Alter.Table("DepartmentCertificationSettings").AddColumn("LastSweepLocalDate").AsDateTime2().Nullable();
 
 			// ---- Unit-scoped records ----------------------------------------------------------------------------
 			if (!Schema.Table("UnitCertifications").Exists())

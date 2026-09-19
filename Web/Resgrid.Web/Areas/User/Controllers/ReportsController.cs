@@ -245,17 +245,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> CertificationComplianceReport()
 		{
-			return View(await CreateCertificationComplianceReportModel(DepartmentId));
+			return View(await CreateCertificationComplianceReportModel(DepartmentId, applyPersonVisibility: true));
 		}
 
-		private async Task<Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView> CreateCertificationComplianceReportModel(int departmentId)
+		/// <summary>
+		/// The interactive report applies the personnel visibility matrix like the sibling personnel reports; the scheduled
+		/// InternalRunReport path has no caller identity and renders the department-wide matrix.
+		/// </summary>
+		private async Task<Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView> CreateCertificationComplianceReportModel(int departmentId, bool applyPersonVisibility)
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			var dashboard = await _certificationService.GetExpiryDashboardAsync(departmentId);
+			if (applyPersonVisibility)
+			{
+				var visible = new List<Resgrid.Model.CertificationDashboardCell>();
+				foreach (var cell in dashboard.PersonCells)
+				{
+					if (await _authorizationService.CanUserViewPersonViaMatrixAsync(cell.SubjectId, UserId, departmentId))
+						visible.Add(cell);
+				}
+				dashboard.PersonCells = visible;
+			}
+
 			return new Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView
 			{
 				Department = department,
 				RunOn = DateTime.UtcNow.TimeConverter(department),
-				Dashboard = await _certificationService.GetExpiryDashboardAsync(departmentId),
+				Dashboard = dashboard,
 				Settings = await _certificationService.GetCertificationSettingsAsync(departmentId)
 			};
 		}
@@ -607,7 +623,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else if (((ReportTypes)type) == ReportTypes.CertificationCompliance)
 			{
-				return View("CertificationComplianceReport", await CreateCertificationComplianceReportModel(departmentId));
+				return View("CertificationComplianceReport", await CreateCertificationComplianceReportModel(departmentId, applyPersonVisibility: false));
 			}
 
 			return new EmptyResult();

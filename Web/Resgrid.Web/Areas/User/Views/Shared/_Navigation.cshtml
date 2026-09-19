@@ -6,6 +6,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -81,6 +82,13 @@
 				@* Workforce & Business Operations plan, Phase B: visible whenever the flag and module are on; a lapsed add-on leaves the pages read-only. *@
 				<li class="@Html.IsSelected(controller: "Invoicing")">
 					<a asp-controller="Invoicing" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> <span class="nav-label">@invoicingLocalizer["Invoicing"]</span></a>
+				</li>
+			}
+			@if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, ClaimsAuthorizationHelper.GetDepartmentId()))
+			{
+				@* Workforce & Business Operations plan, Phase C (deployment core, free): labelled "Deployment Finance" so it is not confused with Records → Deployments (risk 40). Members see only the deployments they are rostered on. *@
+				<li class="@Html.IsSelected(controller: "Deployments")">
+					<a asp-controller="Deployments" asp-action="Index" asp-route-area="User"><i class="fa fa-truck"></i> <span class="nav-label">@deploymentLocalizer["DeploymentFinance"]</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsMappingEnabled())

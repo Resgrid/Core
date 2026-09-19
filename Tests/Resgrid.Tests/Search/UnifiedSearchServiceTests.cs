@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace Resgrid.Tests.Search
 {
 	/// <summary>The unified orchestrator: flag gate, claim-based family filter, per-hit authorization with total suppression, lazy state-row activation.</summary>
 	[TestFixture]
-	public class UnifiedSearchServiceTests
+	public partial class UnifiedSearchServiceTests
 	{
 		private Mock<IGlobalSearchService> _global;
 		private Mock<ISystemActionsService> _actions;
@@ -29,11 +30,27 @@ namespace Resgrid.Tests.Search
 		private UnifiedSearchService _service;
 		private bool _flagOn;
 		private GlobalSearchQuery _lastQuery;
+		private Mock<IDepartmentsService> _departments;
+		private Mock<IDepartmentGroupsService> _groups;
+		private Mock<IPersonnelRolesService> _roles;
+		private Mock<ICallsService> _calls;
+		private Mock<IUnitsService> _units;
+		private Mock<IMessageService> _messages;
+		private Mock<IDocumentsService> _documents;
+		private Mock<INotesService> _notes;
+		private Mock<IContactsService> _contacts;
+		private Mock<IDepartmentDataProtectionService> _protection;
+		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<ISearchProjectionsRepository> _projections;
+		private Mock<IPermissionsRepository> _permissions;
+		private DepartmentMember _viewer;
+		private List<SearchProjection> _rows;
 
 		[SetUp]
 		public void SetUp()
 		{
 			_flagOn = true;
+			_lastQuery = null;
 			_global = new Mock<IGlobalSearchService>();
 			_global.SetupGet(g => g.IsAvailable).Returns(true);
 			_global.Setup(g => g.SearchAsync(It.IsAny<int>(), It.IsAny<GlobalSearchQuery>(), It.IsAny<CancellationToken>()))
@@ -43,8 +60,8 @@ namespace Resgrid.Tests.Search
 					Total = 2,
 					Hits = new List<GlobalSearchHit>
 					{
-						new GlobalSearchHit { EntityType = SearchEntityTypes.Call, EntityId = "1", Title = "One", Score = 2f },
-						new GlobalSearchHit { EntityType = SearchEntityTypes.Call, EntityId = "2", Title = "Two", Score = 1f }
+						Hit(SearchEntityTypes.Call, "1"),
+						Hit(SearchEntityTypes.Call, "2")
 					}
 				});
 			_actions = new Mock<ISystemActionsService>();
@@ -60,14 +77,63 @@ namespace Resgrid.Tests.Search
 			_recordsAuth = new Mock<IRecordsAuthorizationService>();
 			_records = new Mock<IRecordsService>();
 			_cutover = new Mock<IRecordsCutoverService>();
+			_departments = new Mock<IDepartmentsService>();
+			_departments.Setup(d => d.GetDepartmentByIdAsync(7, true)).ReturnsAsync(new Department { DepartmentId = 7, ManagingUserId = "owner" });
+			_viewer = new DepartmentMember { DepartmentId = 7, UserId = "u1" };
+			_departments.Setup(d => d.GetDepartmentMemberAsync("u1", 7, true)).ReturnsAsync(() => _viewer);
+			_groups = new Mock<IDepartmentGroupsService>();
+			_roles = new Mock<IPersonnelRolesService>();
+			_roles.Setup(r => r.GetRolesForUserAsync("u1", 7)).ReturnsAsync(new List<PersonnelRole>());
+			_calls = new Mock<ICallsService>();
+			_calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), true)).ReturnsAsync((int id, bool _) => new Call { CallId = id, DepartmentId = 7 });
+			_units = new Mock<IUnitsService>();
+			_messages = new Mock<IMessageService>();
+			_documents = new Mock<IDocumentsService>();
+			_notes = new Mock<INotesService>();
+			_contacts = new Mock<IContactsService>();
+			_protection = new Mock<IDepartmentDataProtectionService>();
+			_settings = new Mock<IDepartmentSettingsService>();
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(7, true)).ReturnsAsync(new DepartmentModuleSettings());
+			_rows = new List<SearchProjection> { Projection(SearchEntityTypes.Call, "1"), Projection(SearchEntityTypes.Call, "2") };
+			_projections = new Mock<ISearchProjectionsRepository>();
+			_projections.Setup(p => p.GetByIdsAsync(7, It.IsAny<IEnumerable<string>>())).ReturnsAsync(() => _rows);
+			_permissions = new Mock<IPermissionsRepository>();
+			var permissions = new Resgrid.Services.PermissionsService(_permissions.Object, Mock.Of<IUsersService>());
 
 			_service = new UnifiedSearchService(_global.Object, _actions.Object, _flags.Object, _auth.Object, _states.Object, _recordsSearch.Object,
-				_recordsAuth.Object, _records.Object, _cutover.Object);
+				_recordsAuth.Object, _records.Object, _cutover.Object, _departments.Object, permissions, _groups.Object,
+				_roles.Object, _calls.Object, _units.Object, _messages.Object, _documents.Object, _notes.Object,
+				_contacts.Object, _protection.Object, _settings.Object, _projections.Object);
+		}
+
+		private static GlobalSearchHit Hit(string type, string id) => new GlobalSearchHit
+		{
+			DepartmentId = 7, Generation = GlobalSearchGeneration.Compute(0, 0), RowVersion = 1,
+			ProjectionId = type + id, EntityType = type, EntityId = id, Title = "Indexed title"
+		};
+
+		private static SearchProjection Projection(string type, string id) => new SearchProjection
+		{
+			DepartmentId = 7, RowVersion = 1, SearchProjectionId = type + id, EntityType = type,
+			EntityId = id, Title = "Current title", OccurredOn = DateTime.UtcNow
+		};
+
+		private void Answer(params GlobalSearchHit[] hits)
+		{
+			_rows = hits.Select(h => Projection(h.EntityType, h.EntityId)).ToList();
+			_global.Setup(g => g.SearchAsync(7, It.IsAny<GlobalSearchQuery>(), It.IsAny<CancellationToken>()))
+				.Callback((int _, GlobalSearchQuery q, CancellationToken __) => _lastQuery = q)
+				.ReturnsAsync(new GlobalSearchResult { Total = hits.Length, Hits = hits.ToList() });
 		}
 
 		/// <summary>An activated Records module whose index answers with the given hits; every record is viewable and loadable.</summary>
 		private void RecordsAnswer(params RecordsSearchHit[] hits)
 		{
+			foreach (var hit in hits)
+			{
+				hit.DepartmentId = 7;
+				hit.Generation = RecordsSearchGeneration.Compute(0, 0);
+			}
 			var recordSource = ((int)RmsSearchSourceType.Record).ToString();
 			_recordsSearch.SetupGet(r => r.IsAvailable).Returns(true);
 			_recordsSearch.Setup(r => r.SearchAsync(7, It.IsAny<RecordsSearchRequest>(), It.IsAny<CancellationToken>()))
@@ -190,7 +256,7 @@ namespace Resgrid.Tests.Search
 
 			asked.Take.Should().BeGreaterThanOrEqualTo(24, "the federation must cover skip + take");
 			page.Hits.Select(h => h.EntityId).Should().Equal("r23", "r24");
-			page.Total.Should().Be(30);
+			page.Total.Should().BeNull("records outside the candidate window have not been authorized");
 		}
 	}
 }

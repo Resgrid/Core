@@ -140,6 +140,55 @@ namespace Resgrid.Services
 			return saved;
 		}
 
+		public async Task<PersonnelRole> ReplaceRoleMembersAsync(PersonnelRole role, IEnumerable<string> userIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
+		{
+			if (role == null || role.PersonnelRoleId <= 0)
+				throw new ArgumentException("An existing role is required.", nameof(role));
+
+			var incoming = (userIds ?? Enumerable.Empty<string>()).Where(u => !string.IsNullOrWhiteSpace(u)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var current = (await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(role.PersonnelRoleId))?.Where(m => m != null).ToList() ?? new List<PersonnelRoleUser>();
+			var currentIds = new HashSet<string>(current.Select(m => m.UserId), StringComparer.OrdinalIgnoreCase);
+			var incomingIds = new HashSet<string>(incoming, StringComparer.OrdinalIgnoreCase);
+			var added = incoming.Where(u => !currentIds.Contains(u)).ToList();
+			var removed = current.Where(m => !incomingIds.Contains(m.UserId)).ToList();
+
+			// Gate before the delete: only the members the role gains are evaluated, so a standing member who is inside a
+			// grace period does not block a rename, and nothing is removed for a save that will be refused.
+			foreach (var userId in added)
+			{
+				var check = await CheckRoleMembershipAsync(role.DepartmentId, userId, new[] { role.PersonnelRoleId });
+				if (check.IsBlocked)
+					throw new InvalidOperationException("certifications_role_requirements_unmet");
+			}
+
+			// Delete-then-cascade under one transaction: the repository cascades the Users collection on the role save,
+			// and the explicit delete of the previous rows is what lets the cascade re-insert the new membership.
+			PersonnelRole saved;
+			_unitOfWork.CreateOrGetConnection();
+			try
+			{
+				foreach (var member in current)
+					await _personnelRoleUsersRepository.DeleteAsync(member, cancellationToken);
+
+				role.Users = incoming.Select(userId => new PersonnelRoleUser { PersonnelRoleId = role.PersonnelRoleId, DepartmentId = role.DepartmentId, UserId = userId }).ToList();
+				saved = await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
+
+				_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			foreach (var member in removed)
+				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberRemoved, member.UserId, role.PersonnelRoleId, saved.Name);
+			foreach (var userId in added)
+				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
+			SendRoleVisibilityRefresh(role.DepartmentId);
+			return saved;
+		}
+
 		public async Task<PersonnelRole> GetRoleByDepartmentAndNameAsync(int departmentId, string name)
 		{
 			return await _personnelRolesRepository.GetRoleByDepartmentAndNameAsync(departmentId, name.Trim());

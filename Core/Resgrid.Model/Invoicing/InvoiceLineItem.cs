@@ -25,6 +25,9 @@ namespace Resgrid.Model.Invoicing
 		public decimal UnitRate { get; set; }
 		public decimal Amount { get; set; }
 		public bool Taxable { get; set; } = true;
+
+		/// <summary>Phase C provenance (M0219): the approved daily time report this line was generated from.</summary>
+		public string DeploymentTimeReportId { get; set; }
 		public int SortOrder { get; set; }
 		public bool IsProtected { get; set; }
 		public int ProtectedCatalogVersion { get; set; }

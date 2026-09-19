@@ -102,6 +102,9 @@ namespace Resgrid.Search
 					var doc = searcher.Doc(scoreDoc.Doc);
 					result.Hits.Add(new GlobalSearchHit
 					{
+						DepartmentId = int.TryParse(doc.Get(GlobalIndexFields.DepartmentId), out var department) ? department : 0,
+						Generation = doc.Get(GlobalIndexFields.Generation),
+						RowVersion = long.TryParse(doc.Get(GlobalIndexFields.RowVersion), out var version) ? version : 0,
 						ProjectionId = doc.Get(GlobalIndexFields.ProjectionId),
 						EntityType = doc.Get(GlobalIndexFields.EntityType),
 						EntityId = doc.Get(GlobalIndexFields.EntityId),
@@ -177,6 +180,9 @@ namespace Resgrid.Search
 			{
 				{ new TermQuery(new Term(GlobalIndexFields.DepartmentId, departmentId.ToString())), Occur.MUST }
 			};
+
+			if (!string.IsNullOrWhiteSpace(request.Generation))
+				query.Add(new TermQuery(new Term(GlobalIndexFields.Generation, request.Generation)), Occur.MUST);
 
 			if (request.EntityTypes != null && request.EntityTypes.Count > 0)
 			{

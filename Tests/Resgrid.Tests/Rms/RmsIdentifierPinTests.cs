@@ -49,6 +49,12 @@ namespace Resgrid.Tests.Rms
 			((int)PermissionTypes.ManageCertificationSetup).Should().Be(44);
 			foreach (var value in Enumerable.Range(45, 2))
 				Enum.IsDefined(typeof(PermissionTypes), value).Should().BeFalse($"PermissionTypes {value} is reserved for another plan");
+			// Contacts/Billing Phase C authored 116-119 and 79 on 2026-09-19 (registry).
+			((int)PermissionTypes.ManageBids).Should().Be(116);
+			((int)PermissionTypes.ManageContracts).Should().Be(117);
+			((int)PermissionTypes.ManageDeployments).Should().Be(118);
+			((int)PermissionTypes.ApproveTimeReports).Should().Be(119);
+			((int)PermissionTypes.ManageMutualAidReimbursement).Should().Be(79);
 		}
 
 		[Test]
@@ -126,7 +132,12 @@ namespace Resgrid.Tests.Rms
 			// Certifications Phase D authored 87-93 on 2026-09-19 (registry).
 			((int)WorkflowTriggerEventType.CertificationAdded).Should().Be(87);
 			((int)WorkflowTriggerEventType.UnitCertificationExpired).Should().Be(93);
-			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(Enumerable.Range(87, 7)).Except(new[] { 94, 95 }))
+			// Contacts/Billing Phase C authored 74-86 on 2026-09-19 (registry).
+			((int)WorkflowTriggerEventType.BidCreated).Should().Be(74);
+			((int)WorkflowTriggerEventType.ContractExpiring).Should().Be(80);
+			((int)WorkflowTriggerEventType.DeploymentCreated).Should().Be(81);
+			((int)WorkflowTriggerEventType.TimeReportApproved).Should().Be(86);
+			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(Enumerable.Range(74, 13)).Except(Enumerable.Range(87, 7)).Except(new[] { 94, 95 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

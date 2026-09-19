@@ -1,0 +1,340 @@
+@model Resgrid.Web.Areas.User.Models.Deployments.DeploymentDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    var d = Model.Deployment;
+    ViewBag.Title = "Resgrid | " + d.Name;
+    ViewData["Title"] = d.Name;
+    ViewData["Subtitle"] = localizer["Finance" + (Resgrid.Model.Invoicing.DeploymentFinanceModes)d.FinanceMode].Value;
+    var status = (Resgrid.Model.Invoicing.DeploymentStatuses)d.Status;
+    var activeUnits = d.Units.Where(u => u.IsActive).ToList();
+    var activePeople = d.Personnel.Where(p => p.IsActive).ToList();
+    var activeEquipment = d.Equipment.Where(e => e.IsActive).ToList();
+    string Local(DateTime? value) => value.HasValue ? (Model.Department == null ? value.Value.ToString("yyyy-MM-dd HH:mm") : Resgrid.Model.Helpers.TimeConverterHelper.TimeConverter(value.Value, Model.Department).ToString("yyyy-MM-dd HH:mm")) : "—";
+    string UserName(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : Model.UserNames.TryGetValue(userId, out var n) ? n : userId;
+    string UnitName(string deploymentUnitId) { var u = d.Units.FirstOrDefault(x => x.DeploymentUnitId == deploymentUnitId); return u == null ? "" : (u.UnitName ?? u.UnitId.ToString()); }
+    var next = new List<Resgrid.Model.Invoicing.DeploymentStatuses>();
+    foreach (Resgrid.Model.Invoicing.DeploymentStatuses candidate in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentStatuses)))
+    {
+        if (Resgrid.Services.Invoicing.DeploymentService.IsValidTransition(status, candidate)) next.Add(candidate);
+    }
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
+    @foreach (var warning in Model.Warnings)
+    {
+        <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["Warning" + warning.Code] @(string.IsNullOrWhiteSpace(warning.Detail) ? "" : "— " + warning.Detail)</div>
+    }
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["Deployment"] @await Html.PartialAsync("_StatusBadge", d.Status)</h5>
+                    <div class="ibox-tools">
+                        @if (Model.CanManage)
+                        {
+                            <a asp-action="Edit" asp-route-id="@d.DeploymentId" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                        }
+                        <a asp-action="ExportTimeEntries" asp-route-id="@d.DeploymentId" class="btn btn-default btn-xs"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["IncidentNumber"]</dt><dd>@(d.IncidentNumber ?? "—")</dd>
+                        <dt>@localizer["ResourceOrderNumber"]</dt><dd>@(d.ResourceOrderNumber ?? "—") @(string.IsNullOrWhiteSpace(d.RequestNumber) ? "" : $"/ {d.RequestNumber}")</dd>
+                        <dt>@localizer["CostCode"]</dt><dd>@(d.CostCode ?? "—")</dd>
+                        <dt>@localizer["PointOfHire"]</dt><dd>@(d.PointOfHire ?? "—")</dd>
+                        <dt>@localizer["Window"]</dt><dd>@Local(d.StartOn) → @Local(d.EndOn) @(d.MaxDays.HasValue ? $"({d.MaxDays} {localizer["Days"]})" : "")</dd>
+                        <dt>@localizer["Contact"]</dt><dd>@(Model.ContactName ?? "—")</dd>
+                        <dt>@localizer["Call"]</dt><dd>@if (Model.Call != null) { <a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Model.Call.Number @Model.Call.Name</a> } else { <text>—</text> }</dd>
+                        @if (!string.IsNullOrWhiteSpace(d.RmsExternalOrderId))
+                        {
+                            <dt>@localizer["ExternalOrder"]</dt>
+                            <dd>
+                                @if (Model.External?.Order != null)
+                                {
+                                    <a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@d.RmsExternalOrderId">@Model.External.Order.OrderNumber — @Model.External.Order.IncidentName</a>
+                                    <span class="text-muted">· @string.Format(localizer["FillCount"].Value, Model.External.Fills.Count)</span>
+                                }
+                                else
+                                {
+                                    <code>@d.RmsExternalOrderId</code>
+                                }
+                            </dd>
+                        }
+                        <dt>@localizer["Jurisdiction"]</dt><dd>@(d.HomeCountry ?? "—")@(string.IsNullOrWhiteSpace(d.HomeSubdivision) ? "" : "-" + d.HomeSubdivision) → @(d.HostCountry ?? "—")@(string.IsNullOrWhiteSpace(d.HostSubdivision) ? "" : "-" + d.HostSubdivision) @(d.OutOfProvince ? "· " + localizer["OutOfProvince"] : "") @(d.TravelViaAir ? "· " + localizer["TravelViaAir"] : "")</dd>
+                        <dt>@localizer["Currency"]</dt><dd>@(d.Currency ?? "—") · @(d.LocalTimeZoneId ?? Model.Department?.TimeZone)</dd>
+                        @if (!string.IsNullOrWhiteSpace(d.Notes)) { <dt>@localizer["Notes"]</dt><dd>@d.Notes</dd> }
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Summary"]</h5></div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-xs-4 text-center"><h2 class="no-margins">@activeUnits.Count</h2><small>@localizer["Units"]</small></div>
+                        <div class="col-xs-4 text-center"><h2 class="no-margins">@activePeople.Count</h2><small>@localizer["Personnel"]</small></div>
+                        <div class="col-xs-4 text-center"><h2 class="no-margins">@Model.TimeReports.Count(r => r.Status != (int)Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Void)</h2><small>@localizer["TimeReports"]</small></div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xs-6 text-center"><h3 class="no-margins">@Model.TotalHours.ToString("0.0")</h3><small>@localizer["PersonnelHours"]</small></div>
+                        <div class="col-xs-6 text-center"><h3 class="no-margins">@Model.TotalExpenses.ToString("N2") @d.Currency</h3><small>@localizer["Expenses"]</small></div>
+                    </div>
+                    @if (Model.CanManage && next.Count > 0)
+                    {
+                        <hr />
+                        <form method="post" asp-action="SetStatus" asp-route-id="@d.DeploymentId" class="form-inline">
+                            @Html.AntiForgeryToken()
+                            <select name="status" class="form-control input-sm">
+                                @foreach (var candidate in next) { <option value="@((int)candidate)">@localizer["Status" + candidate]</option> }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@localizer["StatusConfirm"]');">@localizer["ChangeStatus"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <ul class="nav nav-tabs m-b-md">
+                <li class="@(Model.Tab == "roster" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="roster"><i class="fa fa-users"></i> @localizer["Roster"]</a></li>
+                <li class="@(Model.Tab == "time" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="time"><i class="fa fa-clock-o"></i> @localizer["TimeReports"]</a></li>
+                <li class="@(Model.Tab == "expenses" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="expenses"><i class="fa fa-money"></i> @localizer["Expenses"]</a></li>
+                <li class="@(Model.Tab == "files" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="files"><i class="fa fa-paperclip"></i> @localizer["Files"]</a></li>
+            </ul>
+
+            @if (Model.Tab == "roster")
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>@localizer["Units"]</h4>
+                        @if (activeUnits.Count == 0) { <p class="text-muted">@localizer["NoUnits"]</p> }
+                        else
+                        {
+                            <table class="table table-condensed">
+                                <thead><tr><th>@localizer["Unit"]</th><th>@localizer["CallSign"]</th><th>@localizer["Crew"]</th><th></th></tr></thead>
+                                <tbody>
+                                    @foreach (var u in activeUnits)
+                                    {
+                                        <tr>
+                                            <td>@(u.UnitName ?? u.UnitId.ToString())</td><td>@u.CallSign</td><td>@activePeople.Count(p => p.DeploymentUnitId == u.DeploymentUnitId)</td>
+                                            <td class="text-right">@if (Model.CanManage && d.IsOpen) { <form method="post" asp-action="RemoveUnit" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentUnitId" value="@u.DeploymentUnitId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-times"></i></button></form> }</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        @if (Model.CanManage && d.IsOpen)
+                        {
+                            <form method="post" asp-action="AddUnit" asp-route-id="@d.DeploymentId" class="form-inline m-b-md">
+                                @Html.AntiForgeryToken()
+                                <select name="unitId" class="form-control input-sm" required>
+                                    <option value="">@localizer["SelectUnit"]</option>
+                                    @foreach (var unit in Model.Units.Where(u => activeUnits.All(a => a.UnitId != u.UnitId))) { <option value="@unit.UnitId">@unit.Name</option> }
+                                </select>
+                                <input type="text" name="callSign" class="form-control input-sm" placeholder="@localizer["CallSign"]" maxlength="50" />
+                                <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> @localizer["AddUnit"]</button>
+                            </form>
+                        }
+
+                        <h4>@localizer["Equipment"]</h4>
+                        @if (activeEquipment.Count == 0) { <p class="text-muted">@localizer["NoEquipment"]</p> }
+                        else
+                        {
+                            <table class="table table-condensed">
+                                <thead><tr><th>@localizer["Item"]</th><th>@localizer["Unit"]</th><th>@localizer["Issued"]</th><th></th></tr></thead>
+                                <tbody>
+                                    @foreach (var e in activeEquipment)
+                                    {
+                                        <tr>
+                                            <td>@(e.FreeTextName ?? e.InventoryAssetId ?? e.InventoryItemId)</td><td>@UnitName(e.DeploymentUnitId)</td><td>@Local(e.IssuedOn)</td>
+                                            <td class="text-right">@if (Model.CanManage) { <form method="post" asp-action="ReturnEquipment" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentEquipmentId" value="@e.DeploymentEquipmentId" /><button class="btn btn-xs btn-default" title="@localizer["Return"]"><i class="fa fa-reply"></i></button></form> }</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        @if (Model.CanManage && d.IsOpen)
+                        {
+                            <form method="post" asp-action="AddEquipment" asp-route-id="@d.DeploymentId" class="form-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="text" name="freeTextName" class="form-control input-sm" placeholder="@localizer["EquipmentName"]" maxlength="250" required />
+                                <select name="deploymentUnitId" class="form-control input-sm"><option value="">@localizer["NoUnit"]</option>@foreach (var u in activeUnits) { <option value="@u.DeploymentUnitId">@(u.UnitName ?? u.UnitId.ToString())</option> }</select>
+                                <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> @localizer["AddEquipment"]</button>
+                            </form>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <h4>@localizer["Personnel"]</h4>
+                        @if (activePeople.Count == 0) { <p class="text-muted">@localizer["NoPersonnel"]</p> }
+                        else
+                        {
+                            <table class="table table-condensed">
+                                <thead><tr><th>@localizer["Name"]</th><th>@localizer["Unit"]</th><th>@localizer["Seat"]</th><th>@localizer["Certification"]</th><th></th></tr></thead>
+                                <tbody>
+                                    @foreach (var p in activePeople.OrderBy(p => p.DeploymentUnitId ?? "~").ThenBy(p => p.DisplayName))
+                                    {
+                                        var seat = p.UnitRoleId.HasValue ? Model.UnitRoles.Values.SelectMany(r => r).FirstOrDefault(r => r.UnitRoleId == p.UnitRoleId.Value)?.Name : null;
+                                        <tr>
+                                            <td>@(p.DisplayName ?? UserName(p.UserId))</td><td>@UnitName(p.DeploymentUnitId)</td><td>@seat</td><td>@p.CertificationCode</td>
+                                            <td class="text-right">@if (Model.CanManage && d.IsOpen) { <form method="post" asp-action="RemovePersonnel" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentPersonnelId" value="@p.DeploymentPersonnelId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-times"></i></button></form> }</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        @if (Model.CanManage && d.IsOpen)
+                        {
+                            <form method="post" asp-action="AddPersonnel" asp-route-id="@d.DeploymentId" class="form-horizontal">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group"><label class="col-sm-3 control-label">@localizer["Member"]</label><div class="col-sm-9">
+                                    <select name="userId" class="form-control input-sm" required>
+                                        <option value="">@localizer["SelectMember"]</option>
+                                        @foreach (var person in Model.Personnel.Where(x => activePeople.All(a => !string.Equals(a.UserId, x.UserId, StringComparison.OrdinalIgnoreCase)))) { <option value="@person.UserId">@person.Name</option> }
+                                    </select>
+                                </div></div>
+                                <div class="form-group"><label class="col-sm-3 control-label">@localizer["Unit"]</label><div class="col-sm-9">
+                                    <select name="deploymentUnitId" id="seatUnit" class="form-control input-sm"><option value="">@localizer["NoUnit"]</option>@foreach (var u in activeUnits) { <option value="@u.DeploymentUnitId" data-unit-id="@u.UnitId">@(u.UnitName ?? u.UnitId.ToString())</option> }</select>
+                                </div></div>
+                                <div class="form-group"><label class="col-sm-3 control-label">@localizer["Seat"]</label><div class="col-sm-9">
+                                    <select name="unitRoleId" id="seatRole" class="form-control input-sm">
+                                        <option value="">—</option>
+                                        @foreach (var kv in Model.UnitRoles) { foreach (var role in kv.Value) { <option value="@role.UnitRoleId" data-unit-id="@kv.Key">@role.Name@(role.PersonnelRoleRequired ? " *" : "")</option> } }
+                                    </select>
+                                    <span class="help-block">@localizer["SeatHelp"]</span>
+                                </div></div>
+                                <div class="form-group"><label class="col-sm-3 control-label">@localizer["Certification"]</label><div class="col-sm-4"><input type="text" name="certificationCode" class="form-control input-sm" maxlength="50" /></div><label class="col-sm-2 control-label">@localizer["CallSign"]</label><div class="col-sm-3"><input type="text" name="callSign" class="form-control input-sm" maxlength="50" /></div></div>
+                                <div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+                                    <div class="checkbox"><label><input type="checkbox" name="force" value="true" /> @localizer["ForceSeat"]</label></div>
+                                    <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-user-plus"></i> @localizer["AddPersonnel"]</button>
+                                </div></div>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+            else if (Model.Tab == "time")
+            {
+                @if (Model.CanEditTime && d.IsOpen)
+                {
+                    <form method="post" asp-action="NewTimeReport" asp-route-id="@d.DeploymentId" class="form-inline m-b-md">
+                        @Html.AntiForgeryToken()
+                        <input type="date" name="reportDate" class="form-control input-sm" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required />
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> @localizer["NewTimeReport"]</button>
+                        <span class="help-block" style="display:inline">@localizer["NewTimeReportHelp"]</span>
+                    </form>
+                }
+                @if (Model.TimeReports.Count == 0) { <p class="text-muted">@localizer["NoTimeReports"]</p> }
+                else
+                {
+                    <table class="table table-striped table-hover">
+                        <thead><tr><th>#</th><th>@localizer["ReportDate"]</th><th>@localizer["Status"]</th><th>@localizer["Submitted"]</th><th>@localizer["Approved"]</th><th>@localizer["Invoice"]</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var r in Model.TimeReports.OrderByDescending(r => r.ReportDate))
+                            {
+                                <tr>
+                                    <td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId">@r.ReportNumber</a></td><td>@r.ReportDate.ToString("yyyy-MM-dd")</td><td>@await Html.PartialAsync("_ReportStatusBadge", r.Status)</td>
+                                    <td>@(r.SubmittedOn.HasValue ? $"{UserName(r.SubmittedByUserId)} · {Local(r.SubmittedOn)}" : "—")</td><td>@(r.ApprovedOn.HasValue ? $"{UserName(r.ApprovedByUserId)} · {Local(r.ApprovedOn)}" : "—")</td>
+                                    <td>@if (!string.IsNullOrWhiteSpace(r.InvoiceId)) { <a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@r.InvoiceId"><i class="fa fa-file-text-o"></i></a> }</td>
+                                    <td class="text-right"><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["Open"]</a> <a asp-action="TimeReportPdf" asp-route-id="@r.DeploymentTimeReportId" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+            else if (Model.Tab == "expenses")
+            {
+                @if (Model.Expenses.Count == 0) { <p class="text-muted">@localizer["NoExpenses"]</p> }
+                else
+                {
+                    <table class="table table-striped">
+                        <thead><tr><th>@localizer["ExpenseDate"]</th><th>@localizer["Type"]</th><th>@localizer["Description"]</th><th>@localizer["City"]</th><th class="text-right">@localizer["Amount"]</th><th>@localizer["Receipt"]</th><th>@localizer["TimeReport"]</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var e in Model.Expenses)
+                            {
+                                <tr>
+                                    <td>@e.ExpenseDate.ToString("yyyy-MM-dd")</td><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(e.Description) @(e.PreApproved ? "· " + localizer["PreApproved"] : "") @(e.Billable ? "" : "· " + localizer["NotBillable"])</td><td>@e.City</td>
+                                    <td class="text-right">@e.Amount.ToString("N2") @e.Currency</td>
+                                    <td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td>
+                                    <td>@if (!string.IsNullOrWhiteSpace(e.DeploymentTimeReportId)) { var r = Model.TimeReports.FirstOrDefault(x => x.DeploymentTimeReportId == e.DeploymentTimeReportId); <a asp-action="TimeReport" asp-route-id="@e.DeploymentTimeReportId">#@(r?.ReportNumber)</a> }</td>
+                                    <td class="text-right">@if (Model.CanEditTime) { <form method="post" asp-action="DeleteExpense" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentExpenseId" value="@e.DeploymentExpenseId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-trash"></i></button></form> }</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot><tr><th colspan="4" class="text-right">@localizer["Total"]</th><th class="text-right">@Model.TotalExpenses.ToString("N2") @d.Currency</th><th colspan="3"></th></tr></tfoot>
+                    </table>
+                }
+                @if (Model.CanEditTime)
+                {
+                    <h4>@localizer["AddExpense"]</h4>
+                    @await Html.PartialAsync("_ExpenseForm", (d.DeploymentId, (string)null, d.Currency))
+                }
+            }
+            else
+            {
+                @if (Model.Attachments.Count == 0) { <p class="text-muted">@localizer["NoFiles"]</p> }
+                else
+                {
+                    <table class="table table-striped">
+                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["Type"]</th><th>@localizer["FileName"]</th><th>@localizer["Size"]</th><th>@localizer["Added"]</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var a in Model.Attachments)
+                            {
+                                <tr>
+                                    <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(a.Name) @if (a.IsProtected) { <i class="fa fa-lock text-muted"></i> }</td><td>@localizer["Attachment" + (Resgrid.Model.Invoicing.DeploymentAttachmentTypes)a.AttachmentType]</td><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(a.FileName)</td><td>@((a.FileSize ?? 0) / 1024) KB</td><td>@Local(a.AddedOn) · @UserName(a.AddedByUserId)</td>
+                                    <td class="text-right"><a asp-action="GetAttachment" asp-route-id="@a.DeploymentAttachmentId" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-download"></i></a> @if (Model.CanManage) { <form method="post" asp-action="DeleteAttachment" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentAttachmentId" value="@a.DeploymentAttachmentId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-trash"></i></button></form> }</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                <div class="row">
+                    <div class="col-md-8">
+                        @if (Model.CanEditTime)
+                        {
+                            <form method="post" asp-action="UploadAttachment" asp-route-id="@d.DeploymentId" enctype="multipart/form-data" class="form-inline">
+                                @Html.AntiForgeryToken()
+                                <select name="attachmentType" class="form-control input-sm">
+                                    @foreach (Resgrid.Model.Invoicing.DeploymentAttachmentTypes type in new[] { Resgrid.Model.Invoicing.DeploymentAttachmentTypes.Other, Resgrid.Model.Invoicing.DeploymentAttachmentTypes.SignedServiceRequest, Resgrid.Model.Invoicing.DeploymentAttachmentTypes.Receipt, Resgrid.Model.Invoicing.DeploymentAttachmentTypes.Certification, Resgrid.Model.Invoicing.DeploymentAttachmentTypes.ExternalOrder, Resgrid.Model.Invoicing.DeploymentAttachmentTypes.CrewRotationApproval, Resgrid.Model.Invoicing.DeploymentAttachmentTypes.LossDamage })
+                                    { <option value="@((int)type)">@localizer["Attachment" + type]</option> }
+                                </select>
+                                <input type="text" name="name" class="form-control input-sm" placeholder="@localizer["Name"]" maxlength="250" />
+                                <input type="file" name="file" class="form-control input-sm" required />
+                                <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-upload"></i> @localizer["Upload"]</button>
+                            </form>
+                        }
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <a asp-action="Manifest" asp-route-id="@d.DeploymentId" class="btn btn-sm btn-default" target="_blank"><i class="fa fa-eye"></i> @localizer["PreviewManifest"]</a>
+                        @if (Model.CanManage)
+                        {
+                            <form method="post" asp-action="GenerateManifest" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-primary"><i class="fa fa-file-pdf-o"></i> @localizer["GenerateManifest"]</button></form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var unit = document.getElementById('seatUnit'), role = document.getElementById('seatRole');
+            if (!unit || !role) return;
+            function filter() {
+                var selected = unit.options[unit.selectedIndex]; var unitId = selected ? selected.getAttribute('data-unit-id') : null;
+                for (var i = 0; i < role.options.length; i++) { var o = role.options[i]; var own = o.getAttribute('data-unit-id'); o.style.display = (!own || own === unitId) ? '' : 'none'; if (own && own !== unitId && o.selected) role.selectedIndex = 0; }
+            }
+            unit.addEventListener('change', filter); filter();
+        })();
+    </script>
+}

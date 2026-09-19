@@ -128,6 +128,20 @@ namespace Resgrid.Services
 					Text("PersonnelCertificationCredits", "Description"), Text("PersonnelCertificationCredits", "FileName"), Binary("PersonnelCertificationCredits", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
+				// Workforce & Business Operations plan, Phase C (ADP catalog 28): deployment time reports, expenses and attachments.
+				AdpTableBinding.Direct("DeploymentTimeReports", "DeploymentTimeReportId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("DeploymentTimeReports", "CustomerSignerName")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("DeploymentExpenses", "DeploymentExpenseId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("DeploymentExpenses", "Description")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("DeploymentAttachments", "DeploymentAttachmentId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("DeploymentAttachments", "Name"), Text("DeploymentAttachments", "FileName"), Binary("DeploymentAttachments", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
 				AdpTableBinding.Direct("Contacts", "ContactId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Text("Contacts", "FirstName"), Text("Contacts", "MiddleName"), Text("Contacts", "LastName"),

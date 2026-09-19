@@ -61,6 +61,32 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task Policy_generation_is_filtered_before_matching_or_counting()
+		{
+			var current = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "fire", ViewerUserId = "u1", Generation = "1.25.3" });
+			current.Hits.Should().ContainSingle(h => h.DepartmentId == 1 && h.Generation == "1.25.3" && h.RowVersion == 1);
+			var changed = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "fire", ViewerUserId = "u1", Generation = "2.25.4" });
+			changed.Hits.Should().BeEmpty();
+			changed.Total.Should().Be(0);
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task Every_entity_family_is_isolated_even_for_the_same_user_in_two_departments(bool prefix)
+		{
+			foreach (var department in new[] { 1, 2 })
+				await _indexer.IndexAsync(SearchEntityTypes.Indexed.Select(type =>
+					Projection(department, type, "isolation-" + type, "Canary isolation", owner: "shared-member")), "2.0.0");
+			await _indexer.CommitAsync();
+			foreach (var department in new[] { 1, 2 })
+			{
+				var result = await _search.SearchAsync(department, new GlobalSearchQuery { Text = "canary", Prefix = prefix, ViewerUserId = "shared-member", IncludeAdminOnly = true });
+				result.Hits.Should().HaveCount(SearchEntityTypes.Indexed.Count).And.OnlyContain(h => h.DepartmentId == department);
+				result.Total.Should().Be(SearchEntityTypes.Indexed.Count);
+			}
+		}
+
+		[Test]
 		public async Task An_unbounded_skip_yields_an_empty_page_instead_of_an_overflowed_window()
 		{
 			var result = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "structure fire", ViewerUserId = "u1", Skip = int.MaxValue, Take = 20 });

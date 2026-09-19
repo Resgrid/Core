@@ -27,6 +27,7 @@ namespace Resgrid.Search
 				new StringField(GlobalIndexFields.IsAdminOnly, p.IsAdminOnly ? "1" : "0", Field.Store.NO),
 				new StringField(GlobalIndexFields.IsActive, p.IsActive ? "1" : "0", Field.Store.NO),
 				new StringField(GlobalIndexFields.Generation, generation ?? string.Empty, Field.Store.YES),
+				new StoredField(GlobalIndexFields.RowVersion, p.RowVersion),
 				new Int64Field(GlobalIndexFields.OccurredOn, p.OccurredOn.Ticks, Field.Store.YES),
 				new NumericDocValuesField(GlobalIndexFields.OccurredOnSort, p.OccurredOn.Ticks)
 			};

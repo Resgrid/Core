@@ -370,7 +370,7 @@ namespace Resgrid.Repositories.DataRepository
 						$"INSERT INTO {Tbl("DepartmentBillingIdentities")} ({string.Join(", ", all.Select(Col))}) VALUES ({string.Join(", ", all.Select(c => P + c))})",
 						identity, cancellationToken);
 				}
-				catch (Exception ex) when (SearchProjectionsRepository.IsUniqueViolation(ex))
+				catch (Exception ex) when (IsUniqueViolation(ex))
 				{
 					// Two first saves for the department raced past the update; the loser applies its values over the winner's row.
 					await ExecuteAsync(

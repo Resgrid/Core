@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Deployments" xml:space="preserve"><value>عمليات الانتشار</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>مالية الانتشار</value></data>
+  <data name="MyDeployments" xml:space="preserve"><value>عمليات انتشاري</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>أغلفة مالية لعمليات الانتشار: قوائم التشكيل وتقارير الوقت اليومية والمصروفات والملفات للانتشارات القابلة للفوترة واسترداد التكاليف والتشغيلية.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>يجمع الانتشار الوحدات والأفراد والمعدات المرسلة إلى حادث مع تقارير الوقت اليومية والمصروفات. اربطه بنداء أو بطلب مساعدة متبادلة من Records.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>لا توجد عمليات انتشار بعد.</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>عرض الكل</value></data>
+  <data name="ShowOpen" xml:space="preserve"><value>عرض المفتوحة فقط</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>انتشار جديد</value></data>
+  <data name="EditDeployment" xml:space="preserve"><value>تعديل الانتشار</value></data>
+  <data name="EditIntro" xml:space="preserve"><value>المعرّفات التي تحددها الجهة العميلة وبيانات الاختصاص التي يحتاجها محرك الفوترة.</value></data>
+  <data name="CreateFromExternalOrder" xml:space="preserve"><value>إنشاء من طلب خارجي</value></data>
+  <data name="Open" xml:space="preserve"><value>فتح</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="FinanceMode" xml:space="preserve"><value>الوضع المالي</value></data>
+  <data name="FinanceModeHelp" xml:space="preserve"><value>«تشغيلي فقط» يحفظ الوقت والمصروفات للتوثيق؛ «استرداد التكاليف» يغذي مطالبة تعويض؛ «قابل للفوترة» يغذي فاتورة للعميل.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>رقم الحادث</value></data>
+  <data name="ResourceOrderNumber" xml:space="preserve"><value>رقم طلب الموارد</value></data>
+  <data name="RequestNumber" xml:space="preserve"><value>رقم الطلب</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>رقم طلب الخدمة</value></data>
+  <data name="CostCode" xml:space="preserve"><value>رمز التكلفة</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>نقطة التعاقد</value></data>
+  <data name="Contact" xml:space="preserve"><value>جهة الاتصال</value></data>
+  <data name="Window" xml:space="preserve"><value>النافذة الزمنية</value></data>
+  <data name="Days" xml:space="preserve"><value>أيام</value></data>
+  <data name="MaxDays" xml:space="preserve"><value>الحد الأقصى للأيام</value></data>
+  <data name="Notes" xml:space="preserve"><value>ملاحظات</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>مرتبط بطلب خارجي في Records</value></data>
+  <data name="Deployment" xml:space="preserve"><value>الانتشار</value></data>
+  <data name="AgencyIdentifiers" xml:space="preserve"><value>معرّفات الجهة</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>الاختصاص</value></data>
+  <data name="HomeCountry" xml:space="preserve"><value>البلد الأصلي</value></data>
+  <data name="HomeSubdivision" xml:space="preserve"><value>الولاية / المقاطعة الأصلية</value></data>
+  <data name="HostCountry" xml:space="preserve"><value>البلد المضيف</value></data>
+  <data name="HostSubdivision" xml:space="preserve"><value>الولاية / المقاطعة المضيفة</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>المنطقة الزمنية</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>المنطقة الزمنية المحلية للحادث لتقارير الوقت؛ الفراغ يستخدم منطقة القسم.</value></data>
+  <data name="Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>خارج المقاطعة / الولاية</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>السفر جوًا</value></data>
+  <data name="CallId" xml:space="preserve"><value>معرّف النداء</value></data>
+  <data name="CallIdHelp" xml:space="preserve"><value>اختياري: النداء الذي تُفوتر عليه هذه العملية. انتشار واحد لكل نداء.</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>تعذّر حفظ التغيير.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>غلّف طلب مساعدة متبادلة مفتوحًا من Records بانتشار لتتبع الوقت والمصروفات والتشكيل وفوترتها. يبقى الطلب نفسه في Records.</value></data>
+  <data name="OpenExternalOrders" xml:space="preserve"><value>الطلبات الخارجية المفتوحة</value></data>
+  <data name="RecordsRequired" xml:space="preserve"><value>نظام Records غير مفعّل لهذا القسم، لذا لا توجد طلبات خارجية للاختيار منها.</value></data>
+  <data name="NoOpenExternalOrders" xml:space="preserve"><value>لا توجد طلبات خارجية مفتوحة بدون انتشار.</value></data>
+  <data name="ExternalOrder" xml:space="preserve"><value>طلب خارجي</value></data>
+  <data name="NameFromOrder" xml:space="preserve"><value>الافتراضي هو اسم الحادث</value></data>
+  <data name="PrefillRoster" xml:space="preserve"><value>تعبئة التشكيل مسبقًا من التخصيصات المقبولة</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>إنشاء نداء أيضًا</value></data>
+  <data name="CallType" xml:space="preserve"><value>نوع النداء</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>أولوية النداء</value></data>
+  <data name="CreateDeployment" xml:space="preserve"><value>إنشاء الانتشار</value></data>
+  <data name="OrdersAlreadyLinked" xml:space="preserve"><value>{0} طلب(ات) مفتوحة لديها انتشار بالفعل.</value></data>
+  <data name="FillCount" xml:space="preserve"><value>{0} تخصيص(ات)</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>تصدير الوقت CSV</value></data>
+  <data name="Call" xml:space="preserve"><value>النداء</value></data>
+  <data name="Summary" xml:space="preserve"><value>الملخص</value></data>
+  <data name="Units" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="Personnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="TimeReports" xml:space="preserve"><value>تقارير الوقت</value></data>
+  <data name="PersonnelHours" xml:space="preserve"><value>ساعات الأفراد</value></data>
+  <data name="Expenses" xml:space="preserve"><value>المصروفات</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>تغيير الحالة</value></data>
+  <data name="StatusConfirm" xml:space="preserve"><value>هل تريد تغيير حالة الانتشار؟</value></data>
+  <data name="Roster" xml:space="preserve"><value>التشكيل</value></data>
+  <data name="Files" xml:space="preserve"><value>الملفات</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="CallSign" xml:space="preserve"><value>رمز النداء</value></data>
+  <data name="Crew" xml:space="preserve"><value>الطاقم</value></data>
+  <data name="RemoveConfirm" xml:space="preserve"><value>هل تريد إزالة هذا الصف؟</value></data>
+  <data name="SelectUnit" xml:space="preserve"><value>اختر وحدة</value></data>
+  <data name="AddUnit" xml:space="preserve"><value>إضافة وحدة</value></data>
+  <data name="Equipment" xml:space="preserve"><value>المعدات</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>لا توجد وحدات في التشكيل.</value></data>
+  <data name="NoEquipment" xml:space="preserve"><value>لا توجد معدات في التشكيل.</value></data>
+  <data name="Item" xml:space="preserve"><value>العنصر</value></data>
+  <data name="Issued" xml:space="preserve"><value>تم التسليم</value></data>
+  <data name="Return" xml:space="preserve"><value>إرجاع</value></data>
+  <data name="EquipmentName" xml:space="preserve"><value>اسم المعدة</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>بدون وحدة</value></data>
+  <data name="AddEquipment" xml:space="preserve"><value>إضافة معدة</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>لا يوجد أفراد في التشكيل.</value></data>
+  <data name="Seat" xml:space="preserve"><value>المقعد</value></data>
+  <data name="Certification" xml:space="preserve"><value>الشهادة</value></data>
+  <data name="Member" xml:space="preserve"><value>العضو</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>اختر عضوًا</value></data>
+  <data name="SeatHelp" xml:space="preserve"><value>المقاعد المميزة بـ * تتطلب دور الأفراد الخاص بالمقعد؛ يتم التحقق من متطلبات شهادات الدور ويتم تمييز الشهادات التي توشك على الانتهاء.</value></data>
+  <data name="ForceSeat" xml:space="preserve"><value>التعيين حتى لو لم يتحقق أحد المتطلبات</value></data>
+  <data name="AddPersonnel" xml:space="preserve"><value>إضافة عضو</value></data>
+  <data name="SeatBlocked" xml:space="preserve"><value>لا يستوفي العضو متطلبات المقعد. حدد «التعيين حتى لو لم يتحقق أحد المتطلبات» للتجاوز.</value></data>
+  <data name="NewTimeReport" xml:space="preserve"><value>تقرير وقت جديد</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>تقرير واحد لكل يوم؛ تُعبأ الإدخالات مسبقًا من التشكيل.</value></data>
+  <data name="NoTimeReports" xml:space="preserve"><value>لا توجد تقارير وقت بعد.</value></data>
+  <data name="ReportDate" xml:space="preserve"><value>تاريخ التقرير</value></data>
+  <data name="Submitted" xml:space="preserve"><value>تم الإرسال</value></data>
+  <data name="Approved" xml:space="preserve"><value>تمت الموافقة</value></data>
+  <data name="Invoice" xml:space="preserve"><value>الفاتورة</value></data>
+  <data name="NoExpenses" xml:space="preserve"><value>لا توجد مصروفات بعد.</value></data>
+  <data name="ExpenseDate" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="City" xml:space="preserve"><value>المدينة</value></data>
+  <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
+  <data name="Receipt" xml:space="preserve"><value>الإيصال</value></data>
+  <data name="TimeReport" xml:space="preserve"><value>تقرير الوقت</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>موافق عليه مسبقًا</value></data>
+  <data name="NotBillable" xml:space="preserve"><value>غير قابل للفوترة</value></data>
+  <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="AddExpense" xml:space="preserve"><value>إضافة مصروف</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>لا توجد ملفات بعد.</value></data>
+  <data name="FileName" xml:space="preserve"><value>اسم الملف</value></data>
+  <data name="Size" xml:space="preserve"><value>الحجم</value></data>
+  <data name="Added" xml:space="preserve"><value>أُضيف</value></data>
+  <data name="Upload" xml:space="preserve"><value>رفع</value></data>
+  <data name="PreviewManifest" xml:space="preserve"><value>معاينة البيان</value></data>
+  <data name="GenerateManifest" xml:space="preserve"><value>حفظ PDF البيان</value></data>
+  <data name="Billable" xml:space="preserve"><value>قابل للفوترة</value></data>
+  <data name="MealCode" xml:space="preserve"><value>رمز الوجبة</value></data>
+  <data name="TimeReportTitle" xml:space="preserve"><value>تقرير الوقت اليومي رقم {0}</value></data>
+  <data name="BackToDeployment" xml:space="preserve"><value>العودة إلى الانتشار</value></data>
+  <data name="NoClear8" xml:space="preserve"><value>بدون راحة 8 ساعات (يستمر الوقت الإضافي إلى الوردية التالية)</value></data>
+  <data name="UnsafeStandDown" xml:space="preserve"><value>توقف بسبب ظروف غير آمنة</value></data>
+  <data name="TimeEntries" xml:space="preserve"><value>إدخالات الوقت</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>الأوقات بالتوقيت المحلي للحادث</value></data>
+  <data name="Subject" xml:space="preserve"><value>الموضوع</value></data>
+  <data name="EntryType" xml:space="preserve"><value>نوع الإدخال</value></data>
+  <data name="Start" xml:space="preserve"><value>البداية</value></data>
+  <data name="End" xml:space="preserve"><value>النهاية</value></data>
+  <data name="PaidBreak" xml:space="preserve"><value>استراحة مدفوعة (دقيقة)</value></data>
+  <data name="UnpaidBreak" xml:space="preserve"><value>استراحة غير مدفوعة (دقيقة)</value></data>
+  <data name="Km" xml:space="preserve"><value>كم</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>إضافة إدخال</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="SaveAndSubmit" xml:space="preserve"><value>حفظ وإرسال</value></data>
+  <data name="SubmitConfirm" xml:space="preserve"><value>هل تريد إرسال هذا التقرير للموافقة؟ تُقفل الإدخالات بعد الموافقة.</value></data>
+  <data name="OpenInvoice" xml:space="preserve"><value>فتح الفاتورة</value></data>
+  <data name="Signatures" xml:space="preserve"><value>التوقيعات</value></data>
+  <data name="ContractorSignature" xml:space="preserve"><value>المقاول</value></data>
+  <data name="CustomerSignature" xml:space="preserve"><value>العميل</value></data>
+  <data name="SignAsContractor" xml:space="preserve"><value>التوقيع بصفة المقاول</value></data>
+  <data name="CustomerSignerName" xml:space="preserve"><value>اسم موقّع العميل</value></data>
+  <data name="Sign" xml:space="preserve"><value>توقيع</value></data>
+  <data name="Review" xml:space="preserve"><value>المراجعة</value></data>
+  <data name="Approve" xml:space="preserve"><value>موافقة</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>هل تريد الموافقة على تقرير الوقت هذا؟</value></data>
+  <data name="VoidReason" xml:space="preserve"><value>السبب</value></data>
+  <data name="Void" xml:space="preserve"><value>إبطال</value></data>
+  <data name="VoidConfirm" xml:space="preserve"><value>هل تريد إبطال تقرير الوقت هذا؟ يُحفظ للتوثيق لكنه يخرج من الفوترة.</value></data>
+  <data name="FilePdf" xml:space="preserve"><value>حفظ PDF في الانتشار</value></data>
+  <data name="StatusPlanned" xml:space="preserve"><value>مخطط</value></data>
+  <data name="StatusStandby" xml:space="preserve"><value>استعداد</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="StatusDemobilizing" xml:space="preserve"><value>إعادة الانتشار</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>ملغى</value></data>
+  <data name="ReportStatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="ReportStatusSubmitted" xml:space="preserve"><value>مرسل</value></data>
+  <data name="ReportStatusApproved" xml:space="preserve"><value>موافق عليه</value></data>
+  <data name="ReportStatusBilled" xml:space="preserve"><value>مفوتر</value></data>
+  <data name="ReportStatusVoid" xml:space="preserve"><value>مبطل</value></data>
+  <data name="FinanceOperationalOnly" xml:space="preserve"><value>تشغيلي فقط</value></data>
+  <data name="FinanceCostRecovery" xml:space="preserve"><value>استرداد التكاليف</value></data>
+  <data name="FinanceBillable" xml:space="preserve"><value>قابل للفوترة</value></data>
+  <data name="ExpensePerDiemMeal" xml:space="preserve"><value>بدل يومي / وجبة</value></data>
+  <data name="ExpenseAccommodation" xml:space="preserve"><value>إقامة</value></data>
+  <data name="ExpensePrivateAccommodation" xml:space="preserve"><value>إقامة خاصة</value></data>
+  <data name="ExpenseFerry" xml:space="preserve"><value>عبّارة</value></data>
+  <data name="ExpenseFuel" xml:space="preserve"><value>وقود</value></data>
+  <data name="ExpenseSupplyRestock" xml:space="preserve"><value>إعادة تزويد المستلزمات</value></data>
+  <data name="ExpenseOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="AttachmentReceipt" xml:space="preserve"><value>إيصال</value></data>
+  <data name="AttachmentSignedServiceRequest" xml:space="preserve"><value>طلب خدمة موقّع</value></data>
+  <data name="AttachmentTimeReportPdf" xml:space="preserve"><value>PDF تقرير الوقت</value></data>
+  <data name="AttachmentManifest" xml:space="preserve"><value>بيان</value></data>
+  <data name="AttachmentCertification" xml:space="preserve"><value>شهادة</value></data>
+  <data name="AttachmentOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="AttachmentExternalOrder" xml:space="preserve"><value>طلب خارجي</value></data>
+  <data name="AttachmentSignedF42" xml:space="preserve"><value>F-42 موقّع</value></data>
+  <data name="AttachmentPaperF42" xml:space="preserve"><value>F-42 ورقي</value></data>
+  <data name="AttachmentIcs213Approval" xml:space="preserve"><value>موافقة ICS 213</value></data>
+  <data name="AttachmentCrewRotationApproval" xml:space="preserve"><value>موافقة تناوب الطاقم</value></data>
+  <data name="AttachmentLossDamage" xml:space="preserve"><value>فقد / تلف</value></data>
+  <data name="AttachmentMarsExpenseEvidence" xml:space="preserve"><value>إثبات مصروف MARS</value></data>
+  <data name="AttachmentMarsInvoice" xml:space="preserve"><value>فاتورة MARS</value></data>
+  <data name="EntryDeployment" xml:space="preserve"><value>انتشار</value></data>
+  <data name="EntryStandby" xml:space="preserve"><value>استعداد</value></data>
+  <data name="EntryTravel" xml:space="preserve"><value>سفر</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>معيّن بالفعل في انتشار مفتوح آخر خلال هذه النافذة</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>لا يحمل العضو دور الأفراد الخاص بالمقعد</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>شهادة يتطلبها المقعد مفقودة أو منتهية</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>تنتهي شهادة مطلوبة خلال نافذة الانتشار</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>موجود بالفعل في هذا التشكيل</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>فشل الصرف من المخزون؛ تم الاحتفاظ بصف المعدة بدون صرف</value></data>
+  <data name="Issueentries_overlap" xml:space="preserve"><value>يتداخل نطاقان زمنيان لنفس الموضوع</value></data>
+  <data name="Issueend_before_start" xml:space="preserve"><value>ينتهي إدخال قبل أن يبدأ</value></data>
+  <data name="Issuesubject_not_on_roster" xml:space="preserve"><value>يشير إدخال إلى موضوع ليس في التشكيل</value></data>
+  <data name="Issueno_entries" xml:space="preserve"><value>لا يحتوي التقرير على إدخالات وقت</value></data>
+  <data name="Issuebreak_rule" xml:space="preserve"><value>نطاق يزيد عن 5 ساعات بدون استراحة مسجلة</value></data>
+  <data name="Issuelong_travel" xml:space="preserve"><value>وقت السفر الذي يزيد عن 12 ساعة يحتاج موافقة</value></data>
+  <data name="Issueoutside_report_date" xml:space="preserve"><value>يقع إدخال خارج تاريخ التقرير</value></data>
+  <data name="deployments_name_required" xml:space="preserve"><value>الاسم مطلوب.</value></data>
+  <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>اختر وضعًا ماليًا.</value></data>
+  <data name="deployments_window_invalid" xml:space="preserve"><value>يجب ألا تكون النهاية قبل البداية.</value></data>
+  <data name="deployments_discount_invalid" xml:space="preserve"><value>يجب أن يكون الخصم بين 0 و100 بالمئة.</value></data>
+  <data name="deployments_contact_not_found" xml:space="preserve"><value>لم يتم العثور على جهة الاتصال.</value></data>
+  <data name="deployments_call_not_found" xml:space="preserve"><value>لم يتم العثور على النداء.</value></data>
+  <data name="deployments_call_already_linked" xml:space="preserve"><value>هذا النداء لديه انتشار بالفعل.</value></data>
+  <data name="deployments_not_found" xml:space="preserve"><value>لم يتم العثور على الانتشار.</value></data>
+  <data name="deployments_status_transition_invalid" xml:space="preserve"><value>تغيير الحالة هذا غير مسموح من الحالة الحالية.</value></data>
+  <data name="deployments_delete_open" xml:space="preserve"><value>لا يمكن حذف انتشار نشط؛ أكمله أو ألغه أولًا.</value></data>
+  <data name="deployments_external_order_required" xml:space="preserve"><value>اختر طلبًا خارجيًا.</value></data>
+  <data name="deployments_external_order_already_linked" xml:space="preserve"><value>هذا الطلب الخارجي لديه انتشار بالفعل.</value></data>
+  <data name="deployments_external_order_not_found" xml:space="preserve"><value>لم يتم العثور على الطلب الخارجي.</value></data>
+  <data name="deployments_unit_not_found" xml:space="preserve"><value>لم يتم العثور على الوحدة.</value></data>
+  <data name="deployments_unit_already_rostered" xml:space="preserve"><value>هذه الوحدة موجودة بالفعل في التشكيل.</value></data>
+  <data name="deployments_closed" xml:space="preserve"><value>الانتشار مكتمل أو ملغى وتشكيله مقفل.</value></data>
+  <data name="deployments_user_required" xml:space="preserve"><value>اختر عضوًا.</value></data>
+  <data name="deployments_user_not_found" xml:space="preserve"><value>لم يتم العثور على العضو.</value></data>
+  <data name="deployments_user_not_in_department" xml:space="preserve"><value>العضو ليس في هذا القسم.</value></data>
+  <data name="deployments_user_already_rostered" xml:space="preserve"><value>هذا العضو موجود بالفعل في التشكيل.</value></data>
+  <data name="deployments_seat_not_found" xml:space="preserve"><value>لم يتم العثور على المقعد في تلك الوحدة.</value></data>
+  <data name="deployments_equipment_required" xml:space="preserve"><value>أدخل اسم معدة أو اختر عنصرًا من المخزون.</value></data>
+  <data name="deployments_attachment_empty" xml:space="preserve"><value>اختر ملفًا للرفع.</value></data>
+  <data name="deployments_attachment_too_large" xml:space="preserve"><value>حجم الملف أكبر من 30 ميغابايت.</value></data>
+  <data name="deployments_pdf_failed" xml:space="preserve"><value>تعذّر إنشاء ملف PDF.</value></data>
+  <data name="deployments_protected_write_refused" xml:space="preserve"><value>تعذّرت كتابة البيانات المحمية؛ تحقق من حالة حماية بيانات القسم.</value></data>
+  <data name="deployments_file_type" xml:space="preserve"><value>نوع الملف هذا غير مسموح.</value></data>
+  <data name="timereports_date_exists" xml:space="preserve"><value>يوجد تقرير وقت لهذا التاريخ بالفعل.</value></data>
+  <data name="timereports_not_found" xml:space="preserve"><value>لم يتم العثور على تقرير الوقت.</value></data>
+  <data name="timereports_locked" xml:space="preserve"><value>تقرير الوقت موافق عليه أو مفوتر أو مبطل ولا يمكن تعديله بعد الآن.</value></data>
+  <data name="timereports_status_transition_invalid" xml:space="preserve"><value>تغيير الحالة هذا غير مسموح لتقرير الوقت هذا.</value></data>
+  <data name="timereports_time_invalid" xml:space="preserve"><value>أدخل وقتي البداية والنهاية بصيغة HH:mm.</value></data>
+  <data name="timereports_validation" xml:space="preserve"><value>صحّح الأخطاء أدناه قبل الإرسال.</value></data>
+  <data name="expenses_amount_invalid" xml:space="preserve"><value>يجب ألا يكون المبلغ سالبًا.</value></data>
+  <data name="expenses_type_invalid" xml:space="preserve"><value>اختر نوع المصروف.</value></data>
+  <data name="expenses_not_found" xml:space="preserve"><value>لم يتم العثور على المصروف.</value></data>
+  <data name="expenses_receipt_invalid" xml:space="preserve"><value>تعذّرت قراءة الإيصال.</value></data>
+  <data name="ManageDeployments" xml:space="preserve"><value>إدارة عمليات الانتشار</value></data>
+  <data name="ManageDeploymentsNote" xml:space="preserve"><value>إنشاء وتعديل عمليات الانتشار والتشكيلات والمعدات والمصروفات والملفات وتغييرات الحالة، ورؤية كل عمليات الانتشار. يرى الأعضاء المعيّنون دائمًا انتشاراتهم ويسجلون الوقت بدون هذا الإذن.</value></data>
+  <data name="ApproveTimeReports" xml:space="preserve"><value>الموافقة على تقارير الوقت</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>الموافقة على تقارير الوقت اليومية المرسلة وإبطالها. التقارير الموافق عليها تغذي الفوترة.</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>تم إنشاء انتشار</value></data>
+  <data name="DeploymentStatusChanged" xml:space="preserve"><value>تغيرت حالة الانتشار</value></data>
+  <data name="DeploymentRosterChanged" xml:space="preserve"><value>تغير تشكيل الانتشار</value></data>
+  <data name="DeploymentExpenseAdded" xml:space="preserve"><value>أُضيف مصروف انتشار</value></data>
+  <data name="TimeReportSubmitted" xml:space="preserve"><value>أُرسل تقرير وقت</value></data>
+  <data name="TimeReportApproved" xml:space="preserve"><value>تمت الموافقة على تقرير وقت</value></data>
+</root>

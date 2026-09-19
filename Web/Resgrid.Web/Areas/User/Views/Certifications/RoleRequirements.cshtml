@@ -48,9 +48,9 @@
                                                     }
                                                 </select>
                                             </td>
-                                            <td class="text-center"><input type="checkbox" name="requirements[@i].IsMandatory" value="true" checked="@r.IsMandatory" /></td>
+                                            <td class="text-center"><input type="checkbox" name="requirements[@i].IsMandatory" value="true" checked="@r.IsMandatory" /><input type="hidden" name="requirements[@i].IsMandatory" value="false" /></td>
                                             <td class="text-center"><input type="number" name="requirements[@i].AnyOfGroup" value="@r.AnyOfGroup" class="form-control input-sm" min="1" max="99" style="width: 70px; display: inline-block;" /></td>
-                                            <td class="text-center"><input type="checkbox" name="requirements[@i].AllowTrainee" value="true" checked="@r.AllowTrainee" /></td>
+                                            <td class="text-center"><input type="checkbox" name="requirements[@i].AllowTrainee" value="true" checked="@r.AllowTrainee" /><input type="hidden" name="requirements[@i].AllowTrainee" value="false" /></td>
                                             <td class="text-center"><input type="number" name="requirements[@i].GraceDaysOverride" value="@r.GraceDaysOverride" class="form-control input-sm" min="0" max="3650" style="width: 80px; display: inline-block;" /></td>
                                             <td><button type="button" class="btn btn-xs btn-danger remove-row" @(Model.CanSetup ? null : "disabled")><i class="fa fa-times"></i></button></td>
                                         </tr>
@@ -74,9 +74,9 @@
                                         }
                                     </select>
                                 </td>
-                                <td class="text-center"><input type="checkbox" name="requirements[__i__].IsMandatory" value="true" checked /></td>
+                                <td class="text-center"><input type="checkbox" name="requirements[__i__].IsMandatory" value="true" checked /><input type="hidden" name="requirements[__i__].IsMandatory" value="false" /></td>
                                 <td class="text-center"><input type="number" name="requirements[__i__].AnyOfGroup" class="form-control input-sm" min="1" max="99" style="width: 70px; display: inline-block;" /></td>
-                                <td class="text-center"><input type="checkbox" name="requirements[__i__].AllowTrainee" value="true" /></td>
+                                <td class="text-center"><input type="checkbox" name="requirements[__i__].AllowTrainee" value="true" /><input type="hidden" name="requirements[__i__].AllowTrainee" value="false" /></td>
                                 <td class="text-center"><input type="number" name="requirements[__i__].GraceDaysOverride" class="form-control input-sm" min="0" max="3650" style="width: 80px; display: inline-block;" /></td>
                                 <td><button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button></td>
                             </tr>

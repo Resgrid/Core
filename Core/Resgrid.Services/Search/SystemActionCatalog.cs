@@ -34,6 +34,7 @@ namespace Resgrid.Services.Search
 		private const string WorkOrder = "WorkOrder";
 		private const string Invoicing = "Invoicing";
 		private const string Certifications = "Certifications";
+		private const string Deployments = "Deployments";
 		private const string Group = "Group";
 		private const string Protocols = "Protocols";
 		private const string Forms = "Forms";
@@ -152,6 +153,11 @@ namespace Resgrid.Services.Search
 			Nav("certification-types", "Certification Types", "The department's certification catalog and template gallery", "/User/Certifications/Types", new[] { "certification", "catalog", "types", "nremt", "cdl", "nwcg", "template" }, Certifications, "Setup"),
 			Nav("certification-settings", "Certification Settings", "Enforcement mode, grace period and expiry notifications", "/User/Certifications/Settings", new[] { "certification", "enforcement", "grace", "expiry", "notifications" }, Certifications, "Setup"),
 			Nav("my-certifications", "My Certifications", "Your own certification records", "/User/Profile/Certifications", new[] { "my certifications", "my certs", "my licenses", "credentials" }),
+
+			// Workforce & Business Operations plan, Phase C (deployment core; free behind Operations.Deployments). DTRs, expenses and attachments are never projected (decision 41).
+			Nav("deployments", "Deployment Finance", "Deployments, rosters, daily time reports and expenses", "/User/Deployments", new[] { "deployment", "deployments", "strike team", "mutual aid", "time report", "dtr", "shift ticket", "roster", "expenses" }, flag: FeatureFlagKeys.Deployments),
+			Act("new-deployment", "New Deployment", "Create a deployment finance wrapper", "/User/Deployments/New", SystemActionCategories.Create, new[] { "deployment", "deploy", "strike team" }, Deployments, Update, flag: FeatureFlagKeys.Deployments),
+			Act("deployment-from-external-order", "Deployment From External Order", "Create a deployment from an open RMS mutual-aid order", "/User/Deployments/FromExternalOrder", SystemActionCategories.Create, new[] { "external order", "mutual aid", "resource order", "deployment" }, Deployments, Update, flag: FeatureFlagKeys.Deployments),
 
 			// ---- Messaging / chat
 			Nav("inbox", "Inbox", "Your messages inbox", "/User/Messages/Inbox", new[] { "messages", "mail", "read" }, Messages, View, SystemActionModules.Messaging),

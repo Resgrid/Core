@@ -43,7 +43,7 @@ namespace Resgrid.Model.Search
 	public static class GlobalSearchGeneration
 	{
 		/// <summary>Bump when GlobalSearchDocumentBuilder or the projection allowlist changes.</summary>
-		public const int SchemaVersion = 1;
+		public const int SchemaVersion = 2;
 
 		public static string Compute(int protectedCatalogVersion, long policyEpoch)
 		{

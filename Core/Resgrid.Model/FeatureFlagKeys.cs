@@ -110,5 +110,14 @@ namespace Resgrid.Model
 
 		/// <summary>Phase B2 online payment collection through a department's own Stripe account. Child of Invoicing.CustomerInvoicing and Payments.StripeConnect. Seeded off by M0212.</summary>
 		public const string OnlinePayments = "Invoicing.OnlinePayments";
+
+		/// <summary>Phase C deployment core (deployments, roster, daily time reports, expenses, attachments, external-order link). Free: no Business.Operations prerequisite. Seeded off by M0219.</summary>
+		public const string Deployments = "Operations.Deployments";
+
+		/// <summary>Phase C contractor billing (rate schedules, contracts, bids, charge runs, invoice generation). Child of Business.Operations. Seeded off by M0219.</summary>
+		public const string ContractorBilling = "Invoicing.ContractorBilling";
+
+		/// <summary>Phase C Cal OES MARS cost recovery. Child of Business.Operations. Seeded off by M0219.</summary>
+		public const string CalOesMars = "CostRecovery.CalOesMars";
 	}
 }

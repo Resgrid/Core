@@ -54,6 +54,10 @@ namespace Resgrid.Model.Invoicing
 
 		/// <summary>Reserved (Phase B2): always null in v1, Resgrid takes no fee.</summary>
 		public decimal? PlatformFeeAmount { get; set; }
+
+		// Phase C provenance (M0219): the contract and deployment a contractor invoice was generated from.
+		public string ServiceContractId { get; set; }
+		public string DeploymentId { get; set; }
 		public bool IsDeleted { get; set; }
 		public DateTime AddedOn { get; set; }
 		public string AddedByUserId { get; set; }

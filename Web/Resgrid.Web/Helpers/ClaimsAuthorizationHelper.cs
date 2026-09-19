@@ -320,6 +320,9 @@ namespace Resgrid.Web.Helpers
 		public static bool CanManageCertifications() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewCertifications() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View);
 		public static bool CanManageCertificationSetup() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup);
+		public static bool CanManageDeployments() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Deployments, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewDeployments() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Deployments, ResgridClaimTypes.Actions.View);
+		public static bool CanApproveTimeReports() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.TimeReports, ResgridClaimTypes.Actions.Approve);
 		public static bool CanManageChecklists() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewChecklistResults() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View);
 

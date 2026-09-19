@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Deployments" xml:space="preserve"><value>Розгортання</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Фінанси розгортань</value></data>
+  <data name="MyDeployments" xml:space="preserve"><value>Мої розгортання</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Фінансові обгортки розгортань: склади, щоденні звіти про час, витрати та файли для розгортань, що виставляються до оплати, з відшкодуванням витрат і суто операційних.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Розгортання об'єднує підрозділи, персонал та обладнання, направлені на подію, з їхніми щоденними звітами про час і витратами. Пов'яжіть його з викликом або з замовленням взаємодопомоги з Records.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>Розгортань поки немає.</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>Показати всі</value></data>
+  <data name="ShowOpen" xml:space="preserve"><value>Показати лише відкриті</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Нове розгортання</value></data>
+  <data name="EditDeployment" xml:space="preserve"><value>Редагувати розгортання</value></data>
+  <data name="EditIntro" xml:space="preserve"><value>Ідентифікатори, які призначає агенція-замовник, і дані юрисдикції, потрібні механізму виставлення рахунків.</value></data>
+  <data name="CreateFromExternalOrder" xml:space="preserve"><value>Створити із зовнішнього замовлення</value></data>
+  <data name="Open" xml:space="preserve"><value>Відкрити</value></data>
+  <data name="Name" xml:space="preserve"><value>Назва</value></data>
+  <data name="Status" xml:space="preserve"><value>Статус</value></data>
+  <data name="FinanceMode" xml:space="preserve"><value>Фінансовий режим</value></data>
+  <data name="FinanceModeHelp" xml:space="preserve"><value>«Лише операційне» зберігає час і витрати для обліку; «відшкодування витрат» живить заявку на компенсацію; «до оплати» живить рахунок клієнту.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>№ події</value></data>
+  <data name="ResourceOrderNumber" xml:space="preserve"><value>№ замовлення ресурсів</value></data>
+  <data name="RequestNumber" xml:space="preserve"><value>№ запиту</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>№ запиту на послугу</value></data>
+  <data name="CostCode" xml:space="preserve"><value>Код витрат</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>Місце найму</value></data>
+  <data name="Contact" xml:space="preserve"><value>Контакт</value></data>
+  <data name="Window" xml:space="preserve"><value>Часове вікно</value></data>
+  <data name="Days" xml:space="preserve"><value>днів</value></data>
+  <data name="MaxDays" xml:space="preserve"><value>Макс. днів</value></data>
+  <data name="Notes" xml:space="preserve"><value>Нотатки</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Пов'язано із зовнішнім замовленням у Records</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Розгортання</value></data>
+  <data name="AgencyIdentifiers" xml:space="preserve"><value>Ідентифікатори агенції</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Юрисдикція</value></data>
+  <data name="HomeCountry" xml:space="preserve"><value>Домашня країна</value></data>
+  <data name="HomeSubdivision" xml:space="preserve"><value>Домашній штат / область</value></data>
+  <data name="HostCountry" xml:space="preserve"><value>Країна приймання</value></data>
+  <data name="HostSubdivision" xml:space="preserve"><value>Штат / область приймання</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Часовий пояс</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Місцевий часовий пояс події для звітів про час; порожнє значення використовує пояс підрозділу.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Валюта</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>За межами області / штату</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>Подорож літаком</value></data>
+  <data name="CallId" xml:space="preserve"><value>ID виклику</value></data>
+  <data name="CallIdHelp" xml:space="preserve"><value>Необов'язково: виклик, на який виставляється це розгортання. Одне розгортання на виклик.</value></data>
+  <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="Saved" xml:space="preserve"><value>Збережено.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Не вдалося зберегти зміну.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Обгорніть відкрите замовлення взаємодопомоги з Records у розгортання, щоб відстежувати та виставляти час, витрати і склад. Саме замовлення залишається в Records.</value></data>
+  <data name="OpenExternalOrders" xml:space="preserve"><value>Відкриті зовнішні замовлення</value></data>
+  <data name="RecordsRequired" xml:space="preserve"><value>Систему Records не ввімкнено для цього підрозділу, тому немає зовнішніх замовлень для вибору.</value></data>
+  <data name="NoOpenExternalOrders" xml:space="preserve"><value>Немає відкритих зовнішніх замовлень без розгортання.</value></data>
+  <data name="ExternalOrder" xml:space="preserve"><value>Зовнішнє замовлення</value></data>
+  <data name="NameFromOrder" xml:space="preserve"><value>Типово — назва події</value></data>
+  <data name="PrefillRoster" xml:space="preserve"><value>Заповнити склад із прийнятих призначень</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>Також створити виклик</value></data>
+  <data name="CallType" xml:space="preserve"><value>Тип виклику</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>Пріоритет виклику</value></data>
+  <data name="CreateDeployment" xml:space="preserve"><value>Створити розгортання</value></data>
+  <data name="OrdersAlreadyLinked" xml:space="preserve"><value>{0} відкрите(і) замовлення вже мають розгортання.</value></data>
+  <data name="FillCount" xml:space="preserve"><value>{0} призначення(нь)</value></data>
+  <data name="Edit" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Експортувати час у CSV</value></data>
+  <data name="Call" xml:space="preserve"><value>Виклик</value></data>
+  <data name="Summary" xml:space="preserve"><value>Підсумок</value></data>
+  <data name="Units" xml:space="preserve"><value>Підрозділи</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Персонал</value></data>
+  <data name="TimeReports" xml:space="preserve"><value>Звіти про час</value></data>
+  <data name="PersonnelHours" xml:space="preserve"><value>Години персоналу</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Витрати</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Змінити статус</value></data>
+  <data name="StatusConfirm" xml:space="preserve"><value>Змінити статус розгортання?</value></data>
+  <data name="Roster" xml:space="preserve"><value>Склад</value></data>
+  <data name="Files" xml:space="preserve"><value>Файли</value></data>
+  <data name="Unit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="CallSign" xml:space="preserve"><value>Позивний</value></data>
+  <data name="Crew" xml:space="preserve"><value>Екіпаж</value></data>
+  <data name="RemoveConfirm" xml:space="preserve"><value>Вилучити цей рядок?</value></data>
+  <data name="SelectUnit" xml:space="preserve"><value>Виберіть підрозділ</value></data>
+  <data name="AddUnit" xml:space="preserve"><value>Додати підрозділ</value></data>
+  <data name="Equipment" xml:space="preserve"><value>Обладнання</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>Підрозділів у складі немає.</value></data>
+  <data name="NoEquipment" xml:space="preserve"><value>Обладнання у складі немає.</value></data>
+  <data name="Item" xml:space="preserve"><value>Позиція</value></data>
+  <data name="Issued" xml:space="preserve"><value>Видано</value></data>
+  <data name="Return" xml:space="preserve"><value>Повернути</value></data>
+  <data name="EquipmentName" xml:space="preserve"><value>Назва обладнання</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>Без підрозділу</value></data>
+  <data name="AddEquipment" xml:space="preserve"><value>Додати обладнання</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>Персоналу у складі немає.</value></data>
+  <data name="Seat" xml:space="preserve"><value>Місце</value></data>
+  <data name="Certification" xml:space="preserve"><value>Сертифікація</value></data>
+  <data name="Member" xml:space="preserve"><value>Учасник</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Виберіть учасника</value></data>
+  <data name="SeatHelp" xml:space="preserve"><value>Місця, позначені *, вимагають ролі персоналу цього місця; перевіряються вимоги ролі до сертифікацій, а сертифікації, що закінчуються, позначаються.</value></data>
+  <data name="ForceSeat" xml:space="preserve"><value>Призначити навіть якщо вимога не виконана</value></data>
+  <data name="AddPersonnel" xml:space="preserve"><value>Додати учасника</value></data>
+  <data name="SeatBlocked" xml:space="preserve"><value>Учасник не відповідає вимогам місця. Позначте «Призначити навіть якщо вимога не виконана», щоб обійти.</value></data>
+  <data name="NewTimeReport" xml:space="preserve"><value>Новий звіт про час</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Один звіт на день; записи заповнюються зі складу.</value></data>
+  <data name="NoTimeReports" xml:space="preserve"><value>Звітів про час поки немає.</value></data>
+  <data name="ReportDate" xml:space="preserve"><value>Дата звіту</value></data>
+  <data name="Submitted" xml:space="preserve"><value>Подано</value></data>
+  <data name="Approved" xml:space="preserve"><value>Затверджено</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Рахунок</value></data>
+  <data name="NoExpenses" xml:space="preserve"><value>Витрат поки немає.</value></data>
+  <data name="ExpenseDate" xml:space="preserve"><value>Дата</value></data>
+  <data name="Type" xml:space="preserve"><value>Тип</value></data>
+  <data name="Description" xml:space="preserve"><value>Опис</value></data>
+  <data name="City" xml:space="preserve"><value>Місто</value></data>
+  <data name="Amount" xml:space="preserve"><value>Сума</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Чек</value></data>
+  <data name="TimeReport" xml:space="preserve"><value>Звіт про час</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Попередньо затверджено</value></data>
+  <data name="NotBillable" xml:space="preserve"><value>Не до оплати</value></data>
+  <data name="Total" xml:space="preserve"><value>Разом</value></data>
+  <data name="AddExpense" xml:space="preserve"><value>Додати витрату</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>Файлів поки немає.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Ім'я файлу</value></data>
+  <data name="Size" xml:space="preserve"><value>Розмір</value></data>
+  <data name="Added" xml:space="preserve"><value>Додано</value></data>
+  <data name="Upload" xml:space="preserve"><value>Завантажити</value></data>
+  <data name="PreviewManifest" xml:space="preserve"><value>Попередній перегляд маніфесту</value></data>
+  <data name="GenerateManifest" xml:space="preserve"><value>Зберегти PDF маніфесту</value></data>
+  <data name="Billable" xml:space="preserve"><value>До оплати</value></data>
+  <data name="MealCode" xml:space="preserve"><value>Код харчування</value></data>
+  <data name="TimeReportTitle" xml:space="preserve"><value>Щоденний звіт про час № {0}</value></data>
+  <data name="BackToDeployment" xml:space="preserve"><value>Назад до розгортання</value></data>
+  <data name="NoClear8" xml:space="preserve"><value>Без 8 годин відпочинку (понаднормові переходять у наступну зміну)</value></data>
+  <data name="UnsafeStandDown" xml:space="preserve"><value>Зупинка через небезпечні умови</value></data>
+  <data name="TimeEntries" xml:space="preserve"><value>Записи часу</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>час у місцевому часі події</value></data>
+  <data name="Subject" xml:space="preserve"><value>Суб'єкт</value></data>
+  <data name="EntryType" xml:space="preserve"><value>Тип запису</value></data>
+  <data name="Start" xml:space="preserve"><value>Початок</value></data>
+  <data name="End" xml:space="preserve"><value>Кінець</value></data>
+  <data name="PaidBreak" xml:space="preserve"><value>Оплачувана перерва (хв)</value></data>
+  <data name="UnpaidBreak" xml:space="preserve"><value>Неоплачувана перерва (хв)</value></data>
+  <data name="Km" xml:space="preserve"><value>Км</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>Додати запис</value></data>
+  <data name="Actions" xml:space="preserve"><value>Дії</value></data>
+  <data name="SaveAndSubmit" xml:space="preserve"><value>Зберегти та подати</value></data>
+  <data name="SubmitConfirm" xml:space="preserve"><value>Подати цей звіт на затвердження? Після затвердження записи блокуються.</value></data>
+  <data name="OpenInvoice" xml:space="preserve"><value>Відкрити рахунок</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Підписи</value></data>
+  <data name="ContractorSignature" xml:space="preserve"><value>Підрядник</value></data>
+  <data name="CustomerSignature" xml:space="preserve"><value>Клієнт</value></data>
+  <data name="SignAsContractor" xml:space="preserve"><value>Підписати як підрядник</value></data>
+  <data name="CustomerSignerName" xml:space="preserve"><value>Ім'я підписанта клієнта</value></data>
+  <data name="Sign" xml:space="preserve"><value>Підписати</value></data>
+  <data name="Review" xml:space="preserve"><value>Перевірка</value></data>
+  <data name="Approve" xml:space="preserve"><value>Затвердити</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>Затвердити цей звіт про час?</value></data>
+  <data name="VoidReason" xml:space="preserve"><value>Причина</value></data>
+  <data name="Void" xml:space="preserve"><value>Анулювати</value></data>
+  <data name="VoidConfirm" xml:space="preserve"><value>Анулювати цей звіт про час? Він зберігається для обліку, але виключається з виставлення рахунків.</value></data>
+  <data name="FilePdf" xml:space="preserve"><value>Зберегти PDF у розгортанні</value></data>
+  <data name="StatusPlanned" xml:space="preserve"><value>Заплановано</value></data>
+  <data name="StatusStandby" xml:space="preserve"><value>Очікування</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Активне</value></data>
+  <data name="StatusDemobilizing" xml:space="preserve"><value>Демобілізація</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Завершено</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Скасовано</value></data>
+  <data name="ReportStatusDraft" xml:space="preserve"><value>Чернетка</value></data>
+  <data name="ReportStatusSubmitted" xml:space="preserve"><value>Подано</value></data>
+  <data name="ReportStatusApproved" xml:space="preserve"><value>Затверджено</value></data>
+  <data name="ReportStatusBilled" xml:space="preserve"><value>Виставлено</value></data>
+  <data name="ReportStatusVoid" xml:space="preserve"><value>Анульовано</value></data>
+  <data name="FinanceOperationalOnly" xml:space="preserve"><value>Лише операційне</value></data>
+  <data name="FinanceCostRecovery" xml:space="preserve"><value>Відшкодування витрат</value></data>
+  <data name="FinanceBillable" xml:space="preserve"><value>До оплати</value></data>
+  <data name="ExpensePerDiemMeal" xml:space="preserve"><value>Добові / харчування</value></data>
+  <data name="ExpenseAccommodation" xml:space="preserve"><value>Проживання</value></data>
+  <data name="ExpensePrivateAccommodation" xml:space="preserve"><value>Приватне проживання</value></data>
+  <data name="ExpenseFerry" xml:space="preserve"><value>Пором</value></data>
+  <data name="ExpenseFuel" xml:space="preserve"><value>Пальне</value></data>
+  <data name="ExpenseSupplyRestock" xml:space="preserve"><value>Поповнення запасів</value></data>
+  <data name="ExpenseOther" xml:space="preserve"><value>Інше</value></data>
+  <data name="AttachmentReceipt" xml:space="preserve"><value>Чек</value></data>
+  <data name="AttachmentSignedServiceRequest" xml:space="preserve"><value>Підписаний запит на послугу</value></data>
+  <data name="AttachmentTimeReportPdf" xml:space="preserve"><value>PDF звіту про час</value></data>
+  <data name="AttachmentManifest" xml:space="preserve"><value>Маніфест</value></data>
+  <data name="AttachmentCertification" xml:space="preserve"><value>Сертифікація</value></data>
+  <data name="AttachmentOther" xml:space="preserve"><value>Інше</value></data>
+  <data name="AttachmentExternalOrder" xml:space="preserve"><value>Зовнішнє замовлення</value></data>
+  <data name="AttachmentSignedF42" xml:space="preserve"><value>Підписаний F-42</value></data>
+  <data name="AttachmentPaperF42" xml:space="preserve"><value>Паперовий F-42</value></data>
+  <data name="AttachmentIcs213Approval" xml:space="preserve"><value>Погодження ICS 213</value></data>
+  <data name="AttachmentCrewRotationApproval" xml:space="preserve"><value>Погодження ротації екіпажу</value></data>
+  <data name="AttachmentLossDamage" xml:space="preserve"><value>Втрата / пошкодження</value></data>
+  <data name="AttachmentMarsExpenseEvidence" xml:space="preserve"><value>Підтвердження витрат MARS</value></data>
+  <data name="AttachmentMarsInvoice" xml:space="preserve"><value>Рахунок MARS</value></data>
+  <data name="EntryDeployment" xml:space="preserve"><value>Розгортання</value></data>
+  <data name="EntryStandby" xml:space="preserve"><value>Очікування</value></data>
+  <data name="EntryTravel" xml:space="preserve"><value>Подорож</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>Уже призначено на інше відкрите розгортання в цьому вікні</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>Учасник не має ролі персоналу цього місця</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>Сертифікація, потрібна для місця, відсутня або прострочена</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>Потрібна сертифікація закінчується протягом вікна розгортання</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>Уже в цьому складі</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>Видача зі складу не вдалася; рядок обладнання збережено без видачі</value></data>
+  <data name="Issueentries_overlap" xml:space="preserve"><value>Два проміжки часу перекриваються для одного суб'єкта</value></data>
+  <data name="Issueend_before_start" xml:space="preserve"><value>Запис закінчується раніше, ніж починається</value></data>
+  <data name="Issuesubject_not_on_roster" xml:space="preserve"><value>Запис посилається на суб'єкта, якого немає у складі</value></data>
+  <data name="Issueno_entries" xml:space="preserve"><value>Звіт не має записів часу</value></data>
+  <data name="Issuebreak_rule" xml:space="preserve"><value>Проміжок понад 5 годин без зареєстрованої перерви</value></data>
+  <data name="Issuelong_travel" xml:space="preserve"><value>Час у дорозі понад 12 годин потребує затвердження</value></data>
+  <data name="Issueoutside_report_date" xml:space="preserve"><value>Запис виходить за межі дати звіту</value></data>
+  <data name="deployments_name_required" xml:space="preserve"><value>Потрібна назва.</value></data>
+  <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Виберіть фінансовий режим.</value></data>
+  <data name="deployments_window_invalid" xml:space="preserve"><value>Кінець не може бути раніше початку.</value></data>
+  <data name="deployments_discount_invalid" xml:space="preserve"><value>Знижка має бути від 0 до 100 відсотків.</value></data>
+  <data name="deployments_contact_not_found" xml:space="preserve"><value>Контакт не знайдено.</value></data>
+  <data name="deployments_call_not_found" xml:space="preserve"><value>Виклик не знайдено.</value></data>
+  <data name="deployments_call_already_linked" xml:space="preserve"><value>Цей виклик уже має розгортання.</value></data>
+  <data name="deployments_not_found" xml:space="preserve"><value>Розгортання не знайдено.</value></data>
+  <data name="deployments_status_transition_invalid" xml:space="preserve"><value>Така зміна статусу не дозволена з поточного статусу.</value></data>
+  <data name="deployments_delete_open" xml:space="preserve"><value>Активне розгортання не можна видалити; спочатку завершіть або скасуйте його.</value></data>
+  <data name="deployments_external_order_required" xml:space="preserve"><value>Виберіть зовнішнє замовлення.</value></data>
+  <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Це зовнішнє замовлення вже має розгортання.</value></data>
+  <data name="deployments_external_order_not_found" xml:space="preserve"><value>Зовнішнє замовлення не знайдено.</value></data>
+  <data name="deployments_unit_not_found" xml:space="preserve"><value>Підрозділ не знайдено.</value></data>
+  <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Цей підрозділ уже у складі.</value></data>
+  <data name="deployments_closed" xml:space="preserve"><value>Розгортання завершено або скасовано, і його склад заблоковано.</value></data>
+  <data name="deployments_user_required" xml:space="preserve"><value>Виберіть учасника.</value></data>
+  <data name="deployments_user_not_found" xml:space="preserve"><value>Учасника не знайдено.</value></data>
+  <data name="deployments_user_not_in_department" xml:space="preserve"><value>Учасник не належить до цього підрозділу.</value></data>
+  <data name="deployments_user_already_rostered" xml:space="preserve"><value>Цей учасник уже у складі.</value></data>
+  <data name="deployments_seat_not_found" xml:space="preserve"><value>Місце не знайдено в цьому підрозділі.</value></data>
+  <data name="deployments_equipment_required" xml:space="preserve"><value>Введіть назву обладнання або виберіть позицію зі складу.</value></data>
+  <data name="deployments_attachment_empty" xml:space="preserve"><value>Виберіть файл для завантаження.</value></data>
+  <data name="deployments_attachment_too_large" xml:space="preserve"><value>Файл більший за 30 МБ.</value></data>
+  <data name="deployments_pdf_failed" xml:space="preserve"><value>Не вдалося створити PDF.</value></data>
+  <data name="deployments_protected_write_refused" xml:space="preserve"><value>Не вдалося записати захищені дані; перевірте стан захисту даних підрозділу.</value></data>
+  <data name="deployments_file_type" xml:space="preserve"><value>Цей тип файлу не дозволено.</value></data>
+  <data name="timereports_date_exists" xml:space="preserve"><value>Звіт про час на цю дату вже існує.</value></data>
+  <data name="timereports_not_found" xml:space="preserve"><value>Звіт про час не знайдено.</value></data>
+  <data name="timereports_locked" xml:space="preserve"><value>Звіт про час затверджено, виставлено або анульовано, і його більше не можна редагувати.</value></data>
+  <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Така зміна статусу не дозволена для цього звіту про час.</value></data>
+  <data name="timereports_time_invalid" xml:space="preserve"><value>Введіть час початку та кінця у форматі HH:mm.</value></data>
+  <data name="timereports_validation" xml:space="preserve"><value>Виправте помилки нижче перед поданням.</value></data>
+  <data name="expenses_amount_invalid" xml:space="preserve"><value>Сума не може бути від'ємною.</value></data>
+  <data name="expenses_type_invalid" xml:space="preserve"><value>Виберіть тип витрати.</value></data>
+  <data name="expenses_not_found" xml:space="preserve"><value>Витрату не знайдено.</value></data>
+  <data name="expenses_receipt_invalid" xml:space="preserve"><value>Не вдалося прочитати чек.</value></data>
+  <data name="ManageDeployments" xml:space="preserve"><value>Керувати розгортаннями</value></data>
+  <data name="ManageDeploymentsNote" xml:space="preserve"><value>Створювати та редагувати розгортання, склади, обладнання, витрати, файли й зміни статусу та бачити всі розгортання. Учасники складу завжди бачать свої розгортання й реєструють час без цього дозволу.</value></data>
+  <data name="ApproveTimeReports" xml:space="preserve"><value>Затверджувати звіти про час</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Затверджувати та анулювати подані щоденні звіти про час. Затверджені звіти живлять виставлення рахунків.</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Розгортання створено</value></data>
+  <data name="DeploymentStatusChanged" xml:space="preserve"><value>Статус розгортання змінено</value></data>
+  <data name="DeploymentRosterChanged" xml:space="preserve"><value>Склад розгортання змінено</value></data>
+  <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Додано витрату розгортання</value></data>
+  <data name="TimeReportSubmitted" xml:space="preserve"><value>Звіт про час подано</value></data>
+  <data name="TimeReportApproved" xml:space="preserve"><value>Звіт про час затверджено</value></data>
+</root>

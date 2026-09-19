@@ -147,5 +147,74 @@ namespace Resgrid.Tests.Services
 				_repositoryCallOrder.Should().BeEmpty();
 			}
 		}
+
+		[TestFixture]
+		public class when_replacing_a_roles_members : with_the_personnel_roles_service
+		{
+			private readonly List<PersonnelRoleUser> _current = new List<PersonnelRoleUser>
+			{
+				new PersonnelRoleUser { PersonnelRoleUserId = 1, PersonnelRoleId = 6787, DepartmentId = 1, UserId = "keep" },
+				new PersonnelRoleUser { PersonnelRoleUserId = 2, PersonnelRoleId = 6787, DepartmentId = 1, UserId = "drop" }
+			};
+
+			private PersonnelRole Role() => new PersonnelRole { PersonnelRoleId = 6787, DepartmentId = 1, Name = "Paramedic", Users = new List<PersonnelRoleUser>(_current) };
+
+			private void Arrange()
+			{
+				_personnelRoleUsersRepositoryMock.Setup(x => x.GetAllMembersOfRoleAsync(6787)).ReturnsAsync(new List<PersonnelRoleUser>(_current));
+				_personnelRoleUsersRepositoryMock
+					.Setup(x => x.DeleteAsync(It.IsAny<PersonnelRoleUser>(), It.IsAny<CancellationToken>()))
+					.Callback<PersonnelRoleUser, CancellationToken>((u, _) => _repositoryCallOrder.Add("delete:" + u.UserId))
+					.ReturnsAsync(true);
+				_personnelRolesRepositoryMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<PersonnelRole>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+					.Callback<PersonnelRole, CancellationToken, bool>((r, _, __) => _repositoryCallOrder.Add("save"))
+					.ReturnsAsync((PersonnelRole r, CancellationToken _, bool __) => r);
+			}
+
+			[Test]
+			public async Task the_delete_and_the_save_share_one_transaction_and_the_cascade_carries_only_the_new_membership()
+			{
+				Arrange();
+
+				var saved = await _personnelRolesService.ReplaceRoleMembersAsync(Role(), new[] { "keep", "new", "new" }, actingUserId: "admin");
+
+				_repositoryCallOrder.Should().Equal("connection", "delete:keep", "delete:drop", "save", "commit");
+				saved.Users.Should().HaveCount(2);
+				saved.Users.Should().OnlyContain(u => u.PersonnelRoleUserId == 0 && u.PersonnelRoleId == 6787 && u.DepartmentId == 1);
+				saved.Users.Should().Contain(u => u.UserId == "keep").And.Contain(u => u.UserId == "new");
+				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.Is<AuditEvent>(a => a.Type == AuditLogTypes.RoleMemberRemoved && a.After.Contains("\"drop\""))), Times.Once);
+				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.Is<AuditEvent>(a => a.Type == AuditLogTypes.RoleMemberAdded && a.After.Contains("\"new\""))), Times.Once);
+				_eventAggregatorMock.Verify(x => x.SendMessage<SecurityRefreshEvent>(It.IsAny<SecurityRefreshEvent>()), Times.AtLeastOnce);
+			}
+
+			[Test]
+			public void a_failed_save_rolls_the_membership_delete_back()
+			{
+				Arrange();
+				_personnelRolesRepositoryMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<PersonnelRole>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+					.ThrowsAsync(new Exception("constraint violation"));
+
+				Assert.ThrowsAsync<Exception>(async () => await _personnelRolesService.ReplaceRoleMembersAsync(Role(), new[] { "keep" }));
+
+				// The previous members were deleted inside the transaction only; the rollback keeps them.
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Never);
+				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.IsAny<AuditEvent>()), Times.Never);
+				_eventAggregatorMock.Verify(x => x.SendMessage<SecurityRefreshEvent>(It.IsAny<SecurityRefreshEvent>()), Times.Never);
+			}
+
+			[Test]
+			public async Task an_unchanged_membership_is_rewritten_in_the_transaction_without_membership_audits()
+			{
+				Arrange();
+
+				await _personnelRolesService.ReplaceRoleMembersAsync(Role(), new[] { "keep", "drop" });
+
+				_repositoryCallOrder.Should().Equal("connection", "delete:keep", "delete:drop", "save", "commit");
+				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.IsAny<AuditEvent>()), Times.Never);
+			}
+		}
 	}
 }

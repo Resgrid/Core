@@ -85,8 +85,14 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("treatpendingverificationasvalid").AsBoolean().NotNullable().WithDefaultValue(false)
 					.WithColumn("sendadmindigest").AsBoolean().NotNullable().WithDefaultValue(true)
 					.WithColumn("updatedon").AsDateTime2().NotNullable()
-					.WithColumn("updatedbyuserid").AsString(128).Nullable();
+					.WithColumn("updatedbyuserid").AsString(128).Nullable()
+					.WithColumn("lastsweeplocaldate").AsDateTime2().Nullable();
 			}
+			// The worker's per-department sweep claim (one sweep per department-local day, survives a repeated or skipped hour).
+			// Schema checks run when Up() is evaluated while Create.Table above is deferred, so a fresh database takes the
+			// column from the create and only a database that already carries the table gets the alter.
+			if (Schema.Table("departmentcertificationsettings").Exists() && !Schema.Table("departmentcertificationsettings").Column("lastsweeplocaldate").Exists())
+				Alter.Table("departmentcertificationsettings").AddColumn("lastsweeplocaldate").AsDateTime2().Nullable();
 
 			if (!Schema.Table("unitcertifications").Exists())
 			{

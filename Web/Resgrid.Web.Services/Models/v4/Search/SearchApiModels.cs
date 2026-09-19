@@ -77,9 +77,10 @@ namespace Resgrid.Web.Services.Models.v4.Search
 	{
 		public bool Enabled { get; set; }
 		public bool GlobalOnline { get; set; }
-		public int GlobalDocumentCount { get; set; }
+		/// <summary>Suppressed: shared-index counts include other departments.</summary>
+		public int? GlobalDocumentCount { get; set; }
 		public bool RecordsOnline { get; set; }
-		public int RecordsDocumentCount { get; set; }
+		public int? RecordsDocumentCount { get; set; }
 		public bool StoreEnabled { get; set; }
 		public string LastSyncedRevision { get; set; }
 		public DateTime? LastSyncedOnUtc { get; set; }

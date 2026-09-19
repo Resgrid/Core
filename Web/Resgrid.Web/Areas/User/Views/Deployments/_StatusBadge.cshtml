@@ -1,0 +1,15 @@
+@model int
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    var status = (Resgrid.Model.Invoicing.DeploymentStatuses)Model;
+    var css = status switch
+    {
+        Resgrid.Model.Invoicing.DeploymentStatuses.Planned => "label-default",
+        Resgrid.Model.Invoicing.DeploymentStatuses.Standby => "label-info",
+        Resgrid.Model.Invoicing.DeploymentStatuses.Active => "label-primary",
+        Resgrid.Model.Invoicing.DeploymentStatuses.Demobilizing => "label-warning",
+        Resgrid.Model.Invoicing.DeploymentStatuses.Completed => "label-success",
+        _ => "label-danger"
+    };
+}
+<span class="label @css">@localizer["Status" + status]</span>

@@ -322,8 +322,13 @@
                 var input = document.getElementById('payUrl');
                 if (!input) return;
                 input.select();
-                try { navigator.clipboard.writeText(input.value); toastr.success('@localizer["LinkCopied"]'); }
-                catch (e) { document.execCommand('copy'); }
+                var copied = function () { toastr.success('@localizer["LinkCopied"]'); };
+                var fallback = function () { try { if (document.execCommand('copy')) copied(); } catch (e) { } };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(input.value).then(copied, fallback);
+                } else {
+                    fallback();
+                }
             });
         });
     </script>

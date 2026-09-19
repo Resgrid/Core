@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Resgrid.Config;
 using Resgrid.Model.Invoicing;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Helpers;
 
@@ -18,7 +21,9 @@ namespace Resgrid.Web.Controllers
 	/// name, the invoice number, the amount due and the due date; nothing else about the customer or the invoice.
 	/// "Pay" opens the hosted provider page server-side and redirects; the return and cancel pages confirm nothing
 	/// and never mark anything paid — only the verified webhook does. No-store, noindex (the layout), rate-limited
-	/// per IP by PaymentConnectConfig.PayPageRateLimitPerMinute. A token never grants access to the invoice itself.
+	/// per IP by PaymentConnectConfig.PayPageRateLimitPerMinute on a counter shared by every web process (the cache
+	/// provider, as the password-recovery and SSO limits are), with the in-process limiter only while that counter is
+	/// unavailable. A token never grants access to the invoice itself.
 	/// </summary>
 	[AllowAnonymous]
 	[Route("pay")]
@@ -26,21 +31,24 @@ namespace Resgrid.Web.Controllers
 	[Filters.AllowDuringDepartmentLock]
 	public class PayController : Controller
 	{
+		private const string RateLimitCachePrefix = "payments:pay-page:rate:";
 		private static readonly PayPageRateLimiter Limiter = new PayPageRateLimiter();
 
 		private readonly IInvoicePaymentsService _payments;
+		private readonly ICacheProvider _cacheProvider;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> _strings;
 
-		public PayController(IInvoicePaymentsService payments, IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings)
+		public PayController(IInvoicePaymentsService payments, ICacheProvider cacheProvider, IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings)
 		{
 			_payments = payments;
+			_cacheProvider = cacheProvider;
 			_strings = strings;
 		}
 
 		[HttpGet("{token}")]
 		public async Task<IActionResult> Index(string token)
 		{
-			if (Throttled()) return TooMany();
+			if (await ThrottledAsync()) return TooMany();
 			var model = await _payments.GetPayPageModelAsync(token);
 			ViewData["PayToken"] = token;
 			return View("Index", model);
@@ -50,7 +58,7 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Start(string token, CancellationToken cancellationToken)
 		{
-			if (Throttled()) return TooMany();
+			if (await ThrottledAsync()) return TooMany();
 			var model = await _payments.GetPayPageModelAsync(token);
 			ViewData["PayToken"] = token;
 			if (!model.Available)
@@ -76,7 +84,7 @@ namespace Resgrid.Web.Controllers
 		[HttpGet("{token}/return")]
 		public async Task<IActionResult> Return(string token)
 		{
-			if (Throttled()) return TooMany();
+			if (await ThrottledAsync()) return TooMany();
 			var model = await _payments.GetPayPageModelAsync(token);
 			ViewData["PayToken"] = token;
 			return View("Return", model);
@@ -85,17 +93,30 @@ namespace Resgrid.Web.Controllers
 		[HttpGet("{token}/cancel")]
 		public async Task<IActionResult> Cancel(string token)
 		{
-			if (Throttled()) return TooMany();
+			if (await ThrottledAsync()) return TooMany();
 			var model = await _payments.GetPayPageModelAsync(token);
 			ViewData["PayToken"] = token;
 			return View("Cancel", model);
 		}
 
-		private bool Throttled()
+		private async Task<bool> ThrottledAsync()
 		{
 			var ip = IpAddressHelper.GetRequestIP(Request, true) ?? "unknown";
-			return !Limiter.Allow(ip, Math.Max(1, PaymentConnectConfig.PayPageRateLimitPerMinute), DateTime.UtcNow);
+			var perMinute = Math.Max(1, PaymentConnectConfig.PayPageRateLimitPerMinute);
+			var now = DateTime.UtcNow;
+
+			// Fixed one-minute window keyed by a hash of the address (no raw addresses in cache keys); the key expires
+			// with the window. IncrementAsync returns 0 only when the cache is disabled or unreachable, and then the
+			// process-local limiter still bounds this instance rather than failing the pay page closed.
+			var window = now.Ticks / TimeSpan.TicksPerMinute;
+			var count = await _cacheProvider.IncrementAsync($"{RateLimitCachePrefix}{Hash(ip)}:{window}", TimeSpan.FromMinutes(2));
+			if (count > 0)
+				return count > perMinute;
+			return !Limiter.Allow(ip, perMinute, now);
 		}
+
+		private static string Hash(string value) =>
+			Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value ?? string.Empty))).ToLowerInvariant();
 
 		private IActionResult TooMany()
 		{
@@ -104,7 +125,7 @@ namespace Resgrid.Web.Controllers
 		}
 	}
 
-	/// <summary>In-process sliding-window limiter for the anonymous pay page: N requests per IP per minute. Small, self-pruning, no external state.</summary>
+	/// <summary>In-process sliding-window limiter for the anonymous pay page: N requests per IP per minute. Small, self-pruning; the fallback while the shared counter is unavailable.</summary>
 	public sealed class PayPageRateLimiter
 	{
 		private readonly ConcurrentDictionary<string, Queue<DateTime>> _hits = new ConcurrentDictionary<string, Queue<DateTime>>();

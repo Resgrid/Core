@@ -205,6 +205,9 @@ namespace Resgrid.Providers.Claims
 		public const string Certifications_Update = "Certifications_Update";
 		public const string Certifications_Delete = "Certifications_Delete";
 		public const string Certifications_Setup = "Certifications_Setup";
+		public const string Deployments_View = "Deployments_View";
+		public const string Deployments_Update = "Deployments_Update";
+		public const string TimeReports_Approve = "TimeReports_Approve";
 		public const string Checklist_Update = "Checklist_Update";
 		public const string ChecklistResults_View = "ChecklistResults_View";
 		public const string RecordDefinition_Update = "RecordDefinition_Update";

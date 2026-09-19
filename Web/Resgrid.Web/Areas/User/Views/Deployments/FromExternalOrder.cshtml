@@ -1,0 +1,97 @@
+@model Resgrid.Web.Areas.User.Models.Deployments.ExternalOrderPickerView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CreateFromExternalOrder"];
+    ViewData["Title"] = localizer["CreateFromExternalOrder"].Value;
+    ViewData["Subtitle"] = localizer["ExternalOrderIntro"].Value;
+    var available = Model.Orders.Where(o => !Model.Linked.Contains(o.RmsExternalOrderId)).ToList();
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["OpenExternalOrders"]</h5></div>
+        <div class="ibox-content">
+            @if (!Model.RecordsEnabled)
+            {
+                <div class="alert alert-warning">@localizer["RecordsRequired"]</div>
+            }
+            else if (available.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoOpenExternalOrders"]</p>
+            }
+            else
+            {
+                <form method="post" asp-action="FromExternalOrder" asp-route-area="User" class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["ExternalOrder"] *</label><div class="col-sm-9">
+                        <select name="rmsExternalOrderId" class="form-control" required>
+                            @foreach (var order in available)
+                            {
+                                <option value="@order.RmsExternalOrderId">@order.OrderNumber — @order.IncidentName @(string.IsNullOrWhiteSpace(order.IncidentNumber) ? "" : $"({order.IncidentNumber})") · @order.RequestingAgency</option>
+                            }
+                        </select>
+                    </div></div>
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["Name"]</label><div class="col-sm-9"><input type="text" name="name" class="form-control" maxlength="250" placeholder="@localizer["NameFromOrder"]" /></div></div>
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["FinanceMode"]</label><div class="col-sm-9">
+                        <select name="financeMode" class="form-control">
+                            @foreach (Resgrid.Model.Invoicing.DeploymentFinanceModes mode in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentFinanceModes)))
+                            {
+                                <option value="@((int)mode)">@localizer["Finance" + mode]</option>
+                            }
+                        </select>
+                    </div></div>
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["Contact"]</label><div class="col-sm-9">
+                        <select name="contactId" class="form-control">
+                            <option value="">—</option>
+                            @foreach (var contact in Model.Contacts.OrderBy(c => c.Name))
+                            {
+                                <option value="@contact.ContactId">@contact.Name</option>
+                            }
+                        </select>
+                    </div></div>
+                    <div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+                        <div class="checkbox"><label><input type="checkbox" name="prefillRoster" value="true" checked /> @localizer["PrefillRoster"]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="createCall" value="true" id="createCall" /> @localizer["CreateCall"]</label></div>
+                    </div></div>
+                    <div id="callFields" style="display:none">
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["CallType"]</label><div class="col-sm-9">
+                            <select name="callType" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var type in Model.CallTypes)
+                                {
+                                    <option value="@type.Type">@type.Type</option>
+                                }
+                            </select>
+                        </div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["CallPriority"]</label><div class="col-sm-9">
+                            <select name="callPriority" class="form-control">
+                                @foreach (var priority in Model.Priorities)
+                                {
+                                    <option value="@priority.DepartmentCallPriorityId">@priority.Name</option>
+                                }
+                            </select>
+                        </div></div>
+                    </div>
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["Notes"]</label><div class="col-sm-9"><textarea name="notes" class="form-control" rows="2"></textarea></div></div>
+                    <div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-exchange"></i> @localizer["CreateDeployment"]</button>
+                        <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+                    </div></div>
+                </form>
+            }
+            @if (Model.Linked.Count > 0)
+            {
+                <p class="text-muted m-t-md"><i class="fa fa-link"></i> @string.Format(localizer["OrdersAlreadyLinked"].Value, Model.Linked.Count)</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('createCall') && document.getElementById('createCall').addEventListener('change', function () { document.getElementById('callFields').style.display = this.checked ? '' : 'none'; });
+    </script>
+}

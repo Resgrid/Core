@@ -14,13 +14,13 @@ using Resgrid.Model.Services;
 namespace Resgrid.Services.Search
 {
 	/// <summary>
-	/// The unified endpoint (plan R4 Phase 2). Order of operations: department flag → system actions (always, cheap) →
-	/// global index query with the department clause injected → per-hit authorization using the entity's own rule
-	/// (call view, unit/person matrix, message sender/recipient, claim for contacts/documents/notes) → Records
-	/// federated from the RMS index with its own re-check → totals suppressed whenever a hit was dropped. A department
+	/// The unified endpoint (plan R4 Phase 2). Checks current membership, module settings and policy, then queries
+	/// the department's current index generation. Each candidate must match its live projection and pass current
+	/// entity ownership and visibility checks. Records are federated with the same department and policy boundary.
+	/// Totals are returned only when every candidate was checked and authorized. A department
 	/// that has never searched gets a state row on its first query so worker 70 starts indexing it (lazy activation).
 	/// </summary>
-	public class UnifiedSearchService : IUnifiedSearchService
+	public partial class UnifiedSearchService : IUnifiedSearchService
 	{
 		private const int CandidateWindow = 200;
 
@@ -36,7 +36,12 @@ namespace Resgrid.Services.Search
 
 		public UnifiedSearchService(IGlobalSearchService global, ISystemActionsService actions, IFeatureToggleService featureToggles,
 			IAuthorizationService authorization, ISearchIndexStatesRepository states, IRecordsSearchService recordsSearch,
-			IRecordsAuthorizationService recordsAuthorization, IRecordsService records, IRecordsCutoverService recordsCutover)
+			IRecordsAuthorizationService recordsAuthorization, IRecordsService records, IRecordsCutoverService recordsCutover,
+			IDepartmentsService departments, IPermissionsService permissions, IDepartmentGroupsService groups,
+			IPersonnelRolesService roles, ICallsService calls, IUnitsService units, IMessageService messages,
+			IDocumentsService documents, INotesService notes, IContactsService contacts,
+			IDepartmentDataProtectionService dataProtection, IDepartmentSettingsService departmentSettings,
+			ISearchProjectionsRepository projections)
 		{
 			_global = global;
 			_actions = actions;
@@ -47,6 +52,19 @@ namespace Resgrid.Services.Search
 			_recordsAuthorization = recordsAuthorization;
 			_records = records;
 			_recordsCutover = recordsCutover;
+			_departments = departments;
+			_permissions = permissions;
+			_groups = groups;
+			_roles = roles;
+			_calls = calls;
+			_units = units;
+			_messages = messages;
+			_documents = documents;
+			_notes = notes;
+			_contacts = contacts;
+			_dataProtection = dataProtection;
+			_departmentSettings = departmentSettings;
+			_projections = projections;
 		}
 
 		public async Task<UnifiedSearchResult> SearchAsync(UnifiedSearchRequest request, SearchPrincipal principal, CancellationToken cancellationToken = default)
@@ -67,6 +85,14 @@ namespace Resgrid.Services.Search
 				result.DegradedReason = "Search.Unified is off for this department.";
 				return Finish(result, watch);
 			}
+
+			var access = await LoadAccessAsync(principal);
+			if (access == null)
+			{
+				result.Available = false;
+				return Finish(result, watch);
+			}
+			principal = access.Principal;
 
 			var text = (request.Text ?? string.Empty).Trim();
 			if (text.Length > 500)
@@ -93,16 +119,18 @@ namespace Resgrid.Services.Search
 			}
 
 			var types = AllowedTypes(request.EntityTypes, principal);
+			var skip = Math.Max(0, request.Skip);
+			var take = Math.Max(1, Math.Min(100, request.Take));
+			var needed = Math.Min(skip, CandidateWindow) + take;
 			var dropped = 0;
 			var authorized = new List<UnifiedSearchHit>();
-			var indexTotal = 0;
-			var truncated = false;
-			var windowCoveredAll = false;
+			var windowCoveredAll = true;
 
 			if (types.Count > 0)
 			{
 				if (!_global.IsAvailable)
 				{
+					windowCoveredAll = false;
 					result.Degraded = true;
 					result.DegradedReason = "The search index is not available yet.";
 					await EnsureStateAsync(principal.DepartmentId, cancellationToken);
@@ -114,6 +142,7 @@ namespace Resgrid.Services.Search
 					{
 						indexResult = await _global.SearchAsync(principal.DepartmentId, new GlobalSearchQuery
 						{
+							Generation = access.GlobalGeneration,
 							Text = text,
 							EntityTypes = types,
 							ViewerUserId = principal.UserId,
@@ -131,23 +160,27 @@ namespace Resgrid.Services.Search
 
 					if (!indexResult.Available)
 					{
+						windowCoveredAll = false;
 						result.Degraded = true;
 						result.DegradedReason = "The search index is not available yet.";
 						await EnsureStateAsync(principal.DepartmentId, cancellationToken);
 					}
 					else
 					{
-						indexTotal = indexResult.Total;
-						truncated = indexResult.Truncated;
-						windowCoveredAll = indexResult.Hits.Count >= indexResult.Total;
-						var need = Math.Max(0, request.Skip) + Math.Max(1, request.Take);
+						windowCoveredAll = !indexResult.Truncated && indexResult.Hits.Count == indexResult.Total;
+						var projections = (await _projections.GetByIdsAsync(principal.DepartmentId,
+							indexResult.Hits.Where(h => h != null && !string.IsNullOrWhiteSpace(h.ProjectionId)).Select(h => h.ProjectionId))
+							?? Enumerable.Empty<SearchProjection>()).ToDictionary(p => p.SearchProjectionId, StringComparer.Ordinal);
 						foreach (var hit in indexResult.Hits)
 						{
 							cancellationToken.ThrowIfCancellationRequested();
-							if (authorized.Count >= need && windowCoveredAll == false)
+							// An incomplete window can never yield an authorized total; stop once the page is filled.
+							if (!windowCoveredAll && authorized.Count >= needed)
 								break;
-							if (await AuthorizeAsync(hit, principal))
-								authorized.Add(Map(hit));
+							if (hit != null && types.Contains(hit.EntityType) &&
+								projections.TryGetValue(hit.ProjectionId ?? string.Empty, out var projection) &&
+								ProjectionIsCurrent(hit, projection, access) && await AuthorizeAsync(hit, access))
+								authorized.Add(Map(projection, hit.Score));
 							else
 								dropped++;
 						}
@@ -157,15 +190,13 @@ namespace Resgrid.Services.Search
 
 			// The records federation must reach as deep as the requested page can: the page is cut from index hits followed
 			// by record hits, so a fixed top-N of records would leave every page past N empty for a records-heavy query.
-			var skip = Math.Max(0, request.Skip);
-			var take = Math.Max(1, Math.Min(100, request.Take));
 			var recordHits = new List<UnifiedSearchHit>();
 			int? recordsTotal = 0;
 			if (request.IncludeRecords && !request.Prefix && WantsType(request.EntityTypes, SearchEntityTypes.Record))
 			{
 				try
 				{
-					(recordHits, recordsTotal) = await FederateRecordsAsync(text, principal, Math.Min(Math.Min(skip, CandidateWindow) + take, CandidateWindow), cancellationToken);
+					(recordHits, recordsTotal) = await FederateRecordsAsync(text, access, Math.Min(Math.Min(skip, CandidateWindow) + take, CandidateWindow), cancellationToken);
 				}
 				catch (Exception ex)
 				{
@@ -177,11 +208,12 @@ namespace Resgrid.Services.Search
 			// One sequence, index hits then the records federation, paged as a whole: special-casing the first page
 			// dropped the Records family from every later page.
 			result.Hits = authorized.Concat(recordHits).Skip(skip).Take(take).ToList();
-			result.Truncated = truncated;
+			// A raw index truncation flag also discloses unauthorized matches. Only expose authorized metadata.
+			result.Truncated = false;
 
 			// Totals only when they can be proven from authorized results (plan 2026-08-15 correction).
-			if (dropped == 0 && recordsTotal.HasValue)
-				result.Total = (windowCoveredAll ? authorized.Count : indexTotal) + recordsTotal.Value;
+			if (dropped == 0 && windowCoveredAll && recordsTotal.HasValue)
+				result.Total = authorized.Count + recordsTotal.Value;
 			else
 				result.Total = null;
 
@@ -224,39 +256,7 @@ namespace Resgrid.Services.Search
 			return allowed;
 		}
 
-		private async Task<bool> AuthorizeAsync(GlobalSearchHit hit, SearchPrincipal principal)
-		{
-			try
-			{
-				switch (hit.EntityType)
-				{
-					case SearchEntityTypes.Call:
-						return int.TryParse(hit.EntityId, out var callId) && await _authorization.CanUserViewCallAsync(principal.UserId, callId);
-					case SearchEntityTypes.Unit:
-						return int.TryParse(hit.EntityId, out var unitId) && await _authorization.CanUserViewUnitViaMatrixAsync(unitId, principal.UserId, principal.DepartmentId);
-					case SearchEntityTypes.Personnel:
-						return !string.IsNullOrWhiteSpace(hit.EntityId) && await _authorization.CanUserViewPersonViaMatrixAsync(hit.EntityId, principal.UserId, principal.DepartmentId);
-					case SearchEntityTypes.Message:
-						return int.TryParse(hit.EntityId, out var messageId) && await _authorization.CanUserViewMessageAsync(principal.UserId, messageId);
-					case SearchEntityTypes.Contact:
-						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Contacts", "View");
-					case SearchEntityTypes.Document:
-						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Documents", "View");
-					case SearchEntityTypes.Note:
-						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Notes", "View");
-					default:
-						return false;
-				}
-			}
-			catch (Exception ex)
-			{
-				// Fail closed: an authorization error drops the hit and suppresses the total.
-				Logging.LogException(ex, $"Search hit authorization failed for {hit.EntityType} {hit.EntityId}.");
-				return false;
-			}
-		}
-
-		private static UnifiedSearchHit Map(GlobalSearchHit hit)
+		private static UnifiedSearchHit Map(SearchProjection hit, float score)
 		{
 			IDictionary<string, string> metadata = new Dictionary<string, string>();
 			if (!string.IsNullOrWhiteSpace(hit.MetadataJson))
@@ -272,16 +272,17 @@ namespace Resgrid.Services.Search
 				Title = hit.Title,
 				Summary = hit.Summary,
 				Url = hit.Url,
-				Score = hit.Score,
-				OccurredOn = hit.OccurredOnTicks > 0 ? new DateTime(hit.OccurredOnTicks, DateTimeKind.Utc) : (DateTime?)null,
+				Score = score,
+				OccurredOn = hit.OccurredOn,
 				Category = hit.Category,
 				Status = hit.Status,
 				Metadata = metadata
 			};
 		}
 
-		private async Task<(List<UnifiedSearchHit> hits, int? total)> FederateRecordsAsync(string text, SearchPrincipal principal, int window, CancellationToken cancellationToken)
+		private async Task<(List<UnifiedSearchHit> hits, int? total)> FederateRecordsAsync(string text, SearchAccess access, int window, CancellationToken cancellationToken)
 		{
+			var principal = access.Principal;
 			var hits = new List<UnifiedSearchHit>();
 			if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Record", "View"))
 				return (hits, 0);
@@ -300,6 +301,9 @@ namespace Resgrid.Services.Search
 
 			var search = await _recordsSearch.SearchAsync(principal.DepartmentId, new RecordsSearchRequest
 			{
+				Generation = access.RecordsGeneration,
+				IncludeNarrative = access.ProtectedTextAllowed &&
+					(await _departmentSettings.GetRecordsSearchConfigAsync(principal.DepartmentId, true))?.IndexNarrative == true,
 				Text = text,
 				VisibleGroupIds = visibleGroups,
 				ViewerUserId = principal.UserId,
@@ -319,7 +323,12 @@ namespace Resgrid.Services.Search
 			foreach (var hit in search.Hits.Where(h => h.SourceType == recordSource))
 			{
 				cancellationToken.ThrowIfCancellationRequested();
-				if (!loaded.TryGetValue(hit.SourceId ?? string.Empty, out var projection) || !await _recordsAuthorization.CanUserViewRecordAsync(principal.UserId, hit.SourceId, principal.DepartmentId))
+				if (hit.DepartmentId != principal.DepartmentId || hit.Generation != access.RecordsGeneration ||
+					!loaded.TryGetValue(hit.SourceId ?? string.Empty, out var projection) ||
+					projection.DepartmentId != principal.DepartmentId || projection.DeletedOn.HasValue ||
+					projection.SourceType != (int)RmsSearchSourceType.Record || projection.SourceId != hit.SourceId ||
+					projection.PolicyEpoch != access.PolicyEpoch || projection.ProtectedCatalogVersion != access.CatalogVersion ||
+					!await _recordsAuthorization.CanUserViewRecordAsync(principal.UserId, hit.SourceId, principal.DepartmentId))
 				{
 					dropped++;
 					continue;
@@ -345,7 +354,7 @@ namespace Resgrid.Services.Search
 				});
 			}
 
-			return (hits, dropped == 0 ? search.Total : (int?)null);
+			return (hits, dropped == 0 && !search.Truncated && search.Hits.Count == search.Total ? hits.Count : (int?)null);
 		}
 
 		private async Task EnsureStateAsync(int departmentId, CancellationToken cancellationToken)

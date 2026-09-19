@@ -42,6 +42,8 @@ namespace Resgrid.Services
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsAccessService>().As<IBusinessOperationsAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.InvoicingService>().As<IInvoicingService>().InstancePerLifetimeScope();
+			builder.RegisterType<Invoicing.DeploymentService>().As<IDeploymentService>().InstancePerLifetimeScope();
+			builder.RegisterType<Invoicing.TimeTrackingService>().As<ITimeTrackingService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().As<IWorkOrderReportingService>().As<IWorkOrderOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();

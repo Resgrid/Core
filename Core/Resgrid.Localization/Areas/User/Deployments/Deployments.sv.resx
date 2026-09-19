@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Deployments" xml:space="preserve"><value>Insatser</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Insatsekonomi</value></data>
+  <data name="MyDeployments" xml:space="preserve"><value>Mina insatser</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Ekonomiska omslag för insatser: bemanning, dagliga tidrapporter, utlägg och filer för fakturerbara, kostnadsåtervinnande och operativa insatser.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>En insats samlar de enheter, den personal och den utrustning som skickats till en händelse tillsammans med dagliga tidrapporter och utlägg. Koppla den till ett larm eller till en beställning för ömsesidigt bistånd i Records.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>Inga insatser ännu.</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>Visa alla</value></data>
+  <data name="ShowOpen" xml:space="preserve"><value>Visa endast öppna</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Ny insats</value></data>
+  <data name="EditDeployment" xml:space="preserve"><value>Redigera insats</value></data>
+  <data name="EditIntro" xml:space="preserve"><value>Identifierare som kundmyndigheten tilldelar och de jurisdiktionsuppgifter som faktureringsmotorn behöver.</value></data>
+  <data name="CreateFromExternalOrder" xml:space="preserve"><value>Skapa från extern beställning</value></data>
+  <data name="Open" xml:space="preserve"><value>Öppna</value></data>
+  <data name="Name" xml:space="preserve"><value>Namn</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="FinanceMode" xml:space="preserve"><value>Ekonomiläge</value></data>
+  <data name="FinanceModeHelp" xml:space="preserve"><value>”Endast operativ” sparar tid och utlägg som dokumentation; ”kostnadsåtervinning” matar ett ersättningsanspråk; ”fakturerbar” matar en kundfaktura.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Händelsenr</value></data>
+  <data name="ResourceOrderNumber" xml:space="preserve"><value>Resursbeställningsnr</value></data>
+  <data name="RequestNumber" xml:space="preserve"><value>Begäran nr</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>Servicebegäran nr</value></data>
+  <data name="CostCode" xml:space="preserve"><value>Kostnadskod</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>Anställningsort</value></data>
+  <data name="Contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Window" xml:space="preserve"><value>Tidsfönster</value></data>
+  <data name="Days" xml:space="preserve"><value>dagar</value></data>
+  <data name="MaxDays" xml:space="preserve"><value>Max dagar</value></data>
+  <data name="Notes" xml:space="preserve"><value>Anteckningar</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Kopplad till en extern beställning i Records</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Insats</value></data>
+  <data name="AgencyIdentifiers" xml:space="preserve"><value>Myndighetsidentifierare</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Jurisdiktion</value></data>
+  <data name="HomeCountry" xml:space="preserve"><value>Hemland</value></data>
+  <data name="HomeSubdivision" xml:space="preserve"><value>Hemstat / -provins</value></data>
+  <data name="HostCountry" xml:space="preserve"><value>Värdland</value></data>
+  <data name="HostSubdivision" xml:space="preserve"><value>Värdstat / -provins</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Tidszon</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Händelsens lokala tidszon för tidrapporter; tomt använder avdelningens.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Valuta</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>Utanför provinsen / delstaten</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>Resa med flyg</value></data>
+  <data name="CallId" xml:space="preserve"><value>Larm-ID</value></data>
+  <data name="CallIdHelp" xml:space="preserve"><value>Valfritt: larmet som insatsen faktureras mot. En insats per larm.</value></data>
+  <data name="Save" xml:space="preserve"><value>Spara</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+  <data name="Saved" xml:space="preserve"><value>Sparat.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Ändringen kunde inte sparas.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Omslut en öppen beställning för ömsesidigt bistånd i Records med en insats så att tid, utlägg och bemanning kan följas upp och faktureras. Själva beställningen stannar i Records.</value></data>
+  <data name="OpenExternalOrders" xml:space="preserve"><value>Öppna externa beställningar</value></data>
+  <data name="RecordsRequired" xml:space="preserve"><value>Records-systemet är inte aktiverat för den här avdelningen, så det finns inga externa beställningar att välja.</value></data>
+  <data name="NoOpenExternalOrders" xml:space="preserve"><value>Inga öppna externa beställningar utan insats.</value></data>
+  <data name="ExternalOrder" xml:space="preserve"><value>Extern beställning</value></data>
+  <data name="NameFromOrder" xml:space="preserve"><value>Standard är händelsens namn</value></data>
+  <data name="PrefillRoster" xml:space="preserve"><value>Förifyll bemanningen från accepterade tilldelningar</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>Skapa även ett larm</value></data>
+  <data name="CallType" xml:space="preserve"><value>Larmtyp</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>Larmprioritet</value></data>
+  <data name="CreateDeployment" xml:space="preserve"><value>Skapa insats</value></data>
+  <data name="OrdersAlreadyLinked" xml:space="preserve"><value>{0} öppen/öppna beställning(ar) har redan en insats.</value></data>
+  <data name="FillCount" xml:space="preserve"><value>{0} tilldelning(ar)</value></data>
+  <data name="Edit" xml:space="preserve"><value>Redigera</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Exportera tid som CSV</value></data>
+  <data name="Call" xml:space="preserve"><value>Larm</value></data>
+  <data name="Summary" xml:space="preserve"><value>Sammanfattning</value></data>
+  <data name="Units" xml:space="preserve"><value>Enheter</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="TimeReports" xml:space="preserve"><value>Tidrapporter</value></data>
+  <data name="PersonnelHours" xml:space="preserve"><value>Personaltimmar</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Utlägg</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Ändra status</value></data>
+  <data name="StatusConfirm" xml:space="preserve"><value>Ändra insatsens status?</value></data>
+  <data name="Roster" xml:space="preserve"><value>Bemanning</value></data>
+  <data name="Files" xml:space="preserve"><value>Filer</value></data>
+  <data name="Unit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="CallSign" xml:space="preserve"><value>Anropssignal</value></data>
+  <data name="Crew" xml:space="preserve"><value>Besättning</value></data>
+  <data name="RemoveConfirm" xml:space="preserve"><value>Ta bort den här raden?</value></data>
+  <data name="SelectUnit" xml:space="preserve"><value>Välj en enhet</value></data>
+  <data name="AddUnit" xml:space="preserve"><value>Lägg till enhet</value></data>
+  <data name="Equipment" xml:space="preserve"><value>Utrustning</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>Inga enheter bemannade.</value></data>
+  <data name="NoEquipment" xml:space="preserve"><value>Ingen utrustning bemannad.</value></data>
+  <data name="Item" xml:space="preserve"><value>Artikel</value></data>
+  <data name="Issued" xml:space="preserve"><value>Utlämnad</value></data>
+  <data name="Return" xml:space="preserve"><value>Återlämna</value></data>
+  <data name="EquipmentName" xml:space="preserve"><value>Utrustningsnamn</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>Ingen enhet</value></data>
+  <data name="AddEquipment" xml:space="preserve"><value>Lägg till utrustning</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>Ingen personal bemannad.</value></data>
+  <data name="Seat" xml:space="preserve"><value>Plats</value></data>
+  <data name="Certification" xml:space="preserve"><value>Certifiering</value></data>
+  <data name="Member" xml:space="preserve"><value>Medlem</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Välj en medlem</value></data>
+  <data name="SeatHelp" xml:space="preserve"><value>Platser märkta * kräver platsens personalroll; rollens certifieringskrav kontrolleras och certifieringar som snart går ut flaggas.</value></data>
+  <data name="ForceSeat" xml:space="preserve"><value>Bemanna även om ett krav inte uppfylls</value></data>
+  <data name="AddPersonnel" xml:space="preserve"><value>Lägg till medlem</value></data>
+  <data name="SeatBlocked" xml:space="preserve"><value>Medlemmen uppfyller inte platsens krav. Markera ”Bemanna även om ett krav inte uppfylls” för att åsidosätta.</value></data>
+  <data name="NewTimeReport" xml:space="preserve"><value>Ny tidrapport</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>En rapport per dag; posterna förifylls från bemanningen.</value></data>
+  <data name="NoTimeReports" xml:space="preserve"><value>Inga tidrapporter ännu.</value></data>
+  <data name="ReportDate" xml:space="preserve"><value>Rapportdatum</value></data>
+  <data name="Submitted" xml:space="preserve"><value>Inskickad</value></data>
+  <data name="Approved" xml:space="preserve"><value>Godkänd</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Faktura</value></data>
+  <data name="NoExpenses" xml:space="preserve"><value>Inga utlägg ännu.</value></data>
+  <data name="ExpenseDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="Description" xml:space="preserve"><value>Beskrivning</value></data>
+  <data name="City" xml:space="preserve"><value>Ort</value></data>
+  <data name="Amount" xml:space="preserve"><value>Belopp</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Kvitto</value></data>
+  <data name="TimeReport" xml:space="preserve"><value>Tidrapport</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Förhandsgodkänt</value></data>
+  <data name="NotBillable" xml:space="preserve"><value>Ej fakturerbart</value></data>
+  <data name="Total" xml:space="preserve"><value>Summa</value></data>
+  <data name="AddExpense" xml:space="preserve"><value>Lägg till utlägg</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>Inga filer ännu.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Filnamn</value></data>
+  <data name="Size" xml:space="preserve"><value>Storlek</value></data>
+  <data name="Added" xml:space="preserve"><value>Tillagd</value></data>
+  <data name="Upload" xml:space="preserve"><value>Ladda upp</value></data>
+  <data name="PreviewManifest" xml:space="preserve"><value>Förhandsgranska manifest</value></data>
+  <data name="GenerateManifest" xml:space="preserve"><value>Arkivera manifest-PDF</value></data>
+  <data name="Billable" xml:space="preserve"><value>Fakturerbart</value></data>
+  <data name="MealCode" xml:space="preserve"><value>Måltidskod</value></data>
+  <data name="TimeReportTitle" xml:space="preserve"><value>Daglig tidrapport nr {0}</value></data>
+  <data name="BackToDeployment" xml:space="preserve"><value>Tillbaka till insatsen</value></data>
+  <data name="NoClear8" xml:space="preserve"><value>Ingen 8 timmars vila (övertid förs över till nästa pass)</value></data>
+  <data name="UnsafeStandDown" xml:space="preserve"><value>Avbrott på grund av osäkra förhållanden</value></data>
+  <data name="TimeEntries" xml:space="preserve"><value>Tidposter</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>tider i händelsens lokala tid</value></data>
+  <data name="Subject" xml:space="preserve"><value>Objekt</value></data>
+  <data name="EntryType" xml:space="preserve"><value>Posttyp</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="End" xml:space="preserve"><value>Slut</value></data>
+  <data name="PaidBreak" xml:space="preserve"><value>Betald rast (min)</value></data>
+  <data name="UnpaidBreak" xml:space="preserve"><value>Obetald rast (min)</value></data>
+  <data name="Km" xml:space="preserve"><value>Km</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>Lägg till post</value></data>
+  <data name="Actions" xml:space="preserve"><value>Åtgärder</value></data>
+  <data name="SaveAndSubmit" xml:space="preserve"><value>Spara och skicka in</value></data>
+  <data name="SubmitConfirm" xml:space="preserve"><value>Skicka in rapporten för godkännande? Posterna låses när den godkänts.</value></data>
+  <data name="OpenInvoice" xml:space="preserve"><value>Öppna faktura</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Underskrifter</value></data>
+  <data name="ContractorSignature" xml:space="preserve"><value>Entreprenör</value></data>
+  <data name="CustomerSignature" xml:space="preserve"><value>Kund</value></data>
+  <data name="SignAsContractor" xml:space="preserve"><value>Signera som entreprenör</value></data>
+  <data name="CustomerSignerName" xml:space="preserve"><value>Kundens undertecknare</value></data>
+  <data name="Sign" xml:space="preserve"><value>Signera</value></data>
+  <data name="Review" xml:space="preserve"><value>Granskning</value></data>
+  <data name="Approve" xml:space="preserve"><value>Godkänn</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>Godkänna den här tidrapporten?</value></data>
+  <data name="VoidReason" xml:space="preserve"><value>Orsak</value></data>
+  <data name="Void" xml:space="preserve"><value>Makulera</value></data>
+  <data name="VoidConfirm" xml:space="preserve"><value>Makulera den här tidrapporten? Den behålls som dokumentation men faller bort från faktureringen.</value></data>
+  <data name="FilePdf" xml:space="preserve"><value>Arkivera PDF på insatsen</value></data>
+  <data name="StatusPlanned" xml:space="preserve"><value>Planerad</value></data>
+  <data name="StatusStandby" xml:space="preserve"><value>Beredskap</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="StatusDemobilizing" xml:space="preserve"><value>Demobilisering</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Avslutad</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Avbruten</value></data>
+  <data name="ReportStatusDraft" xml:space="preserve"><value>Utkast</value></data>
+  <data name="ReportStatusSubmitted" xml:space="preserve"><value>Inskickad</value></data>
+  <data name="ReportStatusApproved" xml:space="preserve"><value>Godkänd</value></data>
+  <data name="ReportStatusBilled" xml:space="preserve"><value>Fakturerad</value></data>
+  <data name="ReportStatusVoid" xml:space="preserve"><value>Makulerad</value></data>
+  <data name="FinanceOperationalOnly" xml:space="preserve"><value>Endast operativ</value></data>
+  <data name="FinanceCostRecovery" xml:space="preserve"><value>Kostnadsåtervinning</value></data>
+  <data name="FinanceBillable" xml:space="preserve"><value>Fakturerbar</value></data>
+  <data name="ExpensePerDiemMeal" xml:space="preserve"><value>Traktamente / måltid</value></data>
+  <data name="ExpenseAccommodation" xml:space="preserve"><value>Boende</value></data>
+  <data name="ExpensePrivateAccommodation" xml:space="preserve"><value>Privat boende</value></data>
+  <data name="ExpenseFerry" xml:space="preserve"><value>Färja</value></data>
+  <data name="ExpenseFuel" xml:space="preserve"><value>Bränsle</value></data>
+  <data name="ExpenseSupplyRestock" xml:space="preserve"><value>Påfyllning av förnödenheter</value></data>
+  <data name="ExpenseOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="AttachmentReceipt" xml:space="preserve"><value>Kvitto</value></data>
+  <data name="AttachmentSignedServiceRequest" xml:space="preserve"><value>Signerad servicebegäran</value></data>
+  <data name="AttachmentTimeReportPdf" xml:space="preserve"><value>Tidrapport-PDF</value></data>
+  <data name="AttachmentManifest" xml:space="preserve"><value>Manifest</value></data>
+  <data name="AttachmentCertification" xml:space="preserve"><value>Certifiering</value></data>
+  <data name="AttachmentOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="AttachmentExternalOrder" xml:space="preserve"><value>Extern beställning</value></data>
+  <data name="AttachmentSignedF42" xml:space="preserve"><value>Signerad F-42</value></data>
+  <data name="AttachmentPaperF42" xml:space="preserve"><value>Pappers-F-42</value></data>
+  <data name="AttachmentIcs213Approval" xml:space="preserve"><value>ICS 213-godkännande</value></data>
+  <data name="AttachmentCrewRotationApproval" xml:space="preserve"><value>Godkännande av besättningsrotation</value></data>
+  <data name="AttachmentLossDamage" xml:space="preserve"><value>Förlust / skada</value></data>
+  <data name="AttachmentMarsExpenseEvidence" xml:space="preserve"><value>MARS-utläggsunderlag</value></data>
+  <data name="AttachmentMarsInvoice" xml:space="preserve"><value>MARS-faktura</value></data>
+  <data name="EntryDeployment" xml:space="preserve"><value>Insats</value></data>
+  <data name="EntryStandby" xml:space="preserve"><value>Beredskap</value></data>
+  <data name="EntryTravel" xml:space="preserve"><value>Resa</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>Redan bemannad på en annan öppen insats i det här fönstret</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>Medlemmen har inte platsens personalroll</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>En certifiering som platsen kräver saknas eller har gått ut</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>En obligatorisk certifiering går ut under insatsfönstret</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>Redan i den här bemanningen</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>Lagerutlämningen misslyckades; utrustningsraden behölls utan utlämning</value></data>
+  <data name="Issueentries_overlap" xml:space="preserve"><value>Två tidsintervall överlappar för samma objekt</value></data>
+  <data name="Issueend_before_start" xml:space="preserve"><value>En post slutar innan den börjar</value></data>
+  <data name="Issuesubject_not_on_roster" xml:space="preserve"><value>En post hänvisar till ett objekt som inte finns i bemanningen</value></data>
+  <data name="Issueno_entries" xml:space="preserve"><value>Rapporten saknar tidposter</value></data>
+  <data name="Issuebreak_rule" xml:space="preserve"><value>Ett intervall längre än 5 timmar saknar registrerad rast</value></data>
+  <data name="Issuelong_travel" xml:space="preserve"><value>Restid över 12 timmar kräver godkännande</value></data>
+  <data name="Issueoutside_report_date" xml:space="preserve"><value>En post ligger utanför rapportdatumet</value></data>
+  <data name="deployments_name_required" xml:space="preserve"><value>Ett namn krävs.</value></data>
+  <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Välj ett ekonomiläge.</value></data>
+  <data name="deployments_window_invalid" xml:space="preserve"><value>Slutet får inte ligga före starten.</value></data>
+  <data name="deployments_discount_invalid" xml:space="preserve"><value>Rabatten måste vara mellan 0 och 100 procent.</value></data>
+  <data name="deployments_contact_not_found" xml:space="preserve"><value>Kontakten hittades inte.</value></data>
+  <data name="deployments_call_not_found" xml:space="preserve"><value>Larmet hittades inte.</value></data>
+  <data name="deployments_call_already_linked" xml:space="preserve"><value>Det larmet har redan en insats.</value></data>
+  <data name="deployments_not_found" xml:space="preserve"><value>Insatsen hittades inte.</value></data>
+  <data name="deployments_status_transition_invalid" xml:space="preserve"><value>Den statusändringen tillåts inte från nuvarande status.</value></data>
+  <data name="deployments_delete_open" xml:space="preserve"><value>En aktiv insats kan inte tas bort; avsluta eller avbryt den först.</value></data>
+  <data name="deployments_external_order_required" xml:space="preserve"><value>Välj en extern beställning.</value></data>
+  <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Den externa beställningen har redan en insats.</value></data>
+  <data name="deployments_external_order_not_found" xml:space="preserve"><value>Den externa beställningen hittades inte.</value></data>
+  <data name="deployments_unit_not_found" xml:space="preserve"><value>Enheten hittades inte.</value></data>
+  <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Den enheten finns redan i bemanningen.</value></data>
+  <data name="deployments_closed" xml:space="preserve"><value>Insatsen är avslutad eller avbruten och bemanningen är låst.</value></data>
+  <data name="deployments_user_required" xml:space="preserve"><value>Välj en medlem.</value></data>
+  <data name="deployments_user_not_found" xml:space="preserve"><value>Medlemmen hittades inte.</value></data>
+  <data name="deployments_user_not_in_department" xml:space="preserve"><value>Medlemmen tillhör inte den här avdelningen.</value></data>
+  <data name="deployments_user_already_rostered" xml:space="preserve"><value>Den medlemmen finns redan i bemanningen.</value></data>
+  <data name="deployments_seat_not_found" xml:space="preserve"><value>Platsen hittades inte på den enheten.</value></data>
+  <data name="deployments_equipment_required" xml:space="preserve"><value>Ange ett utrustningsnamn eller välj en lagerartikel.</value></data>
+  <data name="deployments_attachment_empty" xml:space="preserve"><value>Välj en fil att ladda upp.</value></data>
+  <data name="deployments_attachment_too_large" xml:space="preserve"><value>Filen är större än 30 MB.</value></data>
+  <data name="deployments_pdf_failed" xml:space="preserve"><value>PDF-filen kunde inte skapas.</value></data>
+  <data name="deployments_protected_write_refused" xml:space="preserve"><value>Skyddade data kunde inte skrivas; kontrollera avdelningens dataskyddsstatus.</value></data>
+  <data name="deployments_file_type" xml:space="preserve"><value>Den filtypen är inte tillåten.</value></data>
+  <data name="timereports_date_exists" xml:space="preserve"><value>Det finns redan en tidrapport för det datumet.</value></data>
+  <data name="timereports_not_found" xml:space="preserve"><value>Tidrapporten hittades inte.</value></data>
+  <data name="timereports_locked" xml:space="preserve"><value>Tidrapporten är godkänd, fakturerad eller makulerad och kan inte längre redigeras.</value></data>
+  <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Den statusändringen tillåts inte för den här tidrapporten.</value></data>
+  <data name="timereports_time_invalid" xml:space="preserve"><value>Ange start- och sluttid som HH:mm.</value></data>
+  <data name="timereports_validation" xml:space="preserve"><value>Åtgärda felen nedan innan du skickar in.</value></data>
+  <data name="expenses_amount_invalid" xml:space="preserve"><value>Beloppet får inte vara negativt.</value></data>
+  <data name="expenses_type_invalid" xml:space="preserve"><value>Välj en utläggstyp.</value></data>
+  <data name="expenses_not_found" xml:space="preserve"><value>Utlägget hittades inte.</value></data>
+  <data name="expenses_receipt_invalid" xml:space="preserve"><value>Kvittot kunde inte läsas.</value></data>
+  <data name="ManageDeployments" xml:space="preserve"><value>Hantera insatser</value></data>
+  <data name="ManageDeploymentsNote" xml:space="preserve"><value>Skapa och redigera insatser, bemanning, utrustning, utlägg, filer och statusändringar samt se alla insatser. Bemannade medlemmar ser alltid sina egna insatser och registrerar tid utan denna behörighet.</value></data>
+  <data name="ApproveTimeReports" xml:space="preserve"><value>Godkänn tidrapporter</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Godkänn och makulera inskickade dagliga tidrapporter. Godkända rapporter matar faktureringen.</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Insats skapad</value></data>
+  <data name="DeploymentStatusChanged" xml:space="preserve"><value>Insatsstatus ändrad</value></data>
+  <data name="DeploymentRosterChanged" xml:space="preserve"><value>Insatsbemanning ändrad</value></data>
+  <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Insatsutlägg tillagt</value></data>
+  <data name="TimeReportSubmitted" xml:space="preserve"><value>Tidrapport inskickad</value></data>
+  <data name="TimeReportApproved" xml:space="preserve"><value>Tidrapport godkänd</value></data>
+</root>

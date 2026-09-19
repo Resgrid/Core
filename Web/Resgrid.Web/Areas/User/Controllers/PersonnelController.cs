@@ -2077,26 +2077,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (warned.Count > 0)
 					TempData["RoleMembersWarning"] = string.Format(_certificationLocalizer["RoleMembersWarned"].Value, string.Join(", ", await PersonnelDisplayNamesAsync(warned)));
 
-				//using (var scope = new TransactionScope())
-				//{
-				await _personnelRolesService.DeleteRoleUsersAsync(role.Users.ToList(), cancellationToken);
-
-				if (incomingUsers.Any())
+				try
 				{
-					foreach (var user in incomingUsers)
-					{
-						PersonnelRoleUser pru = new PersonnelRoleUser();
-						string userId = user;
-						pru.UserId = userId;
-
-						role.Users.Add(pru);
-					}
+					// One transaction for the name/description and the membership swap: a refused member (the service's own
+					// gate re-runs against live data) leaves the previous membership untouched.
+					await _personnelRolesService.ReplaceRoleMembersAsync(role, incomingUsers, cancellationToken, UserId);
 				}
-
-				//	scope.Complete();
-				//}
-
-				await _personnelRolesService.SaveRoleAsync(role, cancellationToken, UserId);
+				catch (InvalidOperationException ex) when (ex.Message == "certifications_role_requirements_unmet")
+				{
+					ModelState.AddModelError("Role.Users", string.Format(_certificationLocalizer["RoleMembersBlocked"].Value, string.Join(", ", await PersonnelDisplayNamesAsync(incomingUsers.Where(u => !currentUsers.Contains(u))))));
+					model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+					return View(model);
+				}
 
 				//_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);

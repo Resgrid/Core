@@ -122,5 +122,18 @@
   "CertificationRoleRemoved": 90,
   "CertificationStatusChanged": 91,
   "UnitCertificationExpiring": 92,
-  "UnitCertificationExpired": 93
+  "UnitCertificationExpired": 93,
+  "BidCreated": 74,
+  "BidSent": 75,
+  "BidAccepted": 76,
+  "BidDeclined": 77,
+  "BidExpired": 78,
+  "ContractStatusChanged": 79,
+  "ContractExpiring": 80,
+  "DeploymentCreated": 81,
+  "DeploymentStatusChanged": 82,
+  "DeploymentRosterChanged": 83,
+  "DeploymentExpenseAdded": 84,
+  "TimeReportSubmitted": 85,
+  "TimeReportApproved": 86
 }

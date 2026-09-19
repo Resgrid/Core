@@ -75,6 +75,22 @@ namespace Resgrid.Model
 		InvoicePaymentRefunded = 94,
 		InvoicePaymentDisputed = 95,
 
+		// Workforce & Business Operations plan Phase C: bids, contracts, deployments, time reports (registry 74-86; plan C8).
+		// 81-86 are published by the deployment core (C-M1); 74-80 are registered here and published by the contractor milestone.
+		BidCreated = 74,
+		BidSent = 75,
+		BidAccepted = 76,
+		BidDeclined = 77,
+		BidExpired = 78,
+		ContractStatusChanged = 79,
+		ContractExpiring = 80,
+		DeploymentCreated = 81,
+		DeploymentStatusChanged = 82,
+		DeploymentRosterChanged = 83,
+		DeploymentExpenseAdded = 84,
+		TimeReportSubmitted = 85,
+		TimeReportApproved = 86,
+
 		// Workforce & Business Operations plan Phase D: certifications & role qualification (registry 87-93; plan D7).
 		// CertificationExpiring = 23 (above) is activated by the same worker.
 		CertificationAdded = 87,

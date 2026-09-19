@@ -853,7 +853,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new AddCertificationView();
 			model.UserId = userToGet;
-			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			var types = await PersonCertificationTypesAsync();
 			model.CertificationTypes = new SelectList(types, "Type", "Type");
 
 			return View(model);
@@ -972,10 +972,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				cert.IssuedBy = model.IssuedBy;
 				cert.ExpiresOn = model.ExpiresOn;
 				cert.RecievedOn = model.RecievedOn;
-				cert.Type = model.Type;
-				// Phase D: re-link the catalog type from the picked name; an untyped legacy record stays untyped when the name has no match.
+				// Phase D: re-link the catalog type from the picked name. An unchanged name keeps its link (the type may have
+				// been retired since); a name the picker no longer offers drops the stale link rather than saving a record
+				// whose name and catalog type disagree; an untyped legacy record stays untyped.
+				var pickedType = (model.Type ?? string.Empty).Trim();
 				var personTypes = await PersonCertificationTypesAsync();
-				cert.DepartmentCertificationTypeId = personTypes.FirstOrDefault(t => t.Type == (model.Type ?? string.Empty).Trim())?.DepartmentCertificationTypeId ?? cert.DepartmentCertificationTypeId;
+				var pickedCatalogType = personTypes.FirstOrDefault(t => t.Type == pickedType);
+				if (pickedCatalogType != null)
+					cert.DepartmentCertificationTypeId = pickedCatalogType.DepartmentCertificationTypeId;
+				else if (!string.Equals((cert.Type ?? string.Empty).Trim(), pickedType, StringComparison.Ordinal))
+					cert.DepartmentCertificationTypeId = null;
+				cert.Type = model.Type;
 
 				if (fileToUpload != null && fileToUpload.Length > 0)
 				{
@@ -1034,8 +1041,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.RecievedOn = cert.RecievedOn;
 			model.Type = cert.Type;
 
-			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
-			model.CertificationTypes = new SelectList(types, "Type", "Type");
+			// The record's own type stays selectable even when the catalog has since retired it.
+			var typeNames = (await PersonCertificationTypesAsync()).Select(t => t.Type).ToList();
+			if (!string.IsNullOrWhiteSpace(cert.Type) && !typeNames.Contains(cert.Type))
+				typeNames.Insert(0, cert.Type);
+			model.CertificationTypes = new SelectList(typeNames, cert.Type);
 
 			return View(model);
 		}

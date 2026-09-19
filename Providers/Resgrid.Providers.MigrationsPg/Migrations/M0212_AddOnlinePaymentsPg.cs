@@ -78,9 +78,9 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_invoicepaymentrequests_open ON invoicepaymentrequests (invoiceid) WHERE status IN (0, 1, 2);");
 			}
 
-			if (!Schema.Table("paymentproviderevents").Exists())
+			if (!Schema.Table("paymentconnectevents").Exists())
 			{
-				Create.Table("paymentproviderevents")
+				Create.Table("paymentconnectevents")
 					.WithColumn("paymentconnecteventid").AsString(36).NotNullable().PrimaryKey()
 					.WithColumn("provider").AsInt32().NotNullable()
 					.WithColumn("externaleventid").AsString(200).NotNullable()
@@ -94,15 +94,21 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("error").AsString(1000).Nullable()
 					.WithColumn("payloadjson").AsCustom("text").Nullable();
 
-				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_paymentproviderevents_event ON paymentproviderevents (provider, externaleventid);");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentproviderevents_account ON paymentproviderevents (provider, externalaccountid, receivedon);");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentproviderevents_received ON paymentproviderevents (receivedon);");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentproviderevents_outcome ON paymentproviderevents (outcome, receivedon);");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentproviderevents_department ON paymentproviderevents (departmentid);");
+				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_paymentconnectevents_event ON paymentconnectevents (provider, externaleventid);");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentconnectevents_account ON paymentconnectevents (provider, externalaccountid, receivedon);");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentconnectevents_received ON paymentconnectevents (receivedon);");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentconnectevents_outcome ON paymentconnectevents (outcome, receivedon);");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_paymentconnectevents_department ON paymentconnectevents (departmentid);");
 			}
 
 			// Idempotency of online payments is enforced by the database, not only by the pre-insert lookup: M0210's
 			// non-unique gateway index is replaced by a partial unique one (manual payments carry no transaction id).
+			// Preflight: a duplicate (provider, gatewaytransactionid) pair would make the unique index fail after the old
+			// index was already dropped, so the migration stops here, names the problem and leaves M0210's index in place.
+			Execute.Sql(
+				"DO $guard$ BEGIN IF to_regclass('invoicepayments') IS NOT NULL AND EXISTS (SELECT 1 FROM invoicepayments WHERE gatewaytransactionid IS NOT NULL AND provider IS NOT NULL " +
+				"GROUP BY provider, gatewaytransactionid HAVING COUNT(*) > 1) " +
+				"THEN RAISE EXCEPTION 'M0212: invoicepayments holds duplicate (provider, gatewaytransactionid) pairs; resolve them before ux_invoicepayments_gateway can be created.'; END IF; END $guard$;");
 			Execute.Sql("DROP INDEX IF EXISTS ix_invoicepayments_gateway;");
 			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_invoicepayments_gateway ON invoicepayments (provider, gatewaytransactionid) WHERE gatewaytransactionid IS NOT NULL AND provider IS NOT NULL;");
 
@@ -130,7 +136,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 		{
 			Execute.Sql("DROP INDEX IF EXISTS ux_invoicepayments_gateway;");
 			Execute.Sql("DO $guard$ BEGIN IF to_regclass('invoicepayments') IS NOT NULL THEN CREATE INDEX IF NOT EXISTS ix_invoicepayments_gateway ON invoicepayments (provider, gatewaytransactionid); END IF; END $guard$;");
-			Execute.Sql("DO $guard$ BEGIN IF to_regclass('paymentproviderevents') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM paymentproviderevents) THEN DROP TABLE paymentproviderevents; END IF; END $guard$;");
+			Execute.Sql("DO $guard$ BEGIN IF to_regclass('paymentconnectevents') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM paymentconnectevents) THEN DROP TABLE paymentconnectevents; END IF; END $guard$;");
 			Execute.Sql("DO $guard$ BEGIN IF to_regclass('invoicepaymentrequests') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM invoicepaymentrequests) THEN DROP TABLE invoicepaymentrequests; END IF; END $guard$;");
 			Execute.Sql("DO $guard$ BEGIN IF to_regclass('departmentpaymentconnections') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM departmentpaymentconnections) THEN DROP TABLE departmentpaymentconnections; END IF; END $guard$;");
 		}

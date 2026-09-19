@@ -28,7 +28,7 @@
 
         @if (Model.Available)
         {
-            <form method="post" action="/pay/@token">
+            <form method="post" action="@Url.Action("Start", "Pay", new { token })">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-primary btn-lg">@localizer["PayNow"] @Model.AmountDue.ToString("N2") @Model.Currency</button>
             </form>

@@ -147,6 +147,13 @@ namespace Resgrid.Model
 
 		public string UpdatedByUserId { get; set; }
 
+		/// <summary>
+		/// Department-local date of the last claimed expiry sweep (worker 34). The worker claims the date atomically before it
+		/// runs, so a repeated or skipped local hour (clock drift, daylight-saving transitions, an overlapping tick) can neither
+		/// send a day's expiring notifications twice nor miss the day. Owned by the worker; the settings page never writes it.
+		/// </summary>
+		public DateTime? LastSweepLocalDate { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

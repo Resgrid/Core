@@ -1,0 +1,14 @@
+@model int
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    var status = (Resgrid.Model.Invoicing.DeploymentTimeReportStatuses)Model;
+    var css = status switch
+    {
+        Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Draft => "label-default",
+        Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Submitted => "label-info",
+        Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Approved => "label-primary",
+        Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Billed => "label-success",
+        _ => "label-danger"
+    };
+}
+<span class="label @css">@localizer["ReportStatus" + status]</span>

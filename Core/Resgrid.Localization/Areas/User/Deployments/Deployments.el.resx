@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Deployments" xml:space="preserve"><value>Αποστολές</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Οικονομικά αποστολών</value></data>
+  <data name="MyDeployments" xml:space="preserve"><value>Οι αποστολές μου</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Οικονομικά περιβλήματα αποστολών: συνθέσεις, ημερήσιες αναφορές χρόνου, έξοδα και αρχεία για τιμολογήσιμες, ανάκτησης κόστους και επιχειρησιακές αποστολές.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Μια αποστολή ομαδοποιεί τις μονάδες, το προσωπικό και τον εξοπλισμό που στάλθηκαν σε ένα συμβάν μαζί με τις ημερήσιες αναφορές χρόνου και τα έξοδα. Συνδέστε την με μια κλήση ή με μια εντολή αμοιβαίας συνδρομής από το Records.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>Δεν υπάρχουν αποστολές ακόμη.</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>Εμφάνιση όλων</value></data>
+  <data name="ShowOpen" xml:space="preserve"><value>Εμφάνιση μόνο ανοιχτών</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Νέα αποστολή</value></data>
+  <data name="EditDeployment" xml:space="preserve"><value>Επεξεργασία αποστολής</value></data>
+  <data name="EditIntro" xml:space="preserve"><value>Αναγνωριστικά που ορίζει ο φορέας-πελάτης και στοιχεία δικαιοδοσίας που χρειάζεται η μηχανή τιμολόγησης.</value></data>
+  <data name="CreateFromExternalOrder" xml:space="preserve"><value>Δημιουργία από εξωτερική εντολή</value></data>
+  <data name="Open" xml:space="preserve"><value>Άνοιγμα</value></data>
+  <data name="Name" xml:space="preserve"><value>Όνομα</value></data>
+  <data name="Status" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="FinanceMode" xml:space="preserve"><value>Οικονομική λειτουργία</value></data>
+  <data name="FinanceModeHelp" xml:space="preserve"><value>«Μόνο επιχειρησιακή» κρατά χρόνο και έξοδα ως αρχείο· «ανάκτηση κόστους» τροφοδοτεί αίτημα αποζημίωσης· «τιμολογήσιμη» τροφοδοτεί τιμολόγιο πελάτη.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Αρ. συμβάντος</value></data>
+  <data name="ResourceOrderNumber" xml:space="preserve"><value>Αρ. εντολής πόρων</value></data>
+  <data name="RequestNumber" xml:space="preserve"><value>Αρ. αιτήματος</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>Αρ. αιτήματος υπηρεσίας</value></data>
+  <data name="CostCode" xml:space="preserve"><value>Κωδικός κόστους</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>Σημείο πρόσληψης</value></data>
+  <data name="Contact" xml:space="preserve"><value>Επαφή</value></data>
+  <data name="Window" xml:space="preserve"><value>Χρονικό παράθυρο</value></data>
+  <data name="Days" xml:space="preserve"><value>ημέρες</value></data>
+  <data name="MaxDays" xml:space="preserve"><value>Μέγ. ημέρες</value></data>
+  <data name="Notes" xml:space="preserve"><value>Σημειώσεις</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Συνδεδεμένη με εξωτερική εντολή του Records</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Αποστολή</value></data>
+  <data name="AgencyIdentifiers" xml:space="preserve"><value>Αναγνωριστικά φορέα</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Δικαιοδοσία</value></data>
+  <data name="HomeCountry" xml:space="preserve"><value>Χώρα προέλευσης</value></data>
+  <data name="HomeSubdivision" xml:space="preserve"><value>Πολιτεία / επαρχία προέλευσης</value></data>
+  <data name="HostCountry" xml:space="preserve"><value>Χώρα υποδοχής</value></data>
+  <data name="HostSubdivision" xml:space="preserve"><value>Πολιτεία / επαρχία υποδοχής</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Ζώνη ώρας</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Τοπική ζώνη ώρας του συμβάντος για τις αναφορές χρόνου· κενό χρησιμοποιεί αυτήν του τμήματος.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Νόμισμα</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>Εκτός επαρχίας / πολιτείας</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>Μετακίνηση αεροπορικώς</value></data>
+  <data name="CallId" xml:space="preserve"><value>Αναγνωριστικό κλήσης</value></data>
+  <data name="CallIdHelp" xml:space="preserve"><value>Προαιρετικό: η κλήση στην οποία χρεώνεται η αποστολή. Μία αποστολή ανά κλήση.</value></data>
+  <data name="Save" xml:space="preserve"><value>Αποθήκευση</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Η αλλαγή δεν ήταν δυνατό να αποθηκευτεί.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Περιβάλετε μια ανοιχτή εντολή αμοιβαίας συνδρομής του Records με μια αποστολή ώστε να παρακολουθούνται και να τιμολογούνται χρόνος, έξοδα και σύνθεση. Η ίδια η εντολή παραμένει στο Records.</value></data>
+  <data name="OpenExternalOrders" xml:space="preserve"><value>Ανοιχτές εξωτερικές εντολές</value></data>
+  <data name="RecordsRequired" xml:space="preserve"><value>Το σύστημα Records δεν είναι ενεργοποιημένο για αυτό το τμήμα, οπότε δεν υπάρχουν εξωτερικές εντολές προς επιλογή.</value></data>
+  <data name="NoOpenExternalOrders" xml:space="preserve"><value>Δεν υπάρχουν ανοιχτές εξωτερικές εντολές χωρίς αποστολή.</value></data>
+  <data name="ExternalOrder" xml:space="preserve"><value>Εξωτερική εντολή</value></data>
+  <data name="NameFromOrder" xml:space="preserve"><value>Προεπιλογή το όνομα του συμβάντος</value></data>
+  <data name="PrefillRoster" xml:space="preserve"><value>Προσυμπλήρωση της σύνθεσης από αποδεκτές αναθέσεις</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>Δημιουργία και κλήσης</value></data>
+  <data name="CallType" xml:space="preserve"><value>Τύπος κλήσης</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>Προτεραιότητα κλήσης</value></data>
+  <data name="CreateDeployment" xml:space="preserve"><value>Δημιουργία αποστολής</value></data>
+  <data name="OrdersAlreadyLinked" xml:space="preserve"><value>{0} ανοιχτή/ές εντολή/ές έχουν ήδη αποστολή.</value></data>
+  <data name="FillCount" xml:space="preserve"><value>{0} ανάθεση/εις</value></data>
+  <data name="Edit" xml:space="preserve"><value>Επεξεργασία</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Εξαγωγή χρόνου CSV</value></data>
+  <data name="Call" xml:space="preserve"><value>Κλήση</value></data>
+  <data name="Summary" xml:space="preserve"><value>Σύνοψη</value></data>
+  <data name="Units" xml:space="preserve"><value>Μονάδες</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Προσωπικό</value></data>
+  <data name="TimeReports" xml:space="preserve"><value>Αναφορές χρόνου</value></data>
+  <data name="PersonnelHours" xml:space="preserve"><value>Ώρες προσωπικού</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Έξοδα</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Αλλαγή κατάστασης</value></data>
+  <data name="StatusConfirm" xml:space="preserve"><value>Αλλαγή της κατάστασης της αποστολής;</value></data>
+  <data name="Roster" xml:space="preserve"><value>Σύνθεση</value></data>
+  <data name="Files" xml:space="preserve"><value>Αρχεία</value></data>
+  <data name="Unit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="CallSign" xml:space="preserve"><value>Διακριτικό κλήσης</value></data>
+  <data name="Crew" xml:space="preserve"><value>Πλήρωμα</value></data>
+  <data name="RemoveConfirm" xml:space="preserve"><value>Αφαίρεση αυτής της γραμμής;</value></data>
+  <data name="SelectUnit" xml:space="preserve"><value>Επιλέξτε μονάδα</value></data>
+  <data name="AddUnit" xml:space="preserve"><value>Προσθήκη μονάδας</value></data>
+  <data name="Equipment" xml:space="preserve"><value>Εξοπλισμός</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>Καμία μονάδα στη σύνθεση.</value></data>
+  <data name="NoEquipment" xml:space="preserve"><value>Κανένας εξοπλισμός στη σύνθεση.</value></data>
+  <data name="Item" xml:space="preserve"><value>Είδος</value></data>
+  <data name="Issued" xml:space="preserve"><value>Χορηγήθηκε</value></data>
+  <data name="Return" xml:space="preserve"><value>Επιστροφή</value></data>
+  <data name="EquipmentName" xml:space="preserve"><value>Όνομα εξοπλισμού</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>Χωρίς μονάδα</value></data>
+  <data name="AddEquipment" xml:space="preserve"><value>Προσθήκη εξοπλισμού</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>Κανένα προσωπικό στη σύνθεση.</value></data>
+  <data name="Seat" xml:space="preserve"><value>Θέση</value></data>
+  <data name="Certification" xml:space="preserve"><value>Πιστοποίηση</value></data>
+  <data name="Member" xml:space="preserve"><value>Μέλος</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Επιλέξτε μέλος</value></data>
+  <data name="SeatHelp" xml:space="preserve"><value>Οι θέσεις με * απαιτούν τον ρόλο προσωπικού της θέσης· ελέγχονται οι απαιτήσεις πιστοποίησης του ρόλου και επισημαίνονται οι πιστοποιήσεις που λήγουν.</value></data>
+  <data name="ForceSeat" xml:space="preserve"><value>Τοποθέτηση ακόμη κι αν αποτύχει μια απαίτηση</value></data>
+  <data name="AddPersonnel" xml:space="preserve"><value>Προσθήκη μέλους</value></data>
+  <data name="SeatBlocked" xml:space="preserve"><value>Το μέλος δεν πληροί τις απαιτήσεις της θέσης. Επιλέξτε «Τοποθέτηση ακόμη κι αν αποτύχει μια απαίτηση» για παράκαμψη.</value></data>
+  <data name="NewTimeReport" xml:space="preserve"><value>Νέα αναφορά χρόνου</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Μία αναφορά ανά ημέρα· οι καταχωρίσεις προσυμπληρώνονται από τη σύνθεση.</value></data>
+  <data name="NoTimeReports" xml:space="preserve"><value>Δεν υπάρχουν αναφορές χρόνου ακόμη.</value></data>
+  <data name="ReportDate" xml:space="preserve"><value>Ημερομηνία αναφοράς</value></data>
+  <data name="Submitted" xml:space="preserve"><value>Υποβλήθηκε</value></data>
+  <data name="Approved" xml:space="preserve"><value>Εγκρίθηκε</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Τιμολόγιο</value></data>
+  <data name="NoExpenses" xml:space="preserve"><value>Δεν υπάρχουν έξοδα ακόμη.</value></data>
+  <data name="ExpenseDate" xml:space="preserve"><value>Ημερομηνία</value></data>
+  <data name="Type" xml:space="preserve"><value>Τύπος</value></data>
+  <data name="Description" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="City" xml:space="preserve"><value>Πόλη</value></data>
+  <data name="Amount" xml:space="preserve"><value>Ποσό</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Απόδειξη</value></data>
+  <data name="TimeReport" xml:space="preserve"><value>Αναφορά χρόνου</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Προεγκεκριμένο</value></data>
+  <data name="NotBillable" xml:space="preserve"><value>Μη τιμολογήσιμο</value></data>
+  <data name="Total" xml:space="preserve"><value>Σύνολο</value></data>
+  <data name="AddExpense" xml:space="preserve"><value>Προσθήκη εξόδου</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>Δεν υπάρχουν αρχεία ακόμη.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Όνομα αρχείου</value></data>
+  <data name="Size" xml:space="preserve"><value>Μέγεθος</value></data>
+  <data name="Added" xml:space="preserve"><value>Προστέθηκε</value></data>
+  <data name="Upload" xml:space="preserve"><value>Μεταφόρτωση</value></data>
+  <data name="PreviewManifest" xml:space="preserve"><value>Προεπισκόπηση δηλωτικού</value></data>
+  <data name="GenerateManifest" xml:space="preserve"><value>Αρχειοθέτηση PDF δηλωτικού</value></data>
+  <data name="Billable" xml:space="preserve"><value>Τιμολογήσιμο</value></data>
+  <data name="MealCode" xml:space="preserve"><value>Κωδικός γεύματος</value></data>
+  <data name="TimeReportTitle" xml:space="preserve"><value>Ημερήσια αναφορά χρόνου αρ. {0}</value></data>
+  <data name="BackToDeployment" xml:space="preserve"><value>Επιστροφή στην αποστολή</value></data>
+  <data name="NoClear8" xml:space="preserve"><value>Χωρίς 8ωρη ανάπαυση (οι υπερωρίες μεταφέρονται στην επόμενη βάρδια)</value></data>
+  <data name="UnsafeStandDown" xml:space="preserve"><value>Διακοπή λόγω μη ασφαλών συνθηκών</value></data>
+  <data name="TimeEntries" xml:space="preserve"><value>Καταχωρίσεις χρόνου</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>οι ώρες είναι σε τοπική ώρα συμβάντος</value></data>
+  <data name="Subject" xml:space="preserve"><value>Υποκείμενο</value></data>
+  <data name="EntryType" xml:space="preserve"><value>Τύπος καταχώρισης</value></data>
+  <data name="Start" xml:space="preserve"><value>Έναρξη</value></data>
+  <data name="End" xml:space="preserve"><value>Λήξη</value></data>
+  <data name="PaidBreak" xml:space="preserve"><value>Αμειβόμενο διάλειμμα (λεπτά)</value></data>
+  <data name="UnpaidBreak" xml:space="preserve"><value>Μη αμειβόμενο διάλειμμα (λεπτά)</value></data>
+  <data name="Km" xml:space="preserve"><value>Χλμ</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>Προσθήκη καταχώρισης</value></data>
+  <data name="Actions" xml:space="preserve"><value>Ενέργειες</value></data>
+  <data name="SaveAndSubmit" xml:space="preserve"><value>Αποθήκευση και υποβολή</value></data>
+  <data name="SubmitConfirm" xml:space="preserve"><value>Υποβολή της αναφοράς για έγκριση; Οι καταχωρίσεις κλειδώνουν μετά την έγκριση.</value></data>
+  <data name="OpenInvoice" xml:space="preserve"><value>Άνοιγμα τιμολογίου</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Υπογραφές</value></data>
+  <data name="ContractorSignature" xml:space="preserve"><value>Ανάδοχος</value></data>
+  <data name="CustomerSignature" xml:space="preserve"><value>Πελάτης</value></data>
+  <data name="SignAsContractor" xml:space="preserve"><value>Υπογραφή ως ανάδοχος</value></data>
+  <data name="CustomerSignerName" xml:space="preserve"><value>Όνομα υπογράφοντος πελάτη</value></data>
+  <data name="Sign" xml:space="preserve"><value>Υπογραφή</value></data>
+  <data name="Review" xml:space="preserve"><value>Έλεγχος</value></data>
+  <data name="Approve" xml:space="preserve"><value>Έγκριση</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>Έγκριση αυτής της αναφοράς χρόνου;</value></data>
+  <data name="VoidReason" xml:space="preserve"><value>Αιτία</value></data>
+  <data name="Void" xml:space="preserve"><value>Ακύρωση αναφοράς</value></data>
+  <data name="VoidConfirm" xml:space="preserve"><value>Ακύρωση αυτής της αναφοράς χρόνου; Διατηρείται ως αρχείο αλλά εξαιρείται από την τιμολόγηση.</value></data>
+  <data name="FilePdf" xml:space="preserve"><value>Αρχειοθέτηση PDF στην αποστολή</value></data>
+  <data name="StatusPlanned" xml:space="preserve"><value>Προγραμματισμένη</value></data>
+  <data name="StatusStandby" xml:space="preserve"><value>Σε αναμονή</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Ενεργή</value></data>
+  <data name="StatusDemobilizing" xml:space="preserve"><value>Αποκινητοποίηση</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Ολοκληρωμένη</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Ακυρωμένη</value></data>
+  <data name="ReportStatusDraft" xml:space="preserve"><value>Πρόχειρο</value></data>
+  <data name="ReportStatusSubmitted" xml:space="preserve"><value>Υποβληθείσα</value></data>
+  <data name="ReportStatusApproved" xml:space="preserve"><value>Εγκεκριμένη</value></data>
+  <data name="ReportStatusBilled" xml:space="preserve"><value>Τιμολογημένη</value></data>
+  <data name="ReportStatusVoid" xml:space="preserve"><value>Ακυρωμένη</value></data>
+  <data name="FinanceOperationalOnly" xml:space="preserve"><value>Μόνο επιχειρησιακή</value></data>
+  <data name="FinanceCostRecovery" xml:space="preserve"><value>Ανάκτηση κόστους</value></data>
+  <data name="FinanceBillable" xml:space="preserve"><value>Τιμολογήσιμη</value></data>
+  <data name="ExpensePerDiemMeal" xml:space="preserve"><value>Ημερήσια αποζημίωση / γεύμα</value></data>
+  <data name="ExpenseAccommodation" xml:space="preserve"><value>Διαμονή</value></data>
+  <data name="ExpensePrivateAccommodation" xml:space="preserve"><value>Ιδιωτική διαμονή</value></data>
+  <data name="ExpenseFerry" xml:space="preserve"><value>Πορθμείο</value></data>
+  <data name="ExpenseFuel" xml:space="preserve"><value>Καύσιμα</value></data>
+  <data name="ExpenseSupplyRestock" xml:space="preserve"><value>Ανεφοδιασμός</value></data>
+  <data name="ExpenseOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="AttachmentReceipt" xml:space="preserve"><value>Απόδειξη</value></data>
+  <data name="AttachmentSignedServiceRequest" xml:space="preserve"><value>Υπογεγραμμένο αίτημα υπηρεσίας</value></data>
+  <data name="AttachmentTimeReportPdf" xml:space="preserve"><value>PDF αναφοράς χρόνου</value></data>
+  <data name="AttachmentManifest" xml:space="preserve"><value>Δηλωτικό</value></data>
+  <data name="AttachmentCertification" xml:space="preserve"><value>Πιστοποίηση</value></data>
+  <data name="AttachmentOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="AttachmentExternalOrder" xml:space="preserve"><value>Εξωτερική εντολή</value></data>
+  <data name="AttachmentSignedF42" xml:space="preserve"><value>Υπογεγραμμένο F-42</value></data>
+  <data name="AttachmentPaperF42" xml:space="preserve"><value>Έντυπο F-42</value></data>
+  <data name="AttachmentIcs213Approval" xml:space="preserve"><value>Έγκριση ICS 213</value></data>
+  <data name="AttachmentCrewRotationApproval" xml:space="preserve"><value>Έγκριση εναλλαγής πληρώματος</value></data>
+  <data name="AttachmentLossDamage" xml:space="preserve"><value>Απώλεια / ζημιά</value></data>
+  <data name="AttachmentMarsExpenseEvidence" xml:space="preserve"><value>Αποδεικτικό εξόδου MARS</value></data>
+  <data name="AttachmentMarsInvoice" xml:space="preserve"><value>Τιμολόγιο MARS</value></data>
+  <data name="EntryDeployment" xml:space="preserve"><value>Αποστολή</value></data>
+  <data name="EntryStandby" xml:space="preserve"><value>Αναμονή</value></data>
+  <data name="EntryTravel" xml:space="preserve"><value>Μετακίνηση</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>Ήδη τοποθετημένο σε άλλη ανοιχτή αποστολή σε αυτό το παράθυρο</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>Το μέλος δεν κατέχει τον ρόλο προσωπικού της θέσης</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>Λείπει ή έχει λήξει πιστοποίηση που απαιτεί η θέση</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>Μια απαιτούμενη πιστοποίηση λήγει εντός του παραθύρου της αποστολής</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>Ήδη σε αυτή τη σύνθεση</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>Η χορήγηση από το απόθεμα απέτυχε· η γραμμή εξοπλισμού διατηρήθηκε χωρίς χορήγηση</value></data>
+  <data name="Issueentries_overlap" xml:space="preserve"><value>Δύο χρονικά διαστήματα επικαλύπτονται για το ίδιο υποκείμενο</value></data>
+  <data name="Issueend_before_start" xml:space="preserve"><value>Μια καταχώριση λήγει πριν αρχίσει</value></data>
+  <data name="Issuesubject_not_on_roster" xml:space="preserve"><value>Μια καταχώριση αναφέρεται σε υποκείμενο εκτός σύνθεσης</value></data>
+  <data name="Issueno_entries" xml:space="preserve"><value>Η αναφορά δεν έχει καταχωρίσεις χρόνου</value></data>
+  <data name="Issuebreak_rule" xml:space="preserve"><value>Διάστημα άνω των 5 ωρών χωρίς καταγεγραμμένο διάλειμμα</value></data>
+  <data name="Issuelong_travel" xml:space="preserve"><value>Χρόνος μετακίνησης άνω των 12 ωρών απαιτεί έγκριση</value></data>
+  <data name="Issueoutside_report_date" xml:space="preserve"><value>Μια καταχώριση βρίσκεται εκτός της ημερομηνίας αναφοράς</value></data>
+  <data name="deployments_name_required" xml:space="preserve"><value>Απαιτείται όνομα.</value></data>
+  <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Επιλέξτε οικονομική λειτουργία.</value></data>
+  <data name="deployments_window_invalid" xml:space="preserve"><value>Η λήξη δεν μπορεί να προηγείται της έναρξης.</value></data>
+  <data name="deployments_discount_invalid" xml:space="preserve"><value>Η έκπτωση πρέπει να είναι μεταξύ 0 και 100 τοις εκατό.</value></data>
+  <data name="deployments_contact_not_found" xml:space="preserve"><value>Η επαφή δεν βρέθηκε.</value></data>
+  <data name="deployments_call_not_found" xml:space="preserve"><value>Η κλήση δεν βρέθηκε.</value></data>
+  <data name="deployments_call_already_linked" xml:space="preserve"><value>Αυτή η κλήση έχει ήδη αποστολή.</value></data>
+  <data name="deployments_not_found" xml:space="preserve"><value>Η αποστολή δεν βρέθηκε.</value></data>
+  <data name="deployments_status_transition_invalid" xml:space="preserve"><value>Αυτή η αλλαγή κατάστασης δεν επιτρέπεται από την τρέχουσα κατάσταση.</value></data>
+  <data name="deployments_delete_open" xml:space="preserve"><value>Μια ενεργή αποστολή δεν μπορεί να διαγραφεί· ολοκληρώστε ή ακυρώστε την πρώτα.</value></data>
+  <data name="deployments_external_order_required" xml:space="preserve"><value>Επιλέξτε εξωτερική εντολή.</value></data>
+  <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Αυτή η εξωτερική εντολή έχει ήδη αποστολή.</value></data>
+  <data name="deployments_external_order_not_found" xml:space="preserve"><value>Η εξωτερική εντολή δεν βρέθηκε.</value></data>
+  <data name="deployments_unit_not_found" xml:space="preserve"><value>Η μονάδα δεν βρέθηκε.</value></data>
+  <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Αυτή η μονάδα είναι ήδη στη σύνθεση.</value></data>
+  <data name="deployments_closed" xml:space="preserve"><value>Η αποστολή είναι ολοκληρωμένη ή ακυρωμένη και η σύνθεσή της είναι κλειδωμένη.</value></data>
+  <data name="deployments_user_required" xml:space="preserve"><value>Επιλέξτε μέλος.</value></data>
+  <data name="deployments_user_not_found" xml:space="preserve"><value>Το μέλος δεν βρέθηκε.</value></data>
+  <data name="deployments_user_not_in_department" xml:space="preserve"><value>Το μέλος δεν ανήκει σε αυτό το τμήμα.</value></data>
+  <data name="deployments_user_already_rostered" xml:space="preserve"><value>Αυτό το μέλος είναι ήδη στη σύνθεση.</value></data>
+  <data name="deployments_seat_not_found" xml:space="preserve"><value>Η θέση δεν βρέθηκε σε αυτή τη μονάδα.</value></data>
+  <data name="deployments_equipment_required" xml:space="preserve"><value>Εισαγάγετε όνομα εξοπλισμού ή επιλέξτε είδος αποθέματος.</value></data>
+  <data name="deployments_attachment_empty" xml:space="preserve"><value>Επιλέξτε αρχείο για μεταφόρτωση.</value></data>
+  <data name="deployments_attachment_too_large" xml:space="preserve"><value>Το αρχείο υπερβαίνει τα 30 MB.</value></data>
+  <data name="deployments_pdf_failed" xml:space="preserve"><value>Δεν ήταν δυνατή η δημιουργία του PDF.</value></data>
+  <data name="deployments_protected_write_refused" xml:space="preserve"><value>Δεν ήταν δυνατή η εγγραφή προστατευμένων δεδομένων· ελέγξτε την κατάσταση προστασίας δεδομένων του τμήματος.</value></data>
+  <data name="deployments_file_type" xml:space="preserve"><value>Αυτός ο τύπος αρχείου δεν επιτρέπεται.</value></data>
+  <data name="timereports_date_exists" xml:space="preserve"><value>Υπάρχει ήδη αναφορά χρόνου για αυτή την ημερομηνία.</value></data>
+  <data name="timereports_not_found" xml:space="preserve"><value>Η αναφορά χρόνου δεν βρέθηκε.</value></data>
+  <data name="timereports_locked" xml:space="preserve"><value>Η αναφορά χρόνου είναι εγκεκριμένη, τιμολογημένη ή ακυρωμένη και δεν μπορεί πλέον να επεξεργαστεί.</value></data>
+  <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Αυτή η αλλαγή κατάστασης δεν επιτρέπεται για αυτή την αναφορά χρόνου.</value></data>
+  <data name="timereports_time_invalid" xml:space="preserve"><value>Εισαγάγετε ώρες έναρξης και λήξης ως HH:mm.</value></data>
+  <data name="timereports_validation" xml:space="preserve"><value>Διορθώστε τα παρακάτω σφάλματα πριν την υποβολή.</value></data>
+  <data name="expenses_amount_invalid" xml:space="preserve"><value>Το ποσό δεν μπορεί να είναι αρνητικό.</value></data>
+  <data name="expenses_type_invalid" xml:space="preserve"><value>Επιλέξτε τύπο εξόδου.</value></data>
+  <data name="expenses_not_found" xml:space="preserve"><value>Το έξοδο δεν βρέθηκε.</value></data>
+  <data name="expenses_receipt_invalid" xml:space="preserve"><value>Δεν ήταν δυνατή η ανάγνωση της απόδειξης.</value></data>
+  <data name="ManageDeployments" xml:space="preserve"><value>Διαχείριση αποστολών</value></data>
+  <data name="ManageDeploymentsNote" xml:space="preserve"><value>Δημιουργία και επεξεργασία αποστολών, συνθέσεων, εξοπλισμού, εξόδων, αρχείων και αλλαγών κατάστασης, και προβολή όλων των αποστολών. Τα μέλη της σύνθεσης βλέπουν πάντα τις δικές τους αποστολές και καταχωρίζουν χρόνο χωρίς αυτό το δικαίωμα.</value></data>
+  <data name="ApproveTimeReports" xml:space="preserve"><value>Έγκριση αναφορών χρόνου</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Έγκριση και ακύρωση υποβληθεισών ημερήσιων αναφορών χρόνου. Οι εγκεκριμένες αναφορές τροφοδοτούν την τιμολόγηση.</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Δημιουργήθηκε αποστολή</value></data>
+  <data name="DeploymentStatusChanged" xml:space="preserve"><value>Άλλαξε η κατάσταση αποστολής</value></data>
+  <data name="DeploymentRosterChanged" xml:space="preserve"><value>Άλλαξε η σύνθεση αποστολής</value></data>
+  <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Προστέθηκε έξοδο αποστολής</value></data>
+  <data name="TimeReportSubmitted" xml:space="preserve"><value>Υποβλήθηκε αναφορά χρόνου</value></data>
+  <data name="TimeReportApproved" xml:space="preserve"><value>Εγκρίθηκε αναφορά χρόνου</value></data>
+</root>

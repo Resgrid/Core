@@ -527,6 +527,16 @@
             REDACTED without a grant header, and file bytes never ride these endpoints.
             </summary>
         </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.CertificationsController.MaxFileBytes">
+            <summary>Same ceiling as the MVC upload path (CertificationsController.MaxFileBytes).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CertificationsController.DecodeFile(System.String)">
+            <summary>
+            Decodes a base64 upload under the MVC size ceiling: the encoded length is checked before the decode so an
+            oversized payload is refused without the allocation. Throws certifications_file_too_large / FormatException,
+            both of which the actions already map.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CertificationsController.GetUserCertifications(System.String)">
             <summary>The caller's records, or another member's with Certifications_View.</summary>
         </member>
@@ -1669,6 +1679,20 @@
             </summary>
             <param name="code">The dispatch email code (local part of the email address) to look up.</param>
             <returns>DepartmentResult with the matching department, or a not-found response.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DeploymentsController">
+            <summary>
+            Deployment finance wrappers, roster and attachments (Workforce &amp; Business Operations plan, Phase C5). The
+            deployment core is free behind the Operations.Deployments flag. Managers (Deployments_Update) see and edit every
+            deployment; a rostered member sees the deployments they are seated on. RMS owns the RecordDeployments routes;
+            this route is Deployments and its DTOs carry RmsExternalOrderId so a client can open the Records deployment.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DeploymentsController.GetAccess">
+            <summary>Whether the deployment core is available to this department and what the caller may do. Always answers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DeploymentsController.GetDeploymentByCallId(System.Int32)">
+            <summary>The billing context behind a call (mobile: call → deployment).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DevicesController">
             <summary>
@@ -3774,6 +3798,17 @@
             rapidly dispatch pre-configured calls from mobile apps.
             </summary>
             <returns>Array of CallQuickTemplateResultData for each active call quick template</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.TimeReportsController">
+            <summary>
+            Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file
+            DTRs from the field: a rostered member may create, edit, sign and submit reports and expenses on their own
+            deployments without any new claim; approval and void need TimeReports_Approve. Receipts upload as base64 and
+            are stored as Receipt attachments; DTOs carry UpdatedOn for delta-sync.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.SaveTimeEntries(Resgrid.Web.Services.Models.v4.Deployments.SaveTimeEntriesInput,System.Threading.CancellationToken)">
+            <summary>Replaces the report's entries as a batch. Validation errors come back with the unchanged report and status Failure.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
@@ -11190,6 +11225,36 @@
             Department code (short identifier)
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentAccessData.Enabled">
+            <summary>Operations.Deployments flag (free; no add-on).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentAccessData.ContractorBilling">
+            <summary>Invoicing.ContractorBilling entitlement (paid; bids, contracts, charge runs) — informational for the deployment core.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentData.Status">
+            <summary>DeploymentStatuses value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentData.FinanceMode">
+            <summary>DeploymentFinanceModes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentAttachmentData.AttachmentType">
+            <summary>DeploymentAttachmentTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.Status">
+            <summary>DeploymentTimeReportStatuses value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.SubjectType">
+            <summary>DeploymentTimeSubjectTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.EntryType">
+            <summary>DeploymentTimeEntryTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.ExpenseData.ExpenseType">
+            <summary>DeploymentExpenseTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.SaveExpenseInput.ReceiptData">
+            <summary>Receipt bytes, base64.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput">
             <summary>
             Object that contains the device specific information needed to register the device for push notifications
@@ -11712,7 +11777,7 @@
             <summary>A local reader is open for the global index (after a pull or a write).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.SearchIndexDocCount">
-            <summary>Documents in this process's copy of the global and records indexes.</summary>
+            <summary>Suppressed: shared-index counts disclose other departments' data volumes.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsStripeConnectEnabled">
             <summary>
@@ -13878,6 +13943,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchHitData.Url">
             <summary>Relative web path; clients with native screens switch on EntityType/EntityId instead.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchHealthData.GlobalDocumentCount">
+            <summary>Suppressed: shared-index counts include other departments.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResult.Data">
             <summary>

@@ -328,6 +328,9 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Certifications_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Certifications_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Delete));
 				options.AddPolicy(ResgridResources.Certifications_Setup, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup));
+				options.AddPolicy(ResgridResources.Deployments_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Deployments, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Deployments_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Deployments, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.TimeReports_Approve, policy => policy.RequireClaim(ResgridClaimTypes.Resources.TimeReports, ResgridClaimTypes.Actions.Approve));
 				options.AddPolicy(ResgridResources.Checklist_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.ChecklistResults_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordDefinition_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update));

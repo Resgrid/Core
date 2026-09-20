@@ -82,8 +82,18 @@ namespace Resgrid.Services.Invoicing
 			var deployment = await _deployments.GetByIdForDepartmentAsync(deploymentId, departmentId);
 			if (deployment == null) return new List<DeploymentTimeReport>();
 			var reports = (await _reports.GetByDeploymentAsync(deploymentId))?.Where(r => r.DepartmentId == departmentId).ToList() ?? new List<DeploymentTimeReport>();
-			await ResolveReportsAsync(reports, departmentId);
 			return reports;
+		}
+
+		public async Task<decimal> GetPersonnelHoursAsync(string deploymentId, int departmentId)
+		{
+			// Two reads for the whole deployment (the CSV export's shape) instead of a report + entries pair per report.
+			var deployment = await _deployments.GetByIdForDepartmentAsync(deploymentId, departmentId);
+			if (deployment == null) return 0m;
+			var counted = (await _reports.GetByDeploymentAsync(deploymentId))?.Where(r => r.DepartmentId == departmentId && !r.IsDeleted && r.Status != (int)DeploymentTimeReportStatuses.Void)
+				.Select(r => r.DeploymentTimeReportId).ToHashSet(StringComparer.OrdinalIgnoreCase) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var entries = await _entries.GetByDeploymentAsync(deploymentId);
+			return entries?.Where(e => e.DepartmentId == departmentId && e.DeploymentTimeReportId != null && counted.Contains(e.DeploymentTimeReportId) && e.SubjectType == (int)DeploymentTimeSubjectTypes.Personnel).Sum(e => e.Hours) ?? 0m;
 		}
 
 		public async Task<DeploymentTimeReport> GetTimeReportByIdAsync(string deploymentTimeReportId, int departmentId)
@@ -92,19 +102,14 @@ namespace Resgrid.Services.Invoicing
 			var report = await _reports.GetByIdForDepartmentAsync(deploymentTimeReportId, departmentId);
 			if (report == null || report.IsDeleted) return null;
 			report.Entries = (await _entries.GetByReportAsync(deploymentTimeReportId))?.ToList() ?? new List<DeploymentTimeEntry>();
-			await ResolveReportsAsync(new[] { report }, departmentId);
 			return report;
 		}
 
 		public async Task<List<DeploymentTimeReport>> GetUnbilledApprovedReportsAsync(int departmentId, string deploymentId = null)
 		{
 			var reports = (await _reports.GetUnbilledApprovedAsync(departmentId, deploymentId))?.ToList() ?? new List<DeploymentTimeReport>();
-			await ResolveReportsAsync(reports, departmentId);
 			return reports;
 		}
-
-		private Task ResolveReportsAsync(IReadOnlyList<DeploymentTimeReport> reports, int departmentId) =>
-			Core == null ? Task.CompletedTask : Core.ResolveReadAsync(reports, r => r.DeploymentTimeReportId, DeploymentProtectedFields.TimeReport, departmentId);
 
 		#endregion
 
@@ -161,6 +166,7 @@ namespace Resgrid.Services.Invoicing
 				}
 
 				Audit(departmentId, userId, AuditLogTypes.TimeReportCreated, ipAddress, userAgent, null, saved);
+				if (Core != null) await Core.PublishTimeReportAsync(deployment, WorkflowTriggerEventType.TimeReportCreated, saved, cancellationToken);
 				return await GetTimeReportByIdAsync(saved.DeploymentTimeReportId, departmentId);
 			}, cancellationToken);
 		}
@@ -222,11 +228,20 @@ namespace Resgrid.Services.Invoicing
 			var before = DeploymentService.Snapshot(report);
 			await TransactionAsync(async () =>
 			{
-				await _entries.DeleteByReportAsync(deploymentTimeReportId, cancellationToken);
+				// Entries keep their ids across a save: the catalog-28 envelope on an entry's notes is bound to the entry's row key,
+				// so an untouched entry (REDACTED posted back) is updated in place and a stale one deleted, never re-inserted.
+				var current = (await _entries.GetByReportAsync(deploymentTimeReportId))?.ToDictionary(e => e.DeploymentTimeEntryId, StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, DeploymentTimeEntry>(StringComparer.OrdinalIgnoreCase);
+				var kept = new HashSet<string>(incoming.Where(e => !string.IsNullOrWhiteSpace(e.DeploymentTimeEntryId) && current.ContainsKey(e.DeploymentTimeEntryId)).Select(e => e.DeploymentTimeEntryId), StringComparer.OrdinalIgnoreCase);
+				foreach (var stale in current.Values.Where(e => !kept.Contains(e.DeploymentTimeEntryId)))
+					await _entries.DeleteAsync(stale, cancellationToken);
 				var sort = 0;
 				foreach (var entry in incoming.OrderBy(e => e.SortOrder).ThenBy(e => e.StartTime))
 				{
-					entry.DeploymentTimeEntryId = null;
+					var existingEntry = !string.IsNullOrWhiteSpace(entry.DeploymentTimeEntryId) && current.TryGetValue(entry.DeploymentTimeEntryId, out var found) ? found : null;
+					if (existingEntry == null)
+					{
+						entry.DeploymentTimeEntryId = null;
+					}
 					entry.DeploymentTimeReportId = deploymentTimeReportId;
 					entry.DeploymentId = report.DeploymentId;
 					entry.DepartmentId = departmentId;
@@ -324,6 +339,26 @@ namespace Resgrid.Services.Invoicing
 			return await GetTimeReportByIdAsync(deploymentTimeReportId, departmentId);
 		}
 
+		public async Task<int> MarkTimeReportsBilledAsync(IEnumerable<string> deploymentTimeReportIds, int departmentId, string invoiceId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(invoiceId)) throw new ArgumentNullException(nameof(invoiceId));
+			var count = 0;
+			foreach (var id in (deploymentTimeReportIds ?? Enumerable.Empty<string>()).Where(i => !string.IsNullOrWhiteSpace(i)).Distinct())
+			{
+				var report = await _reports.GetByIdForDepartmentAsync(id, departmentId);
+				if (report == null || report.IsDeleted || report.Status != (int)DeploymentTimeReportStatuses.Approved || !string.IsNullOrWhiteSpace(report.InvoiceId)) continue;
+				var before = DeploymentService.Snapshot(report);
+				report.Status = (int)DeploymentTimeReportStatuses.Billed;
+				report.InvoiceId = invoiceId;
+				report.EditedOn = DateTime.UtcNow;
+				report.EditedByUserId = userId;
+				var saved = await _reports.SaveOrUpdateAsync(report, cancellationToken);
+				Audit(departmentId, userId, AuditLogTypes.TimeReportBilled, ipAddress, userAgent, before, saved);
+				count++;
+			}
+			return count;
+		}
+
 		public async Task<DeploymentTimeReport> VoidTimeReportAsync(string deploymentTimeReportId, int departmentId, string reason, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
 			var report = await _reports.GetByIdForDepartmentAsync(deploymentTimeReportId, departmentId);
@@ -333,11 +368,14 @@ namespace Resgrid.Services.Invoicing
 
 			var before = DeploymentService.Snapshot(report);
 			report.Status = (int)DeploymentTimeReportStatuses.Void;
-			report.Notes = string.IsNullOrWhiteSpace(reason) ? report.Notes : (string.IsNullOrWhiteSpace(report.Notes) ? $"Void: {reason.Trim()}" : $"{report.Notes}\nVoid: {reason.Trim()}");
+			if (!string.IsNullOrWhiteSpace(reason))
+				report.Notes = string.IsNullOrWhiteSpace(report.Notes) ? $"Void: {reason.Trim()}" : $"{report.Notes}\nVoid: {reason.Trim()}";
 			report.EditedOn = DateTime.UtcNow;
 			report.EditedByUserId = userId;
 			var saved = await _reports.SaveOrUpdateAsync(report, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.TimeReportVoided, ipAddress, userAgent, before, saved);
+			var deployment = await _deployments.GetByIdForDepartmentAsync(report.DeploymentId, departmentId);
+			if (Core != null && deployment != null) await Core.PublishTimeReportAsync(deployment, WorkflowTriggerEventType.TimeReportVoided, saved, cancellationToken);
 			return await GetTimeReportByIdAsync(deploymentTimeReportId, departmentId);
 		}
 
@@ -346,16 +384,13 @@ namespace Resgrid.Services.Invoicing
 			var report = await _reports.GetByIdForDepartmentAsync(deploymentTimeReportId, departmentId);
 			if (report == null || report.IsDeleted) throw new InvalidOperationException("timereports_not_found");
 			if (report.Status is (int)DeploymentTimeReportStatuses.Void or (int)DeploymentTimeReportStatuses.Billed) throw new InvalidOperationException("timereports_locked");
-			var existing = report.CloneJson();
 			var before = DeploymentService.Snapshot(report);
 			if (contractorSigned) { report.ContractorSignedByUserId = userId; report.ContractorSignedOn = DateTime.UtcNow; }
 			var signer = Trim(customerSignerName);
 			if (signer != null) { report.CustomerSignerName = signer; report.CustomerSignedOn = DateTime.UtcNow; }
 			report.EditedOn = DateTime.UtcNow;
 			report.EditedByUserId = userId;
-			var saved = Core == null
-				? await _reports.SaveOrUpdateAsync(report, cancellationToken)
-				: await Core.SaveProtectedAsync(_reports, report, existing, r => r.DeploymentTimeReportId, DeploymentProtectedFields.TimeReport, DeploymentService.MarkProtected, departmentId, cancellationToken);
+			var saved = await _reports.SaveOrUpdateAsync(report, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.TimeReportUpdated, ipAddress, userAgent, before, saved);
 			return await GetTimeReportByIdAsync(deploymentTimeReportId, departmentId);
 		}
@@ -431,7 +466,7 @@ namespace Resgrid.Services.Invoicing
 			if (!string.IsNullOrWhiteSpace(report.Notes)) sb.Append("<h2>Notes</h2><p>").Append(E(report.Notes).Replace("\n", "<br/>")).Append("</p>");
 
 			sb.Append("<h2>Signatures</h2><table class=\"sig\"><tr><td>Contractor: ").Append(E(contractorSignerName)).Append(report.ContractorSignedOn.HasValue ? " · " + D(report.ContractorSignedOn) : string.Empty)
-			  .Append("</td><td>Customer: ").Append(E(ProtectedDataEnvelope.SafeDisplay(report.CustomerSignerName))).Append(report.CustomerSignedOn.HasValue ? " · " + D(report.CustomerSignedOn) : string.Empty).Append("</td></tr></table>");
+			  .Append("</td><td>Customer: ").Append(E(report.CustomerSignerName)).Append(report.CustomerSignedOn.HasValue ? " · " + D(report.CustomerSignedOn) : string.Empty).Append("</td></tr></table>");
 			sb.Append("<p class=\"muted\">Generated ").Append(D(DateTime.UtcNow)).Append("</p></body></html>");
 			return sb.ToString();
 		}
@@ -446,6 +481,11 @@ namespace Resgrid.Services.Invoicing
 			static string C(object value)
 			{
 				var text = value switch { null => string.Empty, DateTime d => d.ToString("o", CultureInfo.InvariantCulture), decimal m => m.ToString(CultureInfo.InvariantCulture), _ => value.ToString() };
+				// A leading =, +, -, @, tab or CR makes Excel/Sheets evaluate the cell as a formula on import (the
+				// RecordsExportRenderer guard). Only free text can carry one: numbers and dates are formatted above, so a
+				// negative deduction stays numeric.
+				if (value is string && (text.TrimStart().FirstOrDefault() is '=' or '+' or '-' or '@' || text.StartsWith('\t') || text.StartsWith('\r')))
+					text = "'" + text;
 				return text.IndexOfAny(new[] { ',', '"', '\n', '\r' }) >= 0 ? "\"" + text.Replace("\"", "\"\"") + "\"" : text;
 			}
 			var sb = new StringBuilder();
@@ -473,7 +513,6 @@ namespace Resgrid.Services.Invoicing
 			var deployment = await _deployments.GetByIdForDepartmentAsync(deploymentId, departmentId);
 			if (deployment == null) return new List<DeploymentExpense>();
 			var rows = (await _expenses.GetByDeploymentAsync(deploymentId))?.Where(e => e.DepartmentId == departmentId).ToList() ?? new List<DeploymentExpense>();
-			if (Core != null) await Core.ResolveReadAsync(rows, e => e.DeploymentExpenseId, DeploymentProtectedFields.Expense, departmentId);
 			return rows;
 		}
 
@@ -481,7 +520,6 @@ namespace Resgrid.Services.Invoicing
 		{
 			var row = await _expenses.GetByIdForDepartmentAsync(deploymentExpenseId, departmentId);
 			if (row == null || row.IsDeleted) return null;
-			if (Core != null) await Core.ResolveReadAsync(new[] { row }, e => e.DeploymentExpenseId, DeploymentProtectedFields.Expense, departmentId);
 			return row;
 		}
 
@@ -504,6 +542,9 @@ namespace Resgrid.Services.Invoicing
 			{
 				existing = await _expenses.GetByIdForDepartmentAsync(expense.DeploymentExpenseId, expense.DepartmentId);
 				if (existing == null || existing.IsDeleted) throw new InvalidOperationException("expenses_not_found");
+				// The callers authorize the submitted deployment; a row that belongs to another deployment is not found from
+				// there, so an expense can neither be rewritten nor re-linked across deployments.
+				if (!string.Equals(existing.DeploymentId, expense.DeploymentId, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("expenses_not_found");
 				expense.ReceiptAttachmentId ??= existing.ReceiptAttachmentId;
 				expense.AddedOn = existing.AddedOn;
 				expense.AddedByUserId = existing.AddedByUserId;
@@ -536,9 +577,7 @@ namespace Resgrid.Services.Invoicing
 			}
 
 			var before = existing == null ? null : DeploymentService.Snapshot(existing);
-			var saved = Core == null
-				? await _expenses.SaveOrUpdateAsync(expense, cancellationToken)
-				: await Core.SaveProtectedAsync(_expenses, expense, existing, e => e.DeploymentExpenseId, DeploymentProtectedFields.Expense, DeploymentService.MarkProtected, expense.DepartmentId, cancellationToken);
+			var saved = await _expenses.SaveOrUpdateAsync(expense, cancellationToken);
 			Audit(expense.DepartmentId, userId, isNew ? AuditLogTypes.DeploymentExpenseAdded : AuditLogTypes.DeploymentExpenseUpdated, ipAddress, userAgent, before, saved);
 			if (isNew && Core != null) await Core.PublishExpenseAsync(deployment, saved, cancellationToken);
 			return await GetExpenseByIdAsync(saved.DeploymentExpenseId, expense.DepartmentId);

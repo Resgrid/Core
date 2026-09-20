@@ -711,14 +711,7 @@ namespace Resgrid.Services
 						"InventoryVendors" or "InventoryPurchaseOrders" or "InventoryPurchaseOrderItems" => Resgrid.Model.Inventories.InventoryTables.PurchasingCatalogVersion,
 						_ => Resgrid.Model.Inventories.InventoryTables.CatalogVersion }));
 
-			// Workforce & Business Operations plan, Phase B (catalog 26, registered with M0212): customer-contact and
-			// payment-reference text on the invoicing tables, under the Contacts family. Amounts, statuses, numbers and
-			// dates stay metadata; DepartmentPaymentConnections are system credentials and are never cataloged.
-			foreach (var (table, column) in Resgrid.Model.Invoicing.InvoicingProtectedFields.All())
-				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ContactsFamily, table, column, ProtectedFieldStorageKind.Text,
-					ProtectedFieldClassification.Pii, PermissionTypes.ViewProtectedContactData, PermissionTypes.ViewProtectedContactData, Resgrid.Model.Invoicing.InvoicingProtectedFields.CatalogVersion));
-
-			// Workforce & Business Operations plan, Phase D (catalog 27, registered with M0213/M0214): the free-text and
+			// Workforce & Business Operations plan, Phase D (catalog 26, registered with M0213/M0214): the free-text and
 			// document columns of unit certification records (Operational family, beside UnitLogs) and of certification
 			// credit entries (Personnel family). PersonnelCertifications itself stays catalog 6; statuses, dates and the
 			// type reference are routing metadata.
@@ -731,15 +724,24 @@ namespace Resgrid.Services
 					personnel ? PermissionTypes.ViewProtectedPersonnelData : PermissionTypes.EditProtectedCallData,
 					Resgrid.Model.Certifications.CertificationProtectedFields.CatalogVersion));
 			}
+			// Completion pass (catalog 27): the free-text status reason on both certification record tables.
+			foreach (var (table, column, family) in Resgrid.Model.Certifications.CertificationProtectedFields.Completion())
+			{
+				var personnel = family == Resgrid.Model.Certifications.CertificationProtectedFields.PersonnelFamily;
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", personnel ? PersonnelFamily : OperationalFamily, table, column,
+					ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Sensitive,
+					personnel ? PermissionTypes.ViewProtectedPersonnelData : PermissionTypes.ViewProtectedOperationalData,
+					personnel ? PermissionTypes.ViewProtectedPersonnelData : PermissionTypes.EditProtectedCallData,
+					Resgrid.Model.Certifications.CertificationProtectedFields.CompletionCatalogVersion));
+			}
 
-			// Workforce & Business Operations plan, Phase C (catalog 28, registered with M0218): the deployment core's
-			// customer signer name on daily time reports, expense descriptions and attachment names/bytes (receipts,
-			// signed requests, DTR PDFs, manifests), under the Contacts family. Identifiers, statuses, times, hours,
-			// amounts and the roster stay metadata. The Cal OES MARS identity/rate/agreement fields and compliance
-			// document blobs join this version with their milestones.
+			// Workforce & Business Operations plan, Phase C (catalog 27): the deployment wrapper's internal notes (Contacts
+			// family). Everything a customer receives — invoices, bids, contracts, daily time reports, receipts, manifests,
+			// compliance documents, the billing identity — is deliberately NOT cataloged: customers who are not signed in
+			// read those documents (PDF, pay page, invoice packet), so they must render whole without a grant.
 			foreach (var (table, column, binary) in Resgrid.Model.Invoicing.DeploymentProtectedFields.All())
 				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ContactsFamily, table, column,
-					binary ? ProtectedFieldStorageKind.Binary : ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Pii,
+					binary ? ProtectedFieldStorageKind.Binary : ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Sensitive,
 					PermissionTypes.ViewProtectedContactData, PermissionTypes.ViewProtectedContactData, Resgrid.Model.Invoicing.DeploymentProtectedFields.CatalogVersion));
 			return list;
 		}

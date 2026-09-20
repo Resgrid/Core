@@ -256,6 +256,17 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DeploymentExpenseRepository>().As<IDeploymentExpenseRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentAttachmentRepository>().As<IDeploymentAttachmentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TimeReportNumberSequenceRepository>().As<ITimeReportNumberSequenceRepository>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan, Phase C-M2: contractor path (M0215–M0217).
+			builder.RegisterType<RateScheduleRepository>().As<IRateScheduleRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RateScheduleEntryRepository>().As<IRateScheduleEntryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RateScheduleEntryBandRepository>().As<IRateScheduleEntryBandRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RatePremiumRepository>().As<IRatePremiumRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ServiceContractRepository>().As<IServiceContractRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ServiceContractDocumentRequirementRepository>().As<IServiceContractDocumentRequirementRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentComplianceDocumentRepository>().As<IDepartmentComplianceDocumentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<BidRepository>().As<IBidRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<BidLineItemRepository>().As<IBidLineItemRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<BidNumberSequenceRepository>().As<IBidNumberSequenceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentBillingIdentityRepository>().As<IDepartmentBillingIdentityRepository>().InstancePerLifetimeScope();
 
 			// Indoor Maps Repositories

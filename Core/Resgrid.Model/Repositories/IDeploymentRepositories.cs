@@ -48,6 +48,8 @@ namespace Resgrid.Model.Repositories
 		Task<DeploymentTimeReport> GetByDeploymentAndDateAsync(string deploymentId, DateTime reportDate);
 		/// <summary>Approved reports not yet on an invoice (the billing engine's input).</summary>
 		Task<IEnumerable<DeploymentTimeReport>> GetUnbilledApprovedAsync(int departmentId, string deploymentId = null);
+		/// <summary>All departments: Approved, unbilled reports approved on or before <paramref name="approvedBeforeUtc"/> (finance reminder sweep, worker 32).</summary>
+		Task<IEnumerable<DeploymentTimeReport>> GetUnbilledApprovedBeforeAsync(DateTime approvedBeforeUtc);
 	}
 
 	public interface IDeploymentTimeEntryRepository : IRepository<DeploymentTimeEntry>
@@ -67,7 +69,11 @@ namespace Resgrid.Model.Repositories
 	{
 		/// <summary>Attachment rows without their bytes.</summary>
 		Task<IEnumerable<DeploymentAttachment>> GetByDeploymentAsync(string deploymentId);
+		/// <summary>One attachment row without its bytes.</summary>
+		Task<DeploymentAttachment> GetMetadataByIdAsync(int deploymentAttachmentId);
 		Task<DeploymentAttachment> GetByIdWithDataAsync(int deploymentAttachmentId);
+		/// <summary>Soft-deletes the row in place (no blob round trip); 1 when a live row of the department was marked.</summary>
+		Task<int> MarkDeletedAsync(int deploymentAttachmentId, int departmentId, CancellationToken cancellationToken = default);
 	}
 
 	public interface ITimeReportNumberSequenceRepository : IRepository<TimeReportNumberSequence>

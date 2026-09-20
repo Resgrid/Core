@@ -7,6 +7,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorLocalizer
+@inject Resgrid.Model.Services.IBusinessOperationsAccessService businessOperationsAccess
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -90,6 +92,22 @@
 				<li class="@Html.IsSelected(controller: "Deployments")">
 					<a asp-controller="Deployments" asp-action="Index" asp-route-area="User"><i class="fa fa-truck"></i> <span class="nav-label">@deploymentLocalizer["DeploymentFinance"]</span></a>
 				</li>
+			}
+			@if ((ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids() || ClaimsAuthorizationHelper.CanViewContracts()) && SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseContractorBillingAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
+			{
+				@* Workforce & Business Operations plan, Phase C-M2 (contractor path): bids and contracts need the Invoicing.ContractorBilling entitlement (Business Ops add-on). *@
+				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids())
+				{
+					<li class="@Html.IsSelected(controller: "Bids")">
+						<a asp-controller="Bids" asp-action="Index" asp-route-area="User"><i class="fa fa-handshake-o"></i> <span class="nav-label">@contractorLocalizer["Bids"]</span></a>
+					</li>
+				}
+				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewContracts())
+				{
+					<li class="@Html.IsSelected(controller: "Contracts")">
+						<a asp-controller="Contracts" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text"></i> <span class="nav-label">@contractorLocalizer["Contracts"]</span></a>
+					</li>
+				}
 			}
 			@if (SettingsHelper.IsMappingEnabled())
 			{

@@ -42,11 +42,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserProfileService _profiles;
 		private readonly IRecordDeploymentsService _recordDeployments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> _strings;
+		private readonly IContractorBillingEngine _engine;
+		private readonly IServiceContractService _contracts;
+		private readonly IInvoicingService _invoicing;
+		private readonly IBusinessOperationsAccessService _access;
 
 		public DeploymentsController(IDeploymentService deployments, ITimeTrackingService timeTracking, IFeatureToggleService flags, IDepartmentsService departments, IUnitsService units,
 			IContactsService contacts, ICallsService calls, IUserProfileService profiles, IRecordDeploymentsService recordDeployments,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> strings)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> strings,
+			IContractorBillingEngine engine, IServiceContractService contracts, IInvoicingService invoicing, IBusinessOperationsAccessService access)
 		{
+			_engine = engine;
+			_contracts = contracts;
+			_invoicing = invoicing;
+			_access = access;
 			_deployments = deployments;
 			_timeTracking = timeTracking;
 			_flags = flags;
@@ -130,6 +139,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return (names ?? new List<PersonName>()).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
 		}
 
+		/// <summary>
+		/// ADP reveal endpoint (plan 7.2) for the deployment and edit pages: the wrapper's internal notes (catalog 27). The
+		/// grant rides the X-Resgrid-Protected-Grant header and the deployment service resolves the value for a grant
+		/// holder. Time reports, expenses and attachments are customer-facing and never protected.
+		/// </summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		public async Task<IActionResult> Reveal([FromForm] string kind, [FromForm] string id)
+		{
+			if (string.IsNullOrWhiteSpace(id)) return BadRequest();
+			var deployment = await AccessibleAsync(id);
+			if (deployment == null) return NotFound();
+			var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var accessor in DeploymentProtectedFields.DeploymentFields) fields[accessor.Key] = accessor.Value.Get(deployment);
+			return AdpRevealHelper.Answer(this, fields);
+		}
+
 		private async Task<(byte[] Data, string FileName, string FileType, string Error)> ReadUploadAsync(IFormFile file, CancellationToken cancellationToken)
 		{
 			if (file == null || file.Length == 0) return (null, null, null, null);
@@ -184,7 +209,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanManage) return Unauthorized();
 			var deployment = await _deployments.GetDeploymentByIdAsync(id, DepartmentId);
 			if (deployment == null) return NotFound();
-			var view = Page(new DeploymentEditView { Contacts = await _contacts.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>(), Deployment = ToInput(deployment) });
+			var view = Page(new DeploymentEditView { Contacts = await _contacts.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>(), Deployment = ToInput(deployment), IsProtected = deployment.IsProtected });
 			return View(view);
 		}
 
@@ -323,14 +348,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 					catch (Exception ex) { Logging.LogException(ex, "Unit roles could not be read for the deployment roster."); }
 				}
 			}
-			foreach (var report in view.TimeReports.Where(r => r.Status != (int)DeploymentTimeReportStatuses.Void))
-			{
-				var full = await _timeTracking.GetTimeReportByIdAsync(report.DeploymentTimeReportId, DepartmentId);
-				if (full != null) view.TotalHours += full.Entries.Where(e => e.SubjectType == (int)DeploymentTimeSubjectTypes.Personnel).Sum(e => e.Hours);
-			}
+			view.TotalHours = await _timeTracking.GetPersonnelHoursAsync(id, DepartmentId);
 			if (TempData["DeploymentsWarnings"] is string warnings)
 				view.Warnings = warnings.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(w => w.Split('|')).Where(p => p.Length >= 2).Select(p => new DeploymentRosterWarning { Code = p[0], SubjectId = p[1], Detail = p.Length > 2 ? p[2] : null }).ToList();
+
+			// Contractor billing (C-M2): the Billing tab previews the charge run, the contract compliance checklist and the invoices already generated.
+			view.ContractorBilling = CanManage && deployment.FinanceMode == (int)DeploymentFinanceModes.Billable && await _access.CanUseContractorBillingAsync(DepartmentId);
+			if (view.ContractorBilling && view.Tab == "billing")
+			{
+				try
+				{
+					view.Charges = await _engine.CalculateDeploymentChargesAsync(id, DepartmentId);
+					view.Compliance = await _contracts.GetContractComplianceAsync(id, DepartmentId);
+					if (!string.IsNullOrWhiteSpace(deployment.ContactId))
+						view.Invoices = (await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, new Resgrid.Model.Repositories.InvoiceListFilter { ContactId = deployment.ContactId, Take = 200 })).Where(i => string.Equals(i.DeploymentId, id, StringComparison.OrdinalIgnoreCase)).ToList();
+				}
+				catch (Exception ex) { Logging.LogException(ex, "Deployment billing tab could not be prepared."); }
+			}
 			return View(view);
+		}
+
+		/// <summary>Contractor billing (C-M2): charge run → draft invoice with DTR provenance; the billed DTRs move to Billed.</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		public async Task<IActionResult> GenerateInvoice(string id, DateTime? throughDate, CancellationToken cancellationToken)
+		{
+			if (!CanManage || !await _access.CanUseContractorBillingAsync(DepartmentId)) return Unauthorized();
+			try
+			{
+				var invoice = await _engine.GenerateInvoiceFromDeploymentAsync(id, DepartmentId, throughDate, UserId, Ip, Agent, cancellationToken);
+				return RedirectToAction("View", "Invoicing", new { area = "User", id = invoice.InvoiceId });
+			}
+			catch (InvalidOperationException ex) when (IsDomainError(ex) || ex.Message.StartsWith("contractor_", StringComparison.Ordinal) || ex.Message.StartsWith("invoicing_", StringComparison.Ordinal)) { return Refused(400, ex.Message, "View", new { id, tab = "billing" }); }
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
@@ -448,7 +496,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var attachment = await _deployments.GetAttachmentAsync(id, DepartmentId, true);
 			if (attachment == null) return NotFound();
 			if (await AccessibleAsync(attachment.DeploymentId) == null) return Unauthorized();
-			if (attachment.Data == null || attachment.Data.Length == 0 || ProtectedDataEnvelope.HasEnvelopePrefix(attachment.FileName)) return NotFound();
+			if (attachment.Data == null || attachment.Data.Length == 0) return NotFound();
 			var contentType = string.IsNullOrWhiteSpace(attachment.FileType) ? FileHelper.GetContentTypeByExtension(System.IO.Path.GetExtension(attachment.FileName ?? string.Empty)) ?? "application/octet-stream" : attachment.FileType;
 			return new FileContentResult(attachment.Data, contentType) { FileDownloadName = attachment.FileName ?? $"attachment-{attachment.DeploymentAttachmentId}" };
 		}
@@ -545,6 +593,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (end <= start) end = end.AddDays(1);
 					var entry = new DeploymentTimeEntry
 					{
+						DeploymentTimeEntryId = string.IsNullOrWhiteSpace(row.Id) ? null : row.Id,
 						EntryType = row.EntryType, StartTime = start, EndTime = end, PaidBreakMinutes = row.PaidBreakMinutes, UnpaidBreakMinutes = row.UnpaidBreakMinutes, MileageKm = row.MileageKm, FuelDeductionLitres = row.FuelDeductionLitres,
 						AgencySuppliedMeals = row.AgencySuppliedMeals, AgencySuppliedAccommodation = row.AgencySuppliedAccommodation, CertificationCode = row.CertificationCode, Notes = row.Notes, SortOrder = sort++
 					};
@@ -664,10 +713,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteExpense(string id, string deploymentExpenseId, CancellationToken cancellationToken)
 		{
-			var deployment = await AccessibleAsync(id);
+			// The v4 order: the expense names the deployment that is authorized, not the posted id, so a member rostered on
+			// one deployment cannot delete another deployment's expense by submitting its id.
+			var expense = await _timeTracking.GetExpenseByIdAsync(deploymentExpenseId, DepartmentId);
+			if (expense == null) return NotFound();
+			var deployment = await AccessibleAsync(expense.DeploymentId);
 			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
-			try { await _timeTracking.DeleteExpenseAsync(deploymentExpenseId, DepartmentId, UserId, Ip, Agent, cancellationToken); return Saved("View", new { id, tab = "expenses" }); }
-			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "View", new { id, tab = "expenses" }); }
+			var back = new { id = deployment.DeploymentId, tab = "expenses" };
+			try { await _timeTracking.DeleteExpenseAsync(deploymentExpenseId, DepartmentId, UserId, Ip, Agent, cancellationToken); return Saved("View", back); }
+			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "View", back); }
 		}
 
 		#endregion

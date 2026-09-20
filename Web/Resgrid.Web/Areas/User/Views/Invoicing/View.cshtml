@@ -40,12 +40,12 @@
                         <div class="col-sm-6">
                             <dl class="dl-horizontal m-b-none">
                                 <dt>@localizer["Customer"]</dt><dd>@(Model.ContactName(invoice.ContactId) ?? "—")</dd>
-                                <dt>@localizer["BillingEmail"]</dt><dd>@(Model.Profile?.BillingEmail ?? "—")</dd>
+                                <dt>@localizer["BillingEmail"]</dt><dd><span>@(Model.Profile?.BillingEmail ?? "—")</span></dd>
                                 <dt>@localizer["IssuedOn"]</dt><dd>@(invoice.IssuedOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
                                 <dt>@localizer["DueOn"]</dt><dd>@(invoice.DueOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
                                 @if (invoice.SentOn.HasValue)
                                 {
-                                    <dt>@localizer["SentOn"]</dt><dd>@invoice.SentOn.Value.ToString("yyyy-MM-dd HH:mm") @(string.IsNullOrWhiteSpace(invoice.SentToEmail) ? "" : "(" + invoice.SentToEmail + ")")</dd>
+                                    <dt>@localizer["SentOn"]</dt><dd>@invoice.SentOn.Value.ToString("yyyy-MM-dd HH:mm") @if (!string.IsNullOrWhiteSpace(invoice.SentToEmail)) { <text>(</text><span>@invoice.SentToEmail</span><text>)</text> }</dd>
                                 }
                                 @if (invoice.VoidedOn.HasValue)
                                 {
@@ -79,7 +79,7 @@
                                 @foreach (var line in lines)
                                 {
                                     <tr>
-                                        <td>@line.Description @if (line.CallId.HasValue) { <small class="text-muted">(Call @line.CallId)</small> }</td>
+                                        <td><span>@line.Description</span> @if (line.CallId.HasValue) { <small class="text-muted">(Call @line.CallId)</small> } @if (!string.IsNullOrWhiteSpace(line.DeploymentTimeReportId)) { <a asp-controller="Deployments" asp-action="TimeReport" asp-route-area="User" asp-route-id="@line.DeploymentTimeReportId" class="label label-default" title="@localizer["TimeReportProvenance"]"><i class="fa fa-clock-o"></i> DTR</a> }</td>
                                         <td class="text-right">@line.Quantity.ToString("0.##")</td>
                                         <td class="text-right">@line.UnitRate.ToString("N2")</td>
                                         <td class="text-center">@(line.Taxable ? "✓" : "")</td>
@@ -106,7 +106,7 @@
                                     <tr>
                                         <td>@payment.PaidOn.ToString("yyyy-MM-dd")</td>
                                         <td>@localizer["Method" + (InvoicePaymentMethods)payment.Method] @payment.PaymentMethodSummary</td>
-                                        <td>@payment.Reference</td>
+                                        <td><span>@payment.Reference</span></td>
                                         <td>@localizer["PaymentStatus" + (InvoicePaymentStatuses)payment.Status]@(payment.RefundedAmount > 0 ? " (-" + payment.RefundedAmount.ToString("N2") + ")" : "")</td>
                                         <td class="text-right">@(payment.ProviderFeeAmount?.ToString("N2") ?? "—")</td>
                                         <td class="text-right">@payment.Amount.ToString("N2")</td>
@@ -136,6 +136,11 @@
                         <a asp-controller="Invoicing" asp-action="Edit" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default btn-block"><i class="fa fa-pencil"></i> @localizer["EditDraft"]</a>
                     }
                     <a asp-controller="Invoicing" asp-action="Pdf" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default btn-block"><i class="fa fa-file-pdf-o"></i> @localizer["DownloadPdf"]</a>
+                    @if (Model.ContractorPacket)
+                    {
+                        <a asp-controller="Invoicing" asp-action="Packet" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default btn-block"><i class="fa fa-file-archive-o"></i> @localizer["DownloadPacket"]</a>
+                        <a asp-controller="Deployments" asp-action="View" asp-route-area="User" asp-route-id="@invoice.DeploymentId" asp-route-tab="billing" class="btn btn-default btn-block"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a>
+                    }
                     @if ((isDraft || isOpen) && write)
                     {
                         <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#sendModal"><i class="fa fa-envelope-o"></i> @(isDraft ? localizer["SendInvoice"] : localizer["ResendInvoice"])</button>
@@ -239,6 +244,10 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-white" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
                     <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> @localizer["Send"]</button>
+                    @if (Model.ContractorPacket)
+                    {
+                        <button type="submit" class="btn btn-default" formaction="@Url.Action("SendPacket", "Invoicing", new { area = "User", id = invoice.InvoiceId })" title="@localizer["SendWithPacketHelp"]"><i class="fa fa-file-archive-o"></i> @localizer["SendWithPacket"]</button>
+                    }
                 </div>
             </form>
         </div>

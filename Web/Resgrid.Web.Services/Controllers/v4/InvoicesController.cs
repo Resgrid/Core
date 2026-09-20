@@ -312,7 +312,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				InvoiceId = invoice.InvoiceId,
 				InvoiceNumber = invoice.InvoiceNumber,
 				ContactId = invoice.ContactId,
-				ContactName = invoice.IsProtected ? ProtectedDataEnvelope.RedactionValue : (names.TryGetValue(invoice.ContactId ?? string.Empty, out var name) ? name : null),
+				ContactName = names.TryGetValue(invoice.ContactId ?? string.Empty, out var name) ? name : null,
 				Status = invoice.Status,
 				StatusName = ((InvoiceStatus)invoice.Status).ToString(),
 				Currency = invoice.Currency,
@@ -328,7 +328,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				SentOn = invoice.SentOn,
 				PaidOn = invoice.PaidOn,
 				VoidedOn = invoice.VoidedOn,
-				Notes = invoice.IsProtected ? ProtectedDataEnvelope.RedactionValue : invoice.Notes,
+				Notes = invoice.Notes,
 				TermsText = invoice.TermsText,
 				AddedOn = invoice.AddedOn,
 				UpdatedOn = invoice.EditedOn ?? invoice.AddedOn
@@ -343,7 +343,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				data.Payments = (invoice.Payments ?? new List<InvoicePayment>()).OrderBy(x => x.PaidOn).Select(x => new InvoicePaymentData
 				{
 					InvoicePaymentId = x.InvoicePaymentId, Amount = x.Amount, Method = x.Method, MethodName = ((InvoicePaymentMethods)x.Method).ToString(), Status = x.Status,
-					RefundedAmount = x.RefundedAmount, Reference = invoice.IsProtected ? ProtectedDataEnvelope.RedactionValue : x.Reference, PaymentMethodSummary = x.PaymentMethodSummary, PaidOn = x.PaidOn, AddedOn = x.AddedOn
+					RefundedAmount = x.RefundedAmount, Reference = x.Reference, PaymentMethodSummary = x.PaymentMethodSummary, PaidOn = x.PaidOn, AddedOn = x.AddedOn
 				}).ToList();
 			}
 

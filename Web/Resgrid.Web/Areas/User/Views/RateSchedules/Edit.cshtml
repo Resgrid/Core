@@ -1,0 +1,293 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.RateScheduleEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + (Model.IsNew ? localizer["NewRateSchedule"] : localizer["EditRateSchedule"]);
+    ViewData["Title"] = (Model.IsNew ? localizer["NewRateSchedule"] : Model.Schedule.Name).ToString();
+    ViewData["Subtitle"] = localizer["EditRateScheduleIntro"].Value;
+    ViewData["RootController"] = "RateSchedules";
+    ViewData["RootTitle"] = localizer["RateSchedules"].Value;
+    var s = Model.Schedule;
+    var p = Model.Policy;
+    var canEdit = Model.CanManageRates;
+    var entryTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.RateEntryTypes)).Cast<Resgrid.Model.Invoicing.RateEntryTypes>().ToList();
+    var bandTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.RateBandTypes)).Cast<Resgrid.Model.Invoicing.RateBandTypes>().ToList();
+    var bases = Enum.GetValues(typeof(Resgrid.Model.Invoicing.BillingBases)).Cast<Resgrid.Model.Invoicing.BillingBases>().ToList();
+    string Money(decimal v) => v.ToString("0.00##", System.Globalization.CultureInfo.InvariantCulture);
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Schedule"]</h5>
+                    @if (!Model.IsNew && canEdit)
+                    {
+                        <div class="ibox-tools">
+                            <a asp-action="Export" asp-route-id="@s.RateScheduleId" class="btn btn-default btn-xs"><i class="fa fa-download"></i> @localizer["ExportJson"]</a>
+                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> @localizer["Clone"]</button>
+                        </div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="Save" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="RateScheduleId" value="@s.RateScheduleId" />
+                        <fieldset disabled="@(!canEdit)">
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["Name"] *</label><div class="col-sm-9"><input type="text" name="Name" class="form-control" maxlength="200" required value="@s.Name" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["Description"]</label><div class="col-sm-9"><textarea name="Description" class="form-control" rows="2">@s.Description</textarea></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["Currency"]</label><div class="col-sm-3">@Html.DropDownList("Currency", Model.Currencies, new { @class = "form-control" })</div>
+                                <label class="col-sm-3 control-label">@localizer["Active"]</label><div class="col-sm-3"><div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" checked="@s.IsActive" /> @localizer["Active"]</label></div></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["EffectiveOn"]</label><div class="col-sm-3"><input type="date" name="EffectiveOn" class="form-control" value="@(s.EffectiveOn?.ToString("yyyy-MM-dd"))" /></div>
+                                <label class="col-sm-3 control-label">@localizer["ExpiresOn"]</label><div class="col-sm-3"><input type="date" name="ExpiresOn" class="form-control" value="@(s.ExpiresOn?.ToString("yyyy-MM-dd"))" /></div></div>
+                            <h4>@localizer["Policy"] <small class="text-muted">@localizer["PolicyHelp"]</small></h4>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["RoundingMinutes"]</label><div class="col-sm-3"><input type="number" name="RoundingMinutes" class="form-control" min="0" max="60" value="@p.RoundingMinutes" /></div>
+                                <label class="col-sm-3 control-label">@localizer["OvertimeBasis"]</label><div class="col-sm-3"><select name="OvertimeBasis" class="form-control"><option value="0" selected="@(p.OvertimeBasis == Resgrid.Model.Invoicing.OvertimeBases.ConsecutiveHours)">@localizer["OvertimeConsecutive"]</option><option value="1" selected="@(p.OvertimeBasis == Resgrid.Model.Invoicing.OvertimeBases.DailyTotalHours)">@localizer["OvertimeDailyTotal"]</option></select></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["CancellationMinimumHours"]</label><div class="col-sm-3"><input type="number" step="0.5" name="CancellationMinimumHours" class="form-control" value="@p.CancellationMinimumHours" /></div>
+                                <label class="col-sm-3 control-label">@localizer["DailyGuaranteeHours"]</label><div class="col-sm-3"><input type="number" step="0.5" name="DailyGuaranteeHours" class="form-control" value="@p.DailyGuaranteeHours" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["UnsafeStandDownHours"]</label><div class="col-sm-3"><input type="number" step="0.5" name="UnsafeStandDownHours" class="form-control" value="@p.UnsafeStandDownHours" /></div>
+                                <label class="col-sm-3 control-label">@localizer["TravelDayCapHours"]</label><div class="col-sm-3"><input type="number" step="0.5" name="TravelDayCapHours" class="form-control" value="@p.TravelDayCapHours" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["FuelDeductionRatePerLitre"]</label><div class="col-sm-3"><input type="number" step="0.0001" name="FuelDeductionRatePerLitre" class="form-control" value="@p.FuelDeductionRatePerLitre" /></div>
+                                <label class="col-sm-3 control-label">@localizer["ContinuousRunGapMinutes"]</label><div class="col-sm-3"><input type="number" name="ContinuousRunGapMinutes" class="form-control" min="0" value="@p.ContinuousRunGapMinutes" /></div></div>
+                            <div class="form-group"><div class="col-sm-9 col-sm-offset-3">
+                                <div class="checkbox"><label><input type="checkbox" name="CancellationVehiclesFullDay" value="true" checked="@p.CancellationVehiclesFullDay" /> @localizer["CancellationVehiclesFullDay"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" name="PortalToPortal" value="true" checked="@p.PortalToPortal" /> @localizer["PortalToPortal"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" name="NoClear8CarryOver" value="true" checked="@p.NoClear8CarryOver" /> @localizer["NoClear8CarryOver"]</label></div>
+                            </div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["MealEligibility"]</label><div class="col-sm-9"><textarea name="MealEligibilityJson" class="form-control" rows="3">@Newtonsoft.Json.JsonConvert.SerializeObject(p.MealEligibility)</textarea><span class="help-block">@localizer["MealEligibilityHelp"]</span></div></div>
+                            @if (canEdit)
+                            {
+                                <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                            }
+                        </fieldset>
+                    </form>
+                    @if (!Model.IsNew && canEdit)
+                    {
+                        <form method="post" asp-action="Delete" asp-route-id="@s.RateScheduleId" onsubmit="return confirm('@localizer["ConfirmDeleteSchedule"]');" class="m-t-sm">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> @localizer["DeleteSchedule"]</button></form>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            @if (!Model.IsNew)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Premiums"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["PremiumsHelp"]</p>
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["Name"]</th><th class="text-right">@localizer["BandStandby"]</th><th class="text-right">@localizer["BandDeployment"]</th><th class="text-right">@localizer["BandOvertime1"]</th><th class="text-right">@localizer["BandOvertime2"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var premium in s.Premiums)
+                                {
+                                    <tr class="@(premium.IsActive ? "" : "text-muted")">
+                                        <td>@premium.Name @if (!string.IsNullOrWhiteSpace(premium.Code)) { <small class="text-muted">(@premium.Code)</small> }</td>
+                                        <td class="text-right">@Money(premium.StandbyAdder)</td><td class="text-right">@Money(premium.DeploymentAdder)</td><td class="text-right">@Money(premium.Overtime1Adder)</td><td class="text-right">@Money(premium.Overtime2Adder)</td>
+                                        <td class="text-right">
+                                            @if (canEdit)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-default js-edit-premium" data-premium='@Newtonsoft.Json.JsonConvert.SerializeObject(new { premium.RatePremiumId, premium.Name, premium.Code, premium.StandbyAdder, premium.DeploymentAdder, premium.Overtime1Adder, premium.Overtime2Adder, premium.IsActive })'><i class="fa fa-pencil"></i></button>
+                                                <form method="post" asp-action="DeletePremium" asp-route-id="@premium.RatePremiumId" asp-route-scheduleId="@s.RateScheduleId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (canEdit)
+                        {
+                            <button type="button" class="btn btn-default btn-sm js-edit-premium" data-premium="{}"><i class="fa fa-plus"></i> @localizer["AddPremium"]</button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (!Model.IsNew)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@localizer["Entries"]</h5>
+                @if (canEdit)
+                {
+                    <div class="ibox-tools"><button type="button" class="btn btn-primary btn-xs js-edit-entry" data-entry="{}"><i class="fa fa-plus"></i> @localizer["AddEntry"]</button></div>
+                }
+            </div>
+            <div class="ibox-content">
+                <p class="text-muted small">@localizer["EntriesHelp"]</p>
+                @foreach (var type in entryTypes)
+                {
+                    var entries = s.Entries.Where(e => e.EntryType == (int)type).OrderBy(e => e.SortOrder).ThenBy(e => e.Name).ToList();
+                    if (entries.Count == 0) { continue; }
+                    <h4>@localizer["EntryType" + type]</h4>
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["Code"]</th><th>@localizer["GroupKey"]</th><th>@localizer["CrewSize"]</th><th>@localizer["BillingBasis"]</th><th>@localizer["Bands"]</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var e in entries)
+                            {
+                                <tr class="@(e.IsActive ? "" : "text-muted")">
+                                    <td>@e.Name @if (!string.IsNullOrWhiteSpace(e.CertificationCode)) { <small class="text-muted">· @e.CertificationCode</small> }</td>
+                                    <td>@e.Code</td><td>@e.GroupKey</td><td>@e.CrewSize</td>
+                                    <td>@localizer["Basis" + (Resgrid.Model.Invoicing.BillingBases)e.BillingBasis]</td>
+                                    <td><small>@string.Join(", ", e.Bands.Select(b => (string.IsNullOrWhiteSpace(b.Label) ? localizer["Band" + (Resgrid.Model.Invoicing.RateBandTypes)b.BandType].Value : b.Label) + " " + Money(b.Rate) + (b.ThresholdStartHours.HasValue ? " ≥" + b.ThresholdStartHours.Value.ToString("0.##") + "h" : "") + (b.MealCode != null ? " [" + b.MealCode + "]" : "")))</small></td>
+                                    <td class="text-right">
+                                        @if (canEdit)
+                                        {
+                                            <button type="button" class="btn btn-xs btn-default js-edit-entry" data-entry='@Newtonsoft.Json.JsonConvert.SerializeObject(new { e.RateScheduleEntryId, e.EntryType, e.Name, e.Code, e.GroupKey, e.CrewSize, e.CertificationCode, e.UnitTypeId, e.InventoryItemId, e.BillingBasis, e.RequiredCertificationsJson, e.SortOrder, e.IsActive, Bands = e.Bands.Select(b => new { b.BandType, b.Rate, b.ThresholdStartHours, b.ThresholdEndHours, b.DailyTierMinHours, b.DailyTierMaxHours, b.FreeUnitsPerDay, b.RequiresAirTravel, b.MealCode, b.Label, b.SortOrder }) })'><i class="fa fa-pencil"></i></button>
+                                            <form method="post" asp-action="DeleteEntry" asp-route-id="@e.RateScheduleEntryId" asp-route-scheduleId="@s.RateScheduleId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (s.Entries.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoEntries"]</p>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.IsNew && canEdit)
+{
+    <div class="modal fade" id="cloneModal" tabindex="-1" role="dialog"><div class="modal-dialog" role="document">
+        <form method="post" asp-action="Clone" asp-route-id="@s.RateScheduleId" class="modal-content">@Html.AntiForgeryToken()
+            <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">@localizer["Clone"]</h4></div>
+            <div class="modal-body"><p class="text-muted">@localizer["CloneHelp"]</p><div class="form-group"><label>@localizer["Name"]</label><input type="text" name="name" class="form-control" maxlength="200" value="@s.Name (@localizer["Copy"])" /></div></div>
+            <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Clone"]</button></div>
+        </form></div></div>
+
+    <div class="modal fade" id="premiumModal" tabindex="-1" role="dialog"><div class="modal-dialog" role="document">
+        <form method="post" asp-action="SavePremium" class="modal-content">@Html.AntiForgeryToken()
+            <input type="hidden" name="RateScheduleId" value="@s.RateScheduleId" /><input type="hidden" name="RatePremiumId" id="pm-id" />
+            <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">@localizer["Premium"]</h4></div>
+            <div class="modal-body">
+                <div class="row"><div class="col-sm-8 form-group"><label>@localizer["Name"] *</label><input type="text" name="Name" id="pm-name" class="form-control" required maxlength="200" /></div><div class="col-sm-4 form-group"><label>@localizer["Code"]</label><input type="text" name="Code" id="pm-code" class="form-control" maxlength="50" /></div></div>
+                <div class="row">
+                    <div class="col-sm-3 form-group"><label>@localizer["BandStandby"]</label><input type="number" step="0.01" name="StandbyAdder" id="pm-standby" class="form-control" value="0" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["BandDeployment"]</label><input type="number" step="0.01" name="DeploymentAdder" id="pm-deployment" class="form-control" value="0" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["BandOvertime1"]</label><input type="number" step="0.01" name="Overtime1Adder" id="pm-ot1" class="form-control" value="0" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["BandOvertime2"]</label><input type="number" step="0.01" name="Overtime2Adder" id="pm-ot2" class="form-control" value="0" /></div>
+                </div>
+                <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" id="pm-active" checked /> @localizer["Active"]</label></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div>
+        </form></div></div>
+
+    <div class="modal fade" id="entryModal" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document">
+        <form method="post" asp-action="SaveEntry" class="modal-content" id="entryForm">@Html.AntiForgeryToken()
+            <input type="hidden" name="RateScheduleId" value="@s.RateScheduleId" /><input type="hidden" name="RateScheduleEntryId" id="en-id" /><input type="hidden" name="BandsJson" id="en-bands" />
+            <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">@localizer["Entry"]</h4></div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-3 form-group"><label>@localizer["EntryType"]</label><select name="EntryType" id="en-type" class="form-control">@foreach (var t in entryTypes) { <option value="@((int)t)">@localizer["EntryType" + t]</option> }</select></div>
+                    <div class="col-sm-5 form-group"><label>@localizer["Name"] *</label><input type="text" name="Name" id="en-name" class="form-control" required maxlength="200" /></div>
+                    <div class="col-sm-2 form-group"><label>@localizer["Code"]</label><input type="text" name="Code" id="en-code" class="form-control" maxlength="50" /></div>
+                    <div class="col-sm-2 form-group"><label>@localizer["SortOrder"]</label><input type="number" name="SortOrder" id="en-sort" class="form-control" value="0" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 form-group"><label>@localizer["BillingBasis"]</label><select name="BillingBasis" id="en-basis" class="form-control">@foreach (var b in bases) { <option value="@((int)b)">@localizer["Basis" + b]</option> }</select></div>
+                    <div class="col-sm-3 form-group js-crew"><label>@localizer["GroupKey"]</label><input type="text" name="GroupKey" id="en-group" class="form-control" maxlength="50" placeholder="@localizer["GroupKeyHelp"]" /></div>
+                    <div class="col-sm-2 form-group js-crew"><label>@localizer["CrewSize"]</label><input type="number" name="CrewSize" id="en-crew" class="form-control" min="1" /></div>
+                    <div class="col-sm-4 form-group js-cert"><label>@localizer["CertificationCode"]</label><input type="text" name="CertificationCode" id="en-cert" class="form-control" maxlength="50" list="certCodes" /><datalist id="certCodes">@foreach (var c in Model.CertificationTypes) { <option value="@c.Value">@c.Text</option> }</datalist></div>
+                    <div class="col-sm-4 form-group js-unit"><label>@localizer["UnitType"]</label><select name="UnitTypeId" id="en-unittype" class="form-control"><option value="">—</option>@foreach (var u in Model.UnitTypes) { <option value="@u.Value">@u.Text</option> }</select></div>
+                    <div class="col-sm-4 form-group js-equip"><label>@localizer["InventoryItemId"]</label><input type="text" name="InventoryItemId" id="en-item" class="form-control" maxlength="36" /></div>
+                </div>
+                <div class="form-group js-crew"><label>@localizer["RequiredCertifications"]</label><input type="text" name="RequiredCertificationsJson" id="en-reqs" class="form-control" placeholder='[{"Code":"FFT2","MinCount":3}]' /><span class="help-block">@localizer["RequiredCertificationsHelp"]</span></div>
+                <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" id="en-active" checked /> @localizer["Active"]</label></div>
+                <h4>@localizer["Bands"] <small class="text-muted">@localizer["BandsHelp"]</small></h4>
+                <div class="well well-sm">
+                    <strong>@localizer["MultiplierPrefill"]</strong> <span class="text-muted small">@localizer["MultiplierPrefillHelp"]</span>
+                    <div class="row m-t-xs">
+                        <div class="col-sm-2"><input type="number" step="0.01" id="pf-base" class="form-control input-sm" placeholder="@localizer["BaseRate"]" /></div>
+                        <div class="col-sm-2"><input type="number" step="0.01" id="pf-standby" class="form-control input-sm" placeholder="@localizer["BandStandby"]" /></div>
+                        <div class="col-sm-2"><input type="number" step="0.01" id="pf-ot1m" class="form-control input-sm" value="1.5" title="OT1 ×" /></div>
+                        <div class="col-sm-2"><input type="number" step="0.5" id="pf-ot1h" class="form-control input-sm" value="8" title="OT1 ≥ h" /></div>
+                        <div class="col-sm-2"><input type="number" step="0.01" id="pf-ot2m" class="form-control input-sm" value="2" title="OT2 ×" /></div>
+                        <div class="col-sm-1"><input type="number" step="0.5" id="pf-ot2h" class="form-control input-sm" value="12" title="OT2 ≥ h" /></div>
+                        <div class="col-sm-1"><button type="button" class="btn btn-default btn-sm" id="pf-apply">@localizer["Prefill"]</button></div>
+                    </div>
+                </div>
+                <table class="table table-condensed" id="bandTable">
+                    <thead><tr><th>@localizer["BandType"]</th><th>@localizer["Rate"]</th><th>@localizer["ThresholdStart"]</th><th>@localizer["ThresholdEnd"]</th><th>@localizer["TierMin"]</th><th>@localizer["TierMax"]</th><th>@localizer["FreeUnits"]</th><th>@localizer["Air"]</th><th>@localizer["MealCode"]</th><th>@localizer["Label"]</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <button type="button" class="btn btn-default btn-xs" id="band-add"><i class="fa fa-plus"></i> @localizer["AddBand"]</button>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div>
+        </form></div></div>
+}
+
+@section Scripts {
+    @if (!Model.IsNew && canEdit)
+    {
+        <script>
+            (function () {
+                var bandTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(bandTypes.Select(b => new { v = (int)b, t = localizer["Band" + b].Value })));
+                function val(v) { return v === null || v === undefined ? '' : v; }
+                function bandRow(b) {
+                    b = b || {};
+                    var opts = bandTypes.map(function (t) { return '<option value="' + t.v + '"' + (t.v === b.BandType ? ' selected' : '') + '>' + t.t + '</option>'; }).join('');
+                    return '<tr>' +
+                        '<td><select class="form-control input-sm b-type">' + opts + '</select></td>' +
+                        '<td><input type="number" step="0.0001" class="form-control input-sm b-rate" value="' + val(b.Rate) + '" /></td>' +
+                        '<td><input type="number" step="0.5" class="form-control input-sm b-ts" value="' + val(b.ThresholdStartHours) + '" /></td>' +
+                        '<td><input type="number" step="0.5" class="form-control input-sm b-te" value="' + val(b.ThresholdEndHours) + '" /></td>' +
+                        '<td><input type="number" step="0.5" class="form-control input-sm b-tmin" value="' + val(b.DailyTierMinHours) + '" /></td>' +
+                        '<td><input type="number" step="0.5" class="form-control input-sm b-tmax" value="' + val(b.DailyTierMaxHours) + '" /></td>' +
+                        '<td><input type="number" step="0.01" class="form-control input-sm b-free" value="' + val(b.FreeUnitsPerDay) + '" /></td>' +
+                        '<td><input type="checkbox" class="b-air"' + (b.RequiresAirTravel ? ' checked' : '') + ' /></td>' +
+                        '<td><input type="text" maxlength="10" class="form-control input-sm b-meal" value="' + val(b.MealCode) + '" /></td>' +
+                        '<td><input type="text" maxlength="200" class="form-control input-sm b-label" value="' + val(b.Label) + '" /></td>' +
+                        '<td><button type="button" class="btn btn-xs btn-danger b-del"><i class="fa fa-times"></i></button></td></tr>';
+                }
+                function num(el) { var v = $(el).val(); return v === '' ? null : parseFloat(v); }
+                function collect() {
+                    var rows = [];
+                    $('#bandTable tbody tr').each(function (i) {
+                        rows.push({ BandType: parseInt($(this).find('.b-type').val(), 10), Rate: num($(this).find('.b-rate')) || 0, ThresholdStartHours: num($(this).find('.b-ts')), ThresholdEndHours: num($(this).find('.b-te')), DailyTierMinHours: num($(this).find('.b-tmin')), DailyTierMaxHours: num($(this).find('.b-tmax')), FreeUnitsPerDay: num($(this).find('.b-free')), RequiresAirTravel: $(this).find('.b-air').is(':checked'), MealCode: $(this).find('.b-meal').val() || null, Label: $(this).find('.b-label').val() || null, SortOrder: i });
+                    });
+                    return rows;
+                }
+                function showFields() {
+                    var t = parseInt($('#en-type').val(), 10);
+                    $('.js-crew').toggle(t === 1); $('.js-cert').toggle(t === 0); $('.js-unit').toggle(t === 1 || t === 2); $('.js-equip').toggle(t === 2 || t === 3);
+                }
+                $('#en-type').on('change', showFields);
+                $('#band-add').on('click', function () { $('#bandTable tbody').append(bandRow()); });
+                $('#bandTable').on('click', '.b-del', function () { $(this).closest('tr').remove(); });
+                $('#pf-apply').on('click', function () {
+                    var base = parseFloat($('#pf-base').val()); if (isNaN(base)) return;
+                    var rows = [];
+                    var standby = parseFloat($('#pf-standby').val()); if (!isNaN(standby)) rows.push({ BandType: 0, Rate: standby, Label: '@localizer["BandStandby"]' });
+                    var ot1m = parseFloat($('#pf-ot1m').val()), ot1h = parseFloat($('#pf-ot1h').val()), ot2m = parseFloat($('#pf-ot2m').val()), ot2h = parseFloat($('#pf-ot2h').val());
+                    rows.push({ BandType: 1, Rate: base, ThresholdStartHours: 0, ThresholdEndHours: isNaN(ot1h) ? null : ot1h, Label: '@localizer["BandDeployment"]' });
+                    if (!isNaN(ot1m) && !isNaN(ot1h)) rows.push({ BandType: 2, Rate: Math.round(base * ot1m * 100) / 100, ThresholdStartHours: ot1h, ThresholdEndHours: isNaN(ot2h) ? null : ot2h, Label: 'OT ×' + ot1m });
+                    if (!isNaN(ot2m) && !isNaN(ot2h)) rows.push({ BandType: 3, Rate: Math.round(base * ot2m * 100) / 100, ThresholdStartHours: ot2h, Label: 'OT ×' + ot2m });
+                    $('#bandTable tbody').html(rows.map(bandRow).join(''));
+                });
+                $('#entryForm').on('submit', function () { $('#en-bands').val(JSON.stringify(collect())); });
+                $('.js-edit-entry').on('click', function () {
+                    var e = $(this).data('entry') || {};
+                    $('#en-id').val(e.RateScheduleEntryId || ''); $('#en-type').val(e.EntryType || 0); $('#en-name').val(e.Name || ''); $('#en-code').val(e.Code || ''); $('#en-sort').val(e.SortOrder || 0);
+                    $('#en-basis').val(e.BillingBasis || 0); $('#en-group').val(e.GroupKey || ''); $('#en-crew').val(e.CrewSize || ''); $('#en-cert').val(e.CertificationCode || ''); $('#en-unittype').val(e.UnitTypeId || ''); $('#en-item').val(e.InventoryItemId || '');
+                    $('#en-reqs').val(e.RequiredCertificationsJson || ''); $('#en-active').prop('checked', e.IsActive !== false);
+                    $('#bandTable tbody').html((e.Bands || []).map(bandRow).join(''));
+                    showFields();
+                    $('#entryModal').modal('show');
+                });
+                $('.js-edit-premium').on('click', function () {
+                    var p = $(this).data('premium') || {};
+                    $('#pm-id').val(p.RatePremiumId || ''); $('#pm-name').val(p.Name || ''); $('#pm-code').val(p.Code || '');
+                    $('#pm-standby').val(p.StandbyAdder || 0); $('#pm-deployment').val(p.DeploymentAdder || 0); $('#pm-ot1').val(p.Overtime1Adder || 0); $('#pm-ot2').val(p.Overtime2Adder || 0); $('#pm-active').prop('checked', p.IsActive !== false);
+                    $('#premiumModal').modal('show');
+                });
+            })();
+        </script>
+    }
+}

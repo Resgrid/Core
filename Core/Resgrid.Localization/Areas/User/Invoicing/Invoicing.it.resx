@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>L'incasso online è disattivato su questo server.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe segnala che Resgrid non ha più accesso a questo account. Ricollegalo per riprendere.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>I dati protetti di questo record non sono stati messi in sicurezza; la modifica non è stata salvata.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Fattura protetta</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Identità di fatturazione protetta</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Fatturato da questo rapporto giornaliero</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Invia con pacchetto</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Allega il PDF della fattura, i PDF dei rapporti giornalieri, le ricevute e i documenti di conformità richiesti dal contratto in un unico zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Scarica pacchetto</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Apri intervento</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Listino predefinito</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Fatturazione appaltatore: usato per offerte e interventi di questo cliente quando nessun contratto indica un listino.</value></data>
 </root>

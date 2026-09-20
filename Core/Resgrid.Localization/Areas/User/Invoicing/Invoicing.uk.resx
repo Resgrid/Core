@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>Онлайн-збір платежів вимкнено на цьому сервері.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe повідомляє, що Resgrid більше не має доступу до цього рахунку. Підключіть його знову, щоб продовжити.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Захищені дані цього запису не вдалося убезпечити, тому зміну не збережено.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Захищений рахунок</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Захищена платіжна ідентичність</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Виставлено з цього щоденного звіту часу</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Надіслати з пакетом</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Додає PDF рахунку, PDF щоденних звітів часу, чеки та документи відповідності, яких вимагає договір, одним zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Завантажити пакет</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Відкрити розгортання</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Типовий тарифний план</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Розрахунки підрядника: використовується для пропозицій і розгортань цього замовника, коли договір не вказує план.</value></data>
 </root>

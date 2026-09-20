@@ -14,19 +14,15 @@ namespace Resgrid.Services.Invoicing
 {
 	/// <summary>
 	/// Phase B2 seams on the invoicing service: the pay-page URL for documents and Workflow payloads, the dispute
-	/// lifecycle, and the Advanced Data Protection write/read seam for the catalog-26 columns (customer e-mail,
-	/// invoice notes, payer e-mail, payment reference/receipt/notes). Every dependency here is optional: without the
-	/// payments service no pay URL is offered, and without the protection services rows are written and read as-is.
+	/// lifecycle, and the customer-contact decrypt for delivery renders. Every dependency here is optional: without
+	/// the payments service no pay URL is offered, and without the protection services contacts render as stored.
 	/// The invoicing UI has no step-up grant plumbing yet, so user reads see REDACTED for protected values and every
 	/// write runs as a workload caller (encrypted at rest, sentinel-safe); the reveal path is a follow-up.
 	/// </summary>
 	public partial class InvoicingService
 	{
 		private readonly Lazy<IInvoicePaymentsService> _paymentsService;
-		private readonly Lazy<IProtectedWriteService> _protectedWrite;
 		private readonly Lazy<IProtectedReadService> _protectedRead;
-
-		private const string WorkloadPurpose = "invoicing";
 
 		public async Task<InvoicePayment> ApplyPaymentDisputeAsync(string invoicePaymentId, int departmentId, InvoiceDisputeStages stage, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
@@ -80,83 +76,21 @@ namespace Resgrid.Services.Invoicing
 			}
 		}
 
-		// ---- Advanced Data Protection seam (catalog 26) ----------------------------------------------------------
+		// ---- Customer-facing renders ---------------------------------------------------------------------------
+		//
+		// Invoice, line, payment, billing-profile and billing-identity columns are not under Advanced Data Protection:
+		// customers who are not signed in read invoices (PDF, pay page) and must see them whole. The customer's own
+		// Contact row may be protected (Contacts family), so the delivery render decrypts its name through the
+		// broker's "invoicing" workload lane; a user render shows what the caller may see.
 
-		private static void MarkProtected(CustomerBillingProfile row) { row.IsProtected = true; row.ProtectedCatalogVersion = Math.Max(row.ProtectedCatalogVersion, InvoicingProtectedFields.CatalogVersion); }
-		private static void MarkProtected(Invoice row) { row.IsProtected = true; row.ProtectedCatalogVersion = Math.Max(row.ProtectedCatalogVersion, InvoicingProtectedFields.CatalogVersion); }
-		private static void MarkProtected(InvoicePayment row) { row.IsProtected = true; row.ProtectedCatalogVersion = Math.Max(row.ProtectedCatalogVersion, InvoicingProtectedFields.CatalogVersion); }
+		private const string WorkloadPurpose = "invoicing";
 
-		/// <summary>Encrypts the cataloged columns (when the department enforces protection) and saves. <paramref name="existing"/> lets the sentinel policy keep an untouched envelope when the caller sent REDACTED back.</summary>
-		private async Task<T> SaveProtectedAsync<T>(IRepository<T> repository, T entity, T existing, Func<T, string> rowKey,
-			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, Action<T> markProtected, int departmentId, CancellationToken cancellationToken) where T : class, IEntity
+		/// <summary>Decrypts a protected customer contact for a system workload (delivery). Never throws; leaves the row as-is on failure.</summary>
+		private async Task ResolveContactForWorkloadAsync(Contact contact, int departmentId)
 		{
-			if (_protectedWrite == null)
-				return await repository.SaveOrUpdateAsync(entity, cancellationToken);
-
-			var key = rowKey(entity);
-			if (string.IsNullOrWhiteSpace(key))
-				return await InsertProtectedAsync(repository, entity, rowKey, accessors, markProtected, departmentId, cancellationToken);
-
-			var result = await _protectedWrite.Value.PrepareRecordsEntityWriteAsync(departmentId, entity, existing, key, accessors, () => markProtected(entity), null, null, true, cancellationToken);
-			if (result != null && !result.Success)
-				throw new InvalidOperationException("invoicing_protected_write_refused");
-			return await repository.SaveOrUpdateAsync(entity, cancellationToken);
-		}
-
-		/// <summary>A new row has no key until it is inserted, and the key is part of the envelope binding: the cataloged columns are held back, the row allocated, then encrypted and written (the work-order precedent).</summary>
-		private async Task<T> InsertProtectedAsync<T>(IRepository<T> repository, T entity, Func<T, string> rowKey,
-			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, Action<T> markProtected, int departmentId, CancellationToken cancellationToken) where T : class, IEntity
-		{
-			if (_protectedWrite == null)
-				return await repository.SaveOrUpdateAsync(entity, cancellationToken);
-
-			var held = accessors.ToDictionary(a => a.Key, a => a.Value.Get(entity), StringComparer.OrdinalIgnoreCase);
-			if (held.Values.All(string.IsNullOrEmpty))
-				return await repository.SaveOrUpdateAsync(entity, cancellationToken);
-
-			foreach (var accessor in accessors) accessor.Value.Set(entity, null);
-			var allocated = await repository.SaveOrUpdateAsync(entity, cancellationToken);
-			foreach (var accessor in accessors) accessor.Value.Set(allocated, held[accessor.Key]);
-
-			var result = await _protectedWrite.Value.PrepareRecordsEntityWriteAsync(departmentId, allocated, null, rowKey(allocated), accessors, () => markProtected(allocated), null, null, true, cancellationToken);
-			if (result != null && !result.Success)
-				throw new InvalidOperationException("invoicing_protected_write_refused");
-			return await repository.SaveOrUpdateAsync(allocated, cancellationToken);
-		}
-
-		/// <summary>User-facing read: protected values become REDACTED (no grant is carried on this path yet). Never throws.</summary>
-		private async Task ResolveReadAsync<T>(IReadOnlyList<T> rows, Func<T, string> rowKey, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, int departmentId) where T : class
-		{
-			if (_protectedRead == null || rows == null || rows.Count == 0) return;
-			try { await _protectedRead.Value.ResolveRecordsEntitiesForReadAsync(departmentId, rows.Select(r => (r, rowKey(r))).ToList(), accessors, null, null); }
-			catch (Exception ex) { Logging.LogException(ex, "Protected invoicing rows could not be resolved for read."); }
-		}
-
-		/// <summary>System read (delivery, payments): protected values are decrypted for the workload. Never throws.</summary>
-		private async Task ResolveWorkloadAsync<T>(IReadOnlyList<T> rows, Func<T, string> rowKey, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, int departmentId) where T : class
-		{
-			if (_protectedRead == null || rows == null || rows.Count == 0) return;
-			try { await _protectedRead.Value.ResolveRecordsEntitiesForWorkloadAsync(departmentId, WorkloadPurpose, rows.Select(r => (r, rowKey(r))).ToList(), accessors); }
-			catch (Exception ex) { Logging.LogException(ex, "Protected invoicing rows could not be resolved for the workload."); }
-		}
-
-		private Task ResolveReadAsync(Invoice invoice) => invoice == null ? Task.CompletedTask : ResolveReadAsync(new[] { invoice }, i => i.InvoiceId, InvoicingProtectedFields.Invoice, invoice.DepartmentId);
-		private Task ResolveReadAsync(IReadOnlyList<Invoice> invoices, int departmentId) => ResolveReadAsync(invoices, i => i.InvoiceId, InvoicingProtectedFields.Invoice, departmentId);
-		private Task ResolveReadAsync(IReadOnlyList<InvoicePayment> payments, int departmentId) => ResolveReadAsync(payments, p => p.InvoicePaymentId, InvoicingProtectedFields.Payment, departmentId);
-		private Task ResolveReadAsync(CustomerBillingProfile profile) => profile == null ? Task.CompletedTask : ResolveReadAsync(new[] { profile }, p => p.CustomerBillingProfileId, InvoicingProtectedFields.BillingProfile, profile.DepartmentId);
-		private Task ResolveReadAsync(IReadOnlyList<CustomerBillingProfile> profiles, int departmentId) => ResolveReadAsync(profiles, p => p.CustomerBillingProfileId, InvoicingProtectedFields.BillingProfile, departmentId);
-		private Task ResolveWorkloadAsync(CustomerBillingProfile profile) => profile == null ? Task.CompletedTask : ResolveWorkloadAsync(new[] { profile }, p => p.CustomerBillingProfileId, InvoicingProtectedFields.BillingProfile, profile.DepartmentId);
-		private Task ResolveWorkloadAsync(Invoice invoice) => invoice == null ? Task.CompletedTask : ResolveWorkloadAsync(new[] { invoice }, i => i.InvoiceId, InvoicingProtectedFields.Invoice, invoice.DepartmentId);
-
-		/// <summary>The invoice with children, decrypted for a system workload (delivery).</summary>
-		private async Task<Invoice> GetInvoiceForWorkloadAsync(string invoiceId, int departmentId)
-		{
-			var invoice = await _invoices.GetByIdForDepartmentAsync(invoiceId, departmentId);
-			if (invoice == null) return null;
-			await LoadChildrenAsync(invoice);
-			await ResolveWorkloadAsync(invoice);
-			await ResolveWorkloadAsync(invoice.Payments, p => p.InvoicePaymentId, InvoicingProtectedFields.Payment, departmentId);
-			return invoice;
+			if (contact == null || _protectedRead?.Value == null) return;
+			try { await _protectedRead.Value.ResolveRecordsEntitiesForWorkloadAsync(departmentId, WorkloadPurpose, new[] { (contact, contact.ContactId) }, ProtectedReadService.ContactFieldAccessors); }
+			catch (Exception ex) { Logging.LogException(ex, $"Contact {contact.ContactId} could not be resolved for the invoice workload."); }
 		}
 	}
 }

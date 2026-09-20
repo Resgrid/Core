@@ -104,42 +104,22 @@ namespace Resgrid.Services
 					Text("CallReferences", "Note")
 				}),
 
-				// Workforce & Business Operations plan, Phase B (ADP catalog 26): rows carry their own IsProtected marker.
-				AdpTableBinding.Direct("CustomerBillingProfiles", "CustomerBillingProfileId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("CustomerBillingProfiles", "BillingEmail")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
-				AdpTableBinding.Direct("Invoices", "InvoiceId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("Invoices", "SentToEmail"), Text("Invoices", "Notes")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
-				AdpTableBinding.Direct("InvoicePayments", "InvoicePaymentId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("InvoicePayments", "PayerEmail"), Text("InvoicePayments", "Reference"), Text("InvoicePayments", "ReceiptUrl"), Text("InvoicePayments", "Notes")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
-
-				// Workforce & Business Operations plan, Phase D (ADP catalog 27): unit certification records and credit entries.
+				// Workforce & Business Operations plan, Phase D (ADP catalog 26): unit certification records and credit entries.
 				AdpTableBinding.Direct("UnitCertifications", "UnitCertificationId", pkIsNumeric: true, "DepartmentId", new[]
 				{
-					Text("UnitCertifications", "Number"), Text("UnitCertifications", "IssuedBy"), Text("UnitCertifications", "Notes"), Text("UnitCertifications", "FileName"), Binary("UnitCertifications", "Data")
+					Text("UnitCertifications", "Number"), Text("UnitCertifications", "IssuedBy"), Text("UnitCertifications", "Notes"), Text("UnitCertifications", "FileName"), Binary("UnitCertifications", "Data"),
+					Text("UnitCertifications", "StatusReason")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 				AdpTableBinding.Direct("PersonnelCertificationCredits", "PersonnelCertificationCreditId", pkIsNumeric: true, "DepartmentId", new[]
 				{
 					Text("PersonnelCertificationCredits", "Description"), Text("PersonnelCertificationCredits", "FileName"), Binary("PersonnelCertificationCredits", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
-				// Workforce & Business Operations plan, Phase C (ADP catalog 28): deployment time reports, expenses and attachments.
-				AdpTableBinding.Direct("DeploymentTimeReports", "DeploymentTimeReportId", pkIsNumeric: false, "DepartmentId", new[]
+				// Workforce & Business Operations plan, Phase C (ADP catalog 27): the deployment wrapper's internal notes only.
+				// Customer-facing rows (invoices, bids, contracts, DTRs, receipts, compliance documents) are not bound.
+				AdpTableBinding.Direct("Deployments", "DeploymentId", pkIsNumeric: false, "DepartmentId", new[]
 				{
-					Text("DeploymentTimeReports", "CustomerSignerName")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
-				AdpTableBinding.Direct("DeploymentExpenses", "DeploymentExpenseId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("DeploymentExpenses", "Description")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
-				AdpTableBinding.Direct("DeploymentAttachments", "DeploymentAttachmentId", pkIsNumeric: true, "DepartmentId", new[]
-				{
-					Text("DeploymentAttachments", "Name"), Text("DeploymentAttachments", "FileName"), Binary("DeploymentAttachments", "Data")
+					Text("Deployments", "Notes")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("Contacts", "ContactId", pkIsNumeric: false, "DepartmentId", new[]
@@ -226,7 +206,9 @@ namespace Resgrid.Services
 					Text("PersonnelCertifications", "Area"),
 					Text("PersonnelCertifications", "IssuedBy"),
 					Text("PersonnelCertifications", "Filename"),
-					Binary("PersonnelCertifications", "Data")
+					Binary("PersonnelCertifications", "Data"),
+					// Completion pass (ADP catalog 27): the status reason behind a suspension / revocation.
+					Text("PersonnelCertifications", "StatusReason")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				// Catalog v7: member messaging. Both are Direct on their OWN DepartmentId (M0137)

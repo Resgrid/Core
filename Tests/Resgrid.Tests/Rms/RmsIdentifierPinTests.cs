@@ -52,6 +52,8 @@ namespace Resgrid.Tests.Rms
 			// Contacts/Billing Phase C authored 116-119 and 79 on 2026-09-19 (registry).
 			((int)PermissionTypes.ManageBids).Should().Be(116);
 			((int)PermissionTypes.ManageContracts).Should().Be(117);
+			((int)PermissionTypes.ManageBids).Should().Be(116);
+			((int)PermissionTypes.ManageContracts).Should().Be(117);
 			((int)PermissionTypes.ManageDeployments).Should().Be(118);
 			((int)PermissionTypes.ApproveTimeReports).Should().Be(119);
 			((int)PermissionTypes.ManageMutualAidReimbursement).Should().Be(79);
@@ -137,6 +139,13 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.ContractExpiring).Should().Be(80);
 			((int)WorkflowTriggerEventType.DeploymentCreated).Should().Be(81);
 			((int)WorkflowTriggerEventType.TimeReportApproved).Should().Be(86);
+			// Workforce & Business Operations lifecycle completion took 180-187 on 2026-09-19 (registry: new allocations start at 180; 177-179 stay Enhanced AI).
+			((int)WorkflowTriggerEventType.UnitCertificationAdded).Should().Be(180);
+			((int)WorkflowTriggerEventType.CertificationCreditAdded).Should().Be(184);
+			((int)WorkflowTriggerEventType.TimeReportCreated).Should().Be(185);
+			((int)WorkflowTriggerEventType.DeploymentAttachmentAdded).Should().Be(187);
+			foreach (var value in Enumerable.Range(177, 3))
+				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for the Enhanced AI add-on");
 			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(Enumerable.Range(74, 13)).Except(Enumerable.Range(87, 7)).Except(new[] { 94, 95 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}

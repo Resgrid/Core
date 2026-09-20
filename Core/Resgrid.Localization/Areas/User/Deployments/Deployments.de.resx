@@ -258,4 +258,9 @@
   <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Einsatzspesen hinzugefügt</value></data>
   <data name="TimeReportSubmitted" xml:space="preserve"><value>Zeitbericht eingereicht</value></data>
   <data name="TimeReportApproved" xml:space="preserve"><value>Zeitbericht genehmigt</value></data>
+  <data name="TimeReportCreated" xml:space="preserve"><value>Zeitbericht erstellt</value></data>
+  <data name="TimeReportVoided" xml:space="preserve"><value>Zeitbericht storniert</value></data>
+  <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Einsatzdatei hinzugefügt</value></data>
+  <data name="AdpProtectedDeployment" xml:space="preserve"><value>Geschützter Einsatz</value></data>
+  <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Geschützter Zeitbericht</value></data>
 </root>

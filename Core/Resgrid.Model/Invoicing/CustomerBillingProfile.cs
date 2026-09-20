@@ -21,7 +21,7 @@ namespace Resgrid.Model.Invoicing
 		[Required]
 		public string ContactId { get; set; }
 
-		/// <summary>ADP catalog 26 field (Phase B2) in an enrolled department.</summary>
+		/// <summary>Customer-facing: not under ADP (the customer reads it without a login).</summary>
 		public string BillingEmail { get; set; }
 		public int? BillingAddressId { get; set; }
 		public bool UseContactMailingAddress { get; set; } = true;

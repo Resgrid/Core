@@ -154,6 +154,7 @@
   <data name="RemovalDue" xml:space="preserve"><value>Retrait le {0}</value></data>
   <data name="RoleMembersBlocked" xml:space="preserve"><value>Ces membres ne détiennent pas les certifications requises pour ce rôle et n'ont pas été ajoutés : {0}</value></data>
   <data name="RoleMembersWarned" xml:space="preserve"><value>Ajoutés avec un avertissement – certifications manquantes pour ce rôle : {0}</value></data>
+  <data name="RoleMembersNotInDepartment" xml:space="preserve"><value>Ces membres ne font pas partie de ce service et n'ont pas été ajoutés : {0}</value></data>
   <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Le membre a été créé, mais un ou plusieurs rôles n'ont pas été attribués : il ne détient pas les certifications requises.</value></data>
   <data name="UnitCertifications" xml:space="preserve"><value>Certifications d'unité</value></data>
   <data name="UnitCertificationsFor" xml:space="preserve"><value>Certifications et inspections – {0}</value></data>
@@ -219,4 +220,9 @@
   <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Le membre ne détient pas les certifications requises pour ce rôle.</value></data>
   <data name="certifications_file_type" xml:space="preserve"><value>Ce type de fichier ne peut pas être téléversé.</value></data>
   <data name="certifications_file_too_large" xml:space="preserve"><value>Le fichier dépasse 10 Mo.</value></data>
+  <data name="UnitCertificationAdded" xml:space="preserve"><value>Certification d'unité ajoutée</value></data>
+  <data name="UnitCertificationStatusChanged" xml:space="preserve"><value>Statut de certification d'unité modifié</value></data>
+  <data name="UnitCertificationRemoved" xml:space="preserve"><value>Certification d'unité supprimée</value></data>
+  <data name="CertificationRemoved" xml:space="preserve"><value>Certification supprimée</value></data>
+  <data name="CertificationCreditAdded" xml:space="preserve"><value>Crédits de certification ajoutés</value></data>
 </root>

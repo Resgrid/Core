@@ -230,7 +230,19 @@ RecordPermitExpiring = 163,
 		InventoryReturnOverdue = 166,
 		InventoryAssetStatusChanged = 64,
 		InventoryPurchaseOrderReceived = 65,
-		ControlledSubstanceRecorded = 66
+		ControlledSubstanceRecorded = 66,
+
+		// Workforce & Business Operations lifecycle completion (registry 180-187, 2026-09-19): the Phase D and Phase C
+		// mutations the original blocks left without a trigger. 180-184 ride the in-process certification events;
+		// 185-187 ride the Deployments outbox producer.
+		UnitCertificationAdded = 180,
+		UnitCertificationStatusChanged = 181,
+		UnitCertificationRemoved = 182,
+		CertificationRemoved = 183,
+		CertificationCreditAdded = 184,
+		TimeReportCreated = 185,
+		TimeReportVoided = 186,
+		DeploymentAttachmentAdded = 187
 	}
 
 	public static class WorkflowTriggerEventTypes

@@ -2083,9 +2083,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					// gate re-runs against live data) leaves the previous membership untouched.
 					await _personnelRolesService.ReplaceRoleMembersAsync(role, incomingUsers, cancellationToken, UserId);
 				}
-				catch (InvalidOperationException ex) when (ex.Message == "certifications_role_requirements_unmet")
+				catch (RoleMembershipException ex)
 				{
-					ModelState.AddModelError("Role.Users", string.Format(_certificationLocalizer["RoleMembersBlocked"].Value, string.Join(", ", await PersonnelDisplayNamesAsync(incomingUsers.Where(u => !currentUsers.Contains(u))))));
+					// The service names the one member it refused (the live re-check can differ from the check above);
+					// a stranger to the department is refused the same way rather than written as a member.
+					var refused = ex.UserId != null ? new[] { ex.UserId } : incomingUsers.Where(u => !currentUsers.Contains(u));
+					var key = ex.Message == RoleMembershipException.NotInDepartment ? "RoleMembersNotInDepartment" : "RoleMembersBlocked";
+					ModelState.AddModelError("Role.Users", string.Format(_certificationLocalizer[key].Value, string.Join(", ", await PersonnelDisplayNamesAsync(refused))));
 					model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 					return View(model);
 				}

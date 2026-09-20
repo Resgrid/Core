@@ -258,4 +258,9 @@
   <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Dépense de déploiement ajoutée</value></data>
   <data name="TimeReportSubmitted" xml:space="preserve"><value>Rapport de temps soumis</value></data>
   <data name="TimeReportApproved" xml:space="preserve"><value>Rapport de temps approuvé</value></data>
+  <data name="TimeReportCreated" xml:space="preserve"><value>Rapport de temps créé</value></data>
+  <data name="TimeReportVoided" xml:space="preserve"><value>Rapport de temps annulé</value></data>
+  <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Fichier de déploiement ajouté</value></data>
+  <data name="AdpProtectedDeployment" xml:space="preserve"><value>Déploiement protégé</value></data>
+  <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Rapport de temps protégé</value></data>
 </root>

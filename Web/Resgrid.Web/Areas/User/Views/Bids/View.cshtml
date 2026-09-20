@@ -1,0 +1,108 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.BidDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    var b = Model.Bid;
+    ViewBag.Title = "Resgrid | " + localizer["BidNumber"] + " " + b.BidNumber;
+    ViewData["Title"] = localizer["BidNumber"].Value + " " + b.BidNumber + " — " + b.Title;
+    ViewData["RootController"] = "Bids";
+    ViewData["RootTitle"] = localizer["Bids"].Value;
+    var status = (Resgrid.Model.Invoicing.BidStatuses)b.Status;
+    string Money(decimal v) => v.ToString("N2") + " " + Model.Currency;
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Bid"] @await Html.PartialAsync("_BidStatusBadge", b.Status)</h5>
+                    <div class="ibox-tools">
+                        <a asp-action="Pdf" asp-route-id="@b.BidId" class="btn btn-default btn-xs"><i class="fa fa-file-pdf-o"></i> @localizer["Pdf"]</a>
+                        <a asp-action="Preview" asp-route-id="@b.BidId" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-eye"></i> @localizer["Preview"]</a>
+                        @if (Model.CanManageBids && b.IsEditable) { <a asp-action="Edit" asp-route-id="@b.BidId" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["Customer"]</dt><dd>@Model.ContactName</dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.ContractName)) { <dt>@localizer["Contract"]</dt><dd><a asp-controller="Contracts" asp-action="View" asp-route-id="@b.ServiceContractId">@Model.ContractName</a></dd> }
+                        <dt>@localizer["RateSchedule"]</dt><dd>@(Model.ScheduleName ?? "—")</dd>
+                        @if (!string.IsNullOrWhiteSpace(b.Description)) { <dt>@localizer["Description"]</dt><dd>@b.Description</dd> }
+                        <dt>@localizer["IncidentNumber"]</dt><dd>@(b.IncidentNumber ?? "—")</dd>
+                        <dt>@localizer["DeliveryLocation"]</dt><dd>@b.DeliveryLocation</dd>
+                        <dt>@localizer["Requested"]</dt><dd>@(b.RequestedStartOn?.ToString("yyyy-MM-dd") ?? "—") → @(b.RequestedEndOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
+                        <dt>@localizer["ValidUntil"]</dt><dd>@(b.ValidUntil?.ToString("yyyy-MM-dd") ?? "—")</dd>
+                        @if (b.SentOn.HasValue) { <dt>@localizer["SentOn"]</dt><dd>@b.SentOn.Value.ToString("yyyy-MM-dd HH:mm") · @b.SentToEmail</dd> }
+                        @if (b.AcceptedOn.HasValue) { <dt>@localizer["AcceptedOn"]</dt><dd>@b.AcceptedOn.Value.ToString("yyyy-MM-dd HH:mm")</dd> }
+                        @if (b.DeclinedOn.HasValue) { <dt>@localizer["DeclinedOn"]</dt><dd>@b.DeclinedOn.Value.ToString("yyyy-MM-dd HH:mm") @b.DeclineReason</dd> }
+                        @if (!string.IsNullOrWhiteSpace(b.Notes)) { <dt>@localizer["Notes"]</dt><dd>@b.Notes</dd> }
+                        @if (b.IsConverted) { <dt>@localizer["Deployment"]</dt><dd><a asp-controller="Deployments" asp-action="View" asp-route-id="@b.ConvertedDeploymentId">@(Model.ConvertedDeployment?.Name ?? b.ConvertedDeploymentId)</a> @if (b.ConvertedCallId.HasValue) { <span class="text-muted">· @localizer["Call"] @b.ConvertedCallId</span> }</dd> }
+                    </dl>
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Description"]</th><th class="text-right">@localizer["Quantity"]</th><th class="text-right">@localizer["HoursPerDay"]</th><th class="text-right">@localizer["Days"]</th><th class="text-right">@localizer["Rate"]</th><th class="text-right">@localizer["Amount"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var l in b.LineItems)
+                            {
+                                <tr><td>@l.Description @if (l.CrewSize.HasValue) { <small class="text-muted">(@l.CrewSize-@localizer["Person"])</small> }</td><td class="text-right">@l.Quantity.ToString("0.##")</td><td class="text-right">@(l.EstimatedHoursPerDay?.ToString("0.##") ?? "")</td><td class="text-right">@(l.EstimatedDays?.ToString("0.##") ?? "")</td><td class="text-right">@l.UnitRate.ToString("N4")</td><td class="text-right">@l.EstimatedAmount.ToString("N2")</td></tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr><td colspan="5" class="text-right">@localizer["Subtotal"]</td><td class="text-right">@Money(b.EstimatedSubTotal)</td></tr>
+                            @if (b.EstimatedDiscountAmount > 0) { <tr><td colspan="5" class="text-right">@localizer["Discount"] @(b.DiscountPercent.HasValue ? "(" + b.DiscountPercent.Value.ToString("0.##") + "%)" : "")</td><td class="text-right">-@Money(b.EstimatedDiscountAmount)</td></tr> }
+                            @if (b.EstimatedTaxAmount > 0) { <tr><td colspan="5" class="text-right">@localizer["TaxEstimated"]</td><td class="text-right">@Money(b.EstimatedTaxAmount)</td></tr> }
+                            <tr class="font-bold"><td colspan="5" class="text-right">@localizer["EstimatedTotal"]</td><td class="text-right">@Money(b.EstimatedTotal)</td></tr>
+                        </tfoot>
+                    </table>
+                    @if (!string.IsNullOrWhiteSpace(b.TermsText)) { <h4>@localizer["TermsText"]</h4><p style="white-space:pre-wrap">@b.TermsText</p> }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (Model.CanManageBids)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Actions"]</h5></div>
+                    <div class="ibox-content">
+                        @if (status is Resgrid.Model.Invoicing.BidStatuses.Draft or Resgrid.Model.Invoicing.BidStatuses.Submitted)
+                        {
+                            <form method="post" asp-action="Send" asp-route-id="@b.BidId" class="m-b-sm">@Html.AntiForgeryToken()
+                                <div class="form-group"><label>@localizer["SendTo"]</label><input type="email" name="toEmail" class="form-control" placeholder="@(Model.ContactEmail ?? localizer["CustomerEmail"].Value)" /></div>
+                                <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-envelope"></i> @(status == Resgrid.Model.Invoicing.BidStatuses.Draft ? localizer["SendBid"] : localizer["ResendBid"])</button>
+                            </form>
+                        }
+                        @if (status == Resgrid.Model.Invoicing.BidStatuses.Draft)
+                        {
+                            <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Submitted)" class="m-b-xs">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-block">@localizer["MarkSubmitted"]</button></form>
+                        }
+                        @if (status is Resgrid.Model.Invoicing.BidStatuses.Submitted or Resgrid.Model.Invoicing.BidStatuses.Expired or Resgrid.Model.Invoicing.BidStatuses.Declined)
+                        {
+                            if (status == Resgrid.Model.Invoicing.BidStatuses.Submitted)
+                            {
+                                <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Accepted)" class="m-b-xs">@Html.AntiForgeryToken()<button type="submit" class="btn btn-success btn-block"><i class="fa fa-check"></i> @localizer["MarkAccepted"]</button></form>
+                                <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Declined)" class="m-b-xs">@Html.AntiForgeryToken()<input type="text" name="reason" class="form-control input-sm m-b-xs" placeholder="@localizer["DeclineReason"]" /><button type="submit" class="btn btn-warning btn-block">@localizer["MarkDeclined"]</button></form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Submitted)" class="m-b-xs">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-block">@localizer["Reopen"]</button></form>
+                            }
+                        }
+                        @if (status is Resgrid.Model.Invoicing.BidStatuses.Draft or Resgrid.Model.Invoicing.BidStatuses.Submitted)
+                        {
+                            <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Withdrawn)" class="m-b-xs" onsubmit="return confirm('@localizer["ConfirmWithdraw"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-block">@localizer["Withdraw"]</button></form>
+                        }
+                        @if (status == Resgrid.Model.Invoicing.BidStatuses.Accepted && !b.IsConverted && Model.CanManageDeployments)
+                        {
+                            <a asp-controller="DeploymentWizard" asp-action="Index" asp-route-bidId="@b.BidId" class="btn btn-primary btn-block m-t-sm"><i class="fa fa-magic"></i> @localizer["ScheduleDeploymentCall"]</a>
+                        }
+                        @if (status == Resgrid.Model.Invoicing.BidStatuses.Draft)
+                        {
+                            <form method="post" asp-action="Delete" asp-route-id="@b.BidId" class="m-t-sm" onsubmit="return confirm('@localizer["ConfirmDeleteBid"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-block btn-xs"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.ComplianceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ComplianceDocuments"];
+    ViewData["Title"] = localizer["ComplianceDocuments"].Value;
+    ViewData["Subtitle"] = localizer["ComplianceIntro"].Value;
+    ViewData["RootController"] = "Contracts";
+    ViewData["RootTitle"] = localizer["Contracts"].Value;
+    var docTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.ComplianceDocumentTypes)).Cast<Resgrid.Model.Invoicing.ComplianceDocumentTypes>().ToList();
+    var editing = Model.Editing ?? new Resgrid.Model.Invoicing.DepartmentComplianceDocument { AlertLeadDays = 30 };
+    var today = DateTime.UtcNow.Date;
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["ComplianceDocuments"]</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpCompliance"]</div>
+                    @if (Model.Documents.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoComplianceDocuments"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-striped table-hover">
+                            <thead><tr><th>@localizer["Name"]</th><th>@localizer["ComplianceDocumentType"]</th><th>@localizer["DocumentNumber"]</th><th>@localizer["Issuer"]</th><th>@localizer["ExpiresOn"]</th><th>@localizer["File"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var d in Model.Documents)
+                                {
+                                    var expired = d.ExpiresOn.HasValue && d.ExpiresOn.Value.Date < today;
+                                    var expiring = !expired && d.ExpiresOn.HasValue && d.ExpiresOn.Value.Date <= today.AddDays(d.AlertLeadDays);
+                                    <tr>
+                                        <td>@d.Name</td>
+                                        <td>@localizer["DocType" + (Resgrid.Model.Invoicing.ComplianceDocumentTypes)d.DocumentType]</td>
+                                        <td>@d.DocumentNumber</td>
+                                        <td>@d.Issuer</td>
+                                        <td>@if (d.ExpiresOn.HasValue) { <span class="label @(expired ? "label-danger" : expiring ? "label-warning" : "label-primary")">@d.ExpiresOn.Value.ToString("yyyy-MM-dd")</span> } else { <span class="text-muted">—</span> }</td>
+                                        <td>@if (!string.IsNullOrWhiteSpace(d.FileName)) { <a asp-action="ComplianceFile" asp-route-id="@d.DepartmentComplianceDocumentId">@d.FileName</a> <small class="text-muted">(@((d.FileSize ?? 0) / 1024) KB)</small> } else { <span class="text-muted">—</span> }</td>
+                                        <td class="text-right">
+                                            @if (Model.CanManageContracts)
+                                            {
+                                                <a asp-action="Compliance" asp-route-edit="@d.DepartmentComplianceDocumentId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                                <form method="post" asp-action="DeleteComplianceDocument" asp-route-id="@d.DepartmentComplianceDocumentId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (Model.CanManageContracts)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(Model.Editing == null ? localizer["AddComplianceDocument"] : localizer["EditComplianceDocument"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="SaveComplianceDocument" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="DepartmentComplianceDocumentId" value="@editing.DepartmentComplianceDocumentId" />
+                            <div class="form-group"><label>@localizer["ComplianceDocumentType"]</label><select name="DocumentType" class="form-control">@foreach (var t in docTypes) { <option value="@((int)t)" selected="@((int)t == editing.DocumentType)">@localizer["DocType" + t]</option> }</select></div>
+                            <div class="form-group"><label>@localizer["Name"] *</label><input type="text" name="Name" class="form-control" maxlength="250" required value="@editing.Name" /></div>
+                            <div class="form-group"><label>@localizer["DocumentNumber"]</label><input type="text" name="DocumentNumber" class="form-control" value="@(Model.Editing == null ? "" : editing.DocumentNumber)" /></div>
+                            <div class="form-group"><label>@localizer["Issuer"]</label><input type="text" name="Issuer" class="form-control" maxlength="250" value="@editing.Issuer" /></div>
+                            <div class="row"><div class="col-xs-6 form-group"><label>@localizer["EffectiveOn"]</label><input type="date" name="EffectiveOn" class="form-control" value="@(editing.EffectiveOn?.ToString("yyyy-MM-dd"))" /></div><div class="col-xs-6 form-group"><label>@localizer["ExpiresOn"]</label><input type="date" name="ExpiresOn" class="form-control" value="@(editing.ExpiresOn?.ToString("yyyy-MM-dd"))" /></div></div>
+                            <div class="form-group"><label>@localizer["AlertLeadDays"]</label><input type="number" min="0" max="365" name="AlertLeadDays" class="form-control" value="@editing.AlertLeadDays" /></div>
+                            <div class="form-group"><label>@localizer["File"]</label><input type="file" name="file" class="form-control" /><span class="help-block">@localizer["ComplianceFileHelp"]</span></div>
+                            <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                            @if (Model.Editing != null) { <a asp-action="Compliance" class="btn btn-default">@localizer["Cancel"]</a> }
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

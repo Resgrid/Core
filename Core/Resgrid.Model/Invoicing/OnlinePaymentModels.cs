@@ -404,48 +404,4 @@ namespace Resgrid.Model.Invoicing
 		/// <summary>The gate that fails first, as a resource key (payments_*), or null.</summary>
 		public string BlockedReason { get; set; }
 	}
-
-	/// <summary>
-	/// The Phase B columns Advanced Data Protection catalogs (ADP catalog 26, plan B2.2): customer-contact and
-	/// payment-reference text under the Contacts family. Amounts, statuses, numbers and dates stay metadata.
-	/// </summary>
-	public static class InvoicingProtectedFields
-	{
-		public const int CatalogVersion = 26;
-		public const string Family = "Contacts";
-
-		public static readonly IReadOnlyDictionary<string, (Func<CustomerBillingProfile, string> Get, Action<CustomerBillingProfile, string> Set)> BillingProfile =
-			new Dictionary<string, (Func<CustomerBillingProfile, string>, Action<CustomerBillingProfile, string>)>(StringComparer.OrdinalIgnoreCase)
-			{
-				["customerbillingprofiles.billingemail"] = (p => p.BillingEmail, (p, v) => p.BillingEmail = v)
-			};
-
-		public static readonly IReadOnlyDictionary<string, (Func<Invoice, string> Get, Action<Invoice, string> Set)> Invoice =
-			new Dictionary<string, (Func<Invoice, string>, Action<Invoice, string>)>(StringComparer.OrdinalIgnoreCase)
-			{
-				["invoices.senttoemail"] = (i => i.SentToEmail, (i, v) => i.SentToEmail = v),
-				["invoices.notes"] = (i => i.Notes, (i, v) => i.Notes = v)
-			};
-
-		public static readonly IReadOnlyDictionary<string, (Func<InvoicePayment, string> Get, Action<InvoicePayment, string> Set)> Payment =
-			new Dictionary<string, (Func<InvoicePayment, string>, Action<InvoicePayment, string>)>(StringComparer.OrdinalIgnoreCase)
-			{
-				["invoicepayments.payeremail"] = (p => p.PayerEmail, (p, v) => p.PayerEmail = v),
-				["invoicepayments.reference"] = (p => p.Reference, (p, v) => p.Reference = v),
-				["invoicepayments.receipturl"] = (p => p.ReceiptUrl, (p, v) => p.ReceiptUrl = v),
-				["invoicepayments.notes"] = (p => p.Notes, (p, v) => p.Notes = v)
-			};
-
-		/// <summary>Every cataloged field id, for tests and the catalog builder.</summary>
-		public static IEnumerable<(string Table, string Column)> All()
-		{
-			yield return ("CustomerBillingProfiles", "BillingEmail");
-			yield return ("Invoices", "SentToEmail");
-			yield return ("Invoices", "Notes");
-			yield return ("InvoicePayments", "PayerEmail");
-			yield return ("InvoicePayments", "Reference");
-			yield return ("InvoicePayments", "ReceiptUrl");
-			yield return ("InvoicePayments", "Notes");
-		}
-	}
 }

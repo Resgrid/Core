@@ -25,7 +25,7 @@ namespace Resgrid.Model.Invoicing
 		/// <summary><see cref="InvoicePaymentMethods"/>.</summary>
 		public int Method { get; set; }
 
-		/// <summary>Check number, remittance reference. ADP catalog 26 field (Phase B2).</summary>
+		/// <summary>Check number, remittance reference. Printed on the customer's receipt; not under ADP.</summary>
 		public string Reference { get; set; }
 
 		/// <summary>Provider payment / charge / capture id (Phase B2); null for manual records.</summary>
@@ -41,16 +41,16 @@ namespace Resgrid.Model.Invoicing
 		public decimal? ProviderFeeAmount { get; set; }
 		public decimal? NetAmount { get; set; }
 
-		/// <summary>ADP catalog 26 field (Phase B2).</summary>
+		/// <summary>Customer-facing (receipt); not under ADP.</summary>
 		public string PayerEmail { get; set; }
 
 		/// <summary>"Visa •••• 4242", "ACH" — display only.</summary>
 		public string PaymentMethodSummary { get; set; }
 
-		/// <summary>ADP catalog 26 field (Phase B2).</summary>
+		/// <summary>Customer-facing (receipt); not under ADP.</summary>
 		public string ReceiptUrl { get; set; }
 
-		/// <summary>ADP catalog 26 field (Phase B2).</summary>
+		/// <summary>Customer-facing (receipt); not under ADP.</summary>
 		public string Notes { get; set; }
 		public DateTime PaidOn { get; set; }
 

@@ -127,11 +127,12 @@ namespace Resgrid.Services
 			var incoming = role?.Users?.Where(u => u != null && !string.IsNullOrWhiteSpace(u.UserId)).Select(u => u.UserId).Distinct().ToList() ?? new List<string>();
 			var previous = role != null && role.PersonnelRoleId > 0 ? (await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(role.PersonnelRoleId))?.Select(m => m.UserId).ToHashSet() ?? new HashSet<string>() : new HashSet<string>();
 			var added = incoming.Where(u => !previous.Contains(u)).ToList();
+			await EnsureDepartmentMembersAsync(role.DepartmentId, added);
 			foreach (var userId in added)
 			{
 				var check = await CheckRoleMembershipAsync(role.DepartmentId, userId, new[] { role.PersonnelRoleId });
 				if (check.IsBlocked)
-					throw new InvalidOperationException("certifications_role_requirements_unmet");
+					throw new RoleMembershipException(RoleMembershipException.RequirementsUnmet, userId);
 			}
 
 			var saved = await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
@@ -153,12 +154,14 @@ namespace Resgrid.Services
 			var removed = current.Where(m => !incomingIds.Contains(m.UserId)).ToList();
 
 			// Gate before the delete: only the members the role gains are evaluated, so a standing member who is inside a
-			// grace period does not block a rename, and nothing is removed for a save that will be refused.
+			// grace period does not block a rename, and nothing is removed for a save that will be refused. The department
+			// check comes first: the caller authorizes the role, not the user ids it posts.
+			await EnsureDepartmentMembersAsync(role.DepartmentId, added);
 			foreach (var userId in added)
 			{
 				var check = await CheckRoleMembershipAsync(role.DepartmentId, userId, new[] { role.PersonnelRoleId });
 				if (check.IsBlocked)
-					throw new InvalidOperationException("certifications_role_requirements_unmet");
+					throw new RoleMembershipException(RoleMembershipException.RequirementsUnmet, userId);
 			}
 
 			// Delete-then-cascade under one transaction: the repository cascades the Users collection on the role save,
@@ -187,6 +190,22 @@ namespace Resgrid.Services
 				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
 			SendRoleVisibilityRefresh(role.DepartmentId);
 			return saved;
+		}
+
+		/// <summary>
+		/// Every member a role gains must belong to the role's department: the role is what the caller is authorized
+		/// for, the user ids are posted values. One members read; a stranger is refused before anything is written.
+		/// </summary>
+		private async Task EnsureDepartmentMembersAsync(int departmentId, IReadOnlyCollection<string> userIds)
+		{
+			if (userIds == null || userIds.Count == 0)
+				return;
+
+			var members = (await _departmentMemberRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId))?.Where(m => m != null && !string.IsNullOrWhiteSpace(m.UserId)).Select(m => m.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase)
+				?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var stranger = userIds.FirstOrDefault(u => !members.Contains(u));
+			if (stranger != null)
+				throw new RoleMembershipException(RoleMembershipException.NotInDepartment, stranger);
 		}
 
 		public async Task<PersonnelRole> GetRoleByDepartmentAndNameAsync(int departmentId, string name)
@@ -299,7 +318,7 @@ namespace Resgrid.Services
 			// change leaves the existing membership exactly as it was.
 			var gaining = wanted.Where(r => !current.Contains(r.PersonnelRoleId)).Select(r => r.PersonnelRoleId).ToList();
 			if (gaining.Count > 0 && (await CheckRoleMembershipAsync(departmentId, userId, gaining)).IsBlocked)
-				throw new InvalidOperationException("certifications_role_requirements_unmet");
+				throw new RoleMembershipException(RoleMembershipException.RequirementsUnmet, userId);
 
 			await RemoveUserFromAllRolesAsync(userId, departmentId, cancellationToken);
 

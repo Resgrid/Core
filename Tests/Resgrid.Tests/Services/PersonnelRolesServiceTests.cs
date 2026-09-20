@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -161,6 +162,10 @@ namespace Resgrid.Tests.Services
 
 			private void Arrange()
 			{
+				_departmentMembersRepositoryMock.Setup(x => x.GetAllDepartmentMembersUnlimitedAsync(1)).ReturnsAsync(new List<DepartmentMember>
+				{
+					new DepartmentMember { DepartmentId = 1, UserId = "keep" }, new DepartmentMember { DepartmentId = 1, UserId = "drop" }, new DepartmentMember { DepartmentId = 1, UserId = "new" }
+				});
 				_personnelRoleUsersRepositoryMock.Setup(x => x.GetAllMembersOfRoleAsync(6787)).ReturnsAsync(new List<PersonnelRoleUser>(_current));
 				_personnelRoleUsersRepositoryMock
 					.Setup(x => x.DeleteAsync(It.IsAny<PersonnelRoleUser>(), It.IsAny<CancellationToken>()))
@@ -203,6 +208,32 @@ namespace Resgrid.Tests.Services
 				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Never);
 				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.IsAny<AuditEvent>()), Times.Never);
 				_eventAggregatorMock.Verify(x => x.SendMessage<SecurityRefreshEvent>(It.IsAny<SecurityRefreshEvent>()), Times.Never);
+			}
+
+			[Test]
+			public void a_user_outside_the_department_is_refused_by_name_before_anything_is_written()
+			{
+				Arrange();
+
+				var ex = Assert.ThrowsAsync<RoleMembershipException>(async () => await _personnelRolesService.ReplaceRoleMembersAsync(Role(), new[] { "keep", "stranger", "new" }));
+
+				ex.Message.Should().Be(RoleMembershipException.NotInDepartment);
+				ex.UserId.Should().Be("stranger");
+				_repositoryCallOrder.Should().BeEmpty("the refusal comes before the transaction, the deletes and the save");
+				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.IsAny<AuditEvent>()), Times.Never);
+			}
+
+			[Test]
+			public async Task a_standing_member_who_has_since_left_the_department_does_not_block_the_save()
+			{
+				Arrange();
+				_departmentMembersRepositoryMock.Setup(x => x.GetAllDepartmentMembersUnlimitedAsync(1)).ReturnsAsync(new List<DepartmentMember> { new DepartmentMember { DepartmentId = 1, UserId = "new" } });
+
+				// "keep" is already on the role: only the members the role gains are checked, the way the certification gate works.
+				var saved = await _personnelRolesService.ReplaceRoleMembersAsync(Role(), new[] { "keep", "new" });
+
+				saved.Users.Select(u => u.UserId).Should().BeEquivalentTo("keep", "new");
+				_repositoryCallOrder.Should().EndWith("commit");
 			}
 
 			[Test]

@@ -32,6 +32,7 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 	{
 		public DeploymentInput Deployment { get; set; } = new DeploymentInput();
 		public List<Contact> Contacts { get; set; } = new List<Contact>();
+		public bool IsProtected { get; set; }
 		public bool IsNew => string.IsNullOrWhiteSpace(Deployment.DeploymentId);
 	}
 
@@ -89,6 +90,11 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 		public Dictionary<string, string> UserNames { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public List<DeploymentRosterWarning> Warnings { get; set; } = new List<DeploymentRosterWarning>();
 		public bool IsRostered { get; set; }
+		/// <summary>Contractor billing (C-M2): the Billing tab is offered when the department holds the entitlement and the deployment is billable.</summary>
+		public bool ContractorBilling { get; set; }
+		public ContractorChargeSet Charges { get; set; }
+		public ContractComplianceResult Compliance { get; set; }
+		public List<Invoice> Invoices { get; set; } = new List<Invoice>();
 		public bool CanEditTime => CanManage || IsRostered;
 		public string Tab { get; set; } = "roster";
 		public decimal TotalHours { get; set; }
@@ -112,6 +118,8 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 
 	public class TimeEntryInput
 	{
+		/// <summary>The stored entry id; kept so an untouched entry (REDACTED notes posted back) updates in place.</summary>
+		public string Id { get; set; }
 		public string SubjectId { get; set; }
 		public int EntryType { get; set; }
 		public string Start { get; set; }

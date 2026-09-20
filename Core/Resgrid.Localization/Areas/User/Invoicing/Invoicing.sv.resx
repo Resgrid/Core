@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>Onlinebetalning är avstängd på denna server.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe uppger att Resgrid inte längre har åtkomst till detta konto. Anslut det igen för att fortsätta.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Skyddade uppgifter på denna post kunde inte säkras, så ändringen sparades inte.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Skyddad faktura</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Skyddad faktureringsidentitet</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Fakturerad från denna dagliga tidrapport</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Skicka med paket</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Bifogar faktura-PDF, dagliga tidrapport-PDF:er, kvitton och de efterlevnadsdokument avtalet kräver som en zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Ladda ner paket</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Öppna insats</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Standardprislista</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Entreprenörsfakturering: används för kundens anbud och insatser när inget avtal anger prislista.</value></data>
 </root>

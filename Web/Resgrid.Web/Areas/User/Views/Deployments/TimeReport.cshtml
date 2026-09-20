@@ -72,7 +72,7 @@
                                         <td><input type="number" name="entries[@i].PaidBreakMinutes" class="form-control input-sm" value="@e.PaidBreakMinutes" min="0" disabled="@(!Model.CanEdit)" /></td>
                                         <td><input type="number" name="entries[@i].UnpaidBreakMinutes" class="form-control input-sm" value="@e.UnpaidBreakMinutes" min="0" disabled="@(!Model.CanEdit)" /></td>
                                         <td><input type="number" step="0.1" name="entries[@i].MileageKm" class="form-control input-sm" value="@e.MileageKm" min="0" disabled="@(!Model.CanEdit)" /></td>
-                                        <td><input type="text" name="entries[@i].Notes" class="form-control input-sm" value="@e.Notes" maxlength="500" disabled="@(!Model.CanEdit)" /><input type="hidden" name="entries[@i].CertificationCode" value="@e.CertificationCode" /></td>
+                                        <td><input type="text" name="entries[@i].Notes" class="form-control input-sm" value="@e.Notes" maxlength="500" disabled="@(!Model.CanEdit)" /><input type="hidden" name="entries[@i].CertificationCode" value="@e.CertificationCode" /><input type="hidden" name="entries[@i].Id" class="entry-id" value="@e.DeploymentTimeEntryId" /></td>
                                         <td>@if (Model.CanEdit) { <button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button> } <small class="text-muted">@e.Hours.ToString("0.00")h</small></td>
                                     </tr>
                                 }
@@ -119,7 +119,7 @@
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
                         <dt>@localizer["ContractorSignature"]</dt><dd>@(r.ContractorSignedOn.HasValue ? $"{Model.ContractorSignerName} · {LocalStamp(r.ContractorSignedOn)}" : "—")</dd>
-                        <dt>@localizer["CustomerSignature"]</dt><dd>@(r.CustomerSignedOn.HasValue ? $"{Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.CustomerSignerName)} · {LocalStamp(r.CustomerSignedOn)}" : "—")</dd>
+                        <dt>@localizer["CustomerSignature"]</dt><dd>@if (r.CustomerSignedOn.HasValue) { @r.CustomerSignerName<text> · @LocalStamp(r.CustomerSignedOn)</text> } else { <text>—</text> }</dd>
                     </dl>
                     @if ((Model.CanManage || Model.IsRostered) && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Void && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Billed)
                     {
@@ -143,7 +143,7 @@
                             <tbody>
                                 @foreach (var e in Model.Expenses)
                                 {
-                                    <tr><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(e.Description)</td><td class="text-right">@e.Amount.ToString("N2") @e.Currency</td><td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td></tr>
+                                    <tr><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td>@e.Description</td><td class="text-right">@e.Amount.ToString("N2") @e.Currency</td><td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td></tr>
                                 }
                             </tbody>
                         </table>
@@ -190,7 +190,7 @@
             var add = document.getElementById('addRow');
             if (add) add.addEventListener('click', function () {
                 var rows = body.querySelectorAll('tr'); var clone;
-                if (rows.length) { clone = rows[rows.length - 1].cloneNode(true); clone.querySelectorAll('input[type=text],input[type=number]').forEach(function (i) { i.value = ''; }); }
+                if (rows.length) { clone = rows[rows.length - 1].cloneNode(true); clone.querySelectorAll('input[type=text],input[type=number],input.entry-id').forEach(function (i) { i.value = ''; i.removeAttribute('data-adp-field'); }); }
                 else {
                     clone = document.createElement('tr');
                     clone.innerHTML = '<td><select name="entries[0].SubjectId" class="form-control input-sm">@Html.Raw(string.Join("", Model.Subjects.Select(s => $"<option value=\"{s.Id}\">{System.Net.WebUtility.HtmlEncode(s.Name)}</option>")))</select></td>' +

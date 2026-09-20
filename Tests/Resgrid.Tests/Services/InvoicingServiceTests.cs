@@ -66,7 +66,7 @@ namespace Resgrid.Tests.Services
 			_unitOfWork = new FakeUnitOfWork();
 			_departments.Setup(d => d.GetDepartmentByIdAsync(7, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = 7, Name = "Test County Fire" });
 			_pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>())).Returns<string>(html => System.Text.Encoding.UTF8.GetBytes(html));
-			_email.Setup(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+			_email.Setup(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 			_published = new List<DomainEventEnvelope>();
 			_audits = new List<AuditEvent>();
 
@@ -442,11 +442,13 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public void Render_hides_customer_details_and_notes_on_a_protected_invoice()
+		public void Render_prints_notes_whole_and_never_leaks_an_enveloped_contact_name()
 		{
-			var invoice = new Invoice { InvoiceId = "inv-1", InvoiceNumber = 7, Status = (int)InvoiceStatus.Sent, Currency = "USD", Total = 10m, Notes = "secret", IsProtected = true, LineItems = new List<InvoiceLineItem>() };
-			var html = InvoicingService.RenderInvoiceHtml(new InvoiceRenderModel { Invoice = invoice, DepartmentName = "D", CustomerName = ProtectedDataEnvelope.RedactionValue });
-			html.Should().Contain(ProtectedDataEnvelope.RedactionValue).And.NotContain("secret");
+			// The customer reads the invoice without a login: its notes are always printed. The bill-to name comes from the
+			// (still ADP-protected) Contact row; when the render lane could not decrypt it the safe display value is printed, never ciphertext.
+			var invoice = new Invoice { InvoiceId = "inv-1", InvoiceNumber = 7, Status = (int)InvoiceStatus.Sent, Currency = "USD", Total = 10m, Notes = "Deliver to gate 4", LineItems = new List<InvoiceLineItem>() };
+			var html = InvoicingService.RenderInvoiceHtml(new InvoiceRenderModel { Invoice = invoice, DepartmentName = "D", CustomerName = ProtectedDataEnvelope.SafeDisplay("rgdp:1:1:acme==") });
+			html.Should().Contain("Deliver to gate 4").And.Contain(ProtectedDataEnvelope.RedactionValue).And.NotContain("rgdp:");
 		}
 
 		[Test]
@@ -460,8 +462,8 @@ namespace Resgrid.Tests.Services
 			_payments.Setup(p => p.GetByInvoiceIdAsync("inv-1", 7)).ReturnsAsync(new List<InvoicePayment>());
 			_identities.Setup(i => i.GetByDepartmentIdAsync(7)).ReturnsAsync(new DepartmentBillingIdentity { DepartmentId = 7, LegalBusinessName = "Test County Fire District" });
 			EmailNotification captured = null;
-			_email.Setup(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), 7, It.IsAny<string>(), null, "Invoice #1042"))
-				.Callback<EmailNotification, int, string, string, string>((n, _, __, ___, ____) => captured = n).ReturnsAsync(true);
+			_email.Setup(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), 7, It.IsAny<string>(), null, "Invoice #1042", It.IsAny<string>()))
+				.Callback<EmailNotification, int, string, string, string, string>((n, _, __, ___, ____, _____) => captured = n).ReturnsAsync(true);
 
 			var result = await Build().SendInvoiceAsync("inv-1", 7, null, "user-1", null, null);
 
@@ -488,7 +490,7 @@ namespace Resgrid.Tests.Services
 			_profiles.Setup(p => p.GetByIdForDepartmentAsync("profile-1", 7)).ReturnsAsync(Profile());
 			var noRecipient = async () => await Build().SendInvoiceAsync("inv-s", 7, "  ", "u", null, null);
 			await noRecipient.Should().ThrowAsync<InvalidOperationException>().WithMessage("invoicing_no_recipient_email");
-			_email.Verify(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			_email.Verify(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]
@@ -509,18 +511,24 @@ namespace Resgrid.Tests.Services
 		// ---------------------------------------------------------------- workflow payload hygiene
 
 		[Test]
-		public async Task Workflow_payload_redacts_the_contact_name_on_a_protected_invoice()
+		public async Task Workflow_payload_carries_the_contact_name_as_safe_display_and_omits_free_text()
 		{
 			_profiles.Setup(p => p.GetByContactIdAsync("contact-1", 7)).ReturnsAsync(Profile());
 			_sequence.Setup(s => s.GetNextNumberAsync(7, It.IsAny<CancellationToken>())).ReturnsAsync(1);
 			_invoices.Setup(r => r.SaveOrUpdateAsync(It.IsAny<Invoice>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ReturnsAsync((Invoice i, CancellationToken _, bool __) => { i.InvoiceId ??= "inv-x"; i.IsProtected = true; return i; });
+				.ReturnsAsync((Invoice i, CancellationToken _, bool __) => { i.InvoiceId ??= "inv-x"; return i; });
 
 			await Build().CreateDraftInvoiceAsync(7, "contact-1", "user-1", null, null);
 
 			var payload = Newtonsoft.Json.Linq.JObject.FromObject(_published.Single().Payload);
-			((string)payload["ContactName"]).Should().Be(ProtectedDataEnvelope.RedactionValue);
+			((string)payload["ContactName"]).Should().Be("Acme Logistics");
 			payload.Properties().Select(p => p.Name).Should().NotContain(new[] { "Notes", "SentToEmail", "VoidReason", "BillingEmail" });
+
+			// An enveloped Contact row (ADP still covers Contacts) reaches the payload as the safe display value, never as ciphertext.
+			_published.Clear();
+			_contacts.Setup(c => c.GetContactByIdAsync(It.IsAny<string>())).ReturnsAsync(new Contact { ContactId = "contact-1", DepartmentId = 7, CompanyName = "rgdp:1:1:acme==" });
+			await Build().CreateDraftInvoiceAsync(7, "contact-1", "user-1", null, null);
+			((string)Newtonsoft.Json.Linq.JObject.FromObject(_published.Single().Payload)["ContactName"]).Should().Be(ProtectedDataEnvelope.RedactionValue);
 		}
 
 		[Test]

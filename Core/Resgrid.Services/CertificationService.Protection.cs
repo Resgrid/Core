@@ -67,11 +67,11 @@ namespace Resgrid.Services
 				throw new InvalidOperationException("certifications_protected_write_refused");
 		}
 
-		/// <summary>User-facing read: protected values become REDACTED (no grant is carried on this path yet). Never throws.</summary>
+		/// <summary>User-facing read: a caller presenting a valid Protected Data Grant sees the values, everyone else sees REDACTED. Never throws.</summary>
 		private async Task ResolveReadAsync<T>(IReadOnlyList<T> rows, Func<T, string> rowKey, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, int departmentId) where T : class
 		{
 			if (_protectedRead == null || rows == null || rows.Count == 0) return;
-			try { await _protectedRead.Value.ResolveRecordsEntitiesForReadAsync(departmentId, rows.Select(r => (r, rowKey(r))).ToList(), accessors, null, null); }
+			try { await _protectedRead.Value.ResolveRecordsEntitiesForReadAsync(departmentId, rows.Select(r => (r, rowKey(r))).ToList(), accessors, _grant?.GrantToken, _grant?.UserId); }
 			catch (Exception ex) { Logging.LogException(ex, "Protected certification rows could not be resolved for read."); }
 		}
 
@@ -79,7 +79,7 @@ namespace Resgrid.Services
 		private async Task ResolveBinaryReadAsync(int departmentId, string fieldId, string rowKey, byte[] data, Action<byte[]> apply)
 		{
 			if (_protectedRead == null || data == null) return;
-			try { await _protectedRead.Value.ResolveRecordsBinaryForReadAsync(departmentId, fieldId, rowKey, data, apply, null, null); }
+			try { await _protectedRead.Value.ResolveRecordsBinaryForReadAsync(departmentId, fieldId, rowKey, data, apply, _grant?.GrantToken, _grant?.UserId); }
 			catch (Exception ex) { Logging.LogException(ex, "A protected certification file could not be resolved for read."); }
 		}
 	}

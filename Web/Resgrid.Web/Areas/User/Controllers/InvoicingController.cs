@@ -44,13 +44,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedRead;
 		private readonly IInvoicePaymentsService _payments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> _strings;
+		/// <summary>Contractor billing (C-M2): the invoice packet (invoice PDF + DTR PDFs + receipts + compliance documents) for deployment-generated invoices.</summary>
+		private readonly IContractorBillingEngine _contractorBilling;
+		private readonly IRateScheduleService _rateSchedules;
 
 		private bool _canWrite;
 
 		public InvoicingController(IInvoicingService invoicing, IBusinessOperationsAccessService access, IFeatureToggleService flags, IContactsService contacts,
 			ICallsService calls, IUnitsService units, IAddressService addresses, IProtectedReadService protectedRead,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings, IInvoicePaymentsService payments)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings, IInvoicePaymentsService payments,
+			IContractorBillingEngine contractorBilling = null, IRateScheduleService rateSchedules = null)
 		{
+			_contractorBilling = contractorBilling;
+			_rateSchedules = rateSchedules;
 			_payments = payments;
 			_invoicing = invoicing;
 			_access = access;
@@ -314,8 +320,42 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ContactNames = await ContactNamesAsync(new[] { invoice.ContactId })
 			});
 			await LoadOnlinePaymentsAsync(model);
+			model.ContractorPacket = _contractorBilling != null && !string.IsNullOrWhiteSpace(invoice.DeploymentId) && await _access.CanUseContractorBillingAsync(DepartmentId);
 			model.Message = TempData["InvoicingMessage"] as string;
 			return View("View", model);
+		}
+
+		/// <summary>Contractor billing (C-M2): downloads the invoice-submission packet (zip).</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Invoicing_View)]
+		public async Task<IActionResult> Packet(string id)
+		{
+			if (_contractorBilling == null || !await _access.CanUseContractorBillingAsync(DepartmentId)) return Unauthorized();
+			var invoice = await _invoicing.GetInvoiceByIdAsync(id, DepartmentId);
+			if (invoice == null || string.IsNullOrWhiteSpace(invoice.DeploymentId)) return NotFound();
+			var packet = await _contractorBilling.BuildInvoicePacketAsync(id, DepartmentId);
+			Response.Headers["X-Content-Type-Options"] = "nosniff";
+			return File(packet.Data, "application/zip", packet.FileName);
+		}
+
+		/// <summary>Contractor billing (C-M2): sends the invoice with the packet attached (contract submission address by default).</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
+		public async Task<IActionResult> SendPacket(string id, string toEmail, CancellationToken cancellationToken)
+		{
+			if (_contractorBilling == null || !await _access.CanUseContractorBillingAsync(DepartmentId)) return Unauthorized();
+			var invoice = await _invoicing.GetInvoiceByIdAsync(id, DepartmentId);
+			if (invoice == null || string.IsNullOrWhiteSpace(invoice.DeploymentId)) return NotFound();
+			try
+			{
+				await _contractorBilling.SendDeploymentInvoiceAsync(id, DepartmentId, string.IsNullOrWhiteSpace(toEmail) ? null : toEmail.Trim(), UserId, Ip, UserAgent, cancellationToken);
+				TempData["InvoicingMessage"] = _strings["InvoiceSentMessage"].Value;
+			}
+			catch (Exception ex) when (IsInvoicingError(ex))
+			{
+				TempData["InvoicingMessage"] = ErrorText(ex);
+			}
+			return RedirectToAction(nameof(View), new { id });
 		}
 
 		/// <summary>Phase B2: the section is absent when the cluster does not offer payment collection; a fault degrades it, never the page.</summary>
@@ -846,6 +886,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.BillingAddress = await _addresses.GetAddressByIdAsync(model.Profile.BillingAddressId.Value) ?? new Address();
 			model.TaxComponents = ParseTaxComponents(model.Profile.TaxComponentsJson);
 			model.RateCards = (await _invoicing.GetRateCardsForDepartmentAsync(DepartmentId) ?? new List<RateCard>()).Where(x => x.Active).ToList();
+			model.ContractorBilling = _rateSchedules != null && await _access.CanUseContractorBillingAsync(DepartmentId);
+			if (model.ContractorBilling) model.RateSchedules = await _rateSchedules.GetSchedulesForDepartmentAsync(DepartmentId);
 			model.Invoices = (await _invoicing.GetInvoicesByContactIdAsync(contact.ContactId, DepartmentId) ?? new List<Invoice>()).OrderByDescending(x => x.InvoiceNumber).ToList();
 			return model;
 		}
@@ -892,6 +934,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			profile.TaxRate = input.TaxRate;
 			profile.TaxComponentsJson = components.Count == 0 ? null : JsonConvert.SerializeObject(components);
 			profile.DefaultRateCardId = string.IsNullOrWhiteSpace(input.DefaultRateCardId) ? null : input.DefaultRateCardId;
+			if (_rateSchedules != null && await _access.CanUseContractorBillingAsync(DepartmentId)) profile.DefaultRateScheduleId = string.IsNullOrWhiteSpace(input.DefaultRateScheduleId) ? null : input.DefaultRateScheduleId;
 			profile.DefaultDiscountPercent = input.DefaultDiscountPercent;
 			profile.PurchaseOrderRequired = input.PurchaseOrderRequired;
 			profile.Notes = input.Notes;

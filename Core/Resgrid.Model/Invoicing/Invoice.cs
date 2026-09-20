@@ -41,12 +41,12 @@ namespace Resgrid.Model.Invoicing
 		/// <summary>Snapshot of the applied tax components with per-component amounts (decision 23); null when a flat rate applied.</summary>
 		public string TaxComponentsJson { get; set; }
 
-		/// <summary>ADP catalog 26 field (Phase B2) in an enrolled department.</summary>
+		/// <summary>Customer-facing: not under ADP (the customer reads it without a login).</summary>
 		public string Notes { get; set; }
 		public string TermsText { get; set; }
 		public DateTime? SentOn { get; set; }
 
-		/// <summary>ADP catalog 26 field (Phase B2) in an enrolled department.</summary>
+		/// <summary>Customer-facing: not under ADP (the customer reads it without a login).</summary>
 		public string SentToEmail { get; set; }
 		public DateTime? PaidOn { get; set; }
 		public DateTime? VoidedOn { get; set; }

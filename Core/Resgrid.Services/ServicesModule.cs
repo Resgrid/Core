@@ -44,6 +44,11 @@ namespace Resgrid.Services
 			builder.RegisterType<Invoicing.InvoicingService>().As<IInvoicingService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.DeploymentService>().As<IDeploymentService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.TimeTrackingService>().As<ITimeTrackingService>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan, Phase C-M2: the contractor path.
+			builder.RegisterType<Invoicing.RateScheduleService>().As<IRateScheduleService>().InstancePerLifetimeScope();
+			builder.RegisterType<Invoicing.ServiceContractService>().As<IServiceContractService>().InstancePerLifetimeScope();
+			builder.RegisterType<Invoicing.BidsService>().As<IBidsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Invoicing.ContractorBillingEngine>().As<IContractorBillingEngine>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().As<IWorkOrderReportingService>().As<IWorkOrderOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();

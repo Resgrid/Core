@@ -1,0 +1,67 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.BidIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Bids"];
+    ViewData["Title"] = localizer["Bids"].Value;
+    ViewData["Subtitle"] = localizer["BidsIntro"].Value;
+    ViewData["RootController"] = "Bids";
+    ViewData["RootTitle"] = localizer["Bids"].Value;
+    var statuses = Enum.GetValues(typeof(Resgrid.Model.Invoicing.BidStatuses)).Cast<Resgrid.Model.Invoicing.BidStatuses>().ToList();
+    var pages = Math.Max(1, (int)Math.Ceiling(Model.Total / (double)Model.PageSize));
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["Bids"]</h5>
+            <div class="ibox-tools">
+                @if (Model.CanManageContracts) { <a asp-controller="Contracts" asp-action="Index" class="btn btn-default btn-xs"><i class="fa fa-file-text"></i> @localizer["Contracts"]</a> }
+                @if (Model.CanManageBids) { <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewBid"]</a> }
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpBids"]</div>
+            <div class="btn-group m-b-sm">
+                <a asp-action="Index" class="btn btn-xs @(Model.StatusFilter.HasValue ? "btn-default" : "btn-primary")">@localizer["AllStatuses"]</a>
+                @foreach (var st in statuses)
+                {
+                    <a asp-action="Index" asp-route-status="@((int)st)" class="btn btn-xs @(Model.StatusFilter == (int)st ? "btn-primary" : "btn-default")">@localizer["BidStatus" + st]</a>
+                }
+            </div>
+            @if (Model.Bids.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoBids"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>#</th><th>@localizer["Title"]</th><th>@localizer["Customer"]</th><th>@localizer["Status"]</th><th>@localizer["ValidUntil"]</th><th>@localizer["Requested"]</th><th class="text-right">@localizer["EstimatedTotal"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var b in Model.Bids)
+                        {
+                            <tr>
+                                <td>@b.BidNumber</td>
+                                <td><a asp-action="View" asp-route-id="@b.BidId">@b.Title</a> @if (b.IsConverted) { <span class="label label-success" title="@localizer["Converted"]"><i class="fa fa-truck"></i></span> }</td>
+                                <td>@(Model.ContactNames.TryGetValue(b.ContactId, out var contact) ? contact : b.ContactId)</td>
+                                <td>@await Html.PartialAsync("_BidStatusBadge", b.Status)</td>
+                                <td>@(b.ValidUntil?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                <td>@(b.RequestedStartOn?.ToString("yyyy-MM-dd") ?? "—")@(b.RequestedEndOn.HasValue ? " → " + b.RequestedEndOn.Value.ToString("yyyy-MM-dd") : "")</td>
+                                <td class="text-right">@b.EstimatedTotal.ToString("N2")</td>
+                                <td class="text-right"><a asp-action="View" asp-route-id="@b.BidId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (pages > 1)
+                {
+                    <ul class="pagination">
+                        @for (var p = 1; p <= pages; p++) { <li class="@(p == Model.Page ? "active" : null)"><a asp-action="Index" asp-route-status="@Model.StatusFilter" asp-route-page="@p">@p</a></li> }
+                    </ul>
+                }
+            }
+        </div>
+    </div>
+</div>

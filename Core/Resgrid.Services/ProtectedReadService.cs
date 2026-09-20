@@ -109,7 +109,9 @@ namespace Resgrid.Services
 				["personnelcertifications.type"] = (c => c.Type, (c, v) => c.Type = v),
 				["personnelcertifications.area"] = (c => c.Area, (c, v) => c.Area = v),
 				["personnelcertifications.issuedby"] = (c => c.IssuedBy, (c, v) => c.IssuedBy = v),
-				["personnelcertifications.filename"] = (c => c.Filename, (c, v) => c.Filename = v)
+				["personnelcertifications.filename"] = (c => c.Filename, (c, v) => c.Filename = v),
+				// Catalog 27 (Workforce & Business Operations completion pass): the free-text reason behind a suspension / revocation.
+				["personnelcertifications.statusreason"] = (c => c.StatusReason, (c, v) => c.StatusReason = v)
 			};
 
 		/// <summary>The rgdpb binary certification document field id.</summary>

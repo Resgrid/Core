@@ -100,6 +100,10 @@ namespace Resgrid.Model.Services
 		Task<byte[]> GetInvoicePdfAsync(string invoiceId, int departmentId);
 		/// <summary>E-mails the invoice PDF to the customer (to the address given, else the billing profile's e-mail). A Draft is marked Sent first; a Sent invoice is re-sent without a status change. Returns the invoice.</summary>
 		Task<Invoice> SendInvoiceAsync(string invoiceId, int departmentId, string toEmail, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Sends with a caller-built attachment (the contractor invoice packet) in place of the bare PDF.</summary>
+		Task<Invoice> SendInvoiceAsync(string invoiceId, int departmentId, string toEmail, InvoiceSendAttachment attachment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Contractor billing (plan C4): stamps a draft with its deployment/contract provenance and the contract's terms and submission address.</summary>
+		Task<Invoice> LinkInvoiceToDeploymentAsync(string invoiceId, int departmentId, string deploymentId, string serviceContractId, int? termsNetDays, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 
 		// Department billing identity
 		Task<DepartmentBillingIdentity> GetDepartmentBillingIdentityAsync(int departmentId);

@@ -154,6 +154,7 @@
   <data name="RemovalDue" xml:space="preserve"><value>Αφαίρεση στις {0}</value></data>
   <data name="RoleMembersBlocked" xml:space="preserve"><value>Αυτά τα μέλη δεν κατέχουν τις πιστοποιήσεις που απαιτεί ο ρόλος και δεν προστέθηκαν: {0}</value></data>
   <data name="RoleMembersWarned" xml:space="preserve"><value>Προστέθηκαν με προειδοποίηση – λείπουν πιστοποιήσεις για αυτόν τον ρόλο: {0}</value></data>
+  <data name="RoleMembersNotInDepartment" xml:space="preserve"><value>Αυτά τα μέλη δεν ανήκουν σε αυτό το τμήμα και δεν προστέθηκαν: {0}</value></data>
   <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Το μέλος δημιουργήθηκε, αλλά ένας ή περισσότεροι ρόλοι δεν ανατέθηκαν: δεν κατέχει τις πιστοποιήσεις που απαιτούν.</value></data>
   <data name="UnitCertifications" xml:space="preserve"><value>Πιστοποιήσεις μονάδας</value></data>
   <data name="UnitCertificationsFor" xml:space="preserve"><value>Πιστοποιήσεις και επιθεωρήσεις – {0}</value></data>
@@ -219,4 +220,9 @@
   <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Το μέλος δεν κατέχει τις πιστοποιήσεις που απαιτεί αυτός ο ρόλος.</value></data>
   <data name="certifications_file_type" xml:space="preserve"><value>Αυτός ο τύπος αρχείου δεν μπορεί να μεταφορτωθεί.</value></data>
   <data name="certifications_file_too_large" xml:space="preserve"><value>Το αρχείο είναι μεγαλύτερο από 10 MB.</value></data>
+  <data name="UnitCertificationAdded" xml:space="preserve"><value>Προστέθηκε πιστοποίηση μονάδας</value></data>
+  <data name="UnitCertificationStatusChanged" xml:space="preserve"><value>Άλλαξε η κατάσταση πιστοποίησης μονάδας</value></data>
+  <data name="UnitCertificationRemoved" xml:space="preserve"><value>Αφαιρέθηκε πιστοποίηση μονάδας</value></data>
+  <data name="CertificationRemoved" xml:space="preserve"><value>Αφαιρέθηκε πιστοποίηση</value></data>
+  <data name="CertificationCreditAdded" xml:space="preserve"><value>Προστέθηκαν μονάδες πιστοποίησης</value></data>
 </root>

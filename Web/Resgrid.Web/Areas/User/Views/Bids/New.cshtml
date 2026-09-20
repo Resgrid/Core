@@ -1,0 +1,45 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.BidNewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["NewBid"];
+    ViewData["Title"] = localizer["NewBid"].Value;
+    ViewData["Subtitle"] = localizer["NewBidIntro"].Value;
+    ViewData["RootController"] = "Bids";
+    ViewData["RootTitle"] = localizer["Bids"].Value;
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="row"><div class="col-md-7">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@localizer["NewBid"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-action="Create" class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["Customer"] *</label><div class="col-sm-9">@Html.DropDownList("contactId", Model.Contacts, localizer["SelectContact"].Value, new { @class = "form-control", required = "required", id = "contactId" })<span class="help-block">@localizer["BidContactHelp"]</span></div></div>
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["Contract"]</label><div class="col-sm-9">
+                        <select name="serviceContractId" id="serviceContractId" class="form-control">
+                            <option value="">@localizer["NoContract"]</option>
+                            @foreach (var c in Model.Contracts) { <option value="@c.ServiceContractId" data-contact="@c.ContactId" selected="@(c.ServiceContractId == Model.ServiceContractId)">@c.Name @(string.IsNullOrWhiteSpace(c.ContractNumber) ? "" : "(" + c.ContractNumber + ")")</option> }
+                        </select><span class="help-block">@localizer["BidContractHelp"]</span></div></div>
+                    <div class="form-group"><label class="col-sm-3 control-label">@localizer["Title"]</label><div class="col-sm-9"><input type="text" name="title" class="form-control" maxlength="250" value="@Model.Title" /></div></div>
+                    <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["CreateDraft"]</button> <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                </form>
+            </div>
+        </div>
+    </div></div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            function filter() {
+                var contact = $('#contactId').val();
+                $('#serviceContractId option').each(function () { var c = $(this).data('contact'); if (!c) return; $(this).toggle(!contact || c === contact); if (contact && c !== contact && $(this).is(':selected')) $('#serviceContractId').val(''); });
+            }
+            $('#contactId').on('change', filter); filter();
+        })();
+    </script>
+}

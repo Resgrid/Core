@@ -7,11 +7,23 @@
     ViewData["Subtitle"] = localizer["UnitCertificationsIntro"].Value;
     var types = Model.TypeMap;
     var today = DateTime.UtcNow.Date;
+    // ADP reveal (plan 7.2): catalog 27/28 values render REDACTED; the step-up modal and the Reveal action fill the marked spans.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedCertifications"],
+        RevealController = "Certifications",
+        RevealAction = "Reveal",
+        RevealData = new Dictionary<string, string> { { "kind", "unit" }, { "id", Model.Unit.UnitId.ToString() } }
+    };
 }
 
 @await Html.PartialAsync("_Shell")
 
 <div class="wrapper wrapper-content">
+    @if (Model.Records.Any(x => x.IsProtected))
+    {
+        <partial name="_AdpRevealBanner" model="adpReveal" />
+    }
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title">
@@ -46,11 +58,11 @@
                             var css = status == Resgrid.Model.UnitCertificationStatuses.Expired || days < 0 ? "label-danger" : status == Resgrid.Model.UnitCertificationStatuses.Suspended ? "label-warning" : "label-primary";
                             <tr>
                                 <td>@(type?.Type ?? "—") <br /><small class="text-muted">@type?.Code</small></td>
-                                <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</td>
-                                <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</td>
+                                <td><span data-adp-field="unitcertifications.number:@r.UnitCertificationId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</span></td>
+                                <td><span data-adp-field="unitcertifications.issuedby:@r.UnitCertificationId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</span></td>
                                 <td>@r.IssuedOn?.ToString("yyyy-MM-dd")</td>
                                 <td>@(type?.NeverExpires == true ? localizer["NeverExpires"].Value : r.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—") @if (days.HasValue && days >= 0 && days <= 60) { <br /><small class="text-warning">@string.Format(localizer["DaysLeft"].Value, days)</small> }</td>
-                                <td><span class="label @css">@localizer["UnitStatus" + status]</span> @if (!string.IsNullOrWhiteSpace(r.StatusReason) && r.StatusReason != "expired") { <br /><small>@r.StatusReason</small> }</td>
+                                <td><span class="label @css">@localizer["UnitStatus" + status]</span> @if (!string.IsNullOrWhiteSpace(r.StatusReason) && status != Resgrid.Model.UnitCertificationStatuses.Expired) { <br /><small data-adp-field="unitcertifications.statusreason:@r.UnitCertificationId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.StatusReason)</small> }</td>
                                 <td>@if (!string.IsNullOrWhiteSpace(r.FileName) || r.FileSize > 0) { <a asp-controller="Certifications" asp-action="UnitCertificationFile" asp-route-area="User" asp-route-id="@r.UnitCertificationId"><i class="fa fa-download"></i> @Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.FileName)</a> }</td>
                                 <td class="text-right">
                                     @if (Model.CanManage)
@@ -128,6 +140,10 @@
 }
 
 @section Scripts {
+    @if (Model.Records.Any(x => x.IsProtected))
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <script>
         $(function () {
             $('#recordModal').on('show.bs.modal', function (e) {

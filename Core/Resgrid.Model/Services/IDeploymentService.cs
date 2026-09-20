@@ -34,7 +34,7 @@ namespace Resgrid.Model.Services
 		/// <summary>The order and fills behind a deployment, read through the Records service (never the RMS tables).</summary>
 		Task<DeploymentExternalContext> GetExternalContextAsync(string deploymentId, int departmentId, string userId);
 
-		Task<DeploymentRosterResult> AddUnitAsync(string deploymentId, int departmentId, int unitId, string callSign, string notes, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		Task<DeploymentRosterResult> AddUnitAsync(string deploymentId, int departmentId, int unitId, string callSign, string notes, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default, string rateScheduleEntryId = null);
 		Task<bool> RemoveUnitAsync(string deploymentUnitId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<DeploymentRosterResult> AddPersonnelAsync(string deploymentId, int departmentId, DeploymentPersonnelInput input, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<bool> RemovePersonnelAsync(string deploymentPersonnelId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
@@ -42,6 +42,8 @@ namespace Resgrid.Model.Services
 		Task<bool> ReturnEquipmentAsync(string deploymentEquipmentId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Seat/schedule warnings for candidate members without writing anything (the wizard's conflict badges).</summary>
 		Task<List<DeploymentRosterWarning>> GetRosterWarningsAsync(string deploymentId, int departmentId, IEnumerable<string> userIds, IEnumerable<int> unitIds);
+		/// <summary>Schedule conflicts for a window before a deployment exists (the bid conversion wizard).</summary>
+		Task<List<DeploymentRosterWarning>> GetWindowConflictsAsync(int departmentId, DateTime windowStart, DateTime windowEnd, IEnumerable<string> userIds, IEnumerable<int> unitIds);
 		Task<int> GetCrewSizeForUnitAsync(string deploymentUnitId, int departmentId);
 
 		Task<List<DeploymentAttachment>> GetAttachmentsAsync(string deploymentId, int departmentId);

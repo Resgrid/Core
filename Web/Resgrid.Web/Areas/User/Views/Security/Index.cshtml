@@ -6,6 +6,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer
 @{
@@ -29,6 +30,8 @@
             case PermissionTypes.ManageCertificationSetup: return certificationLocalizer[row.Type.ToString()].Value;
             case PermissionTypes.ManageDeployments:
             case PermissionTypes.ApproveTimeReports: return deploymentLocalizer[row.Type.ToString()].Value;
+            case PermissionTypes.ManageBids:
+            case PermissionTypes.ManageContracts: return contractorLocalizer[row.Type.ToString()].Value;
             case PermissionTypes.ManageInvoicing: return invoicingLocalizer["ManageInvoicing"].Value;
             case PermissionTypes.ViewInvoicing: return invoicingLocalizer["ViewInvoicing"].Value;
             case PermissionTypes.ManageWorkOrders: return workOrderLocalizer["ManageWorkOrders"].Value;
@@ -48,6 +51,8 @@
             case PermissionTypes.ManageCertificationSetup: return certificationLocalizer[row.Type + "Note"].Value;
             case PermissionTypes.ManageDeployments:
             case PermissionTypes.ApproveTimeReports: return deploymentLocalizer[row.Type + "Note"].Value;
+            case PermissionTypes.ManageBids:
+            case PermissionTypes.ManageContracts: return contractorLocalizer[row.Type + "Note"].Value;
             case PermissionTypes.ManageInvoicing: return invoicingLocalizer["ManageInvoicingNote"].Value;
             case PermissionTypes.ViewInvoicing: return invoicingLocalizer["ViewInvoicingNote"].Value;
             case PermissionTypes.ManageWorkOrders: return workOrderLocalizer["ManageWorkOrdersNote"].Value;
@@ -505,6 +510,7 @@
                                         if (row.Type == PermissionTypes.ManageInvoicing) { <tr><td colspan="5"><strong>@invoicingLocalizer["Invoicing"]</strong></td></tr> }
                                         if (row.Type == PermissionTypes.ManageCertifications) { <tr><td colspan="5"><strong>@certificationLocalizer["Certifications"]</strong></td></tr> }
                                         if (row.Type == PermissionTypes.ManageDeployments) { <tr><td colspan="5"><strong>@deploymentLocalizer["Deployments"]</strong></td></tr> }
+                                        if (row.Type == PermissionTypes.ManageBids) { <tr><td colspan="5"><strong>@contractorLocalizer["ContractorBilling"]</strong></td></tr> }
                                         <tr data-record-perm="@row.PermissionType" data-record-el="@row.ElementId">
                                             <td>@RecordsPermissionLabel(row)</td>
                                             <td style="max-width: 350px">@RecordsPermissionNote(row)</td>

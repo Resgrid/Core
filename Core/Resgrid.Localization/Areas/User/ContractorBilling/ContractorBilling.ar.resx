@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AcceptedOn" xml:space="preserve"><value>مقبول</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="ActivateNow" xml:space="preserve"><value>تفعيل الآن</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="Add" xml:space="preserve"><value>إضافة</value></data>
+  <data name="AddBand" xml:space="preserve"><value>إضافة شريحة</value></data>
+  <data name="AddComplianceDocument" xml:space="preserve"><value>إضافة مستند امتثال</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>إضافة بند</value></data>
+  <data name="AddLine" xml:space="preserve"><value>إضافة بند</value></data>
+  <data name="AddPerson" xml:space="preserve"><value>إضافة شخص</value></data>
+  <data name="AddPremium" xml:space="preserve"><value>إضافة علاوة</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>إضافة متطلب</value></data>
+  <data name="Address" xml:space="preserve"><value>العنوان</value></data>
+  <data name="AdpProtectedBid" xml:space="preserve"><value>يحتوي هذا العرض على بيانات عميل محمية.</value></data>
+  <data name="AdpProtectedCompliance" xml:space="preserve"><value>أرقام مستندات الامتثال وملفاتها محمية.</value></data>
+  <data name="AdpProtectedContract" xml:space="preserve"><value>يحتوي هذا العقد على بيانات عميل محمية.</value></data>
+  <data name="Air" xml:space="preserve"><value>جوي</value></data>
+  <data name="AlertLeadDays" xml:space="preserve"><value>مهلة التنبيه (أيام)</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>الكل</value></data>
+  <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
+  <data name="Back" xml:space="preserve"><value>رجوع</value></data>
+  <data name="BandCustom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="BandDailyDeployment" xml:space="preserve"><value>انتشار يومي</value></data>
+  <data name="BandDailyStandby" xml:space="preserve"><value>استعداد يومي</value></data>
+  <data name="BandDeployment" xml:space="preserve"><value>انتشار</value></data>
+  <data name="BandMileagePerKm" xml:space="preserve"><value>المسافة لكل كم</value></data>
+  <data name="BandOutOfProvincePerPersonDaily" xml:space="preserve"><value>خارج المقاطعة لكل شخص/يوم</value></data>
+  <data name="BandOvertime1" xml:space="preserve"><value>إضافي 1</value></data>
+  <data name="BandOvertime2" xml:space="preserve"><value>إضافي 2</value></data>
+  <data name="BandPerDiemMeal" xml:space="preserve"><value>بدل وجبة</value></data>
+  <data name="BandPrivateAccommodationDaily" xml:space="preserve"><value>إقامة خاصة/يوم</value></data>
+  <data name="BandStandby" xml:space="preserve"><value>استعداد</value></data>
+  <data name="BandType" xml:space="preserve"><value>الشريحة</value></data>
+  <data name="Bands" xml:space="preserve"><value>الشرائح</value></data>
+  <data name="BandsHelp" xml:space="preserve"><value>عتبات الانتشار/الإضافي1/الإضافي2 والمستويات اليومية والوحدات المجانية ورموز الوجبات بيانات هنا — وليست كودًا.</value></data>
+  <data name="BaseRate" xml:space="preserve"><value>السعر الأساسي</value></data>
+  <data name="BasisDaily" xml:space="preserve"><value>يومي</value></data>
+  <data name="BasisFixed" xml:space="preserve"><value>ثابت</value></data>
+  <data name="BasisHourly" xml:space="preserve"><value>بالساعة</value></data>
+  <data name="BasisPerKilometer" xml:space="preserve"><value>لكل كيلومتر</value></data>
+  <data name="BasisPerPersonPerDay" xml:space="preserve"><value>لكل شخص في اليوم</value></data>
+  <data name="Bid" xml:space="preserve"><value>العرض</value></data>
+  <data name="BidAccepted" xml:space="preserve"><value>تم قبول العرض</value></data>
+  <data name="BidContactHelp" xml:space="preserve"><value>يوجَّه العرض إلى ملف الفوترة لجهة الاتصال هذه.</value></data>
+  <data name="BidContractHelp" xml:space="preserve"><value>يوفر العقد جدول أسعاره وخصمه وشروطه.</value></data>
+  <data name="BidCreated" xml:space="preserve"><value>تم إنشاء العرض</value></data>
+  <data name="BidDeclined" xml:space="preserve"><value>تم رفض العرض</value></data>
+  <data name="BidExpired" xml:space="preserve"><value>انتهت صلاحية العرض</value></data>
+  <data name="BidLine" xml:space="preserve"><value>بند العرض</value></data>
+  <data name="BidNumber" xml:space="preserve"><value>العرض رقم</value></data>
+  <data name="BidScheduleHelp" xml:space="preserve"><value>تأخذ البنود سعرها من هذا الجدول عند الإضافة.</value></data>
+  <data name="BidSent" xml:space="preserve"><value>تم إرسال العرض</value></data>
+  <data name="BidStatusAccepted" xml:space="preserve"><value>مقبول</value></data>
+  <data name="BidStatusDeclined" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="BidStatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="BidStatusExpired" xml:space="preserve"><value>منتهي</value></data>
+  <data name="BidStatusSubmitted" xml:space="preserve"><value>مُقدَّم</value></data>
+  <data name="BidStatusWithdrawn" xml:space="preserve"><value>مسحوب</value></data>
+  <data name="Bids" xml:space="preserve"><value>العروض</value></data>
+  <data name="BidsIntro" xml:space="preserve"><value>تقديرات مسعّرة لجهات اتصال العملاء والعقود؛ العرض المقبول يجدول الانتشار.</value></data>
+  <data name="Billing" xml:space="preserve"><value>الفوترة</value></data>
+  <data name="BillingBasis" xml:space="preserve"><value>أساس الفوترة</value></data>
+  <data name="Call" xml:space="preserve"><value>النداء</value></data>
+  <data name="CallName" xml:space="preserve"><value>اسم النداء</value></data>
+  <data name="CallNature" xml:space="preserve"><value>طبيعة النداء</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="CallSign" xml:space="preserve"><value>رمز النداء</value></data>
+  <data name="CallType" xml:space="preserve"><value>نوع النداء</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="CancellationMinimumHours" xml:space="preserve"><value>الحد الأدنى للإلغاء (ساعات)</value></data>
+  <data name="CancellationVehiclesFullDay" xml:space="preserve"><value>تُحاسب المركبات يومًا كاملًا في يوم الإلغاء</value></data>
+  <data name="CertExpired" xml:space="preserve"><value>الشهادة منتهية أو معلّقة</value></data>
+  <data name="CertExpiring" xml:space="preserve"><value>تنتهي الشهادة خلال فترة الانتشار</value></data>
+  <data name="CertificationCode" xml:space="preserve"><value>رمز الشهادة</value></data>
+  <data name="ChargePreview" xml:space="preserve"><value>معاينة الرسوم</value></data>
+  <data name="ChargeWarningaccommodation_agency_supplied" xml:space="preserve"><value>طُلبت إقامة في يوم وفرتها فيه الجهة.</value></data>
+  <data name="ChargeWarningband_missing" xml:space="preserve"><value>بند سعر يفتقر إلى الشريحة اللازمة لبعض الساعات.</value></data>
+  <data name="ChargeWarningcrew_size_fallback" xml:space="preserve"><value>لا يوجد بند لحجم الطاقم المشغول؛ استُخدم أقرب سعر أدنى.</value></data>
+  <data name="ChargeWarningno_reports" xml:space="preserve"><value>لا توجد تقارير وقت معتمدة غير مفوترة.</value></data>
+  <data name="ChargeWarningper_diem_agency_meals" xml:space="preserve"><value>طُلب بدل يومي في يوم وفرت فيه الجهة الوجبات.</value></data>
+  <data name="ChargeWarningper_diem_ineligible" xml:space="preserve"><value>طُلب بدل يومي خارج نافذة الأهلية.</value></data>
+  <data name="ChargeWarningper_diem_mismatch" xml:space="preserve"><value>مبلغ بدل يومي يختلف عن سعر الجدول.</value></data>
+  <data name="ChargeWarningrate_entry_missing" xml:space="preserve"><value>عنصر بلا بند سعر وتم تخطيه.</value></data>
+  <data name="ChargeWarningschedule_missing" xml:space="preserve"><value>لا يوجد جدول أسعار مطبق على هذا الانتشار.</value></data>
+  <data name="ChargeWarningtravel_capped" xml:space="preserve"><value>تم تحديد ساعات السفر وفق السياسة.</value></data>
+  <data name="ChargesUnavailable" xml:space="preserve"><value>تعذر تجهيز عملية احتساب الرسوم.</value></data>
+  <data name="Clone" xml:space="preserve"><value>نسخ</value></data>
+  <data name="CloneHelp" xml:space="preserve"><value>ينشئ جدولًا جديدًا بنسخ من كل بند وشريحة وعلاوة — البداية المعتادة للتجديد.</value></data>
+  <data name="Code" xml:space="preserve"><value>الرمز</value></data>
+  <data name="ComplianceChecklist" xml:space="preserve"><value>قائمة الامتثال</value></data>
+  <data name="ComplianceDocumentType" xml:space="preserve"><value>نوع المستند</value></data>
+  <data name="ComplianceDocuments" xml:space="preserve"><value>مستندات الامتثال</value></data>
+  <data name="ComplianceExpiringBanner" xml:space="preserve"><value>{0} مستند(ات) امتثال على وشك الانتهاء أو منتهية.</value></data>
+  <data name="ComplianceFileHelp" xml:space="preserve"><value>PDF أو صورة حتى 30 ميغابايت؛ اتركه فارغًا للاحتفاظ بالملف المخزن.</value></data>
+  <data name="ComplianceIntro" xml:space="preserve"><value>التأمين وتعويض العمال وSAM/CAGE والتراخيص والكفالات مع تنبيهات الانتهاء؛ تستوفي متطلبات العقود وتُرفق بحزمة الفاتورة.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>حذف هذا العنصر؟</value></data>
+  <data name="ConfirmDeleteBid" xml:space="preserve"><value>حذف مسودة العرض هذه؟</value></data>
+  <data name="ConfirmDeleteContract" xml:space="preserve"><value>حذف هذا العقد؟</value></data>
+  <data name="ConfirmDeleteSchedule" xml:space="preserve"><value>حذف جدول الأسعار هذا؟</value></data>
+  <data name="ConfirmGenerateInvoice" xml:space="preserve"><value>إنشاء مسودة فاتورة من هذه الرسوم؟</value></data>
+  <data name="ConfirmWithdraw" xml:space="preserve"><value>سحب هذا العرض؟</value></data>
+  <data name="ConflictBadge" xml:space="preserve"><value>انتشار متداخل</value></data>
+  <data name="ContinuousRunGapMinutes" xml:space="preserve"><value>فجوة التشغيل المتواصل (دقائق)</value></data>
+  <data name="Contract" xml:space="preserve"><value>العقد</value></data>
+  <data name="ContractDetailIntro" xml:space="preserve"><value>العروض وعمليات الانتشار والفواتير المرتبطة وحالة امتثال هذا العقد.</value></data>
+  <data name="ContractExpiring" xml:space="preserve"><value>العقد على وشك الانتهاء</value></data>
+  <data name="ContractNumber" xml:space="preserve"><value>رقم العقد</value></data>
+  <data name="ContractScheduleHelp" xml:space="preserve"><value>العقد → افتراضي ملف العميل → أول جدول نشط.</value></data>
+  <data name="ContractStatusActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="ContractStatusChanged" xml:space="preserve"><value>تغيّرت حالة العقد</value></data>
+  <data name="ContractStatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="ContractStatusExpired" xml:space="preserve"><value>منتهي</value></data>
+  <data name="ContractStatusSuspended" xml:space="preserve"><value>معلّق</value></data>
+  <data name="ContractStatusTerminated" xml:space="preserve"><value>منهى</value></data>
+  <data name="ContractType" xml:space="preserve"><value>نوع العقد</value></data>
+  <data name="ContractTypeMasterServices" xml:space="preserve"><value>خدمات رئيسية</value></data>
+  <data name="ContractTypeOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="ContractTypeProject" xml:space="preserve"><value>مشروع</value></data>
+  <data name="ContractTypeStandingArrangement" xml:space="preserve"><value>ترتيب دائم</value></data>
+  <data name="ContractorBilling" xml:space="preserve"><value>فوترة المقاول</value></data>
+  <data name="Contracts" xml:space="preserve"><value>العقود</value></data>
+  <data name="ContractsIntro" xml:space="preserve"><value>عقود الخدمة مع جدول الأسعار والشروط وعنوان التقديم ومتطلبات المستندات.</value></data>
+  <data name="Converted" xml:space="preserve"><value>حُوِّل إلى انتشار</value></data>
+  <data name="Copy" xml:space="preserve"><value>نسخة</value></data>
+  <data name="CreateCalendarItem" xml:space="preserve"><value>إضافة إلى تقويم القسم</value></data>
+  <data name="CreateCallAndDeployment" xml:space="preserve"><value>إنشاء النداء والانتشار</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>إنشاء مسودة</value></data>
+  <data name="CrewIndicator" xml:space="preserve"><value>طاقم أشخاص</value></data>
+  <data name="CrewSize" xml:space="preserve"><value>حجم الطاقم</value></data>
+  <data name="Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="Customer" xml:space="preserve"><value>العميل</value></data>
+  <data name="CustomerEmail" xml:space="preserve"><value>بريد العميل</value></data>
+  <data name="DailyGuaranteeHours" xml:space="preserve"><value>الضمان اليومي (ساعات)</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Days" xml:space="preserve"><value>الأيام</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>سبب الرفض</value></data>
+  <data name="DeclinedOn" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="DeleteSchedule" xml:space="preserve"><value>حذف الجدول</value></data>
+  <data name="DeliveryLocation" xml:space="preserve"><value>موقع التسليم</value></data>
+  <data name="Deployment" xml:space="preserve"><value>الانتشار</value></data>
+  <data name="DeploymentAttachment" xml:space="preserve"><value>مرفق الانتشار</value></data>
+  <data name="Deployments" xml:space="preserve"><value>عمليات الانتشار</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Discount" xml:space="preserve"><value>الخصم</value></data>
+  <data name="DiscountCascade" xml:space="preserve"><value>تسلسل الخصم</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>الخصم %</value></data>
+  <data name="DocTypeBond" xml:space="preserve"><value>كفالة</value></data>
+  <data name="DocTypeBusinessLicense" xml:space="preserve"><value>رخصة تجارية</value></data>
+  <data name="DocTypeCageCode" xml:space="preserve"><value>رمز CAGE</value></data>
+  <data name="DocTypeInsuranceCertificate" xml:space="preserve"><value>شهادة تأمين</value></data>
+  <data name="DocTypeOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="DocTypeSamRegistration" xml:space="preserve"><value>تسجيل SAM</value></data>
+  <data name="DocTypeTaxRegistration" xml:space="preserve"><value>التسجيل الضريبي</value></data>
+  <data name="DocTypeWorkersCompClearance" xml:space="preserve"><value>براءة تعويض العمال</value></data>
+  <data name="DocumentNumber" xml:space="preserve"><value>رقم المستند</value></data>
+  <data name="DocumentRequirements" xml:space="preserve"><value>متطلبات المستندات</value></data>
+  <data name="DocumentRequirementsHelp" xml:space="preserve"><value>ما يتوقعه العميل في كل مرحلة؛ يُستوفى نوع مستند الامتثال بمستند قسم ساري، وإلا بمرفق انتشار.</value></data>
+  <data name="DocumentTemplateKey" xml:space="preserve"><value>قالب المستند</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="EditBid" xml:space="preserve"><value>تعديل العرض</value></data>
+  <data name="EditBidIntro" xml:space="preserve"><value>الترويسة والبنود بأسعارها والعلاوات والتقدير.</value></data>
+  <data name="EditComplianceDocument" xml:space="preserve"><value>تعديل مستند الامتثال</value></data>
+  <data name="EditContract" xml:space="preserve"><value>تعديل العقد</value></data>
+  <data name="EditContractIntro" xml:space="preserve"><value>الترويسة والشروط التجارية ومتطلبات المستندات لكل مرحلة.</value></data>
+  <data name="EditRateSchedule" xml:space="preserve"><value>تعديل جدول الأسعار</value></data>
+  <data name="EditRateScheduleIntro" xml:space="preserve"><value>الأسعار مبالغ صريحة لكل شريحة؛ عائلات الأطقم تتشارك مفتاح مجموعة وتختلف بحجم الطاقم.</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>ساري من</value></data>
+  <data name="EndOn" xml:space="preserve"><value>النهاية</value></data>
+  <data name="Entries" xml:space="preserve"><value>بنود الأسعار</value></data>
+  <data name="EntriesHelp" xml:space="preserve"><value>بنود الأفراد تطابق رمز شهادة؛ بنود الأطقم تتشارك مفتاح مجموعة ببند لكل حجم؛ بنود المركبات والمعدات مثبتة بعنصر القائمة.</value></data>
+  <data name="Entry" xml:space="preserve"><value>بند سعر</value></data>
+  <data name="EntryType" xml:space="preserve"><value>نوع البند</value></data>
+  <data name="EntryTypeCrew" xml:space="preserve"><value>طاقم</value></data>
+  <data name="EntryTypeEquipment" xml:space="preserve"><value>معدات</value></data>
+  <data name="EntryTypePersonnelCertification" xml:space="preserve"><value>أفراد (شهادة)</value></data>
+  <data name="EntryTypeService" xml:space="preserve"><value>خدمة</value></data>
+  <data name="EntryTypeVehicle" xml:space="preserve"><value>مركبة</value></data>
+  <data name="Equipment" xml:space="preserve"><value>المعدات</value></data>
+  <data name="Estimate" xml:space="preserve"><value>التقدير</value></data>
+  <data name="EstimateHelp" xml:space="preserve"><value>تتبع الضريبة ملف فوترة العميل؛ والرسوم الفعلية تتبع تقارير الوقت اليومية.</value></data>
+  <data name="EstimatedDailyCharge" xml:space="preserve"><value>الرسوم التقديرية للعميل يوميًا</value></data>
+  <data name="EstimatedTotal" xml:space="preserve"><value>الإجمالي التقديري</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>ينتهي في</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>تصدير JSON</value></data>
+  <data name="File" xml:space="preserve"><value>الملف</value></data>
+  <data name="FreeTextEquipment" xml:space="preserve"><value>اسم العنصر</value></data>
+  <data name="FreeUnits" xml:space="preserve"><value>مجاني/يوم</value></data>
+  <data name="FuelDeductionRatePerLitre" xml:space="preserve"><value>خصم الوقود لكل لتر</value></data>
+  <data name="GenerateInvoice" xml:space="preserve"><value>إنشاء فاتورة</value></data>
+  <data name="GenerateInvoiceHelp" xml:space="preserve"><value>ينشئ مسودة فاتورة من الرسوم أعلاه؛ تنتقل تقارير الوقت المفوترة إلى حالة مفوتر.</value></data>
+  <data name="GroupKey" xml:space="preserve"><value>مفتاح المجموعة</value></data>
+  <data name="GroupKeyHelp" xml:space="preserve"><value>مثال: crew-type6</value></data>
+  <data name="HelpBids" xml:space="preserve"><value>أنشئ عرضًا من جدول أسعار العميل، أرسله بصيغة PDF، ثم اقبله لبدء معالج الانتشار.</value></data>
+  <data name="HelpCompliance" xml:space="preserve"><value>لكل مستند مهلة تنبيه خاصة؛ يُخطَر مديرو القسم عند دخوله النافذة أو انتهائه.</value></data>
+  <data name="HelpContracts" xml:space="preserve"><value>يحدد العقد جدول الأسعار والخصم وشروط الدفع لكل عرض وانتشار تابع؛ ومتطلبات المستندات تقود قائمة الامتثال وحزمة الفاتورة.</value></data>
+  <data name="HelpRateSchedules" xml:space="preserve"><value>يشير العقد إلى جدول؛ وإلا يُطبق جدول الملف الافتراضي أو أول جدول نشط. انسخ جدولًا للموسم التالي.</value></data>
+  <data name="HoursPerDay" xml:space="preserve"><value>ساعات/يوم</value></data>
+  <data name="Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="ImportJson" xml:space="preserve"><value>استيراد JSON</value></data>
+  <data name="ImportJsonHelp" xml:space="preserve"><value>الصق أو ارفع جدولًا مُصدَّرًا من Resgrid؛ تُحذف المعرفات وروابط القسم ليمكن مشاركة الجدول بين الأقسام.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>رقم الحادث</value></data>
+  <data name="InventoryItemId" xml:space="preserve"><value>معرف عنصر المخزون</value></data>
+  <data name="InvoiceSubmissionEmail" xml:space="preserve"><value>بريد تقديم الفواتير</value></data>
+  <data name="InvoiceSubmissionEmailHelp" xml:space="preserve"><value>حيث تُرسل فواتير الانتشار وحزمتها افتراضيًا.</value></data>
+  <data name="Invoices" xml:space="preserve"><value>الفواتير</value></data>
+  <data name="Issuer" xml:space="preserve"><value>الجهة المصدرة</value></data>
+  <data name="Label" xml:space="preserve"><value>التسمية</value></data>
+  <data name="LineType" xml:space="preserve"><value>نوع البند</value></data>
+  <data name="LineTypeCrew" xml:space="preserve"><value>طاقم</value></data>
+  <data name="LineTypeEquipment" xml:space="preserve"><value>معدات</value></data>
+  <data name="LineTypeFreeForm" xml:space="preserve"><value>حر</value></data>
+  <data name="LineTypePersonnelCertification" xml:space="preserve"><value>أفراد</value></data>
+  <data name="LineTypeService" xml:space="preserve"><value>خدمة</value></data>
+  <data name="LineTypeVehicle" xml:space="preserve"><value>مركبة</value></data>
+  <data name="Lines" xml:space="preserve"><value>البنود</value></data>
+  <data name="LinesHelp" xml:space="preserve"><value>اختر بند سعر لنسخ سعره أو أدخل بندًا حرًا. الكمية × السعر × الساعات/اليوم × الأيام.</value></data>
+  <data name="ManageBids" xml:space="preserve"><value>إدارة العروض</value></data>
+  <data name="ManageBidsNote" xml:space="preserve"><value>إنشاء العروض وتعديلها وإرسالها وقبولها وتحويلها. يستطيع مديرو القسم ذلك دائمًا.</value></data>
+  <data name="ManageContracts" xml:space="preserve"><value>إدارة العقود</value></data>
+  <data name="ManageContractsNote" xml:space="preserve"><value>إنشاء وتعديل العقود ومتطلبات المستندات ومستندات الامتثال. يستطيع مديرو القسم ذلك دائمًا.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>إلزامي</value></data>
+  <data name="MarkAccepted" xml:space="preserve"><value>وضع علامة مقبول</value></data>
+  <data name="MarkDeclined" xml:space="preserve"><value>وضع علامة مرفوض</value></data>
+  <data name="MarkSubmitted" xml:space="preserve"><value>وضع علامة مُقدَّم</value></data>
+  <data name="MaxDeploymentDays" xml:space="preserve"><value>الحد الأقصى لأيام الانتشار</value></data>
+  <data name="MealCode" xml:space="preserve"><value>رمز الوجبة</value></data>
+  <data name="MealEligibility" xml:space="preserve"><value>أهلية الوجبات</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>نوافذ JSON لكل رمز وجبة، مثل [{"MealCode":"B","StartsBeforeMinutes":420}]؛ البدل خارج نافذته يُنبَّه عنه ولا يُمنع.</value></data>
+  <data name="Missing" xml:space="preserve"><value>مفقود</value></data>
+  <data name="MultiplierPrefill" xml:space="preserve"><value>التعبئة المسبقة بالمضاعف</value></data>
+  <data name="MultiplierPrefillHelp" xml:space="preserve"><value>الأساس + الاستعداد + مضاعفات الإضافي تُنشئ الشرائح الساعية؛ تبقى القيم المخزنة مبالغ صريحة.</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NearestLowerRate" xml:space="preserve"><value>أقرب سعر أدنى</value></data>
+  <data name="NewBid" xml:space="preserve"><value>عرض جديد</value></data>
+  <data name="NewBidIntro" xml:space="preserve"><value>اختر العميل، وإن وُجد، العقد؛ يتبع ذلك جدول الأسعار والخصم.</value></data>
+  <data name="NewContract" xml:space="preserve"><value>عقد جديد</value></data>
+  <data name="NewRateSchedule" xml:space="preserve"><value>جدول أسعار جديد</value></data>
+  <data name="Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+  <data name="NoBids" xml:space="preserve"><value>لا توجد عروض بعد.</value></data>
+  <data name="NoCharges" xml:space="preserve"><value>لا توجد تقارير وقت معتمدة غير مفوترة.</value></data>
+  <data name="NoClear8CarryOver" xml:space="preserve"><value>الترحيل بدون راحة 8 ساعات يبدأ اليوم في شريحة العمل الإضافي</value></data>
+  <data name="NoComplianceDocuments" xml:space="preserve"><value>لا توجد مستندات امتثال بعد.</value></data>
+  <data name="NoContract" xml:space="preserve"><value>بدون عقد</value></data>
+  <data name="NoContracts" xml:space="preserve"><value>لا توجد عقود بعد.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>لا توجد عمليات انتشار.</value></data>
+  <data name="NoEntries" xml:space="preserve"><value>لا توجد بنود أسعار بعد.</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>لا توجد فواتير.</value></data>
+  <data name="NoRateSchedules" xml:space="preserve"><value>لا توجد جداول أسعار بعد.</value></data>
+  <data name="NoRequirements" xml:space="preserve"><value>لا توجد متطلبات مستندات.</value></data>
+  <data name="NoSchedule" xml:space="preserve"><value>بدون جدول أسعار</value></data>
+  <data name="NoScheduleWarning" xml:space="preserve"><value>لا يوجد جدول أسعار مطبق: تحتاج البنود إلى سعر مُدخل.</value></data>
+  <data name="None" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="Notes" xml:space="preserve"><value>ملاحظات</value></data>
+  <data name="Open" xml:space="preserve"><value>فتح</value></data>
+  <data name="Optional" xml:space="preserve"><value>اختياري</value></data>
+  <data name="OrPasteJson" xml:space="preserve"><value>…أو الصق JSON</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>خارج المقاطعة</value></data>
+  <data name="OvertimeBasis" xml:space="preserve"><value>أساس العمل الإضافي</value></data>
+  <data name="OvertimeConsecutive" xml:space="preserve"><value>ساعات متتالية</value></data>
+  <data name="OvertimeDailyTotal" xml:space="preserve"><value>إجمالي ساعات اليوم</value></data>
+  <data name="Pdf" xml:space="preserve"><value>ملف PDF</value></data>
+  <data name="PerDeployment" xml:space="preserve"><value>يُفحص لكل انتشار</value></data>
+  <data name="Person" xml:space="preserve"><value>شخص</value></data>
+  <data name="Personnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>نقطة التعاقد</value></data>
+  <data name="Policy" xml:space="preserve"><value>سياسة الفوترة</value></data>
+  <data name="PolicyHelp" xml:space="preserve"><value>التقريب والحدود الدنيا وأساس العمل الإضافي وحدود السفر التي يطبقها المحرك على كل تقرير وقت في هذا الجدول.</value></data>
+  <data name="PortalToPortal" xml:space="preserve"><value>من الباب إلى الباب (يُحاسب السفر كوقت انتشار)</value></data>
+  <data name="Prefill" xml:space="preserve"><value>تعبئة</value></data>
+  <data name="Premium" xml:space="preserve"><value>علاوة</value></data>
+  <data name="Premiums" xml:space="preserve"><value>العلاوات</value></data>
+  <data name="PremiumsHelp" xml:space="preserve"><value>إضافات ثابتة بالساعة لكل شريحة (ليلي، خطر، قائد)؛ تُجمع ولا تُضرب أبدًا.</value></data>
+  <data name="Preview" xml:space="preserve"><value>معاينة</value></data>
+  <data name="Profile" xml:space="preserve"><value>الملف</value></data>
+  <data name="Qualified" xml:space="preserve"><value>مؤهل</value></data>
+  <data name="Quantity" xml:space="preserve"><value>الكمية</value></data>
+  <data name="Rate" xml:space="preserve"><value>السعر</value></data>
+  <data name="RateEntry" xml:space="preserve"><value>بند السعر</value></data>
+  <data name="RateSchedule" xml:space="preserve"><value>جدول الأسعار</value></data>
+  <data name="RateSchedules" xml:space="preserve"><value>جداول الأسعار</value></data>
+  <data name="RateSchedulesIntro" xml:space="preserve"><value>جداول أسعار المقاول: الشهادات والأطقم والمركبات والمعدات والعلاوات وسياسة الفوترة.</value></data>
+  <data name="Remove" xml:space="preserve"><value>إزالة</value></data>
+  <data name="Reopen" xml:space="preserve"><value>إعادة فتح</value></data>
+  <data name="Requested" xml:space="preserve"><value>المطلوب</value></data>
+  <data name="RequestedEndOn" xml:space="preserve"><value>النهاية المطلوبة</value></data>
+  <data name="RequestedStartOn" xml:space="preserve"><value>البداية المطلوبة</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>الشهادات المطلوبة</value></data>
+  <data name="RequiredCertificationsHelp" xml:space="preserve"><value>قائمة JSON من الرمز + الحد الأدنى للعدد الذي يجب أن يحمله طاقم بهذا الحجم.</value></data>
+  <data name="ResendBid" xml:space="preserve"><value>إعادة إرسال العرض</value></data>
+  <data name="ResponseTimeMinutes" xml:space="preserve"><value>زمن الاستجابة (دقائق)</value></data>
+  <data name="RoleMissing" xml:space="preserve"><value>لا يحمل الدور</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>التقريب (دقائق)</value></data>
+  <data name="Satisfied" xml:space="preserve"><value>مستوفى</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>تعذر حفظ التغيير.</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="Schedule" xml:space="preserve"><value>الجدول</value></data>
+  <data name="ScheduleDeploymentCall" xml:space="preserve"><value>جدولة نداء الانتشار</value></data>
+  <data name="Seat" xml:space="preserve"><value>مقعد</value></data>
+  <data name="Seats" xml:space="preserve"><value>المقاعد</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>اختر جهة اتصال…</value></data>
+  <data name="SendBid" xml:space="preserve"><value>إرسال العرض</value></data>
+  <data name="SendTo" xml:space="preserve"><value>إرسال إلى</value></data>
+  <data name="SentOn" xml:space="preserve"><value>أُرسل</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>رقم طلب الخدمة</value></data>
+  <data name="SetStatusActive" xml:space="preserve"><value>تفعيل</value></data>
+  <data name="SetStatusDraft" xml:space="preserve"><value>العودة إلى المسودة</value></data>
+  <data name="SetStatusExpired" xml:space="preserve"><value>وضع علامة منتهي</value></data>
+  <data name="SetStatusSuspended" xml:space="preserve"><value>تعليق</value></data>
+  <data name="SetStatusTerminated" xml:space="preserve"><value>إنهاء</value></data>
+  <data name="ShowActive" xml:space="preserve"><value>عرض النشط</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>عرض الكل</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="Stage" xml:space="preserve"><value>المرحلة</value></data>
+  <data name="StageBidSubmission" xml:space="preserve"><value>تقديم العرض</value></data>
+  <data name="StageDailyTimeReport" xml:space="preserve"><value>تقرير الوقت اليومي</value></data>
+  <data name="StageDeploymentStart" xml:space="preserve"><value>بداية الانتشار</value></data>
+  <data name="StageInvoiceSubmission" xml:space="preserve"><value>تقديم الفاتورة</value></data>
+  <data name="StartOn" xml:space="preserve"><value>البداية</value></data>
+  <data name="State" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Subtotal" xml:space="preserve"><value>المجموع الفرعي</value></data>
+  <data name="TaxEstimated" xml:space="preserve"><value>الضريبة (تقديري)</value></data>
+  <data name="Taxable" xml:space="preserve"><value>خاضع للضريبة</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>الشروط (أيام صافية)</value></data>
+  <data name="TermsText" xml:space="preserve"><value>الشروط</value></data>
+  <data name="ThresholdEnd" xml:space="preserve"><value>إلى (ساعة)</value></data>
+  <data name="ThresholdStart" xml:space="preserve"><value>من (ساعة)</value></data>
+  <data name="ThroughDate" xml:space="preserve"><value>حتى تاريخ</value></data>
+  <data name="TierMax" xml:space="preserve"><value>الحد الأقصى للمستوى (ساعة)</value></data>
+  <data name="TierMin" xml:space="preserve"><value>الحد الأدنى للمستوى (ساعة)</value></data>
+  <data name="Title" xml:space="preserve"><value>العنوان</value></data>
+  <data name="TotalBeforeTax" xml:space="preserve"><value>الإجمالي قبل الضريبة</value></data>
+  <data name="TravelDayCapHours" xml:space="preserve"><value>الحد الأقصى للسفر يوميًا (ساعات)</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>السفر جوًا</value></data>
+  <data name="UnassignedHelp" xml:space="preserve"><value>يُحاسب الأشخاص المنتشرون بدون مقعد وحدة وفق بند شهادتهم الخاص.</value></data>
+  <data name="UnassignedPersonnel" xml:space="preserve"><value>أفراد غير مُعيَّنين</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="UnitType" xml:space="preserve"><value>نوع الوحدة</value></data>
+  <data name="Units" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="UnsafeStandDownHours" xml:space="preserve"><value>التوقف لأسباب السلامة (ساعات)</value></data>
+  <data name="UseDefaultSchedule" xml:space="preserve"><value>استخدام الجدول الافتراضي</value></data>
+  <data name="ValidUntil" xml:space="preserve"><value>صالح حتى</value></data>
+  <data name="ViewBid" xml:space="preserve"><value>عرض العرض</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>موجود بالفعل في هذه القائمة.</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>تنتهي شهادة مطلوبة خلال الانتشار.</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>شخص مُعيَّن يفتقر إلى شهادة مطلوبة.</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>فشل صرف المخزون؛ أُضيف العنصر كنص حر.</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>شخص مُعيَّن لا يحمل دور المقعد.</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>شخص أو وحدة مُعيَّن بالفعل في انتشار متداخل.</value></data>
+  <data name="Window" xml:space="preserve"><value>الفترة</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>سحب</value></data>
+  <data name="WizardEquipmentHelp" xml:space="preserve"><value>لكل وحدة: عناصر حرة أو معرفات أصول مخزون مع بند سعر يومي من الجدول.</value></data>
+  <data name="WizardIntro" xml:space="preserve"><value>العرض رقم {0} — {1}: تفاصيل النداء، الوحدات، مقاعد الطاقم، المعدات، الأسعار، المراجعة.</value></data>
+  <data name="WizardRatesHelp" xml:space="preserve"><value>أكد بند الشهادة والعلاوات لكل شخص، وعائلة الطاقم لكل وحدة، والبند لكل معدة؛ الرقم اليومي تقديري.</value></data>
+  <data name="WizardSeatsHelp" xml:space="preserve"><value>املأ المقاعد من القائمة: الحالة والتوظيف والأدوار والشهادات لكل شخص؛ المنتهية أو المعلقة بالأحمر، والمنتهية خلال الفترة بالكهرماني، وعمليات الانتشار المتداخلة مُعلَّمة. تُحاسب الأطقم الجزئية بالحجم المشغول.</value></data>
+  <data name="WizardStepCall" xml:space="preserve"><value>تفاصيل النداء</value></data>
+  <data name="WizardStepEquipment" xml:space="preserve"><value>المعدات</value></data>
+  <data name="WizardStepRates" xml:space="preserve"><value>الأسعار والعلاوات</value></data>
+  <data name="WizardStepReview" xml:space="preserve"><value>مراجعة وإنشاء</value></data>
+  <data name="WizardStepSeats" xml:space="preserve"><value>مقاعد الطاقم</value></data>
+  <data name="WizardStepUnits" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="WizardUnitsHelp" xml:space="preserve"><value>حدد الوحدات المراد نشرها واربط كلًا منها ببند طاقم في العرض؛ تحدد عائلة البند السعر.</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="bids_already_converted" xml:space="preserve"><value>هذا العرض له انتشار بالفعل.</value></data>
+  <data name="bids_call_name_required" xml:space="preserve"><value>يحتاج النداء إلى اسم.</value></data>
+  <data name="bids_contact_not_found" xml:space="preserve"><value>لم يتم العثور على جهة اتصال العميل.</value></data>
+  <data name="bids_contact_required" xml:space="preserve"><value>اختر جهة اتصال العميل.</value></data>
+  <data name="bids_contract_contact_mismatch" xml:space="preserve"><value>العقد يخص جهة اتصال أخرى.</value></data>
+  <data name="bids_contract_not_found" xml:space="preserve"><value>لم يتم العثور على العقد.</value></data>
+  <data name="bids_dates_invalid" xml:space="preserve"><value>النهاية المطلوبة قبل البداية المطلوبة.</value></data>
+  <data name="bids_discount_invalid" xml:space="preserve"><value>يجب أن يكون الخصم بين 0 و100 بالمئة.</value></data>
+  <data name="bids_email_not_sent" xml:space="preserve"><value>لم يُرسل البريد؛ تحقق من العنوان وإعدادات بريد القسم.</value></data>
+  <data name="bids_line_invalid" xml:space="preserve"><value>يحتاج البند إلى وصف وكمية موجبة وسعر غير سالب.</value></data>
+  <data name="bids_locked" xml:space="preserve"><value>يمكن تعديل العروض في حالة المسودة أو المُقدَّمة فقط.</value></data>
+  <data name="bids_no_lines" xml:space="preserve"><value>أضف بندًا واحدًا على الأقل قبل التقديم.</value></data>
+  <data name="bids_no_recipient_email" xml:space="preserve"><value>لا يوجد بريد مستلم: أدخل واحدًا أو عيّن بريد الفوترة لجهة الاتصال.</value></data>
+  <data name="bids_not_accepted" xml:space="preserve"><value>يمكن جدولة العرض المقبول فقط.</value></data>
+  <data name="bids_not_found" xml:space="preserve"><value>لم يتم العثور على العرض.</value></data>
+  <data name="bids_pdf_unavailable" xml:space="preserve"><value>تعذر إنشاء ملف PDF للعرض.</value></data>
+  <data name="bids_protected_write_refused" xml:space="preserve"><value>رفضت Advanced Data Protection الكتابة؛ تحقق من حالة حماية القسم.</value></data>
+  <data name="bids_schedule_not_found" xml:space="preserve"><value>لم يتم العثور على جدول الأسعار.</value></data>
+  <data name="bids_status_transition_invalid" xml:space="preserve"><value>تغيير الحالة هذا غير مسموح من حالة العرض الحالية.</value></data>
+  <data name="bids_title_required" xml:space="preserve"><value>يحتاج العرض إلى عنوان.</value></data>
+  <data name="compliance_dates_invalid" xml:space="preserve"><value>تاريخ الانتهاء قبل تاريخ السريان.</value></data>
+  <data name="compliance_file_protected" xml:space="preserve"><value>الملف محمي؛ اكشفه أولًا بتصريح البيانات المحمية.</value></data>
+  <data name="compliance_file_too_large" xml:space="preserve"><value>حجم الملف أكبر من 30 ميغابايت.</value></data>
+  <data name="compliance_file_type" xml:space="preserve"><value>نوع الملف هذا غير مسموح.</value></data>
+  <data name="compliance_name_required" xml:space="preserve"><value>يحتاج المستند إلى اسم.</value></data>
+  <data name="compliance_not_found" xml:space="preserve"><value>لم يتم العثور على مستند الامتثال.</value></data>
+  <data name="compliance_type_invalid" xml:space="preserve"><value>نوع المستند غير صالح.</value></data>
+  <data name="contractor_deployment_no_contact" xml:space="preserve"><value>لا يوجد للانتشار جهة اتصال عميل للفوترة.</value></data>
+  <data name="contractor_deployment_not_billable" xml:space="preserve"><value>يمكن فوترة الانتشار القابل للفوترة فقط.</value></data>
+  <data name="contractor_no_charges" xml:space="preserve"><value>لا شيء للفوترة: لم تُنتج تقارير الوقت المعتمدة غير المفوترة أي رسوم.</value></data>
+  <data name="contracts_active" xml:space="preserve"><value>لا يمكن حذف عقد نشط؛ أنهِه أولًا.</value></data>
+  <data name="contracts_contact_not_found" xml:space="preserve"><value>لم يتم العثور على جهة اتصال العميل.</value></data>
+  <data name="contracts_contact_required" xml:space="preserve"><value>اختر جهة اتصال العميل.</value></data>
+  <data name="contracts_dates_invalid" xml:space="preserve"><value>تاريخ النهاية قبل تاريخ البداية.</value></data>
+  <data name="contracts_discount_invalid" xml:space="preserve"><value>يجب أن يكون الخصم بين 0 و100 بالمئة.</value></data>
+  <data name="contracts_ended" xml:space="preserve"><value>انقضى تاريخ انتهاء العقد؛ مدده قبل التفعيل.</value></data>
+  <data name="contracts_name_required" xml:space="preserve"><value>يحتاج العقد إلى اسم.</value></data>
+  <data name="contracts_not_found" xml:space="preserve"><value>لم يتم العثور على العقد.</value></data>
+  <data name="contracts_protected_write_refused" xml:space="preserve"><value>رفضت Advanced Data Protection الكتابة؛ تحقق من حالة حماية القسم.</value></data>
+  <data name="contracts_requirement_invalid" xml:space="preserve"><value>متطلب مستند بمرحلة أو نوع مستند غير معروف.</value></data>
+  <data name="contracts_status_transition_invalid" xml:space="preserve"><value>تغيير الحالة هذا غير مسموح من حالة العقد الحالية.</value></data>
+  <data name="contracts_type_invalid" xml:space="preserve"><value>نوع العقد غير صالح.</value></data>
+  <data name="rateschedules_band_duplicate" xml:space="preserve"><value>يظهر نوع الشريحة نفسه مرتين في البند.</value></data>
+  <data name="rateschedules_band_invalid" xml:space="preserve"><value>شريحة بنوع غير معروف أو سعر سالب.</value></data>
+  <data name="rateschedules_crew_size_required" xml:space="preserve"><value>يحتاج بند الطاقم إلى حجم.</value></data>
+  <data name="rateschedules_dates_invalid" xml:space="preserve"><value>تاريخ الانتهاء قبل تاريخ السريان.</value></data>
+  <data name="rateschedules_entry_invalid" xml:space="preserve"><value>نوع البند أو أساس الفوترة غير صالح.</value></data>
+  <data name="rateschedules_entry_name_required" xml:space="preserve"><value>يحتاج البند إلى اسم.</value></data>
+  <data name="rateschedules_entry_not_found" xml:space="preserve"><value>لم يتم العثور على بند السعر.</value></data>
+  <data name="rateschedules_import_invalid" xml:space="preserve"><value>JSON ليس تصديرًا صالحًا لجدول أسعار.</value></data>
+  <data name="rateschedules_in_use" xml:space="preserve"><value>الجدول مستخدم في عقد نشط أو مسودة ولا يمكن حذفه.</value></data>
+  <data name="rateschedules_name_required" xml:space="preserve"><value>يحتاج الجدول إلى اسم.</value></data>
+  <data name="rateschedules_not_found" xml:space="preserve"><value>لم يتم العثور على جدول الأسعار.</value></data>
+  <data name="rateschedules_policy_invalid" xml:space="preserve"><value>JSON السياسة غير صالح.</value></data>
+  <data name="rateschedules_premium_invalid" xml:space="preserve"><value>لا يمكن أن تكون العلاوات سالبة.</value></data>
+  <data name="rateschedules_premium_name_required" xml:space="preserve"><value>تحتاج العلاوة إلى اسم.</value></data>
+  <data name="rateschedules_premium_not_found" xml:space="preserve"><value>لم يتم العثور على العلاوة.</value></data>
+</root>

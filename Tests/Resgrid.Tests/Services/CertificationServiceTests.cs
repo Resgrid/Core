@@ -257,6 +257,10 @@ namespace Resgrid.Tests.Services
 			(await _service.SoftDeleteCertificationAsync(renewed.PersonnelCertificationId, Dept, "chief")).Should().BeTrue();
 			_records.Single(r => r.PersonnelCertificationId == renewed.PersonnelCertificationId).IsDeleted.Should().BeTrue();
 			Audits.Last().Type.Should().Be(AuditLogTypes.CertificationRemoved);
+			// Lifecycle completion (trigger 183): the removal reaches the Workflow Engine with the holder and the type.
+			var removed = _published.OfType<CertificationRemovedEvent>().Single();
+			removed.Certification.PersonnelCertificationId.Should().Be(renewed.PersonnelCertificationId);
+			removed.RemovedByUserId.Should().Be("chief");
 		}
 
 		[Test]
@@ -285,6 +289,10 @@ namespace Resgrid.Tests.Services
 			await _service.AddCertificationCreditAsync(new PersonnelCertificationCredit { PersonnelCertificationId = record.PersonnelCertificationId, DepartmentId = Dept, Hours = 4, Category = "Trauma" }, "u1");
 			(await _service.GetCertificationCreditTotalsAsync(new[] { record.PersonnelCertificationId }))[record.PersonnelCertificationId].Should().Be(16.5m);
 			Audits.Count(a => a.Type == AuditLogTypes.CertificationCreditAdded).Should().Be(2);
+			// Lifecycle completion (trigger 184): each credit reaches the Workflow Engine with its hours and category.
+			_published.OfType<CertificationCreditAddedEvent>().Select(e => e.Hours).Should().BeEquivalentTo(new[] { 12.5m, 4m });
+			_published.OfType<CertificationCreditAddedEvent>().Last().Category.Should().Be("Trauma");
+			_published.OfType<CertificationCreditAddedEvent>().Should().OnlyContain(e => e.Certification.PersonnelCertificationId == record.PersonnelCertificationId && e.AddedByUserId == "u1");
 			(await FluentActions.Awaiting(() => _service.AddCertificationCreditAsync(new PersonnelCertificationCredit { PersonnelCertificationId = record.PersonnelCertificationId, DepartmentId = Dept, Hours = 0 }, "u1")).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("certifications_credit_hours_invalid");
 			var credit = _credits.First();
 			(await _service.DeleteCertificationCreditAsync(credit.PersonnelCertificationCreditId, Dept, "chief")).Should().BeTrue();
@@ -305,13 +313,20 @@ namespace Resgrid.Tests.Services
 			saved.UnitCertificationId.Should().BeGreaterThan(0); saved.AddedByUserId.Should().Be("chief"); saved.FileSize.Should().Be(3);
 			_unitRecords.Single().Data.Should().Equal(1, 2, 3);
 			Audits.Last().Type.Should().Be(AuditLogTypes.UnitCertificationAdded);
+			_published.OfType<UnitCertificationAddedEvent>().Single().Certification.UnitCertificationId.Should().Be(saved.UnitCertificationId);
+			_published.OfType<UnitCertificationAddedEvent>().Single().Certification.Data.Should().BeNull("the event carries no file bytes");
 
 			var edited = await _service.SaveUnitCertificationAsync(new UnitCertification { UnitCertificationId = saved.UnitCertificationId, UnitId = 7, DepartmentId = Dept, DepartmentCertificationTypeId = 2, Number = "INSP-2", ExpiresOn = Today.AddMonths(7) }, "chief");
 			_unitRecords.Single().Data.Should().Equal(new byte[] { 1, 2, 3 }, "no new file keeps the stored one"); edited.EditedByUserId.Should().Be("chief");
 
 			var suspended = await _service.SetUnitCertificationStatusAsync(saved.UnitCertificationId, Dept, UnitCertificationStatuses.Suspended, "failed re-test", "chief");
 			suspended.Status.Should().Be((int)UnitCertificationStatuses.Suspended);
+			_unitRecords.Single().Data.Should().Equal(new byte[] { 1, 2, 3 }, "a status change through the catalog-28 seam keeps the stored file");
+			// Lifecycle completion (triggers 181/182): status changes and removals reach the Workflow Engine.
+			var statusChange = _published.OfType<UnitCertificationStatusChangedEvent>().Single();
+			statusChange.OldStatus.Should().Be((int)UnitCertificationStatuses.Active); statusChange.NewStatus.Should().Be((int)UnitCertificationStatuses.Suspended); statusChange.Reason.Should().Be("failed re-test"); statusChange.ChangedByUserId.Should().Be("chief");
 			(await _service.DeleteUnitCertificationAsync(saved.UnitCertificationId, Dept, "chief")).Should().BeTrue();
+			_published.OfType<UnitCertificationRemovedEvent>().Single().RemovedByUserId.Should().Be("chief");
 			(await _service.GetUnitCertificationsAsync(7)).Should().BeEmpty();
 			(await FluentActions.Awaiting(() => _service.AddCertificationCreditAsync(new PersonnelCertificationCredit { PersonnelCertificationId = 1, DepartmentId = Dept, Hours = 1 }, "u1")).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("certifications_record_not_found");
 		}
@@ -492,7 +507,9 @@ namespace Resgrid.Tests.Services
 			_roles.Setup(r => r.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = 12, DepartmentId = Dept, Name = "Paramedic" }, new PersonnelRole { PersonnelRoleId = 13, DepartmentId = Dept, Name = "Driver" } });
 			var aggregator = new Mock<IEventAggregator>();
 			aggregator.Setup(a => a.SendMessage<AuditEvent>(It.IsAny<AuditEvent>())).Callback((AuditEvent a) => _audits.Add(a));
-			_service = new PersonnelRolesService(_roles.Object, _roleUsers.Object, Mock.Of<ISubscriptionsService>(), Mock.Of<IDepartmentMembersRepository>(), aggregator.Object, Mock.Of<Resgrid.Model.Repositories.Queries.IUnitOfWork>(), new Lazy<ICertificationService>(() => _certifications.Object));
+			var members = new Mock<IDepartmentMembersRepository>();
+			members.Setup(m => m.GetAllDepartmentMembersUnlimitedAsync(Dept)).ReturnsAsync(new[] { "u1", "existing", "newcomer" }.Select(u => new DepartmentMember { DepartmentId = Dept, UserId = u }).ToList());
+			_service = new PersonnelRolesService(_roles.Object, _roleUsers.Object, Mock.Of<ISubscriptionsService>(), members.Object, aggregator.Object, Mock.Of<Resgrid.Model.Repositories.Queries.IUnitOfWork>(), new Lazy<ICertificationService>(() => _certifications.Object));
 		}
 
 		[Test]
@@ -521,10 +538,14 @@ namespace Resgrid.Tests.Services
 			_memberships.Add(new PersonnelRoleUser { PersonnelRoleUserId = 1, PersonnelRoleId = 12, DepartmentId = Dept, UserId = "existing" });
 			_roles.Setup(r => r.SaveOrUpdateAsync(It.IsAny<PersonnelRole>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((PersonnelRole r, CancellationToken _, bool __) => r);
 			var role = new PersonnelRole { PersonnelRoleId = 12, DepartmentId = Dept, Name = "Paramedic", Users = new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "existing" }, new PersonnelRoleUser { UserId = "newcomer" } } };
-			await FluentActions.Awaiting(() => _service.SaveRoleAsync(role, default, "admin")).Should().ThrowAsync<InvalidOperationException>().WithMessage("certifications_role_requirements_unmet");
+			(await FluentActions.Awaiting(() => _service.SaveRoleAsync(role, default, "admin")).Should().ThrowAsync<RoleMembershipException>().WithMessage("certifications_role_requirements_unmet")).Which.UserId.Should().Be("newcomer", "the refusal names the member it is about");
 			_qualified = true;
 			await _service.SaveRoleAsync(role, default, "admin");
 			_audits.Should().ContainSingle(a => a.Type == AuditLogTypes.RoleMemberAdded).Which.After.Should().Contain("newcomer");
+
+			// A user id outside the department is refused before the certification gate and before any write.
+			role.Users.Add(new PersonnelRoleUser { UserId = "stranger" });
+			(await FluentActions.Awaiting(() => _service.SaveRoleAsync(role, default, "admin")).Should().ThrowAsync<RoleMembershipException>().WithMessage("roles_member_not_in_department")).Which.UserId.Should().Be("stranger");
 		}
 	}
 }

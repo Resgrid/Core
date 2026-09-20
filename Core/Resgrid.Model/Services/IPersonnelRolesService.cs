@@ -45,8 +45,9 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Saves the role and replaces its membership with <paramref name="userIds"/> in one transaction: the certification
 		/// gate (plan D4) runs against the members the role gains before anything is deleted, and a failure anywhere leaves
-		/// the previous membership in place. Throws InvalidOperationException("certifications_role_requirements_unmet") when
-		/// a gained member is blocked under Enforce.
+		/// the previous membership in place. Every gained member must belong to the role's department. Throws
+		/// <see cref="RoleMembershipException"/> naming the member: roles_member_not_in_department for a stranger,
+		/// certifications_role_requirements_unmet for a member blocked under Enforce.
 		/// </summary>
 		Task<PersonnelRole> ReplaceRoleMembersAsync(PersonnelRole role, IEnumerable<string> userIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null);
 
@@ -79,7 +80,8 @@ namespace Resgrid.Model.Services
 		/// Workforce &amp; Business Operations plan Phase D4: evaluates a member against each role's certification
 		/// requirements under the department's enforcement mode. Enforce lists blocked roles, WarnOnly lists warnings,
 		/// Off returns an empty check. Callers show the result before mutating membership; the mutation methods
-		/// re-run it as a backstop and throw certifications_role_requirements_unmet under Enforce.
+		/// re-run it as a backstop and throw <see cref="RoleMembershipException"/> (certifications_role_requirements_unmet,
+		/// naming the member) under Enforce.
 		/// </summary>
 		Task<RoleMembershipCheck> CheckRoleMembershipAsync(int departmentId, string userId, IEnumerable<int> roleIds);
 

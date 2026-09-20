@@ -23,7 +23,9 @@
         <label class="col-sm-2 control-label">@localizer["Receipt"]</label><div class="col-sm-5"><input type="file" name="receipt" class="form-control input-sm" /></div>
         <div class="col-sm-5">
             <label class="checkbox-inline"><input type="checkbox" name="PreApproved" value="true" /> @localizer["PreApproved"]</label>
+            @* Billable initialises to true on ExpenseInput and an unchecked box posts nothing, so the binder needs an explicit false after it (the binder takes the first value). *@
             <label class="checkbox-inline"><input type="checkbox" name="Billable" value="true" checked /> @localizer["Billable"]</label>
+            <input type="hidden" name="Billable" value="false" />
             <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> @localizer["AddExpense"]</button>
         </div>
     </div>

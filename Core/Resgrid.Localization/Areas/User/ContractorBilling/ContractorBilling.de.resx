@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AcceptedOn" xml:space="preserve"><value>Angenommen</value></data>
+  <data name="Actions" xml:space="preserve"><value>Aktionen</value></data>
+  <data name="ActivateNow" xml:space="preserve"><value>Sofort aktivieren</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Add" xml:space="preserve"><value>Hinzufügen</value></data>
+  <data name="AddBand" xml:space="preserve"><value>Band hinzufügen</value></data>
+  <data name="AddComplianceDocument" xml:space="preserve"><value>Compliance-Dokument hinzufügen</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>Eintrag hinzufügen</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Position hinzufügen</value></data>
+  <data name="AddPerson" xml:space="preserve"><value>Person hinzufügen</value></data>
+  <data name="AddPremium" xml:space="preserve"><value>Zuschlag hinzufügen</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>Anforderung hinzufügen</value></data>
+  <data name="Address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="AdpProtectedBid" xml:space="preserve"><value>Dieses Angebot enthält geschützte Kundendaten.</value></data>
+  <data name="AdpProtectedCompliance" xml:space="preserve"><value>Nummern und Dateien der Compliance-Dokumente sind geschützt.</value></data>
+  <data name="AdpProtectedContract" xml:space="preserve"><value>Dieser Vertrag enthält geschützte Kundendaten.</value></data>
+  <data name="Air" xml:space="preserve"><value>Flug</value></data>
+  <data name="AlertLeadDays" xml:space="preserve"><value>Vorwarnzeit (Tage)</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Alle</value></data>
+  <data name="Amount" xml:space="preserve"><value>Betrag</value></data>
+  <data name="Back" xml:space="preserve"><value>Zurück</value></data>
+  <data name="BandCustom" xml:space="preserve"><value>Benutzerdefiniert</value></data>
+  <data name="BandDailyDeployment" xml:space="preserve"><value>Tageseinsatz</value></data>
+  <data name="BandDailyStandby" xml:space="preserve"><value>Tagesbereitschaft</value></data>
+  <data name="BandDeployment" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="BandMileagePerKm" xml:space="preserve"><value>Kilometergeld</value></data>
+  <data name="BandOutOfProvincePerPersonDaily" xml:space="preserve"><value>Außerhalb der Provinz je Person/Tag</value></data>
+  <data name="BandOvertime1" xml:space="preserve"><value>Überstunden 1</value></data>
+  <data name="BandOvertime2" xml:space="preserve"><value>Überstunden 2</value></data>
+  <data name="BandPerDiemMeal" xml:space="preserve"><value>Verpflegungstagegeld</value></data>
+  <data name="BandPrivateAccommodationDaily" xml:space="preserve"><value>Privatunterkunft/Tag</value></data>
+  <data name="BandStandby" xml:space="preserve"><value>Bereitschaft</value></data>
+  <data name="BandType" xml:space="preserve"><value>Band</value></data>
+  <data name="Bands" xml:space="preserve"><value>Bänder</value></data>
+  <data name="BandsHelp" xml:space="preserve"><value>Schwellen für Einsatz/ÜS1/ÜS2, Tagesstufen, Freieinheiten und Verpflegungscodes sind hier Daten — nie Code.</value></data>
+  <data name="BaseRate" xml:space="preserve"><value>Basissatz</value></data>
+  <data name="BasisDaily" xml:space="preserve"><value>Täglich</value></data>
+  <data name="BasisFixed" xml:space="preserve"><value>Pauschal</value></data>
+  <data name="BasisHourly" xml:space="preserve"><value>Stündlich</value></data>
+  <data name="BasisPerKilometer" xml:space="preserve"><value>Je Kilometer</value></data>
+  <data name="BasisPerPersonPerDay" xml:space="preserve"><value>Je Person und Tag</value></data>
+  <data name="Bid" xml:space="preserve"><value>Angebot</value></data>
+  <data name="BidAccepted" xml:space="preserve"><value>Angebot angenommen</value></data>
+  <data name="BidContactHelp" xml:space="preserve"><value>Das Angebot richtet sich an das Abrechnungsprofil dieses Kontakts.</value></data>
+  <data name="BidContractHelp" xml:space="preserve"><value>Ein Vertrag liefert Tarifplan, Rabatt und Konditionen.</value></data>
+  <data name="BidCreated" xml:space="preserve"><value>Angebot erstellt</value></data>
+  <data name="BidDeclined" xml:space="preserve"><value>Angebot abgelehnt</value></data>
+  <data name="BidExpired" xml:space="preserve"><value>Angebot abgelaufen</value></data>
+  <data name="BidLine" xml:space="preserve"><value>Angebotsposition</value></data>
+  <data name="BidNumber" xml:space="preserve"><value>Angebot Nr.</value></data>
+  <data name="BidScheduleHelp" xml:space="preserve"><value>Positionen übernehmen ihren Satz beim Hinzufügen aus diesem Tarifplan.</value></data>
+  <data name="BidSent" xml:space="preserve"><value>Angebot gesendet</value></data>
+  <data name="BidStatusAccepted" xml:space="preserve"><value>Angenommen</value></data>
+  <data name="BidStatusDeclined" xml:space="preserve"><value>Abgelehnt</value></data>
+  <data name="BidStatusDraft" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="BidStatusExpired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="BidStatusSubmitted" xml:space="preserve"><value>Eingereicht</value></data>
+  <data name="BidStatusWithdrawn" xml:space="preserve"><value>Zurückgezogen</value></data>
+  <data name="Bids" xml:space="preserve"><value>Angebote</value></data>
+  <data name="BidsIntro" xml:space="preserve"><value>Kalkulierte Angebote für Kundenkontakte und Verträge; ein angenommenes Angebot plant den Einsatz.</value></data>
+  <data name="Billing" xml:space="preserve"><value>Abrechnung</value></data>
+  <data name="BillingBasis" xml:space="preserve"><value>Abrechnungsbasis</value></data>
+  <data name="Call" xml:space="preserve"><value>Einsatzmeldung</value></data>
+  <data name="CallName" xml:space="preserve"><value>Einsatzname</value></data>
+  <data name="CallNature" xml:space="preserve"><value>Art des Einsatzes</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>Priorität</value></data>
+  <data name="CallSign" xml:space="preserve"><value>Rufzeichen</value></data>
+  <data name="CallType" xml:space="preserve"><value>Einsatzart</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="CancellationMinimumHours" xml:space="preserve"><value>Stornomindestzeit (Stunden)</value></data>
+  <data name="CancellationVehiclesFullDay" xml:space="preserve"><value>Fahrzeuge berechnen am Stornotag einen vollen Tag</value></data>
+  <data name="CertExpired" xml:space="preserve"><value>Zertifizierung abgelaufen oder ausgesetzt</value></data>
+  <data name="CertExpiring" xml:space="preserve"><value>Zertifizierung läuft im Einsatzzeitraum ab</value></data>
+  <data name="CertificationCode" xml:space="preserve"><value>Zertifizierungscode</value></data>
+  <data name="ChargePreview" xml:space="preserve"><value>Kostenvorschau</value></data>
+  <data name="ChargeWarningaccommodation_agency_supplied" xml:space="preserve"><value>Unterkunft wurde an einem Tag mit Unterkunft durch die Behörde beansprucht.</value></data>
+  <data name="ChargeWarningband_missing" xml:space="preserve"><value>Einem Tarifeintrag fehlt das Band für einige Stunden.</value></data>
+  <data name="ChargeWarningcrew_size_fallback" xml:space="preserve"><value>Kein Eintrag für die besetzte Stärke; der nächstniedrigere Satz wurde verwendet.</value></data>
+  <data name="ChargeWarningno_reports" xml:space="preserve"><value>Keine genehmigten, nicht abgerechneten Tagesberichte.</value></data>
+  <data name="ChargeWarningper_diem_agency_meals" xml:space="preserve"><value>Ein Tagegeld wurde an einem Tag mit Verpflegung durch die Behörde beansprucht.</value></data>
+  <data name="ChargeWarningper_diem_ineligible" xml:space="preserve"><value>Ein Tagegeld wurde außerhalb seines Anspruchsfensters beansprucht.</value></data>
+  <data name="ChargeWarningper_diem_mismatch" xml:space="preserve"><value>Ein Tagegeldbetrag weicht vom Plansatz ab.</value></data>
+  <data name="ChargeWarningrate_entry_missing" xml:space="preserve"><value>Für ein Subjekt gibt es keinen Tarifeintrag; es wurde übersprungen.</value></data>
+  <data name="ChargeWarningschedule_missing" xml:space="preserve"><value>Für diesen Einsatz gilt kein Tarifplan.</value></data>
+  <data name="ChargeWarningtravel_capped" xml:space="preserve"><value>Reisestunden wurden gemäß Regelwerk begrenzt.</value></data>
+  <data name="ChargesUnavailable" xml:space="preserve"><value>Der Kostenlauf konnte nicht vorbereitet werden.</value></data>
+  <data name="Clone" xml:space="preserve"><value>Klonen</value></data>
+  <data name="CloneHelp" xml:space="preserve"><value>Erstellt einen neuen Plan mit Kopien aller Einträge, Bänder und Zuschläge — der übliche Start einer Verlängerung.</value></data>
+  <data name="Code" xml:space="preserve"><value>Kürzel</value></data>
+  <data name="ComplianceChecklist" xml:space="preserve"><value>Compliance-Prüfliste</value></data>
+  <data name="ComplianceDocumentType" xml:space="preserve"><value>Dokumenttyp</value></data>
+  <data name="ComplianceDocuments" xml:space="preserve"><value>Compliance-Dokumente</value></data>
+  <data name="ComplianceExpiringBanner" xml:space="preserve"><value>{0} Compliance-Dokument(e) laufen ab oder sind abgelaufen.</value></data>
+  <data name="ComplianceFileHelp" xml:space="preserve"><value>PDF oder Bild bis 30 MB; leer lassen, um die gespeicherte Datei zu behalten.</value></data>
+  <data name="ComplianceIntro" xml:space="preserve"><value>Versicherung, Unfallversicherung, SAM/CAGE, Lizenzen und Bürgschaften mit Ablaufwarnungen; sie erfüllen Vertragsanforderungen und liegen dem Rechnungspaket bei.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Diesen Eintrag löschen?</value></data>
+  <data name="ConfirmDeleteBid" xml:space="preserve"><value>Diesen Angebotsentwurf löschen?</value></data>
+  <data name="ConfirmDeleteContract" xml:space="preserve"><value>Diesen Vertrag löschen?</value></data>
+  <data name="ConfirmDeleteSchedule" xml:space="preserve"><value>Diesen Tarifplan löschen?</value></data>
+  <data name="ConfirmGenerateInvoice" xml:space="preserve"><value>Aus diesen Kosten einen Rechnungsentwurf erzeugen?</value></data>
+  <data name="ConfirmWithdraw" xml:space="preserve"><value>Dieses Angebot zurückziehen?</value></data>
+  <data name="ConflictBadge" xml:space="preserve"><value>Überlappender Einsatz</value></data>
+  <data name="ContinuousRunGapMinutes" xml:space="preserve"><value>Pausenlücke für Durchlauf (Minuten)</value></data>
+  <data name="Contract" xml:space="preserve"><value>Vertrag</value></data>
+  <data name="ContractDetailIntro" xml:space="preserve"><value>Verknüpfte Angebote, Einsätze, Rechnungen und der Compliance-Status dieses Vertrags.</value></data>
+  <data name="ContractExpiring" xml:space="preserve"><value>Vertrag läuft ab</value></data>
+  <data name="ContractNumber" xml:space="preserve"><value>Vertragsnummer</value></data>
+  <data name="ContractScheduleHelp" xml:space="preserve"><value>Vertrag → Standard des Kontaktprofils → erster aktiver Plan.</value></data>
+  <data name="ContractStatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="ContractStatusChanged" xml:space="preserve"><value>Vertragsstatus geändert</value></data>
+  <data name="ContractStatusDraft" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="ContractStatusExpired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="ContractStatusSuspended" xml:space="preserve"><value>Ausgesetzt</value></data>
+  <data name="ContractStatusTerminated" xml:space="preserve"><value>Beendet</value></data>
+  <data name="ContractType" xml:space="preserve"><value>Vertragsart</value></data>
+  <data name="ContractTypeMasterServices" xml:space="preserve"><value>Rahmenleistungsvertrag</value></data>
+  <data name="ContractTypeOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="ContractTypeProject" xml:space="preserve"><value>Projekt</value></data>
+  <data name="ContractTypeStandingArrangement" xml:space="preserve"><value>Rahmenvereinbarung</value></data>
+  <data name="ContractorBilling" xml:space="preserve"><value>Auftragnehmer-Abrechnung</value></data>
+  <data name="Contracts" xml:space="preserve"><value>Verträge</value></data>
+  <data name="ContractsIntro" xml:space="preserve"><value>Dienstleistungsverträge mit Tarifplan, Konditionen, Einreichungsadresse und Dokumentanforderungen.</value></data>
+  <data name="Converted" xml:space="preserve"><value>In einen Einsatz umgewandelt</value></data>
+  <data name="Copy" xml:space="preserve"><value>Kopie</value></data>
+  <data name="CreateCalendarItem" xml:space="preserve"><value>In den Abteilungskalender eintragen</value></data>
+  <data name="CreateCallAndDeployment" xml:space="preserve"><value>Einsatzmeldung und Einsatz erstellen</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Entwurf erstellen</value></data>
+  <data name="CrewIndicator" xml:space="preserve"><value>Personen-Mannschaft</value></data>
+  <data name="CrewSize" xml:space="preserve"><value>Mannschaftsstärke</value></data>
+  <data name="Currency" xml:space="preserve"><value>Währung</value></data>
+  <data name="Customer" xml:space="preserve"><value>Kunde</value></data>
+  <data name="CustomerEmail" xml:space="preserve"><value>E-Mail des Kunden</value></data>
+  <data name="DailyGuaranteeHours" xml:space="preserve"><value>Tagesgarantie (Stunden)</value></data>
+  <data name="Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="Days" xml:space="preserve"><value>Tage</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Ablehnungsgrund</value></data>
+  <data name="DeclinedOn" xml:space="preserve"><value>Abgelehnt</value></data>
+  <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="DeleteSchedule" xml:space="preserve"><value>Plan löschen</value></data>
+  <data name="DeliveryLocation" xml:space="preserve"><value>Einsatzort</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="DeploymentAttachment" xml:space="preserve"><value>Einsatzanhang</value></data>
+  <data name="Deployments" xml:space="preserve"><value>Einsätze</value></data>
+  <data name="Description" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="Discount" xml:space="preserve"><value>Rabatt</value></data>
+  <data name="DiscountCascade" xml:space="preserve"><value>Rabattkaskade</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Rabatt %</value></data>
+  <data name="DocTypeBond" xml:space="preserve"><value>Bürgschaft</value></data>
+  <data name="DocTypeBusinessLicense" xml:space="preserve"><value>Gewerbeschein</value></data>
+  <data name="DocTypeCageCode" xml:space="preserve"><value>CAGE-Code</value></data>
+  <data name="DocTypeInsuranceCertificate" xml:space="preserve"><value>Versicherungsnachweis</value></data>
+  <data name="DocTypeOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="DocTypeSamRegistration" xml:space="preserve"><value>SAM-Registrierung</value></data>
+  <data name="DocTypeTaxRegistration" xml:space="preserve"><value>Steuerregistrierung</value></data>
+  <data name="DocTypeWorkersCompClearance" xml:space="preserve"><value>Unfallversicherungsnachweis</value></data>
+  <data name="DocumentNumber" xml:space="preserve"><value>Dokumentnummer</value></data>
+  <data name="DocumentRequirements" xml:space="preserve"><value>Dokumentanforderungen</value></data>
+  <data name="DocumentRequirementsHelp" xml:space="preserve"><value>Was der Kunde in jeder Phase erwartet; ein Compliance-Dokumenttyp wird durch ein gültiges Abteilungsdokument erfüllt, sonst durch einen Einsatzanhang.</value></data>
+  <data name="DocumentTemplateKey" xml:space="preserve"><value>Dokumentvorlage</value></data>
+  <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="EditBid" xml:space="preserve"><value>Angebot bearbeiten</value></data>
+  <data name="EditBidIntro" xml:space="preserve"><value>Kopf, Positionen mit Satzübernahme, Zuschläge und Schätzung.</value></data>
+  <data name="EditComplianceDocument" xml:space="preserve"><value>Compliance-Dokument bearbeiten</value></data>
+  <data name="EditContract" xml:space="preserve"><value>Vertrag bearbeiten</value></data>
+  <data name="EditContractIntro" xml:space="preserve"><value>Kopf, kaufmännische Bedingungen und Dokumentanforderungen je Phase.</value></data>
+  <data name="EditRateSchedule" xml:space="preserve"><value>Tarifplan bearbeiten</value></data>
+  <data name="EditRateScheduleIntro" xml:space="preserve"><value>Sätze sind explizite Beträge je Band; Mannschaftsfamilien teilen einen Gruppenschlüssel und unterscheiden sich in der Stärke.</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Gültig ab</value></data>
+  <data name="EndOn" xml:space="preserve"><value>Ende</value></data>
+  <data name="Entries" xml:space="preserve"><value>Tarifeinträge</value></data>
+  <data name="EntriesHelp" xml:space="preserve"><value>Personaleinträge passen zu einem Zertifizierungscode; Mannschaftseinträge teilen einen Gruppenschlüssel mit je einem Eintrag pro Stärke; Fahrzeug- und Ausrüstungseinträge werden dem Einsatzmittel zugeordnet.</value></data>
+  <data name="Entry" xml:space="preserve"><value>Tarifeintrag</value></data>
+  <data name="EntryType" xml:space="preserve"><value>Eintragsart</value></data>
+  <data name="EntryTypeCrew" xml:space="preserve"><value>Mannschaft</value></data>
+  <data name="EntryTypeEquipment" xml:space="preserve"><value>Ausrüstung</value></data>
+  <data name="EntryTypePersonnelCertification" xml:space="preserve"><value>Personal (Zertifizierung)</value></data>
+  <data name="EntryTypeService" xml:space="preserve"><value>Leistung</value></data>
+  <data name="EntryTypeVehicle" xml:space="preserve"><value>Fahrzeug</value></data>
+  <data name="Equipment" xml:space="preserve"><value>Ausrüstung</value></data>
+  <data name="Estimate" xml:space="preserve"><value>Schätzung</value></data>
+  <data name="EstimateHelp" xml:space="preserve"><value>Die Steuer folgt dem Abrechnungsprofil des Kunden; die tatsächlichen Kosten folgen den Tagesberichten.</value></data>
+  <data name="EstimatedDailyCharge" xml:space="preserve"><value>Geschätzte Kundenkosten pro Tag</value></data>
+  <data name="EstimatedTotal" xml:space="preserve"><value>Geschätzte Summe</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Läuft ab am</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>JSON exportieren</value></data>
+  <data name="File" xml:space="preserve"><value>Datei</value></data>
+  <data name="FreeTextEquipment" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="FreeUnits" xml:space="preserve"><value>Frei/Tag</value></data>
+  <data name="FuelDeductionRatePerLitre" xml:space="preserve"><value>Kraftstoffabzug je Liter</value></data>
+  <data name="GenerateInvoice" xml:space="preserve"><value>Rechnung erzeugen</value></data>
+  <data name="GenerateInvoiceHelp" xml:space="preserve"><value>Erstellt aus den obigen Kosten einen Rechnungsentwurf; die abgerechneten Tagesberichte wechseln zu Abgerechnet.</value></data>
+  <data name="GroupKey" xml:space="preserve"><value>Gruppenschlüssel</value></data>
+  <data name="GroupKeyHelp" xml:space="preserve"><value>z. B. typ6-crew</value></data>
+  <data name="HelpBids" xml:space="preserve"><value>Erstellen Sie ein Angebot aus dem Tarifplan des Kunden, senden Sie es als PDF und nehmen Sie es an, um den Einsatzassistenten zu starten.</value></data>
+  <data name="HelpCompliance" xml:space="preserve"><value>Jedes Dokument hat seine eigene Vorwarnzeit; Abteilungsadministratoren werden benachrichtigt, wenn es in das Fenster eintritt oder abläuft.</value></data>
+  <data name="HelpContracts" xml:space="preserve"><value>Ein Vertrag legt Tarifplan, Rabatt und Zahlungsziel für alle zugehörigen Angebote und Einsätze fest; Dokumentanforderungen steuern die Compliance-Prüfliste und das Rechnungspaket.</value></data>
+  <data name="HelpRateSchedules" xml:space="preserve"><value>Ein Vertrag verweist auf einen Plan; sonst gilt der Standard des Kontaktprofils oder der erste aktive Plan. Klonen Sie einen Plan für die nächste Saison.</value></data>
+  <data name="HoursPerDay" xml:space="preserve"><value>Std./Tag</value></data>
+  <data name="Import" xml:space="preserve"><value>Importieren</value></data>
+  <data name="ImportJson" xml:space="preserve"><value>JSON importieren</value></data>
+  <data name="ImportJsonHelp" xml:space="preserve"><value>Fügen Sie einen aus Resgrid exportierten Plan ein oder laden Sie ihn hoch; IDs und Abteilungsbezüge entfallen, sodass ein Plan zwischen Abteilungen geteilt werden kann.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Einsatznummer</value></data>
+  <data name="InventoryItemId" xml:space="preserve"><value>Inventarartikel-ID</value></data>
+  <data name="InvoiceSubmissionEmail" xml:space="preserve"><value>E-Mail für Rechnungseinreichung</value></data>
+  <data name="InvoiceSubmissionEmailHelp" xml:space="preserve"><value>Wohin Einsatzrechnungen und ihr Paket standardmäßig gesendet werden.</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Rechnungen</value></data>
+  <data name="Issuer" xml:space="preserve"><value>Aussteller</value></data>
+  <data name="Label" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="LineType" xml:space="preserve"><value>Positionsart</value></data>
+  <data name="LineTypeCrew" xml:space="preserve"><value>Mannschaft</value></data>
+  <data name="LineTypeEquipment" xml:space="preserve"><value>Ausrüstung</value></data>
+  <data name="LineTypeFreeForm" xml:space="preserve"><value>Freie Position</value></data>
+  <data name="LineTypePersonnelCertification" xml:space="preserve"><value>Personal</value></data>
+  <data name="LineTypeService" xml:space="preserve"><value>Leistung</value></data>
+  <data name="LineTypeVehicle" xml:space="preserve"><value>Fahrzeug</value></data>
+  <data name="Lines" xml:space="preserve"><value>Positionen</value></data>
+  <data name="LinesHelp" xml:space="preserve"><value>Wählen Sie einen Tarifeintrag, um den Satz zu übernehmen, oder erfassen Sie eine freie Position. Menge × Satz × Std./Tag × Tage.</value></data>
+  <data name="ManageBids" xml:space="preserve"><value>Angebote verwalten</value></data>
+  <data name="ManageBidsNote" xml:space="preserve"><value>Angebote erstellen, bearbeiten, senden, annehmen und umwandeln. Abteilungsadministratoren dürfen es immer.</value></data>
+  <data name="ManageContracts" xml:space="preserve"><value>Verträge verwalten</value></data>
+  <data name="ManageContractsNote" xml:space="preserve"><value>Dienstleistungsverträge, Dokumentanforderungen und Compliance-Dokumente anlegen und bearbeiten. Abteilungsadministratoren dürfen es immer.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>Pflicht</value></data>
+  <data name="MarkAccepted" xml:space="preserve"><value>Als angenommen markieren</value></data>
+  <data name="MarkDeclined" xml:space="preserve"><value>Als abgelehnt markieren</value></data>
+  <data name="MarkSubmitted" xml:space="preserve"><value>Als eingereicht markieren</value></data>
+  <data name="MaxDeploymentDays" xml:space="preserve"><value>Max. Einsatztage</value></data>
+  <data name="MealCode" xml:space="preserve"><value>Verpflegungscode</value></data>
+  <data name="MealEligibility" xml:space="preserve"><value>Verpflegungsanspruch</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>JSON-Fenster je Verpflegungscode, z. B. [{"MealCode":"B","StartsBeforeMinutes":420}]; ein Tagegeld außerhalb wird gewarnt, nicht blockiert.</value></data>
+  <data name="Missing" xml:space="preserve"><value>Fehlt</value></data>
+  <data name="MultiplierPrefill" xml:space="preserve"><value>Vorbelegung per Multiplikator</value></data>
+  <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Basis + Bereitschaft + ÜS-Multiplikatoren erzeugen die Stundenbänder; gespeichert werden explizite Beträge.</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="NearestLowerRate" xml:space="preserve"><value>nächstniedrigerer Satz</value></data>
+  <data name="NewBid" xml:space="preserve"><value>Neues Angebot</value></data>
+  <data name="NewBidIntro" xml:space="preserve"><value>Wählen Sie den Kunden und ggf. den Vertrag; Tarifplan und Rabatt folgen daraus.</value></data>
+  <data name="NewContract" xml:space="preserve"><value>Neuer Vertrag</value></data>
+  <data name="NewRateSchedule" xml:space="preserve"><value>Neuer Tarifplan</value></data>
+  <data name="Next" xml:space="preserve"><value>Weiter</value></data>
+  <data name="No" xml:space="preserve"><value>Nein</value></data>
+  <data name="NoBids" xml:space="preserve"><value>Noch keine Angebote.</value></data>
+  <data name="NoCharges" xml:space="preserve"><value>Keine genehmigten, nicht abgerechneten Tagesberichte.</value></data>
+  <data name="NoClear8CarryOver" xml:space="preserve"><value>No-Clear-8-Übertrag startet den Tag im Überstundenband</value></data>
+  <data name="NoComplianceDocuments" xml:space="preserve"><value>Noch keine Compliance-Dokumente.</value></data>
+  <data name="NoContract" xml:space="preserve"><value>Kein Vertrag</value></data>
+  <data name="NoContracts" xml:space="preserve"><value>Noch keine Verträge.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>Keine Einsätze.</value></data>
+  <data name="NoEntries" xml:space="preserve"><value>Noch keine Tarifeinträge.</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>Keine Rechnungen.</value></data>
+  <data name="NoRateSchedules" xml:space="preserve"><value>Noch keine Tarifpläne.</value></data>
+  <data name="NoRequirements" xml:space="preserve"><value>Keine Dokumentanforderungen.</value></data>
+  <data name="NoSchedule" xml:space="preserve"><value>Kein Tarifplan</value></data>
+  <data name="NoScheduleWarning" xml:space="preserve"><value>Kein Tarifplan gilt: Positionen brauchen einen eingegebenen Satz.</value></data>
+  <data name="None" xml:space="preserve"><value>Keine</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notizen</value></data>
+  <data name="Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Optional" xml:space="preserve"><value>optional</value></data>
+  <data name="OrPasteJson" xml:space="preserve"><value>…oder JSON einfügen</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>Außerhalb der Provinz</value></data>
+  <data name="OvertimeBasis" xml:space="preserve"><value>Überstundenbasis</value></data>
+  <data name="OvertimeConsecutive" xml:space="preserve"><value>Aufeinanderfolgende Stunden</value></data>
+  <data name="OvertimeDailyTotal" xml:space="preserve"><value>Tagesgesamtstunden</value></data>
+  <data name="Pdf" xml:space="preserve"><value>PDF-Datei</value></data>
+  <data name="PerDeployment" xml:space="preserve"><value>je Einsatz geprüft</value></data>
+  <data name="Person" xml:space="preserve"><value>Person</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>Einstellungsort</value></data>
+  <data name="Policy" xml:space="preserve"><value>Abrechnungsregeln</value></data>
+  <data name="PolicyHelp" xml:space="preserve"><value>Rundung, Mindestwerte, Überstundenbasis und Reisegrenzen, die die Engine auf jeden Tagesbericht unter diesem Plan anwendet.</value></data>
+  <data name="PortalToPortal" xml:space="preserve"><value>Portal-zu-Portal (Reisezeit gilt als Einsatzzeit)</value></data>
+  <data name="Prefill" xml:space="preserve"><value>Vorbelegen</value></data>
+  <data name="Premium" xml:space="preserve"><value>Zuschlag</value></data>
+  <data name="Premiums" xml:space="preserve"><value>Zuschläge</value></data>
+  <data name="PremiumsHelp" xml:space="preserve"><value>Feste Stundenzuschläge je Band (Nacht, Gefahr, Leitung); sie addieren sich und multiplizieren nie.</value></data>
+  <data name="Preview" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Qualified" xml:space="preserve"><value>Qualifiziert</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Menge</value></data>
+  <data name="Rate" xml:space="preserve"><value>Satz</value></data>
+  <data name="RateEntry" xml:space="preserve"><value>Tarifeintrag</value></data>
+  <data name="RateSchedule" xml:space="preserve"><value>Tarifplan</value></data>
+  <data name="RateSchedules" xml:space="preserve"><value>Tarifpläne</value></data>
+  <data name="RateSchedulesIntro" xml:space="preserve"><value>Tariftabellen für Auftragnehmer: Zertifizierungen, Mannschaften, Fahrzeuge, Ausrüstung, Zuschläge und die Abrechnungsregeln.</value></data>
+  <data name="Remove" xml:space="preserve"><value>Entfernen</value></data>
+  <data name="Reopen" xml:space="preserve"><value>Wieder öffnen</value></data>
+  <data name="Requested" xml:space="preserve"><value>Angefragt</value></data>
+  <data name="RequestedEndOn" xml:space="preserve"><value>Gewünschtes Ende</value></data>
+  <data name="RequestedStartOn" xml:space="preserve"><value>Gewünschter Beginn</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>Erforderliche Zertifizierungen</value></data>
+  <data name="RequiredCertificationsHelp" xml:space="preserve"><value>JSON-Liste aus Code + Mindestanzahl, die eine Mannschaft dieser Stärke mitführen muss.</value></data>
+  <data name="ResendBid" xml:space="preserve"><value>Angebot erneut senden</value></data>
+  <data name="ResponseTimeMinutes" xml:space="preserve"><value>Reaktionszeit (Minuten)</value></data>
+  <data name="RoleMissing" xml:space="preserve"><value>Rolle nicht vorhanden</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Rundung (Minuten)</value></data>
+  <data name="Satisfied" xml:space="preserve"><value>Erfüllt</value></data>
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Die Änderung konnte nicht gespeichert werden.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
+  <data name="Schedule" xml:space="preserve"><value>Plan</value></data>
+  <data name="ScheduleDeploymentCall" xml:space="preserve"><value>Einsatz planen</value></data>
+  <data name="Seat" xml:space="preserve"><value>Platz</value></data>
+  <data name="Seats" xml:space="preserve"><value>Plätze</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>Kontakt auswählen…</value></data>
+  <data name="SendBid" xml:space="preserve"><value>Angebot senden</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Senden an</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Gesendet</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>Serviceanfragenummer</value></data>
+  <data name="SetStatusActive" xml:space="preserve"><value>Aktivieren</value></data>
+  <data name="SetStatusDraft" xml:space="preserve"><value>Zurück zum Entwurf</value></data>
+  <data name="SetStatusExpired" xml:space="preserve"><value>Als abgelaufen markieren</value></data>
+  <data name="SetStatusSuspended" xml:space="preserve"><value>Aussetzen</value></data>
+  <data name="SetStatusTerminated" xml:space="preserve"><value>Beenden</value></data>
+  <data name="ShowActive" xml:space="preserve"><value>Aktive anzeigen</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>Alle anzeigen</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Reihenfolge</value></data>
+  <data name="Stage" xml:space="preserve"><value>Phase</value></data>
+  <data name="StageBidSubmission" xml:space="preserve"><value>Angebotsabgabe</value></data>
+  <data name="StageDailyTimeReport" xml:space="preserve"><value>Tagesbericht</value></data>
+  <data name="StageDeploymentStart" xml:space="preserve"><value>Einsatzbeginn</value></data>
+  <data name="StageInvoiceSubmission" xml:space="preserve"><value>Rechnungseinreichung</value></data>
+  <data name="StartOn" xml:space="preserve"><value>Beginn</value></data>
+  <data name="State" xml:space="preserve"><value>Zustand</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Subtotal" xml:space="preserve"><value>Zwischensumme</value></data>
+  <data name="TaxEstimated" xml:space="preserve"><value>Steuer (geschätzt)</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Steuerpflichtig</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Zahlungsziel (Tage netto)</value></data>
+  <data name="TermsText" xml:space="preserve"><value>Bedingungen</value></data>
+  <data name="ThresholdEnd" xml:space="preserve"><value>Bis (Std.)</value></data>
+  <data name="ThresholdStart" xml:space="preserve"><value>Ab (Std.)</value></data>
+  <data name="ThroughDate" xml:space="preserve"><value>Bis zum Datum</value></data>
+  <data name="TierMax" xml:space="preserve"><value>Stufe max (Std.)</value></data>
+  <data name="TierMin" xml:space="preserve"><value>Stufe min (Std.)</value></data>
+  <data name="Title" xml:space="preserve"><value>Titel</value></data>
+  <data name="TotalBeforeTax" xml:space="preserve"><value>Summe vor Steuern</value></data>
+  <data name="TravelDayCapHours" xml:space="preserve"><value>Reiseobergrenze pro Tag (Stunden)</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>Anreise per Flugzeug</value></data>
+  <data name="UnassignedHelp" xml:space="preserve"><value>Ohne Einheitenplatz eingesetzte Personen werden nach ihrem eigenen Zertifizierungseintrag abgerechnet.</value></data>
+  <data name="UnassignedPersonnel" xml:space="preserve"><value>Nicht zugeordnetes Personal</value></data>
+  <data name="Unit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="UnitType" xml:space="preserve"><value>Einheitentyp</value></data>
+  <data name="Units" xml:space="preserve"><value>Einheiten</value></data>
+  <data name="UnsafeStandDownHours" xml:space="preserve"><value>Sicherheitsstopp (Stunden)</value></data>
+  <data name="UseDefaultSchedule" xml:space="preserve"><value>Standardplan verwenden</value></data>
+  <data name="ValidUntil" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="ViewBid" xml:space="preserve"><value>Angebot ansehen</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>Bereits auf diesem Dienstplan.</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>Eine erforderliche Zertifizierung läuft während des Einsatzes ab.</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>Einer eingesetzten Person fehlt eine erforderliche Zertifizierung.</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>Inventarausgabe fehlgeschlagen; der Artikel wurde als freie Position hinzugefügt.</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>Eine eingesetzte Person hat nicht die Rolle des Platzes.</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>Eine Person oder Einheit ist bereits in einem überlappenden Einsatz.</value></data>
+  <data name="Window" xml:space="preserve"><value>Zeitraum</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>Zurückziehen</value></data>
+  <data name="WizardEquipmentHelp" xml:space="preserve"><value>Je Einheit: freie Positionen oder Inventar-Asset-IDs mit einem Tagessatzeintrag aus dem Plan.</value></data>
+  <data name="WizardIntro" xml:space="preserve"><value>Angebot Nr. {0} — {1}: Einsatzdaten, Einheiten, Mannschaftsplätze, Ausrüstung, Sätze, Prüfung.</value></data>
+  <data name="WizardRatesHelp" xml:space="preserve"><value>Bestätigen Sie Zertifizierungseintrag und Zuschläge je Person, die Mannschaftsfamilie je Einheit und den Eintrag je Ausrüstung; der Tageswert ist eine Schätzung.</value></data>
+  <data name="WizardSeatsHelp" xml:space="preserve"><value>Besetzen Sie die Plätze aus dem Dienstplan: Status, Besetzung, Rollen und Zertifizierungen je Person; abgelaufene oder ausgesetzte Zertifizierungen rot, im Zeitraum ablaufende gelb, überlappende Einsätze markiert. Teilbesetzte Mannschaften werden nach der tatsächlichen Stärke abgerechnet.</value></data>
+  <data name="WizardStepCall" xml:space="preserve"><value>Einsatzdaten</value></data>
+  <data name="WizardStepEquipment" xml:space="preserve"><value>Ausrüstung</value></data>
+  <data name="WizardStepRates" xml:space="preserve"><value>Sätze &amp; Zuschläge</value></data>
+  <data name="WizardStepReview" xml:space="preserve"><value>Prüfen &amp; erstellen</value></data>
+  <data name="WizardStepSeats" xml:space="preserve"><value>Mannschaftsplätze</value></data>
+  <data name="WizardStepUnits" xml:space="preserve"><value>Einheiten</value></data>
+  <data name="WizardUnitsHelp" xml:space="preserve"><value>Markieren Sie die einzusetzenden Einheiten und ordnen Sie jede einer Angebotsposition zu; deren Mannschaftsfamilie bestimmt den Satz.</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="bids_already_converted" xml:space="preserve"><value>Dieses Angebot hat bereits einen Einsatz.</value></data>
+  <data name="bids_call_name_required" xml:space="preserve"><value>Die Einsatzmeldung braucht einen Namen.</value></data>
+  <data name="bids_contact_not_found" xml:space="preserve"><value>Der Kundenkontakt wurde nicht gefunden.</value></data>
+  <data name="bids_contact_required" xml:space="preserve"><value>Wählen Sie den Kundenkontakt.</value></data>
+  <data name="bids_contract_contact_mismatch" xml:space="preserve"><value>Der Vertrag gehört zu einem anderen Kontakt.</value></data>
+  <data name="bids_contract_not_found" xml:space="preserve"><value>Der Vertrag wurde nicht gefunden.</value></data>
+  <data name="bids_dates_invalid" xml:space="preserve"><value>Das gewünschte Ende liegt vor dem gewünschten Beginn.</value></data>
+  <data name="bids_discount_invalid" xml:space="preserve"><value>Der Rabatt muss zwischen 0 und 100 Prozent liegen.</value></data>
+  <data name="bids_email_not_sent" xml:space="preserve"><value>Die E-Mail wurde nicht gesendet; prüfen Sie die Adresse und die E-Mail-Einstellungen der Abteilung.</value></data>
+  <data name="bids_line_invalid" xml:space="preserve"><value>Eine Position braucht eine Beschreibung, eine positive Menge und einen nicht negativen Satz.</value></data>
+  <data name="bids_locked" xml:space="preserve"><value>Nur Entwürfe oder eingereichte Angebote können bearbeitet werden.</value></data>
+  <data name="bids_no_lines" xml:space="preserve"><value>Fügen Sie vor dem Einreichen mindestens eine Position hinzu.</value></data>
+  <data name="bids_no_recipient_email" xml:space="preserve"><value>Keine Empfänger-E-Mail: geben Sie eine ein oder hinterlegen Sie die Rechnungs-E-Mail des Kontakts.</value></data>
+  <data name="bids_not_accepted" xml:space="preserve"><value>Nur ein angenommenes Angebot kann geplant werden.</value></data>
+  <data name="bids_not_found" xml:space="preserve"><value>Das Angebot wurde nicht gefunden.</value></data>
+  <data name="bids_pdf_unavailable" xml:space="preserve"><value>Das Angebots-PDF konnte nicht erzeugt werden.</value></data>
+  <data name="bids_protected_write_refused" xml:space="preserve"><value>Advanced Data Protection hat das Schreiben abgelehnt; prüfen Sie den Schutzstatus der Abteilung.</value></data>
+  <data name="bids_schedule_not_found" xml:space="preserve"><value>Der Tarifplan wurde nicht gefunden.</value></data>
+  <data name="bids_status_transition_invalid" xml:space="preserve"><value>Dieser Statuswechsel ist vom aktuellen Angebotsstatus aus nicht erlaubt.</value></data>
+  <data name="bids_title_required" xml:space="preserve"><value>Das Angebot braucht einen Titel.</value></data>
+  <data name="compliance_dates_invalid" xml:space="preserve"><value>Das Ablaufdatum liegt vor dem Gültigkeitsbeginn.</value></data>
+  <data name="compliance_file_protected" xml:space="preserve"><value>Die Datei ist geschützt; legen Sie sie zuerst mit einer Protected-Data-Freigabe offen.</value></data>
+  <data name="compliance_file_too_large" xml:space="preserve"><value>Die Datei ist größer als 30 MB.</value></data>
+  <data name="compliance_file_type" xml:space="preserve"><value>Dieser Dateityp ist nicht erlaubt.</value></data>
+  <data name="compliance_name_required" xml:space="preserve"><value>Das Dokument braucht einen Namen.</value></data>
+  <data name="compliance_not_found" xml:space="preserve"><value>Das Compliance-Dokument wurde nicht gefunden.</value></data>
+  <data name="compliance_type_invalid" xml:space="preserve"><value>Der Dokumenttyp ist ungültig.</value></data>
+  <data name="contractor_deployment_no_contact" xml:space="preserve"><value>Der Einsatz hat keinen Kundenkontakt zur Rechnungsstellung.</value></data>
+  <data name="contractor_deployment_not_billable" xml:space="preserve"><value>Nur ein abrechenbarer Einsatz kann in Rechnung gestellt werden.</value></data>
+  <data name="contractor_no_charges" xml:space="preserve"><value>Es gibt nichts abzurechnen: keine genehmigten, nicht abgerechneten Tagesberichte haben Kosten ergeben.</value></data>
+  <data name="contracts_active" xml:space="preserve"><value>Ein aktiver Vertrag kann nicht gelöscht werden; beenden Sie ihn zuerst.</value></data>
+  <data name="contracts_contact_not_found" xml:space="preserve"><value>Der Kundenkontakt wurde nicht gefunden.</value></data>
+  <data name="contracts_contact_required" xml:space="preserve"><value>Wählen Sie den Kundenkontakt.</value></data>
+  <data name="contracts_dates_invalid" xml:space="preserve"><value>Das Enddatum liegt vor dem Startdatum.</value></data>
+  <data name="contracts_discount_invalid" xml:space="preserve"><value>Der Rabatt muss zwischen 0 und 100 Prozent liegen.</value></data>
+  <data name="contracts_ended" xml:space="preserve"><value>Das Enddatum des Vertrags ist vorbei; verlängern Sie ihn vor der Aktivierung.</value></data>
+  <data name="contracts_name_required" xml:space="preserve"><value>Der Vertrag braucht einen Namen.</value></data>
+  <data name="contracts_not_found" xml:space="preserve"><value>Der Vertrag wurde nicht gefunden.</value></data>
+  <data name="contracts_protected_write_refused" xml:space="preserve"><value>Advanced Data Protection hat das Schreiben abgelehnt; prüfen Sie den Schutzstatus der Abteilung.</value></data>
+  <data name="contracts_requirement_invalid" xml:space="preserve"><value>Eine Dokumentanforderung hat eine unbekannte Phase oder einen unbekannten Dokumenttyp.</value></data>
+  <data name="contracts_status_transition_invalid" xml:space="preserve"><value>Dieser Statuswechsel ist vom aktuellen Vertragsstatus aus nicht erlaubt.</value></data>
+  <data name="contracts_type_invalid" xml:space="preserve"><value>Die Vertragsart ist ungültig.</value></data>
+  <data name="rateschedules_band_duplicate" xml:space="preserve"><value>Derselbe Bandtyp kommt im Eintrag zweimal vor.</value></data>
+  <data name="rateschedules_band_invalid" xml:space="preserve"><value>Ein Band hat einen unbekannten Typ oder einen negativen Satz.</value></data>
+  <data name="rateschedules_crew_size_required" xml:space="preserve"><value>Ein Mannschaftseintrag braucht eine Stärke.</value></data>
+  <data name="rateschedules_dates_invalid" xml:space="preserve"><value>Das Ablaufdatum liegt vor dem Gültigkeitsbeginn.</value></data>
+  <data name="rateschedules_entry_invalid" xml:space="preserve"><value>Eintragsart oder Abrechnungsbasis ist ungültig.</value></data>
+  <data name="rateschedules_entry_name_required" xml:space="preserve"><value>Der Eintrag braucht einen Namen.</value></data>
+  <data name="rateschedules_entry_not_found" xml:space="preserve"><value>Der Tarifeintrag wurde nicht gefunden.</value></data>
+  <data name="rateschedules_import_invalid" xml:space="preserve"><value>Das JSON ist kein gültiger Tarifplan-Export.</value></data>
+  <data name="rateschedules_in_use" xml:space="preserve"><value>Der Plan wird von einem aktiven oder Entwurfsvertrag verwendet und kann nicht gelöscht werden.</value></data>
+  <data name="rateschedules_name_required" xml:space="preserve"><value>Der Plan braucht einen Namen.</value></data>
+  <data name="rateschedules_not_found" xml:space="preserve"><value>Der Tarifplan wurde nicht gefunden.</value></data>
+  <data name="rateschedules_policy_invalid" xml:space="preserve"><value>Das Regel-JSON ist ungültig.</value></data>
+  <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Zuschläge dürfen nicht negativ sein.</value></data>
+  <data name="rateschedules_premium_name_required" xml:space="preserve"><value>Der Zuschlag braucht einen Namen.</value></data>
+  <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Der Zuschlag wurde nicht gefunden.</value></data>
+</root>

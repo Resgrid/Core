@@ -123,6 +123,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var entries = (input.Entries ?? new List<TimeEntryData>()).Select(e => new DeploymentTimeEntry
 				{
+					DeploymentTimeEntryId = string.IsNullOrWhiteSpace(e.Id) ? null : e.Id,
 					DeploymentPersonnelId = e.DeploymentPersonnelId, DeploymentUnitId = e.DeploymentUnitId, DeploymentEquipmentId = e.DeploymentEquipmentId, EntryType = e.EntryType, StartTime = e.StartTime, EndTime = e.EndTime,
 					PaidBreakMinutes = e.PaidBreakMinutes, UnpaidBreakMinutes = e.UnpaidBreakMinutes, CrewSizeSnapshot = e.CrewSizeSnapshot, CertificationCode = e.CertificationCode, MileageKm = e.MileageKm, FuelDeductionLitres = e.FuelDeductionLitres,
 					AgencySuppliedMeals = e.AgencySuppliedMeals, AgencySuppliedAccommodation = e.AgencySuppliedAccommodation, Notes = e.Notes, SortOrder = e.SortOrder
@@ -289,8 +290,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			Id = r.DeploymentTimeReportId, DeploymentId = r.DeploymentId, ReportNumber = r.ReportNumber, ReportDate = r.ReportDate, Status = r.Status, IncidentNumber = r.IncidentNumber, ResourceOrderNumber = r.ResourceOrderNumber,
 			RequestNumber = r.RequestNumber, CostCode = r.CostCode, PointOfHire = r.PointOfHire, NoClear8 = r.NoClear8, UnsafeConditionsStandDown = r.UnsafeConditionsStandDown, ContractorSignedByUserId = r.ContractorSignedByUserId,
-			ContractorSignedOn = r.ContractorSignedOn, CustomerSignerName = ProtectedDataEnvelope.SafeDisplay(r.CustomerSignerName), CustomerSignedOn = r.CustomerSignedOn, SubmittedByUserId = r.SubmittedByUserId, SubmittedOn = r.SubmittedOn,
-			ApprovedByUserId = r.ApprovedByUserId, ApprovedOn = r.ApprovedOn, InvoiceId = r.InvoiceId, RmsExternalOrderFillId = r.RmsExternalOrderFillId, Notes = r.Notes, IsProtected = r.IsProtected, AddedOn = r.AddedOn, UpdatedOn = r.EditedOn ?? r.AddedOn,
+			ContractorSignedOn = r.ContractorSignedOn, CustomerSignerName = r.CustomerSignerName, CustomerSignedOn = r.CustomerSignedOn, SubmittedByUserId = r.SubmittedByUserId, SubmittedOn = r.SubmittedOn,
+			ApprovedByUserId = r.ApprovedByUserId, ApprovedOn = r.ApprovedOn, InvoiceId = r.InvoiceId, RmsExternalOrderFillId = r.RmsExternalOrderFillId, Notes = r.Notes, AddedOn = r.AddedOn, UpdatedOn = r.EditedOn ?? r.AddedOn,
 			Entries = r.Entries.Select(e => new TimeEntryData
 			{
 				Id = e.DeploymentTimeEntryId, SubjectType = e.SubjectType, DeploymentPersonnelId = e.DeploymentPersonnelId, DeploymentUnitId = e.DeploymentUnitId, DeploymentEquipmentId = e.DeploymentEquipmentId, EntryType = e.EntryType,
@@ -304,7 +305,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		internal static ExpenseData MapExpense(DeploymentExpense e) => new ExpenseData
 		{
 			Id = e.DeploymentExpenseId, DeploymentId = e.DeploymentId, TimeReportId = e.DeploymentTimeReportId, ExpenseDate = e.ExpenseDate, ExpenseType = e.ExpenseType, MealCode = e.MealCode, City = e.City,
-			Description = ProtectedDataEnvelope.SafeDisplay(e.Description), Amount = e.Amount, Currency = e.Currency, PreApproved = e.PreApproved, Billable = e.Billable, ReceiptAttachmentId = e.ReceiptAttachmentId, IsProtected = e.IsProtected,
+			Description = e.Description, Amount = e.Amount, Currency = e.Currency, PreApproved = e.PreApproved, Billable = e.Billable, ReceiptAttachmentId = e.ReceiptAttachmentId,
 			AddedOn = e.AddedOn, UpdatedOn = e.EditedOn ?? e.AddedOn
 		};
 

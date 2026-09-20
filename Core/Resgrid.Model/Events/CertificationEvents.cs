@@ -72,6 +72,65 @@ namespace Resgrid.Model.Events
 		public int DaysUntilExpiry { get; set; }
 	}
 
+	/// <summary>Trigger 183: a personnel certification record was soft-deleted.</summary>
+	public class CertificationRemovedEvent
+	{
+		public int DepartmentId { get; set; }
+		public PersonnelCertification Certification { get; set; }
+		public string TypeCode { get; set; }
+		public string TypeName { get; set; }
+		public string RemovedByUserId { get; set; }
+	}
+
+	/// <summary>Trigger 184: a renewal credit (CEU / con-ed hours) was logged against a personnel certification.</summary>
+	public class CertificationCreditAddedEvent
+	{
+		public int DepartmentId { get; set; }
+		public PersonnelCertification Certification { get; set; }
+		public string TypeCode { get; set; }
+		public string TypeName { get; set; }
+		public int PersonnelCertificationCreditId { get; set; }
+		public DateTime CreditDate { get; set; }
+		public decimal Hours { get; set; }
+		public string Category { get; set; }
+		public string AddedByUserId { get; set; }
+	}
+
+	/// <summary>Trigger 180: a unit certification record was created.</summary>
+	public class UnitCertificationAddedEvent
+	{
+		public int DepartmentId { get; set; }
+		public UnitCertification Certification { get; set; }
+		public string UnitName { get; set; }
+		public string TypeCode { get; set; }
+		public string TypeName { get; set; }
+	}
+
+	/// <summary>Trigger 181: a unit certification's status changed (suspend / reinstate / re-activate on renewal).</summary>
+	public class UnitCertificationStatusChangedEvent
+	{
+		public int DepartmentId { get; set; }
+		public UnitCertification Certification { get; set; }
+		public string UnitName { get; set; }
+		public string TypeCode { get; set; }
+		public string TypeName { get; set; }
+		public int OldStatus { get; set; }
+		public int NewStatus { get; set; }
+		public string Reason { get; set; }
+		public string ChangedByUserId { get; set; }
+	}
+
+	/// <summary>Trigger 182: a unit certification record was soft-deleted.</summary>
+	public class UnitCertificationRemovedEvent
+	{
+		public int DepartmentId { get; set; }
+		public UnitCertification Certification { get; set; }
+		public string UnitName { get; set; }
+		public string TypeCode { get; set; }
+		public string TypeName { get; set; }
+		public string RemovedByUserId { get; set; }
+	}
+
 	/// <summary>Trigger 93 / notification 29: the worker flipped a unit certification to Expired.</summary>
 	public class UnitCertificationExpiredEvent
 	{

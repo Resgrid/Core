@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Resgrid.Model
@@ -394,10 +395,25 @@ namespace Resgrid.Model
 		public List<DepartmentCertificationType> UnitTypes { get; set; } = new List<DepartmentCertificationType>();
 		public List<CertificationDashboardCell> PersonCells { get; set; } = new List<CertificationDashboardCell>();
 		public List<CertificationDashboardCell> UnitCells { get; set; } = new List<CertificationDashboardCell>();
+		/// <summary>The "expiring within" window in days (the longest notification lead) the counts below use.</summary>
+		public int Horizon { get; set; }
 		public int ExpiredCount { get; set; }
 		public int ExpiringCount { get; set; }
 		public int SuspendedCount { get; set; }
 		public int PendingVerificationCount { get; set; }
+
+		/// <summary>
+		/// Recomputes the four totals from the cells that are present, so a caller that trims the cells (the compliance
+		/// report applies the personnel visibility matrix) does not keep department-wide numbers over a filtered matrix.
+		/// </summary>
+		public void RecountTotals()
+		{
+			var all = PersonCells.Concat(UnitCells).ToList();
+			ExpiredCount = all.Count(c => c.Status == (int)PersonnelCertificationStatuses.Expired || (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry < 0));
+			ExpiringCount = all.Count(c => c.Status == (int)PersonnelCertificationStatuses.Active && c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry >= 0 && c.DaysUntilExpiry <= Horizon);
+			SuspendedCount = PersonCells.Count(c => c.Status == (int)PersonnelCertificationStatuses.Suspended || c.Status == (int)PersonnelCertificationStatuses.Revoked) + UnitCells.Count(c => c.Status == (int)UnitCertificationStatuses.Suspended);
+			PendingVerificationCount = PersonCells.Count(c => c.Status == (int)PersonnelCertificationStatuses.PendingVerification);
+		}
 	}
 
 	/// <summary>A seed template for a department certification type (plan D1.2).</summary>

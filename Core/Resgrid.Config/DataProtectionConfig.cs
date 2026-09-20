@@ -55,10 +55,12 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Purposes the broker's workload decrypt lane (POST api/v1/broker/workload/decrypt?purpose=) accepts, comma
 		/// separated (RMS plan section 5.9.4). Each purpose is an egress the department acknowledged in the
-		/// application before the caller reaches the broker: neris-submission (worker 41) and records-export
-		/// (worker 45 / Workflow renders). Empty disables the lane; callers fail closed with workload_purpose_denied.
+		/// application before the caller reaches the broker: neris-submission (worker 41), records-export
+		/// (worker 45 / Workflow renders) and invoicing (invoice delivery, pay links and deployment finance: the
+		/// Workforce &amp; Business Operations plan's document renders and the DTR void-reason append). Empty
+		/// disables the lane; callers fail closed with workload_purpose_denied.
 		/// </summary>
-		public static string BrokerWorkloadPurposes = "neris-submission,records-export";
+		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing";
 
 		/// <summary>True on the broker host to run the ADP migration coordinator sweep there (the only
 		/// host with a real KMS adapter). Workers.Console keeps its sweep for liveness/offboarding

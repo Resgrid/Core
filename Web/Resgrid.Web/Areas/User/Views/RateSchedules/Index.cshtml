@@ -1,0 +1,72 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.RateScheduleIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RateSchedules"];
+    ViewData["Title"] = localizer["RateSchedules"].Value;
+    ViewData["Subtitle"] = localizer["RateSchedulesIntro"].Value;
+    ViewData["RootController"] = "RateSchedules";
+    ViewData["RootTitle"] = localizer["RateSchedules"].Value;
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["RateSchedules"]</h5>
+            <div class="ibox-tools">
+                <a asp-action="Index" asp-route-all="@(Model.IncludeInactive ? "false" : "true")" class="btn btn-default btn-xs">@(Model.IncludeInactive ? localizer["ShowActive"] : localizer["ShowAll"])</a>
+                @if (Model.CanManageRates)
+                {
+                    <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#importModal"><i class="fa fa-upload"></i> @localizer["ImportJson"]</button>
+                    <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewRateSchedule"]</a>
+                }
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpRateSchedules"]</div>
+            @if (Model.Schedules.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoRateSchedules"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Currency"]</th><th>@localizer["EffectiveOn"]</th><th>@localizer["ExpiresOn"]</th><th>@localizer["Active"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var s in Model.Schedules)
+                        {
+                            <tr>
+                                <td><a asp-action="Edit" asp-route-id="@s.RateScheduleId">@s.Name</a>@if (!string.IsNullOrWhiteSpace(s.Description)) { <br /><small class="text-muted">@s.Description</small> }</td>
+                                <td>@s.Currency</td>
+                                <td>@(s.EffectiveOn.HasValue ? s.EffectiveOn.Value.ToString("yyyy-MM-dd") : "—")</td>
+                                <td>@(s.ExpiresOn.HasValue ? s.ExpiresOn.Value.ToString("yyyy-MM-dd") : "—")</td>
+                                <td>@if (s.IsActive) { <span class="label label-primary">@localizer["Active"]</span> } else { <span class="label label-default">@localizer["Inactive"]</span> }</td>
+                                <td class="text-right"><a asp-action="Edit" asp-route-id="@s.RateScheduleId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["Open"]</a> <a asp-action="Export" asp-route-id="@s.RateScheduleId" class="btn btn-xs btn-default"><i class="fa fa-download"></i> @localizer["ExportJson"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.CanManageRates)
+{
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form method="post" asp-action="Import" enctype="multipart/form-data" class="modal-content">
+                @Html.AntiForgeryToken()
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">@localizer["ImportJson"]</h4></div>
+                <div class="modal-body">
+                    <p class="text-muted">@localizer["ImportJsonHelp"]</p>
+                    <div class="form-group"><label>@localizer["File"]</label><input type="file" name="file" accept=".json,application/json" class="form-control" /></div>
+                    <div class="form-group"><label>@localizer["OrPasteJson"]</label><textarea name="json" class="form-control" rows="6"></textarea></div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Import"]</button></div>
+            </form>
+        </div>
+    </div>
+}

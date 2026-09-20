@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace Resgrid.Web.Services.Models.v4.Deployments
 {
 	// Workforce & Business Operations plan, Phase C5 (deployment core). Every data row carries UpdatedOn for mobile delta-sync.
-	// Protected values (ADP catalog 28) read REDACTED; attachment bytes never ride these endpoints except the receipt upload input.
+	// Only the deployment's internal Notes are under ADP (catalog 27) and read REDACTED without a grant; DTRs, expenses and
+	// attachments are sent to customers and are stored whole. Attachment bytes never ride these endpoints except the receipt upload input.
 
 	public class DeploymentAccessResult : StandardApiResponseV4Base
 	{
@@ -229,7 +230,6 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public string FileName { get; set; }
 		public string FileType { get; set; }
 		public int? FileSize { get; set; }
-		public bool IsProtected { get; set; }
 		public DateTime AddedOn { get; set; }
 		public string AddedByUserId { get; set; }
 	}
@@ -272,7 +272,6 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public string InvoiceId { get; set; }
 		public string RmsExternalOrderFillId { get; set; }
 		public string Notes { get; set; }
-		public bool IsProtected { get; set; }
 		public DateTime AddedOn { get; set; }
 		public DateTime? UpdatedOn { get; set; }
 		public List<TimeEntryData> Entries { get; set; } = new List<TimeEntryData>();
@@ -376,7 +375,6 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public bool PreApproved { get; set; }
 		public bool Billable { get; set; }
 		public int? ReceiptAttachmentId { get; set; }
-		public bool IsProtected { get; set; }
 		public DateTime AddedOn { get; set; }
 		public DateTime? UpdatedOn { get; set; }
 	}

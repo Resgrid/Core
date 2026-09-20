@@ -154,6 +154,7 @@
   <data name="RemovalDue" xml:space="preserve"><value>Entfernung am {0}</value></data>
   <data name="RoleMembersBlocked" xml:space="preserve"><value>Diese Mitglieder besitzen die für diese Rolle erforderlichen Zertifizierungen nicht und wurden nicht hinzugefügt: {0}</value></data>
   <data name="RoleMembersWarned" xml:space="preserve"><value>Mit Warnung hinzugefügt – fehlende Zertifizierungen für diese Rolle: {0}</value></data>
+  <data name="RoleMembersNotInDepartment" xml:space="preserve"><value>Diese Mitglieder gehören nicht zu dieser Abteilung und wurden nicht hinzugefügt: {0}</value></data>
   <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Das Mitglied wurde angelegt, aber eine oder mehrere Rollen wurden nicht zugewiesen: Es fehlen die für diese Rollen erforderlichen Zertifizierungen.</value></data>
   <data name="UnitCertifications" xml:space="preserve"><value>Einheitszertifizierungen</value></data>
   <data name="UnitCertificationsFor" xml:space="preserve"><value>Zertifizierungen und Prüfungen – {0}</value></data>
@@ -219,4 +220,9 @@
   <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Das Mitglied besitzt die für diese Rolle erforderlichen Zertifizierungen nicht.</value></data>
   <data name="certifications_file_type" xml:space="preserve"><value>Dieser Dateityp kann nicht hochgeladen werden.</value></data>
   <data name="certifications_file_too_large" xml:space="preserve"><value>Die Datei ist größer als 10 MB.</value></data>
+  <data name="UnitCertificationAdded" xml:space="preserve"><value>Einheitszertifizierung hinzugefügt</value></data>
+  <data name="UnitCertificationStatusChanged" xml:space="preserve"><value>Status der Einheitszertifizierung geändert</value></data>
+  <data name="UnitCertificationRemoved" xml:space="preserve"><value>Einheitszertifizierung entfernt</value></data>
+  <data name="CertificationRemoved" xml:space="preserve"><value>Zertifizierung entfernt</value></data>
+  <data name="CertificationCreditAdded" xml:space="preserve"><value>Fortbildungspunkte hinzugefügt</value></data>
 </root>

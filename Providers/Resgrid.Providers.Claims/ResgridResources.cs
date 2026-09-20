@@ -208,6 +208,12 @@ namespace Resgrid.Providers.Claims
 		public const string Deployments_View = "Deployments_View";
 		public const string Deployments_Update = "Deployments_Update";
 		public const string TimeReports_Approve = "TimeReports_Approve";
+		public const string Bids_View = "Bids_View";
+		public const string Bids_Create = "Bids_Create";
+		public const string Bids_Update = "Bids_Update";
+		public const string Bids_Delete = "Bids_Delete";
+		public const string ServiceContracts_View = "ServiceContracts_View";
+		public const string ServiceContracts_Update = "ServiceContracts_Update";
 		public const string Checklist_Update = "Checklist_Update";
 		public const string ChecklistResults_View = "ChecklistResults_View";
 		public const string RecordDefinition_Update = "RecordDefinition_Update";

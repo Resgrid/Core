@@ -154,6 +154,7 @@
   <data name="RemovalDue" xml:space="preserve"><value>Вилучення {0}</value></data>
   <data name="RoleMembersBlocked" xml:space="preserve"><value>Ці члени не мають сертифікатів, яких вимагає роль, і не були додані: {0}</value></data>
   <data name="RoleMembersWarned" xml:space="preserve"><value>Додано з попередженням – бракує сертифікатів для цієї ролі: {0}</value></data>
+  <data name="RoleMembersNotInDepartment" xml:space="preserve"><value>Ці учасники не належать до цього підрозділу й не були додані: {0}</value></data>
   <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Члена створено, але одну чи кілька ролей не призначено: він не має сертифікатів, яких вимагають ці ролі.</value></data>
   <data name="UnitCertifications" xml:space="preserve"><value>Сертифікати підрозділу</value></data>
   <data name="UnitCertificationsFor" xml:space="preserve"><value>Сертифікати та огляди – {0}</value></data>
@@ -219,4 +220,9 @@
   <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Член не має сертифікатів, яких вимагає ця роль.</value></data>
   <data name="certifications_file_type" xml:space="preserve"><value>Цей тип файлу не можна завантажити.</value></data>
   <data name="certifications_file_too_large" xml:space="preserve"><value>Файл більший за 10 МБ.</value></data>
+  <data name="UnitCertificationAdded" xml:space="preserve"><value>Додано сертифікацію підрозділу</value></data>
+  <data name="UnitCertificationStatusChanged" xml:space="preserve"><value>Змінено статус сертифікації підрозділу</value></data>
+  <data name="UnitCertificationRemoved" xml:space="preserve"><value>Вилучено сертифікацію підрозділу</value></data>
+  <data name="CertificationRemoved" xml:space="preserve"><value>Вилучено сертифікацію</value></data>
+  <data name="CertificationCreditAdded" xml:space="preserve"><value>Додано кредити сертифікації</value></data>
 </root>

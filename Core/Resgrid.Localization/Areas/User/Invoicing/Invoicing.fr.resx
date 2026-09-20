@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>L'encaissement en ligne est désactivé sur ce serveur.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe indique que Resgrid n'a plus accès à ce compte. Reconnectez-le pour reprendre.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Les données protégées de cet enregistrement n'ont pas pu être sécurisées ; la modification n'a pas été enregistrée.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Facture protégée</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Identité de facturation protégée</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Facturé à partir de ce rapport de temps quotidien</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Envoyer avec le dossier</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Joint le PDF de facture, les PDF des rapports de temps, les reçus et les documents de conformité exigés par le contrat, en un seul zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Télécharger le dossier</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Ouvrir le déploiement</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Grille tarifaire par défaut</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Facturation contractant : utilisée pour les offres et déploiements de ce client quand aucun contrat ne désigne de grille.</value></data>
 </root>

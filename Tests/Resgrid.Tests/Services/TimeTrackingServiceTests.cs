@@ -100,10 +100,11 @@ namespace Resgrid.Tests.Services
 			_reports.Setup(r => r.GetByDeploymentAndDateAsync(It.IsAny<string>(), It.IsAny<DateTime>())).ReturnsAsync((string id, DateTime date) => _storedReports.FirstOrDefault(t => t.DeploymentId == id && t.ReportDate == date.Date && t.Status != (int)DeploymentTimeReportStatuses.Void));
 			_reports.Setup(r => r.GetUnbilledApprovedAsync(DeptId, It.IsAny<string>())).ReturnsAsync((int _, string id) => _storedReports.Where(t => t.Status == (int)DeploymentTimeReportStatuses.Approved && t.InvoiceId == null && (id == null || t.DeploymentId == id)).ToList());
 			_entries.Setup(r => r.SaveOrUpdateAsync(It.IsAny<DeploymentTimeEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ReturnsAsync((DeploymentTimeEntry e, CancellationToken _, bool __) => { e.DeploymentTimeEntryId ??= Guid.NewGuid().ToString(); _storedEntries.Add(e); return e; });
+				.ReturnsAsync((DeploymentTimeEntry e, CancellationToken _, bool __) => { e.DeploymentTimeEntryId ??= Guid.NewGuid().ToString(); _storedEntries.RemoveAll(x => x.DeploymentTimeEntryId == e.DeploymentTimeEntryId); _storedEntries.Add(e); return e; });
 			_entries.Setup(r => r.GetByReportAsync(It.IsAny<string>())).ReturnsAsync((string id) => _storedEntries.Where(e => e.DeploymentTimeReportId == id).OrderBy(e => e.SortOrder).ToList());
 			_entries.Setup(r => r.GetByDeploymentAsync(It.IsAny<string>())).ReturnsAsync((string id) => _storedEntries.Where(e => e.DeploymentId == id).ToList());
 			_entries.Setup(r => r.DeleteByReportAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((string id, CancellationToken _) => _storedEntries.RemoveAll(e => e.DeploymentTimeReportId == id));
+			_entries.Setup(r => r.DeleteAsync(It.IsAny<DeploymentTimeEntry>(), It.IsAny<CancellationToken>())).ReturnsAsync((DeploymentTimeEntry e, CancellationToken _) => _storedEntries.RemoveAll(x => x.DeploymentTimeEntryId == e.DeploymentTimeEntryId) > 0);
 			_expenses.Setup(r => r.SaveOrUpdateAsync(It.IsAny<DeploymentExpense>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((DeploymentExpense e, CancellationToken _, bool __) => { e.DeploymentExpenseId ??= Guid.NewGuid().ToString(); _storedExpenses.RemoveAll(x => x.DeploymentExpenseId == e.DeploymentExpenseId); _storedExpenses.Add(e); return e; });
 			_expenses.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<string>(), DeptId)).ReturnsAsync((string id, int _) => _storedExpenses.FirstOrDefault(e => e.DeploymentExpenseId == id));
@@ -287,6 +288,58 @@ namespace Resgrid.Tests.Services
 			lines[0].Should().StartWith("ReportNumber,ReportDate,ReportStatus");
 			lines[1].Should().StartWith("1,2026-09-21,Draft,CA-BTU-1,O-1,E-12,CC-1,Personnel,per-1,Alice Smith,Deployment,");
 			lines[1].Should().Contain("\"hose, \"\"long\"\" lay\"");
+		}
+
+		[Test]
+		public async Task Csv_export_neutralises_spreadsheet_formulas_in_free_text_but_not_numbers()
+		{
+			var report = await _service.CreateTimeReportAsync("dep-1", DeptId, Day, Crew, null, null);
+			await _service.SaveTimeEntriesAsync(report.DeploymentTimeReportId, DeptId, new List<DeploymentTimeEntry> { Entry("per-1", 6, 14) }, Crew, null, null);
+			_storedEntries.Single().Notes = "=HYPERLINK(\"http://evil\")";
+			_storedEntries.Single().CertificationCode = "@ENGB";
+			_storedEntries.Single().FuelDeductionLitres = -12.5m;
+			_storedReports.Single().IncidentNumber = "+1";
+			var csv = await _service.ExportTimeEntriesCsvAsync("dep-1", DeptId);
+
+			var line = csv.Split('\n', StringSplitOptions.RemoveEmptyEntries)[1];
+			line.Should().Contain("\"'=HYPERLINK(\"\"http://evil\"\")\"", "a leading = is prefixed before quoting");
+			line.Should().Contain(",'@ENGB,");
+			line.Should().Contain(",'+1,");
+			line.Should().Contain(",-12.5,", "a negative number is not free text");
+		}
+
+		[Test]
+		public async Task Personnel_hours_sum_the_deployment_in_one_pass_and_skip_void_reports()
+		{
+			var live = await _service.CreateTimeReportAsync("dep-1", DeptId, Day, Crew, null, null);
+			await _service.SaveTimeEntriesAsync(live.DeploymentTimeReportId, DeptId, new List<DeploymentTimeEntry> { Entry("per-1", 6, 14), Entry("unit-1", 6, 14) }, Crew, null, null);
+			var voided = await _service.CreateTimeReportAsync("dep-1", DeptId, Day.AddDays(1), Crew, null, null);
+			await _service.SaveTimeEntriesAsync(voided.DeploymentTimeReportId, DeptId, new List<DeploymentTimeEntry> { Entry("per-1", 6, 10, day: Day.AddDays(1)) }, Crew, null, null);
+			await _service.VoidTimeReportAsync(voided.DeploymentTimeReportId, DeptId, "duplicate", Approver, null, null);
+			_reports.Invocations.Clear(); _entries.Invocations.Clear();
+
+			(await _service.GetPersonnelHoursAsync("dep-1", DeptId)).Should().Be(7.5m, "8h less the 30 minute unpaid break, personnel only, the void report skipped");
+
+			_reports.Verify(r => r.GetByDeploymentAsync("dep-1"), Times.Once);
+			_entries.Verify(r => r.GetByDeploymentAsync("dep-1"), Times.Once);
+			_reports.Verify(r => r.GetByIdForDepartmentAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+			(await _service.GetPersonnelHoursAsync("dep-1", DeptId + 1)).Should().Be(0m);
+		}
+
+		[Test]
+		public async Task An_existing_expense_cannot_be_rewritten_or_relinked_from_another_deployment()
+		{
+			var expense = await _service.SaveExpenseAsync(new DeploymentExpense { DeploymentId = "dep-1", DepartmentId = DeptId, ExpenseType = (int)DeploymentExpenseTypes.Fuel, Amount = 10m }, null, null, null, Crew, null, null);
+			var other = new Deployment { DeploymentId = "dep-2", DepartmentId = DeptId, Name = "Other", Status = (int)DeploymentStatuses.Active, Currency = "USD", LocalTimeZoneId = "UTC" };
+			_deployments.Setup(r => r.GetByIdForDepartmentAsync("dep-2", DeptId)).ReturnsAsync(other);
+
+			// A caller authorized for dep-2 submits dep-1's expense id with DeploymentId = dep-2.
+			(await FluentActions.Awaiting(() => _service.SaveExpenseAsync(new DeploymentExpense { DeploymentExpenseId = expense.DeploymentExpenseId, DeploymentId = "dep-2", DepartmentId = DeptId, ExpenseType = (int)DeploymentExpenseTypes.Fuel, Amount = 999m }, null, null, null, Crew, null, null))
+				.Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("expenses_not_found");
+
+			_storedExpenses.Single().DeploymentId.Should().Be("dep-1");
+			_storedExpenses.Single().Amount.Should().Be(10m);
+			_audits.Should().NotContain(a => a.Type == AuditLogTypes.DeploymentExpenseUpdated);
 		}
 	}
 }

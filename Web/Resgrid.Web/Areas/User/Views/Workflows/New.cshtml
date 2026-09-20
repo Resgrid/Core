@@ -4,6 +4,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorStrings
 @model Resgrid.Model.Workflow
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
 @{
@@ -16,7 +17,7 @@
                         .Where(e => !usedEventTypes.Contains((int)e))
                         .Where(e => recordsTriggersAvailable || !Resgrid.Model.WorkflowTriggerEventTypes.IsRecordsTrigger(e))
                         .Where(e => !Resgrid.Model.Invoicing.DeploymentWorkflowPayload.IsReserved((int)e))
-                        .Select(e => new SelectListItem { Value = ((int)e).ToString(), Text = Resgrid.Model.Invoicing.InvoiceWorkflowPayload.IsInvoice((int)e) ? invoicingStrings[e.ToString()].Value : Resgrid.Model.Invoicing.DeploymentWorkflowPayload.IsDeployment((int)e) ? deploymentStrings[e.ToString()].Value : Resgrid.Model.Certifications.CertificationWorkflowTriggers.IsCertification((int)e) ? certificationStrings[e.ToString()].Value : Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory((int)e) ? inventoryStrings[e.ToString()].Value : Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.IsWorkOrder((int)e) ? workOrderStrings[e.ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)e) ? checklistStrings[e.ToString()].Value : e.ToString() })
+                        .Select(e => new SelectListItem { Value = ((int)e).ToString(), Text = Resgrid.Model.Invoicing.InvoiceWorkflowPayload.IsInvoice((int)e) ? invoicingStrings[e.ToString()].Value : Resgrid.Model.Invoicing.DeploymentWorkflowPayload.IsDeployment((int)e) ? deploymentStrings[e.ToString()].Value : Resgrid.Model.Invoicing.ContractorWorkflowPayload.IsContractor((int)e) ? contractorStrings[e.ToString()].Value : Resgrid.Model.Certifications.CertificationWorkflowTriggers.IsCertification((int)e) ? certificationStrings[e.ToString()].Value : Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory((int)e) ? inventoryStrings[e.ToString()].Value : Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.IsWorkOrder((int)e) ? workOrderStrings[e.ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)e) ? checklistStrings[e.ToString()].Value : e.ToString() })
                         .ToList();
     var noEventTypesAvailable = !eventTypes.Any();
 }

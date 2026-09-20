@@ -99,13 +99,37 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.DeploymentExpenseAdded:
 				case WorkflowTriggerEventType.TimeReportSubmitted:
 				case WorkflowTriggerEventType.TimeReportApproved:
+				case WorkflowTriggerEventType.TimeReportCreated:
+				case WorkflowTriggerEventType.TimeReportVoided:
+				case WorkflowTriggerEventType.DeploymentAttachmentAdded:
 					obj["deployment"] = new ScriptObject { ["id"] = "5d1e2f3a-4b5c-4d6e-8f7a-9b0c1d2e3f4a", ["name"] = "Ridge Fire strike team", ["status"] = 2, ["finance_mode"] = 2, ["call_id"] = 1042, ["incident_number"] = "CA-BTU-012345", ["resource_order_number"] = "O-1234", ["request_number"] = "E-12", ["cost_code"] = "CC-8891", ["start_on"] = "2026-09-18T14:00:00Z", ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Deployments/View/5d1e2f3a-4b5c-4d6e-8f7a-9b0c1d2e3f4a" };
 					var sampleDeployment = (ScriptObject)obj["deployment"];
 					foreach (var variable in Resgrid.Model.Invoicing.DeploymentWorkflowPayload.Variables) if (!sampleDeployment.ContainsKey(variable.Variable)) sampleDeployment[variable.Variable] = null;
 					if (eventType == WorkflowTriggerEventType.DeploymentStatusChanged) sampleDeployment["old_status"] = 1;
 					if (eventType == WorkflowTriggerEventType.DeploymentRosterChanged) { sampleDeployment["subject_type"] = 0; sampleDeployment["subject_id"] = "8e7d6c5b-4a39-4281-9f0e-1d2c3b4a5968"; sampleDeployment["subject_name"] = "J. Alvarez"; sampleDeployment["roster_action"] = "Added"; }
 					if (eventType == WorkflowTriggerEventType.DeploymentExpenseAdded) { sampleDeployment["expense_type"] = 1; sampleDeployment["expense_amount"] = 189.50m; sampleDeployment["expense_currency"] = "USD"; }
-					if (eventType is WorkflowTriggerEventType.TimeReportSubmitted or WorkflowTriggerEventType.TimeReportApproved) { sampleDeployment["report_number"] = 57; sampleDeployment["report_date"] = "2026-09-18T00:00:00Z"; sampleDeployment["report_id"] = "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"; }
+					if (eventType is WorkflowTriggerEventType.TimeReportSubmitted or WorkflowTriggerEventType.TimeReportApproved or WorkflowTriggerEventType.TimeReportCreated or WorkflowTriggerEventType.TimeReportVoided) { sampleDeployment["report_number"] = 57; sampleDeployment["report_date"] = "2026-09-18T00:00:00Z"; sampleDeployment["report_id"] = "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"; sampleDeployment["report_status"] = eventType == WorkflowTriggerEventType.TimeReportCreated ? 0 : eventType == WorkflowTriggerEventType.TimeReportSubmitted ? 1 : eventType == WorkflowTriggerEventType.TimeReportApproved ? 2 : 4; }
+					if (eventType == WorkflowTriggerEventType.DeploymentAttachmentAdded) { sampleDeployment["attachment_id"] = 312; sampleDeployment["attachment_type"] = 1; sampleDeployment["attachment_name"] = "Signed service request"; }
+					break;
+				case WorkflowTriggerEventType.BidCreated:
+				case WorkflowTriggerEventType.BidSent:
+				case WorkflowTriggerEventType.BidAccepted:
+				case WorkflowTriggerEventType.BidDeclined:
+				case WorkflowTriggerEventType.BidExpired:
+					obj["bid"] = new ScriptObject { ["id"] = "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d", ["number"] = 12, ["title"] = "Type 6 engine, Ridge Fire", ["status"] = eventType == WorkflowTriggerEventType.BidCreated ? 0 : eventType == WorkflowTriggerEventType.BidSent ? 1 : eventType == WorkflowTriggerEventType.BidAccepted ? 2 : eventType == WorkflowTriggerEventType.BidDeclined ? 3 : 4, ["contact_id"] = "c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f", ["contact_name"] = "Province Wildfire Service", ["incident_number"] = "CA-BTU-012345", ["valid_until"] = "2026-10-18T00:00:00Z", ["estimated_total"] = 18450.00m, ["currency"] = "USD", ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Bids/View/7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d" };
+					var sampleBid = (ScriptObject)obj["bid"];
+					foreach (var variable in Resgrid.Model.Invoicing.ContractorWorkflowPayload.BidVariables) if (!sampleBid.ContainsKey(variable.Variable)) sampleBid[variable.Variable] = null;
+					if (eventType != WorkflowTriggerEventType.BidCreated) { sampleBid["old_status"] = eventType == WorkflowTriggerEventType.BidSent ? 0 : 1; sampleBid["sent_on"] = "2026-09-18T15:00:00Z"; }
+					if (eventType == WorkflowTriggerEventType.BidAccepted) sampleBid["accepted_on"] = "2026-09-19T09:30:00Z";
+					if (eventType == WorkflowTriggerEventType.BidDeclined) sampleBid["declined_on"] = "2026-09-19T09:30:00Z";
+					break;
+				case WorkflowTriggerEventType.ContractStatusChanged:
+				case WorkflowTriggerEventType.ContractExpiring:
+					obj["contract"] = new ScriptObject { ["id"] = "9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a", ["number"] = "WFS-2026-0417", ["name"] = "2026 wildfire standing arrangement", ["status"] = 1, ["contact_id"] = "c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f", ["contact_name"] = "Province Wildfire Service", ["contract_type"] = 0, ["start_on"] = "2026-04-01T00:00:00Z", ["end_on"] = "2026-10-31T00:00:00Z", ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Contracts/View/9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a" };
+					var sampleContract = (ScriptObject)obj["contract"];
+					foreach (var variable in Resgrid.Model.Invoicing.ContractorWorkflowPayload.ContractVariables) if (!sampleContract.ContainsKey(variable.Variable)) sampleContract[variable.Variable] = null;
+					if (eventType == WorkflowTriggerEventType.ContractStatusChanged) sampleContract["old_status"] = 0;
+					if (eventType == WorkflowTriggerEventType.ContractExpiring) sampleContract["days_until_end"] = 21;
 					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
@@ -274,6 +298,8 @@ namespace Resgrid.Services
 					break;
 
 				case WorkflowTriggerEventType.CertificationExpiring:
+				case WorkflowTriggerEventType.CertificationRemoved:
+				case WorkflowTriggerEventType.CertificationCreditAdded:
 				case WorkflowTriggerEventType.CertificationAdded:
 				case WorkflowTriggerEventType.CertificationRenewed:
 				case WorkflowTriggerEventType.CertificationExpired:
@@ -300,7 +326,19 @@ namespace Resgrid.Services
 						cert["new_status"] = 2;
 						cert["reason"] = "Pending investigation";
 					}
+					if (eventType == WorkflowTriggerEventType.CertificationRemoved)
+						cert["removed_by_user_id"] = "sample-admin-id";
 					obj["certification"] = cert;
+					if (eventType == WorkflowTriggerEventType.CertificationCreditAdded)
+					{
+						var credit = new ScriptObject();
+						credit["id"] = 7101;
+						credit["date"] = DateTime.Today;
+						credit["hours"] = 4.0m;
+						credit["category"] = "Continuing education";
+						credit["added_by_user_id"] = "sample-admin-id";
+						obj["credit"] = credit;
+					}
 					break;
 
 				case WorkflowTriggerEventType.CertificationRoleRemoved:
@@ -315,6 +353,9 @@ namespace Resgrid.Services
 					obj["removal"] = removal;
 					break;
 
+				case WorkflowTriggerEventType.UnitCertificationAdded:
+				case WorkflowTriggerEventType.UnitCertificationStatusChanged:
+				case WorkflowTriggerEventType.UnitCertificationRemoved:
 				case WorkflowTriggerEventType.UnitCertificationExpiring:
 				case WorkflowTriggerEventType.UnitCertificationExpired:
 					var unitCert = new ScriptObject();
@@ -328,6 +369,8 @@ namespace Resgrid.Services
 					unitCert["expires_on"] = eventType == WorkflowTriggerEventType.UnitCertificationExpired ? DateTime.Today.AddDays(-1) : DateTime.Today.AddDays(14);
 					unitCert["days_until_expiry"] = eventType == WorkflowTriggerEventType.UnitCertificationExpired ? -1 : 14;
 					unitCert["status"] = eventType == WorkflowTriggerEventType.UnitCertificationExpired ? 1 : 0;
+					if (eventType == WorkflowTriggerEventType.UnitCertificationStatusChanged) { unitCert["old_status"] = 0; unitCert["new_status"] = 2; unitCert["reason"] = "Out of service pending repair"; }
+					if (eventType == WorkflowTriggerEventType.UnitCertificationRemoved) unitCert["removed_by_user_id"] = "sample-admin-id";
 					obj["unit_certification"] = unitCert;
 					break;
 

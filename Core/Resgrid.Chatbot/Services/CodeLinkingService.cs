@@ -54,6 +54,8 @@ namespace Resgrid.Chatbot.Services
 				attempts++;
 			}
 			while (await _linkingCodeRepository.GetByCodeAsync(code) != null && attempts < 10);
+			if (await _linkingCodeRepository.GetByCodeAsync(code) != null)
+				throw new InvalidOperationException("Unable to allocate a linking code. Please try again.");
 
 			var entity = new LinkingCodeEntity
 			{
@@ -103,12 +105,15 @@ namespace Resgrid.Chatbot.Services
 			if (DateTime.UtcNow > entity.ExpiresAt)
 				return LinkResult.Fail("That linking code has expired. Please generate a new one.");
 
-			// Consume the code (single use) before linking so a retry can't reuse it.
-			entity.IsUsed = true;
-			entity.UsedAt = DateTime.UtcNow;
-			entity.Platform = (int)platform;
-			entity.PlatformUserId = platformUserId;
-			await _linkingCodeRepository.UpdateAsync(entity, CancellationToken.None);
+			if (!Enum.IsDefined(typeof(ChatbotPlatform), platform) || platform == ChatbotPlatform.Unknown
+				|| string.IsNullOrWhiteSpace(platformUserId))
+				return LinkResult.Fail("Invalid messaging account.");
+			var existingIdentity = await _userIdentityService.GetIdentityAsync(platform, platformUserId);
+			if (existingIdentity != null && existingIdentity.UserId != entity.UserId)
+				return LinkResult.Fail("This messaging account is already linked to another user.");
+			// One conditional database write; two concurrent requests cannot redeem the same code.
+			if (!await _linkingCodeRepository.TryConsumeAsync(entity.Id, (int)platform, platformUserId, DateTime.UtcNow))
+				return LinkResult.Fail("That linking code is invalid or has expired.");
 
 			// Link the platform identity to the Resgrid user the code was issued to.
 			var identity = await _userIdentityService.LinkUserAsync(

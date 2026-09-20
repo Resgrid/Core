@@ -22,15 +22,18 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly IUnitsService _unitsService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IPlatformReportingService _platformReportingService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public UnitsAvailableActionHandler(
 			IUnitsService unitsService,
 			ICustomStateService customStateService,
-			IPlatformReportingService platformReportingService)
+			IPlatformReportingService platformReportingService,
+			IAuthorizationService authorizationService)
 		{
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_platformReportingService = platformReportingService;
+			_authorizationService = authorizationService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.UnitsAvailable;
@@ -48,8 +51,12 @@ namespace Resgrid.Chatbot.Handlers
 				var lines = new StringBuilder();
 				var availableCount = 0;
 
-				foreach (var unitState in unitStatuses.Where(u => u.Unit != null).OrderBy(u => u.Unit.Name))
+				foreach (var unitState in unitStatuses.Where(u => u?.Unit != null && u.Unit.DepartmentId == session.DepartmentId)
+					.OrderBy(u => u.Unit.Name))
 				{
+					if (!await _authorizationService.CanUserViewUnitAsync(session.UserId, unitState.Unit.UnitId))
+						continue;
+
 					var availability = await _platformReportingService.ClassifyUnitAvailabilityAsync(session.DepartmentId, unitState.State);
 					if (availability != AvailabilityClass.Available)
 						continue;

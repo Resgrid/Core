@@ -212,7 +212,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanManage) return Unauthorized();
 			var deployment = await _deployments.GetDeploymentByIdAsync(id, DepartmentId);
 			if (deployment == null) return NotFound();
-			var view = Page(new DeploymentEditView { Contacts = await _contacts.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>(), Deployment = ToInput(deployment), IsProtected = deployment.IsProtected });
+			var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+			var view = Page(new DeploymentEditView { Contacts = await _contacts.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>(), Deployment = ToInput(deployment, department?.TimeZone), IsProtected = deployment.IsProtected });
 			return View(view);
 		}
 
@@ -225,7 +226,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var deployment = string.IsNullOrWhiteSpace(input.DeploymentId) ? new Deployment { DepartmentId = DepartmentId } : await _deployments.GetDeploymentByIdAsync(input.DeploymentId, DepartmentId);
 				if (deployment == null) return NotFound();
-				Apply(input, deployment);
+				var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+				Apply(input, deployment, department?.TimeZone);
 				var saved = await _deployments.SaveDeploymentAsync(deployment, UserId, Ip, Agent, cancellationToken);
 				return Saved("View", new { id = saved.DeploymentId });
 			}
@@ -262,19 +264,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "View", new { id }); }
 		}
 
-		private static DeploymentInput ToInput(Deployment d) => new DeploymentInput
+		// The window is entered and shown in the deployment's local time zone (its LocalTimeZoneId, else the department's), like Calendar; storage is UTC.
+		private static string WindowTimeZone(string deploymentTimeZone, string departmentTimeZone) => string.IsNullOrWhiteSpace(deploymentTimeZone) ? departmentTimeZone : deploymentTimeZone;
+
+		private static DateTime? ToLocal(DateTime? utc, string timeZone)
+		{
+			if (!utc.HasValue) return null;
+			try { return DateTimeHelpers.GetLocalDateTime(utc.Value, timeZone); }
+			catch (Exception) { return utc; }
+		}
+
+		private static DateTime? ToUtc(DateTime? local, string timeZone)
+		{
+			if (!local.HasValue) return null;
+			try { return DateTimeHelpers.ConvertToUtc(local.Value, timeZone, lenient: true); }
+			catch (Exception) { return DateTime.SpecifyKind(local.Value, DateTimeKind.Utc); }
+		}
+
+		private static DeploymentInput ToInput(Deployment d, string departmentTimeZone) => new DeploymentInput
 		{
 			DeploymentId = d.DeploymentId, Name = d.Name, FinanceMode = d.FinanceMode, CallId = d.CallId, ContactId = d.ContactId, IncidentNumber = d.IncidentNumber, ServiceRequestNumber = d.ServiceRequestNumber,
-			ResourceOrderNumber = d.ResourceOrderNumber, RequestNumber = d.RequestNumber, CostCode = d.CostCode, PointOfHire = d.PointOfHire, StartOn = d.StartOn, EndOn = d.EndOn, MaxDays = d.MaxDays,
+			ResourceOrderNumber = d.ResourceOrderNumber, RequestNumber = d.RequestNumber, CostCode = d.CostCode, PointOfHire = d.PointOfHire,
+			StartOn = ToLocal(d.StartOn, WindowTimeZone(d.LocalTimeZoneId, departmentTimeZone)), EndOn = ToLocal(d.EndOn, WindowTimeZone(d.LocalTimeZoneId, departmentTimeZone)), MaxDays = d.MaxDays,
 			OutOfProvince = d.OutOfProvince, TravelViaAir = d.TravelViaAir, HomeCountry = d.HomeCountry, HostCountry = d.HostCountry, HomeSubdivision = d.HomeSubdivision, HostSubdivision = d.HostSubdivision,
 			LocalTimeZoneId = d.LocalTimeZoneId, Currency = d.Currency, Notes = d.Notes
 		};
 
-		private static void Apply(DeploymentInput input, Deployment d)
+		private static void Apply(DeploymentInput input, Deployment d, string departmentTimeZone)
 		{
+			var timeZone = WindowTimeZone(input.LocalTimeZoneId, departmentTimeZone);
 			d.Name = input.Name; d.FinanceMode = input.FinanceMode; d.CallId = input.CallId; d.ContactId = string.IsNullOrWhiteSpace(input.ContactId) ? null : input.ContactId;
 			d.IncidentNumber = input.IncidentNumber; d.ServiceRequestNumber = input.ServiceRequestNumber; d.ResourceOrderNumber = input.ResourceOrderNumber; d.RequestNumber = input.RequestNumber; d.CostCode = input.CostCode; d.PointOfHire = input.PointOfHire;
-			d.StartOn = input.StartOn.HasValue ? DateTime.SpecifyKind(input.StartOn.Value, DateTimeKind.Utc) : null; d.EndOn = input.EndOn.HasValue ? DateTime.SpecifyKind(input.EndOn.Value, DateTimeKind.Utc) : null; d.MaxDays = input.MaxDays;
+			d.StartOn = ToUtc(input.StartOn, timeZone); d.EndOn = ToUtc(input.EndOn, timeZone); d.MaxDays = input.MaxDays;
 			d.OutOfProvince = input.OutOfProvince; d.TravelViaAir = input.TravelViaAir; d.HomeCountry = input.HomeCountry; d.HostCountry = input.HostCountry; d.HomeSubdivision = input.HomeSubdivision; d.HostSubdivision = input.HostSubdivision;
 			d.LocalTimeZoneId = input.LocalTimeZoneId; d.Currency = input.Currency; d.Notes = input.Notes;
 		}

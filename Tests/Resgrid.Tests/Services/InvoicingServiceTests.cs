@@ -654,5 +654,28 @@ namespace Resgrid.Tests.Services
 			report.Buckets.Single(b => b.Label == "1-30").BalancesByCurrency.Should().Equal(new SortedDictionary<string, decimal> { ["EUR"] = 80m, ["USD"] = 50m });
 			report.Buckets.Single(b => b.Label == "Current").BalancesByCurrency.Should().Equal(new SortedDictionary<string, decimal> { ["USD"] = 100m });
 		}
+
+		[Test]
+		public async Task Saving_a_new_default_rate_card_reprojects_the_card_that_lost_the_flag()
+		{
+			var previous = new RateCard { RateCardId = "rc-old", DepartmentId = 7, Name = "2025", IsDefault = true, Active = true };
+			_rateCards.Setup(r => r.SaveOrUpdateAsync(It.IsAny<RateCard>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RateCard c, CancellationToken _, bool __) => { c.RateCardId ??= "rc-new"; return c; });
+			_rateCards.Setup(r => r.GetAllForDepartmentAsync(7)).ReturnsAsync(new List<RateCard> { previous });
+			_rateCards.Setup(r => r.ClearDefaultAsync(7, "rc-new", It.IsAny<CancellationToken>())).ReturnsAsync(1);
+			_rateCardItems.Setup(r => r.GetByRateCardIdAsync(It.IsAny<string>(), 7, It.IsAny<bool>())).ReturnsAsync(new List<RateCardItem>());
+			var projected = new List<(string Id, bool IsDefault)>();
+			var projections = new Mock<ISearchProjectionService>();
+			projections.Setup(p => p.ProjectRateCardAsync(It.IsAny<RateCard>(), It.IsAny<CancellationToken>()))
+				.Callback((RateCard c, CancellationToken _) => projected.Add((c.RateCardId, c.IsDefault))).Returns(Task.CompletedTask);
+			var service = new InvoicingService(_profiles.Object, _rateCards.Object, _rateCardItems.Object, _invoices.Object,
+				_lineItems.Object, _payments.Object, _sequence.Object, _identities.Object, _contacts.Object, _calls.Object, _units.Object, _outbox.Object, _events.Object,
+				_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, searchProjections: new Lazy<ISearchProjectionService>(() => projections.Object));
+
+			await service.SaveRateCardAsync(new RateCard { DepartmentId = 7, Name = "2026", IsDefault = true, Active = true }, "u1", null, null);
+
+			projected.Should().BeEquivalentTo(new[] { ("rc-old", false), ("rc-new", true) }, "the demoted card's search row loses its Default badge with the flag");
+			_rateCards.Verify(r => r.ClearDefaultAsync(7, "rc-new", It.IsAny<CancellationToken>()), Times.Once);
+		}
 	}
 }

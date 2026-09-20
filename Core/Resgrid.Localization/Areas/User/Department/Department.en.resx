@@ -685,7 +685,7 @@
     <value>Allowed Platforms</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Comma-separated platform names this department allows, or * for all. Valid names: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+    <value>Comma-separated platform names this department allows, or * for all. Valid names: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Allow Dispatch via Assistant</value>

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
@@ -37,6 +39,10 @@ namespace Resgrid.Services.Search
 			public int CatalogVersion;
 			public long PolicyEpoch;
 			public bool ProtectedTextAllowed;
+			/// <summary>Header rows for the window's deployment candidates, one read for the window rather than a roster load per hit.</summary>
+			public Dictionary<string, Deployment> Deployments;
+			/// <summary>Deployments the caller is rostered on; loaded only when the caller lacks the Deployments/View claim.</summary>
+			public HashSet<string> RosteredDeploymentIds;
 			public string GlobalGeneration => GlobalSearchGeneration.Compute(CatalogVersion, PolicyEpoch);
 			public string RecordsGeneration => RecordsSearchGeneration.Compute(CatalogVersion, PolicyEpoch);
 		}
@@ -168,15 +174,14 @@ namespace Resgrid.Services.Search
 						var contract = await _contracts.Value.GetContractByIdAsync(hit.EntityId, departmentId);
 						return contract != null && contract.DepartmentId == departmentId && !contract.IsDeleted;
 					case SearchEntityTypes.Deployment:
-						if (_deploymentsService?.Value == null) return false;
-						var deployment = await _deploymentsService.Value.GetDeploymentByIdAsync(hit.EntityId, departmentId);
-						if (deployment == null || deployment.DepartmentId != departmentId || deployment.IsDeleted) return false;
+						if (_deploymentsService?.Value == null || access.Deployments == null || !access.Deployments.TryGetValue(hit.EntityId ?? string.Empty, out var deployment)) return false;
+						if (deployment.DepartmentId != departmentId || deployment.IsDeleted) return false;
 						// Rostered members reach their own deployments without the claim, exactly as the deployment page does.
-						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Deployments", "View") || deployment.Personnel?.Any(p => p.UserId == userId && !p.RemovedOn.HasValue) == true;
+						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Deployments", "View") || access.RosteredDeploymentIds?.Contains(deployment.DeploymentId) == true;
 					case SearchEntityTypes.CertificationType:
 						if (_certifications?.Value == null || !int.TryParse(hit.EntityId, out var typeId) || !principal.HasResourceClaim("Certifications", "View") && !principal.IsDepartmentAdmin) return false;
 						var certificationType = await _certifications.Value.GetCertificationTypeByIdAsync(typeId);
-						return certificationType != null && certificationType.DepartmentId == departmentId;
+						return certificationType != null && certificationType.DepartmentId == departmentId && !certificationType.IsDeleted;
 					default:
 						return false;
 				}
@@ -185,6 +190,42 @@ namespace Resgrid.Services.Search
 			{
 				Logging.LogException(ex, "Search hit access could not be verified.");
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// One header read for every deployment candidate in the window (and one roster read when the caller lacks the claim)
+		/// instead of a full aggregate load — roster, unit and profile names, protected-field resolve — per hit.
+		/// </summary>
+		private async Task PreloadDeploymentsAsync(IEnumerable<GlobalSearchHit> hits, SearchAccess access, CancellationToken cancellationToken)
+		{
+			var ids = (hits ?? Enumerable.Empty<GlobalSearchHit>())
+				.Where(h => h != null && h.EntityType == SearchEntityTypes.Deployment && !string.IsNullOrWhiteSpace(h.EntityId))
+				.Select(h => h.EntityId).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			if (ids.Count == 0 || _deploymentsService?.Value == null) return;
+			var principal = access.Principal;
+			try
+			{
+				access.Deployments = (await _deploymentsService.Value.GetDeploymentsByIdsAsync(principal.DepartmentId, ids) ?? new List<Deployment>())
+					.Where(d => d != null && !string.IsNullOrWhiteSpace(d.DeploymentId))
+					.GroupBy(d => d.DeploymentId, StringComparer.OrdinalIgnoreCase)
+					.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+				if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Deployments", "View"))
+					access.RosteredDeploymentIds = new HashSet<string>(
+						(await _deploymentsService.Value.GetDeploymentsForUserAsync(principal.DepartmentId, principal.UserId, false) ?? new List<Deployment>())
+							.Select(d => d?.DeploymentId).Where(id => !string.IsNullOrWhiteSpace(id)),
+						StringComparer.OrdinalIgnoreCase);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: every deployment candidate is dropped when its liveness cannot be verified.
+				Logging.LogException(ex, "Search deployment candidates could not be verified.");
+				access.Deployments = new Dictionary<string, Deployment>(StringComparer.OrdinalIgnoreCase);
+				access.RosteredDeploymentIds = null;
 			}
 		}
 

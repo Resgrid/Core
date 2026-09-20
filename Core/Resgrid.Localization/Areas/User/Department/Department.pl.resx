@@ -606,7 +606,7 @@
     <value>Dozwolone platformy</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Nazwy platform oddzielone przecinkami dozwolone dla tego działu lub * dla wszystkich. Prawidłowe nazwy: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+    <value>Nazwy platform oddzielone przecinkami dozwolone dla tego działu lub * dla wszystkich. Prawidłowe nazwy: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Zezwól na dysponowanie przez asystenta</value>

@@ -91,6 +91,12 @@ namespace Resgrid.Tests.Search
 
 			(await _service.BuildBidAsync(new Bid { BidId = "b-2", DepartmentId = 5, IsDeleted = true })).Should().BeNull();
 			(await _service.BuildDeploymentAsync(new Deployment { DeploymentId = "dep-2", DepartmentId = 5, Name = "  " })).Should().BeNull("a nameless deployment has nothing safe to index");
+
+			var retired = new DepartmentCertificationType { DepartmentCertificationTypeId = 32, DepartmentId = 5, Type = "Retired", IsDeleted = true };
+			(await _service.BuildCertificationTypeAsync(retired)).Should().BeNull();
+			await _service.ProjectCertificationTypeAsync(retired);
+			_removed.Should().Contain((SearchEntityTypes.CertificationType, "32"), "a deleted type retires its projection instead of re-upserting it");
+			_upserted.Should().NotContain(p => p.EntityType == SearchEntityTypes.CertificationType);
 		}
 
 		[Test]

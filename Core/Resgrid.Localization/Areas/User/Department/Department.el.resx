@@ -685,7 +685,7 @@
     <value>Επιτρεπόμενες Πλατφόρμες</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Ονόματα πλατφορμών χωρισμένα με κόμμα που επιτρέπει αυτό το τμήμα ή * για όλες. Έγκυρα ονόματα: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+    <value>Ονόματα πλατφορμών χωρισμένα με κόμμα που επιτρέπει αυτό το τμήμα ή * για όλες. Έγκυρα ονόματα: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Να Επιτρέπεται Αποστολή μέσω Βοηθού</value>

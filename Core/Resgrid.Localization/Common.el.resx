@@ -783,4 +783,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Δεσμεύσεις διατήρησης αρχείων</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Όλα τα αρχεία</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Λογαριασμοί μηνυμάτων</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Δημιουργία κωδικού σύνδεσης</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Δημιουργήστε έναν κωδικό και στείλτε LINK μαζί με τον κωδικό σε ιδιωτική συνομιλία με το bot του Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Κωδικός σύνδεσης</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Λήγει (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Αποσύνδεση</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Συνδεδεμένοι λογαριασμοί</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Πλατφόρμες μηνυμάτων</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Δεν υπάρχουν συνδεδεμένοι λογαριασμοί μηνυμάτων.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Δεν ήταν δυνατή η ενημέρωση των λογαριασμών μηνυμάτων. Δοκιμάστε ξανά.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Επιστροφή στο προφίλ</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Ο κωδικός σύνδεσής σας είναι έτοιμος.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Στο Discord, χρησιμοποιήστε /resgrid και εισαγάγετε LINK μαζί με τον κωδικό στην επιλογή message. Χρησιμοποιήστε /resgrid και για τις επόμενες εντολές.</value></data>
 </root>

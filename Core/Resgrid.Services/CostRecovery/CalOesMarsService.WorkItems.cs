@@ -23,8 +23,6 @@ namespace Resgrid.Services.CostRecovery
 	/// </summary>
 	public partial class CalOesMarsService
 	{
-		private const int ReminderSweepPageSize = 200;
-		private const int ReminderSweepMaxDeployments = 5_000;
 		private static readonly int[] F42AttachmentTypes = { (int)DeploymentAttachmentTypes.SignedF42, (int)DeploymentAttachmentTypes.PaperF42, (int)DeploymentAttachmentTypes.CrewRotationApproval, (int)DeploymentAttachmentTypes.LossDamage, (int)DeploymentAttachmentTypes.ExternalOrder, (int)DeploymentAttachmentTypes.SignedServiceRequest };
 
 		#region Queue and reads
@@ -861,16 +859,9 @@ namespace Resgrid.Services.CostRecovery
 					var invoices = queue.Count(w => w.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice && w.LocalState == (int)CalOesMarsLocalStates.PendingLocalAgencyApproval);
 					if (invoices > 0) lines.Add($"{invoices} MARS invoice(s) awaiting local approval.");
 
-					// Every deployment, newest first, in pages: the overdue ones are not the newest, so a single capped page would skip them.
-					var deployments = new List<Deployment>();
-					for (var skip = 0; skip < ReminderSweepMaxDeployments; skip += ReminderSweepPageSize)
-					{
-						var page = await _deploymentService.GetDeploymentsForDepartmentAsync(departmentId, false, skip, ReminderSweepPageSize);
-						if (page == null || page.Count == 0) break;
-						deployments.AddRange(page);
-						if (page.Count < ReminderSweepPageSize) break;
-					}
+					// Only the released cost-recovery deployments, however old: a newest-first page walk let the overdue ones age past its cap.
 					var due = asOfUtc.AddDays(-Config.CostRecoveryConfig.F42DueDaysAfterRelease);
+					var deployments = await _deploymentService.GetCostRecoveryDeploymentsReleasedBeforeAsync(departmentId, due) ?? new List<Deployment>();
 					foreach (var deployment in deployments.Where(d => d.FinanceMode == (int)DeploymentFinanceModes.CostRecovery && d.Status is (int)DeploymentStatuses.Demobilizing or (int)DeploymentStatuses.Completed && (d.StatusChangedOn ?? d.EndOn ?? d.AddedOn) <= due))
 					{
 						var items = queue.Where(w => string.Equals(w.DeploymentId, deployment.DeploymentId, StringComparison.OrdinalIgnoreCase) && w.RecordType == (int)CalOesMarsRecordTypes.F42).ToList();

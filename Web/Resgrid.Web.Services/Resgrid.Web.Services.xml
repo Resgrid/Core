@@ -4,21 +4,6 @@
         <name>Resgrid.Web.Services</name>
     </assembly>
     <members>
-        <member name="T:Resgrid.Web.Services.Controllers.ChatbotTelegramController">
-            <summary>
-            Webhook controller for Telegram Bot API.
-            Receives messages from Telegram and routes them through the chatbot pipeline.
-            
-            Phase 2 implementation: Simple webhook receiver.
-            In production, Telegram's setWebhook should point to: POST /api/v4/ChatbotTelegram/Webhook
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Controllers.ChatbotTelegramController.Webhook">
-            <summary>
-            Telegram webhook endpoint.
-            Receives Update objects from Telegram Bot API.
-            </summary>
-        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.Receive(PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
             <summary>
             The receiver API method call

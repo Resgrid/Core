@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business-Operations-Add-on</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Ein monatliches Add-on für Abteilungen, die Kunden abrechnen und Verträge verwalten. Nur das verwaltende Mitglied der Abteilung kann es kaufen oder kündigen.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Kundenrechnungen, Preislisten, Zahlungen und Forderungsanalyse</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Auftragnehmer-Preistabellen, Verträge und Kostenerstattung (folgt später)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Lohndaten und Einsatzkostenrechnung (folgt später)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Auftragnehmer-Preistabellen, Verträge und Kostenerstattung</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Lohndaten und Einsatzkostenrechnung</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Das Add-on ist für Ihre Abteilung aktiv.</value></data>
   <data name="Monthly" xml:space="preserve"><value>Monat</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Ihre Abteilung hat dieses Add-on noch nicht.</value></data>

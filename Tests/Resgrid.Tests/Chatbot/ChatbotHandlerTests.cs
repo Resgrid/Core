@@ -58,7 +58,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var messages = new Mock<IMessageService>();
 			messages.Setup(m => m.GetMessageByIdAsync(42))
-				.ReturnsAsync(new Message { MessageId = 42, Subject = "Hello", Body = "the body", SentOn = DateTime.UtcNow });
+				.ReturnsAsync(new Message { MessageId = 42, DepartmentId = 1, Subject = "Hello", Body = "the body", SentOn = DateTime.UtcNow });
 			messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(42, "user-1"))
 				.ReturnsAsync(new MessageRecipient { MessageId = 42, UserId = "user-1", ReadOn = null });
 

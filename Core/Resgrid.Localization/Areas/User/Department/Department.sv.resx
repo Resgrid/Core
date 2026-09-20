@@ -606,7 +606,7 @@
     <value>Tillåtna plattformar</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Kommaseparerade plattformsnamn som denna avdelning tillåter, eller * för alla. Giltiga namn: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+    <value>Kommaseparerade plattformsnamn som denna avdelning tillåter, eller * för alla. Giltiga namn: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Tillåt utlarmning via assistenten</value>

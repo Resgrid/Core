@@ -421,6 +421,7 @@ namespace Resgrid.Tests.Chatbot
 			var identity = new ChatbotUserIdentity
 			{
 				Id = "identity-1",
+				IsActive = true,
 				UserId = "user-1",
 				Platform = ChatbotPlatform.WebChat,
 				PlatformUserId = "web-user",

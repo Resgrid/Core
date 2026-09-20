@@ -7,6 +7,8 @@ namespace Resgrid.Chatbot.Models
 		public string Text { get; set; }
 		public List<string> Segments { get; set; } = new List<string>();
 		public bool Processed { get; set; }
+		// A completed switch needs a generic acknowledgement across the old/new department boundary.
+		public bool DepartmentChanged { get; set; }
 		public ChatbotIntent Intent { get; set; }
 		public string ResponseFormat { get; set; } = "text";
 		public List<ChatbotRichComponent> RichComponents { get; set; } = new List<ChatbotRichComponent>();

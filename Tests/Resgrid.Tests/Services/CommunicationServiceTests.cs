@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Framework.Testing;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -74,6 +76,154 @@ namespace Resgrid.Tests.Services
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
 					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object,
 					_departmentsServiceMock.Object, _protectedProjectionServiceMock.Object);
+			}
+		}
+
+		[TestFixture]
+		[NonParallelizable]
+		public class when_sending_chat_notifications : with_the_communication_service
+		{
+			[TestCase(false, ChatbotOutboundType.Notification)]
+			[TestCase(true, ChatbotOutboundType.Reminder)]
+			public async Task notifications_and_calendar_use_the_chat_projection(bool calendar, ChatbotOutboundType expectedType)
+			{
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id, Language = "en" };
+				_protectedProjectionServiceMock
+					.Setup(x => x.BuildNotificationSafeMessageAsync(1, It.Is<Message>(m =>
+						m.Subject == "Private title" && m.Body == "Private location" && m.ReceivingUserId == profile.UserId),
+						ProtectedDataEgressChannel.ChatPlatform, profile.Language))
+					.ReturnsAsync(new Message { Subject = "Protected notification", Body = "Sign in to Resgrid" });
+
+				if (calendar)
+					await _communicationService.SendCalendarAsync(profile.UserId, 1, "Private location", null, "Private title", profile);
+				else
+					await _communicationService.SendNotificationAsync(profile.UserId, 1, "Private location", null, null, "Private title", profile);
+
+				_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(profile.UserId, 1,
+					It.Is<ChatbotOutboundMessage>(m => m.Type == expectedType && m.Title == "Protected notification"
+						&& m.Body == "Sign in to Resgrid")), Times.Once);
+			}
+
+			[Test]
+			public async Task cancellation_uses_the_chat_projection_instead_of_the_supplied_address()
+			{
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id };
+				var call = new Call { CallId = 71, DepartmentId = 1, Name = "Private call", Address = "Private address" };
+				_protectedProjectionServiceMock.Setup(x => x.BuildNotificationSafeCallAsync(1, call,
+					ProtectedDataEgressChannel.ChatPlatform, It.IsAny<string>()))
+					.ReturnsAsync(new Call { CallId = 71, Name = "Call 71", NatureOfCall = "Sign in to Resgrid" });
+
+				await _communicationService.SendCancelCallAsync(call, new CallDispatch { UserId = profile.UserId },
+					null, 1, profile, "Resolved private address");
+
+				_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(profile.UserId, 1,
+					It.Is<ChatbotOutboundMessage>(m => m.Type == ChatbotOutboundType.Dispatch &&
+						m.Title == "Dispatch Cancelled - Call 71" && m.Body == "Sign in to Resgrid" && m.ReferenceId == "71")), Times.Once);
+			}
+
+			[TestCase(false)]
+			[TestCase(true)]
+			public async Task protected_trouble_alerts_omit_locations_and_personnel_with_or_without_a_call(bool hasCall)
+			{
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id };
+				_protectedProjectionServiceMock.Setup(x => x.IsChannelSanitizedAsync(1, ProtectedDataEgressChannel.ChatPlatform))
+					.ReturnsAsync(true);
+				var alert = new TroubleAlertEvent { Roles = new List<TroubleAlertRole> { new TroubleAlertRole { UserFullName = "Private person" } } };
+				var call = hasCall ? new Call { CallId = 71, Name = "Private call" } : null;
+
+				await _communicationService.SendTroubleAlertAsync(alert, new Unit { Name = "Engine 1" }, call,
+					null, 1, "Private call location", "Private unit location", new List<UserProfile> { profile });
+
+				_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(profile.UserId, 1,
+					It.Is<ChatbotOutboundMessage>(m => m.Title == "TROUBLE ALERT for Engine 1"
+						&& m.Body == "Protected — sign in to Resgrid")), Times.Once);
+			}
+
+			[TestCase("notification")]
+			[TestCase("calendar")]
+			[TestCase("cancellation")]
+			[TestCase("trouble")]
+			public async Task disabled_members_do_not_receive_chat_notifications(string kind)
+			{
+				_departmentsServiceMock.Setup(x => x.GetDepartmentMemberAsync(It.IsAny<string>(), 1, It.IsAny<bool>()))
+					.ReturnsAsync(new DepartmentMember { IsDisabled = true });
+
+				await SendNotificationKind(kind, 1);
+
+				_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(It.IsAny<string>(), It.IsAny<int>(),
+					It.IsAny<ChatbotOutboundMessage>()), Times.Never);
+			}
+
+			[TestCase("notification")]
+			[TestCase("calendar")]
+			[TestCase("cancellation")]
+			[TestCase("trouble")]
+			public async Task broadcast_suppression_prevents_chat_notifications(string kind)
+			{
+				var original = Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast;
+				try
+				{
+					Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = true;
+					await SendNotificationKind(kind, int.MaxValue);
+					_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(It.IsAny<string>(), It.IsAny<int>(),
+						It.IsAny<ChatbotOutboundMessage>()), Times.Never);
+				}
+				finally
+				{
+					Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = original;
+				}
+			}
+
+			[Test]
+			public async Task failed_chat_projection_does_not_send_private_content_or_block_sms()
+			{
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id, SendNotificationSms = true };
+				_protectedProjectionServiceMock.Setup(x => x.BuildNotificationSafeMessageAsync(1, It.IsAny<Message>(),
+					ProtectedDataEgressChannel.ChatPlatform, It.IsAny<string>())).ThrowsAsync(new InvalidOperationException("Projection unavailable"));
+
+				var sent = await _communicationService.SendNotificationAsync(profile.UserId, 1, "Private location", null,
+					null, "Private title", profile);
+
+				Assert.That(sent, Is.True);
+				_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(It.IsAny<string>(), It.IsAny<int>(),
+					It.IsAny<ChatbotOutboundMessage>()), Times.Never);
+				_smsServiceMock.Verify(x => x.SendNotificationAsync(profile.UserId, 1, "Private title Private location", null, profile), Times.Once);
+			}
+
+			[Test]
+			public async Task failed_chat_send_does_not_block_other_trouble_alert_recipients_or_push()
+			{
+				var first = new UserProfile { UserId = TestData.Users.TestUser1Id, SendPush = true };
+				var second = new UserProfile { UserId = TestData.Users.TestUser2Id, SendPush = true };
+				_chatbotOutboundServiceMock.Setup(x => x.SendToUserAsync(first.UserId, 1, It.IsAny<ChatbotOutboundMessage>()))
+					.ThrowsAsync(new InvalidOperationException("Platform unavailable"));
+
+				var sent = await _communicationService.SendTroubleAlertAsync(new TroubleAlertEvent(), new Unit { Name = "Engine 1" },
+					null, null, 1, null, "Station 1", new List<UserProfile> { first, second });
+
+				Assert.That(sent, Is.True);
+				_chatbotOutboundServiceMock.Verify(x => x.SendToUserAsync(second.UserId, 1,
+					It.Is<ChatbotOutboundMessage>(m => m.Body.Contains("Station 1"))), Times.Once);
+				_pushServiceMock.Verify(x => x.PushCall(It.IsAny<StandardPushCall>(), first.UserId, first, null), Times.Once);
+				_pushServiceMock.Verify(x => x.PushCall(It.IsAny<StandardPushCall>(), second.UserId, second, null), Times.Once);
+			}
+
+			private Task<bool> SendNotificationKind(string kind, int departmentId)
+			{
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id };
+				switch (kind)
+				{
+					case "notification":
+						return _communicationService.SendNotificationAsync(profile.UserId, departmentId, "Body", null, null, profile: profile);
+					case "calendar":
+						return _communicationService.SendCalendarAsync(profile.UserId, departmentId, "Body", null, profile: profile);
+					case "cancellation":
+						return _communicationService.SendCancelCallAsync(new Call { DepartmentId = departmentId },
+							new CallDispatch { UserId = profile.UserId }, null, departmentId, profile);
+					default:
+						return _communicationService.SendTroubleAlertAsync(new TroubleAlertEvent(), new Unit(), null, null,
+							departmentId, null, null, new List<UserProfile> { profile });
+				}
 			}
 		}
 

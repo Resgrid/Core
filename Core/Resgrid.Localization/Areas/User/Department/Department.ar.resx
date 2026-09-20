@@ -655,7 +655,7 @@
     <value>المنصات المسموح بها</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>أسماء المنصات مفصولة بفواصل المسموح بها لهذا القسم، أو * للكل. الأسماء الصالحة: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+    <value>أسماء المنصات مفصولة بفواصل المسموح بها لهذا القسم، أو * للكل. الأسماء الصالحة: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>السماح بالإرسال عبر المساعد</value>

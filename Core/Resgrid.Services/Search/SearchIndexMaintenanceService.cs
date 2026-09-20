@@ -24,6 +24,12 @@ namespace Resgrid.Services.Search
 	/// </summary>
 	public class SearchIndexMaintenanceService : ISearchIndexMaintenanceService
 	{
+		/// <summary>
+		/// The invoice, bid and deployment repositories clamp a page at 500 rows; a single larger read silently returned the
+		/// newest 500 and the family's SoftDeleteStaleAsync then retired every projection past them.
+		/// </summary>
+		private const int RebuildPageSize = 500;
+
 		private readonly ISearchIndexStatesRepository _states;
 		private readonly ISearchProjectionsRepository _projections;
 		private readonly IGlobalSearchIndexer _indexer;
@@ -368,11 +374,16 @@ namespace Resgrid.Services.Search
 				count += await Family(departmentId, SearchEntityTypes.Invoice, async () =>
 				{
 					var n = 0;
-					foreach (var invoice in await _invoicing.Value.GetInvoicesForDepartmentAsync(departmentId, new InvoiceListFilter { Skip = 0, Take = 5000 }) ?? new List<Invoice>())
+					for (var skip = 0; ; skip += RebuildPageSize)
 					{
-						cancellationToken.ThrowIfCancellationRequested();
-						var p = await _projectionService.BuildInvoiceAsync(invoice);
-						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+						var page = await _invoicing.Value.GetInvoicesForDepartmentAsync(departmentId, new InvoiceListFilter { Skip = skip, Take = RebuildPageSize }) ?? new List<Invoice>();
+						foreach (var invoice in page)
+						{
+							cancellationToken.ThrowIfCancellationRequested();
+							var p = await _projectionService.BuildInvoiceAsync(invoice);
+							if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+						}
+						if (page.Count < RebuildPageSize) break;
 					}
 					return n;
 				}, started, cancellationToken);
@@ -393,11 +404,16 @@ namespace Resgrid.Services.Search
 				count += await Family(departmentId, SearchEntityTypes.Bid, async () =>
 				{
 					var n = 0;
-					foreach (var bid in await _bids.Value.GetBidsForDepartmentAsync(departmentId, null, 0, 5000) ?? new List<Bid>())
+					for (var skip = 0; ; skip += RebuildPageSize)
 					{
-						cancellationToken.ThrowIfCancellationRequested();
-						var p = await _projectionService.BuildBidAsync(bid);
-						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+						var page = await _bids.Value.GetBidsForDepartmentAsync(departmentId, null, skip, RebuildPageSize) ?? new List<Bid>();
+						foreach (var bid in page)
+						{
+							cancellationToken.ThrowIfCancellationRequested();
+							var p = await _projectionService.BuildBidAsync(bid);
+							if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+						}
+						if (page.Count < RebuildPageSize) break;
 					}
 					return n;
 				}, started, cancellationToken);
@@ -421,11 +437,16 @@ namespace Resgrid.Services.Search
 				count += await Family(departmentId, SearchEntityTypes.Deployment, async () =>
 				{
 					var n = 0;
-					foreach (var deployment in await _deploymentsService.Value.GetDeploymentsForDepartmentAsync(departmentId, false, 0, 5000) ?? new List<Deployment>())
+					for (var skip = 0; ; skip += RebuildPageSize)
 					{
-						cancellationToken.ThrowIfCancellationRequested();
-						var p = await _projectionService.BuildDeploymentAsync(deployment);
-						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+						var page = await _deploymentsService.Value.GetDeploymentsForDepartmentAsync(departmentId, false, skip, RebuildPageSize) ?? new List<Deployment>();
+						foreach (var deployment in page)
+						{
+							cancellationToken.ThrowIfCancellationRequested();
+							var p = await _projectionService.BuildDeploymentAsync(deployment);
+							if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+						}
+						if (page.Count < RebuildPageSize) break;
 					}
 					return n;
 				}, started, cancellationToken);

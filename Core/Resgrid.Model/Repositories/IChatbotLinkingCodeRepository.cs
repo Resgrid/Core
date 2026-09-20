@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -10,5 +11,8 @@ namespace Resgrid.Model.Repositories
 	{
 		/// <summary>Gets the most recent linking code row for a given code value.</summary>
 		Task<ChatbotLinkingCode> GetByCodeAsync(string code);
+
+		/// <summary>Atomically consumes an unused, unexpired code. Returns false if it cannot be consumed.</summary>
+		Task<bool> TryConsumeAsync(string id, int platform, string platformUserId, DateTime utcNow);
 	}
 }

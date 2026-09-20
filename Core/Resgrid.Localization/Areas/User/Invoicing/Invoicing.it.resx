@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Componente Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Un componente mensile per i dipartimenti che fatturano ai clienti e gestiscono contratti. Solo il membro amministratore può acquistarlo o annullarlo.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Fatturazione clienti, listini, pagamenti e scadenzario crediti</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Tariffari per appaltatori, contratti e recupero costi (in arrivo)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Dati retributivi e costi operativi (in arrivo)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Tariffari per appaltatori, contratti e recupero costi</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Dati retributivi e costi operativi</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Il componente è attivo per il tuo dipartimento.</value></data>
   <data name="Monthly" xml:space="preserve"><value>mese</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Il tuo dipartimento non ha ancora questo componente.</value></data>

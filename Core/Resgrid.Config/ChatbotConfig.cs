@@ -3,8 +3,8 @@ namespace Resgrid.Config
 	public static class ChatbotConfig
 	{
 		// General
-		// NOTE: Chatbot enable/disable is governed by the Feature Toggle service
-		// (FeatureFlagKeys.ChatbotTwilioTextIntegration), not by a config flag.
+		// SMS integration uses FeatureFlagKeys.ChatbotTwilioTextIntegration. External platforms
+		// require provider credentials and honor department IsEnabled/AllowedPlatforms settings.
 		public static int DefaultSessionTimeoutMinutes = 30;
 
 		// NLU Configuration
@@ -39,10 +39,28 @@ namespace Resgrid.Config
 		public static bool UseRedisSessionStore = false;
 		public static string RedisConnectionString = "";
 
-		// Platform Tokens (set via appsettings.json or environment variables)
+		// Platform credentials (ConfigProcessor JSON keys or RESGRID:ChatbotConfig:* environment variables).
 		public static string DiscordBotToken = "";
 		public static string SlackBotToken = "";
 		public static string SlackAppToken = "";
+		public static string SlackSigningSecret = "";
+		public static string SlackTeamId = "";
+		public static string DiscordPublicKey = "";
+		public static string WhatsAppFromNumber = "";
+		public static string WhatsAppWebhookUrl = "";
+		// An approved, static template telling the user to open Resgrid (no incident data/variables).
+		public static string WhatsAppNotificationContentSid = "";
+		public static string LineChannelAccessToken = "";
+		public static string LineChannelSecret = "";
+		public static string ViberBotToken = "";
+		public static string TeamsAppId = "";
+		public static string TeamsAppPassword = "";
+		public static string TeamsTenantId = "";
+		// Exact HTTPS connector base URLs for this deployment, comma separated; never trust request URLs.
+		public static string TeamsServiceUrls = "";
+		public static string GoogleChatAudience = "";
+		public static string GoogleChatServiceAccountEmail = "";
+		public static string GoogleChatPrivateKey = "";
 		public static string TelegramBotToken = "";
 		// Secret token sent by Telegram in the X-Telegram-Bot-Api-Secret-Token header
 		// (configured via setWebhook). When set, inbound webhooks lacking a matching token are rejected.
@@ -62,7 +80,7 @@ namespace Resgrid.Config
 		public static bool LogMessageContent = true;
 
 		// Linking Codes
-		public static int LinkingCodeLength = 4;
+		public static int LinkingCodeLength = 6;
 		public static int LinkingCodeExpiryMinutes = 5;
 		public static int MaxLinkingCodesPerUserPerDay = 3;
 

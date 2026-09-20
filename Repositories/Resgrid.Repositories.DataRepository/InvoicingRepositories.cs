@@ -358,7 +358,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				"LegalBusinessName", "RemitToAddressId", "TaxRegistrationNumber", "SecondaryTaxRegistrationNumber", "SamUei", "CageCode",
 				"WorkersCompAccountNumber", "InvoiceFooterText", "OnlinePaymentsEnabled", "DefaultPaymentConnectionId", "AllowedPaymentMethodsCsv",
-				"PayLinkExpiryDays", "ShowPayOnlineOnDocuments", "UpdatedOn", "UpdatedByUserId", "IsProtected", "ProtectedCatalogVersion"
+				"PayLinkExpiryDays", "ShowPayOnlineOnDocuments", "UpdatedOn", "UpdatedByUserId"
 			};
 			var setList = string.Join(", ", columns.Select(c => $"{Col(c)} = {P}{c}"));
 

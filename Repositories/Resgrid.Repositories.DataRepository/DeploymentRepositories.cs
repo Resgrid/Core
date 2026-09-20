@@ -46,6 +46,12 @@ namespace Resgrid.Repositories.DataRepository
 			QueryAsync<Deployment>(
 				$"SELECT * FROM {Tbl("Deployments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ServiceContractId")} = {P}ContractId AND {Col("IsDeleted")} = {False} ORDER BY {Col("AddedOn")} DESC {Paging()}",
 				new { DepartmentId = departmentId, ContractId = serviceContractId, Skip = 0, Take = 500 });
+
+		public Task<IEnumerable<Deployment>> GetCostRecoveryReleasedBeforeAsync(int departmentId, DateTime releasedOnOrBeforeUtc) =>
+			QueryAsync<Deployment>(
+				$"SELECT * FROM {Tbl("Deployments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {Col("FinanceMode")} = {P}CostRecovery " +
+				$"AND {Col("Status")} IN ({P}Demobilizing, {P}Completed) AND COALESCE({Col("StatusChangedOn")}, {Col("EndOn")}, {Col("AddedOn")}) <= {P}ReleasedBy ORDER BY {Col("AddedOn")} DESC",
+				new { DepartmentId = departmentId, CostRecovery = (int)DeploymentFinanceModes.CostRecovery, Demobilizing = (int)DeploymentStatuses.Demobilizing, Completed = (int)DeploymentStatuses.Completed, ReleasedBy = DatabaseTimestamp(releasedOnOrBeforeUtc) });
 	}
 
 	public class DeploymentUnitRepository : RmsRepositoryBase<DeploymentUnit>, IDeploymentUnitRepository
@@ -153,7 +159,7 @@ namespace Resgrid.Repositories.DataRepository
 
 	public class DeploymentAttachmentRepository : RmsRepositoryBase<DeploymentAttachment>, IDeploymentAttachmentRepository
 	{
-		private static readonly string[] Meta = { "DeploymentAttachmentId", "DeploymentId", "DepartmentId", "AttachmentType", "Name", "FileName", "FileType", "FileSize", "IsDeleted", "AddedOn", "AddedByUserId", "IsProtected", "ProtectedCatalogVersion" };
+		private static readonly string[] Meta = { "DeploymentAttachmentId", "DeploymentId", "DepartmentId", "AttachmentType", "Name", "FileName", "FileType", "FileSize", "IsDeleted", "AddedOn", "AddedByUserId" };
 
 		public DeploymentAttachmentRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }

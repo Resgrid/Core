@@ -131,7 +131,7 @@ namespace Resgrid.Tests.Services
 			_deployments.Setup(d => d.GetAttachmentsAsync("dep-1", DeptId)).ReturnsAsync(() => _attachments.ToList());
 			_deployments.Setup(d => d.GetAttachmentAsync(It.IsAny<int>(), DeptId, It.IsAny<bool>())).ReturnsAsync((int id, int _, bool __) => _attachments.FirstOrDefault(a => a.DeploymentAttachmentId == id));
 			_deployments.Setup(d => d.IsRosteredAsync("dep-1", DeptId, It.IsAny<string>())).ReturnsAsync((string _, int __, string user) => _deployment.Personnel.Any(p => p.UserId == user));
-			_deployments.Setup(d => d.GetDeploymentsForDepartmentAsync(DeptId, It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(() => new List<Deployment> { _deployment });
+			_deployments.Setup(d => d.GetCostRecoveryDeploymentsReleasedBeforeAsync(DeptId, It.IsAny<DateTime>())).ReturnsAsync(() => new List<Deployment> { _deployment });
 			var timeTracking = new Mock<ITimeTrackingService>();
 			timeTracking.Setup(t => t.GetTimeReportsAsync("dep-1", DeptId)).ReturnsAsync(() => _reports.ToList());
 			timeTracking.Setup(t => t.GetExpensesAsync("dep-1", DeptId)).ReturnsAsync(() => _expenses.ToList());
@@ -317,7 +317,20 @@ namespace Resgrid.Tests.Services
 			var edit = new CalOesMarsAgreementSnapshot { CalOesMarsAgreementSnapshotId = agreement.CalOesMarsAgreementSnapshotId, DepartmentId = DeptId, DocumentKind = agreement.DocumentKind, CompensationMethod = agreement.CompensationMethod, OvertimeMethod = (int)CalOesMarsOvertimeMethods.AfterTwelveHoursPerDay, StartOn = agreement.StartOn };
 			var saved = await _service.SaveAgreementAsync(edit, User, null, null);
 			saved.CalOesMarsAgreementSnapshotId.Should().NotBe(item.AgreementSnapshotId, "an edit to a referenced snapshot becomes a new version");
-			(await _service.GetAgreementAsync(item.AgreementSnapshotId, DeptId)).OvertimeMethod.Should().Be((int)CalOesMarsOvertimeMethods.AfterEightHoursPerDay, "the closed claim's terms are unchanged");
+			var superseded = await _service.GetAgreementAsync(item.AgreementSnapshotId, DeptId);
+			superseded.OvertimeMethod.Should().Be((int)CalOesMarsOvertimeMethods.AfterEightHoursPerDay, "the closed claim's terms are unchanged");
+			// The revision starts on the same day, so the prior snapshot covers no dispatch date the revision does and a new claim selects the revision.
+			superseded.CoversDate(Dispatch).Should().BeFalse();
+			(await _service.SelectAgreementAsync(DeptId, null, Dispatch)).CalOesMarsAgreementSnapshotId.Should().Be(saved.CalOesMarsAgreementSnapshotId);
+
+			// An amendment effective later closes the prior revision the day before it and keeps it for the earlier dispatch dates.
+			_items.Add(new CalOesMarsWorkItem { CalOesMarsWorkItemId = "wi-ext", DepartmentId = DeptId, DeploymentId = "dep-1", RecordType = (int)CalOesMarsRecordTypes.F42, AgreementSnapshotId = saved.CalOesMarsAgreementSnapshotId, LocalState = (int)CalOesMarsLocalStates.Closed, MarsRecordId = "F42-9", AddedOn = Dispatch });
+			var amendment = new CalOesMarsAgreementSnapshot { CalOesMarsAgreementSnapshotId = saved.CalOesMarsAgreementSnapshotId, DepartmentId = DeptId, DocumentKind = saved.DocumentKind, CompensationMethod = saved.CompensationMethod, OvertimeMethod = (int)CalOesMarsOvertimeMethods.AfterEightHoursPerDay, StartOn = Dispatch.Date.AddDays(10) };
+			var amended = await _service.SaveAgreementAsync(amendment, User, null, null);
+			amended.CalOesMarsAgreementSnapshotId.Should().NotBe(saved.CalOesMarsAgreementSnapshotId);
+			(await _service.GetAgreementAsync(saved.CalOesMarsAgreementSnapshotId, DeptId)).EndOn.Should().Be(Dispatch.Date.AddDays(9));
+			(await _service.SelectAgreementAsync(DeptId, null, Dispatch)).CalOesMarsAgreementSnapshotId.Should().Be(saved.CalOesMarsAgreementSnapshotId);
+			(await _service.SelectAgreementAsync(DeptId, null, Dispatch.AddDays(10))).CalOesMarsAgreementSnapshotId.Should().Be(amended.CalOesMarsAgreementSnapshotId);
 		}
 
 		[Test]

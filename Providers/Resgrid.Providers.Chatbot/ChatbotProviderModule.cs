@@ -8,6 +8,13 @@ namespace Resgrid.Providers.Chatbot
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.Register(_ => new Services.ChatbotHttpClient()).AsSelf().SingleInstance();
+			builder.Register(_ => new Services.ChatbotJwtValidator()).AsSelf().SingleInstance();
+			builder.RegisterType<Services.ExternalChatbotMessageProcessor>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<LineBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<ViberBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<TeamsBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<GoogleChatBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
 			// SMS Adapters (Phase 1)
 			builder.RegisterType<TwilioSmsAdapter>()
 				.As<IChatbotPlatformAdapter>()

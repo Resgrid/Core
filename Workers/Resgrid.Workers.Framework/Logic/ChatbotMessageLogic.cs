@@ -41,6 +41,16 @@ namespace Resgrid.Workers.Framework.Logic
 			if (item == null || string.IsNullOrWhiteSpace(item.From) || string.IsNullOrWhiteSpace(item.Body))
 				return true;
 
+			if (item.Platform != (int)ChatbotPlatform.SmsTwilio && item.Platform != (int)ChatbotPlatform.SmsSignalWire
+				&& item.Platform != (int)ChatbotPlatform.WebChat)
+			{
+				// Native transport errors must reach the bus retry/dead-letter policy. Never fall back
+				// to SMS (external account ids are not phone numbers), nor re-execute saved commands.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				await scope.Resolve<Resgrid.Providers.Chatbot.Services.ExternalChatbotMessageProcessor>().ProcessAsync(item);
+				return true;
+			}
+
 			try
 			{
 				var chatbotIngressService = Bootstrapper.GetKernel().Resolve<IChatbotIngressService>();

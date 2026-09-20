@@ -137,6 +137,22 @@ namespace Resgrid.Services.Invoicing
 			return openOnly ? deployments.Where(d => d.IsOpen).ToList() : deployments;
 		}
 
+		public async Task<List<Deployment>> GetCostRecoveryDeploymentsReleasedBeforeAsync(int departmentId, DateTime releasedOnOrBeforeUtc)
+		{
+			var deployments = (await _deployments.GetCostRecoveryReleasedBeforeAsync(departmentId, releasedOnOrBeforeUtc))?.ToList() ?? new List<Deployment>();
+			await ResolveDeploymentsAsync(deployments, departmentId);
+			return deployments;
+		}
+
+		public async Task<List<Deployment>> GetDeploymentsByIdsAsync(int departmentId, IEnumerable<string> deploymentIds)
+		{
+			var ids = deploymentIds?.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).ToList() ?? new List<string>();
+			if (ids.Count == 0) return new List<Deployment>();
+			var deployments = (await _deployments.GetByIdsAsync(departmentId, ids))?.ToList() ?? new List<Deployment>();
+			await ResolveDeploymentsAsync(deployments, departmentId);
+			return deployments;
+		}
+
 		public async Task<bool> IsRosteredAsync(string deploymentId, int departmentId, string userId)
 		{
 			if (string.IsNullOrWhiteSpace(deploymentId) || string.IsNullOrWhiteSpace(userId)) return false;
@@ -236,6 +252,8 @@ namespace Resgrid.Services.Invoicing
 			audit.Before = existing == null ? null : Snapshot(existing);
 			// Catalog 27: Notes are enveloped before the save; a REDACTED value posted back from an unrevealed edit page keeps the stored envelope.
 			var saved = await SaveProtectedAsync(_deployments, deployment, existing, d => d.DeploymentId, DeploymentProtectedFields.DeploymentFields, MarkProtected, deployment.DepartmentId, cancellationToken);
+			// The projection never reads Notes (catalog 27), so the enveloped row is safe to hand over as saved.
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectDeploymentAsync(saved, cancellationToken);
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 

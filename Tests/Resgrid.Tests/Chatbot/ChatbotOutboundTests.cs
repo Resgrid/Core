@@ -29,19 +29,37 @@ namespace Resgrid.Tests.Chatbot
 		// ---- ChatbotAdapterRegistry ----
 
 		[Test]
-		public void Registry_CanInitiateProactively_ReflectsPlatformConstraints()
+		public void Registry_UnregisteredPlatforms_CannotInitiateProactively()
 		{
 			var registry = new ChatbotAdapterRegistry(new Lazy<IEnumerable<IChatbotPlatformAdapter>>(() => new List<IChatbotPlatformAdapter>()));
 
-			registry.CanInitiateProactively(ChatbotPlatform.Slack).Should().BeTrue();
+			foreach (var platform in Enum.GetValues<ChatbotPlatform>())
+				registry.CanInitiateProactively(platform).Should().BeFalse($"{platform} has no registered adapter");
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void Registry_RegisteredExternalAdapter_HonorsProactiveCapability(bool canInitiate)
+		{
+			var slack = new Mock<IExternalChatbotAdapter>();
+			slack.SetupGet(a => a.Platform).Returns(ChatbotPlatform.Slack);
+			slack.SetupGet(a => a.IsConfigured).Returns(canInitiate);
+			slack.SetupGet(a => a.CanInitiateProactively).Returns(canInitiate);
+			var registry = new ChatbotAdapterRegistry(new Lazy<IEnumerable<IChatbotPlatformAdapter>>(() =>
+				new[] { slack.Object }));
+
+			registry.CanInitiateProactively(ChatbotPlatform.Slack).Should().Be(canInitiate);
+			registry.CanInitiateProactively(ChatbotPlatform.Signal).Should().BeFalse();
+		}
+
+		[Test]
+		public void Registry_RegisteredWebChat_CanInitiateProactively()
+		{
+			var webChat = new WebChatAdapter(Mock.Of<IChatbotWebChatNotifier>());
+			var registry = new ChatbotAdapterRegistry(new Lazy<IEnumerable<IChatbotPlatformAdapter>>(() =>
+				new[] { webChat }));
+
 			registry.CanInitiateProactively(ChatbotPlatform.WebChat).Should().BeTrue();
-			registry.CanInitiateProactively(ChatbotPlatform.Signal).Should().BeTrue();
-			// Conditional platforms (need a prior conversation/template) and SMS (other channel) are not initiable here.
-			registry.CanInitiateProactively(ChatbotPlatform.Telegram).Should().BeFalse();
-			registry.CanInitiateProactively(ChatbotPlatform.MicrosoftTeams).Should().BeFalse();
-			registry.CanInitiateProactively(ChatbotPlatform.Discord).Should().BeFalse();
-			registry.CanInitiateProactively(ChatbotPlatform.WhatsApp).Should().BeFalse();
-			registry.CanInitiateProactively(ChatbotPlatform.SmsTwilio).Should().BeFalse();
 		}
 
 		[Test]
@@ -92,7 +110,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var (id, cfg, reg) = Mocks(
 				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Slack) },
-				new ChatbotDepartmentConfig { ProactiveNotificationsEnabled = false, AllowedPlatforms = "*" });
+				new ChatbotDepartmentConfig { IsEnabled = true, ProactiveNotificationsEnabled = false, AllowedPlatforms = "*" });
 
 			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
 			var result = await service.SendToUserAsync("user-1", 1, DispatchMsg());
@@ -106,7 +124,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var (id, cfg, reg) = Mocks(
 				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Telegram) },
-				new ChatbotDepartmentConfig { ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
+				new ChatbotDepartmentConfig { IsEnabled = true, ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
 			reg.Setup(r => r.CanInitiateProactively(ChatbotPlatform.Telegram)).Returns(false);
 
 			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
@@ -121,7 +139,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var (id, cfg, reg) = Mocks(
 				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.SmsTwilio) },
-				new ChatbotDepartmentConfig { ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
+				new ChatbotDepartmentConfig { IsEnabled = true, ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
 
 			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
 			var result = await service.SendToUserAsync("user-1", 1, DispatchMsg());
@@ -136,7 +154,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var (id, cfg, reg) = Mocks(
 				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Slack, isActive: false) },
-				new ChatbotDepartmentConfig { ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
+				new ChatbotDepartmentConfig { IsEnabled = true, ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
 
 			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
 			var result = await service.SendToUserAsync("user-1", 1, DispatchMsg());
@@ -149,7 +167,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var (id, cfg, reg) = Mocks(
 				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Slack) },
-				new ChatbotDepartmentConfig { ProactiveNotificationsEnabled = true, AllowedPlatforms = "Discord,Telegram" });
+				new ChatbotDepartmentConfig { IsEnabled = true, ProactiveNotificationsEnabled = true, AllowedPlatforms = "Discord,Telegram" });
 			reg.Setup(r => r.CanInitiateProactively(ChatbotPlatform.Slack)).Returns(true);
 
 			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
@@ -163,7 +181,7 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var (id, cfg, reg) = Mocks(
 				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Slack, platformUserId: "U123") },
-				new ChatbotDepartmentConfig { ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
+				new ChatbotDepartmentConfig { IsEnabled = true, ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
 			reg.Setup(r => r.CanInitiateProactively(ChatbotPlatform.Slack)).Returns(true);
 
 			var adapter = new Mock<IChatbotPlatformAdapter>();
@@ -179,7 +197,7 @@ namespace Resgrid.Tests.Chatbot
 		}
 
 		[Test]
-		public async Task Outbound_NoConfig_TreatsAsEnabled_AndDelivers()
+		public async Task Outbound_NoConfig_PreservesWebChatDelivery()
 		{
 			// A department with no config row: defaults apply, chatbot stays enabled (backward compatible).
 			var (id, cfg, reg) = Mocks(
@@ -195,6 +213,39 @@ namespace Resgrid.Tests.Chatbot
 			var result = await service.SendToUserAsync("user-1", 1, DispatchMsg());
 
 			result.DeliveredPlatforms.Should().Contain("WebChat");
+		}
+
+		[Test]
+		public async Task Outbound_DisabledDepartment_DoesNotSendEvenWhenProactiveIsEnabled()
+		{
+			var (id, cfg, reg) = Mocks(
+				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Slack, "U123") },
+				new ChatbotDepartmentConfig { IsEnabled = false, ProactiveNotificationsEnabled = true, AllowedPlatforms = "*" });
+			var adapter = new Mock<IChatbotPlatformAdapter>();
+			reg.Setup(r => r.CanInitiateProactively(ChatbotPlatform.Slack)).Returns(true);
+			reg.Setup(r => r.GetAdapter(ChatbotPlatform.Slack)).Returns(adapter.Object);
+
+			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
+			var result = await service.SendToUserAsync("user-1", 1, DispatchMsg());
+
+			result.AnyDelivered.Should().BeFalse();
+			adapter.Verify(a => a.SendRichResponseAsync(It.IsAny<string>(), It.IsAny<ChatbotResponse>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Outbound_NoConfig_DoesNotSendExternally()
+		{
+			var (id, cfg, reg) = Mocks(
+				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.Slack, "U123") }, config: null);
+			var adapter = new Mock<IChatbotPlatformAdapter>();
+			reg.Setup(r => r.CanInitiateProactively(ChatbotPlatform.Slack)).Returns(true);
+			reg.Setup(r => r.GetAdapter(ChatbotPlatform.Slack)).Returns(adapter.Object);
+
+			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
+			var result = await service.SendToUserAsync("user-1", 1, DispatchMsg());
+
+			result.AnyDelivered.Should().BeFalse();
+			adapter.Verify(a => a.SendRichResponseAsync(It.IsAny<string>(), It.IsAny<ChatbotResponse>()), Times.Never);
 		}
 	}
 }

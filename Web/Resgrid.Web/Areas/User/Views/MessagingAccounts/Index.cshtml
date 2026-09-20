@@ -1,0 +1,102 @@
+@using System.Linq
+@model Resgrid.Web.Areas.User.Controllers.MessagingAccountsViewModel
+@{
+    ViewBag.Title = "Resgrid | " + commonLocalizer["ChatAccountsTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@commonLocalizer["ChatAccountsTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li class="active"><strong>@commonLocalizer["ChatAccountsTitle"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model.HasError)
+            {
+                <div class="alert alert-danger" role="alert">@commonLocalizer["ChatAccountsError"]</div>
+            }
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@commonLocalizer["ChatAccountsGenerate"]</h5></div>
+                <div class="ibox-content">
+                    <p>@commonLocalizer["ChatAccountsInstructions"]</p>
+                    <p>@commonLocalizer["ChatAccountsDiscordInstructions"]</p>
+                    @if (!string.IsNullOrWhiteSpace(Model.Code) && Model.CodeExpiresAt.HasValue)
+                    {
+                        <div class="alert alert-success" role="status">
+                            <p>@commonLocalizer["ChatAccountsCodeReady"]</p>
+                            <p><strong>@commonLocalizer["ChatAccountsCode"]:</strong> <code>LINK @Model.Code</code></p>
+                            <p>
+                                <strong>@commonLocalizer["ChatAccountsExpires"]:</strong>
+                                <time datetime="@Model.CodeExpiresAt.Value.ToString("o")">@Model.CodeExpiresAt.Value.ToString("u")</time>
+                            </p>
+                        </div>
+                    }
+                    <form asp-controller="MessagingAccounts" asp-action="Generate" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary" disabled="@(!Model.Platforms.Any(platform => platform.IsConfigured))">@commonLocalizer["ChatAccountsGenerate"]</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@commonLocalizer["ChatAccountsLinked"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Accounts.Count == 0)
+                    {
+                        <p class="text-muted">@commonLocalizer["ChatAccountsNone"]</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group">
+                            @foreach (var account in Model.Accounts)
+                            {
+                                <li class="list-group-item clearfix">
+                                    <form asp-controller="MessagingAccounts" asp-action="Unlink" asp-route-area="User" method="post" class="pull-right">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@account.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger">@commonLocalizer["ChatAccountsUnlink"]</button>
+                                    </form>
+                                    <strong>@account.PlatformName</strong><br />
+                                    <span>@account.DisplayName</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+
+            <a asp-controller="Home" asp-action="EditUserProfile" asp-route-area="User" asp-route-userId="@ClaimsAuthorizationHelper.GetUserId()" class="btn btn-default">@commonLocalizer["ChatAccountsBack"]</a>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@commonLocalizer["ChatAccountsAvailable"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Platforms.Count == 0)
+                    {
+                        <p class="text-muted">@commonLocalizer["ChatAccountsNone"]</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group">
+                            @foreach (var platform in Model.Platforms)
+                            {
+                                <li class="list-group-item">
+                                    <span class="label @(platform.IsConfigured ? "label-primary" : "label-default") pull-right">@commonLocalizer[platform.IsConfigured ? "Available" : "Unavailable"]</span>
+                                    @platform.Name
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

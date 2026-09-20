@@ -10,17 +10,42 @@ namespace Resgrid.Providers.Chatbot.Adapters
 	/// <summary>
 	/// WhatsApp adapter via the Twilio WhatsApp API. Inbound webhooks share Twilio's SMS request shape
 	/// but carry a "whatsapp:" channel prefix on the From/To numbers. Outbound proactive sends require a
-	/// Meta-approved message template outside the 24h session window (Phase 3 §15.3), so the adapter
-	/// registry reports WhatsApp as not-proactively-initiable for now; inbound replies are delivered by
-	/// the Twilio send path like SMS.
+	/// Meta-approved message template outside the 24h session window. Unsolicited messages use the
+	/// configured static notification template; interactive replies use the WhatsApp transport.
 	/// </summary>
-	public class WhatsAppAdapter : IChatbotPlatformAdapter
+	public class WhatsAppAdapter : HttpChatbotAdapter
 	{
-		public ChatbotPlatform Platform => ChatbotPlatform.WhatsApp;
+		public WhatsAppAdapter() : this(new Services.ChatbotHttpClient()) { }
+		public WhatsAppAdapter(Services.ChatbotHttpClient http) : base(http) { }
+		public override ChatbotPlatform Platform => ChatbotPlatform.WhatsApp;
+		public override bool IsConfigured => !string.IsNullOrWhiteSpace(Config.NumberProviderConfig.TwilioAccountSid)
+			&& !string.IsNullOrWhiteSpace(Config.NumberProviderConfig.TwilioAuthToken)
+			&& !string.IsNullOrWhiteSpace(Config.ChatbotConfig.WhatsAppFromNumber);
+		public override bool CanInitiateProactively => IsConfigured && !string.IsNullOrWhiteSpace(Config.ChatbotConfig.WhatsAppNotificationContentSid);
+		protected override int MessageLength => 1500;
+		// One static, approved notice per proactive event, regardless of the original content length.
+		public override Task SendRichResponseAsync(string recipient, ChatbotResponse response)
+			=> base.SendRichResponseAsync(recipient, new ChatbotResponse { Text = "Resgrid notification" });
 
-		public ChatbotPlatformCapabilities GetCapabilities() => ChatbotPlatformCapabilities.ForPlatform(Platform);
+		// Twilio signs the form but supplies no original timestamp. Retrieve it from the
+		// authenticated Message resource so replaying a signed old form cannot renew a command.
+		public async Task<DateTime> GetInboundTimestampAsync(string messageSid, string from, string to)
+		{
+			if (!System.Text.RegularExpressions.Regex.IsMatch(messageSid ?? "", @"^(?:SM|MM)[a-fA-F0-9]{32}$"))
+				throw new ArgumentException("Invalid WhatsApp message identity.");
+			var credentials = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+				Config.NumberProviderConfig.TwilioAccountSid + ":" + Config.NumberProviderConfig.TwilioAuthToken));
+			var resource = await Http.GetAsync("https://api.twilio.com/2010-04-01/Accounts/" +
+				Uri.EscapeDataString(Config.NumberProviderConfig.TwilioAccountSid) + "/Messages/" + messageSid + ".json", "Basic " + credentials);
+			if ((string)resource["sid"] != messageSid || (string)resource["account_sid"] != Config.NumberProviderConfig.TwilioAccountSid
+				|| (string)resource["direction"] != "inbound" || (string)resource["from"] != from || (string)resource["to"] != to
+				|| !DateTimeOffset.TryParse((string)resource["date_created"], System.Globalization.CultureInfo.InvariantCulture,
+					System.Globalization.DateTimeStyles.AssumeUniversal, out var created))
+				throw new InvalidOperationException("Unable to verify the original WhatsApp message.");
+			return created.UtcDateTime;
+		}
 
-		public Task<ChatbotMessage> ParseInboundMessageAsync(object rawRequest)
+		public override Task<ChatbotMessage> ParseInboundMessageAsync(object rawRequest)
 		{
 			if (rawRequest is TwilioRequest twilioRequest)
 			{
@@ -63,17 +88,37 @@ namespace Resgrid.Providers.Chatbot.Adapters
 				return Task.FromResult(message);
 			}
 
-			return Task.FromResult<ChatbotMessage>(null);
+			return base.ParseInboundMessageAsync(rawRequest);
 		}
 
-		public Task<string> FormatOutboundResponseAsync(ChatbotResponse response)
-			=> Task.FromResult(response?.Text ?? string.Empty);
-
-		// Proactive WhatsApp sends require an approved template (outside the 24h window). Until template
-		// registration is wired, the registry marks WhatsApp non-initiable; inbound replies go via Twilio.
-		public Task SendRichResponseAsync(string platformUserId, ChatbotResponse response) => Task.CompletedTask;
-
-		public Task SendTypingIndicatorAsync(string platformUserId) => Task.CompletedTask;
+		protected override async Task SendTextAsync(string recipient, string text, ChatbotMessage inbound)
+		{
+			var number = NormalizeWhatsAppNumber(recipient);
+			if (!System.Text.RegularExpressions.Regex.IsMatch(number ?? "", @"^[1-9][0-9]{6,14}$"))
+				throw new InvalidOperationException("Invalid WhatsApp recipient.");
+			var fields = new Dictionary<string, string>
+			{
+				["To"] = "whatsapp:+" + number,
+				["From"] = "whatsapp:+" + NormalizeWhatsAppNumber(Config.ChatbotConfig.WhatsAppFromNumber)
+			};
+			if (inbound == null)
+			{
+				if (!CanInitiateProactively) throw new InvalidOperationException("WhatsApp requires an approved notification template.");
+				fields["ContentSid"] = Config.ChatbotConfig.WhatsAppNotificationContentSid;
+			}
+			else
+			{
+				if (DateTime.UtcNow - inbound.Timestamp > TimeSpan.FromHours(23))
+					throw new InvalidOperationException("WhatsApp reply window expired.");
+				fields["Body"] = text;
+			}
+			var credentials = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+				Config.NumberProviderConfig.TwilioAccountSid + ":" + Config.NumberProviderConfig.TwilioAuthToken));
+			var sent = await Http.SendAsync("https://api.twilio.com/2010-04-01/Accounts/" +
+				Uri.EscapeDataString(Config.NumberProviderConfig.TwilioAccountSid) + "/Messages.json",
+				new System.Net.Http.FormUrlEncodedContent(fields), "Basic " + credentials);
+			if (string.IsNullOrWhiteSpace((string)sent["sid"])) throw new InvalidOperationException("WhatsApp rejected the message.");
+		}
 
 		private static string NormalizeWhatsAppNumber(string number)
 			=> number?.Replace("whatsapp:", "").Replace("+", "").Trim();

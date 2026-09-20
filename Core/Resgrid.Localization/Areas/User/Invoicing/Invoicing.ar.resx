@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>إضافة Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>إضافة شهرية للأقسام التي تفوتر العملاء وتدير العقود. يمكن فقط للعضو المدير للقسم شراؤها أو إلغاؤها.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>فوترة العملاء وبطاقات الأسعار والمدفوعات وأعمار الذمم المدينة</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>جداول أسعار المقاولين والعقود واسترداد التكاليف (لاحقًا)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>بيانات رواتب القوى العاملة وتكاليف الميدان (لاحقًا)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>جداول أسعار المقاولين والعقود واسترداد التكاليف</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>بيانات رواتب القوى العاملة وتكاليف الميدان</value></data>
   <data name="AddonActive" xml:space="preserve"><value>الإضافة نشطة لقسمك.</value></data>
   <data name="Monthly" xml:space="preserve"><value>شهر</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>لا يملك قسمك هذه الإضافة بعد.</value></data>

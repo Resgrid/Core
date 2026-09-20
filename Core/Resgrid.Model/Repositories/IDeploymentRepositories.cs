@@ -20,6 +20,11 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Deployment>> GetByIdsAsync(int departmentId, IEnumerable<string> deploymentIds);
 		/// <summary>Non-deleted deployments raised under one service contract, newest first (capped at 500).</summary>
 		Task<IEnumerable<Deployment>> GetByContractAsync(int departmentId, string serviceContractId);
+		/// <summary>
+		/// Non-deleted cost-recovery deployments that are demobilizing or completed and were released (status change, else end,
+		/// else creation) on or before the instant: the Cal OES MARS F-42 reminder scope, unpaged so no overdue deployment ages out of it.
+		/// </summary>
+		Task<IEnumerable<Deployment>> GetCostRecoveryReleasedBeforeAsync(int departmentId, DateTime releasedOnOrBeforeUtc);
 	}
 
 	public interface IDeploymentUnitRepository : IRepository<DeploymentUnit>

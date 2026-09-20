@@ -298,4 +298,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>حالات حفظ السجلات</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>كل السجلات</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>حسابات المراسلة</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>إنشاء رمز ربط</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>أنشئ رمزًا، ثم أرسل LINK متبوعًا بالرمز في محادثة خاصة مع روبوت Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>رمز الربط</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>تنتهي الصلاحية (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>إلغاء الربط</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>الحسابات المرتبطة</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>منصات المراسلة</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>لا توجد حسابات مراسلة مرتبطة.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>تعذر تحديث حسابات المراسلة. يُرجى المحاولة مجددًا.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>العودة إلى الملف الشخصي</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>رمز الربط جاهز.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>في Discord، استخدم /resgrid وأدخل LINK متبوعًا بالرمز في خيار message. استخدم /resgrid أيضًا للأوامر اللاحقة.</value></data>
 </root>

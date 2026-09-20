@@ -34,6 +34,7 @@ namespace Resgrid.Chatbot.Handlers
 			try
 			{
 				var messages = await _messageService.GetUnreadInboxMessagesByUserIdAsync(session.UserId);
+				messages = messages?.Where(m => m.DepartmentId == session.DepartmentId).ToList();
 
 				if (messages == null || messages.Count == 0)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Msg_NoUnread", culture), Processed = true };

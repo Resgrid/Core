@@ -161,10 +161,10 @@ namespace Resgrid.Tests.Chatbot
 			var repo = new Mock<IChatbotLinkingCodeRepository>();
 			repo.Setup(r => r.GetByCodeAsync(It.IsAny<string>())).ReturnsAsync(new LinkingCodeEntity
 			{
-				Code = "ABC123", UserId = "user-9", IsUsed = false, ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+				Id = "link-1", Code = "ABC123", UserId = "user-9", IsUsed = false, ExpiresAt = DateTime.UtcNow.AddMinutes(5)
 			});
-			repo.Setup(r => r.UpdateAsync(It.IsAny<LinkingCodeEntity>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ReturnsAsync((LinkingCodeEntity e, CancellationToken _, bool __) => e);
+			repo.Setup(r => r.TryConsumeAsync("link-1", (int)ChatbotPlatform.Telegram, "tg-1", It.IsAny<DateTime>()))
+				.ReturnsAsync(true);
 
 			var service = new CodeLinkingService(identity.Object, repo.Object);
 
@@ -174,8 +174,54 @@ namespace Resgrid.Tests.Chatbot
 			// The link must use the stored Resgrid user id, NOT the code string.
 			identity.Verify(i => i.LinkUserAsync("user-9", ChatbotPlatform.Telegram, "tg-1",
 				It.IsAny<string>(), "code", It.IsAny<string>()), Times.Once);
-			// The code must be consumed (single use).
-			repo.Verify(r => r.UpdateAsync(It.Is<LinkingCodeEntity>(e => e.IsUsed), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			// The database must atomically consume the issued row, scoped to the verified platform sender.
+			repo.Verify(r => r.TryConsumeAsync("link-1", (int)ChatbotPlatform.Telegram, "tg-1", It.IsAny<DateTime>()), Times.Once);
+			repo.Verify(r => r.UpdateAsync(It.IsAny<LinkingCodeEntity>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ProcessCode_ConcurrentRedemptionAlreadyConsumedCode_DoesNotLink()
+		{
+			var identity = new Mock<IChatbotUserIdentityService>();
+			var repo = new Mock<IChatbotLinkingCodeRepository>();
+			repo.Setup(r => r.GetByCodeAsync("ABC123")).ReturnsAsync(new LinkingCodeEntity
+			{
+				Id = "link-1", Code = "ABC123", UserId = "user-9", IsUsed = false, ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+			});
+			// Another request consumed the row after this request read its previously unused state.
+			repo.Setup(r => r.TryConsumeAsync("link-1", (int)ChatbotPlatform.Telegram, "tg-1", It.IsAny<DateTime>()))
+				.ReturnsAsync(false);
+
+			var service = new CodeLinkingService(identity.Object, repo.Object);
+			var result = await service.ProcessCodeAsync("ABC123", ChatbotPlatform.Telegram, "tg-1", "Test");
+
+			result.Success.Should().BeFalse();
+			repo.Verify(r => r.TryConsumeAsync("link-1", (int)ChatbotPlatform.Telegram, "tg-1", It.IsAny<DateTime>()), Times.Once);
+			identity.Verify(i => i.LinkUserAsync(It.IsAny<string>(), It.IsAny<ChatbotPlatform>(), It.IsAny<string>(),
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task ProcessCode_IdentityOwnedByAnotherUser_DoesNotConsumeOrTransfer(bool isActive)
+		{
+			var identity = new Mock<IChatbotUserIdentityService>();
+			identity.Setup(i => i.GetIdentityAsync(ChatbotPlatform.Telegram, "tg-1"))
+				.ReturnsAsync(new ChatbotUserIdentity { UserId = "different-user", IsActive = isActive });
+			var repo = new Mock<IChatbotLinkingCodeRepository>();
+			repo.Setup(r => r.GetByCodeAsync("ABC123")).ReturnsAsync(new LinkingCodeEntity
+			{
+				Id = "link-1", Code = "ABC123", UserId = "user-9", IsUsed = false, ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+			});
+
+			var service = new CodeLinkingService(identity.Object, repo.Object);
+			var result = await service.ProcessCodeAsync("ABC123", ChatbotPlatform.Telegram, "tg-1", "Test");
+
+			result.Success.Should().BeFalse();
+			result.Message.Should().Contain("already linked");
+			repo.Verify(r => r.TryConsumeAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+			identity.Verify(i => i.LinkUserAsync(It.IsAny<string>(), It.IsAny<ChatbotPlatform>(), It.IsAny<string>(),
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 		}
 
 		// ---- S5: OAuth CSRF state binding -------------------------------------------------------

@@ -555,6 +555,23 @@ namespace Resgrid.Services
 			}
 
 			// No voice call for cancellation
+			try
+			{
+				var chatCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(
+					departmentId, call, ProtectedDataEgressChannel.ChatPlatform, profile?.Language);
+				await _chatbotOutboundService.SendToUserAsync(dispatch.UserId, departmentId,
+					new ChatbotOutboundMessage
+					{
+						Type = ChatbotOutboundType.Dispatch,
+						Title = $"Dispatch Cancelled - {chatCall.Name}",
+						Body = string.IsNullOrWhiteSpace(chatCall.Address) ? chatCall.NatureOfCall : chatCall.Address,
+						ReferenceId = chatCall.CallId.ToString()
+					});
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 
 			return true;
 		}
@@ -697,6 +714,8 @@ namespace Resgrid.Services
 				}
 			}
 
+			await SendChatNotificationAsync(userId, departmentId, title, message, ChatbotOutboundType.Notification, profile);
+
 			return true;
 		}
 
@@ -757,6 +776,8 @@ namespace Resgrid.Services
 					Logging.LogException(ex);
 				}
 			}
+
+			await SendChatNotificationAsync(userId, departmentId, title, message, ChatbotOutboundType.Reminder, profile);
 
 			return true;
 		}
@@ -877,6 +898,29 @@ namespace Resgrid.Services
 				if (!await CanSendToUser(recipient.UserId, departmentId))
 					continue;
 
+				if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				{
+					try
+					{
+						// A trouble alert can carry personnel and locations even without a call.
+						var chatSanitized = await _protectedProjectionService.IsChannelSanitizedAsync(
+							departmentId, ProtectedDataEgressChannel.ChatPlatform);
+						await _chatbotOutboundService.SendToUserAsync(recipient.UserId, departmentId,
+							new ChatbotOutboundMessage
+							{
+								Type = ChatbotOutboundType.Notification,
+								Title = $"TROUBLE ALERT for {unit.Name}",
+								Body = chatSanitized ? "Protected — sign in to Resgrid" : string.Join("\n",
+									new[] { unitAddress, call?.Name, callAddress, personnelNames }.Where(value => !string.IsNullOrWhiteSpace(value))),
+								ReferenceId = call?.CallId.ToString()
+							});
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+
 				// Send a Push Notification
 				if (recipient.SendPush)
 				{
@@ -957,6 +1001,26 @@ namespace Resgrid.Services
 				return false;
 
 			return await _smsService.SendTextAsync(userId, title, message, departmentId, departmentNumber, profile);
+		}
+
+		private async Task SendChatNotificationAsync(string userId, int departmentId, string title, string body,
+			ChatbotOutboundType type, UserProfile profile)
+		{
+			try
+			{
+				// Notification and calendar text can contain protected names and locations, so use
+				// the same per-recipient safe projection as ordinary messages before chat delivery.
+				var chatMessage = await _protectedProjectionService.BuildNotificationSafeMessageAsync(
+					departmentId, new Message { Subject = title, Body = body, DepartmentId = departmentId,
+						ReceivingUserId = userId, SystemGenerated = true },
+					ProtectedDataEgressChannel.ChatPlatform, profile?.Language);
+				await _chatbotOutboundService.SendToUserAsync(userId, departmentId,
+					new ChatbotOutboundMessage { Type = type, Title = chatMessage.Subject, Body = chatMessage.Body });
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		private async Task<bool> CanSendToUser(string userId, int departmentId)

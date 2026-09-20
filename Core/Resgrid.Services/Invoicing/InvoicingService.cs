@@ -212,9 +212,20 @@ namespace Resgrid.Services.Invoicing
 			rateCard.IsDeleted = false;
 
 			var saved = await _rateCards.SaveOrUpdateAsync(rateCard, cancellationToken);
-			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectRateCardAsync(rateCard, cancellationToken);
 			if (saved.IsDefault)
+			{
+				// The cards losing the flag here are reprojected too, or "Default" would stay in their search rows until a rebuild.
+				var demoted = _searchProjections?.Value == null
+					? new List<RateCard>()
+					: (await _rateCards.GetAllForDepartmentAsync(saved.DepartmentId))?.Where(c => c.IsDefault && !string.Equals(c.RateCardId, saved.RateCardId, StringComparison.OrdinalIgnoreCase)).ToList() ?? new List<RateCard>();
 				await _rateCards.ClearDefaultAsync(saved.DepartmentId, saved.RateCardId, cancellationToken);
+				foreach (var card in demoted)
+				{
+					card.IsDefault = false;
+					await _searchProjections.Value.ProjectRateCardAsync(card, cancellationToken);
+				}
+			}
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectRateCardAsync(saved, cancellationToken);
 
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);

@@ -297,6 +297,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 			if (Schema.Table("CalOesMarsResourceProfiles").Exists()) Delete.Table("CalOesMarsResourceProfiles");
 			if (Schema.Table("CalOesMarsAgencyProfiles").Exists()) Delete.Table("CalOesMarsAgencyProfiles");
 			if (Schema.Table("InvoiceLineItems").Column("DeploymentTimeReportId").Exists()) Delete.Column("DeploymentTimeReportId").FromTable("InvoiceLineItems");
+			// The filtered index depends on the column; SQL Server refuses the column drop while it exists.
+			Execute.Sql("IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Invoices_Deployment' AND object_id = OBJECT_ID('Invoices')) DROP INDEX [IX_Invoices_Deployment] ON [Invoices];");
 			if (Schema.Table("Invoices").Column("DeploymentId").Exists()) Delete.Column("DeploymentId").FromTable("Invoices");
 			if (Schema.Table("Invoices").Column("ServiceContractId").Exists()) Delete.Column("ServiceContractId").FromTable("Invoices");
 		}

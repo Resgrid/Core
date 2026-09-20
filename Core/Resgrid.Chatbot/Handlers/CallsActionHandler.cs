@@ -17,17 +17,20 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public CallsActionHandler(
 			ICallsService callsService,
 			IDepartmentsService departmentsService,
 			ICustomStateService customStateService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService,
+			IAuthorizationService authorizationService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_customStateService = customStateService;
 			_userProfileService = userProfileService;
+			_authorizationService = authorizationService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.ListCalls;
@@ -44,7 +47,13 @@ namespace Resgrid.Chatbot.Handlers
 				if (activeCalls == null || !activeCalls.Any())
 					return new ChatbotResponse { Text = ChatbotResources.Get("Calls_NoActive", culture, departmentName), Processed = true };
 
-				var callList = activeCalls.Take(10).ToList();
+				var callList = new System.Collections.Generic.List<Resgrid.Model.Call>();
+				foreach (var call in activeCalls)
+				{
+					if (call.DepartmentId == session.DepartmentId && await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
+						callList.Add(call);
+					if (callList.Count == 10) break;
+				}
 				var sb = new StringBuilder();
 				sb.AppendLine(ChatbotResources.Get("Calls_Header", culture, departmentName));
 				sb.AppendLine("----------------------");

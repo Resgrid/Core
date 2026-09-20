@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Business Operations add-on</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>A monthly add-on for departments that bill customers and manage contracts. Only the department's managing member can buy or cancel it.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Customer invoicing, rate cards, payments and accounts-receivable aging</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Contractor rate schedules, contracts and cost recovery (coming later)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Workforce pay data and field costing (coming later)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Contractor rate schedules, contracts and cost recovery</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Workforce pay data and field costing</value></data>
   <data name="AddonActive" xml:space="preserve"><value>The add-on is active for your department.</value></data>
   <data name="Monthly" xml:space="preserve"><value>month</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Your department does not hold this add-on yet.</value></data>

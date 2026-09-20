@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Nur F-42 und Spesenanträge werden bei MARS eingereicht.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>Der Datensatz ist bezahlt oder geschlossen; die Zeilen sind endgültig.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Der Datensatz hat nicht den erwarteten Typ.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Aus Lohndaten erstellen</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Reguläre und Überstundensätze jeder passenden Klassifikationszeile durch die Mittelwerte ersetzen?</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} Klassifikationszeile(n) aus {1} Beschäftigten erstellt; {2} nicht zugeordnete Klassifikation(en); {3} Einzelpersonen-Klassifikation(en) zu prüfen.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Phase E: Der Mittelwert der aktuell genehmigten individuellen Stundensätze je MARS-Klassifikation (plus Zulagen pro Überstunde) füllt die regulären und Überstundensätze. Nur Aggregate – nie ein Bandmittelwert, nie eine Einzelperson. Eine Prüfhilfe; der Bevollmächtigte unterzeichnet weiterhin in MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Kein genehmigtes Vergütungsprofil trägt eine MARS-Klassifikation für dieses Autoritätsprofil.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Nur ein Salary-Survey- oder Attachment-A-Profil nimmt einen Lohndaten-Entwurf an.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Das Ratenprofil ist nicht mehr bearbeitbar.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Lohndaten stehen dieser Organisation nicht zur Verfügung.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>Lohndaten sind für diese Organisation nicht aktiviert.</value></data>
 </root>

@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Лише F-42 та вимоги витрат подаються в MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>Запис оплачено або закрито; його рядки остаточні.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Запис не очікуваного типу.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Створити з даних оплати</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Замінити звичайну та понаднормову ставки кожного відповідного рядка класифікації середніми?</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} рядків класифікації створено з {1} працівників; {2} незіставлених класифікацій; {3} класифікацій з одним працівником на перевірку.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Фаза E: середнє поточних затверджених індивідуальних погодинних ставок за класифікацією MARS (плюс компоненти за годину понаднормових) заповнює звичайну та понаднормову ставки. Лише агрегати — ніколи середина діапазону чи особа. Допоміжний засіб; уповноважений представник підписує в MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Жоден затверджений профіль оплати не має класифікації MARS для цього профілю авторитету.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Лише профіль Salary Survey або Attachment A приймає чернетку з даних оплати.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Профіль ставок більше не редагується.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Дані оплати недоступні для цього підрозділу.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>Дані оплати не ввімкнено для цього підрозділу.</value></data>
 </root>

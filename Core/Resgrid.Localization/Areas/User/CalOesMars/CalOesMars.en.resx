@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Only F-42 and expense claims are submitted to MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>The record is paid or closed; its lines are final.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>The record is not of the expected type.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Build from workforce pay data</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Replace the straight and overtime rates of every matching classification line with the workforce means?</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} classification line(s) drafted from {1} employee(s); {2} unmapped classification(s); {3} single-employee classification(s) to review.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Phase E: the mean of the current approved individual hourly rates per MARS classification (plus components paid for each overtime hour) fills the straight and overtime rates. Aggregates only — never a pay-range midpoint, never an individual. A review aid; the authorized representative still signs in MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>No approved employee compensation profile carries a MARS classification for this authority profile.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Only a Salary Survey or Attachment A profile takes a workforce draft.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>The rate profile is no longer editable.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Workforce pay data is not available to this department.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>Workforce pay data is not enabled for this department.</value></data>
 </root>

@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Il lavoratore non è stato trovato.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>È richiesto un lavoratore.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>L'anno di riferimento non è valido.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Costo interno</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Margine di contribuzione stimato dai costi interni — non un utile contabile; gli input mancanti sono elencati nel calcolo.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>Nessun calcolo dei costi per questo record.</value></data>
 </root>

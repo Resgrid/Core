@@ -46,9 +46,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_bids_department ON bids (departmentid, isdeleted, status);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_bids_contact ON bids (contactid);");
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_bids_number ON bids (departmentid, bidnumber);");

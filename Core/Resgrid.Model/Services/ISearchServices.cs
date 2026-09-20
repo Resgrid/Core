@@ -28,6 +28,14 @@ namespace Resgrid.Model.Services
 
 		Task ProjectNoteAsync(Note note, CancellationToken cancellationToken = default);
 
+		// Workforce & Business Operations families (decision 41): identifier / title / status only; a deleted row removes the projection.
+		Task ProjectInvoiceAsync(Invoicing.Invoice invoice, CancellationToken cancellationToken = default);
+		Task ProjectRateCardAsync(Invoicing.RateCard rateCard, CancellationToken cancellationToken = default);
+		Task ProjectBidAsync(Invoicing.Bid bid, CancellationToken cancellationToken = default);
+		Task ProjectServiceContractAsync(Invoicing.ServiceContract contract, CancellationToken cancellationToken = default);
+		Task ProjectDeploymentAsync(Invoicing.Deployment deployment, CancellationToken cancellationToken = default);
+		Task ProjectCertificationTypeAsync(DepartmentCertificationType type, CancellationToken cancellationToken = default);
+
 		Task RemoveAsync(int departmentId, string entityType, string entityId, CancellationToken cancellationToken = default);
 
 		/// <summary>Builds the projection row without saving it (used by rebuilds and tests). Null when nothing safe can be indexed.</summary>
@@ -38,6 +46,12 @@ namespace Resgrid.Model.Services
 		Task<SearchProjection> BuildMessageAsync(Message message);
 		Task<SearchProjection> BuildDocumentAsync(Document document);
 		Task<SearchProjection> BuildNoteAsync(Note note);
+		Task<SearchProjection> BuildInvoiceAsync(Invoicing.Invoice invoice);
+		Task<SearchProjection> BuildRateCardAsync(Invoicing.RateCard rateCard);
+		Task<SearchProjection> BuildBidAsync(Invoicing.Bid bid);
+		Task<SearchProjection> BuildServiceContractAsync(Invoicing.ServiceContract contract);
+		Task<SearchProjection> BuildDeploymentAsync(Invoicing.Deployment deployment);
+		Task<SearchProjection> BuildCertificationTypeAsync(DepartmentCertificationType type);
 
 		/// <summary>Upserts a prebuilt row (rebuild path).</summary>
 		Task<SearchProjection> UpsertAsync(SearchProjection projection, CancellationToken cancellationToken = default);

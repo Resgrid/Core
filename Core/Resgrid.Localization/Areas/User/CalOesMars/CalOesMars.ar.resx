@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>فقط نماذج F-42 ومطالبات المصروفات تُقدَّم إلى MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>السجل مدفوع أو مغلق؛ بنوده نهائية.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>السجل ليس من النوع المتوقع.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>إنشاء من بيانات أجور القوى العاملة</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>استبدال المعدلين العادي والإضافي لكل بند تصنيف مطابق بالمتوسطات؟</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>تم إنشاء {0} بند تصنيف من {1} موظف؛ {2} تصنيف غير مطابق؛ {3} تصنيف بموظف واحد للمراجعة.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>المرحلة E: متوسط المعدلات الساعية الفردية المعتمدة الحالية لكل تصنيف MARS (بالإضافة إلى المكوّنات المدفوعة لكل ساعة إضافية) يملأ المعدلين العادي والإضافي. مجاميع فقط — ليس منتصف نطاق ولا فردًا. أداة مراجعة؛ الممثل المفوض لا يزال يوقع في MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>لا يوجد ملف تعويض معتمد يحمل تصنيف MARS لملف السلطة هذا.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>فقط ملف Salary Survey أو Attachment A يقبل مسودة من بيانات الأجور.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>ملف المعدلات لم يعد قابلًا للتعديل.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>بيانات الأجور غير متاحة لهذا القسم.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>بيانات الأجور غير مفعّلة لهذا القسم.</value></data>
 </root>

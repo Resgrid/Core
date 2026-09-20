@@ -38,10 +38,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IContactsService _contactsService;
 		private readonly IBusinessOperationsAccessService _access;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> _strings;
+		private readonly Lazy<IFieldCostingService> _costing;
 
 		public BidsController(IBidsService bids, IServiceContractService contracts, IRateScheduleService rateSchedules, IInvoicingService invoicing, IDeploymentService deployments,
-			IContactsService contactsService, IBusinessOperationsAccessService access, IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> strings)
+			IContactsService contactsService, IBusinessOperationsAccessService access, IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> strings, Lazy<IFieldCostingService> costing = null)
 		{
+			_costing = costing;
 			_bids = bids;
 			_contracts = contracts;
 			_rateSchedules = rateSchedules;
@@ -242,6 +244,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				view.Currency = schedule?.Currency ?? "USD";
 			}
 			if (bid.IsConverted) view.ConvertedDeployment = await _deployments.GetDeploymentByIdAsync(bid.ConvertedDeploymentId, DepartmentId);
+			// Phase E: the estimated contribution margin card — aggregate only, never on the customer PDF (plan decision 33).
+			if (_costing?.Value != null && (IsAdmin || ClaimsAuthorizationHelper.CanViewInternalCosts()) && await _access.CanUseWorkforceAsync(DepartmentId))
+			{
+				var runs = await _costing.Value.GetRunsForBidAsync(bid.BidId, DepartmentId);
+				view.CostCard = new Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView { BidId = bid.BidId, Latest = runs.OrderByDescending(r => r.AddedOn).FirstOrDefault(), CanRun = true };
+			}
 			return View(view);
 		}
 

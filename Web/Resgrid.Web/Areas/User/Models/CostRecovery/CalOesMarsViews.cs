@@ -59,6 +59,8 @@ namespace Resgrid.Web.Areas.User.Models.CostRecovery
 		public IReadOnlyList<string> Classifications { get; set; } = Array.Empty<string>();
 		public IReadOnlyList<string> ResourceTypes { get; set; } = Array.Empty<string>();
 		public List<CalOesMarsRateProfileStatuses> NextStatuses { get; set; } = new List<CalOesMarsRateProfileStatuses>();
+		/// <summary>Phase E entitlement present: the Salary Survey / Attachment A draft can be built from workforce pay data.</summary>
+		public bool WorkforceEnabled { get; set; }
 	}
 
 	public class CalOesMarsAgreementsView : CalOesMarsPageView
@@ -87,7 +89,6 @@ namespace Resgrid.Web.Areas.User.Models.CostRecovery
 		public List<CalOesMarsWorkItem> Related { get; set; } = new List<CalOesMarsWorkItem>();
 		public bool IsRostered { get; set; }
 		public bool CanEdit { get; set; }
-		public string SnapshotJson { get; set; }
 		public IReadOnlyList<string> Classifications { get; set; } = Array.Empty<string>();
 	}
 

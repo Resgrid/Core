@@ -27,6 +27,7 @@ namespace Resgrid.Services
 		private readonly IDepartmentCertificationTypeRepository _departmentCertificationTypeRepository;
 		private readonly IPersonnelCertificationRepository _personnelCertificationRepository;
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly IPersonnelRoleCertificationRequirementRepository _requirements;
 		private readonly IDepartmentCertificationSettingsRepository _settings;
 		private readonly IPersonnelCertificationCreditsRepository _credits;
@@ -60,12 +61,14 @@ namespace Resgrid.Services
 			Lazy<IDepartmentSettingsService> departmentSettings,
 			Lazy<ICommunicationService> communication,
 			Lazy<IProtectedReadService> protectedRead = null,
-			IProtectedGrantContext grant = null)
+			IProtectedGrantContext grant = null,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_grant = grant;
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
 			_personnelCertificationRepository = personnelCertificationRepository;
 			_protectedWriteService = protectedWriteService;
+			_searchProjections = searchProjections;
 			_requirements = requirements;
 			_settings = settings;
 			_credits = credits;
@@ -109,6 +112,7 @@ namespace Resgrid.Services
 			type.IsActive = false;
 			type.EditedOn = DateTime.UtcNow;
 			await _departmentCertificationTypeRepository.SaveOrUpdateAsync(type, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectCertificationTypeAsync(type, cancellationToken);
 			Audit(type.DepartmentId, null, AuditLogTypes.CertificationTypeRemoved, before, Snapshot(type));
 			return true;
 		}
@@ -324,6 +328,7 @@ namespace Resgrid.Services
 			}
 
 			var saved = await _departmentCertificationTypeRepository.SaveOrUpdateAsync(type, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectCertificationTypeAsync(type, cancellationToken);
 			Audit(saved.DepartmentId, userId, existing == null ? AuditLogTypes.CertificationTypeAdded : AuditLogTypes.CertificationTypeEdited, existing == null ? null : Snapshot(existing), Snapshot(saved));
 			return saved;
 		}

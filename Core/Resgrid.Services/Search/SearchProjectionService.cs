@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
@@ -114,6 +115,24 @@ namespace Resgrid.Services.Search
 				Logging.LogException(ex, $"Search projection failed for {entityType} {entityId} in department {departmentId}.");
 			}
 		}
+
+		public Task ProjectInvoiceAsync(Invoice invoice, CancellationToken cancellationToken = default)
+			=> Guarded(SearchEntityTypes.Invoice, invoice?.DepartmentId ?? 0, invoice?.InvoiceId, invoice != null && invoice.IsDeleted, () => BuildInvoiceAsync(invoice), cancellationToken);
+
+		public Task ProjectRateCardAsync(RateCard rateCard, CancellationToken cancellationToken = default)
+			=> Guarded(SearchEntityTypes.RateCard, rateCard?.DepartmentId ?? 0, rateCard?.RateCardId, rateCard != null && rateCard.IsDeleted, () => BuildRateCardAsync(rateCard), cancellationToken);
+
+		public Task ProjectBidAsync(Bid bid, CancellationToken cancellationToken = default)
+			=> Guarded(SearchEntityTypes.Bid, bid?.DepartmentId ?? 0, bid?.BidId, bid != null && bid.IsDeleted, () => BuildBidAsync(bid), cancellationToken);
+
+		public Task ProjectServiceContractAsync(ServiceContract contract, CancellationToken cancellationToken = default)
+			=> Guarded(SearchEntityTypes.ServiceContract, contract?.DepartmentId ?? 0, contract?.ServiceContractId, contract != null && contract.IsDeleted, () => BuildServiceContractAsync(contract), cancellationToken);
+
+		public Task ProjectDeploymentAsync(Deployment deployment, CancellationToken cancellationToken = default)
+			=> Guarded(SearchEntityTypes.Deployment, deployment?.DepartmentId ?? 0, deployment?.DeploymentId, deployment != null && deployment.IsDeleted, () => BuildDeploymentAsync(deployment), cancellationToken);
+
+		public Task ProjectCertificationTypeAsync(DepartmentCertificationType type, CancellationToken cancellationToken = default)
+			=> Guarded(SearchEntityTypes.CertificationType, type?.DepartmentId ?? 0, type?.DepartmentCertificationTypeId.ToString(), false, () => BuildCertificationTypeAsync(type), cancellationToken);
 
 		// ---- builders --------------------------------------------------------------------------------------------
 
@@ -315,6 +334,122 @@ namespace Resgrid.Services.Search
 			p.OccurredOn = note.AddedOn == default ? DateTime.UtcNow : note.AddedOn;
 			p.Url = $"/User/Notes/View?noteId={note.NoteId}";
 			p.MetadataJson = Json(new Dictionary<string, string> { ["Category"] = Safe(note.Category), ["Color"] = Safe(note.Color), ["AddedOn"] = p.OccurredOn.ToString("o") });
+			return p;
+		}
+
+		// ---- Workforce & Business Operations families (decision 41): identifier, title, status. Never an amount, a line, a note, an e-mail or a person. ----
+
+		public async Task<SearchProjection> BuildInvoiceAsync(Invoice invoice)
+		{
+			if (invoice == null || invoice.DepartmentId <= 0 || string.IsNullOrWhiteSpace(invoice.InvoiceId) || invoice.IsDeleted)
+				return null;
+			var ctx = await ContextAsync(invoice.DepartmentId);
+			var status = Enum.IsDefined(typeof(InvoiceStatus), invoice.Status) ? ((InvoiceStatus)invoice.Status).ToString() : invoice.Status.ToString();
+			var p = New(invoice.DepartmentId, SearchEntityTypes.Invoice, invoice.InvoiceId, ctx);
+			p.Title = Cap("Invoice #" + invoice.InvoiceNumber, TitleMax);
+			p.Summary = Cap(Join(" · ", status, invoice.IssuedOn?.ToString("yyyy-MM-dd"), Safe(invoice.Currency)), SummaryMax);
+			p.Keywords = Cap(Join(" ", invoice.InvoiceNumber.ToString(), Safe(invoice.DeploymentId), Safe(invoice.ServiceContractId)), KeywordsMax);
+			p.Category = status;
+			p.IsActive = invoice.Status != (int)InvoiceStatus.Void;
+			p.OccurredOn = invoice.IssuedOn ?? (invoice.AddedOn == default ? DateTime.UtcNow : invoice.AddedOn);
+			p.Url = $"/User/Invoicing/View?id={Uri.EscapeDataString(invoice.InvoiceId)}";
+			p.MetadataJson = Json(new Dictionary<string, string> { ["Status"] = status, ["ContactId"] = Safe(invoice.ContactId), ["DeploymentId"] = Safe(invoice.DeploymentId) });
+			return p;
+		}
+
+		public async Task<SearchProjection> BuildRateCardAsync(RateCard rateCard)
+		{
+			if (rateCard == null || rateCard.DepartmentId <= 0 || string.IsNullOrWhiteSpace(rateCard.RateCardId) || rateCard.IsDeleted)
+				return null;
+			var ctx = await ContextAsync(rateCard.DepartmentId);
+			var name = Safe(rateCard.Name);
+			if (name == null) return null;
+			var p = New(rateCard.DepartmentId, SearchEntityTypes.RateCard, rateCard.RateCardId, ctx);
+			p.Title = Cap(name, TitleMax);
+			p.Summary = Cap(Join(" · ", rateCard.IsDefault ? "Default" : null, rateCard.Active ? "Active" : "Inactive", Safe(rateCard.Description)), SummaryMax);
+			p.Category = rateCard.Active ? "Active" : "Inactive";
+			p.IsActive = rateCard.Active;
+			p.OccurredOn = rateCard.AddedOn == default ? DateTime.UtcNow : rateCard.AddedOn;
+			p.Url = $"/User/Invoicing/EditRateCard?id={Uri.EscapeDataString(rateCard.RateCardId)}";
+			p.MetadataJson = Json(new Dictionary<string, string> { ["IsDefault"] = rateCard.IsDefault.ToString() });
+			return p;
+		}
+
+		public async Task<SearchProjection> BuildBidAsync(Bid bid)
+		{
+			if (bid == null || bid.DepartmentId <= 0 || string.IsNullOrWhiteSpace(bid.BidId) || bid.IsDeleted)
+				return null;
+			var ctx = await ContextAsync(bid.DepartmentId);
+			var status = Enum.IsDefined(typeof(BidStatuses), bid.Status) ? ((BidStatuses)bid.Status).ToString() : bid.Status.ToString();
+			var p = New(bid.DepartmentId, SearchEntityTypes.Bid, bid.BidId, ctx);
+			p.Title = Cap(Join(" ", "Bid #" + bid.BidNumber, Safe(bid.Title)), TitleMax);
+			p.Summary = Cap(Join(" · ", status, Safe(bid.IncidentNumber), bid.RequestedStartOn?.ToString("yyyy-MM-dd")), SummaryMax);
+			p.Keywords = Cap(Join(" ", bid.BidNumber.ToString(), Safe(bid.IncidentNumber), Safe(bid.ConvertedDeploymentId)), KeywordsMax);
+			p.Category = status;
+			p.IsActive = bid.Status != (int)BidStatuses.Declined && bid.Status != (int)BidStatuses.Expired;
+			p.OccurredOn = bid.AddedOn == default ? DateTime.UtcNow : bid.AddedOn;
+			p.Url = $"/User/Bids/View?id={Uri.EscapeDataString(bid.BidId)}";
+			p.MetadataJson = Json(new Dictionary<string, string> { ["Status"] = status, ["ContactId"] = Safe(bid.ContactId), ["DeploymentId"] = Safe(bid.ConvertedDeploymentId) });
+			return p;
+		}
+
+		public async Task<SearchProjection> BuildServiceContractAsync(ServiceContract contract)
+		{
+			if (contract == null || contract.DepartmentId <= 0 || string.IsNullOrWhiteSpace(contract.ServiceContractId) || contract.IsDeleted)
+				return null;
+			var ctx = await ContextAsync(contract.DepartmentId);
+			var name = Safe(contract.Name);
+			if (name == null) return null;
+			var status = Enum.IsDefined(typeof(ServiceContractStatuses), contract.Status) ? ((ServiceContractStatuses)contract.Status).ToString() : contract.Status.ToString();
+			var p = New(contract.DepartmentId, SearchEntityTypes.ServiceContract, contract.ServiceContractId, ctx);
+			p.Title = Cap(Join(" ", Safe(contract.ContractNumber), name), TitleMax);
+			p.Summary = Cap(Join(" · ", status, contract.StartOn.ToString("yyyy-MM-dd") + " – " + (contract.EndOn?.ToString("yyyy-MM-dd") ?? "…")), SummaryMax);
+			p.Keywords = Cap(Safe(contract.ContractNumber), KeywordsMax);
+			p.Category = status;
+			p.IsActive = contract.Status == (int)ServiceContractStatuses.Active;
+			p.OccurredOn = contract.StartOn == default ? DateTime.UtcNow : contract.StartOn;
+			p.Url = $"/User/Contracts/View?id={Uri.EscapeDataString(contract.ServiceContractId)}";
+			p.MetadataJson = Json(new Dictionary<string, string> { ["Status"] = status, ["ContactId"] = Safe(contract.ContactId) });
+			return p;
+		}
+
+		public async Task<SearchProjection> BuildDeploymentAsync(Deployment deployment)
+		{
+			if (deployment == null || deployment.DepartmentId <= 0 || string.IsNullOrWhiteSpace(deployment.DeploymentId) || deployment.IsDeleted)
+				return null;
+			var ctx = await ContextAsync(deployment.DepartmentId);
+			var name = Safe(deployment.Name);
+			if (name == null) return null;
+			var status = Enum.IsDefined(typeof(DeploymentStatuses), deployment.Status) ? ((DeploymentStatuses)deployment.Status).ToString() : deployment.Status.ToString();
+			// Deployments.Notes is ADP catalog 27 and never indexed; the order / request / incident identifiers print on every claim and are plain.
+			var p = New(deployment.DepartmentId, SearchEntityTypes.Deployment, deployment.DeploymentId, ctx);
+			p.Title = Cap(name, TitleMax);
+			p.Summary = Cap(Join(" · ", status, Safe(deployment.IncidentNumber), Safe(deployment.ResourceOrderNumber), deployment.StartOn?.ToString("yyyy-MM-dd")), SummaryMax);
+			p.Keywords = Cap(Join(" ", Safe(deployment.IncidentNumber), Safe(deployment.ResourceOrderNumber), Safe(deployment.RequestNumber), Safe(deployment.CostCode), deployment.CallId?.ToString()), KeywordsMax);
+			p.Category = status;
+			p.IsActive = deployment.IsOpen;
+			p.OccurredOn = deployment.StartOn ?? (deployment.AddedOn == default ? DateTime.UtcNow : deployment.AddedOn);
+			p.Url = $"/User/Deployments/View?id={Uri.EscapeDataString(deployment.DeploymentId)}";
+			p.MetadataJson = Json(new Dictionary<string, string> { ["Status"] = status, ["FinanceMode"] = deployment.FinanceMode.ToString(), ["CallId"] = deployment.CallId?.ToString() });
+			return p;
+		}
+
+		public async Task<SearchProjection> BuildCertificationTypeAsync(DepartmentCertificationType type)
+		{
+			if (type == null || type.DepartmentId <= 0 || type.DepartmentCertificationTypeId <= 0)
+				return null;
+			var ctx = await ContextAsync(type.DepartmentId);
+			var name = Safe(type.Type);
+			if (name == null) return null;
+			var p = New(type.DepartmentId, SearchEntityTypes.CertificationType, type.DepartmentCertificationTypeId.ToString(), ctx);
+			p.Title = Cap(name, TitleMax);
+			p.Summary = Cap(Join(" · ", Safe(type.Code), Safe(type.IssuingAuthority), Safe(type.Description)), SummaryMax);
+			p.Keywords = Cap(Join(" ", Safe(type.Code), Safe(type.IssuingAuthority)), KeywordsMax);
+			p.Category = type.IsActive ? "Active" : "Inactive";
+			p.IsActive = type.IsActive;
+			p.OccurredOn = DateTime.UtcNow;
+			p.Url = $"/User/Certifications/EditType?id={type.DepartmentCertificationTypeId}";
+			p.MetadataJson = Json(new Dictionary<string, string> { ["Code"] = Safe(type.Code), ["AppliesTo"] = type.AppliesTo.ToString() });
 			return p;
 		}
 

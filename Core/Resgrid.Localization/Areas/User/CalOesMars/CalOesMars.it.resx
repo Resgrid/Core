@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Solo F-42 e richieste spese vengono inviati a MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>Il record è pagato o chiuso; le sue righe sono definitive.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Il record non è del tipo atteso.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Genera dai dati retributivi</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Sostituire le tariffe ordinaria e straordinaria di ogni riga di classificazione corrispondente con le medie?</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} riga/righe di classificazione generate da {1} dipendenti; {2} classificazioni non mappate; {3} classificazioni con un solo dipendente da rivedere.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Fase E: la media delle tariffe orarie individuali approvate per classificazione MARS (più i componenti pagati per ora di straordinario) compila le tariffe ordinaria e straordinaria. Solo aggregati — mai un punto medio di fascia né un individuo. Un ausilio alla revisione; il rappresentante autorizzato firma comunque in MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Nessun profilo retributivo approvato reca una classificazione MARS per questo profilo di autorità.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Solo un profilo Salary Survey o Attachment A accetta una bozza dai dati retributivi.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Il profilo tariffario non è più modificabile.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>I dati retributivi non sono disponibili per questo dipartimento.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>I dati retributivi non sono abilitati per questo dipartimento.</value></data>
 </root>

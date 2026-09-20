@@ -36,9 +36,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_servicecontracts_department ON servicecontracts (departmentid, isdeleted, status);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_servicecontracts_contact ON servicecontracts (contactid);");
 			}
@@ -75,9 +73,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_departmentcompliancedocuments_department ON departmentcompliancedocuments (departmentid, isdeleted, expireson);");
 			}
 		}

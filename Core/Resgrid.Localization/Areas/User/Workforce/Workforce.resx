@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>The worker was not found.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>A worker is required.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>The reporting year is not valid.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Internal cost</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Estimated contribution margin from internal cost inputs — not accounting profit; missing inputs are listed on the run.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>No cost run yet for this record.</value></data>
 </root>

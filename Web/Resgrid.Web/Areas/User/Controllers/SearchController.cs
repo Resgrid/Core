@@ -148,6 +148,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				case SearchEntityTypes.Document: return "Documents";
 				case SearchEntityTypes.Note: return "Notes";
 				case SearchEntityTypes.Record: return "Records";
+				case SearchEntityTypes.Invoice: return "Invoices";
+				case SearchEntityTypes.RateCard: return "Rate Cards";
+				case SearchEntityTypes.Bid: return "Bids";
+				case SearchEntityTypes.ServiceContract: return "Contracts";
+				case SearchEntityTypes.Deployment: return "Deployments";
+				case SearchEntityTypes.CertificationType: return "Certification Types";
 				default: return entityType;
 			}
 		}

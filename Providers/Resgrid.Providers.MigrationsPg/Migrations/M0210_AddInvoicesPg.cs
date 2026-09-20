@@ -42,9 +42,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_invoices_department_number ON invoices (departmentid, invoicenumber);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoices_department_status ON invoices (departmentid, status, isdeleted);");
@@ -65,9 +63,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("unitrate").AsDecimal(18, 4).NotNullable().WithDefaultValue(0)
 					.WithColumn("amount").AsDecimal(18, 2).NotNullable().WithDefaultValue(0)
 					.WithColumn("taxable").AsBoolean().NotNullable().WithDefaultValue(true)
-					.WithColumn("sortorder").AsInt32().NotNullable().WithDefaultValue(0)
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("sortorder").AsInt32().NotNullable().WithDefaultValue(0);
 
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoicelineitems_invoice ON invoicelineitems (invoiceid, sortorder);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoicelineitems_department_call ON invoicelineitems (departmentid, callid);");
@@ -95,9 +91,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("notes").AsString(int.MaxValue).Nullable()
 					.WithColumn("paidon").AsDateTime2().NotNullable()
 					.WithColumn("recordedbyuserid").AsString(128).Nullable()
-					.WithColumn("addedon").AsDateTime2().NotNullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("addedon").AsDateTime2().NotNullable();
 
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoicepayments_invoice ON invoicepayments (invoiceid, paidon);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoicepayments_department_paid ON invoicepayments (departmentid, paidon);");

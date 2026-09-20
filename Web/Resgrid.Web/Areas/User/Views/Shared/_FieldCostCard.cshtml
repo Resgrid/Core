@@ -1,0 +1,57 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceStrings
+@*
+    Internal cost card for a bid or deployment page (Workforce & Business Operations plan, Phase E / E4 "estimated
+    contribution margin"). Renders only for ViewInternalCosts holders with the Workforce.InternalCosting entitlement;
+    aggregate categories and totals only — never a line, a rate or a person. Runs and freezes go through the
+    Workforce controller, which redirects to the run page.
+*@
+@{
+    var r = Model.Latest;
+}
+<div class="ibox float-e-margins">
+    <div class="ibox-title"><h5><i class="fa fa-calculator"></i> @workforceStrings["InternalCost"]</h5>
+        <div class="ibox-tools"><a asp-controller="Workforce" asp-action="CostRuns" asp-route-area="User" class="btn btn-xs btn-default">@workforceStrings["TabCostRuns"]</a></div>
+    </div>
+    <div class="ibox-content">
+        @if (r == null)
+        {
+            <p class="text-muted">@workforceStrings["NoRunForContext"]</p>
+        }
+        else
+        {
+            <p class="small text-muted">@workforceStrings["RunType" + (FieldCostRunTypes)r.RunType] · <span class="label @(r.Status == (int)FieldCostRunStatuses.Frozen ? "label-primary" : r.Status == (int)FieldCostRunStatuses.NeedsReview ? "label-warning" : "label-default")">@workforceStrings["RunStatus" + (FieldCostRunStatuses)r.Status]</span> · @r.AddedOn.ToString("yyyy-MM-dd")</p>
+            <table class="table table-condensed m-b-xs">
+                <tr><td>@workforceStrings["Personnel"]</td><td class="text-right">@r.PersonnelTotal.ToString("N2")</td></tr>
+                <tr><td>@workforceStrings["Resources"]</td><td class="text-right">@r.ResourceTotal.ToString("N2")</td></tr>
+                <tr><td>@workforceStrings["Expenses"]</td><td class="text-right">@(r.ExpenseTotal + r.ConsumableTotal + r.OverheadTotal).ToString("N2")</td></tr>
+                <tr class="active"><td><strong>@workforceStrings["TotalLoadedCost"]</strong></td><td class="text-right"><strong>@r.TotalLoadedCost.ToString("N2") @r.Currency</strong></td></tr>
+                <tr><td>@workforceStrings["Revenue"]</td><td class="text-right">@(r.RevenueAmount?.ToString("N2") ?? "—")</td></tr>
+                <tr><td>@workforceStrings["Margin"]</td><td class="text-right @(r.ContributionMargin < 0 ? "text-danger" : "")">@(r.ContributionMargin.HasValue ? r.ContributionMargin.Value.ToString("N2") + " (" + (r.ContributionMarginPercent ?? 0).ToString("N1") + "%)" : "—")</td></tr>
+                <tr><td>@workforceStrings["BreakEven"]</td><td class="text-right">@r.BreakEvenRevenue.ToString("N2")</td></tr>
+            </table>
+            @if (r.MissingInputCount > 0) { <p class="small text-warning"><i class="fa fa-exclamation-triangle"></i> @workforceStrings["MissingInputs"]: @r.MissingInputCount</p> }
+            <a asp-controller="Workforce" asp-action="CostRun" asp-route-area="User" asp-route-id="@r.FieldCostRunId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @workforceStrings["CostRun"]</a>
+        }
+        @if (Model.CanRun)
+        {
+            <div class="m-t-sm">
+                @if (!string.IsNullOrWhiteSpace(Model.BidId))
+                {
+                    <form method="post" asp-controller="Workforce" asp-action="RunBidEstimate" asp-route-area="User" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="bidId" value="@Model.BidId" /><button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-refresh"></i> @workforceStrings["RunBidEstimate"]</button></form>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.DeploymentId))
+                {
+                    <form method="post" asp-controller="Workforce" asp-action="RunDeploymentCost" asp-route-area="User" class="form-inline" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="deploymentId" value="@Model.DeploymentId" />
+                        <select name="revenueSource" class="form-control input-sm">@foreach (RevenueSources s in Enum.GetValues(typeof(RevenueSources))) { <option value="@((int)s)" selected="@(Model.DefaultRevenueSource == s)">@workforceStrings["Revenue" + s]</option> }</select>
+                        <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-refresh"></i> @workforceStrings["RunDeploymentCost"]</button>
+                    </form>
+                }
+            </div>
+        }
+        <p class="small text-muted m-t-xs m-b-none">@workforceStrings["MarginDisclaimer"]</p>
+    </div>
+</div>

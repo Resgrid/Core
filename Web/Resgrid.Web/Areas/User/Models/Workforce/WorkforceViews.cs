@@ -191,6 +191,16 @@ namespace Resgrid.Web.Areas.User.Models.Workforce
 		public IReadOnlyList<CaPayDataCode> Sexes { get; set; } = CaPayDataSchemaProfile.Current.Sexes;
 	}
 
+	/// <summary>The internal cost card on a bid or deployment page (aggregate only).</summary>
+	public class FieldCostCardView
+	{
+		public string BidId { get; set; }
+		public string DeploymentId { get; set; }
+		public FieldCostRun Latest { get; set; }
+		public bool CanRun { get; set; }
+		public RevenueSources DefaultRevenueSource { get; set; } = RevenueSources.CustomerInvoice;
+	}
+
 	public class WorkforceDemographicInput
 	{
 		public string HispanicLatino { get; set; }

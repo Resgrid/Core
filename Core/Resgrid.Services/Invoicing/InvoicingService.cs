@@ -33,6 +33,7 @@ namespace Resgrid.Services.Invoicing
 		private readonly IDepartmentBillingIdentityRepository _identities;
 		/// <summary>Contractor billing (C-M2): the linked contract's terms override the profile's net days when the invoice issues.</summary>
 		private readonly IServiceContractRepository _serviceContracts;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly IContactsService _contactsService;
 		private readonly ICallsService _callsService;
 		private readonly IUnitsService _unitsService;
@@ -51,9 +52,10 @@ namespace Resgrid.Services.Invoicing
 			IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
 			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService, IUnitOfWork unitOfWork,
 			Lazy<IInvoicePaymentsService> paymentsService = null, Lazy<IProtectedReadService> protectedRead = null,
-			IServiceContractRepository serviceContracts = null)
+			IServiceContractRepository serviceContracts = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_serviceContracts = serviceContracts;
+			_searchProjections = searchProjections;
 			_unitOfWork = unitOfWork;
 			_paymentsService = paymentsService;
 			_protectedRead = protectedRead;
@@ -198,8 +200,6 @@ namespace Resgrid.Services.Invoicing
 				audit.Before = Snapshot(existing);
 				rateCard.AddedOn = existing.AddedOn;
 				rateCard.AddedByUserId = existing.AddedByUserId;
-				rateCard.IsProtected = existing.IsProtected;
-				rateCard.ProtectedCatalogVersion = existing.ProtectedCatalogVersion;
 				rateCard.EditedOn = now;
 				rateCard.EditedByUserId = userId;
 			}
@@ -212,6 +212,7 @@ namespace Resgrid.Services.Invoicing
 			rateCard.IsDeleted = false;
 
 			var saved = await _rateCards.SaveOrUpdateAsync(rateCard, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectRateCardAsync(rateCard, cancellationToken);
 			if (saved.IsDefault)
 				await _rateCards.ClearDefaultAsync(saved.DepartmentId, saved.RateCardId, cancellationToken);
 
@@ -241,6 +242,7 @@ namespace Resgrid.Services.Invoicing
 			card.EditedOn = now;
 			card.EditedByUserId = userId;
 			await _rateCards.SaveOrUpdateAsync(card, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectRateCardAsync(card, cancellationToken);
 			audit.After = Snapshot(card);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return true;
@@ -263,8 +265,6 @@ namespace Resgrid.Services.Invoicing
 				audit.Before = Snapshot(existing);
 				item.AddedOn = existing.AddedOn;
 				item.AddedByUserId = existing.AddedByUserId;
-				item.IsProtected = existing.IsProtected;
-				item.ProtectedCatalogVersion = existing.ProtectedCatalogVersion;
 				item.EditedOn = now;
 				item.EditedByUserId = userId;
 			}
@@ -358,6 +358,7 @@ namespace Resgrid.Services.Invoicing
 			};
 
 			var saved = await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
 			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceCreated, ipAddress, userAgent);
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
@@ -387,6 +388,7 @@ namespace Resgrid.Services.Invoicing
 			existing.EditedByUserId = userId;
 
 			await _invoices.SaveOrUpdateAsync(existing, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(existing, cancellationToken);
 			var recalculated = await RecalculateTotalsAsync(existing.InvoiceId, existing.DepartmentId, cancellationToken);
 			audit.After = Snapshot(recalculated);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
@@ -405,6 +407,7 @@ namespace Resgrid.Services.Invoicing
 			existing.EditedOn = DateTime.UtcNow;
 			existing.EditedByUserId = userId;
 			await _invoices.SaveOrUpdateAsync(existing, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(existing, cancellationToken);
 			var result = await GetInvoiceByIdAsync(invoiceId, departmentId);
 			audit.After = Snapshot(result);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
@@ -548,6 +551,7 @@ namespace Resgrid.Services.Invoicing
 
 			ComputeTotals(invoice, lines, profile);
 			await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
 			invoice.LineItems = lines;
 			invoice.Payments = (await _payments.GetByInvoiceIdAsync(invoiceId, departmentId))?.ToList() ?? new List<InvoicePayment>();
 			return invoice;
@@ -615,6 +619,7 @@ namespace Resgrid.Services.Invoicing
 			invoice.EditedByUserId = userId;
 
 			await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
 			audit.After = Snapshot(invoice);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			await PublishAsync(invoice, WorkflowTriggerEventType.InvoiceSent, oldStatus: (int)InvoiceStatus.Draft, cancellationToken: cancellationToken);
@@ -640,6 +645,7 @@ namespace Resgrid.Services.Invoicing
 			invoice.EditedOn = now;
 			invoice.EditedByUserId = userId;
 			await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
 			audit.After = Snapshot(invoice);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			await PublishAsync(invoice, WorkflowTriggerEventType.InvoiceVoided, oldStatus: oldStatus, cancellationToken: cancellationToken);
@@ -749,6 +755,7 @@ namespace Resgrid.Services.Invoicing
 				invoice.Status = (int)InvoiceStatus.Overdue;
 				invoice.EditedOn = asOfUtc;
 				await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+				if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
 				audit.After = Snapshot(invoice);
 				_eventAggregator.SendMessage<AuditEvent>(audit);
 				await PublishAsync(invoice, WorkflowTriggerEventType.InvoiceOverdue, oldStatus: oldStatus, cancellationToken: cancellationToken);
@@ -884,6 +891,7 @@ namespace Resgrid.Services.Invoicing
 			invoice.EditedOn = now;
 			invoice.EditedByUserId = userId;
 			await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
 		}
 
 		/// <summary>Paid when the balance is settled; PartiallyPaid when something is paid; otherwise Overdue if past due, else Sent. Void and Draft never change here.</summary>

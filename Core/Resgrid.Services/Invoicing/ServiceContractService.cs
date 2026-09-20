@@ -40,11 +40,12 @@ namespace Resgrid.Services.Invoicing
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly Lazy<ICommunicationService> _communication;
 		private readonly Lazy<IDepartmentSettingsService> _departmentSettings;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public ServiceContractService(IServiceContractRepository contracts, IServiceContractDocumentRequirementRepository requirements, IDepartmentComplianceDocumentRepository documents,
 			IDeploymentRepository deployments, IDeploymentAttachmentRepository attachments, ICustomerBillingProfileRepository profiles, IContactsService contactsService,
 			IDepartmentsService departmentsService, IDomainEventOutboxService outbox, IEventAggregator eventAggregator, IUnitOfWork unitOfWork,
-			Lazy<ICommunicationService> communication = null, Lazy<IDepartmentSettingsService> departmentSettings = null)
+			Lazy<ICommunicationService> communication = null, Lazy<IDepartmentSettingsService> departmentSettings = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_contracts = contracts;
 			_requirements = requirements;
@@ -59,6 +60,7 @@ namespace Resgrid.Services.Invoicing
 			_unitOfWork = unitOfWork;
 			_communication = communication;
 			_departmentSettings = departmentSettings;
+			_searchProjections = searchProjections;
 		}
 
 		#region Contracts
@@ -122,6 +124,7 @@ namespace Resgrid.Services.Invoicing
 			if (existing != null) { target.EditedOn = now; target.EditedByUserId = userId; }
 
 			var saved = await _contracts.SaveOrUpdateAsync(target, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectServiceContractAsync(target, cancellationToken);
 			Audit(contract.DepartmentId, userId, existing == null ? AuditLogTypes.ServiceContractCreated : AuditLogTypes.ServiceContractUpdated, ipAddress, userAgent, before, saved);
 			if (existing == null && saved.Status == (int)ServiceContractStatuses.Active)
 				await PublishAsync(saved, WorkflowTriggerEventType.ContractStatusChanged, (int)ServiceContractStatuses.Draft, cancellationToken);
@@ -155,6 +158,7 @@ namespace Resgrid.Services.Invoicing
 			contract.EditedOn = DateTime.UtcNow;
 			contract.EditedByUserId = userId;
 			var saved = await _contracts.SaveOrUpdateAsync(contract, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectServiceContractAsync(contract, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.ServiceContractStatusChanged, ipAddress, userAgent, before, saved);
 			await PublishAsync(saved, WorkflowTriggerEventType.ContractStatusChanged, (int)from, cancellationToken);
 			return await GetContractByIdAsync(serviceContractId, departmentId);
@@ -170,6 +174,7 @@ namespace Resgrid.Services.Invoicing
 			contract.EditedOn = DateTime.UtcNow;
 			contract.EditedByUserId = userId;
 			await _contracts.SaveOrUpdateAsync(contract, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectServiceContractAsync(contract, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.ServiceContractDeleted, ipAddress, userAgent, before, contract);
 			return true;
 		}
@@ -194,6 +199,7 @@ namespace Resgrid.Services.Invoicing
 			contract.EditedOn = DateTime.UtcNow;
 			contract.EditedByUserId = userId;
 			await _contracts.SaveOrUpdateAsync(contract, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectServiceContractAsync(contract, cancellationToken);
 			var audit = DeploymentService.NewAuditEvent(departmentId, userId, AuditLogTypes.ServiceContractUpdated, ipAddress, userAgent);
 			audit.Before = before;
 			audit.After = saved.CloneJsonToString();
@@ -362,6 +368,7 @@ namespace Resgrid.Services.Invoicing
 					contract.Status = (int)ServiceContractStatuses.Expired;
 					contract.EditedOn = asOfUtc;
 					var saved = await _contracts.SaveOrUpdateAsync(contract, cancellationToken);
+					if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectServiceContractAsync(contract, cancellationToken);
 					Audit(contract.DepartmentId, null, AuditLogTypes.ServiceContractStatusChanged, null, null, before, saved);
 					await PublishAsync(saved, WorkflowTriggerEventType.ContractStatusChanged, (int)ServiceContractStatuses.Active, cancellationToken);
 					touched++;

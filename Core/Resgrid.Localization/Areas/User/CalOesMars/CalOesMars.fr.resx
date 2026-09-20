@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Seuls les F-42 et demandes de dépenses sont soumis à MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>L'enregistrement est payé ou clôturé ; ses lignes sont définitives.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>L'enregistrement n'est pas du type attendu.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Générer depuis les données de paie</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Remplacer les taux normal et sup. de chaque ligne de classification correspondante par les moyennes ?</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} ligne(s) de classification générée(s) à partir de {1} employé(s) ; {2} classification(s) non associée(s) ; {3} classification(s) à un seul employé à vérifier.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Phase E : la moyenne des taux horaires individuels approuvés par classification MARS (plus les composantes payées par heure sup.) remplit les taux normal et sup. Agrégats seulement — jamais un milieu de fourchette ni un individu. Aide à la revue ; le représentant autorisé signe toujours dans MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Aucun profil de rémunération approuvé ne porte une classification MARS pour ce profil d'autorité.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Seul un profil Salary Survey ou Attachment A accepte un brouillon issu des données de paie.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Le profil de taux n'est plus modifiable.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Les données de paie ne sont pas disponibles pour ce service.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>Les données de paie ne sont pas activées pour ce service.</value></data>
 </root>

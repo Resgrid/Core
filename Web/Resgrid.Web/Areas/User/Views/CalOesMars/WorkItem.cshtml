@@ -15,6 +15,8 @@
     var v = Model.Validation;
     var stateName = (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates)w.LocalState;
     var recordStatuses = Model.Authority.RecordStatusMap.Keys.ToList();
+    // JSON emitted inside <script>: personnel names and attachment names are user text, so < > & are unicode-escaped.
+    var scriptJson = new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml };
 }
 
 @await Html.PartialAsync("_CalOesMarsShell")
@@ -277,10 +279,9 @@
     {
         <script>
             (function () {
-                var snapshot = @Html.Raw(Model.SnapshotJson);
                 $('#rotation-add').on('click', function () {
-                    var people = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(f.Personnel.Select(p => new { p.UserId, p.Name })));
-                    var attachments = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Attachments.Select(a => new { a.DeploymentAttachmentId, a.Name })));
+                    var people = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(f.Personnel.Select(p => new { p.UserId, p.Name }), scriptJson));
+                    var attachments = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Attachments.Select(a => new { a.DeploymentAttachmentId, a.Name }), scriptJson));
                     var people_opts = '<option value="">—</option>' + people.map(function (p) { return '<option value="' + p.UserId + '">' + $('<span>').text(p.Name).html() + '</option>'; }).join('');
                     var att_opts = '<option value="">—</option>' + attachments.map(function (a) { return '<option value="' + a.DeploymentAttachmentId + '">' + $('<span>').text(a.Name).html() + '</option>'; }).join('');
                     $('#rotations tbody').append('<tr><td><input type="date" class="form-control input-sm r-on" /></td><td><select class="form-control input-sm r-out">' + people_opts + '</select></td><td><select class="form-control input-sm r-in">' + people_opts + '</select></td><td><select class="form-control input-sm r-att">' + att_opts + '</select></td><td><button type="button" class="btn btn-xs btn-danger r-del"><i class="fa fa-times"></i></button></td></tr>');

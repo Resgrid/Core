@@ -98,6 +98,21 @@ namespace Resgrid.Tests.Services
 			var noAgreement = new CalOesMarsReimbursementCalculator().Calculate(new CalOesMarsReimbursementInput { F42 = Engine(), RateLines = Rates() });
 			noAgreement.Exceptions.Should().Contain(e => e.Code == CalOesMarsExceptionCodes.NoAgreement);
 			noAgreement.Lines.Where(l => l.SubjectId == "p1").Should().ContainSingle("without an agreement every DTR hour is straight time");
+
+			// A rate line that is not portal-to-portal eligible falls back to DTR hours even under a portal-to-portal agreement, so a
+			// person without DTR hours is reported (NoActualHours) instead of producing a silent zero-amount line.
+			var ineligible = Rates();
+			ineligible.Single(r => r.CalOesMarsRateLineId == "sal-capt").PortalToPortalEligible = false;
+			var noHours = Engine();
+			noHours.Personnel.RemoveAll(p => p.DeploymentPersonnelId != "p1");
+			noHours.Personnel[0].ActualHours.Clear();
+			var fallback = new CalOesMarsReimbursementCalculator().Calculate(new CalOesMarsReimbursementInput
+			{
+				F42 = noHours, RateLines = ineligible,
+				Agreement = new CalOesMarsAgreementSnapshot { CompensationMethod = (int)CalOesMarsCompensationMethods.PortalToPortal, OvertimeMethod = (int)CalOesMarsOvertimeMethods.AfterTwelveHoursPerDay }
+			});
+			fallback.Exceptions.Should().Contain(e => e.Code == CalOesMarsExceptionCodes.NoActualHours);
+			fallback.Lines.Where(l => l.SubjectId == "p1").Sum(l => l.ExpectedAmount).Should().Be(0);
 		}
 
 		[Test]

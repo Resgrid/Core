@@ -56,6 +56,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static bool CanSubmit => IsAdmin || ClaimsAuthorizationHelper.CanSubmitMutualAidReimbursement();
 		private static bool CanReconcile => IsAdmin || ClaimsAuthorizationHelper.CanReconcileMutualAidReimbursement();
 		private static readonly HashSet<string> FieldActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Queue", "WorkItem", "BuildF42", "BuildExpense", "SaveF42", "SaveExpense", "Validate", "Print", "Packet" };
+		// JSON that lands inside a <script> block: user text with < > & is unicode-escaped so a stored "</script>" cannot end the element.
+		private static readonly JsonSerializerSettings ScriptJson = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
 
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -118,6 +120,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try { return await action(); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, redirectAction, routeValues); }
 			catch (ArgumentException) { return Refused(400, "SaveFailed", redirectAction, routeValues); }
+			// The rate-line, administrative-input and F-42 forms post page-script JSON as an opaque string; a truncated or tampered post is a refusal, not a 500.
+			catch (JsonException) { return Refused(400, "SaveFailed", redirectAction, routeValues); }
 		}
 
 		#endregion
@@ -222,11 +226,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				view.Profile = await _mars.GetRateProfileAsync(id, DepartmentId);
 				if (view.Profile == null) return NotFound();
 				view.AdministrativeDraft = CostRecoveryDraft(view.Profile);
+				view.WorkforceEnabled = await _access.CanUseWorkforceAsync(DepartmentId);
 				view.NextStatuses = Enum.GetValues<CalOesMarsRateProfileStatuses>().Where(s => Resgrid.Services.CostRecovery.CalOesMarsService.IsValidRateTransition((CalOesMarsRateProfileStatuses)view.Profile.Status, s)).ToList();
 			}
 			else view.Profile = new CalOesMarsRateProfile { DepartmentId = DepartmentId, SubmissionYear = DateTime.UtcNow.Year, SubmissionType = type ?? (int)CalOesMarsSubmissionTypes.SalarySurvey, EffectiveOn = new DateTime(DateTime.UtcNow.Year, 1, 1) };
-			view.LinesJson = JsonConvert.SerializeObject(view.Profile.Lines ?? new List<CalOesMarsRateLine>());
-			view.InputsJson = JsonConvert.SerializeObject((view.Profile.AdministrativeInputs ?? new List<CalOesMarsAdministrativeRateInput>()).Select(i => new { i.CalOesMarsAdministrativeRateInputId, i.FiscalYear, i.FunctionCode, i.CategoryCode, i.Classification, Amount = i.Amount, i.SourceSystem, i.SourceLine, i.IncidentDirectExclusion, i.DoubleCountMarker, i.ReviewStatus, i.ReviewReason }));
+			view.LinesJson = JsonConvert.SerializeObject(view.Profile.Lines ?? new List<CalOesMarsRateLine>(), ScriptJson);
+			view.InputsJson = JsonConvert.SerializeObject((view.Profile.AdministrativeInputs ?? new List<CalOesMarsAdministrativeRateInput>()).Select(i => new { i.CalOesMarsAdministrativeRateInputId, i.FiscalYear, i.FunctionCode, i.CategoryCode, i.Classification, Amount = i.Amount, i.SourceSystem, i.SourceLine, i.IncidentDirectExclusion, i.DoubleCountMarker, i.ReviewStatus, i.ReviewReason }), ScriptJson);
 			return View(view);
 		}
 
@@ -290,6 +295,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var draft = await _mars.BuildAdministrativeRateDraftAsync(id, DepartmentId, UserId, Ip, Agent);
 			if (!draft.IsReady) { TempData["CalOesMarsMessage"] = string.Join(" ", draft.Blockers.Select(b => ErrorText("AdminBlocker_" + b))); return RedirectToAction("Rate", new { id }); }
 			return Saved("Rate", new { id });
+		}, "Rate", new { id });
+
+		/// <summary>Phase E composition: classification means from the workforce pay data become the Salary Survey / Attachment A lines (never an individual; the representative still signs in MARS).</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		public Task<IActionResult> BuildSalarySurvey(string id, DateTime? asOf) => GuardedAsync(async () =>
+		{
+			if (!IsManager) return Unauthorized();
+			if (!await _access.CanUseWorkforceAsync(DepartmentId)) return Refused(403, "workforce_disabled", "Rate", new { id });
+			var draft = await _mars.BuildSalarySurveyDraftAsync(id, DepartmentId, asOf ?? DateTime.UtcNow.Date, UserId, Ip, Agent);
+			if (!draft.IsReady) { TempData["CalOesMarsMessage"] = string.Join(" ", draft.Blockers.Select(b => ErrorText("SurveyBlocker_" + b))); return RedirectToAction("Rate", new { id }); }
+			TempData["CalOesMarsSaved"] = true;
+			TempData["CalOesMarsMessage"] = string.Format(_strings["SalarySurveyDraftBuilt"].Value, draft.LinesWritten, draft.EmployeesIncluded, draft.UnknownClassifications.Count, draft.Classifications.Count(c => c.SingleEmployee));
+			return RedirectToAction("Rate", new { id });
 		}, "Rate", new { id });
 
 		[HttpPost, ValidateAntiForgeryToken]
@@ -402,7 +420,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var view = Page(new CalOesMarsWorkItemView { Item = item, IsRostered = rostered, Authority = CalOesMarsAuthorityProfile.Get(item.AuthorityProfileCode) ?? CalOesMarsAuthorityProfile.Current, Classifications = CalOesMarsAuthorityProfile.Current.SalaryClassifications });
 			view.CanEdit = (IsManager || rostered) && item.IsLocallyEditable;
 			view.Validation = Resgrid.Services.CostRecovery.CalOesMarsService.Deserialize<CalOesMarsValidationResult>(item.ValidationSummaryJson);
-			view.SnapshotJson = item.SnapshotJson ?? "{}";
 			switch ((CalOesMarsRecordTypes)item.RecordType)
 			{
 				case CalOesMarsRecordTypes.F42: view.F42 = Resgrid.Services.CostRecovery.CalOesMarsService.Deserialize<CalOesMarsF42Snapshot>(item.SnapshotJson); break;

@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Працівника не знайдено.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>Працівник обов'язковий.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>Звітний рік недійсний.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Внутрішня вартість</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Оцінений маржинальний дохід із внутрішніх витрат — не бухгалтерський прибуток; відсутні дані перелічено в розрахунку.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>Розрахунку витрат для цього запису ще немає.</value></data>
 </root>

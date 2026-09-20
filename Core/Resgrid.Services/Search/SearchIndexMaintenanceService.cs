@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
@@ -38,12 +39,24 @@ namespace Resgrid.Services.Search
 		private readonly IMessageService _messages;
 		private readonly IDocumentsService _documents;
 		private readonly INotesService _notes;
+		private readonly Lazy<IInvoicingService> _invoicing;
+		private readonly Lazy<IBidsService> _bids;
+		private readonly Lazy<IServiceContractService> _contracts;
+		private readonly Lazy<IDeploymentService> _deploymentsService;
+		private readonly Lazy<ICertificationService> _certifications;
 
 		public SearchIndexMaintenanceService(ISearchIndexStatesRepository states, ISearchProjectionsRepository projections, IGlobalSearchIndexer indexer,
 			IDepartmentDataProtectionService dataProtection, IFeatureToggleService featureToggles, ISearchProjectionService projectionService,
 			ICallsService calls, IUnitsService units, IUserProfileService profiles, IDepartmentsService departments, IDepartmentGroupsService groups,
-			IContactsService contacts, IMessageService messages, IDocumentsService documents, INotesService notes)
+			IContactsService contacts, IMessageService messages, IDocumentsService documents, INotesService notes,
+			Lazy<IInvoicingService> invoicing = null, Lazy<IBidsService> bids = null, Lazy<IServiceContractService> contracts = null,
+			Lazy<IDeploymentService> deploymentsService = null, Lazy<ICertificationService> certifications = null)
 		{
+			_invoicing = invoicing;
+			_bids = bids;
+			_contracts = contracts;
+			_deploymentsService = deploymentsService;
+			_certifications = certifications;
 			_states = states;
 			_projections = projections;
 			_indexer = indexer;
@@ -348,6 +361,89 @@ namespace Resgrid.Services.Search
 				}
 				return n;
 			}, started, cancellationToken);
+
+			// Workforce & Business Operations families (decision 41). Each service is Lazy so the search worker never forms a construction cycle with them.
+			if (_invoicing?.Value != null)
+			{
+				count += await Family(departmentId, SearchEntityTypes.Invoice, async () =>
+				{
+					var n = 0;
+					foreach (var invoice in await _invoicing.Value.GetInvoicesForDepartmentAsync(departmentId, new InvoiceListFilter { Skip = 0, Take = 5000 }) ?? new List<Invoice>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildInvoiceAsync(invoice);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+				count += await Family(departmentId, SearchEntityTypes.RateCard, async () =>
+				{
+					var n = 0;
+					foreach (var card in await _invoicing.Value.GetRateCardsForDepartmentAsync(departmentId) ?? new List<RateCard>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildRateCardAsync(card);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			}
+			if (_bids?.Value != null)
+			{
+				count += await Family(departmentId, SearchEntityTypes.Bid, async () =>
+				{
+					var n = 0;
+					foreach (var bid in await _bids.Value.GetBidsForDepartmentAsync(departmentId, null, 0, 5000) ?? new List<Bid>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildBidAsync(bid);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			}
+			if (_contracts?.Value != null)
+			{
+				count += await Family(departmentId, SearchEntityTypes.ServiceContract, async () =>
+				{
+					var n = 0;
+					foreach (var contract in await _contracts.Value.GetContractsForDepartmentAsync(departmentId) ?? new List<ServiceContract>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildServiceContractAsync(contract);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			}
+			if (_deploymentsService?.Value != null)
+			{
+				count += await Family(departmentId, SearchEntityTypes.Deployment, async () =>
+				{
+					var n = 0;
+					foreach (var deployment in await _deploymentsService.Value.GetDeploymentsForDepartmentAsync(departmentId, false, 0, 5000) ?? new List<Deployment>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildDeploymentAsync(deployment);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			}
+			if (_certifications?.Value != null)
+			{
+				count += await Family(departmentId, SearchEntityTypes.CertificationType, async () =>
+				{
+					var n = 0;
+					foreach (var type in await _certifications.Value.GetAllCertificationTypesByDepartmentAsync(departmentId) ?? new List<DepartmentCertificationType>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildCertificationTypeAsync(type);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			}
 
 			count += await Family(departmentId, SearchEntityTypes.Message, async () =>
 			{

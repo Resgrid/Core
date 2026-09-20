@@ -17,6 +17,7 @@
     var classifications = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsCostClassifications>();
     var reviews = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsInputReviewStatuses>();
     var isAdmin = p.SubmissionType == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes.AdministrativeRate;
+    var isSalary = p.SubmissionType == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes.SalarySurvey || p.SubmissionType == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes.AttachmentA;
     var editable = Model.IsNew || p.IsEditable;
 }
 
@@ -127,6 +128,17 @@
                                     <tbody></tbody>
                                 </table>
                             </div>
+                            @if (editable && isSalary && Model.WorkforceEnabled && !Model.IsNew)
+                            {
+                                <div class="alert alert-info m-t-sm">
+                                    <i class="fa fa-users"></i> @localizer["SalarySurveyFromWorkforceHelp"]
+                                    <form method="post" asp-action="BuildSalarySurvey" asp-route-id="@p.CalOesMarsRateProfileId" class="form-inline m-t-xs" onsubmit="return confirm('@localizer["ConfirmSalarySurveyDraft"]');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="date" name="asOf" class="form-control input-sm" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+                                        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-calculator"></i> @localizer["BuildSalarySurvey"]</button>
+                                    </form>
+                                </div>
+                            }
                             @if (editable)
                             {
                                 <button type="button" class="btn btn-default btn-xs" id="line-add"><i class="fa fa-plus"></i> @localizer["AddLine"]</button>

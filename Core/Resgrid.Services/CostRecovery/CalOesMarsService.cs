@@ -55,13 +55,14 @@ namespace Resgrid.Services.CostRecovery
 		private readonly ICalOesMarsExternalGateway _gateway;
 		private readonly Lazy<ICommunicationService> _communication;
 		private readonly Lazy<IDepartmentSettingsService> _departmentSettings;
+		private readonly Lazy<ICompensationCostService> _compensation;
 
 		public CalOesMarsService(ICalOesMarsAgencyProfileRepository agencies, ICalOesMarsResourceProfileRepository resources, ICalOesMarsRateProfileRepository rateProfiles,
 			ICalOesMarsRateLineRepository rateLines, ICalOesMarsAdministrativeRateInputRepository adminInputs, ICalOesMarsAgreementSnapshotRepository agreements,
 			ICalOesMarsWorkItemRepository workItems, ICalOesMarsReimbursementLineRepository lines, IDeploymentService deploymentService, ITimeTrackingService timeTracking,
 			IDeploymentTimeEntryRepository timeEntries, IUnitsService unitsService, IUserProfileService userProfileService, IDepartmentsService departmentsService,
 			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, ICalOesMarsReimbursementCalculator calculator, ICalOesMarsExternalGateway gateway,
-			Lazy<ICommunicationService> communication = null, Lazy<IDepartmentSettingsService> departmentSettings = null)
+			Lazy<ICommunicationService> communication = null, Lazy<IDepartmentSettingsService> departmentSettings = null, Lazy<ICompensationCostService> compensation = null)
 		{
 			_agencies = agencies;
 			_resources = resources;
@@ -83,6 +84,7 @@ namespace Resgrid.Services.CostRecovery
 			_gateway = gateway;
 			_communication = communication;
 			_departmentSettings = departmentSettings;
+			_compensation = compensation;
 		}
 
 		#region Readiness and agency
@@ -514,6 +516,44 @@ namespace Resgrid.Services.CostRecovery
 			return draft;
 		}
 
+		public async Task<CalOesMarsSalarySurveyDraft> BuildSalarySurveyDraftAsync(string rateProfileId, int departmentId, DateTime asOf, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		{
+			var profile = await GetRateProfileAsync(rateProfileId, departmentId) ?? throw new InvalidOperationException("calmars_rate_not_found");
+			var draft = new CalOesMarsSalarySurveyDraft { RateProfileId = profile.CalOesMarsRateProfileId, AsOf = asOf.Date };
+			if (profile.SubmissionType != (int)CalOesMarsSubmissionTypes.SalarySurvey && profile.SubmissionType != (int)CalOesMarsSubmissionTypes.AttachmentA) { draft.Blockers.Add("profile_type"); return draft; }
+			if (!profile.IsEditable) { draft.Blockers.Add("rate_locked"); return draft; }
+			if (_compensation?.Value == null) { draft.Blockers.Add("workforce_unavailable"); return draft; }
+			var authority = CalOesMarsAuthorityProfile.Get(profile.AuthorityProfileCode) ?? CalOesMarsAuthorityProfile.Current;
+			// Phase E returns classification means only (decrypted through the workforce-costing purpose) — no individual reaches this service.
+			var aggregate = await _compensation.Value.GetClassificationRateAggregateAsync(departmentId, asOf.Date, authority.Code);
+			if (aggregate.Count == 0) { draft.Blockers.Add("no_classifications"); return draft; }
+			var lines = profile.Lines.Where(l => !l.IsDeleted).Select(l => l.CloneJson()).ToList();
+			foreach (var (classification, count, meanRate, meanAdder) in aggregate.OrderBy(a => a.ClassificationCode))
+			{
+				if (!authority.SalaryClassifications.Contains(classification, StringComparer.OrdinalIgnoreCase)) { draft.UnknownClassifications.Add(classification); continue; }
+				var straight = Math.Round(meanRate, 2, MidpointRounding.AwayFromZero);
+				// CFAA salary survey overtime: time-and-a-half on the straight rate plus the components paid for each overtime hour.
+				var overtime = Math.Round(meanRate * 1.5m + meanAdder, 2, MidpointRounding.AwayFromZero);
+				draft.Classifications.Add(new CalOesMarsSalarySurveyDraftLine { ClassificationCode = classification, Count = count, MeanRate = straight, MeanOvertimeAdder = Math.Round(meanAdder, 2, MidpointRounding.AwayFromZero), StraightRate = straight, OvertimeRate = overtime });
+				var kind = string.Equals(classification, "Non-suppression", StringComparison.OrdinalIgnoreCase) || profile.SubmissionType == (int)CalOesMarsSubmissionTypes.AttachmentA ? (int)CalOesMarsRateLineKinds.AttachmentANonSuppression : (int)CalOesMarsRateLineKinds.SalarySurvey;
+				var line = lines.FirstOrDefault(l => string.Equals(l.ClassificationCode, classification, StringComparison.OrdinalIgnoreCase) && (l.LineKind == (int)CalOesMarsRateLineKinds.SalarySurvey || l.LineKind == (int)CalOesMarsRateLineKinds.AttachmentANonSuppression));
+				if (line == null)
+				{
+					line = new CalOesMarsRateLine { LineKind = kind, ClassificationCode = classification, Basis = (int)CalOesMarsRateBases.Hourly, Authority = (int)CalOesMarsRateAuthorities.AgencySubmitted, OvertimeEligible = true, PortalToPortalEligible = true, SortOrder = lines.Count };
+					lines.Add(line);
+				}
+				line.StraightRate = straight; line.OvertimeRate = overtime;
+				line.SourceInputVersions = JsonConvert.SerializeObject(new { Source = "workforce-aggregate", AsOf = asOf.Date, Employees = count });
+				draft.LinesWritten++;
+			}
+			if (draft.LinesWritten == 0) { draft.Blockers.Add("no_classifications"); return draft; }
+			await SaveRateLinesAsync(profile.CalOesMarsRateProfileId, departmentId, lines, userId, ipAddress, userAgent, cancellationToken);
+			var audit = Invoicing.DeploymentService.NewAuditEvent(departmentId, userId, AuditLogTypes.CalOesMarsRateDraftBuilt, ipAddress, userAgent);
+			audit.After = JsonConvert.SerializeObject(new { profile.CalOesMarsRateProfileId, draft.AsOf, draft.LinesWritten, draft.EmployeesIncluded, Classifications = draft.Classifications.Select(c => new { c.ClassificationCode, c.Count }).ToList(), draft.UnknownClassifications });
+			_eventAggregator.SendMessage<AuditEvent>(audit);
+			return draft;
+		}
+
 		/// <summary>Allowable indirect ÷ allowable direct from the reviewed inputs (pure; the de-minimis option comes from the authority profile).</summary>
 		public static CalOesMarsAdministrativeRateDraft BuildAdministrativeRateDraft(CalOesMarsRateProfile profile, CalOesMarsAuthorityProfile authority)
 		{
@@ -631,8 +671,8 @@ namespace Resgrid.Services.CostRecovery
 			var existing = string.IsNullOrWhiteSpace(agreement.CalOesMarsAgreementSnapshotId) ? null : await _agreements.GetByIdForDepartmentAsync(agreement.CalOesMarsAgreementSnapshotId, agreement.DepartmentId);
 			if (existing != null && existing.IsDeleted) throw new InvalidOperationException("calmars_agreement_not_found");
 			var before = existing == null ? null : Snapshot(existing);
-			// A snapshot referenced by an external work item is immutable: the edit becomes a new version.
-			var referenced = existing != null && (await _workItems.GetActionQueueAsync(agreement.DepartmentId))?.Any(w => w.AgreementSnapshotId == existing.CalOesMarsAgreementSnapshotId && w.IsExternal) == true;
+			// A snapshot referenced by an external work item is immutable: the edit becomes a new version. Closed (paid / documentation-only) items count.
+			var referenced = existing != null && (await _workItems.GetByAgreementSnapshotAsync(agreement.DepartmentId, existing.CalOesMarsAgreementSnapshotId))?.Any(w => w.IsExternal) == true;
 			var target = existing == null || referenced ? new CalOesMarsAgreementSnapshot { DepartmentId = agreement.DepartmentId, AddedOn = now, AddedByUserId = userId, RowVersion = referenced ? existing.RowVersion + 1 : 1 } : existing;
 			target.ClassificationCode = Trim(agreement.ClassificationCode);
 			target.ClassificationTitle = Trim(agreement.ClassificationTitle);
@@ -674,7 +714,7 @@ namespace Resgrid.Services.CostRecovery
 		{
 			var row = await GetAgreementAsync(agreementSnapshotId, departmentId);
 			if (row == null) return false;
-			if ((await _workItems.GetActionQueueAsync(departmentId))?.Any(w => w.AgreementSnapshotId == row.CalOesMarsAgreementSnapshotId) == true) throw new InvalidOperationException("calmars_agreement_in_use");
+			if ((await _workItems.GetByAgreementSnapshotAsync(departmentId, row.CalOesMarsAgreementSnapshotId))?.Any() == true) throw new InvalidOperationException("calmars_agreement_in_use");
 			var before = Snapshot(row);
 			row.IsDeleted = true; row.EditedOn = DateTime.UtcNow; row.EditedByUserId = userId;
 			await _agreements.SaveOrUpdateAsync(row, cancellationToken);

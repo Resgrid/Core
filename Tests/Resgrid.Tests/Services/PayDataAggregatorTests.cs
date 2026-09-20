@@ -130,6 +130,13 @@ namespace Resgrid.Tests.Services
 			var xlsx = PayDataAggregator.RenderXlsx(Profile.PayrollColumns, new[] { (IReadOnlyList<string>)cells });
 			using var archive = new ZipArchive(new MemoryStream(xlsx), ZipArchiveMode.Read);
 			archive.Entries.Select(e => e.FullName).Should().Contain("xl/worksheets/sheet1.xml").And.Contain("[Content_Types].xml");
+			using var sheetReader = new StreamReader(archive.GetEntry("xl/worksheets/sheet1.xml").Open());
+			var sheet = sheetReader.ReadToEnd();
+			// Cell types follow the schema: text / code columns stay text even when numeric-looking (ZIP, job category), integer and decimal columns are numbers.
+			sheet.Should().Contain("<c r=\"E1\" t=\"inlineStr\"><is><t>Establishment Zip</t></is></c>");
+			sheet.Should().Contain("<c r=\"E2\" t=\"inlineStr\"><is><t>95814</t></is></c>");
+			sheet.Should().Contain("<c r=\"K2\" t=\"inlineStr\"><is><t>10</t></is></c>");
+			sheet.Should().Contain("<c r=\"N2\"><v>2</v></c>").And.Contain("<c r=\"P2\"><v>24.50</v></c>");
 
 			var contractorCells = PayDataAggregator.Cells(rows[0], Profile, (int)PayDataReportTypes.LaborContractorEmployee, establishment, new PayDataAggregator.ExportContractor { Name = "Staffing Co", Fein = "12-3456789" });
 			contractorCells.Take(2).Should().Equal("Staffing Co", "12-3456789");

@@ -125,6 +125,9 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT * FROM {Tbl("CalOesMarsWorkItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {Col("LocalState")} <> {P}Closed" + (recordType.HasValue ? $" AND {Col("RecordType")} = {P}RecordType" : string.Empty) +
 				$" ORDER BY {Col("LocalState")}, {Col("AddedOn")}", new { DepartmentId = departmentId, Closed = (int)CalOesMarsLocalStates.Closed, RecordType = recordType });
 
+		public Task<IEnumerable<CalOesMarsWorkItem>> GetByAgreementSnapshotAsync(int departmentId, string agreementSnapshotId) =>
+			QueryAsync<CalOesMarsWorkItem>($"SELECT * FROM {Tbl("CalOesMarsWorkItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("AgreementSnapshotId")} = {P}AgreementSnapshotId AND {Col("IsDeleted")} = {False} ORDER BY {Col("AddedOn")}", new { DepartmentId = departmentId, AgreementSnapshotId = agreementSnapshotId });
+
 		public Task<IEnumerable<CalOesMarsWorkItem>> GetUnreconciledAsync(int departmentId) =>
 			QueryAsync<CalOesMarsWorkItem>(
 				$"SELECT * FROM {Tbl("CalOesMarsWorkItems")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {Col("LocalState")} IN ({P}Submitted, {P}Returned, {P}Approved, {P}PendingLocal, {P}PendingPaying, {P}Rejected) ORDER BY {Col("AddedOn")}",

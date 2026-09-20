@@ -38,9 +38,6 @@ namespace Resgrid.Model.Invoicing
 		public bool ShowPayOnlineOnDocuments { get; set; } = true;
 		public DateTime UpdatedOn { get; set; }
 		public string UpdatedByUserId { get; set; }
-		/// <summary>Reserved marker columns (never set): the registrations print on every invoice, so they are not under ADP.</summary>
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped]
 		public string TableName => "DepartmentBillingIdentities";

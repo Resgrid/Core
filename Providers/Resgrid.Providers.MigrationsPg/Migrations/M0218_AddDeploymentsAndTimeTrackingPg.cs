@@ -143,9 +143,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_deploymenttimereports_deployment ON deploymenttimereports (deploymentid, isdeleted, reportdate);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_deploymenttimereports_department ON deploymenttimereports (departmentid, status);");
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_deploymenttimereports_number ON deploymenttimereports (departmentid, reportnumber);");
@@ -202,9 +200,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_deploymentexpenses_deployment ON deploymentexpenses (deploymentid, isdeleted, expensedate);");
 				Create.ForeignKey("fk_deploymentexpenses_deployment").FromTable("deploymentexpenses").ForeignColumn("deploymentid").ToTable("deployments").PrimaryColumn("deploymentid");
 			}
@@ -222,9 +218,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("data").AsCustom("bytea").Nullable()
 					.WithColumn("isdeleted").AsBoolean().NotNullable().WithDefaultValue(false)
 					.WithColumn("addedon").AsDateTime2().NotNullable()
-					.WithColumn("addedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("addedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_deploymentattachments_deployment ON deploymentattachments (deploymentid, isdeleted);");
 				Create.ForeignKey("fk_deploymentattachments_deployment").FromTable("deploymentattachments").ForeignColumn("deploymentid").ToTable("deployments").PrimaryColumn("deploymentid");
 			}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.CostRecovery.CalOesMars;
@@ -47,6 +48,8 @@ namespace Resgrid.Model.Services
 		Task<CalOesMarsRateProfile> SaveAdministrativeInputsAsync(string rateProfileId, int departmentId, List<CalOesMarsAdministrativeRateInput> inputs, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Allowable indirect ÷ allowable direct from the reviewed inputs, compared with the de-minimis option; records the method chosen. Blocks on unresolved double-count flags.</summary>
 		Task<CalOesMarsAdministrativeRateDraft> BuildAdministrativeRateDraftAsync(string rateProfileId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Salary Survey / Attachment A draft from Phase E pay data (plan C-M3 §"Salary Survey/Attachment A draft"): the mean of the current approved individual hourly rates per reviewed MARS classification (plus components paid for each overtime hour) becomes the straight / overtime rate of the matching line. Aggregates only — never a pay-range midpoint, never an individual; a review aid the authorized representative still signs in MARS.</summary>
+		Task<CalOesMarsSalarySurveyDraft> BuildSalarySurveyDraftAsync(string rateProfileId, int departmentId, DateTime asOf, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<CalOesMarsRateProfile> SetRateProfileStatusAsync(string rateProfileId, int departmentId, CalOesMarsRateProfileStatuses status, string signedByName, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<CalOesMarsRateProfile> RecordRateProfileObservationAsync(string rateProfileId, int departmentId, CalOesMarsExternalObservation observation, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<bool> DeleteRateProfileAsync(string rateProfileId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
@@ -126,6 +129,31 @@ namespace Resgrid.Model.Services
 		public decimal? ChosenPercent { get; set; }
 		public List<string> Blockers { get; set; } = new List<string>();
 		public bool IsReady => Blockers.Count == 0;
+	}
+
+	/// <summary>The Salary Survey draft result (counts and classification means only).</summary>
+	public sealed class CalOesMarsSalarySurveyDraft
+	{
+		public string RateProfileId { get; set; }
+		public DateTime AsOf { get; set; }
+		public List<CalOesMarsSalarySurveyDraftLine> Classifications { get; set; } = new List<CalOesMarsSalarySurveyDraftLine>();
+		public int EmployeesIncluded => Classifications.Sum(c => c.Count);
+		public int LinesWritten { get; set; }
+		public List<string> UnknownClassifications { get; set; } = new List<string>();
+		public List<string> Blockers { get; set; } = new List<string>();
+		public bool IsReady => Blockers.Count == 0;
+	}
+
+	public sealed class CalOesMarsSalarySurveyDraftLine
+	{
+		public string ClassificationCode { get; set; }
+		public int Count { get; set; }
+		public decimal MeanRate { get; set; }
+		public decimal MeanOvertimeAdder { get; set; }
+		public decimal StraightRate { get; set; }
+		public decimal OvertimeRate { get; set; }
+		/// <summary>A single-employee classification exposes that person's rate as the mean; the reviewer decides whether to keep it.</summary>
+		public bool SingleEmployee => Count == 1;
 	}
 
 	public sealed class CalOesMarsInvoiceReconciliation

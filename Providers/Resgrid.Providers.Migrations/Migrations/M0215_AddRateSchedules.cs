@@ -3,7 +3,7 @@ using FluentMigrator;
 namespace Resgrid.Providers.Migrations.Migrations
 {
 	/// <summary>
-	/// Workforce &amp; Business Operations plan, Phase C (C1): contractor rate schedules with typed entries (per-certification, crew size families, vehicle, equipment, service), explicit rate bands (standby, deployment, overtime thresholds, daily tiers, out-of-province, mileage, per-diem) and stacking premiums. Rates are explicit numbers (decision 16); thresholds are data, not code. Every table carries the ADP row marker from creation. Registry M0215. Guarded for safe retry.
+	/// Workforce &amp; Business Operations plan, Phase C (C1): contractor rate schedules with typed entries (per-certification, crew size families, vehicle, equipment, service), explicit rate bands (standby, deployment, overtime thresholds, daily tiers, out-of-province, mileage, per-diem) and stacking premiums. Rates are explicit numbers (decision 16); thresholds are data, not code. Nothing here is under Advanced Data Protection (decision 44; marker columns dropped before release). Registry M0215. Guarded for safe retry.
 	/// </summary>
 	[Migration(215)]
 	public class M0215_AddRateSchedules : Migration
@@ -26,9 +26,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_RateSchedules_Department").OnTable("RateSchedules").OnColumn("DepartmentId").Ascending().OnColumn("IsDeleted").Ascending();
 			}
 			if (!Schema.Table("RateScheduleEntries").Exists())
@@ -54,9 +52,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_RateScheduleEntries_Schedule").OnTable("RateScheduleEntries").OnColumn("RateScheduleId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("SortOrder").Ascending();
 				Create.Index("IX_RateScheduleEntries_Group").OnTable("RateScheduleEntries").OnColumn("RateScheduleId").Ascending().OnColumn("GroupKey").Ascending();
 				Create.ForeignKey("FK_RateScheduleEntries_Schedule").FromTable("RateScheduleEntries").ForeignColumn("RateScheduleId").ToTable("RateSchedules").PrimaryColumn("RateScheduleId");
@@ -97,9 +93,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_RatePremiums_Schedule").OnTable("RatePremiums").OnColumn("RateScheduleId").Ascending().OnColumn("IsDeleted").Ascending();
 				Create.ForeignKey("FK_RatePremiums_Schedule").FromTable("RatePremiums").ForeignColumn("RateScheduleId").ToTable("RateSchedules").PrimaryColumn("RateScheduleId");
 			}

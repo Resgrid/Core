@@ -60,6 +60,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return mine?.Any(d => string.Equals(d.DeploymentId, deploymentId, StringComparison.OrdinalIgnoreCase)) == true;
 		}
 
+		private async Task<bool> IsUnitOnDeploymentAsync(string deploymentId, int unitId)
+		{
+			if (string.IsNullOrWhiteSpace(deploymentId) || unitId <= 0) return false;
+			var deployment = await _deployments.GetDeploymentByIdAsync(deploymentId, DepartmentId);
+			return deployment?.Units?.Any(u => u.IsActive && u.UnitId == unitId) == true;
+		}
+
 		[HttpGet("GetAccess")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<FieldCostAccessResult>> GetAccess()
@@ -119,6 +126,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<ResourceUsageResult>("workforce_disabled", StatusCodes.Status403Forbidden);
 			if (input == null) return Failed<ResourceUsageResult>("workforce_usage_invalid");
 			if (!CanViewInternalCosts && !await IsRosteredAsync(input.DeploymentId)) return Failed<ResourceUsageResult>("workforce_not_rostered", StatusCodes.Status403Forbidden);
+			// A rostered member files readings for the units on their own deployment only; any unit needs ViewInternalCosts.
+			if (!CanViewInternalCosts && !await IsUnitOnDeploymentAsync(input.DeploymentId, input.UnitId)) return Failed<ResourceUsageResult>("workforce_unit_not_on_deployment", StatusCodes.Status403Forbidden);
 			try
 			{
 				var entry = new ResourceUsageEntry

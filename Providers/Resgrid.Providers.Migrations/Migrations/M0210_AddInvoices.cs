@@ -7,7 +7,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 	/// invoice number sequence. Registry M0210. Money is decimal(18,2) for totals and decimal(18,4) for rates.
 	/// InvoicePayments already carries the Phase B2 online-payment columns (request id, provider, status, refund,
 	/// fee/net, payer e-mail, method summary, receipt URL) so M0212 adds no ALTER; Invoices.PlatformFeeAmount is
-	/// reserved and always null in v1. Every table carries the ADP row marker from creation. Guarded for safe retry.
+	/// reserved and always null in v1. Nothing here is under Advanced Data Protection (decision 44; marker columns dropped before release). Guarded for safe retry.
 	/// </summary>
 	[Migration(210)]
 	public class M0210_AddInvoices : Migration
@@ -45,9 +45,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 
 				// The sequence table is the authority; this unique index is the backstop (decision 7).
 				Create.Index("UX_Invoices_Department_Number").OnTable("Invoices")
@@ -73,9 +71,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("UnitRate").AsDecimal(18, 4).NotNullable().WithDefaultValue(0)
 					.WithColumn("Amount").AsDecimal(18, 2).NotNullable().WithDefaultValue(0)
 					.WithColumn("Taxable").AsBoolean().NotNullable().WithDefaultValue(true)
-					.WithColumn("SortOrder").AsInt32().NotNullable().WithDefaultValue(0)
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("SortOrder").AsInt32().NotNullable().WithDefaultValue(0);
 
 				Create.Index("IX_InvoiceLineItems_Invoice").OnTable("InvoiceLineItems")
 					.OnColumn("InvoiceId").Ascending().OnColumn("SortOrder").Ascending();
@@ -105,9 +101,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("Notes").AsString(int.MaxValue).Nullable()
 					.WithColumn("PaidOn").AsDateTime2().NotNullable()
 					.WithColumn("RecordedByUserId").AsString(128).Nullable()
-					.WithColumn("AddedOn").AsDateTime2().NotNullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("AddedOn").AsDateTime2().NotNullable();
 
 				Create.Index("IX_InvoicePayments_Invoice").OnTable("InvoicePayments")
 					.OnColumn("InvoiceId").Ascending().OnColumn("PaidOn").Ascending();

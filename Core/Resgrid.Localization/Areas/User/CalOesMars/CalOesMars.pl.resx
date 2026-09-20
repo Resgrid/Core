@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Tylko F-42 i roszczenia wydatków są zgłaszane do MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>Rekord jest zapłacony lub zamknięty; jego pozycje są ostateczne.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Rekord nie jest oczekiwanego typu.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Utwórz z danych płacowych</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Zastąpić stawki zwykłą i nadliczbową każdej pasującej pozycji klasyfikacji średnimi?</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} pozycji klasyfikacji utworzono z {1} pracowników; {2} niezmapowanych klasyfikacji; {3} klasyfikacji jednoosobowych do przeglądu.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Faza E: średnia bieżących zatwierdzonych indywidualnych stawek godzinowych na klasyfikację MARS (plus składniki płacone za godzinę nadliczbową) wypełnia stawki zwykłą i nadliczbową. Tylko wartości zbiorcze — nigdy środek przedziału ani osoba. Pomoc w przeglądzie; upoważniony przedstawiciel nadal podpisuje w MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Żaden zatwierdzony profil wynagrodzenia nie ma klasyfikacji MARS dla tego profilu autorytetu.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Tylko profil Salary Survey lub Attachment A przyjmuje szkic z danych płacowych.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Profil stawek nie jest już edytowalny.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Dane płacowe nie są dostępne dla tej jednostki.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>Dane płacowe nie są włączone dla tej jednostki.</value></data>
 </root>

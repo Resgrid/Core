@@ -154,6 +154,7 @@
   <data name="RemovalDue" xml:space="preserve"><value>Borttagning {0}</value></data>
   <data name="RoleMembersBlocked" xml:space="preserve"><value>Dessa medlemmar saknar certifieringarna rollen kräver och lades inte till: {0}</value></data>
   <data name="RoleMembersWarned" xml:space="preserve"><value>Tillagda med en varning – saknade certifieringar för denna roll: {0}</value></data>
+  <data name="RoleMembersNotInDepartment" xml:space="preserve"><value>Dessa medlemmar tillhör inte den här avdelningen och lades inte till: {0}</value></data>
   <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Medlemmen skapades, men en eller flera roller tilldelades inte: medlemmen saknar certifieringarna rollerna kräver.</value></data>
   <data name="UnitCertifications" xml:space="preserve"><value>Enhetscertifieringar</value></data>
   <data name="UnitCertificationsFor" xml:space="preserve"><value>Certifieringar och besiktningar – {0}</value></data>
@@ -219,4 +220,9 @@
   <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Medlemmen saknar certifieringarna rollen kräver.</value></data>
   <data name="certifications_file_type" xml:space="preserve"><value>Den filtypen kan inte laddas upp.</value></data>
   <data name="certifications_file_too_large" xml:space="preserve"><value>Filen är större än 10 MB.</value></data>
+  <data name="UnitCertificationAdded" xml:space="preserve"><value>Enhetscertifiering tillagd</value></data>
+  <data name="UnitCertificationStatusChanged" xml:space="preserve"><value>Enhetscertifieringens status ändrad</value></data>
+  <data name="UnitCertificationRemoved" xml:space="preserve"><value>Enhetscertifiering borttagen</value></data>
+  <data name="CertificationRemoved" xml:space="preserve"><value>Certifiering borttagen</value></data>
+  <data name="CertificationCreditAdded" xml:space="preserve"><value>Certifieringspoäng tillagda</value></data>
 </root>

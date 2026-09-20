@@ -5,12 +5,23 @@
     ViewData["Title"] = (Model.IsNew ? localizer["NewDeployment"] : localizer["EditDeployment"]).Value;
     ViewData["Subtitle"] = localizer["EditIntro"].Value;
     var d = Model.Deployment;
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = localizer["AdpProtectedDeployment"],
+        RevealController = "Deployments",
+        RevealAction = "Reveal",
+        RevealData = new Dictionary<string, string> { { "kind", "deployment" }, { "id", d.DeploymentId ?? "" } }
+    };
 }
 
 @await Html.PartialAsync("_Shell")
 
 <div class="wrapper wrapper-content">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
+    @if (Model.IsProtected)
+    {
+        <partial name="_AdpRevealBanner" model="adpReveal" />
+    }
     <form method="post" asp-action="Edit" asp-route-area="User" class="form-horizontal">
         @Html.AntiForgeryToken()
         <input type="hidden" name="DeploymentId" value="@d.DeploymentId" />
@@ -40,7 +51,7 @@
                         </div></div>
                         <div class="form-group"><label class="col-sm-3 control-label">@localizer["CallId"]</label><div class="col-sm-9"><input type="number" name="CallId" class="form-control" value="@d.CallId" /><span class="help-block">@localizer["CallIdHelp"]</span></div></div>
                         <div class="form-group"><label class="col-sm-3 control-label">@localizer["Window"]</label><div class="col-sm-4"><input type="datetime-local" name="StartOn" class="form-control" value="@(d.StartOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div><div class="col-sm-4"><input type="datetime-local" name="EndOn" class="form-control" value="@(d.EndOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div><div class="col-sm-1"><input type="number" name="MaxDays" class="form-control" placeholder="@localizer["MaxDays"]" value="@d.MaxDays" min="1" /></div></div>
-                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Notes"]</label><div class="col-sm-9"><textarea name="Notes" class="form-control" rows="3">@d.Notes</textarea></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Notes"]</label><div class="col-sm-9"><textarea name="Notes" class="form-control" rows="3" data-adp-field="deployments.notes">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(d.Notes)</textarea></div></div>
                     </div>
                 </div>
                 <div class="ibox float-e-margins">
@@ -79,3 +90,10 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @if (Model.IsProtected)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
+}

@@ -113,6 +113,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return (names ?? new List<PersonName>()).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
 		}
 
+		/// <summary>
+		/// ADP reveal endpoint (plan 7.2) for the record and unit pages. The grant rides the X-Resgrid-Protected-Grant
+		/// header: catalog 6 resolves here with the explicit grant, catalog 27/28 through the certification service's
+		/// request-bound grant context.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Reveal([FromForm] string kind, [FromForm] int id)
+		{
+			var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			if (string.Equals(kind, "unit", StringComparison.OrdinalIgnoreCase))
+			{
+				if (!CanView) return Unauthorized();
+				var unit = await _units.GetUnitByIdAsync(id);
+				if (unit == null || unit.DepartmentId != DepartmentId) return NotFound();
+				foreach (var row in await _certifications.GetUnitCertificationsAsync(id))
+					foreach (var accessor in CertificationProtectedFields.Unit) fields[accessor.Key + ":" + row.UnitCertificationId] = accessor.Value.Get(row);
+			}
+			else
+			{
+				var record = await AuthorizedRecordAsync(id, false);
+				if (record == null) return Unauthorized();
+				record.Data = null;
+				var resolved = await _protectedRead.ResolveCertificationsForReadAsync(DepartmentId, new[] { record }, Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+				if (resolved != null && resolved.IsProtected && resolved.ProtectedReason != null)
+					return Json(new { success = false, error = resolved.ProtectedReason });
+				foreach (var accessor in Resgrid.Services.ProtectedReadService.CertificationFieldAccessors) fields[accessor.Key] = accessor.Value.Get(record);
+				foreach (var credit in await _certifications.GetCertificationCreditsAsync(id))
+					foreach (var accessor in CertificationProtectedFields.Credit) fields[accessor.Key + ":" + credit.PersonnelCertificationCreditId] = accessor.Value.Get(credit);
+			}
+			return AdpRevealHelper.Answer(this, fields);
+		}
+
 		private async Task<(byte[] Data, string FileName, string FileType, string Error)> ReadUploadAsync(IFormFile file, CancellationToken cancellationToken)
 		{
 			if (file == null || file.Length == 0)

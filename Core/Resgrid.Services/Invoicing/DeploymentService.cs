@@ -43,6 +43,8 @@ namespace Resgrid.Services.Invoicing
 		private readonly Lazy<IInventoryIssuanceService> _inventoryIssuance;
 		private readonly Lazy<IProtectedWriteService> _protectedWrite;
 		private readonly Lazy<IProtectedReadService> _protectedRead;
+		/// <summary>The caller's Protected Data Grant (request-bound in the web hosts, workload elsewhere); a grant holder reads decrypted values.</summary>
+		private readonly IProtectedGrantContext _grant;
 
 		public DeploymentService(IDeploymentRepository deployments, IDeploymentUnitRepository units, IDeploymentPersonnelRepository personnel,
 			IDeploymentEquipmentRepository equipment, IDeploymentAttachmentRepository attachments,
@@ -50,8 +52,9 @@ namespace Resgrid.Services.Invoicing
 			IPersonnelRolesService personnelRolesService, ICertificationService certificationService, IContactsService contactsService,
 			ICallsService callsService, IRecordDeploymentsService recordDeployments, IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
 			IPdfProvider pdfProvider, IUnitOfWork unitOfWork,
-			Lazy<IInventoryIssuanceService> inventoryIssuance = null, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null)
+			Lazy<IInventoryIssuanceService> inventoryIssuance = null, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null)
 		{
+			_grant = grant;
 			_deployments = deployments;
 			_units = units;
 			_personnel = personnel;
@@ -82,6 +85,7 @@ namespace Resgrid.Services.Invoicing
 			var deployment = await _deployments.GetByIdForDepartmentAsync(deploymentId, departmentId);
 			if (deployment == null || deployment.IsDeleted) return null;
 			await LoadRosterAsync(deployment);
+			await ResolveDeploymentsAsync(new[] { deployment }, departmentId);
 			return deployment;
 		}
 
@@ -90,6 +94,7 @@ namespace Resgrid.Services.Invoicing
 			var deployment = await _deployments.GetByCallIdAsync(callId, departmentId);
 			if (deployment == null) return null;
 			await LoadRosterAsync(deployment);
+			await ResolveDeploymentsAsync(new[] { deployment }, departmentId);
 			return deployment;
 		}
 
@@ -99,11 +104,16 @@ namespace Resgrid.Services.Invoicing
 			var deployment = await _deployments.GetByExternalOrderIdAsync(rmsExternalOrderId, departmentId);
 			if (deployment == null) return null;
 			await LoadRosterAsync(deployment);
+			await ResolveDeploymentsAsync(new[] { deployment }, departmentId);
 			return deployment;
 		}
 
-		public async Task<List<Deployment>> GetDeploymentsForDepartmentAsync(int departmentId, bool openOnly, int skip = 0, int take = 100) =>
-			(await _deployments.GetForDepartmentAsync(departmentId, openOnly, skip, take))?.ToList() ?? new List<Deployment>();
+		public async Task<List<Deployment>> GetDeploymentsForDepartmentAsync(int departmentId, bool openOnly, int skip = 0, int take = 100)
+		{
+			var deployments = (await _deployments.GetForDepartmentAsync(departmentId, openOnly, skip, take))?.ToList() ?? new List<Deployment>();
+			await ResolveDeploymentsAsync(deployments, departmentId);
+			return deployments;
+		}
 
 		public Task<int> CountDeploymentsForDepartmentAsync(int departmentId, bool openOnly) => _deployments.CountForDepartmentAsync(departmentId, openOnly);
 
@@ -113,6 +123,7 @@ namespace Resgrid.Services.Invoicing
 			if (rows.Count == 0) return new List<Deployment>();
 			var ids = rows.Select(r => r.DeploymentId).Distinct().ToList();
 			var deployments = (await _deployments.GetByIdsAsync(departmentId, ids))?.ToList() ?? new List<Deployment>();
+			await ResolveDeploymentsAsync(deployments, departmentId);
 			return openOnly ? deployments.Where(d => d.IsOpen).ToList() : deployments;
 		}
 
@@ -122,6 +133,9 @@ namespace Resgrid.Services.Invoicing
 			var rows = await _personnel.GetByDeploymentAsync(deploymentId);
 			return rows != null && rows.Any(r => r.DepartmentId == departmentId && r.UserId == userId);
 		}
+
+		private Task ResolveDeploymentsAsync(IReadOnlyList<Deployment> deployments, int departmentId) =>
+			ResolveReadAsync(deployments, d => d.DeploymentId, DeploymentProtectedFields.DeploymentFields, departmentId);
 
 		private async Task LoadRosterAsync(Deployment deployment)
 		{
@@ -210,12 +224,14 @@ namespace Resgrid.Services.Invoicing
 
 			var audit = NewAuditEvent(deployment.DepartmentId, userId, isNew ? AuditLogTypes.DeploymentCreated : AuditLogTypes.DeploymentUpdated, ipAddress, userAgent);
 			audit.Before = existing == null ? null : Snapshot(existing);
-			var saved = await _deployments.SaveOrUpdateAsync(deployment, cancellationToken);
+			// Catalog 27: Notes are enveloped before the save; a REDACTED value posted back from an unrevealed edit page keeps the stored envelope.
+			var saved = await SaveProtectedAsync(_deployments, deployment, existing, d => d.DeploymentId, DeploymentProtectedFields.DeploymentFields, MarkProtected, deployment.DepartmentId, cancellationToken);
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 
 			if (isNew) await PublishAsync(saved, WorkflowTriggerEventType.DeploymentCreated, cancellationToken: cancellationToken);
 			await LoadRosterAsync(saved);
+			await ResolveDeploymentsAsync(new[] { saved }, saved.DepartmentId);
 			return saved;
 		}
 
@@ -378,7 +394,7 @@ namespace Resgrid.Services.Invoicing
 
 		#region Roster
 
-		public async Task<DeploymentRosterResult> AddUnitAsync(string deploymentId, int departmentId, int unitId, string callSign, string notes, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		public async Task<DeploymentRosterResult> AddUnitAsync(string deploymentId, int departmentId, int unitId, string callSign, string notes, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default, string rateScheduleEntryId = null)
 		{
 			var deployment = await RequireOpenAsync(deploymentId, departmentId);
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
@@ -388,7 +404,7 @@ namespace Resgrid.Services.Invoicing
 
 			var result = new DeploymentRosterResult();
 			result.Warnings.AddRange(await UnitConflictsAsync(deployment, new[] { unitId }));
-			var row = new DeploymentUnit { DeploymentId = deploymentId, DepartmentId = departmentId, UnitId = unitId, CallSign = Trim(callSign), Notes = Trim(notes), AddedOn = DateTime.UtcNow };
+			var row = new DeploymentUnit { DeploymentId = deploymentId, DepartmentId = departmentId, UnitId = unitId, CallSign = Trim(callSign), Notes = Trim(notes), RateScheduleEntryId = Trim(rateScheduleEntryId), AddedOn = DateTime.UtcNow };
 			result.Unit = await _units.SaveOrUpdateAsync(row, cancellationToken);
 			result.Unit.UnitName = unit.Name;
 
@@ -447,7 +463,8 @@ namespace Resgrid.Services.Invoicing
 			var row = new DeploymentPersonnel
 			{
 				DeploymentId = deploymentId, DepartmentId = departmentId, UserId = input.UserId, DeploymentUnitId = seatUnit?.DeploymentUnitId, UnitRoleId = input.UnitRoleId,
-				CertificationCode = Trim(input.CertificationCode), CallSign = Trim(input.CallSign), RmsExternalOrderFillId = Trim(input.RmsExternalOrderFillId), AddedOn = DateTime.UtcNow
+				CertificationCode = Trim(input.CertificationCode), CallSign = Trim(input.CallSign), RmsExternalOrderFillId = Trim(input.RmsExternalOrderFillId), AddedOn = DateTime.UtcNow,
+				RateScheduleEntryId = Trim(input.RateScheduleEntryId), PremiumIdsJson = input.PremiumIds == null || input.PremiumIds.Count == 0 ? null : Newtonsoft.Json.JsonConvert.SerializeObject(input.PremiumIds.Where(p => !string.IsNullOrWhiteSpace(p)).Distinct().ToList())
 			};
 			result.Personnel = await _personnel.SaveOrUpdateAsync(row, cancellationToken);
 			result.Personnel.DisplayName = profile.FullName.AsFirstNameLastName;
@@ -489,7 +506,7 @@ namespace Resgrid.Services.Invoicing
 			var row = new DeploymentEquipment
 			{
 				DeploymentId = deploymentId, DepartmentId = departmentId, DeploymentUnitId = unit?.DeploymentUnitId, InventoryAssetId = Trim(input.InventoryAssetId), InventoryItemId = Trim(input.InventoryItemId),
-				FreeTextName = Trim(input.FreeTextName), Notes = Trim(input.Notes), AddedOn = DateTime.UtcNow
+				FreeTextName = Trim(input.FreeTextName), Notes = Trim(input.Notes), RateScheduleEntryId = Trim(input.RateScheduleEntryId), AddedOn = DateTime.UtcNow
 			};
 
 			// Inventory plan M1: an Issue transaction referencing the deployment when the module is present (plan C4; absent = free-text row).
@@ -538,6 +555,15 @@ namespace Resgrid.Services.Invoicing
 			var warnings = new List<DeploymentRosterWarning>();
 			warnings.AddRange(await PersonnelConflictsAsync(deployment, userIds?.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct().ToList() ?? new List<string>()));
 			warnings.AddRange(await UnitConflictsAsync(deployment, unitIds?.Distinct().ToList() ?? new List<int>()));
+			return warnings;
+		}
+
+		public async Task<List<DeploymentRosterWarning>> GetWindowConflictsAsync(int departmentId, DateTime windowStart, DateTime windowEnd, IEnumerable<string> userIds, IEnumerable<int> unitIds)
+		{
+			var probe = new Deployment { DepartmentId = departmentId, DeploymentId = string.Empty, StartOn = windowStart, EndOn = windowEnd };
+			var warnings = new List<DeploymentRosterWarning>();
+			warnings.AddRange(await PersonnelConflictsAsync(probe, userIds?.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct().ToList() ?? new List<string>()));
+			warnings.AddRange(await UnitConflictsAsync(probe, unitIds?.Distinct().ToList() ?? new List<int>()));
 			return warnings;
 		}
 
@@ -623,18 +649,14 @@ namespace Resgrid.Services.Invoicing
 		{
 			var deployment = await _deployments.GetByIdForDepartmentAsync(deploymentId, departmentId);
 			if (deployment == null) return new List<DeploymentAttachment>();
-			var rows = (await _attachments.GetByDeploymentAsync(deploymentId))?.Where(a => a.DepartmentId == departmentId).ToList() ?? new List<DeploymentAttachment>();
-			await ResolveReadAsync(rows, a => a.DeploymentAttachmentId.ToString(), DeploymentProtectedFields.Attachment, departmentId);
-			return rows;
+			return (await _attachments.GetByDeploymentAsync(deploymentId))?.Where(a => a.DepartmentId == departmentId).ToList() ?? new List<DeploymentAttachment>();
 		}
 
 		public async Task<DeploymentAttachment> GetAttachmentAsync(int deploymentAttachmentId, int departmentId, bool includeData)
 		{
 			var row = await _attachments.GetByIdWithDataAsync(deploymentAttachmentId);
 			if (row == null || row.DepartmentId != departmentId || row.IsDeleted) return null;
-			await ResolveReadAsync(new[] { row }, a => a.DeploymentAttachmentId.ToString(), DeploymentProtectedFields.Attachment, departmentId);
-			if (includeData) await ResolveBinaryReadAsync(departmentId, DeploymentProtectedFields.AttachmentDataFieldId, row.DeploymentAttachmentId.ToString(), row.Data, bytes => row.Data = bytes);
-			else row.Data = null;
+			if (!includeData) row.Data = null;
 			return row;
 		}
 
@@ -653,17 +675,20 @@ namespace Resgrid.Services.Invoicing
 			attachment.IsDeleted = false;
 			attachment.AddedOn = DateTime.UtcNow;
 			attachment.AddedByUserId = userId;
-			var saved = await SaveProtectedAttachmentAsync(attachment, cancellationToken);
+			var saved = await _attachments.SaveOrUpdateAsync(attachment, cancellationToken);
 			Audit(attachment.DepartmentId, userId, AuditLogTypes.DeploymentAttachmentAdded, ipAddress, userAgent, null, WithoutBytes(saved));
+			await PublishAttachmentAsync(deployment, saved, cancellationToken);
 			return WithoutBytes(saved);
 		}
 
 		public async Task<bool> DeleteAttachmentAsync(int deploymentAttachmentId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
-			var row = await _attachments.GetByIdWithDataAsync(deploymentAttachmentId);
+			// Metadata read and a targeted flag update: an attachment can be MaxAttachmentBytes, and a soft delete has no
+			// reason to pull the blob down and write it back.
+			var row = await _attachments.GetMetadataByIdAsync(deploymentAttachmentId);
 			if (row == null || row.DepartmentId != departmentId || row.IsDeleted) return false;
+			if (await _attachments.MarkDeletedAsync(deploymentAttachmentId, departmentId, cancellationToken) == 0) return false;
 			row.IsDeleted = true;
-			await _attachments.SaveOrUpdateAsync(row, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.DeploymentAttachmentRemoved, ipAddress, userAgent, null, WithoutBytes(row));
 			return true;
 		}
@@ -684,7 +709,7 @@ namespace Resgrid.Services.Invoicing
 		/// <summary>Publishes a lifecycle trigger through the domain outbox. The payload is identifiers, status, dates and the roster subject; names are REDACTED on a protected row.</summary>
 		private async Task PublishAsync(Deployment deployment, WorkflowTriggerEventType trigger, int? oldStatus = null,
 			(DeploymentTimeSubjectTypes Type, string Id, string Name, string Action)? subject = null, string subjectUserId = null,
-			DeploymentTimeReport report = null, DeploymentExpense expense = null, CancellationToken cancellationToken = default)
+			DeploymentTimeReport report = null, DeploymentExpense expense = null, DeploymentAttachment attachment = null, CancellationToken cancellationToken = default)
 		{
 			try
 			{
@@ -704,11 +729,12 @@ namespace Resgrid.Services.Invoicing
 						deployment.StartOn, deployment.EndOn,
 						SubjectType = subject.HasValue ? (int?)subject.Value.Type : null,
 						SubjectId = subject?.Id,
-						SubjectName = subject.HasValue ? (deployment.IsProtected ? ProtectedDataEnvelope.RedactionValue : subject.Value.Name) : null,
+						SubjectName = subject?.Name,
 						SubjectUserId = subjectUserId,
 						RosterAction = subject?.Action,
-						ReportNumber = report?.ReportNumber, ReportDate = report?.ReportDate, TimeReportId = report?.DeploymentTimeReportId,
-						ExpenseType = expense?.ExpenseType, ExpenseAmount = expense?.Amount, ExpenseCurrency = expense?.Currency ?? deployment.Currency
+						ReportNumber = report?.ReportNumber, ReportDate = report?.ReportDate, TimeReportId = report?.DeploymentTimeReportId, ReportStatus = report?.Status,
+						ExpenseType = expense?.ExpenseType, ExpenseAmount = expense?.Amount, ExpenseCurrency = expense?.Currency ?? deployment.Currency,
+						AttachmentId = attachment?.DeploymentAttachmentId, AttachmentType = attachment?.AttachmentType, AttachmentName = attachment?.Name
 					}
 				}, cancellationToken);
 			}
@@ -724,6 +750,9 @@ namespace Resgrid.Services.Invoicing
 
 		internal Task PublishExpenseAsync(Deployment deployment, DeploymentExpense expense, CancellationToken cancellationToken) =>
 			PublishAsync(deployment, WorkflowTriggerEventType.DeploymentExpenseAdded, expense: expense, cancellationToken: cancellationToken);
+
+		private Task PublishAttachmentAsync(Deployment deployment, DeploymentAttachment attachment, CancellationToken cancellationToken) =>
+			PublishAsync(deployment, WorkflowTriggerEventType.DeploymentAttachmentAdded, attachment: attachment, cancellationToken: cancellationToken);
 
 		private void Audit<T>(int departmentId, string userId, AuditLogTypes type, string ipAddress, string userAgent, string before, T after)
 		{

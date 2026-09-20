@@ -233,7 +233,7 @@ namespace Resgrid.Model.Invoicing
 		[NotMapped] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName", "IsActive" };
 	}
 
-	/// <summary>A pre-numbered daily time report (DTR; the shift-ticket / CTR analog). CustomerSignerName is an ADP catalog 28 field.</summary>
+	/// <summary>A pre-numbered daily time report (DTR; the shift-ticket / CTR analog). Customer-signed and sent with invoices, so not under ADP.</summary>
 	public class DeploymentTimeReport : IEntity
 	{
 		[Required]
@@ -323,7 +323,7 @@ namespace Resgrid.Model.Invoicing
 		[NotMapped] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName", "Hours", "SubjectId" };
 	}
 
-	/// <summary>A dated expense against a deployment. Description is an ADP catalog 28 field.</summary>
+	/// <summary>A dated expense against a deployment. Billed through to the customer, so not under ADP.</summary>
 	public class DeploymentExpense : IEntity
 	{
 		[Required]
@@ -359,7 +359,7 @@ namespace Resgrid.Model.Invoicing
 		[NotMapped] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 
-	/// <summary>A file on a deployment (receipt, signed request, DTR PDF, manifest…). Name/FileName/Data are ADP catalog 28 fields.</summary>
+	/// <summary>A file on a deployment (receipt, signed request, DTR PDF, manifest…). Sent to customers in invoice packets, so not under ADP.</summary>
 	public class DeploymentAttachment : IEntity
 	{
 		[Key]
@@ -402,40 +402,26 @@ namespace Resgrid.Model.Invoicing
 		[NotMapped] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 
-	/// <summary>ADP catalog 28 accessor maps for the deployment core (plan C8). The MARS and compliance-document fields join the same version with their milestones.</summary>
+	/// <summary>
+	/// ADP catalog 27 accessor map for the deployment core: the finance wrapper's internal notes. Daily time reports,
+	/// entries, expenses and attachments are deliberately not cataloged — they are customer-facing (the customer signs
+	/// the DTR; receipts, DTR PDFs and manifests ride the invoice packet) and must read whole for people outside the
+	/// department.
+	/// </summary>
 	public static class DeploymentProtectedFields
 	{
-		public const int CatalogVersion = 28;
-		public const string Family = "Contacts";
-		public const string AttachmentDataFieldId = "deploymentattachments.data";
+		public const int CatalogVersion = 27;
 
-		public static readonly IReadOnlyDictionary<string, (Func<DeploymentTimeReport, string> Get, Action<DeploymentTimeReport, string> Set)> TimeReport =
-			new Dictionary<string, (Func<DeploymentTimeReport, string>, Action<DeploymentTimeReport, string>)>(StringComparer.OrdinalIgnoreCase)
+		public static readonly IReadOnlyDictionary<string, (Func<Deployment, string> Get, Action<Deployment, string> Set)> DeploymentFields =
+			new Dictionary<string, (Func<Deployment, string>, Action<Deployment, string>)>(StringComparer.OrdinalIgnoreCase)
 			{
-				["deploymenttimereports.customersignername"] = (r => r.CustomerSignerName, (r, v) => r.CustomerSignerName = v)
-			};
-
-		public static readonly IReadOnlyDictionary<string, (Func<DeploymentExpense, string> Get, Action<DeploymentExpense, string> Set)> Expense =
-			new Dictionary<string, (Func<DeploymentExpense, string>, Action<DeploymentExpense, string>)>(StringComparer.OrdinalIgnoreCase)
-			{
-				["deploymentexpenses.description"] = (e => e.Description, (e, v) => e.Description = v)
-			};
-
-		public static readonly IReadOnlyDictionary<string, (Func<DeploymentAttachment, string> Get, Action<DeploymentAttachment, string> Set)> Attachment =
-			new Dictionary<string, (Func<DeploymentAttachment, string>, Action<DeploymentAttachment, string>)>(StringComparer.OrdinalIgnoreCase)
-			{
-				["deploymentattachments.name"] = (a => a.Name, (a, v) => a.Name = v),
-				["deploymentattachments.filename"] = (a => a.FileName, (a, v) => a.FileName = v)
+				["deployments.notes"] = (d => d.Notes, (d, v) => d.Notes = v)
 			};
 
 		/// <summary>(table, column, binary) for the catalog registration.</summary>
 		public static IEnumerable<(string Table, string Column, bool Binary)> All()
 		{
-			yield return ("DeploymentTimeReports", "CustomerSignerName", false);
-			yield return ("DeploymentExpenses", "Description", false);
-			yield return ("DeploymentAttachments", "Name", false);
-			yield return ("DeploymentAttachments", "FileName", false);
-			yield return ("DeploymentAttachments", "Data", true);
+			yield return ("Deployments", "Notes", false);
 		}
 	}
 
@@ -450,24 +436,23 @@ namespace Resgrid.Model.Invoicing
 			("call_id", "CallId"), ("incident_number", "IncidentNumber"), ("resource_order_number", "ResourceOrderNumber"), ("request_number", "RequestNumber"), ("cost_code", "CostCode"),
 			("external_order_id", "RmsExternalOrderId"), ("contact_id", "ContactId"), ("start_on", "StartOn"), ("end_on", "EndOn"),
 			("subject_type", "SubjectType"), ("subject_id", "SubjectId"), ("subject_name", "SubjectName"), ("roster_action", "RosterAction"),
-			("report_number", "ReportNumber"), ("report_date", "ReportDate"), ("report_id", "TimeReportId"),
-			("expense_type", "ExpenseType"), ("expense_amount", "ExpenseAmount"), ("expense_currency", "ExpenseCurrency")
+			("report_number", "ReportNumber"), ("report_date", "ReportDate"), ("report_id", "TimeReportId"), ("report_status", "ReportStatus"),
+			("expense_type", "ExpenseType"), ("expense_amount", "ExpenseAmount"), ("expense_currency", "ExpenseCurrency"),
+			("attachment_id", "AttachmentId"), ("attachment_type", "AttachmentType"), ("attachment_name", "AttachmentName")
 		};
 
 		public static readonly int[] Triggers =
 		{
 			(int)WorkflowTriggerEventType.DeploymentCreated, (int)WorkflowTriggerEventType.DeploymentStatusChanged, (int)WorkflowTriggerEventType.DeploymentRosterChanged,
-			(int)WorkflowTriggerEventType.DeploymentExpenseAdded, (int)WorkflowTriggerEventType.TimeReportSubmitted, (int)WorkflowTriggerEventType.TimeReportApproved
+			(int)WorkflowTriggerEventType.DeploymentExpenseAdded, (int)WorkflowTriggerEventType.TimeReportSubmitted, (int)WorkflowTriggerEventType.TimeReportApproved,
+			// Lifecycle completion (registry 185-187, 2026-09-19).
+			(int)WorkflowTriggerEventType.TimeReportCreated, (int)WorkflowTriggerEventType.TimeReportVoided, (int)WorkflowTriggerEventType.DeploymentAttachmentAdded
 		};
 
 		public static bool IsDeployment(int trigger) => Triggers.Contains(trigger);
 
-		/// <summary>Registry 74-80 (bids, contracts): declared so the values stay locked, published by the contractor-billing milestone; hidden from the trigger picker until then.</summary>
-		public static readonly int[] Reserved =
-		{
-			(int)WorkflowTriggerEventType.BidCreated, (int)WorkflowTriggerEventType.BidSent, (int)WorkflowTriggerEventType.BidAccepted, (int)WorkflowTriggerEventType.BidDeclined,
-			(int)WorkflowTriggerEventType.BidExpired, (int)WorkflowTriggerEventType.ContractStatusChanged, (int)WorkflowTriggerEventType.ContractExpiring
-		};
+		/// <summary>Registry 74-80 (bids, contracts) were hidden here until the contractor-billing milestone (C-M2, 2026-09-19) published them under <see cref="ContractorWorkflowPayload"/>; nothing is reserved now.</summary>
+		public static readonly int[] Reserved = Array.Empty<int>();
 
 		public static bool IsReserved(int trigger) => Reserved.Contains(trigger);
 	}

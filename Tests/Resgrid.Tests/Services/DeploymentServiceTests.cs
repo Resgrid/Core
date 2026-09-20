@@ -118,6 +118,8 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync((DeploymentAttachment a, CancellationToken _, bool __) => { if (a.DeploymentAttachmentId == 0) a.DeploymentAttachmentId = _storedAttachments.Count + 1; _storedAttachments.RemoveAll(x => x.DeploymentAttachmentId == a.DeploymentAttachmentId); _storedAttachments.Add(a); return a; });
 			_attachments.Setup(r => r.GetByDeploymentAsync(It.IsAny<string>())).ReturnsAsync((string id) => _storedAttachments.Where(a => a.DeploymentId == id && !a.IsDeleted).ToList());
 			_attachments.Setup(r => r.GetByIdWithDataAsync(It.IsAny<int>())).ReturnsAsync((int id) => _storedAttachments.FirstOrDefault(a => a.DeploymentAttachmentId == id));
+			_attachments.Setup(r => r.GetMetadataByIdAsync(It.IsAny<int>())).ReturnsAsync((int id) => { var a = _storedAttachments.FirstOrDefault(x => x.DeploymentAttachmentId == id); return a == null ? null : new DeploymentAttachment { DeploymentAttachmentId = a.DeploymentAttachmentId, DeploymentId = a.DeploymentId, DepartmentId = a.DepartmentId, AttachmentType = a.AttachmentType, Name = a.Name, FileName = a.FileName, FileType = a.FileType, FileSize = a.FileSize, IsDeleted = a.IsDeleted }; });
+			_attachments.Setup(r => r.MarkDeletedAsync(It.IsAny<int>(), DeptId, It.IsAny<CancellationToken>())).ReturnsAsync((int id, int _, CancellationToken __) => { var a = _storedAttachments.FirstOrDefault(x => x.DeploymentAttachmentId == id && !x.IsDeleted); if (a == null) return 0; a.IsDeleted = true; return 1; });
 
 			_service = new DeploymentService(_deployments.Object, _units.Object, _personnel.Object, _equipment.Object, _attachments.Object, _departments.Object, _unitsService.Object, _profiles.Object,
 				_roles.Object, _certifications.Object, _contacts.Object, _calls.Object, _records.Object, _outbox.Object, _events.Object, _pdf.Object, null);
@@ -384,6 +386,23 @@ namespace Resgrid.Tests.Services
 			var d = await NewDeploymentAsync();
 			(await FluentActions.Awaiting(() => _service.SaveAttachmentAsync(new DeploymentAttachment { DeploymentId = d.DeploymentId, DepartmentId = DeptId, FileName = "x.pdf" }, Manager, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("deployments_attachment_empty");
 			(await FluentActions.Awaiting(() => _service.SaveAttachmentAsync(new DeploymentAttachment { DeploymentId = d.DeploymentId, DepartmentId = DeptId, FileName = "x.pdf", Data = new byte[DeploymentService.MaxAttachmentBytes + 1] }, Manager, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("deployments_attachment_too_large");
+		}
+
+		[Test]
+		public async Task Deleting_an_attachment_flags_the_row_without_moving_its_bytes()
+		{
+			var d = await NewDeploymentAsync();
+			var saved = await _service.SaveAttachmentAsync(new DeploymentAttachment { DeploymentId = d.DeploymentId, DepartmentId = DeptId, FileName = "map.pdf", FileType = "application/pdf", Data = new byte[] { 1, 2, 3 } }, Manager, null, null);
+			_attachments.Invocations.Clear();
+
+			(await _service.DeleteAttachmentAsync(saved.DeploymentAttachmentId, DeptId, Manager, null, null)).Should().BeTrue();
+
+			_storedAttachments.Single().IsDeleted.Should().BeTrue();
+			_attachments.Verify(r => r.GetByIdWithDataAsync(It.IsAny<int>()), Times.Never, "the soft delete reads metadata only");
+			_attachments.Verify(r => r.SaveOrUpdateAsync(It.IsAny<DeploymentAttachment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never, "the flag is set in place");
+			_audits.Should().ContainSingle(a => a.Type == AuditLogTypes.DeploymentAttachmentRemoved).Which.After.Should().NotContain("\"Data\":\"AQID\"");
+			(await _service.DeleteAttachmentAsync(saved.DeploymentAttachmentId, DeptId, Manager, null, null)).Should().BeFalse("a deleted row is not deleted twice");
+			(await _service.DeleteAttachmentAsync(saved.DeploymentAttachmentId, DeptId + 1, Manager, null, null)).Should().BeFalse("another department's id is not found");
 		}
 
 		[Test]

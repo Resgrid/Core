@@ -135,5 +135,13 @@
   "DeploymentRosterChanged": 83,
   "DeploymentExpenseAdded": 84,
   "TimeReportSubmitted": 85,
-  "TimeReportApproved": 86
+  "TimeReportApproved": 86,
+  "UnitCertificationAdded": 180,
+  "UnitCertificationStatusChanged": 181,
+  "UnitCertificationRemoved": 182,
+  "CertificationRemoved": 183,
+  "CertificationCreditAdded": 184,
+  "TimeReportCreated": 185,
+  "TimeReportVoided": 186,
+  "DeploymentAttachmentAdded": 187
 }

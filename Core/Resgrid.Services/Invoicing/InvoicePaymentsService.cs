@@ -74,14 +74,12 @@ namespace Resgrid.Services.Invoicing
 		private readonly IEmailService _emailService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
-		private readonly Lazy<IProtectedReadService> _protectedRead;
 
 		public InvoicePaymentsService(IFeatureToggleService featureToggleService, IStripeConnectEndpointProbe endpointProbe,
 			IPaymentConnectProvider provider, IDepartmentPaymentConnectionRepository connections, IInvoicePaymentRequestRepository requests,
 			IPaymentProviderEventRepository events, IInvoiceRepository invoices, ICustomerBillingProfileRepository profiles, IInvoicePaymentRepository payments,
 			IDepartmentBillingIdentityRepository identities, IInvoicingService invoicing, IBusinessOperationsAccessService access,
-			IDepartmentsService departmentsService, IEmailService emailService, ICacheProvider cacheProvider, IEventAggregator eventAggregator,
-			Lazy<IProtectedReadService> protectedRead = null)
+			IDepartmentsService departmentsService, IEmailService emailService, ICacheProvider cacheProvider, IEventAggregator eventAggregator)
 		{
 			_featureToggleService = featureToggleService;
 			_endpointProbe = endpointProbe;
@@ -99,7 +97,6 @@ namespace Resgrid.Services.Invoicing
 			_emailService = emailService;
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
-			_protectedRead = protectedRead;
 		}
 
 		#region Availability and status
@@ -355,7 +352,6 @@ namespace Resgrid.Services.Invoicing
 			}
 
 			var profile = await _profiles.GetByIdForDepartmentAsync(invoice.CustomerBillingProfileId, departmentId);
-			await ResolveWorkloadAsync(profile == null ? new List<CustomerBillingProfile>() : new List<CustomerBillingProfile> { profile }, p => p.CustomerBillingProfileId, InvoicingProtectedFields.BillingProfile, departmentId);
 
 			// The row is allocated first so the provider receives the request id as its reference (plan B2.1 client_reference_id).
 			var request = new InvoicePaymentRequest
@@ -389,7 +385,7 @@ namespace Resgrid.Services.Invoicing
 					InvoiceNumber = invoice.InvoiceNumber,
 					Amount = request.Amount,
 					Currency = request.Currency,
-					CustomerEmail = ProtectedDataEnvelope.HasEnvelopePrefix(profile?.BillingEmail) || profile?.BillingEmail == ProtectedDataEnvelope.RedactionValue ? null : profile?.BillingEmail,
+					CustomerEmail = profile?.BillingEmail,
 					PaymentMethodTypes = methods,
 					SuccessUrl = payBase + "/return",
 					CancelUrl = payBase + "/cancel",
@@ -568,7 +564,8 @@ namespace Resgrid.Services.Invoicing
 				LiveMode = envelope.LiveMode,
 				ReceivedOn = now,
 				Outcome = (int)PaymentEventOutcomes.Ignored,
-				PayloadJson = rawBody
+				// The ledger keeps the reconciliation shape only; payer PII is stripped before the row is written (ADP: no department at receipt time).
+				PayloadJson = PaymentWebhookPayloadMinimizer.Minimize(rawBody)
 			};
 			try
 			{
@@ -1150,12 +1147,7 @@ namespace Resgrid.Services.Invoicing
 			return department?.Name ?? "Resgrid";
 		}
 
-		private async Task ResolveWorkloadAsync<T>(IReadOnlyList<T> rows, Func<T, string> key, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, int departmentId) where T : class
-		{
-			if (_protectedRead == null || rows == null || rows.Count == 0) return;
-			try { await _protectedRead.Value.ResolveRecordsEntitiesForWorkloadAsync(departmentId, "invoice-payments", rows.Select(r => (r, key(r))).ToList(), accessors); }
-			catch (Exception ex) { Logging.LogException(ex, "Protected invoicing rows could not be resolved for the payments workload."); }
-		}
+
 
 		private static AuditEvent NewAuditEvent(int departmentId, string userId, AuditLogTypes type, string ipAddress, string userAgent)
 		{

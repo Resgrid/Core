@@ -265,6 +265,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						visible.Add(cell);
 				}
 				dashboard.PersonCells = visible;
+				// The totals came from the department-wide matrix; over the filtered cells they would both disagree with
+				// the rows on the page and count certification states of the members the matrix hides.
+				dashboard.RecountTotals();
 			}
 
 			return new Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView

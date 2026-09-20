@@ -53,6 +53,9 @@ namespace Resgrid.Model.Invoicing
 		public string CertificationCode { get; set; }
 		public string CallSign { get; set; }
 		public string RmsExternalOrderFillId { get; set; }
+		/// <summary>Contractor billing (C-M2): the certification rate entry and premium adders this person bills under.</summary>
+		public string RateScheduleEntryId { get; set; }
+		public List<string> PremiumIds { get; set; }
 		/// <summary>Write the row even when a seat requirement fails (the wizard's partial-fill path, decision 17).</summary>
 		public bool Force { get; set; }
 	}
@@ -64,6 +67,8 @@ namespace Resgrid.Model.Invoicing
 		public string InventoryItemId { get; set; }
 		public string FreeTextName { get; set; }
 		public string Notes { get; set; }
+		/// <summary>Contractor billing (C-M2): the equipment/vehicle rate entry this item bills under.</summary>
+		public string RateScheduleEntryId { get; set; }
 		/// <summary>Post an inventory Issue transaction (ReferenceType=Deployment) when the inventory module is present.</summary>
 		public bool IssueFromInventory { get; set; }
 		public string FromLocationId { get; set; }

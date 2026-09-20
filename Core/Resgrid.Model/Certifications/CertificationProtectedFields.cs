@@ -4,13 +4,15 @@ using System.Collections.Generic;
 namespace Resgrid.Model.Certifications
 {
 	/// <summary>
-	/// ADP catalog 27 (Workforce &amp; Business Operations plan, Phase D2; registered with M0213/M0214): the free-text and
+	/// ADP catalog 26 (Workforce &amp; Business Operations plan, Phase D2; registered with M0213/M0214): the free-text and
 	/// document columns of unit certification records (Operational family, like UnitLogs) and certification credit entries (Personnel family).
 	/// PersonnelCertifications itself stays catalog 6. Accessor maps drive the generic RMS write/read seams.
 	/// </summary>
 	public static class CertificationProtectedFields
 	{
-		public const int CatalogVersion = 27;
+		public const int CatalogVersion = 26;
+		/// <summary>The 2026-09-19 completion pass (catalog 27): the free-text status reasons on both record tables.</summary>
+		public const int CompletionCatalogVersion = 27;
 		public const string UnitFamily = "Operational";
 		public const string PersonnelFamily = "Personnel";
 		public const string UnitDataFieldId = "unitcertifications.data";
@@ -22,7 +24,8 @@ namespace Resgrid.Model.Certifications
 				["unitcertifications.number"] = (u => u.Number, (u, v) => u.Number = v),
 				["unitcertifications.issuedby"] = (u => u.IssuedBy, (u, v) => u.IssuedBy = v),
 				["unitcertifications.notes"] = (u => u.Notes, (u, v) => u.Notes = v),
-				["unitcertifications.filename"] = (u => u.FileName, (u, v) => u.FileName = v)
+				["unitcertifications.filename"] = (u => u.FileName, (u, v) => u.FileName = v),
+				["unitcertifications.statusreason"] = (u => u.StatusReason, (u, v) => u.StatusReason = v)
 			};
 
 		public static readonly IReadOnlyDictionary<string, (Func<PersonnelCertificationCredit, string> Get, Action<PersonnelCertificationCredit, string> Set)> Credit =
@@ -43,6 +46,13 @@ namespace Resgrid.Model.Certifications
 			yield return ("PersonnelCertificationCredits", "Description", PersonnelFamily, false);
 			yield return ("PersonnelCertificationCredits", "FileName", PersonnelFamily, false);
 			yield return ("PersonnelCertificationCredits", "Data", PersonnelFamily, true);
+		}
+
+		/// <summary>Catalog 27 additions: (table, column, family). PersonnelCertifications.StatusReason joins the catalog-6 accessor map in ProtectedReadService.</summary>
+		public static IEnumerable<(string Table, string Column, string Family)> Completion()
+		{
+			yield return ("UnitCertifications", "StatusReason", UnitFamily);
+			yield return ("PersonnelCertifications", "StatusReason", PersonnelFamily);
 		}
 	}
 }

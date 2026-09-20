@@ -1,0 +1,65 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.ContractIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Contracts"];
+    ViewData["Title"] = localizer["Contracts"].Value;
+    ViewData["Subtitle"] = localizer["ContractsIntro"].Value;
+    ViewData["RootController"] = "Contracts";
+    ViewData["RootTitle"] = localizer["Contracts"].Value;
+    var statuses = Enum.GetValues(typeof(Resgrid.Model.Invoicing.ServiceContractStatuses)).Cast<Resgrid.Model.Invoicing.ServiceContractStatuses>().ToList();
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    @if (Model.ExpiringDocuments > 0)
+    {
+        <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @string.Format(localizer["ComplianceExpiringBanner"].Value, Model.ExpiringDocuments) <a asp-action="Compliance">@localizer["ComplianceDocuments"]</a></div>
+    }
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer["Contracts"]</h5>
+            <div class="ibox-tools">
+                <a asp-action="Compliance" class="btn btn-default btn-xs"><i class="fa fa-shield"></i> @localizer["ComplianceDocuments"]</a>
+                @if (Model.CanManageRates) { <a asp-controller="RateSchedules" asp-action="Index" class="btn btn-default btn-xs"><i class="fa fa-table"></i> @localizer["RateSchedules"]</a> }
+                @if (Model.CanManageContracts) { <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewContract"]</a> }
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpContracts"]</div>
+            <div class="btn-group m-b-sm">
+                <a asp-action="Index" class="btn btn-xs @(Model.StatusFilter.HasValue ? "btn-default" : "btn-primary")">@localizer["AllStatuses"]</a>
+                @foreach (var st in statuses)
+                {
+                    <a asp-action="Index" asp-route-status="@((int)st)" class="btn btn-xs @(Model.StatusFilter == (int)st ? "btn-primary" : "btn-default")">@localizer["ContractStatus" + st]</a>
+                }
+            </div>
+            @if (Model.Contracts.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoContracts"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["ContractNumber"]</th><th>@localizer["Customer"]</th><th>@localizer["ContractType"]</th><th>@localizer["Status"]</th><th>@localizer["Window"]</th><th>@localizer["RateSchedule"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var c in Model.Contracts)
+                        {
+                            <tr>
+                                <td><a asp-action="View" asp-route-id="@c.ServiceContractId">@c.Name</a></td>
+                                <td>@c.ContractNumber</td>
+                                <td>@(Model.ContactNames.TryGetValue(c.ContactId, out var contact) ? contact : c.ContactId)</td>
+                                <td>@localizer["ContractType" + (Resgrid.Model.Invoicing.ServiceContractTypes)c.ContractType]</td>
+                                <td>@await Html.PartialAsync("_ContractStatusBadge", c.Status)</td>
+                                <td>@c.StartOn.ToString("yyyy-MM-dd") → @(c.EndOn.HasValue ? c.EndOn.Value.ToString("yyyy-MM-dd") : "—")</td>
+                                <td>@(string.IsNullOrWhiteSpace(c.RateScheduleId) ? "—" : Model.ScheduleNames.TryGetValue(c.RateScheduleId, out var schedule) ? schedule : c.RateScheduleId)</td>
+                                <td class="text-right"><a asp-action="View" asp-route-id="@c.ServiceContractId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

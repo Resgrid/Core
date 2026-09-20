@@ -31,6 +31,8 @@ namespace Resgrid.Services.Invoicing
 		private readonly IInvoicePaymentRepository _payments;
 		private readonly IInvoiceNumberSequenceRepository _sequence;
 		private readonly IDepartmentBillingIdentityRepository _identities;
+		/// <summary>Contractor billing (C-M2): the linked contract's terms override the profile's net days when the invoice issues.</summary>
+		private readonly IServiceContractRepository _serviceContracts;
 		private readonly IContactsService _contactsService;
 		private readonly ICallsService _callsService;
 		private readonly IUnitsService _unitsService;
@@ -48,11 +50,12 @@ namespace Resgrid.Services.Invoicing
 			IContactsService contactsService, ICallsService callsService, IUnitsService unitsService,
 			IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
 			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService, IUnitOfWork unitOfWork,
-			Lazy<IInvoicePaymentsService> paymentsService = null, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null)
+			Lazy<IInvoicePaymentsService> paymentsService = null, Lazy<IProtectedReadService> protectedRead = null,
+			IServiceContractRepository serviceContracts = null)
 		{
+			_serviceContracts = serviceContracts;
 			_unitOfWork = unitOfWork;
 			_paymentsService = paymentsService;
-			_protectedWrite = protectedWrite;
 			_protectedRead = protectedRead;
 			_pdfProvider = pdfProvider;
 			_emailService = emailService;
@@ -77,23 +80,17 @@ namespace Resgrid.Services.Invoicing
 
 		public async Task<CustomerBillingProfile> GetBillingProfileByContactIdAsync(string contactId, int departmentId)
 		{
-			var profile = await _profiles.GetByContactIdAsync(contactId, departmentId);
-			await ResolveReadAsync(profile);
-			return profile;
+			return await _profiles.GetByContactIdAsync(contactId, departmentId);
 		}
 
 		public async Task<CustomerBillingProfile> GetBillingProfileByIdAsync(string customerBillingProfileId, int departmentId)
 		{
-			var profile = await _profiles.GetByIdForDepartmentAsync(customerBillingProfileId, departmentId);
-			await ResolveReadAsync(profile);
-			return profile;
+			return await _profiles.GetByIdForDepartmentAsync(customerBillingProfileId, departmentId);
 		}
 
 		public async Task<List<CustomerBillingProfile>> GetBillingProfilesForDepartmentAsync(int departmentId)
 		{
-			var profiles = (await _profiles.GetAllForDepartmentAsync(departmentId))?.ToList() ?? new List<CustomerBillingProfile>();
-			await ResolveReadAsync(profiles, departmentId);
-			return profiles;
+			return (await _profiles.GetAllForDepartmentAsync(departmentId))?.ToList() ?? new List<CustomerBillingProfile>();
 		}
 
 		public async Task<CustomerBillingProfile> SaveBillingProfileAsync(CustomerBillingProfile profile, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
@@ -124,8 +121,6 @@ namespace Resgrid.Services.Invoicing
 				profile.CustomerBillingProfileId = existing.CustomerBillingProfileId;
 				profile.AddedOn = existing.AddedOn;
 				profile.AddedByUserId = existing.AddedByUserId;
-				profile.IsProtected = existing.IsProtected;
-				profile.ProtectedCatalogVersion = existing.ProtectedCatalogVersion;
 				profile.EditedOn = now;
 				profile.EditedByUserId = userId;
 			}
@@ -139,7 +134,7 @@ namespace Resgrid.Services.Invoicing
 			}
 			profile.IsDeleted = false;
 
-			var saved = await SaveProtectedAsync(_profiles, profile, existing, p => p.CustomerBillingProfileId, InvoicingProtectedFields.BillingProfile, MarkProtected, profile.DepartmentId, cancellationToken);
+			var saved = await _profiles.SaveOrUpdateAsync(profile, cancellationToken);
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return saved;
@@ -321,7 +316,6 @@ namespace Resgrid.Services.Invoicing
 		public async Task<List<Invoice>> GetInvoicesForDepartmentAsync(int departmentId, InvoiceListFilter filter)
 		{
 			var invoices = (await _invoices.GetForDepartmentAsync(departmentId, filter ?? new InvoiceListFilter()))?.ToList() ?? new List<Invoice>();
-			await ResolveReadAsync(invoices, departmentId);
 			return invoices;
 		}
 
@@ -331,7 +325,6 @@ namespace Resgrid.Services.Invoicing
 		public async Task<List<Invoice>> GetInvoicesByContactIdAsync(string contactId, int departmentId)
 		{
 			var invoices = (await _invoices.GetByContactIdAsync(contactId, departmentId))?.ToList() ?? new List<Invoice>();
-			await ResolveReadAsync(invoices, departmentId);
 			return invoices;
 		}
 
@@ -340,8 +333,6 @@ namespace Resgrid.Services.Invoicing
 			var invoice = await _invoices.GetByIdForDepartmentAsync(invoiceId, departmentId);
 			if (invoice == null) return null;
 			await LoadChildrenAsync(invoice);
-			await ResolveReadAsync(invoice);
-			await ResolveReadAsync(invoice.Payments, departmentId);
 			return invoice;
 		}
 
@@ -380,7 +371,6 @@ namespace Resgrid.Services.Invoicing
 		{
 			if (invoice == null) throw new ArgumentNullException(nameof(invoice));
 			var existing = await RequireDraftAsync(invoice.InvoiceId, invoice.DepartmentId);
-			var pristine = existing.CloneJson();
 			ValidatePercent(invoice.DiscountPercent, nameof(invoice.DiscountPercent));
 
 			var audit = NewAuditEvent(existing.DepartmentId, userId, AuditLogTypes.InvoiceUpdated, ipAddress, userAgent);
@@ -396,11 +386,29 @@ namespace Resgrid.Services.Invoicing
 			existing.EditedOn = DateTime.UtcNow;
 			existing.EditedByUserId = userId;
 
-			await SaveProtectedAsync(_invoices, existing, pristine, i => i.InvoiceId, InvoicingProtectedFields.Invoice, MarkProtected, existing.DepartmentId, cancellationToken);
+			await _invoices.SaveOrUpdateAsync(existing, cancellationToken);
 			var recalculated = await RecalculateTotalsAsync(existing.InvoiceId, existing.DepartmentId, cancellationToken);
 			audit.After = Snapshot(recalculated);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return recalculated;
+		}
+
+		public async Task<Invoice> LinkInvoiceToDeploymentAsync(string invoiceId, int departmentId, string deploymentId, string serviceContractId, int? termsNetDays, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		{
+			var existing = await RequireDraftAsync(invoiceId, departmentId);
+			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceUpdated, ipAddress, userAgent);
+			audit.Before = Snapshot(existing);
+			existing.DeploymentId = string.IsNullOrWhiteSpace(deploymentId) ? null : deploymentId.Trim();
+			existing.ServiceContractId = string.IsNullOrWhiteSpace(serviceContractId) ? null : serviceContractId.Trim();
+			// Contract terms override the profile's net days (decision 14 cascade); the due date is derived when the invoice issues.
+			if (termsNetDays.HasValue && termsNetDays.Value > 0 && existing.IssuedOn.HasValue) existing.DueOn = existing.IssuedOn.Value.AddDays(termsNetDays.Value);
+			existing.EditedOn = DateTime.UtcNow;
+			existing.EditedByUserId = userId;
+			await _invoices.SaveOrUpdateAsync(existing, cancellationToken);
+			var result = await GetInvoiceByIdAsync(invoiceId, departmentId);
+			audit.After = Snapshot(result);
+			_eventAggregator.SendMessage<AuditEvent>(audit);
+			return result;
 		}
 
 		public Task<Invoice> SaveDraftAsync(Invoice invoice, List<InvoiceLineItem> lineItems, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
@@ -424,13 +432,22 @@ namespace Resgrid.Services.Invoicing
 				var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceUpdated, ipAddress, userAgent);
 				audit.Before = Snapshot(invoice);
 
-				await _lineItems.DeleteByInvoiceIdAsync(invoiceId, departmentId, cancellationToken);
-				var sort = 0;
-				var minimums = new Dictionary<string, decimal?>(StringComparer.OrdinalIgnoreCase);
-				foreach (var line in (lineItems ?? new List<InvoiceLineItem>()).Where(x => x != null))
+				// Lines keep their ids across a save (provenance links and audit history follow the row); stale lines are deleted.
+				var current = (await _lineItems.GetByInvoiceIdAsync(invoiceId, departmentId))?.ToDictionary(l => l.InvoiceLineItemId, StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, InvoiceLineItem>(StringComparer.OrdinalIgnoreCase);
+				var incoming = (lineItems ?? new List<InvoiceLineItem>()).Where(x => x != null).ToList();
+				var kept = new HashSet<string>(incoming.Where(l => !string.IsNullOrWhiteSpace(l.InvoiceLineItemId) && current.ContainsKey(l.InvoiceLineItemId)).Select(l => l.InvoiceLineItemId), StringComparer.OrdinalIgnoreCase);
+				foreach (var line in incoming)
 				{
 					if (string.IsNullOrWhiteSpace(line.Description)) throw new ArgumentException("Every line needs a description.", nameof(lineItems));
-					line.InvoiceLineItemId = null;
+				}
+				foreach (var stale in current.Values.Where(l => !kept.Contains(l.InvoiceLineItemId)))
+					await _lineItems.DeleteAsync(stale, cancellationToken);
+				var sort = 0;
+				var minimums = new Dictionary<string, decimal?>(StringComparer.OrdinalIgnoreCase);
+				foreach (var line in incoming)
+				{
+					var existingLine = !string.IsNullOrWhiteSpace(line.InvoiceLineItemId) && current.TryGetValue(line.InvoiceLineItemId, out var found) ? found : null;
+					if (existingLine == null) line.InvoiceLineItemId = null;
 					line.InvoiceId = invoiceId;
 					line.DepartmentId = departmentId;
 					line.Amount = RoundMoney(line.Quantity * line.UnitRate);
@@ -584,22 +601,20 @@ namespace Resgrid.Services.Invoicing
 			if (lines.Count == 0) throw new InvalidOperationException("invoicing_invoice_has_no_lines");
 
 			var profile = await _profiles.GetByIdForDepartmentAsync(invoice.CustomerBillingProfileId, departmentId);
-			await ResolveWorkloadAsync(profile);
-			var pristine = invoice.CloneJson();
 			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceSent, ipAddress, userAgent);
 			audit.Before = Snapshot(invoice);
 
 			var now = DateTime.UtcNow;
 			ComputeTotals(invoice, lines, profile);
 			invoice.IssuedOn ??= now;
-			invoice.DueOn ??= invoice.IssuedOn.Value.AddDays(profile?.TermsNetDays ?? 30);
+			invoice.DueOn ??= invoice.IssuedOn.Value.AddDays(await TermsNetDaysAsync(invoice, profile));
 			invoice.SentOn = now;
 			invoice.SentToEmail = string.IsNullOrWhiteSpace(sentToEmail) ? profile?.BillingEmail : sentToEmail.Trim();
 			invoice.Status = (int)InvoiceStatus.Sent;
 			invoice.EditedOn = now;
 			invoice.EditedByUserId = userId;
 
-			await SaveProtectedAsync(_invoices, invoice, pristine, i => i.InvoiceId, InvoicingProtectedFields.Invoice, MarkProtected, departmentId, cancellationToken);
+			await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
 			audit.After = Snapshot(invoice);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			await PublishAsync(invoice, WorkflowTriggerEventType.InvoiceSent, oldStatus: (int)InvoiceStatus.Draft, cancellationToken: cancellationToken);
@@ -665,7 +680,7 @@ namespace Resgrid.Services.Invoicing
 			InvoicePayment saved;
 			try
 			{
-				saved = await InsertProtectedAsync(_payments, payment, p => p.InvoicePaymentId, InvoicingProtectedFields.Payment, MarkProtected, payment.DepartmentId, cancellationToken);
+				saved = await _payments.SaveOrUpdateAsync(payment, cancellationToken);
 			}
 			catch (Exception ex) when (online && IsUniqueViolation(ex))
 			{
@@ -772,8 +787,10 @@ namespace Resgrid.Services.Invoicing
 
 		#region Department billing identity
 
-		public async Task<DepartmentBillingIdentity> GetDepartmentBillingIdentityAsync(int departmentId) =>
-			await _identities.GetByDepartmentIdAsync(departmentId) ?? new DepartmentBillingIdentity { DepartmentId = departmentId, AllowedPaymentMethodsCsv = "card", PayLinkExpiryDays = 30, ShowPayOnlineOnDocuments = true };
+		public async Task<DepartmentBillingIdentity> GetDepartmentBillingIdentityAsync(int departmentId)
+		{
+			return await _identities.GetByDepartmentIdAsync(departmentId) ?? new DepartmentBillingIdentity { DepartmentId = departmentId, AllowedPaymentMethodsCsv = "card", PayLinkExpiryDays = 30, ShowPayOnlineOnDocuments = true };
+		}
 
 		public async Task<DepartmentBillingIdentity> SaveDepartmentBillingIdentityAsync(DepartmentBillingIdentity identity, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
@@ -837,6 +854,16 @@ namespace Resgrid.Services.Invoicing
 			if (ex is Microsoft.Data.SqlClient.SqlException sql)
 				return sql.Number == 2601 || sql.Number == 2627;
 			return false;
+		}
+
+		private async Task<int> TermsNetDaysAsync(Invoice invoice, CustomerBillingProfile profile)
+		{
+			if (_serviceContracts != null && !string.IsNullOrWhiteSpace(invoice.ServiceContractId))
+			{
+				var contract = await _serviceContracts.GetByIdForDepartmentAsync(invoice.ServiceContractId, invoice.DepartmentId);
+				if (contract?.TermsNetDays > 0) return contract.TermsNetDays.Value;
+			}
+			return profile?.TermsNetDays ?? 30;
 		}
 
 		private async Task<Invoice> RequireDraftAsync(string invoiceId, int departmentId)
@@ -928,19 +955,16 @@ namespace Resgrid.Services.Invoicing
 			}
 		}
 
-		/// <summary>Publishes the lifecycle trigger through the domain outbox (plan decision 22). Payload = identifiers, status, amounts, dates; contact name only when the row is not protected.</summary>
+		/// <summary>Publishes the lifecycle trigger through the domain outbox (plan decision 22). Payload = identifiers, status, amounts, dates; the contact name reads REDACTED when the contact row is protected.</summary>
 		private async Task PublishAsync(Invoice invoice, WorkflowTriggerEventType trigger, InvoicePayment payment = null, int? oldStatus = null, CancellationToken cancellationToken = default)
 		{
 			string contactName = null;
-			if (!invoice.IsProtected)
+			try
 			{
-				try
-				{
-					var contact = await _contactsService.GetContactByIdAsync(invoice.ContactId);
-					contactName = contact == null ? null : (string.IsNullOrWhiteSpace(contact.CompanyName) ? $"{contact.FirstName} {contact.LastName}".Trim() : contact.CompanyName);
-				}
-				catch (Exception ex) { Logging.LogException(ex, "Invoice workflow payload: contact name could not be read."); }
+				var contact = await _contactsService.GetContactByIdAsync(invoice.ContactId);
+				contactName = contact == null ? null : ProtectedDataEnvelope.SafeDisplay(string.IsNullOrWhiteSpace(contact.CompanyName) ? $"{contact.FirstName} {contact.LastName}".Trim() : contact.CompanyName);
 			}
+			catch (Exception ex) { Logging.LogException(ex, "Invoice workflow payload: contact name could not be read."); }
 
 			var payUrl = await PayUrlAsync(invoice);
 			try
@@ -957,7 +981,7 @@ namespace Resgrid.Services.Invoicing
 					Payload = new
 					{
 						invoice.InvoiceId, invoice.InvoiceNumber, invoice.Status, invoice.ContactId,
-						ContactName = invoice.IsProtected ? ProtectedDataEnvelope.RedactionValue : contactName,
+						ContactName = contactName,
 						invoice.Currency, invoice.SubTotal, invoice.DiscountAmount, invoice.TaxAmount, invoice.Total, invoice.AmountPaid, invoice.Balance,
 						invoice.IssuedOn, invoice.DueOn, invoice.SentOn, invoice.PaidOn,
 						PaymentAmount = payment?.Amount, PaymentMethod = payment == null ? null : ((InvoicePaymentMethods)payment.Method).ToString(), PaymentId = payment?.InvoicePaymentId,

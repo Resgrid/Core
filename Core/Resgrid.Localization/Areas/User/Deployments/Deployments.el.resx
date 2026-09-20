@@ -258,4 +258,9 @@
   <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Προστέθηκε έξοδο αποστολής</value></data>
   <data name="TimeReportSubmitted" xml:space="preserve"><value>Υποβλήθηκε αναφορά χρόνου</value></data>
   <data name="TimeReportApproved" xml:space="preserve"><value>Εγκρίθηκε αναφορά χρόνου</value></data>
+  <data name="TimeReportCreated" xml:space="preserve"><value>Δημιουργήθηκε αναφορά χρόνου</value></data>
+  <data name="TimeReportVoided" xml:space="preserve"><value>Ακυρώθηκε αναφορά χρόνου</value></data>
+  <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Προστέθηκε αρχείο αποστολής</value></data>
+  <data name="AdpProtectedDeployment" xml:space="preserve"><value>Προστατευμένη αποστολή</value></data>
+  <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Προστατευμένη αναφορά χρόνου</value></data>
 </root>

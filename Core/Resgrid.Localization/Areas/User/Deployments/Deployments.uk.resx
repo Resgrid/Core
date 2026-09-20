@@ -258,4 +258,9 @@
   <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Додано витрату розгортання</value></data>
   <data name="TimeReportSubmitted" xml:space="preserve"><value>Звіт про час подано</value></data>
   <data name="TimeReportApproved" xml:space="preserve"><value>Звіт про час затверджено</value></data>
+  <data name="TimeReportCreated" xml:space="preserve"><value>Створено звіт про час</value></data>
+  <data name="TimeReportVoided" xml:space="preserve"><value>Звіт про час анульовано</value></data>
+  <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Додано файл розгортання</value></data>
+  <data name="AdpProtectedDeployment" xml:space="preserve"><value>Захищене розгортання</value></data>
+  <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Захищений звіт про час</value></data>
 </root>

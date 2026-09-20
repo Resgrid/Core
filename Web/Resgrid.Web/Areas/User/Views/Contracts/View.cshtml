@@ -1,0 +1,123 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.ContractDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentStrings
+@{
+    var c = Model.Contract;
+    ViewBag.Title = "Resgrid | " + c.Name;
+    ViewData["Title"] = c.Name;
+    ViewData["Subtitle"] = localizer["ContractDetailIntro"].Value;
+    ViewData["RootController"] = "Contracts";
+    ViewData["RootTitle"] = localizer["Contracts"].Value;
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Contract"] @await Html.PartialAsync("_ContractStatusBadge", c.Status)</h5>
+                    <div class="ibox-tools">
+                        @if (Model.CanManageContracts) { <a asp-action="Edit" asp-route-id="@c.ServiceContractId" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
+                        @if (Model.CanManageBids) { <a asp-controller="Bids" asp-action="New" asp-route-contactId="@c.ContactId" asp-route-contractId="@c.ServiceContractId" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewBid"]</a> }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["Customer"]</dt><dd>@Model.ContactName</dd>
+                        <dt>@localizer["ContractNumber"]</dt><dd>@(c.ContractNumber ?? "—")</dd>
+                        <dt>@localizer["ContractType"]</dt><dd>@localizer["ContractType" + (Resgrid.Model.Invoicing.ServiceContractTypes)c.ContractType]</dd>
+                        <dt>@localizer["Window"]</dt><dd>@c.StartOn.ToString("yyyy-MM-dd") → @(c.EndOn.HasValue ? c.EndOn.Value.ToString("yyyy-MM-dd") : "—")</dd>
+                        <dt>@localizer["RateSchedule"]</dt><dd>@if (!string.IsNullOrWhiteSpace(c.RateScheduleId)) { <a asp-controller="RateSchedules" asp-action="Edit" asp-route-id="@c.RateScheduleId">@(Model.ScheduleName ?? c.RateScheduleId)</a> } else { <span class="text-muted">@localizer["UseDefaultSchedule"]</span> }</dd>
+                        <dt>@localizer["DiscountPercent"]</dt><dd>@(c.DiscountPercent.HasValue ? c.DiscountPercent.Value.ToString("0.##") + " %" : "—")</dd>
+                        <dt>@localizer["TermsNetDays"]</dt><dd>@(c.TermsNetDays?.ToString() ?? "—")</dd>
+                        <dt>@localizer["InvoiceSubmissionEmail"]</dt><dd>@c.InvoiceSubmissionEmail</dd>
+                        <dt>@localizer["MaxDeploymentDays"]</dt><dd>@(c.MaxDeploymentDays?.ToString() ?? "—")</dd>
+                        <dt>@localizer["ResponseTimeMinutes"]</dt><dd>@(c.ResponseTimeMinutes?.ToString() ?? "—")</dd>
+                        <dt>@localizer["PointOfHire"]</dt><dd>@(c.PointOfHire ?? "—")</dd>
+                        @if (!string.IsNullOrWhiteSpace(c.Notes)) { <dt>@localizer["Notes"]</dt><dd>@c.Notes</dd> }
+                    </dl>
+                    @if (Model.CanManageContracts && Model.NextStatuses.Count > 0)
+                    {
+                        <div class="m-t-sm">
+                            @foreach (var next in Model.NextStatuses)
+                            {
+                                <form method="post" asp-action="SetStatus" asp-route-id="@c.ServiceContractId" asp-route-status="@((int)next)" class="inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm @(next == Resgrid.Model.Invoicing.ServiceContractStatuses.Active ? "btn-primary" : "btn-default")">@localizer["SetStatus" + next]</button></form>
+                            }
+                            @if (c.Status != (int)Resgrid.Model.Invoicing.ServiceContractStatuses.Active)
+                            {
+                                <form method="post" asp-action="Delete" asp-route-id="@c.ServiceContractId" class="inline" onsubmit="return confirm('@localizer["ConfirmDeleteContract"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["DocumentRequirements"]</h5></div>
+                <div class="ibox-content">
+                    @if (c.Requirements.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoRequirements"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["Name"]</th><th>@localizer["Stage"]</th><th>@localizer["ComplianceDocumentType"]</th><th>@localizer["Mandatory"]</th><th>@localizer["Satisfied"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var r in c.Requirements)
+                                {
+                                    var item = Model.Compliance?.Items.FirstOrDefault(i => i.ServiceContractDocumentRequirementId == r.ServiceContractDocumentRequirementId);
+                                    <tr>
+                                        <td>@r.Name</td><td>@localizer["Stage" + (Resgrid.Model.Invoicing.DocumentRequirementStages)r.Stage]</td>
+                                        <td>@(r.ComplianceDocumentType.HasValue ? localizer["DocType" + (Resgrid.Model.Invoicing.ComplianceDocumentTypes)r.ComplianceDocumentType.Value].Value : localizer["DeploymentAttachment"].Value)</td>
+                                        <td>@(r.IsMandatory ? localizer["Yes"] : localizer["No"])</td>
+                                        <td>@if (item != null && item.Satisfied) { <span class="label label-primary">@localizer["Satisfied"]</span> <small class="text-muted">@item.SatisfiedBy @(item.ExpiresOn.HasValue ? "· " + localizer["ExpiresOn"] + " " + item.ExpiresOn.Value.ToString("yyyy-MM-dd") : "")</small> } else if (r.ComplianceDocumentType.HasValue) { <span class="label label-warning">@localizer["Missing"]</span> } else { <span class="text-muted">@localizer["PerDeployment"]</span> }</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Bids"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Bids.Count == 0) { <p class="text-muted">@localizer["NoBids"]</p> }
+                    else
+                    {
+                        <table class="table table-condensed"><tbody>
+                            @foreach (var b in Model.Bids) { <tr><td><a asp-controller="Bids" asp-action="View" asp-route-id="@b.BidId">#@b.BidNumber @b.Title</a></td><td>@await Html.PartialAsync("~/Areas/User/Views/Bids/_BidStatusBadge.cshtml", b.Status)</td><td class="text-right">@b.EstimatedTotal.ToString("N2")</td></tr> }
+                        </tbody></table>
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Deployments"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Deployments.Count == 0) { <p class="text-muted">@localizer["NoDeployments"]</p> }
+                    else
+                    {
+                        <table class="table table-condensed"><tbody>
+                            @foreach (var d in Model.Deployments) { <tr><td><a asp-controller="Deployments" asp-action="View" asp-route-id="@d.DeploymentId">@d.Name</a></td><td>@deploymentStrings["Status" + (Resgrid.Model.Invoicing.DeploymentStatuses)d.Status]</td><td>@(d.StartOn?.ToString("yyyy-MM-dd") ?? "—")</td></tr> }
+                        </tbody></table>
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Invoices"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Invoices.Count == 0) { <p class="text-muted">@localizer["NoInvoices"]</p> }
+                    else
+                    {
+                        <table class="table table-condensed"><tbody>
+                            @foreach (var i in Model.Invoices) { <tr><td><a asp-controller="Invoicing" asp-action="View" asp-route-id="@i.InvoiceId">#@i.InvoiceNumber</a></td><td>@(i.IssuedOn?.ToString("yyyy-MM-dd") ?? "—")</td><td class="text-right">@i.Total.ToString("N2") @i.Currency</td></tr> }
+                        </tbody></table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

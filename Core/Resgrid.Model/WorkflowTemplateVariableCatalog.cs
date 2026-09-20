@@ -407,12 +407,35 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.DeploymentExpenseAdded:
 				case WorkflowTriggerEventType.TimeReportSubmitted:
 				case WorkflowTriggerEventType.TimeReportApproved:
+				case WorkflowTriggerEventType.TimeReportCreated:
+				case WorkflowTriggerEventType.TimeReportVoided:
+				case WorkflowTriggerEventType.DeploymentAttachmentAdded:
 					foreach (var pair in Invoicing.DeploymentWorkflowPayload.Variables)
-						list.Add(new TemplateVariableDescriptor("deployment." + pair.Variable, "Deployment " + pair.Variable.Replace('_', ' ') + (pair.Variable == "subject_name" ? "; REDACTED on a protected row" : ""),
-							pair.Variable is "status" or "old_status" or "finance_mode" or "call_id" or "subject_type" or "report_number" or "expense_type" ? "int"
+						list.Add(new TemplateVariableDescriptor("deployment." + pair.Variable, "Deployment " + pair.Variable.Replace('_', ' ') + (pair.Variable is "subject_name" or "attachment_name" ? "; REDACTED on a protected row" : ""),
+							pair.Variable is "status" or "old_status" or "finance_mode" or "call_id" or "subject_type" or "report_number" or "report_status" or "expense_type" or "attachment_id" or "attachment_type" ? "int"
 							: pair.Variable == "expense_amount" ? "decimal"
 							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) || pair.Variable == "report_date" ? "datetime" : "string", false));
 					list.Add(new TemplateVariableDescriptor("deployment.url", "Authenticated deployment link", "string", false));
+					break;
+				case WorkflowTriggerEventType.BidCreated:
+				case WorkflowTriggerEventType.BidSent:
+				case WorkflowTriggerEventType.BidAccepted:
+				case WorkflowTriggerEventType.BidDeclined:
+				case WorkflowTriggerEventType.BidExpired:
+					foreach (var pair in Invoicing.ContractorWorkflowPayload.BidVariables)
+						list.Add(new TemplateVariableDescriptor("bid." + pair.Variable, "Bid " + pair.Variable.Replace('_', ' ') + (pair.Variable == "contact_name" ? "; REDACTED on a protected row" : ""),
+							pair.Variable is "number" or "status" or "old_status" or "converted_call_id" ? "int"
+							: pair.Variable == "estimated_total" ? "decimal"
+							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) || pair.Variable == "valid_until" ? "datetime" : "string", false));
+					list.Add(new TemplateVariableDescriptor("bid.url", "Authenticated bid link", "string", false));
+					break;
+				case WorkflowTriggerEventType.ContractStatusChanged:
+				case WorkflowTriggerEventType.ContractExpiring:
+					foreach (var pair in Invoicing.ContractorWorkflowPayload.ContractVariables)
+						list.Add(new TemplateVariableDescriptor("contract." + pair.Variable, "Contract " + pair.Variable.Replace('_', ' ') + (pair.Variable == "contact_name" ? "; REDACTED on a protected row" : ""),
+							pair.Variable is "status" or "old_status" or "contract_type" or "days_until_end" ? "int"
+							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) ? "datetime" : "string", false));
+					list.Add(new TemplateVariableDescriptor("contract.url", "Authenticated contract link", "string", false));
 					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
@@ -850,6 +873,8 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.CertificationRenewed:
 				case WorkflowTriggerEventType.CertificationExpired:
 				case WorkflowTriggerEventType.CertificationStatusChanged:
+				case WorkflowTriggerEventType.CertificationRemoved:
+				case WorkflowTriggerEventType.CertificationCreditAdded:
 					list.AddRange(new[]
 					{
 						new TemplateVariableDescriptor("certification.id", "Certification ID", "int", false),
@@ -874,7 +899,18 @@ namespace Resgrid.Model
 						{
 							new TemplateVariableDescriptor("certification.old_status", "Status before the change", "int", false),
 							new TemplateVariableDescriptor("certification.new_status", "Status after the change", "int", false),
-							new TemplateVariableDescriptor("certification.reason", "Reason given for the change", "string", false),
+							new TemplateVariableDescriptor("certification.reason", "Reason given for the change (REDACTED on a protected row)", "string", false),
+						});
+					if (eventType == WorkflowTriggerEventType.CertificationRemoved)
+						list.Add(new TemplateVariableDescriptor("certification.removed_by_user_id", "User who removed the record", "string", false));
+					if (eventType == WorkflowTriggerEventType.CertificationCreditAdded)
+						list.AddRange(new[]
+						{
+							new TemplateVariableDescriptor("credit.id", "Credit entry ID", "int", false),
+							new TemplateVariableDescriptor("credit.date", "Credit date", "datetime", false),
+							new TemplateVariableDescriptor("credit.hours", "Hours credited", "decimal", false),
+							new TemplateVariableDescriptor("credit.category", "Credit category", "string", false),
+							new TemplateVariableDescriptor("credit.added_by_user_id", "User who logged the credit", "string", false),
 						});
 					break;
 
@@ -893,6 +929,9 @@ namespace Resgrid.Model
 
 				case WorkflowTriggerEventType.UnitCertificationExpiring:
 				case WorkflowTriggerEventType.UnitCertificationExpired:
+				case WorkflowTriggerEventType.UnitCertificationAdded:
+				case WorkflowTriggerEventType.UnitCertificationStatusChanged:
+				case WorkflowTriggerEventType.UnitCertificationRemoved:
 					list.AddRange(new[]
 					{
 						new TemplateVariableDescriptor("unit_certification.id", "Unit certification ID", "int", false),
@@ -906,6 +945,15 @@ namespace Resgrid.Model
 						new TemplateVariableDescriptor("unit_certification.days_until_expiry", "Days until expiry (negative once expired)", "int", false),
 						new TemplateVariableDescriptor("unit_certification.status", "Record status (0 Active, 1 Expired, 2 Suspended)", "int", false),
 					});
+					if (eventType == WorkflowTriggerEventType.UnitCertificationStatusChanged)
+						list.AddRange(new[]
+						{
+							new TemplateVariableDescriptor("unit_certification.old_status", "Status before the change", "int", false),
+							new TemplateVariableDescriptor("unit_certification.new_status", "Status after the change", "int", false),
+							new TemplateVariableDescriptor("unit_certification.reason", "Reason given for the change (REDACTED on a protected row)", "string", false),
+						});
+					if (eventType == WorkflowTriggerEventType.UnitCertificationRemoved)
+						list.Add(new TemplateVariableDescriptor("unit_certification.removed_by_user_id", "User who removed the record", "string", false));
 					break;
 
 				case WorkflowTriggerEventType.FormSubmitted:

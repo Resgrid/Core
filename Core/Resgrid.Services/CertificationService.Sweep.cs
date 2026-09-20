@@ -68,6 +68,7 @@ namespace Resgrid.Services
 					record.StatusChangedOn = DateTime.UtcNow;
 					record.StatusChangedByUserId = SystemUserId;
 					record.StatusReason = "expired";
+					await ProtectRecordBeforeSaveAsync(record, departmentId, cancellationToken);
 					await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 					Audit(departmentId, SystemUserId, AuditLogTypes.CertificationStatusChanged, before, Snapshot(record));
 					_eventAggregator.SendMessage(new CertificationExpiredEvent { DepartmentId = departmentId, Certification = record, TypeCode = type.Code, TypeName = type.Type });
@@ -109,7 +110,7 @@ namespace Resgrid.Services
 					// The meta read carries no bytes; the update must not null the stored file.
 					var full = await _unitRecords.GetByIdWithDataAsync(record.UnitCertificationId);
 					if (full != null) record.Data = full.Data;
-					await _unitRecords.SaveOrUpdateAsync(record, cancellationToken);
+					await SaveProtectedAsync(_unitRecords, record, full, u => u.UnitCertificationId.ToString(), CertificationProtectedFields.Unit, MarkProtected, departmentId, cancellationToken);
 					record.Data = null;
 					Audit(departmentId, SystemUserId, AuditLogTypes.UnitCertificationStatusChanged, before, Snapshot(record));
 					_eventAggregator.SendMessage(new UnitCertificationExpiredEvent { DepartmentId = departmentId, Certification = record, UnitName = unitName, TypeCode = type.Code, TypeName = type.Type });

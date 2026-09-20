@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>Pobieranie płatności online jest wyłączone na tym serwerze.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe zgłasza, że Resgrid nie ma już dostępu do tego konta. Połącz je ponownie, aby wznowić.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Nie udało się zabezpieczyć chronionych danych tego rekordu, więc zmiana nie została zapisana.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Chroniona faktura</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Chroniona tożsamość rozliczeniowa</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Zafakturowano z tego dziennego raportu czasu</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Wyślij z pakietem</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Dołącza PDF faktury, PDF-y dziennych raportów czasu, paragony i dokumenty zgodności wymagane umową jako jeden plik zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Pobierz pakiet</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Otwórz wyjazd</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Domyślny cennik</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Rozliczenia wykonawcy: używany dla ofert i wyjazdów tego klienta, gdy żadna umowa nie wskazuje cennika.</value></data>
 </root>

@@ -209,7 +209,7 @@ namespace Resgrid.Model.Services
 		Task<bool> SendReportDeliveryAsync(EmailNotification email, int departmentId, string reportUrl, string reportName);
 
 		/// <summary>Customer invoice with the PDF attached (Workforce &amp; Business Operations plan, Phase B). Honors DoNotBroadcast and department e-mail branding.</summary>
-		Task<bool> SendInvoiceAsync(EmailNotification email, int departmentId, string invoiceUrl, string payUrl, string invoiceLabel);
+		Task<bool> SendInvoiceAsync(EmailNotification email, int departmentId, string invoiceUrl, string payUrl, string invoiceLabel, string attachmentContentType = "application/pdf");
 
 		/// <summary>
 		/// Sends a contact-method verification code to the user's email address.

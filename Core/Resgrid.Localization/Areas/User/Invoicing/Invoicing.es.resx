@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>El cobro en línea está desactivado en este servidor.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe informa de que Resgrid ya no tiene acceso a esta cuenta. Conéctela de nuevo para continuar.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>No se pudieron proteger los datos de este registro, por lo que el cambio no se guardó.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Factura protegida</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Identidad de facturación protegida</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Facturado desde este parte diario</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Enviar con paquete</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Adjunta el PDF de la factura, los PDF de los partes diarios, recibos y documentos de cumplimiento requeridos por el contrato en un zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Descargar paquete</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Abrir despliegue</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Tabla de tarifas predeterminada</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Facturación de contratista: se usa en las ofertas y despliegues de este cliente cuando ningún contrato indica una tabla.</value></data>
 </root>

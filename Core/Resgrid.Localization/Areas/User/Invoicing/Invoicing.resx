@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>Online payment collection is switched off on this server.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe reports that Resgrid no longer has access to this account. Connect it again to resume.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Protected data on this record could not be secured, so the change was not saved.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Protected invoice</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Protected billing identity</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Billed from this daily time report</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Send with packet</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Attaches the invoice PDF, the daily time report PDFs, receipts and the compliance documents the contract requires, as one zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Download packet</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Open deployment</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Default rate schedule</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Contractor billing: used for this customer's bids and deployments when no contract names a schedule.</value></data>
 </root>

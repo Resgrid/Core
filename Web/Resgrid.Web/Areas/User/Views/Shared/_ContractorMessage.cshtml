@@ -1,0 +1,10 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorStrings
+@if (Model.SaveSuccess)
+{
+    <div class="alert alert-success">@contractorStrings["Saved"]</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-danger">@Model.Message</div>
+}

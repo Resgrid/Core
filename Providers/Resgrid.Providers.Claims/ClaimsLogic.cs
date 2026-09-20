@@ -1779,6 +1779,20 @@ namespace Resgrid.Providers.Claims
 					};
 				case PermissionTypes.ApproveTimeReports:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.TimeReports, ResgridClaimTypes.Actions.Approve) };
+				case PermissionTypes.ManageBids:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Bids, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Bids, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Bids, ResgridClaimTypes.Actions.Delete),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Bids, ResgridClaimTypes.Actions.View)
+					};
+				case PermissionTypes.ManageContracts:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.ServiceContracts, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.ServiceContracts, ResgridClaimTypes.Actions.View)
+					};
 				case PermissionTypes.ManageChecklists:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update) };
 				case PermissionTypes.ViewChecklistResults:

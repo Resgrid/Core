@@ -1,0 +1,15 @@
+@model int
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    var status = (Resgrid.Model.Invoicing.BidStatuses)Model;
+    var css = status switch
+    {
+        Resgrid.Model.Invoicing.BidStatuses.Draft => "label-default",
+        Resgrid.Model.Invoicing.BidStatuses.Submitted => "label-info",
+        Resgrid.Model.Invoicing.BidStatuses.Accepted => "label-primary",
+        Resgrid.Model.Invoicing.BidStatuses.Declined => "label-danger",
+        Resgrid.Model.Invoicing.BidStatuses.Expired => "label-warning",
+        _ => "label-default"
+    };
+}
+<span class="label @css">@localizer["BidStatus" + status]</span>

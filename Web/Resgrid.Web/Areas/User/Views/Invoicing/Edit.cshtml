@@ -199,7 +199,7 @@
                     subTotal += amount;
                     body.append(
                         '<tr data-index="' + i + '">' +
-                        '<td><input type="text" class="form-control input-sm line-desc" maxlength="500" value="' + esc(l.description) + '">' + (l.callId ? '<small class="text-muted">Call ' + esc(l.callId) + '</small>' : '') + '</td>' +
+                        '<td><input type="text" class="form-control input-sm line-desc" maxlength="500" value="' + esc(l.description) + '"' + (l.invoiceLineItemId ? '' : '') + '>' + (l.callId ? '<small class="text-muted">Call ' + esc(l.callId) + '</small>' : '') + '</td>' +
                         '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-qty" value="' + esc(l.quantity) + '"></td>' +
                         '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-rate" value="' + esc(l.unitRate) + '"></td>' +
                         '<td class="text-center"><input type="checkbox" class="line-tax"' + (l.taxable ? ' checked' : '') + '></td>' +

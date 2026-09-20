@@ -1,0 +1,97 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.ContractEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    ViewBag.Title = "Resgrid | " + (Model.IsNew ? localizer["NewContract"] : localizer["EditContract"]);
+    ViewData["Title"] = (Model.IsNew ? localizer["NewContract"].Value : Model.Contract.Name);
+    ViewData["Subtitle"] = localizer["EditContractIntro"].Value;
+    ViewData["RootController"] = "Contracts";
+    ViewData["RootTitle"] = localizer["Contracts"].Value;
+    var c = Model.Contract;
+    var types = Enum.GetValues(typeof(Resgrid.Model.Invoicing.ServiceContractTypes)).Cast<Resgrid.Model.Invoicing.ServiceContractTypes>().ToList();
+    var stages = Enum.GetValues(typeof(Resgrid.Model.Invoicing.DocumentRequirementStages)).Cast<Resgrid.Model.Invoicing.DocumentRequirementStages>().ToList();
+    var docTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.ComplianceDocumentTypes)).Cast<Resgrid.Model.Invoicing.ComplianceDocumentTypes>().ToList();
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <form method="post" asp-action="Save" class="form-horizontal" id="contractForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ServiceContractId" value="@c.ServiceContractId" />
+        <input type="hidden" name="RequirementsJson" id="requirementsJson" />
+        <div class="row">
+            <div class="col-md-7">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Contract"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Customer"] *</label><div class="col-sm-9">@Html.DropDownList("ContactId", Model.Contacts, localizer["SelectContact"].Value, new { @class = "form-control", required = "required" })</div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Name"] *</label><div class="col-sm-9"><input type="text" name="Name" class="form-control" maxlength="250" required value="@c.Name" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["ContractNumber"]</label><div class="col-sm-4"><input type="text" name="ContractNumber" class="form-control" maxlength="100" value="@c.ContractNumber" /></div>
+                            <label class="col-sm-2 control-label">@localizer["ContractType"]</label><div class="col-sm-3"><select name="ContractType" class="form-control">@foreach (var t in types) { <option value="@((int)t)" selected="@((int)t == c.ContractType)">@localizer["ContractType" + t]</option> }</select></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["StartOn"] *</label><div class="col-sm-4"><input type="date" name="StartOn" class="form-control" required value="@c.StartOn.ToString("yyyy-MM-dd")" /></div>
+                            <label class="col-sm-2 control-label">@localizer["EndOn"]</label><div class="col-sm-3"><input type="date" name="EndOn" class="form-control" value="@(c.EndOn?.ToString("yyyy-MM-dd"))" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["RateSchedule"]</label><div class="col-sm-9">@Html.DropDownList("RateScheduleId", Model.Schedules, localizer["UseDefaultSchedule"].Value, new { @class = "form-control" })<span class="help-block">@localizer["ContractScheduleHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["DiscountPercent"]</label><div class="col-sm-3"><input type="number" step="0.01" min="0" max="100" name="DiscountPercent" class="form-control" value="@c.DiscountPercent" /></div>
+                            <label class="col-sm-3 control-label">@localizer["TermsNetDays"]</label><div class="col-sm-3"><input type="number" min="0" name="TermsNetDays" class="form-control" value="@c.TermsNetDays" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["InvoiceSubmissionEmail"]</label><div class="col-sm-9"><input type="email" name="InvoiceSubmissionEmail" class="form-control" maxlength="500" value="@c.InvoiceSubmissionEmail" /><span class="help-block">@localizer["InvoiceSubmissionEmailHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["MaxDeploymentDays"]</label><div class="col-sm-3"><input type="number" min="0" name="MaxDeploymentDays" class="form-control" value="@c.MaxDeploymentDays" /></div>
+                            <label class="col-sm-3 control-label">@localizer["ResponseTimeMinutes"]</label><div class="col-sm-3"><input type="number" min="0" name="ResponseTimeMinutes" class="form-control" value="@c.ResponseTimeMinutes" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["PointOfHire"]</label><div class="col-sm-9"><input type="text" name="PointOfHire" class="form-control" maxlength="250" value="@c.PointOfHire" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["DocumentTemplateKey"]</label><div class="col-sm-9"><input type="text" name="DocumentTemplateKey" class="form-control" maxlength="50" value="@c.DocumentTemplateKey" placeholder="Generic" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Notes"]</label><div class="col-sm-9"><textarea name="Notes" class="form-control" rows="3">@c.Notes</textarea></div></div>
+                        @if (Model.IsNew)
+                        {
+                            <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" name="ActivateNow" value="true" /> @localizer["ActivateNow"]</label></div></div></div>
+                        }
+                        <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="@(Model.IsNew ? "Index" : "View")" asp-route-id="@c.ServiceContractId" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["DocumentRequirements"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["DocumentRequirementsHelp"]</p>
+                        <table class="table table-condensed" id="reqTable">
+                            <thead><tr><th>@localizer["Name"]</th><th>@localizer["Stage"]</th><th>@localizer["ComplianceDocumentType"]</th><th>@localizer["Mandatory"]</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                        <button type="button" class="btn btn-default btn-xs" id="req-add"><i class="fa fa-plus"></i> @localizer["AddRequirement"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var stages = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(stages.Select(s => new { v = (int)s, t = localizer["Stage" + s].Value })));
+            var docTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(docTypes.Select(d => new { v = (int)d, t = localizer["DocType" + d].Value })));
+            var existing = @Html.Raw(string.IsNullOrWhiteSpace(Model.RequirementsJson) ? "[]" : Model.RequirementsJson);
+            function opts(list, selected, blank) { return (blank ? '<option value="">—</option>' : '') + list.map(function (o) { return '<option value="' + o.v + '"' + (o.v === selected ? ' selected' : '') + '>' + o.t + '</option>'; }).join(''); }
+            function row(r) {
+                r = r || {};
+                return '<tr data-id="' + (r.ServiceContractDocumentRequirementId || '') + '"><td><input type="text" class="form-control input-sm r-name" maxlength="250" value="' + (r.Name || '').replace(/"/g, '&quot;') + '" /></td>' +
+                    '<td><select class="form-control input-sm r-stage">' + opts(stages, r.Stage, false) + '</select></td>' +
+                    '<td><select class="form-control input-sm r-type">' + opts(docTypes, r.ComplianceDocumentType, true) + '</select></td>' +
+                    '<td class="text-center"><input type="checkbox" class="r-mand"' + (r.IsMandatory !== false ? ' checked' : '') + ' /></td>' +
+                    '<td><button type="button" class="btn btn-xs btn-danger r-del"><i class="fa fa-times"></i></button></td></tr>';
+            }
+            $('#reqTable tbody').html(existing.map(row).join(''));
+            $('#req-add').on('click', function () { $('#reqTable tbody').append(row()); });
+            $('#reqTable').on('click', '.r-del', function () { $(this).closest('tr').remove(); });
+            $('#contractForm').on('submit', function () {
+                var rows = [];
+                $('#reqTable tbody tr').each(function (i) {
+                    var name = $(this).find('.r-name').val(); if (!name) return;
+                    var type = $(this).find('.r-type').val();
+                    rows.push({ ServiceContractDocumentRequirementId: $(this).data('id') || null, Name: name, Stage: parseInt($(this).find('.r-stage').val(), 10), ComplianceDocumentType: type === '' ? null : parseInt(type, 10), IsMandatory: $(this).find('.r-mand').is(':checked'), SortOrder: i });
+                });
+                $('#requirementsJson').val(JSON.stringify(rows));
+            });
+        })();
+    </script>
+}

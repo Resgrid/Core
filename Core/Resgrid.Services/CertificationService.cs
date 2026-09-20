@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Certifications;
 using Resgrid.Model.Events;
@@ -38,6 +39,8 @@ namespace Resgrid.Services
 		private readonly Lazy<IDepartmentSettingsService> _departmentSettings;
 		private readonly Lazy<ICommunicationService> _communication;
 		private readonly Lazy<IProtectedReadService> _protectedRead;
+		/// <summary>The caller's Protected Data Grant (request-bound in the web hosts, workload elsewhere); a grant holder reads decrypted values.</summary>
+		private readonly IProtectedGrantContext _grant;
 
 		public const string SystemUserId = "system";
 		private static readonly Regex CodeCleaner = new Regex("[^A-Za-z0-9._-]+", RegexOptions.Compiled);
@@ -56,8 +59,10 @@ namespace Resgrid.Services
 			Lazy<IDepartmentsService> departments,
 			Lazy<IDepartmentSettingsService> departmentSettings,
 			Lazy<ICommunicationService> communication,
-			Lazy<IProtectedReadService> protectedRead = null)
+			Lazy<IProtectedReadService> protectedRead = null,
+			IProtectedGrantContext grant = null)
 		{
+			_grant = grant;
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
 			_personnelCertificationRepository = personnelCertificationRepository;
 			_protectedWriteService = protectedWriteService;
@@ -375,6 +380,7 @@ namespace Resgrid.Services
 				record.VerifiedOn = record.StatusChangedOn;
 				record.VerifiedByUserId = userId;
 			}
+			await ProtectRecordBeforeSaveAsync(record, departmentId, cancellationToken);
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationStatusChanged, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationStatusChangedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = record.StatusReason, ChangedByUserId = userId });
@@ -394,6 +400,7 @@ namespace Resgrid.Services
 			record.StatusChangedOn = record.VerifiedOn;
 			record.StatusChangedByUserId = userId;
 			record.StatusReason = null;
+			await ProtectRecordBeforeSaveAsync(record, departmentId, cancellationToken);
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationVerified, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationStatusChangedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = "verified", ChangedByUserId = userId });
@@ -430,13 +437,27 @@ namespace Resgrid.Services
 			return saved;
 		}
 
+		/// <summary>
+		/// Catalog-6/28 write seam for an existing personnel record whose cataloged text (now including StatusReason) may have
+		/// changed: the row is enveloped before the save so no plaintext reaches the table. A pristine copy is not needed —
+		/// the record came straight from the repository, so untouched columns still hold their envelopes.
+		/// </summary>
+		private async Task ProtectRecordBeforeSaveAsync(PersonnelCertification record, int departmentId, CancellationToken cancellationToken)
+		{
+			if (_protectedWriteService?.Value == null) return;
+			var write = await _protectedWriteService.Value.PrepareCertificationWriteAsync(departmentId, record, null, null, null, workloadCaller: true, cancellationToken);
+			if (write != null && !write.Success)
+				throw new InvalidOperationException($"Protected write blocked ({write.Reason}); certification {record.PersonnelCertificationId} was NOT saved.");
+		}
+
 		public async Task<bool> SoftDeleteCertificationAsync(int certificationId, int departmentId, string userId, CancellationToken cancellationToken = default)
 		{
-			var (record, _) = await LoadRecordAsync(certificationId, departmentId);
+			var (record, type) = await LoadRecordAsync(certificationId, departmentId);
 			var before = Snapshot(record);
 			record.IsDeleted = true;
 			await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationRemoved, before, Snapshot(record));
+			_eventAggregator.SendMessage(new CertificationRemovedEvent { DepartmentId = departmentId, Certification = record, TypeCode = type?.Code, TypeName = type?.Type, RemovedByUserId = userId });
 			return true;
 		}
 
@@ -492,6 +513,11 @@ namespace Resgrid.Services
 				saved = await _credits.SaveOrUpdateAsync(saved, cancellationToken);
 			}
 			Audit(saved.DepartmentId, userId, AuditLogTypes.CertificationCreditAdded, null, Snapshot(new { saved.PersonnelCertificationCreditId, saved.PersonnelCertificationId, saved.CreditDate, saved.Hours, saved.Category }));
+			_eventAggregator.SendMessage(new CertificationCreditAddedEvent
+			{
+				DepartmentId = saved.DepartmentId, Certification = record, TypeCode = type?.Code, TypeName = type?.Type, PersonnelCertificationCreditId = saved.PersonnelCertificationCreditId,
+				CreditDate = saved.CreditDate, Hours = saved.Hours, Category = saved.Category, AddedByUserId = userId
+			});
 			return saved;
 		}
 
@@ -614,6 +640,10 @@ namespace Resgrid.Services
 				saved.Data = existing.Data;
 
 			Audit(saved.DepartmentId, userId, existing == null ? AuditLogTypes.UnitCertificationAdded : AuditLogTypes.UnitCertificationUpdated, existing == null ? null : Snapshot(existing), Snapshot(saved));
+			if (existing == null)
+				_eventAggregator.SendMessage(new UnitCertificationAddedEvent { DepartmentId = saved.DepartmentId, Certification = WithoutBytes(saved), UnitName = unit.Name, TypeCode = type.Code, TypeName = type.Type });
+			else if (existing.Status != saved.Status)
+				_eventAggregator.SendMessage(new UnitCertificationStatusChangedEvent { DepartmentId = saved.DepartmentId, Certification = WithoutBytes(saved), UnitName = unit.Name, TypeCode = type.Code, TypeName = type.Type, OldStatus = existing.Status, NewStatus = saved.Status, Reason = saved.StatusReason, ChangedByUserId = userId });
 			return WithoutBytes(saved);
 		}
 
@@ -625,12 +655,17 @@ namespace Resgrid.Services
 			if (status == UnitCertificationStatuses.Expired)
 				throw new InvalidOperationException("certifications_status_invalid");
 			var before = Snapshot(row);
+			var pristine = row.CloneJson();
+			var oldStatus = row.Status;
 			row.Status = (int)status;
 			row.StatusChangedOn = DateTime.UtcNow;
 			row.StatusChangedByUserId = userId;
 			row.StatusReason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
-			var saved = await _unitRecords.SaveOrUpdateAsync(row, cancellationToken);
+			// StatusReason is a catalog field: the reason is enveloped before it reaches the table, the file bytes stay as stored.
+			var saved = await SaveProtectedAsync(_unitRecords, row, pristine, u => u.UnitCertificationId.ToString(), CertificationProtectedFields.Unit, MarkProtected, departmentId, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.UnitCertificationStatusChanged, before, Snapshot(saved));
+			var (unitName, type) = await UnitEventContextAsync(saved);
+			_eventAggregator.SendMessage(new UnitCertificationStatusChangedEvent { DepartmentId = departmentId, Certification = WithoutBytes(saved), UnitName = unitName, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = saved.StatusReason, ChangedByUserId = userId });
 			return WithoutBytes(saved);
 		}
 
@@ -645,7 +680,18 @@ namespace Resgrid.Services
 			row.EditedByUserId = userId;
 			await _unitRecords.SaveOrUpdateAsync(row, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.UnitCertificationRemoved, before, Snapshot(row));
+			var (unitName, type) = await UnitEventContextAsync(row);
+			_eventAggregator.SendMessage(new UnitCertificationRemovedEvent { DepartmentId = departmentId, Certification = WithoutBytes(row), UnitName = unitName, TypeCode = type?.Code, TypeName = type?.Type, RemovedByUserId = userId });
 			return true;
+		}
+
+		/// <summary>Unit name and catalog type for a unit-certification event; lookup failures leave them blank rather than failing the mutation.</summary>
+		private async Task<(string UnitName, DepartmentCertificationType Type)> UnitEventContextAsync(UnitCertification row)
+		{
+			string unitName = null; DepartmentCertificationType type = null;
+			try { unitName = (await _units.Value.GetUnitByIdAsync(row.UnitId))?.Name; } catch (Exception ex) { Logging.LogException(ex, "Unit name could not be read for a certification event."); }
+			try { type = await GetCertificationTypeByIdAsync(row.DepartmentCertificationTypeId); } catch (Exception ex) { Logging.LogException(ex, "Certification type could not be read for a unit certification event."); }
+			return (unitName, type);
 		}
 
 		#endregion
@@ -824,11 +870,8 @@ namespace Resgrid.Services
 				dashboard.UnitCells.Add(Cell(group.Key.UnitId.ToString(), unitName, type, best.UnitCertificationId, best.Status, best.ExpiresOn, today));
 			}
 
-			var all = dashboard.PersonCells.Concat(dashboard.UnitCells).ToList();
-			dashboard.ExpiredCount = all.Count(c => c.Status == (int)PersonnelCertificationStatuses.Expired || (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry < 0));
-			dashboard.ExpiringCount = all.Count(c => c.Status == (int)PersonnelCertificationStatuses.Active && c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry >= 0 && c.DaysUntilExpiry <= horizon);
-			dashboard.SuspendedCount = dashboard.PersonCells.Count(c => c.Status == (int)PersonnelCertificationStatuses.Suspended || c.Status == (int)PersonnelCertificationStatuses.Revoked) + dashboard.UnitCells.Count(c => c.Status == (int)UnitCertificationStatuses.Suspended);
-			dashboard.PendingVerificationCount = dashboard.PersonCells.Count(c => c.Status == (int)PersonnelCertificationStatuses.PendingVerification);
+			dashboard.Horizon = horizon;
+			dashboard.RecountTotals();
 			return dashboard;
 		}
 

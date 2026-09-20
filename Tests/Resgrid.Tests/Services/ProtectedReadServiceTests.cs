@@ -351,12 +351,13 @@ namespace Resgrid.Tests.Services
 				"RmsRecordValues",
 				// Contacts pre-plans, catalog v12 (Contacts plan Phase A).
 				"ContactPreplans", "ContactPreplanHazards", "ContactAttachments",
-				// Invoicing, catalog v26 (Workforce & Business Operations plan, Phase B2): read through the generic Records resolvers with InvoicingProtectedFields accessors (InvoicingService.Protection.cs).
-				"CustomerBillingProfiles", "Invoices", "InvoicePayments",
-				// Certifications, catalog v27 (Workforce & Business Operations plan, Phase D): read through the generic Records resolvers with CertificationProtectedFields accessors (CertificationService.Protection.cs).
+				// Workforce & Business Operations: invoices, receipts, bids, contracts, compliance documents, daily time reports,
+				// expenses and attachments are read by customers without a login (pay page, bid e-mail, invoice packet) and are
+				// deliberately NOT bound. Only what stays inside the department is:
+				// Certifications, catalog v26 (Phase D): read through the generic Records resolvers with CertificationProtectedFields accessors (CertificationService.Protection.cs).
 				"UnitCertifications", "PersonnelCertificationCredits",
-				// Deployment core, catalog v28 (Workforce & Business Operations plan, Phase C): read through the generic Records resolvers with DeploymentProtectedFields accessors (DeploymentService.Protection.cs).
-				"DeploymentTimeReports", "DeploymentExpenses", "DeploymentAttachments",
+				// Deployment core, catalog v27 (Phase C): the wrapper's internal notes, read with DeploymentProtectedFields accessors (DeploymentService.Protection.cs).
+				"Deployments",
 				// RMS-5 prevention and investigations plus the RMS-4 quality review, catalog v13: read through the generic Records resolvers.
 				"RmsOccupancies", "RmsOccupancyHazards", "RmsInspections", "RmsViolations", "RmsPermits", "RmsPlanReviews",
 				"RmsInvestigationCases", "RmsInvestigationNotes", "RmsInvestigationEvidence", "RmsInvestigationCustody", "RmsInvestigationReferrals",

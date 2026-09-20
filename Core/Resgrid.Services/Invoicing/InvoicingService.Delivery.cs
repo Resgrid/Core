@@ -18,18 +18,18 @@ namespace Resgrid.Services.Invoicing
 	{
 		public Task<string> RenderInvoiceHtmlAsync(string invoiceId, int departmentId) => RenderInvoiceHtmlCoreAsync(invoiceId, departmentId, workload: false);
 
-		/// <summary>User rendering shows REDACTED for protected values; the delivery workload (e-mail, PDF attachment) decrypts them.</summary>
+		/// <summary>Invoice data is never protected; the delivery workload additionally decrypts the customer contact so the PDF the customer receives is whole.</summary>
 		private async Task<string> RenderInvoiceHtmlCoreAsync(string invoiceId, int departmentId, bool workload)
 		{
-			var invoice = workload ? await GetInvoiceForWorkloadAsync(invoiceId, departmentId) : await GetInvoiceByIdAsync(invoiceId, departmentId);
+			var invoice = await GetInvoiceByIdAsync(invoiceId, departmentId);
 			if (invoice == null)
 				return null;
 
 			var identity = await GetDepartmentBillingIdentityAsync(departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			var profile = await _profiles.GetByIdForDepartmentAsync(invoice.CustomerBillingProfileId, departmentId);
-			if (workload) await ResolveWorkloadAsync(profile); else await ResolveReadAsync(profile);
 			var contact = await _contactsService.GetContactByIdAsync(invoice.ContactId);
+			if (workload) await ResolveContactForWorkloadAsync(contact, departmentId);
 
 			var remitTo = identity?.RemitToAddressId.HasValue == true ? await SafeAddressAsync(identity.RemitToAddressId.Value) : null;
 			Address billTo = null;
@@ -48,9 +48,9 @@ namespace Resgrid.Services.Invoicing
 				TaxRegistrationNumber = identity?.TaxRegistrationNumber,
 				SecondaryTaxRegistrationNumber = identity?.SecondaryTaxRegistrationNumber,
 				FooterText = identity?.InvoiceFooterText,
-				CustomerName = invoice.IsProtected ? ProtectedDataEnvelope.RedactionValue : contact?.Name,
-				CustomerEmail = invoice.IsProtected ? null : (profile?.BillingEmail ?? contact?.Email),
-				BillTo = invoice.IsProtected ? null : billTo,
+				CustomerName = ProtectedDataEnvelope.SafeDisplay(contact?.Name),
+				CustomerEmail = profile?.BillingEmail ?? ProtectedDataEnvelope.SafeDisplay(contact?.Email),
+				BillTo = billTo,
 				TaxComponents = ParseTaxComponents(invoice.TaxComponentsJson),
 				// Phase B2: the pay-page link is printed only when the department shows it on documents and online payment is offered right now.
 				PayUrl = identity?.ShowPayOnlineOnDocuments == false ? null : await PayUrlAsync(invoice)
@@ -67,14 +67,16 @@ namespace Resgrid.Services.Invoicing
 			return html == null ? null : _pdfProvider.ConvertHtmlToPdf(html);
 		}
 
-		public async Task<Invoice> SendInvoiceAsync(string invoiceId, int departmentId, string toEmail, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		public Task<Invoice> SendInvoiceAsync(string invoiceId, int departmentId, string toEmail, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default) =>
+			SendInvoiceAsync(invoiceId, departmentId, toEmail, null, userId, ipAddress, userAgent, cancellationToken);
+
+		public async Task<Invoice> SendInvoiceAsync(string invoiceId, int departmentId, string toEmail, InvoiceSendAttachment attachment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
 			var invoice = await _invoices.GetByIdForDepartmentAsync(invoiceId, departmentId);
 			if (invoice == null) throw new InvalidOperationException("invoicing_invoice_not_found");
 			if (invoice.Status == (int)InvoiceStatus.Void) throw new InvalidOperationException("invoicing_invoice_void");
 
 			var profile = await _profiles.GetByIdForDepartmentAsync(invoice.CustomerBillingProfileId, departmentId);
-			await ResolveWorkloadAsync(profile);
 			var recipient = string.IsNullOrWhiteSpace(toEmail) ? profile?.BillingEmail : toEmail.Trim();
 			if (string.IsNullOrWhiteSpace(recipient)) throw new InvalidOperationException("invoicing_no_recipient_email");
 
@@ -82,7 +84,8 @@ namespace Resgrid.Services.Invoicing
 			if (invoice.Status == (int)InvoiceStatus.Draft)
 				invoice = await MarkSentAsync(invoiceId, departmentId, recipient, userId, ipAddress, userAgent, cancellationToken);
 
-			var pdf = await GetInvoicePdfCoreAsync(invoiceId, departmentId, workload: true);
+			var useCallerAttachment = attachment?.Data != null && attachment.Data.Length > 0 && !string.IsNullOrWhiteSpace(attachment.FileName);
+			var pdf = useCallerAttachment ? attachment.Data : await GetInvoicePdfCoreAsync(invoiceId, departmentId, workload: true);
 			if (pdf == null || pdf.Length == 0) throw new InvalidOperationException("invoicing_pdf_unavailable");
 
 			var label = $"Invoice #{invoice.InvoiceNumber}";
@@ -90,12 +93,13 @@ namespace Resgrid.Services.Invoicing
 			{
 				To = recipient,
 				Subject = $"{label} from {await DepartmentDisplayNameAsync(departmentId)}",
-				Body = $"{label} for {FormatMoney(invoice.Total, invoice.Currency)} is attached." + (invoice.DueOn.HasValue ? $" Payment is due by {invoice.DueOn.Value:yyyy-MM-dd}." : string.Empty),
-				AttachmentName = $"invoice-{invoice.InvoiceNumber}.pdf",
+				Body = $"{label} for {FormatMoney(invoice.Total, invoice.Currency)} is attached." + (invoice.DueOn.HasValue ? $" Payment is due by {invoice.DueOn.Value:yyyy-MM-dd}." : string.Empty)
+					   + (useCallerAttachment && attachment.Contents.Count > 0 ? " The packet also contains: " + string.Join("; ", attachment.Contents) + "." : string.Empty),
+				AttachmentName = useCallerAttachment ? attachment.FileName : $"invoice-{invoice.InvoiceNumber}.pdf",
 				AttachmentData = pdf
 			};
 
-			var sent = await _emailService.SendInvoiceAsync(notification, departmentId, InvoiceUrl(invoice.InvoiceId), await PayUrlAsync(invoice), label);
+			var sent = await _emailService.SendInvoiceAsync(notification, departmentId, InvoiceUrl(invoice.InvoiceId), await PayUrlAsync(invoice), label, useCallerAttachment ? attachment.ContentType ?? "application/octet-stream" : "application/pdf");
 			if (!sent)
 			{
 				// The invoice stays issued (its number and dates are final) but is not stamped as sent: the caller sees
@@ -106,14 +110,13 @@ namespace Resgrid.Services.Invoicing
 
 			if (invoice.Status != (int)InvoiceStatus.Draft && (invoice.SentToEmail != recipient || invoice.SentOn == null))
 			{
-				var pristine = invoice.CloneJson();
 				var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceSent, ipAddress, userAgent);
 				audit.Before = Snapshot(invoice);
 				invoice.SentOn = DateTime.UtcNow;
 				invoice.SentToEmail = recipient;
 				invoice.EditedOn = invoice.SentOn;
 				invoice.EditedByUserId = userId;
-				await SaveProtectedAsync(_invoices, invoice, pristine, i => i.InvoiceId, InvoicingProtectedFields.Invoice, MarkProtected, departmentId, cancellationToken);
+				await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
 				audit.After = Snapshot(invoice);
 				_eventAggregator.SendMessage<AuditEvent>(audit);
 			}
@@ -199,7 +202,7 @@ namespace Resgrid.Services.Invoicing
 			sb.Append("</table>");
 
 			if (!string.IsNullOrWhiteSpace(invoice.TermsText)) sb.Append("<h2>Terms</h2><div class=\"footer\">").Append(E(invoice.TermsText)).Append("</div>");
-			if (!string.IsNullOrWhiteSpace(invoice.Notes) && !invoice.IsProtected) sb.Append("<h2>Notes</h2><div class=\"footer\">").Append(E(invoice.Notes)).Append("</div>");
+			if (!string.IsNullOrWhiteSpace(invoice.Notes)) sb.Append("<h2>Notes</h2><div class=\"footer\">").Append(E(invoice.Notes)).Append("</div>");
 			if (!string.IsNullOrWhiteSpace(model.PayUrl)) sb.Append("<p><a href=\"").Append(E(model.PayUrl)).Append("\">Pay this invoice online</a></p>");
 			if (!string.IsNullOrWhiteSpace(model.FooterText)) sb.Append("<div class=\"footer\">").Append(E(model.FooterText)).Append("</div>");
 			sb.Append("</body></html>");

@@ -35,6 +35,8 @@ namespace Resgrid.Services.Search
 		private const string Invoicing = "Invoicing";
 		private const string Certifications = "Certifications";
 		private const string Deployments = "Deployments";
+		private const string Bids = "Bids";
+		private const string ServiceContracts = "ServiceContracts";
 		private const string Group = "Group";
 		private const string Protocols = "Protocols";
 		private const string Forms = "Forms";
@@ -158,6 +160,13 @@ namespace Resgrid.Services.Search
 			Nav("deployments", "Deployment Finance", "Deployments, rosters, daily time reports and expenses", "/User/Deployments", new[] { "deployment", "deployments", "strike team", "mutual aid", "time report", "dtr", "shift ticket", "roster", "expenses" }, flag: FeatureFlagKeys.Deployments),
 			Act("new-deployment", "New Deployment", "Create a deployment finance wrapper", "/User/Deployments/New", SystemActionCategories.Create, new[] { "deployment", "deploy", "strike team" }, Deployments, Update, flag: FeatureFlagKeys.Deployments),
 			Act("deployment-from-external-order", "Deployment From External Order", "Create a deployment from an open RMS mutual-aid order", "/User/Deployments/FromExternalOrder", SystemActionCategories.Create, new[] { "external order", "mutual aid", "resource order", "deployment" }, Deployments, Update, flag: FeatureFlagKeys.Deployments),
+			// Workforce & Business Operations plan, Phase C-M2 (contractor path; Business Ops add-on behind Invoicing.ContractorBilling).
+			Nav("bids", "Bids", "Priced estimates for customer contacts and contracts", "/User/Bids", new[] { "bid", "bids", "quote", "estimate", "proposal", "tender" }, Bids, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
+			Act("new-bid", "New Bid", "Draft a bid for a customer", "/User/Bids/New", SystemActionCategories.Create, new[] { "bid", "quote", "estimate" }, Bids, Create, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
+			Nav("contracts", "Contracts", "Service contracts, document requirements and compliance", "/User/Contracts", new[] { "contract", "contracts", "agreement", "standing arrangement", "master services" }, ServiceContracts, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
+			Act("new-contract", "New Contract", "Create a service contract for a customer", "/User/Contracts/New", SystemActionCategories.Create, new[] { "contract", "agreement" }, ServiceContracts, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
+			Nav("compliance-documents", "Compliance Documents", "Insurance, workers' comp, SAM, licences and bonds with expiry alerts", "/User/Contracts/Compliance", new[] { "compliance", "insurance", "workers comp", "sam", "cage", "bond", "licence", "license" }, ServiceContracts, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
+			Nav("rate-schedules", "Rate Schedules", "Contractor rate tables: certifications, crews, vehicles, equipment, premiums and policies", "/User/RateSchedules", new[] { "rate schedule", "rates", "crew rate", "overtime", "premium", "per diem", "mileage" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
 
 			// ---- Messaging / chat
 			Nav("inbox", "Inbox", "Your messages inbox", "/User/Messages/Inbox", new[] { "messages", "mail", "read" }, Messages, View, SystemActionModules.Messaging),

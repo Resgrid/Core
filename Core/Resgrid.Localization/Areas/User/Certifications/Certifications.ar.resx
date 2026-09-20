@@ -154,6 +154,7 @@
   <data name="RemovalDue" xml:space="preserve"><value>الإزالة في {0}</value></data>
   <data name="RoleMembersBlocked" xml:space="preserve"><value>هؤلاء الأعضاء لا يحملون الشهادات التي يتطلبها هذا الدور ولم تتم إضافتهم: {0}</value></data>
   <data name="RoleMembersWarned" xml:space="preserve"><value>تمت الإضافة مع تحذير – شهادات مفقودة لهذا الدور: {0}</value></data>
+  <data name="RoleMembersNotInDepartment" xml:space="preserve"><value>هؤلاء الأعضاء ليسوا في هذا القسم ولم تتم إضافتهم: {0}</value></data>
   <data name="RoleAssignmentBlocked" xml:space="preserve"><value>تم إنشاء العضو، لكن لم يتم تعيين دور أو أكثر: لا يحمل العضو الشهادات التي تتطلبها تلك الأدوار.</value></data>
   <data name="UnitCertifications" xml:space="preserve"><value>شهادات الوحدة</value></data>
   <data name="UnitCertificationsFor" xml:space="preserve"><value>الشهادات والفحوصات – {0}</value></data>
@@ -219,4 +220,9 @@
   <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>لا يحمل العضو الشهادات التي يتطلبها هذا الدور.</value></data>
   <data name="certifications_file_type" xml:space="preserve"><value>لا يمكن رفع هذا النوع من الملفات.</value></data>
   <data name="certifications_file_too_large" xml:space="preserve"><value>حجم الملف أكبر من 10 ميغابايت.</value></data>
+  <data name="UnitCertificationAdded" xml:space="preserve"><value>تمت إضافة شهادة وحدة</value></data>
+  <data name="UnitCertificationStatusChanged" xml:space="preserve"><value>تغيرت حالة شهادة الوحدة</value></data>
+  <data name="UnitCertificationRemoved" xml:space="preserve"><value>تمت إزالة شهادة وحدة</value></data>
+  <data name="CertificationRemoved" xml:space="preserve"><value>تمت إزالة شهادة</value></data>
+  <data name="CertificationCreditAdded" xml:space="preserve"><value>تمت إضافة ساعات اعتماد شهادة</value></data>
 </root>

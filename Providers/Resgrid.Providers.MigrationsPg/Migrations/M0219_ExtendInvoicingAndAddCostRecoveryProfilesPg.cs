@@ -16,6 +16,11 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 				Alter.Table("invoices").AddColumn("deploymentid").AsString(36).Nullable();
 			if (!Schema.Table("invoicelineitems").Column("deploymenttimereportid").Exists())
 				Alter.Table("invoicelineitems").AddColumn("deploymenttimereportid").AsString(36).Nullable();
+			// ADP catalog 28 marker for the department billing identity (tax registrations, SAM/CAGE, workers' comp account).
+			if (!Schema.Table("departmentbillingidentities").Column("isprotected").Exists())
+				Alter.Table("departmentbillingidentities").AddColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false);
+			if (!Schema.Table("departmentbillingidentities").Column("protectedcatalogversion").Exists())
+				Alter.Table("departmentbillingidentities").AddColumn("protectedcatalogversion").AsInt32().Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoices_deployment ON invoices (deploymentid) WHERE deploymentid IS NOT NULL;");
 
 			if (!Schema.Table("caloesmarsagencyprofiles").Exists())
@@ -310,6 +315,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Execute.Sql("DROP TABLE IF EXISTS caloesmarsrateprofiles;");
 			Execute.Sql("DROP TABLE IF EXISTS caloesmarsresourceprofiles;");
 			Execute.Sql("DROP TABLE IF EXISTS caloesmarsagencyprofiles;");
+			Execute.Sql("ALTER TABLE departmentbillingidentities DROP COLUMN IF EXISTS protectedcatalogversion;");
+			Execute.Sql("ALTER TABLE departmentbillingidentities DROP COLUMN IF EXISTS isprotected;");
 			Execute.Sql("ALTER TABLE invoicelineitems DROP COLUMN IF EXISTS deploymenttimereportid;");
 			Execute.Sql("ALTER TABLE invoices DROP COLUMN IF EXISTS deploymentid;");
 			Execute.Sql("ALTER TABLE invoices DROP COLUMN IF EXISTS servicecontractid;");

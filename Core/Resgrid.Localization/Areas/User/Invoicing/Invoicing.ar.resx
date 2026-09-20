@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>تحصيل المدفوعات عبر الإنترنت معطّل على هذا الخادم.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>يفيد Stripe بأن Resgrid لم يعد لديها وصول إلى هذا الحساب. اربطه مجددًا للمتابعة.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>تعذر تأمين البيانات المحمية في هذا السجل، لذا لم يتم حفظ التغيير.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>فاتورة محمية</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>هوية فوترة محمية</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>مفوتر من تقرير الوقت اليومي هذا</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>إرسال مع الحزمة</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>يرفق ملف PDF للفاتورة وملفات PDF لتقارير الوقت اليومية والإيصالات ومستندات الامتثال التي يتطلبها العقد في ملف zip واحد.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>تنزيل الحزمة</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>فتح الانتشار</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>جدول الأسعار الافتراضي</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>فوترة المقاول: يُستخدم لعروض هذا العميل وعمليات انتشاره عندما لا يحدد أي عقد جدولًا.</value></data>
 </root>

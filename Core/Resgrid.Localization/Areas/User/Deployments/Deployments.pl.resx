@@ -258,4 +258,9 @@
   <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Dodano wydatek dyslokacji</value></data>
   <data name="TimeReportSubmitted" xml:space="preserve"><value>Przesłano raport czasu</value></data>
   <data name="TimeReportApproved" xml:space="preserve"><value>Zatwierdzono raport czasu</value></data>
+  <data name="TimeReportCreated" xml:space="preserve"><value>Utworzono raport czasu</value></data>
+  <data name="TimeReportVoided" xml:space="preserve"><value>Unieważniono raport czasu</value></data>
+  <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Dodano plik dyslokacji</value></data>
+  <data name="AdpProtectedDeployment" xml:space="preserve"><value>Chroniona dyslokacja</value></data>
+  <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Chroniony raport czasu</value></data>
 </root>

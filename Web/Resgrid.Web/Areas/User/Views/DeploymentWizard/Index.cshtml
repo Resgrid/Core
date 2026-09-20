@@ -1,0 +1,253 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.WizardView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    var bid = Model.Context.Bid;
+    ViewBag.Title = "Resgrid | " + localizer["ScheduleDeploymentCall"];
+    ViewData["Title"] = localizer["ScheduleDeploymentCall"].Value;
+    ViewData["Subtitle"] = string.Format(localizer["WizardIntro"].Value, bid.BidNumber, bid.Title);
+    ViewData["RootController"] = "Bids";
+    ViewData["RootTitle"] = localizer["Bids"].Value;
+    var steps = new[] { "WizardStepCall", "WizardStepUnits", "WizardStepSeats", "WizardStepEquipment", "WizardStepRates", "WizardStepReview" };
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["ScheduleDeploymentCall"]</h5></div>
+        <div class="ibox-content">
+            <div id="wizardError" class="alert alert-danger" style="display:none"></div>
+            <ul class="nav nav-pills m-b-md" id="wizardSteps">
+                @for (var i = 0; i < steps.Length; i++) { <li class="@(i == 0 ? "active" : "")"><a href="#" data-step="@i">@(i + 1). @localizer[steps[i]]</a></li> }
+            </ul>
+
+            <div class="wizard-step" data-step="0">
+                <h3>@localizer["WizardStepCall"]</h3>
+                <div class="row">
+                    <div class="col-sm-6 form-group"><label>@localizer["CallName"] *</label><input type="text" id="w-callName" class="form-control" maxlength="250" value="@bid.Title" /></div>
+                    <div class="col-sm-6 form-group"><label>@localizer["CallNature"]</label><input type="text" id="w-callNature" class="form-control" value="@bid.Description" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 form-group"><label>@localizer["CallType"]</label><select id="w-callType" class="form-control"><option value="">—</option>@foreach (var t in Model.CallTypes) { <option value="@t.CallTypeId">@t.Type</option> }</select></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["CallPriority"]</label><select id="w-priority" class="form-control">@foreach (var p in Model.Priorities) { <option value="@p.DepartmentCallPriorityId">@p.Name</option> }</select></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["IncidentNumber"]</label><input type="text" id="w-incident" class="form-control" maxlength="100" value="@bid.IncidentNumber" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["ServiceRequestNumber"]</label><input type="text" id="w-serviceRequest" class="form-control" maxlength="100" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 form-group"><label>@localizer["Address"]</label><input type="text" id="w-address" class="form-control" value="@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(bid.DeliveryLocation)" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["StartOn"]</label><input type="datetime-local" id="w-start" class="form-control" value="@(bid.RequestedStartOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["EndOn"]</label><input type="datetime-local" id="w-end" class="form-control" value="@(bid.RequestedEndOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 form-group"><label>@localizer["MaxDeploymentDays"]</label><input type="number" id="w-maxDays" class="form-control" value="@Model.Context.Contract?.MaxDeploymentDays" /></div>
+                    <div class="col-sm-3 form-group"><label>@localizer["PointOfHire"]</label><input type="text" id="w-pointOfHire" class="form-control" value="@Model.Context.Contract?.PointOfHire" /></div>
+                    <div class="col-sm-3 form-group"><label>&nbsp;</label><div class="checkbox"><label><input type="checkbox" id="w-outOfProvince" /> @localizer["OutOfProvince"]</label></div><div class="checkbox"><label><input type="checkbox" id="w-travelViaAir" /> @localizer["TravelViaAir"]</label></div></div>
+                    <div class="col-sm-3 form-group"><label>&nbsp;</label><div class="checkbox"><label><input type="checkbox" id="w-calendar" checked /> @localizer["CreateCalendarItem"]</label></div></div>
+                </div>
+                <div class="form-group"><label>@localizer["Notes"]</label><textarea id="w-notes" class="form-control" rows="2"></textarea></div>
+            </div>
+
+            <div class="wizard-step" data-step="1" style="display:none">
+                <h3>@localizer["WizardStepUnits"]</h3>
+                <p class="text-muted">@localizer["WizardUnitsHelp"]</p>
+                <table class="table table-condensed table-hover">
+                    <thead><tr><th></th><th>@localizer["Unit"]</th><th>@localizer["UnitType"]</th><th>@localizer["State"]</th><th>@localizer["Seats"]</th><th>@localizer["BidLine"]</th><th>@localizer["CallSign"]</th></tr></thead>
+                    <tbody id="unitRows"></tbody>
+                </table>
+            </div>
+
+            <div class="wizard-step" data-step="2" style="display:none">
+                <h3>@localizer["WizardStepSeats"]</h3>
+                <p class="text-muted">@localizer["WizardSeatsHelp"]</p>
+                <div id="seatPanels"></div>
+                <h4>@localizer["UnassignedPersonnel"]</h4>
+                <p class="text-muted small">@localizer["UnassignedHelp"]</p>
+                <table class="table table-condensed"><thead><tr><th>@localizer["Person"]</th><th>@localizer["CertificationCode"]</th><th>@localizer["RateEntry"]</th><th></th></tr></thead><tbody id="unassignedRows"></tbody></table>
+                <button type="button" class="btn btn-default btn-xs" id="unassigned-add"><i class="fa fa-plus"></i> @localizer["AddPerson"]</button>
+            </div>
+
+            <div class="wizard-step" data-step="3" style="display:none">
+                <h3>@localizer["WizardStepEquipment"]</h3>
+                <p class="text-muted">@localizer["WizardEquipmentHelp"]</p>
+                <div id="equipmentPanels"></div>
+            </div>
+
+            <div class="wizard-step" data-step="4" style="display:none">
+                <h3>@localizer["WizardStepRates"]</h3>
+                <p class="text-muted">@localizer["WizardRatesHelp"]</p>
+                <div id="ratesSummary"></div>
+            </div>
+
+            <div class="wizard-step" data-step="5" style="display:none">
+                <h3>@localizer["WizardStepReview"]</h3>
+                <div id="reviewSummary"></div>
+                <button type="button" class="btn btn-primary btn-lg" id="wizardCreate"><i class="fa fa-check"></i> @localizer["CreateCallAndDeployment"]</button>
+            </div>
+
+            <hr />
+            <button type="button" class="btn btn-default" id="wizardPrev">&larr; @localizer["Back"]</button>
+            <button type="button" class="btn btn-primary" id="wizardNext">@localizer["Next"] &rarr;</button>
+            <a asp-controller="Bids" asp-action="View" asp-route-id="@bid.BidId" class="btn btn-link">@localizer["Cancel"]</a>
+        </div>
+    </div>
+</div>
+
+<form id="wizardForm" method="post" asp-action="Create" style="display:none">@Html.AntiForgeryToken()<input type="hidden" name="BidId" value="@bid.BidId" /><input type="hidden" name="RequestJson" id="requestJson" /></form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var ctx = @Html.Raw(Model.ContextJson);
+            var L = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                conflict = localizer["ConflictBadge"].Value, expired = localizer["CertExpired"].Value, expiring = localizer["CertExpiring"].Value, roleMissing = localizer["RoleMissing"].Value, qualified = localizer["Qualified"].Value,
+                seat = localizer["Seat"].Value, person = localizer["Person"].Value, none = localizer["None"].Value, crew = localizer["CrewIndicator"].Value, nearestLower = localizer["NearestLowerRate"].Value,
+                equipment = localizer["Equipment"].Value, freeText = localizer["FreeTextEquipment"].Value, rateEntry = localizer["RateEntry"].Value, premiums = localizer["Premiums"].Value, perDay = localizer["EstimatedDailyCharge"].Value,
+                units = localizer["Units"].Value, personnel = localizer["Personnel"].Value, callNameRequired = localizer["bids_call_name_required"].Value, add = localizer["Add"].Value, remove = localizer["Remove"].Value
+            }));
+            var state = { step: 0, units: {}, unassigned: [] };
+            var entries = (ctx.schedule && ctx.schedule.entries) || [], premiums = (ctx.schedule && ctx.schedule.premiums) || [];
+            function esc(v) { return (v === null || v === undefined ? '' : String(v)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+            function entryOpts(types, sel) { return '<option value="">' + L.none + '</option>' + entries.filter(function (e) { return types.indexOf(e.EntryType) >= 0; }).map(function (e) { return '<option value="' + e.RateScheduleEntryId + '"' + (e.RateScheduleEntryId === sel ? ' selected' : '') + '>' + esc(e.Name) + (e.CrewSize ? ' (' + e.CrewSize + ')' : '') + ' — ' + e.rate + '</option>'; }).join(''); }
+            function premiumOpts(sel) { sel = sel || []; return premiums.map(function (p) { return '<option value="' + p.RatePremiumId + '"' + (sel.indexOf(p.RatePremiumId) >= 0 ? ' selected' : '') + '>' + esc(p.Name) + '</option>'; }).join(''); }
+            function certBadges(p, windowNeeded) {
+                return (p.Certifications || []).map(function (c) {
+                    var cls = c.Status === 1 || c.Status === 2 || c.Status === 3 ? 'label-danger' : c.ExpiringInWindow ? 'label-warning' : 'label-primary';
+                    return '<span class="label ' + cls + '" title="' + esc(c.Name) + (c.ExpiresOn ? ' ' + c.ExpiresOn.substring(0, 10) : '') + '">' + esc(c.Code || c.Name) + '</span> ';
+                }).join('');
+            }
+            // Step 2: units
+            var crewLines = (ctx.bid.lines || []).filter(function (l) { return l.LineType === 1 || l.LineType === 2; });
+            $('#unitRows').html(ctx.units.map(function (u) {
+                var lineOpts = '<option value="">' + L.none + '</option>' + crewLines.map(function (l) { return '<option value="' + l.BidLineItemId + '" data-entry="' + (l.RateScheduleEntryId || '') + '">' + esc(l.Description) + '</option>'; }).join('');
+                return '<tr data-unit="' + u.UnitId + '"><td><input type="checkbox" class="u-pick" /></td><td>' + esc(u.Name) + (u.Conflict ? ' <span class="label label-danger">' + L.conflict + '</span>' : '') + '</td><td>' + esc(u.Type) + '</td><td>' + esc(u.State || '') + '</td><td>' + u.Staffing + '</td><td><select class="form-control input-sm u-line">' + lineOpts + '</select></td><td><input type="text" class="form-control input-sm u-callsign" maxlength="50" /></td></tr>';
+            }).join(''));
+            // Step 3: seats per picked unit
+            function personRow(p, seat) {
+                var roleOk = !seat || !seat.PersonnelRoleId || (p.RoleIds || []).indexOf(seat.PersonnelRoleId) >= 0;
+                return { ok: roleOk, html: '<option value="' + p.UserId + '"' + (roleOk ? '' : ' data-warn="1"') + '>' + esc(p.Name) + (p.Status ? ' · ' + esc(p.Status) : '') + (p.Staffing ? ' · ' + esc(p.Staffing) : '') + (p.Conflict ? ' · ' + L.conflict : '') + (roleOk ? '' : ' · ' + L.roleMissing) + '</option>' };
+            }
+            function renderSeats() {
+                var html = '';
+                $('#unitRows tr').each(function () {
+                    if (!$(this).find('.u-pick').is(':checked')) return;
+                    var unitId = $(this).data('unit'), u = ctx.units.filter(function (x) { return x.UnitId === unitId; })[0];
+                    var lineEntry = $(this).find('.u-line option:selected').data('entry') || '';
+                    state.units[unitId] = state.units[unitId] || { seats: {}, equipment: [], entry: lineEntry };
+                    var unitEntry = entries.filter(function (e) { return e.RateScheduleEntryId === (state.units[unitId].entry || lineEntry); })[0];
+                    var seatsHtml = (u.Seats.length ? u.Seats : [{ UnitRoleId: 0, Name: L.seat + ' 1' }, { UnitRoleId: -1, Name: L.seat + ' 2' }, { UnitRoleId: -2, Name: L.seat + ' 3' }, { UnitRoleId: -3, Name: L.seat + ' 4' }]).map(function (s) {
+                        var rows = ctx.personnel.map(function (p) { return personRow(p, s); });
+                        rows.sort(function (a, b) { return (b.ok ? 1 : 0) - (a.ok ? 1 : 0); });
+                        var chosen = state.units[unitId].seats[s.UnitRoleId] || {};
+                        return '<tr data-seat="' + s.UnitRoleId + '"><td>' + esc(s.Name) + (s.PersonnelRoleRequired ? ' *' : '') + '</td><td><select class="form-control input-sm s-user"><option value="">' + L.none + '</option>' + rows.map(function (r) { return r.html; }).join('') + '</select></td><td class="s-certs"></td><td><select class="form-control input-sm s-entry">' + entryOpts([0], chosen.entry) + '</select></td><td><select multiple size="2" class="form-control input-sm s-prem">' + premiumOpts(chosen.premiums) + '</select></td></tr>';
+                    }).join('');
+                    html += '<div class="panel panel-default" data-unit="' + unitId + '"><div class="panel-heading"><strong>' + esc(u.Name) + '</strong> <span class="text-muted">' + esc(u.Type) + '</span> — <span class="crew-indicator"></span></div><div class="panel-body"><table class="table table-condensed"><thead><tr><th>' + L.seat + '</th><th>' + L.person + '</th><th></th><th>' + L.rateEntry + '</th><th>' + L.premiums + '</th></tr></thead><tbody>' + seatsHtml + '</tbody></table></div></div>';
+                });
+                $('#seatPanels').html(html);
+                $('#seatPanels select.s-user').each(function () { var unitId = $(this).closest('.panel').data('unit'), seatId = $(this).closest('tr').data('seat'); var chosen = state.units[unitId].seats[seatId]; if (chosen && chosen.user) $(this).val(chosen.user); });
+                $('#seatPanels .panel').each(function () { updateCrew($(this)); });
+            }
+            function updateCrew(panel) {
+                var unitId = panel.data('unit'), filled = 0, total = panel.find('tr[data-seat]').length;
+                panel.find('.s-user').each(function () { if ($(this).val()) filled++; var p = ctx.personnel.filter(function (x) { return x.UserId === $(this).val(); }.bind(this))[0]; $(this).closest('tr').find('.s-certs').html(p ? certBadges(p) : ''); });
+                var unitRow = $('#unitRows tr[data-unit="' + unitId + '"]'), lineEntryId = unitRow.find('.u-line option:selected').data('entry') || state.units[unitId].entry;
+                var base = entries.filter(function (e) { return e.RateScheduleEntryId === lineEntryId; })[0];
+                var text = filled + ' / ' + total + ' → ' + filled + '-' + L.crew;
+                if (base && base.GroupKey) {
+                    var family = entries.filter(function (e) { return e.GroupKey === base.GroupKey && e.CrewSize; }).sort(function (a, b) { return a.CrewSize - b.CrewSize; });
+                    var exact = family.filter(function (e) { return e.CrewSize === filled; })[0], lower = family.filter(function (e) { return e.CrewSize < filled; }).pop();
+                    var pick = exact || lower || base;
+                    state.units[unitId].entry = pick.RateScheduleEntryId;
+                    text += ' — ' + esc(pick.Name) + ' @@ ' + pick.rate + (exact ? '' : ' <span class="label label-warning">' + L.nearestLower + '</span>');
+                } else if (base) { state.units[unitId].entry = base.RateScheduleEntryId; text += ' — ' + esc(base.Name) + ' @@ ' + base.rate; }
+                panel.find('.crew-indicator').html(text);
+            }
+            $('#seatPanels').on('change', '.s-user, .s-entry, .s-prem', function () {
+                var panel = $(this).closest('.panel'), unitId = panel.data('unit'), tr = $(this).closest('tr'), seatId = tr.data('seat');
+                state.units[unitId].seats[seatId] = { user: tr.find('.s-user').val(), entry: tr.find('.s-entry').val(), premiums: tr.find('.s-prem').val() || [] };
+                var p = ctx.personnel.filter(function (x) { return x.UserId === tr.find('.s-user').val(); })[0];
+                if (p && !tr.find('.s-entry').val()) { var code = (p.Certifications || []).map(function (c) { return c.Code; }); var match = entries.filter(function (e) { return e.EntryType === 0 && code.indexOf(e.CertificationCode) >= 0; })[0]; if (match) { tr.find('.s-entry').val(match.RateScheduleEntryId); state.units[unitId].seats[seatId].entry = match.RateScheduleEntryId; } }
+                updateCrew(panel);
+            });
+            // Unassigned personnel
+            function unassignedRow(row) { return '<tr><td><select class="form-control input-sm ua-user"><option value="">' + L.none + '</option>' + ctx.personnel.map(function (p) { return '<option value="' + p.UserId + '">' + esc(p.Name) + (p.Conflict ? ' · ' + L.conflict : '') + '</option>'; }).join('') + '</select></td><td><input type="text" class="form-control input-sm ua-cert" maxlength="50" /></td><td><select class="form-control input-sm ua-entry">' + entryOpts([0]) + '</select></td><td><button type="button" class="btn btn-xs btn-danger ua-del"><i class="fa fa-times"></i></button></td></tr>'; }
+            $('#unassigned-add').on('click', function () { $('#unassignedRows').append(unassignedRow()); });
+            $('#unassignedRows').on('click', '.ua-del', function () { $(this).closest('tr').remove(); });
+            // Step 4: equipment per unit
+            function renderEquipment() {
+                var html = '';
+                Object.keys(state.units).forEach(function (unitId) {
+                    if (!$('#unitRows tr[data-unit="' + unitId + '"] .u-pick').is(':checked')) return;
+                    var u = ctx.units.filter(function (x) { return String(x.UnitId) === String(unitId); })[0];
+                    html += '<div class="panel panel-default" data-unit="' + unitId + '"><div class="panel-heading"><strong>' + esc(u.Name) + '</strong></div><div class="panel-body"><table class="table table-condensed"><thead><tr><th>' + L.freeText + '</th><th>' + L.equipment + ' ID</th><th>' + L.rateEntry + '</th><th></th></tr></thead><tbody>' +
+                        (state.units[unitId].equipment || []).map(function (e) { return equipmentRow(e); }).join('') + '</tbody></table><button type="button" class="btn btn-default btn-xs eq-add"><i class="fa fa-plus"></i> ' + L.add + '</button></div></div>';
+                });
+                $('#equipmentPanels').html(html);
+            }
+            function equipmentRow(e) { e = e || {}; return '<tr><td><input type="text" class="form-control input-sm eq-name" value="' + esc(e.name) + '" /></td><td><input type="text" class="form-control input-sm eq-asset" placeholder="InventoryAssetId" value="' + esc(e.asset) + '" /></td><td><select class="form-control input-sm eq-entry">' + entryOpts([2, 3], e.entry) + '</select></td><td><button type="button" class="btn btn-xs btn-danger eq-del"><i class="fa fa-times"></i></button></td></tr>'; }
+            $('#equipmentPanels').on('click', '.eq-add', function () { $(this).closest('.panel-body').find('tbody').append(equipmentRow()); });
+            $('#equipmentPanels').on('click', '.eq-del', function () { $(this).closest('tr').remove(); });
+            function collectEquipment() { $('#equipmentPanels .panel').each(function () { var unitId = $(this).data('unit'); state.units[unitId].equipment = []; $(this).find('tbody tr').each(function () { state.units[unitId].equipment.push({ name: $(this).find('.eq-name').val(), asset: $(this).find('.eq-asset').val(), entry: $(this).find('.eq-entry').val() }); }); }); }
+            // Step 5: rates summary
+            function buildRequest() {
+                collectEquipment();
+                var req = {
+                    CallName: $('#w-callName').val(), CallNature: $('#w-callNature').val(), CallPriority: parseInt($('#w-priority').val(), 10) || 0, CallTypeId: $('#w-callType').val() ? parseInt($('#w-callType').val(), 10) : null,
+                    Address: $('#w-address').val(), StartOn: $('#w-start').val() || null, EndOn: $('#w-end').val() || null, MaxDays: $('#w-maxDays').val() ? parseInt($('#w-maxDays').val(), 10) : null, IncidentNumber: $('#w-incident').val(), ServiceRequestNumber: $('#w-serviceRequest').val(),
+                    PointOfHire: $('#w-pointOfHire').val(), OutOfProvince: $('#w-outOfProvince').is(':checked'), TravelViaAir: $('#w-travelViaAir').is(':checked'), LocalTimeZoneId: ctx.timeZone, Notes: $('#w-notes').val(), CreateCalendarItem: $('#w-calendar').is(':checked'), Units: [], UnassignedPersonnel: []
+                };
+                $('#unitRows tr').each(function () {
+                    if (!$(this).find('.u-pick').is(':checked')) return;
+                    var unitId = $(this).data('unit'), s = state.units[unitId] || { seats: {}, equipment: [] };
+                    var unit = { UnitId: unitId, CallSign: $(this).find('.u-callsign').val(), BidLineItemId: $(this).find('.u-line').val() || null, RateScheduleEntryId: s.entry || ($(this).find('.u-line option:selected').data('entry') || null), Seats: [], Equipment: [] };
+                    Object.keys(s.seats).forEach(function (seatId) { var seat = s.seats[seatId]; if (!seat.user) return; unit.Seats.push({ UserId: seat.user, UnitRoleId: parseInt(seatId, 10) > 0 ? parseInt(seatId, 10) : null, RateScheduleEntryId: seat.entry || null, PremiumIds: seat.premiums || [] }); });
+                    (s.equipment || []).forEach(function (e) { if (!e.name && !e.asset) return; unit.Equipment.push({ FreeTextName: e.name || null, InventoryAssetId: e.asset || null, RateScheduleEntryId: e.entry || null }); });
+                    req.Units.push(unit);
+                });
+                $('#unassignedRows tr').each(function () { var user = $(this).find('.ua-user').val(); if (!user) return; req.UnassignedPersonnel.push({ UserId: user, CertificationCode: $(this).find('.ua-cert').val() || null, RateScheduleEntryId: $(this).find('.ua-entry').val() || null, PremiumIds: [] }); });
+                return req;
+            }
+            function entryName(id) { var e = entries.filter(function (x) { return x.RateScheduleEntryId === id; })[0]; return e ? esc(e.Name) + ' @@ ' + e.rate : L.none; }
+            function personName(id) { var p = ctx.personnel.filter(function (x) { return x.UserId === id; })[0]; return p ? esc(p.Name) : id; }
+            function renderRates(req) {
+                var daily = 0, html = '';
+                req.Units.forEach(function (u) {
+                    var unit = ctx.units.filter(function (x) { return x.UnitId === u.UnitId; })[0], e = entries.filter(function (x) { return x.RateScheduleEntryId === u.RateScheduleEntryId; })[0];
+                    if (e) daily += e.rate * (e.BillingBasis === 0 ? 8 : 1);
+                    html += '<h4>' + esc(unit.Name) + ' — ' + entryName(u.RateScheduleEntryId) + '</h4><ul>';
+                    u.Seats.forEach(function (s) { var se = entries.filter(function (x) { return x.RateScheduleEntryId === s.RateScheduleEntryId; })[0]; if (se) daily += se.rate * (se.BillingBasis === 0 ? 8 : 1); html += '<li>' + personName(s.UserId) + ' — ' + entryName(s.RateScheduleEntryId) + (s.PremiumIds.length ? ' + ' + s.PremiumIds.map(function (id) { var p = premiums.filter(function (x) { return x.RatePremiumId === id; })[0]; return p ? esc(p.Name) : id; }).join(', ') : '') + '</li>'; });
+                    u.Equipment.forEach(function (q) { var qe = entries.filter(function (x) { return x.RateScheduleEntryId === q.RateScheduleEntryId; })[0]; if (qe) daily += qe.rate * (qe.BillingBasis === 0 ? 8 : 1); html += '<li><em>' + esc(q.FreeTextName || q.InventoryAssetId) + '</em> — ' + entryName(q.RateScheduleEntryId) + '</li>'; });
+                    html += '</ul>';
+                });
+                req.UnassignedPersonnel.forEach(function (s) { var se = entries.filter(function (x) { return x.RateScheduleEntryId === s.RateScheduleEntryId; })[0]; if (se) daily += se.rate * (se.BillingBasis === 0 ? 8 : 1); html += '<p>' + personName(s.UserId) + ' — ' + entryName(s.RateScheduleEntryId) + '</p>'; });
+                html += '<p class="font-bold">' + L.perDay + ': ' + daily.toFixed(2) + ' ' + ((ctx.schedule && ctx.schedule.Currency) || '') + '</p>';
+                $('#ratesSummary').html(html);
+            }
+            function renderReview(req) {
+                $('#reviewSummary').html('<dl class="dl-horizontal"><dt>Call</dt><dd>' + esc(req.CallName) + '</dd><dt>' + L.units + '</dt><dd>' + req.Units.length + '</dd><dt>' + L.personnel + '</dt><dd>' + (req.Units.reduce(function (n, u) { return n + u.Seats.length; }, 0) + req.UnassignedPersonnel.length) + '</dd><dt>' + L.equipment + '</dt><dd>' + req.Units.reduce(function (n, u) { return n + u.Equipment.length; }, 0) + '</dd></dl>');
+            }
+            function show(step) {
+                if (step === 2) renderSeats();
+                if (step === 3) renderEquipment();
+                if (step === 4) renderRates(buildRequest());
+                if (step === 5) renderReview(buildRequest());
+                state.step = step;
+                $('.wizard-step').hide(); $('.wizard-step[data-step="' + step + '"]').show();
+                $('#wizardSteps li').removeClass('active'); $('#wizardSteps li a[data-step="' + step + '"]').parent().addClass('active');
+                $('#wizardPrev').toggle(step > 0); $('#wizardNext').toggle(step < 5);
+            }
+            $('#wizardSteps').on('click', 'a', function (e) { e.preventDefault(); show(parseInt($(this).data('step'), 10)); });
+            $('#wizardPrev').on('click', function () { show(state.step - 1); });
+            $('#wizardNext').on('click', function () { if (state.step === 0 && !$('#w-callName').val()) { $('#wizardError').text(L.callNameRequired).show(); return; } $('#wizardError').hide(); show(state.step + 1); });
+            $('#wizardCreate').on('click', function () {
+                var req = buildRequest();
+                $('#wizardError').hide(); $(this).prop('disabled', true);
+                $.ajax({ url: $('#wizardForm').attr('action'), type: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, data: { BidId: $('#wizardForm input[name=BidId]').val(), RequestJson: JSON.stringify(req), __RequestVerificationToken: $('#wizardForm input[name=__RequestVerificationToken]').val() } })
+                    .done(function (r) { window.location.href = r.url; })
+                    .fail(function (x) { $('#wizardCreate').prop('disabled', false); $('#wizardError').text((x.responseJSON && x.responseJSON.message) || 'Error').show(); });
+            });
+            show(0);
+        })();
+    </script>
+}

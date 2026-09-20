@@ -116,6 +116,19 @@
             <param name="id">ID of the user</param>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.BidsController">
+            <summary>
+            Contractor bids and the deployment charge run (Workforce &amp; Business Operations plan, C5). Gated by the
+            Invoicing.ContractorBilling entitlement; Bids_View reads, Bids_Create/Update/Delete write, the charge run and
+            invoice generation need Invoicing_Update. Conversion mirrors the MVC wizard's last step.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.BidsController.GetAccess">
+            <summary>Whether the contractor path is available to this department and what the caller may do. Always answers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.BidsController.GetDeploymentCharges(System.String,System.Nullable{System.DateTime})">
+            <summary>Dry run of the contractor billing engine over the deployment's approved, unbilled DTRs.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CalendarController">
             <summary>
             Mobile or Tablet Device specific operations
@@ -2875,6 +2888,13 @@
             while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RateSchedulesController">
+            <summary>
+            Contractor rate schedules (Workforce &amp; Business Operations plan, C5): schedules, entries with bands, premiums,
+            clone and JSON import/export. Gated by the Invoicing.ContractorBilling entitlement; Invoicing_View reads,
+            Invoicing_Update writes.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ReadinessController.GetAccess">
             <summary>Independent feature availability and monthly offers. A flag alone is not a paid entitlement.</summary>
         </member>
@@ -3618,6 +3638,13 @@
             Gets the current users department rights
             </summary>
             <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ServiceContractsController">
+            <summary>
+            Service contracts, document requirements and department compliance documents (Workforce &amp; Business
+            Operations plan, C5). Gated by the Invoicing.ContractorBilling entitlement; ServiceContracts_View reads,
+            ServiceContracts_Update writes. Compliance document bytes are served only through GetComplianceDocumentFile.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SessionsController">
             <summary>User authentication session inventory and revocation.</summary>
@@ -11001,6 +11028,51 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.ContactVerification.ConfirmVerificationCodeInput.Code">
             <summary>The numeric code the user received.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ContractorAccessData.Enabled">
+            <summary>Invoicing.ContractorBilling entitlement (paid add-on + flag).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.RateScheduleEntryData.EntryType">
+            <summary>RateEntryTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.RateScheduleEntryData.BillingBasis">
+            <summary>BillingBases value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.RateScheduleBandData.BandType">
+            <summary>RateBandTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ServiceContractData.ContractType">
+            <summary>ServiceContractTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ServiceContractData.Status">
+            <summary>ServiceContractStatuses value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ContractRequirementData.Stage">
+            <summary>DocumentRequirementStages value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ContractRequirementData.ComplianceDocumentType">
+            <summary>ComplianceDocumentTypes value; null = satisfied by a deployment attachment.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ComplianceDocumentData.DocumentType">
+            <summary>ComplianceDocumentTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.SaveComplianceDocumentInput.FileBase64">
+            <summary>Base64 file bytes; omit to keep the stored file.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.BidData.Status">
+            <summary>BidStatuses value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.BidLineData.LineType">
+            <summary>BidLineTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.SaveBidInput.LineItems">
+            <summary>When present the line set is replaced (upsert by id).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.SetBidStatusInput.Status">
+            <summary>BidStatuses target: Submitted (1), Accepted (2), Declined (3), Withdrawn (5).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ContractorChargeLineData.Kind">
+            <summary>ContractorChargeKinds value.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">
             <summary>

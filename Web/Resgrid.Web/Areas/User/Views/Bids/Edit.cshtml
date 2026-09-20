@@ -1,0 +1,140 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.BidEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    var b = Model.Bid;
+    ViewBag.Title = "Resgrid | " + localizer["EditBid"];
+    ViewData["Title"] = localizer["BidNumber"].Value + " " + b.BidNumber;
+    ViewData["Subtitle"] = localizer["EditBidIntro"].Value;
+    ViewData["RootController"] = "Bids";
+    ViewData["RootTitle"] = localizer["Bids"].Value;
+    var lineTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.BidLineTypes)).Cast<Resgrid.Model.Invoicing.BidLineTypes>().ToList();
+}
+
+@await Html.PartialAsync("_ContractorShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
+    <form method="post" asp-action="Save" class="form-horizontal" id="bidForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="BidId" value="@b.BidId" />
+        <input type="hidden" name="LinesJson" id="linesJson" />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Bid"] @await Html.PartialAsync("_BidStatusBadge", b.Status)</h5><div class="ibox-tools"><a asp-action="View" asp-route-id="@b.BidId" class="btn btn-default btn-xs"><i class="fa fa-eye"></i> @localizer["ViewBid"]</a></div></div>
+                    <div class="ibox-content">
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Customer"]</label><div class="col-sm-9"><p class="form-control-static">@Model.ContactName</p></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Title"] *</label><div class="col-sm-9"><input type="text" name="Title" class="form-control" maxlength="250" required value="@b.Title" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Description"]</label><div class="col-sm-9"><textarea name="Description" class="form-control" rows="2">@b.Description</textarea></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Contract"]</label><div class="col-sm-9"><select name="ServiceContractId" class="form-control"><option value="">@localizer["NoContract"]</option>@foreach (var c in Model.Contracts) { <option value="@c.ServiceContractId" selected="@(c.ServiceContractId == b.ServiceContractId)">@c.Name</option> }</select></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["RateSchedule"]</label><div class="col-sm-9">@Html.DropDownList("RateScheduleId", Model.Schedules, localizer["NoSchedule"].Value, new { @class = "form-control" })<span class="help-block">@localizer["BidScheduleHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["ValidUntil"]</label><div class="col-sm-4"><input type="date" name="ValidUntil" class="form-control" value="@(b.ValidUntil?.ToString("yyyy-MM-dd"))" /></div>
+                            <label class="col-sm-2 control-label">@localizer["IncidentNumber"]</label><div class="col-sm-3"><input type="text" name="IncidentNumber" class="form-control" maxlength="100" value="@b.IncidentNumber" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["RequestedStartOn"]</label><div class="col-sm-4"><input type="date" name="RequestedStartOn" class="form-control" value="@(b.RequestedStartOn?.ToString("yyyy-MM-dd"))" /></div>
+                            <label class="col-sm-2 control-label">@localizer["RequestedEndOn"]</label><div class="col-sm-3"><input type="date" name="RequestedEndOn" class="form-control" value="@(b.RequestedEndOn?.ToString("yyyy-MM-dd"))" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["DeliveryLocation"]</label><div class="col-sm-9"><input type="text" name="DeliveryLocation" class="form-control" value="@b.DeliveryLocation" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["DiscountPercent"]</label><div class="col-sm-3"><input type="number" step="0.01" min="0" max="100" name="DiscountPercent" id="discountPercent" class="form-control" value="@b.DiscountPercent" /></div>
+                            <div class="col-sm-6"><p class="form-control-static text-muted small">@localizer["DiscountCascade"]: @localizer["Profile"] @(Model.ProfileDiscountPercent?.ToString("0.##") ?? "—")% → @localizer["Contract"] @(Model.ContractDiscountPercent?.ToString("0.##") ?? "—")% → @localizer["Bid"]</p></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Notes"]</label><div class="col-sm-9"><textarea name="Notes" class="form-control" rows="2">@b.Notes</textarea></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["TermsText"]</label><div class="col-sm-9"><textarea name="TermsText" class="form-control" rows="3">@b.TermsText</textarea></div></div>
+                        <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="View" asp-route-id="@b.BidId" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Estimate"]</h5></div>
+                    <div class="ibox-content">
+                        <table class="table table-condensed">
+                            <tr><td>@localizer["Subtotal"]</td><td class="text-right" id="estSub">@b.EstimatedSubTotal.ToString("N2") @Model.Currency</td></tr>
+                            <tr><td>@localizer["Discount"]</td><td class="text-right" id="estDisc">-@b.EstimatedDiscountAmount.ToString("N2") @Model.Currency</td></tr>
+                            <tr><td>@localizer["TaxEstimated"]</td><td class="text-right">@b.EstimatedTaxAmount.ToString("N2") @Model.Currency</td></tr>
+                            <tr class="font-bold"><td>@localizer["EstimatedTotal"]</td><td class="text-right" id="estTotal">@b.EstimatedTotal.ToString("N2") @Model.Currency</td></tr>
+                        </table>
+                        <p class="text-muted small">@localizer["EstimateHelp"]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@localizer["Lines"]</h5><div class="ibox-tools"><button type="button" class="btn btn-primary btn-xs" id="line-add"><i class="fa fa-plus"></i> @localizer["AddLine"]</button></div></div>
+            <div class="ibox-content">
+                @if (Model.Schedule == null) { <div class="alert alert-warning">@localizer["NoScheduleWarning"]</div> }
+                <p class="text-muted small">@localizer["LinesHelp"]</p>
+                <table class="table table-condensed" id="lineTable">
+                    <thead><tr><th style="width:22%">@localizer["RateEntry"]</th><th>@localizer["LineType"]</th><th style="width:20%">@localizer["Description"]</th><th>@localizer["CrewSize"]</th><th>@localizer["Quantity"]</th><th>@localizer["HoursPerDay"]</th><th>@localizer["Days"]</th><th>@localizer["Rate"]</th><th>@localizer["Premiums"]</th><th>@localizer["Taxable"]</th><th class="text-right">@localizer["Amount"]</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var lines = @Html.Raw(Model.LinesJson ?? "[]"), entries = @Html.Raw(Model.EntriesJson ?? "[]"), premiums = @Html.Raw(Model.PremiumsJson ?? "[]");
+            var lineTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(lineTypes.Select(t => new { v = (int)t, t = localizer["LineType" + t].Value })));
+            var currency = '@Model.Currency';
+            function esc(v) { return (v === null || v === undefined ? '' : String(v)).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+            function val(v) { return v === null || v === undefined ? '' : v; }
+            function entryOpts(sel) {
+                var families = {};
+                entries.forEach(function (e) { var k = e.entryType + '|' + (e.groupKey || e.id); (families[k] = families[k] || []).push(e); });
+                return '<option value="">—</option>' + entries.map(function (e) { return '<option value="' + e.id + '" data-type="' + e.entryType + '" data-rate="' + e.rate + '" data-crew="' + val(e.crewSize) + '" data-group="' + esc(e.groupKey) + '"' + (e.id === sel ? ' selected' : '') + '>' + esc(e.name) + (e.crewSize ? ' (' + e.crewSize + ')' : '') + '</option>'; }).join('');
+            }
+            function premiumOpts(selected) { selected = selected || []; return premiums.map(function (p) { return '<option value="' + p.id + '"' + (selected.indexOf(p.id) >= 0 ? ' selected' : '') + '>' + esc(p.name) + ' (+' + p.deploymentAdder + ')</option>'; }).join(''); }
+            function row(l) {
+                l = l || { quantity: 1, taxable: true };
+                return '<tr data-id="' + (l.id || '') + '">' +
+                    '<td><select class="form-control input-sm l-entry">' + entryOpts(l.entryId) + '</select></td>' +
+                    '<td><select class="form-control input-sm l-type">' + lineTypes.map(function (t) { return '<option value="' + t.v + '"' + (t.v === (l.lineType || 0) ? ' selected' : '') + '>' + t.t + '</option>'; }).join('') + '</select></td>' +
+                    '<td><input type="text" class="form-control input-sm l-desc" value="' + esc(l.description) + '" /></td>' +
+                    '<td><input type="number" min="1" class="form-control input-sm l-crew" value="' + val(l.crewSize) + '" /></td>' +
+                    '<td><input type="number" step="0.01" min="0.01" class="form-control input-sm l-qty" value="' + val(l.quantity) + '" /></td>' +
+                    '<td><input type="number" step="0.5" class="form-control input-sm l-hours" value="' + val(l.hoursPerDay) + '" /></td>' +
+                    '<td><input type="number" step="0.5" class="form-control input-sm l-days" value="' + val(l.days) + '" /></td>' +
+                    '<td><input type="number" step="0.0001" class="form-control input-sm l-rate" value="' + val(l.unitRate) + '" /></td>' +
+                    '<td><select multiple class="form-control input-sm l-prem" size="2">' + premiumOpts(l.premiumIds) + '</select></td>' +
+                    '<td class="text-center"><input type="checkbox" class="l-tax"' + (l.taxable !== false ? ' checked' : '') + ' /></td>' +
+                    '<td class="text-right l-amount">' + (l.amount || 0).toFixed(2) + '</td>' +
+                    '<td><button type="button" class="btn btn-xs btn-danger l-del"><i class="fa fa-times"></i></button></td></tr>';
+            }
+            function num(el) { var v = $(el).val(); return v === '' ? null : parseFloat(v); }
+            function recalc() {
+                var sub = 0;
+                $('#lineTable tbody tr').each(function () {
+                    var q = num($(this).find('.l-qty')) || 0, r = num($(this).find('.l-rate')) || 0, h = num($(this).find('.l-hours')), d = num($(this).find('.l-days'));
+                    var amt = Math.round(q * r * (h === null ? 1 : h) * (d === null ? 1 : d) * 100) / 100;
+                    $(this).find('.l-amount').text(amt.toFixed(2)); sub += amt;
+                });
+                var disc = parseFloat($('#discountPercent').val()) || 0, discAmt = Math.round(sub * disc) / 100;
+                $('#estSub').text(sub.toFixed(2) + ' ' + currency); $('#estDisc').text('-' + discAmt.toFixed(2) + ' ' + currency); $('#estTotal').text((sub - discAmt).toFixed(2) + ' ' + currency + ' *');
+            }
+            $('#lineTable tbody').html(lines.map(row).join(''));
+            $('#line-add').on('click', function () { $('#lineTable tbody').append(row()); });
+            $('#lineTable').on('click', '.l-del', function () { $(this).closest('tr').remove(); recalc(); });
+            $('#lineTable').on('change', '.l-entry', function () {
+                var o = $(this).find('option:selected'), tr = $(this).closest('tr');
+                if (!o.val()) return;
+                tr.find('.l-type').val(o.data('type')); tr.find('.l-rate').val(o.data('rate')); if (!tr.find('.l-desc').val()) tr.find('.l-desc').val(o.text()); if (o.data('crew')) tr.find('.l-crew').val(o.data('crew'));
+                recalc();
+            });
+            $('#lineTable').on('change', '.l-prem', function () {
+                var tr = $(this).closest('tr'), o = tr.find('.l-entry option:selected'); if (!o.val()) return;
+                var rate = parseFloat(o.data('rate')) || 0;
+                $(this).find('option:selected').each(function () { var p = premiums.filter(function (x) { return x.id === $(this).val(); }.bind(this))[0]; if (p) rate += p.deploymentAdder; });
+                tr.find('.l-rate').val(rate.toFixed(4)); recalc();
+            });
+            $('#lineTable, #discountPercent').on('input change', 'input', recalc); $('#discountPercent').on('input', recalc);
+            $('#bidForm').on('submit', function () {
+                var rows = [];
+                $('#lineTable tbody tr').each(function () {
+                    rows.push({ id: $(this).data('id') || null, entryId: $(this).find('.l-entry').val() || null, lineType: parseInt($(this).find('.l-type').val(), 10), description: $(this).find('.l-desc').val(), crewSize: num($(this).find('.l-crew')), quantity: num($(this).find('.l-qty')) || 1, hoursPerDay: num($(this).find('.l-hours')), days: num($(this).find('.l-days')), unitRate: num($(this).find('.l-rate')) || 0, premiumIds: $(this).find('.l-prem').val() || [], taxable: $(this).find('.l-tax').is(':checked') });
+                });
+                $('#linesJson').val(JSON.stringify(rows));
+            });
+            recalc();
+        })();
+    </script>
+}

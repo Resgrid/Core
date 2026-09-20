@@ -514,6 +514,26 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(15),
 					stoppingToken);
 
+				// Workers 31–33 (Identifier Allocation Registry, Workforce & Business Operations plan C7): contractor path sweeps.
+				// Daily ticks; each pass is a single indexed query when no department holds the Business Ops add-on.
+				_logger.Log(LogLevel.Information, "Scheduling Bid Expiration");
+				await Client.ScheduleAsync("Bid Expiration",
+					new Commands.BidExpirationCommand(31),
+					Cron.Daily(4, 0),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Deployment Finance Reminder");
+				await Client.ScheduleAsync("Deployment Finance Reminder",
+					new Commands.DeploymentFinanceReminderCommand(32),
+					Cron.Daily(4, 15),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Compliance Expiry");
+				await Client.ScheduleAsync("Compliance Expiry",
+					new Commands.ComplianceExpiryCommand(33),
+					Cron.Daily(4, 30),
+					stoppingToken);
+
 				// Worker ID 34 (Identifier Allocation Registry, Workforce & Business Operations plan D5): certification expiry
 				// sweep. Hourly tick; each department runs once per local day at CertificationConfig.SweepLocalHour.
 				_logger.Log(LogLevel.Information, "Scheduling Certification Expiry");

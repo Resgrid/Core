@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Deployments.DeploymentDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorStrings
 @{
     var d = Model.Deployment;
     ViewBag.Title = "Resgrid | " + d.Name;
@@ -12,6 +13,15 @@
     string Local(DateTime? value) => value.HasValue ? (Model.Department == null ? value.Value.ToString("yyyy-MM-dd HH:mm") : Resgrid.Model.Helpers.TimeConverterHelper.TimeConverter(value.Value, Model.Department).ToString("yyyy-MM-dd HH:mm")) : "—";
     string UserName(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : Model.UserNames.TryGetValue(userId, out var n) ? n : userId;
     string UnitName(string deploymentUnitId) { var u = d.Units.FirstOrDefault(x => x.DeploymentUnitId == deploymentUnitId); return u == null ? "" : (u.UnitName ?? u.UnitId.ToString()); }
+    // ADP reveal (plan 7.2): catalog 28 values render REDACTED; the step-up modal and the Reveal action fill the marked spans.
+    var adpProtected = d.IsProtected;
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = localizer["AdpProtectedDeployment"],
+        RevealController = "Deployments",
+        RevealAction = "Reveal",
+        RevealData = new Dictionary<string, string> { { "kind", "deployment" }, { "id", d.DeploymentId } }
+    };
     var next = new List<Resgrid.Model.Invoicing.DeploymentStatuses>();
     foreach (Resgrid.Model.Invoicing.DeploymentStatuses candidate in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentStatuses)))
     {
@@ -26,6 +36,10 @@
     @foreach (var warning in Model.Warnings)
     {
         <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["Warning" + warning.Code] @(string.IsNullOrWhiteSpace(warning.Detail) ? "" : "— " + warning.Detail)</div>
+    }
+    @if (adpProtected)
+    {
+        <partial name="_AdpRevealBanner" model="adpReveal" />
     }
     <div class="row">
         <div class="col-md-8">
@@ -66,7 +80,7 @@
                         }
                         <dt>@localizer["Jurisdiction"]</dt><dd>@(d.HomeCountry ?? "—")@(string.IsNullOrWhiteSpace(d.HomeSubdivision) ? "" : "-" + d.HomeSubdivision) → @(d.HostCountry ?? "—")@(string.IsNullOrWhiteSpace(d.HostSubdivision) ? "" : "-" + d.HostSubdivision) @(d.OutOfProvince ? "· " + localizer["OutOfProvince"] : "") @(d.TravelViaAir ? "· " + localizer["TravelViaAir"] : "")</dd>
                         <dt>@localizer["Currency"]</dt><dd>@(d.Currency ?? "—") · @(d.LocalTimeZoneId ?? Model.Department?.TimeZone)</dd>
-                        @if (!string.IsNullOrWhiteSpace(d.Notes)) { <dt>@localizer["Notes"]</dt><dd>@d.Notes</dd> }
+                        @if (!string.IsNullOrWhiteSpace(d.Notes)) { <dt>@localizer["Notes"]</dt><dd><span data-adp-field="deployments.notes">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(d.Notes)</span></dd> }
                     </dl>
                 </div>
             </div>
@@ -108,6 +122,10 @@
                 <li class="@(Model.Tab == "time" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="time"><i class="fa fa-clock-o"></i> @localizer["TimeReports"]</a></li>
                 <li class="@(Model.Tab == "expenses" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="expenses"><i class="fa fa-money"></i> @localizer["Expenses"]</a></li>
                 <li class="@(Model.Tab == "files" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="files"><i class="fa fa-paperclip"></i> @localizer["Files"]</a></li>
+                @if (Model.ContractorBilling)
+                {
+                    <li class="@(Model.Tab == "billing" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="billing"><i class="fa fa-usd"></i> @contractorStrings["Billing"]</a></li>
+                }
             </ul>
 
             @if (Model.Tab == "roster")
@@ -261,7 +279,7 @@
                             @foreach (var e in Model.Expenses)
                             {
                                 <tr>
-                                    <td>@e.ExpenseDate.ToString("yyyy-MM-dd")</td><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(e.Description) @(e.PreApproved ? "· " + localizer["PreApproved"] : "") @(e.Billable ? "" : "· " + localizer["NotBillable"])</td><td>@e.City</td>
+                                    <td>@e.ExpenseDate.ToString("yyyy-MM-dd")</td><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td><span>@e.Description</span> @(e.PreApproved ? "· " + localizer["PreApproved"] : "") @(e.Billable ? "" : "· " + localizer["NotBillable"])</td><td>@e.City</td>
                                     <td class="text-right">@e.Amount.ToString("N2") @e.Currency</td>
                                     <td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td>
                                     <td>@if (!string.IsNullOrWhiteSpace(e.DeploymentTimeReportId)) { var r = Model.TimeReports.FirstOrDefault(x => x.DeploymentTimeReportId == e.DeploymentTimeReportId); <a asp-action="TimeReport" asp-route-id="@e.DeploymentTimeReportId">#@(r?.ReportNumber)</a> }</td>
@@ -278,6 +296,77 @@
                     @await Html.PartialAsync("_ExpenseForm", (d.DeploymentId, (string)null, d.Currency))
                 }
             }
+            else if (Model.Tab == "billing" && Model.ContractorBilling)
+            {
+                @* Contractor billing (C-M2): charge run preview, contract compliance checklist, generate invoice, linked invoices. *@
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>@contractorStrings["ChargePreview"]</h4>
+                        @if (Model.Charges == null)
+                        {
+                            <p class="text-muted">@contractorStrings["ChargesUnavailable"]</p>
+                        }
+                        else
+                        {
+                            foreach (var warning in Model.Charges.Warnings)
+                            {
+                                <div class="alert alert-warning alert-sm"><i class="fa fa-exclamation-triangle"></i> @contractorStrings["ChargeWarning" + warning.Code] <small class="text-muted">@warning.Message</small></div>
+                            }
+                            if (!Model.Charges.HasCharges)
+                            {
+                                <p class="text-muted">@contractorStrings["NoCharges"]</p>
+                            }
+                            else
+                            {
+                                <table class="table table-condensed table-striped">
+                                    <thead><tr><th>@contractorStrings["Date"]</th><th>@contractorStrings["Description"]</th><th class="text-right">@contractorStrings["Quantity"]</th><th class="text-right">@contractorStrings["Rate"]</th><th class="text-right">@contractorStrings["Amount"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var line in Model.Charges.Lines)
+                                        {
+                                            <tr><td>@line.Date.ToString("yyyy-MM-dd")</td><td>@line.Description</td><td class="text-right">@line.Quantity.ToString("0.##")</td><td class="text-right">@line.UnitRate.ToString("N4")</td><td class="text-right">@line.Amount.ToString("N2")</td></tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr><td colspan="4" class="text-right">@contractorStrings["Subtotal"]</td><td class="text-right">@Model.Charges.SubTotal.ToString("N2") @Model.Charges.Currency</td></tr>
+                                        @if (Model.Charges.DiscountAmount > 0) { <tr><td colspan="4" class="text-right">@contractorStrings["Discount"] (@Model.Charges.DiscountPercent?.ToString("0.##")%)</td><td class="text-right">-@Model.Charges.DiscountAmount.ToString("N2") @Model.Charges.Currency</td></tr> }
+                                        <tr class="font-bold"><td colspan="4" class="text-right">@contractorStrings["TotalBeforeTax"]</td><td class="text-right">@Model.Charges.TotalBeforeTax.ToString("N2") @Model.Charges.Currency</td></tr>
+                                    </tfoot>
+                                </table>
+                                <form method="post" asp-action="GenerateInvoice" asp-route-id="@d.DeploymentId" class="form-inline" onsubmit="return confirm('@contractorStrings["ConfirmGenerateInvoice"]');">
+                                    @Html.AntiForgeryToken()
+                                    <label>@contractorStrings["ThroughDate"]</label> <input type="date" name="throughDate" class="form-control input-sm" />
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-file-text-o"></i> @contractorStrings["GenerateInvoice"]</button>
+                                    <span class="help-block">@contractorStrings["GenerateInvoiceHelp"]</span>
+                                </form>
+                            }
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <h4>@contractorStrings["ComplianceChecklist"]</h4>
+                        @if (Model.Compliance == null || Model.Compliance.Items.Count == 0)
+                        {
+                            <p class="text-muted">@contractorStrings["NoRequirements"]</p>
+                        }
+                        else
+                        {
+                            <ul class="list-unstyled">
+                                @foreach (var item in Model.Compliance.Items)
+                                {
+                                    <li>@if (item.Satisfied) { <i class="fa fa-check text-navy"></i> } else { <i class="fa fa-times text-danger"></i> } @item.Name <small class="text-muted">· @contractorStrings["Stage" + (Resgrid.Model.Invoicing.DocumentRequirementStages)item.Stage]@(item.IsMandatory ? "" : " · " + contractorStrings["Optional"].Value)</small></li>
+                                }
+                            </ul>
+                        }
+                        <h4>@contractorStrings["Invoices"]</h4>
+                        @if (Model.Invoices.Count == 0) { <p class="text-muted">@contractorStrings["NoInvoices"]</p> }
+                        else
+                        {
+                            <ul class="list-unstyled">
+                                @foreach (var invoice in Model.Invoices) { <li><a asp-controller="Invoicing" asp-action="View" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a> · @invoice.Total.ToString("N2") @invoice.Currency</li> }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            }
             else
             {
                 @if (Model.Attachments.Count == 0) { <p class="text-muted">@localizer["NoFiles"]</p> }
@@ -289,7 +378,7 @@
                             @foreach (var a in Model.Attachments)
                             {
                                 <tr>
-                                    <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(a.Name) @if (a.IsProtected) { <i class="fa fa-lock text-muted"></i> }</td><td>@localizer["Attachment" + (Resgrid.Model.Invoicing.DeploymentAttachmentTypes)a.AttachmentType]</td><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(a.FileName)</td><td>@((a.FileSize ?? 0) / 1024) KB</td><td>@Local(a.AddedOn) · @UserName(a.AddedByUserId)</td>
+                                    <td><span>@a.Name</span></td><td>@localizer["Attachment" + (Resgrid.Model.Invoicing.DeploymentAttachmentTypes)a.AttachmentType]</td><td><span>@a.FileName</span></td><td>@((a.FileSize ?? 0) / 1024) KB</td><td>@Local(a.AddedOn) · @UserName(a.AddedByUserId)</td>
                                     <td class="text-right"><a asp-action="GetAttachment" asp-route-id="@a.DeploymentAttachmentId" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-download"></i></a> @if (Model.CanManage) { <form method="post" asp-action="DeleteAttachment" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentAttachmentId" value="@a.DeploymentAttachmentId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-trash"></i></button></form> }</td>
                                 </tr>
                             }
@@ -326,6 +415,10 @@
 </div>
 
 @section Scripts {
+    @if (adpProtected)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <script>
         (function () {
             var unit = document.getElementById('seatUnit'), role = document.getElementById('seatRole');

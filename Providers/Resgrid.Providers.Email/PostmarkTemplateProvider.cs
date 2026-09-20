@@ -658,10 +658,13 @@ namespace Resgrid.Providers.EmailProvider
 		}
 
 		public async Task<bool> SendInvoiceMail(string email, string subject, string messageBody, string sentOn,
-			string invoiceLabel, string attachmentFilename, byte[] attachmentData, string invoiceUrl, string payUrl, DepartmentEmailBranding branding)
+			string invoiceLabel, string attachmentFilename, byte[] attachmentData, string invoiceUrl, string payUrl, DepartmentEmailBranding branding,
+			string attachmentContentType = "application/pdf")
 		{
 			if (attachmentData == null || String.IsNullOrWhiteSpace(email))
 				return false;
+			if (String.IsNullOrWhiteSpace(attachmentContentType)) attachmentContentType = "application/pdf";
+			var attachmentTypeLabel = attachmentContentType.Equals("application/zip", StringComparison.OrdinalIgnoreCase) ? "ZIP" : attachmentContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase) ? "PDF" : "file";
 
 			var templateModel = new Dictionary<string, object>
 			{
@@ -670,7 +673,7 @@ namespace Resgrid.Providers.EmailProvider
 				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
 				{ "attachment_name", attachmentFilename },
 				{ "attachment_size", StringHelpers.GetSizeInMemory(attachmentData.LongLength) },
-				{ "attachment_type", "PDF" },
+				{ "attachment_type", attachmentTypeLabel },
 				{ "invoice_links", String.IsNullOrWhiteSpace(invoiceUrl) ? Array.Empty<Dictionary<string, object>>() : new[] { new Dictionary<string, object> { { "url", invoiceUrl } } } },
 				{ "pay_links", String.IsNullOrWhiteSpace(payUrl) ? Array.Empty<Dictionary<string, object>>() : new[] { new Dictionary<string, object> { { "url", payUrl } } } },
 				{ "timestamp", sentOn }
@@ -689,7 +692,7 @@ namespace Resgrid.Providers.EmailProvider
 				newEmail.To.Add(email);
 				newEmail.AttachmentName = attachmentFilename;
 				newEmail.AttachmentData = attachmentData;
-				newEmail.AttachmentContentType = "application/pdf";
+				newEmail.AttachmentContentType = attachmentContentType;
 				newEmail.From = DONOTREPLY_EMAIL;
 				newEmail.Subject = subject;
 

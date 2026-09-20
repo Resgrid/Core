@@ -279,6 +279,31 @@ ChecklistReminderSettingsUpdated,
 		TimeReportVoided,
 		DeploymentExpenseAdded,
 		DeploymentExpenseUpdated,
-		DeploymentExpenseRemoved
+		DeploymentExpenseRemoved,
+
+		// Workforce & Business Operations plan Phase C-M2 (contractor path). Append-only.
+		RateScheduleCreated,
+		RateScheduleUpdated,
+		RateScheduleDeleted,
+		RateScheduleEntryChanged,
+		RatePremiumChanged,
+		ServiceContractCreated,
+		ServiceContractUpdated,
+		ServiceContractStatusChanged,
+		ServiceContractDeleted,
+		ComplianceDocumentAdded,
+		ComplianceDocumentUpdated,
+		ComplianceDocumentRemoved,
+		BidCreated,
+		BidUpdated,
+		BidSent,
+		BidAccepted,
+		BidDeclined,
+		BidWithdrawn,
+		BidExpired,
+		BidConverted,
+		BidDeleted,
+		TimeReportBilled,
+		DeploymentInvoiceGenerated
 	}
 }

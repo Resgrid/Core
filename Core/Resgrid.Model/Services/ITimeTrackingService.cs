@@ -15,6 +15,8 @@ namespace Resgrid.Model.Services
 	public interface ITimeTrackingService
 	{
 		Task<List<DeploymentTimeReport>> GetTimeReportsAsync(string deploymentId, int departmentId);
+		/// <summary>Personnel hours across the deployment's non-void reports, read in one pass for the deployment page.</summary>
+		Task<decimal> GetPersonnelHoursAsync(string deploymentId, int departmentId);
 		Task<DeploymentTimeReport> GetTimeReportByIdAsync(string deploymentTimeReportId, int departmentId);
 		Task<List<DeploymentTimeReport>> GetUnbilledApprovedReportsAsync(int departmentId, string deploymentId = null);
 
@@ -29,6 +31,8 @@ namespace Resgrid.Model.Services
 		Task<TimeReportSaveResult> SubmitTimeReportAsync(string deploymentTimeReportId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<DeploymentTimeReport> ApproveTimeReportAsync(string deploymentTimeReportId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<DeploymentTimeReport> VoidTimeReportAsync(string deploymentTimeReportId, int departmentId, string reason, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Approved → Billed for the reports an invoice now covers (contractor billing, plan C4). Reports already billed or not Approved are skipped.</summary>
+		Task<int> MarkTimeReportsBilledAsync(IEnumerable<string> deploymentTimeReportIds, int departmentId, string invoiceId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Contractor signature (the acting user) and/or the customer signer's typed name.</summary>
 		Task<DeploymentTimeReport> SignTimeReportAsync(string deploymentTimeReportId, int departmentId, bool contractorSigned, string customerSignerName, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 

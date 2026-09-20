@@ -10,6 +10,14 @@
     var canEdit = Model.IsSelf || Model.CanManage;
     var required = t?.RenewalCreditHoursRequired;
     var pct = required.HasValue && required.Value > 0 ? (int)Math.Min(100, Math.Round(Model.CreditHours / required.Value * 100)) : (int?)null;
+    // ADP reveal (plan 7.2): catalog 6/27/28 values render REDACTED; the step-up modal and the Reveal action fill the marked spans.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedCertifications"],
+        RevealController = "Certifications",
+        RevealAction = "Reveal",
+        RevealData = new Dictionary<string, string> { { "kind", "record" }, { "id", r.PersonnelCertificationId.ToString() } }
+    };
 }
 
 @await Html.PartialAsync("_Shell")
@@ -20,27 +28,27 @@
         <div class="col-md-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Name)</h5>
+                    <h5><span data-adp-field="personnelcertifications.name">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Name)</span></h5>
                     <div class="ibox-tools">
                         @await Html.PartialAsync("_StatusBadge", r.Status)
                     </div>
                 </div>
                 <div class="ibox-content">
-                    @if (r.IsProtected)
+                    @if (r.IsProtected || Model.Credits.Any(c => c.IsProtected))
                     {
-                        <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["ProtectedNotice"]</div>
+                        <partial name="_AdpRevealBanner" model="adpReveal" />
                     }
                     <dl class="dl-horizontal">
                         <dt>@localizer["Member"]</dt><dd><a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@r.UserId">@Model.HolderName</a></dd>
                         <dt>@localizer["TypeName"]</dt><dd>@(t != null ? $"{t.Type} ({t.Code})" : Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Type) ?? "—") @if (t == null) { <span class="label label-default">@localizer["Untyped"]</span> }</dd>
-                        <dt>@localizer["Number"]</dt><dd>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</dd>
-                        <dt>@localizer["IssuedBy"]</dt><dd>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</dd>
+                        <dt>@localizer["Number"]</dt><dd><span data-adp-field="personnelcertifications.number">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</span></dd>
+                        <dt>@localizer["IssuedBy"]</dt><dd><span data-adp-field="personnelcertifications.issuedby">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</span></dd>
                         <dt>@localizer["ReceivedOn"]</dt><dd>@r.RecievedOn?.ToString("yyyy-MM-dd")</dd>
                         <dt>@localizer["ExpiresOn"]</dt><dd>@(t?.NeverExpires == true ? localizer["NeverExpires"].Value : r.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")
                             @if (Model.DaysUntilExpiry.HasValue) { <small class="@(Model.DaysUntilExpiry < 0 ? "text-danger" : Model.DaysUntilExpiry <= 60 ? "text-warning" : "text-muted")">(@string.Format(localizer[Model.DaysUntilExpiry < 0 ? "DaysAgo" : "DaysLeft"].Value, Math.Abs(Model.DaysUntilExpiry.Value)))</small> }</dd>
-                        @if (!string.IsNullOrWhiteSpace(r.StatusReason) && r.StatusReason != "expired")
+                        @if (!string.IsNullOrWhiteSpace(r.StatusReason) && r.Status != (int)Resgrid.Model.PersonnelCertificationStatuses.Expired)
                         {
-                            <dt>@localizer["Reason"]</dt><dd>@r.StatusReason</dd>
+                            <dt>@localizer["Reason"]</dt><dd><span data-adp-field="personnelcertifications.statusreason">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.StatusReason)</span></dd>
                         }
                         @if (r.VerifiedOn.HasValue)
                         {
@@ -114,7 +122,7 @@
                                         <td>@c.CreditDate.ToString("yyyy-MM-dd")</td>
                                         <td class="text-right">@c.Hours.ToString("0.##")</td>
                                         <td>@c.Category</td>
-                                        <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Description) @if (!string.IsNullOrWhiteSpace(c.FileName)) { <a asp-controller="Certifications" asp-action="CreditFile" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId"><i class="fa fa-paperclip"></i></a> }</td>
+                                        <td><span data-adp-field="personnelcertificationcredits.description:@c.PersonnelCertificationCreditId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Description)</span> @if (!string.IsNullOrWhiteSpace(c.FileName)) { <a asp-controller="Certifications" asp-action="CreditFile" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId"><i class="fa fa-paperclip"></i></a> }</td>
                                         <td class="text-right">
                                             @if (Model.CanManage)
                                             {
@@ -193,6 +201,10 @@
 }
 
 @section Scripts {
+    @if (r.IsProtected || Model.Credits.Any(c => c.IsProtected))
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <script>
         $(function () {
             $('#statusModal').on('show.bs.modal', function (e) {

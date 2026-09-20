@@ -14,7 +14,13 @@ namespace Resgrid.Model.Certifications
 			(int)WorkflowTriggerEventType.CertificationRoleRemoved,
 			(int)WorkflowTriggerEventType.CertificationStatusChanged,
 			(int)WorkflowTriggerEventType.UnitCertificationExpiring,
-			(int)WorkflowTriggerEventType.UnitCertificationExpired
+			(int)WorkflowTriggerEventType.UnitCertificationExpired,
+			// Lifecycle completion (registry 180-184, 2026-09-19).
+			(int)WorkflowTriggerEventType.UnitCertificationAdded,
+			(int)WorkflowTriggerEventType.UnitCertificationStatusChanged,
+			(int)WorkflowTriggerEventType.UnitCertificationRemoved,
+			(int)WorkflowTriggerEventType.CertificationRemoved,
+			(int)WorkflowTriggerEventType.CertificationCreditAdded
 		};
 
 		public static bool IsCertification(int trigger) => Triggers.Contains(trigger);

@@ -46,7 +46,8 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>Customer invoice with the PDF attached (Workforce &amp; Business Operations plan, Phase B). payUrl is null until online payments are enabled (Phase B2).</summary>
 		Task<bool> SendInvoiceMail(string email, string subject, string messageBody, string sentOn,
-			string invoiceLabel, string attachmentFilename, byte[] attachmentData, string invoiceUrl, string payUrl, DepartmentEmailBranding branding);
+			string invoiceLabel, string attachmentFilename, byte[] attachmentData, string invoiceUrl, string payUrl, DepartmentEmailBranding branding,
+			string attachmentContentType = "application/pdf");
 
 		Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content);
 

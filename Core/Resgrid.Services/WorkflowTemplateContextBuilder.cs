@@ -327,8 +327,66 @@ namespace Resgrid.Services
 						var c = (ScriptObject)scriptObject["certification"];
 						c["old_status"] = evt.OldStatus;
 						c["new_status"] = evt.NewStatus;
-						c["reason"] = evt.Reason ?? string.Empty;
+						c["reason"] = ProtectedDataEnvelope.SafeDisplay(evt.Reason) ?? string.Empty;
 						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationRemoved:
+				{
+					var evt = TryDeserialize<CertificationRemovedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapCertificationVariables(scriptObject, evt.Certification, DaysUntil(evt.Certification.ExpiresOn), evt.TypeCode, evt.TypeName);
+						((ScriptObject)scriptObject["certification"])["removed_by_user_id"] = evt.RemovedByUserId ?? string.Empty;
+						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CertificationCreditAdded:
+				{
+					var evt = TryDeserialize<CertificationCreditAddedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapCertificationVariables(scriptObject, evt.Certification, DaysUntil(evt.Certification.ExpiresOn), evt.TypeCode, evt.TypeName);
+						var credit = new ScriptObject();
+						credit["id"] = evt.PersonnelCertificationCreditId;
+						credit["date"] = evt.CreditDate;
+						credit["hours"] = evt.Hours;
+						credit["category"] = evt.Category;
+						credit["added_by_user_id"] = evt.AddedByUserId ?? string.Empty;
+						scriptObject["credit"] = credit;
+						triggeringUserId = evt.Certification.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.UnitCertificationAdded:
+				{
+					var evt = TryDeserialize<UnitCertificationAddedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+						MapUnitCertificationVariables(scriptObject, evt.Certification, evt.UnitName, evt.TypeCode, evt.TypeName, DaysUntil(evt.Certification.ExpiresOn));
+					break;
+				}
+				case WorkflowTriggerEventType.UnitCertificationStatusChanged:
+				{
+					var evt = TryDeserialize<UnitCertificationStatusChangedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapUnitCertificationVariables(scriptObject, evt.Certification, evt.UnitName, evt.TypeCode, evt.TypeName, DaysUntil(evt.Certification.ExpiresOn));
+						var u = (ScriptObject)scriptObject["unit_certification"];
+						u["old_status"] = evt.OldStatus;
+						u["new_status"] = evt.NewStatus;
+						u["reason"] = ProtectedDataEnvelope.SafeDisplay(evt.Reason) ?? string.Empty;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.UnitCertificationRemoved:
+				{
+					var evt = TryDeserialize<UnitCertificationRemovedEvent>(eventPayloadJson);
+					if (evt?.Certification != null)
+					{
+						MapUnitCertificationVariables(scriptObject, evt.Certification, evt.UnitName, evt.TypeCode, evt.TypeName, DaysUntil(evt.Certification.ExpiresOn));
+						((ScriptObject)scriptObject["unit_certification"])["removed_by_user_id"] = evt.RemovedByUserId ?? string.Empty;
 					}
 					break;
 				}
@@ -519,6 +577,9 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.DeploymentExpenseAdded:
 				case WorkflowTriggerEventType.TimeReportSubmitted:
 				case WorkflowTriggerEventType.TimeReportApproved:
+				case WorkflowTriggerEventType.TimeReportCreated:
+				case WorkflowTriggerEventType.TimeReportVoided:
+				case WorkflowTriggerEventType.DeploymentAttachmentAdded:
 				{
 					var deploymentEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
 					var deploymentPayload = deploymentEvent?.Payload ?? new JObject(); var deployment = new ScriptObject();
@@ -528,6 +589,31 @@ namespace Resgrid.Services
 						? string.Empty
 						: $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Deployments/View/{deploymentId}";
 					scriptObject["deployment"] = deployment;
+					break;
+				}
+				case WorkflowTriggerEventType.BidCreated:
+				case WorkflowTriggerEventType.BidSent:
+				case WorkflowTriggerEventType.BidAccepted:
+				case WorkflowTriggerEventType.BidDeclined:
+				case WorkflowTriggerEventType.BidExpired:
+				{
+					var bidEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var bidPayload = bidEvent?.Payload ?? new JObject(); var bid = new ScriptObject();
+					foreach (var pair in Resgrid.Model.Invoicing.ContractorWorkflowPayload.BidVariables) bid[pair.Variable] = ToScriptValue(bidPayload[pair.Property]);
+					var bidId = bidPayload["BidId"]?.Type == JTokenType.String ? bidPayload["BidId"].Value<string>() : null;
+					bid["url"] = string.IsNullOrWhiteSpace(bidId) ? string.Empty : $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Bids/View/{bidId}";
+					scriptObject["bid"] = bid;
+					break;
+				}
+				case WorkflowTriggerEventType.ContractStatusChanged:
+				case WorkflowTriggerEventType.ContractExpiring:
+				{
+					var contractEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var contractPayload = contractEvent?.Payload ?? new JObject(); var contract = new ScriptObject();
+					foreach (var pair in Resgrid.Model.Invoicing.ContractorWorkflowPayload.ContractVariables) contract[pair.Variable] = ToScriptValue(contractPayload[pair.Property]);
+					var contractId = contractPayload["ServiceContractId"]?.Type == JTokenType.String ? contractPayload["ServiceContractId"].Value<string>() : null;
+					contract["url"] = string.IsNullOrWhiteSpace(contractId) ? string.Empty : $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Contracts/View/{contractId}";
+					scriptObject["contract"] = contract;
 					break;
 				}
 				case WorkflowTriggerEventType.WorkOrderCreated:

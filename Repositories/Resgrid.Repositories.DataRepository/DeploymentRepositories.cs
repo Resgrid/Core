@@ -110,6 +110,11 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT * FROM {Tbl("DeploymentTimeReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {Col("Status")} = {P}Approved AND {Col("InvoiceId")} IS NULL" +
 				(deploymentId != null ? $" AND {Col("DeploymentId")} = {P}DeploymentId" : string.Empty) + $" ORDER BY {Col("DeploymentId")}, {Col("ReportDate")}",
 				new { DepartmentId = departmentId, Approved = (int)DeploymentTimeReportStatuses.Approved, DeploymentId = deploymentId ?? string.Empty });
+
+		public Task<IEnumerable<DeploymentTimeReport>> GetUnbilledApprovedBeforeAsync(DateTime approvedBeforeUtc) =>
+			QueryAsync<DeploymentTimeReport>(
+				$"SELECT * FROM {Tbl("DeploymentTimeReports")} WHERE {Col("IsDeleted")} = {False} AND {Col("Status")} = {P}Approved AND {Col("InvoiceId")} IS NULL AND {Col("ApprovedOn")} IS NOT NULL AND {Col("ApprovedOn")} <= {P}Before ORDER BY {Col("DepartmentId")}, {Col("DeploymentId")}, {Col("ReportDate")}",
+				new { Approved = (int)DeploymentTimeReportStatuses.Approved, Before = DatabaseTimestamp(approvedBeforeUtc) });
 	}
 
 	public class DeploymentTimeEntryRepository : RmsRepositoryBase<DeploymentTimeEntry>, IDeploymentTimeEntryRepository
@@ -151,8 +156,15 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<DeploymentAttachment>> GetByDeploymentAsync(string deploymentId) =>
 			QueryAsync<DeploymentAttachment>($"SELECT {Cols(Meta)} FROM {Tbl("DeploymentAttachments")} WHERE {Col("DeploymentId")} = {P}Id AND {Col("IsDeleted")} = {(IsPostgres ? "FALSE" : "0")} ORDER BY {Col("AddedOn")} DESC", new { Id = deploymentId });
 
+		public Task<DeploymentAttachment> GetMetadataByIdAsync(int deploymentAttachmentId) =>
+			QueryFirstOrDefaultAsync<DeploymentAttachment>($"SELECT {Cols(Meta)} FROM {Tbl("DeploymentAttachments")} WHERE {Col("DeploymentAttachmentId")} = {P}Id", new { Id = deploymentAttachmentId });
+
 		public Task<DeploymentAttachment> GetByIdWithDataAsync(int deploymentAttachmentId) =>
 			QueryFirstOrDefaultAsync<DeploymentAttachment>($"SELECT * FROM {Tbl("DeploymentAttachments")} WHERE {Col("DeploymentAttachmentId")} = {P}Id", new { Id = deploymentAttachmentId });
+
+		public Task<int> MarkDeletedAsync(int deploymentAttachmentId, int departmentId, CancellationToken cancellationToken = default) =>
+			ExecuteAsync($"UPDATE {Tbl("DeploymentAttachments")} SET {Col("IsDeleted")} = {(IsPostgres ? "TRUE" : "1")} WHERE {Col("DeploymentAttachmentId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {(IsPostgres ? "FALSE" : "0")}",
+				new { Id = deploymentAttachmentId, DepartmentId = departmentId }, cancellationToken);
 	}
 
 	public class TimeReportNumberSequenceRepository : RmsRepositoryBase<TimeReportNumberSequence>, ITimeReportNumberSequenceRepository

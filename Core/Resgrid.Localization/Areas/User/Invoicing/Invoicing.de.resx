@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>Die Online-Zahlungsannahme ist auf diesem Server deaktiviert.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Laut Stripe hat Resgrid keinen Zugriff mehr auf dieses Konto. Verbinden Sie es erneut, um fortzufahren.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Geschützte Daten dieses Datensatzes konnten nicht gesichert werden; die Änderung wurde nicht gespeichert.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Geschützte Rechnung</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Geschützte Rechnungsidentität</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Aus diesem Tagesbericht abgerechnet</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Mit Paket senden</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Hängt Rechnungs-PDF, Tagesbericht-PDFs, Belege und die vom Vertrag geforderten Compliance-Dokumente als ein ZIP an.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Paket herunterladen</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Einsatz öffnen</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Standard-Tarifplan</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Auftragnehmer-Abrechnung: gilt für Angebote und Einsätze dieses Kunden, wenn kein Vertrag einen Plan nennt.</value></data>
 </root>

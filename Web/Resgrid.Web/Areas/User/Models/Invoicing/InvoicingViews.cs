@@ -70,6 +70,8 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public Invoice Invoice { get; set; }
 		public CustomerBillingProfile Profile { get; set; }
 		public string RenderedHtml { get; set; }
+		/// <summary>Contractor billing (C-M2): the packet download / send-with-packet actions are offered for deployment-generated invoices.</summary>
+		public bool ContractorPacket { get; set; }
 		public string Message { get; set; }
 		/// <summary>Phase B2: null when the cluster does not offer payment collection at all (the section is absent).</summary>
 		public OnlinePaymentsStatus OnlinePayments { get; set; }
@@ -173,6 +175,9 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public List<RateCard> RateCards { get; set; } = new List<RateCard>();
 		public List<Invoice> Invoices { get; set; } = new List<Invoice>();
 		public bool IsProtectedContact { get; set; }
+		/// <summary>Contractor billing (C-M2): the profile's default rate schedule is offered when the department holds the entitlement.</summary>
+		public List<RateSchedule> RateSchedules { get; set; } = new List<RateSchedule>();
+		public bool ContractorBilling { get; set; }
 		public bool SaveSuccess { get; set; }
 		public string Message { get; set; }
 	}
@@ -195,6 +200,7 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public decimal?[] TaxPercent { get; set; } = new decimal?[0];
 		public string[] TaxRegistration { get; set; } = new string[0];
 		public string DefaultRateCardId { get; set; }
+		public string DefaultRateScheduleId { get; set; }
 		public decimal? DefaultDiscountPercent { get; set; }
 		public bool PurchaseOrderRequired { get; set; }
 		public string Notes { get; set; }

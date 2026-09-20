@@ -16,6 +16,11 @@ namespace Resgrid.Providers.Migrations.Migrations
 				Alter.Table("Invoices").AddColumn("DeploymentId").AsString(36).Nullable();
 			if (!Schema.Table("InvoiceLineItems").Column("DeploymentTimeReportId").Exists())
 				Alter.Table("InvoiceLineItems").AddColumn("DeploymentTimeReportId").AsString(36).Nullable();
+			// ADP catalog 28 marker for the department billing identity (tax registrations, SAM/CAGE, workers' comp account).
+			if (!Schema.Table("DepartmentBillingIdentities").Column("IsProtected").Exists())
+				Alter.Table("DepartmentBillingIdentities").AddColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false);
+			if (!Schema.Table("DepartmentBillingIdentities").Column("ProtectedCatalogVersion").Exists())
+				Alter.Table("DepartmentBillingIdentities").AddColumn("ProtectedCatalogVersion").AsInt32().Nullable();
 				Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Invoices_Deployment' AND object_id = OBJECT_ID('Invoices')) CREATE INDEX [IX_Invoices_Deployment] ON [Invoices] ([DeploymentId]) WHERE [DeploymentId] IS NOT NULL;");
 
 			if (!Schema.Table("CalOesMarsAgencyProfiles").Exists())
@@ -310,6 +315,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 			if (Schema.Table("CalOesMarsRateProfiles").Exists()) Delete.Table("CalOesMarsRateProfiles");
 			if (Schema.Table("CalOesMarsResourceProfiles").Exists()) Delete.Table("CalOesMarsResourceProfiles");
 			if (Schema.Table("CalOesMarsAgencyProfiles").Exists()) Delete.Table("CalOesMarsAgencyProfiles");
+			if (Schema.Table("DepartmentBillingIdentities").Column("ProtectedCatalogVersion").Exists()) Delete.Column("ProtectedCatalogVersion").FromTable("DepartmentBillingIdentities");
+			if (Schema.Table("DepartmentBillingIdentities").Column("IsProtected").Exists()) Delete.Column("IsProtected").FromTable("DepartmentBillingIdentities");
 			if (Schema.Table("InvoiceLineItems").Column("DeploymentTimeReportId").Exists()) Delete.Column("DeploymentTimeReportId").FromTable("InvoiceLineItems");
 			if (Schema.Table("Invoices").Column("DeploymentId").Exists()) Delete.Column("DeploymentId").FromTable("Invoices");
 			if (Schema.Table("Invoices").Column("ServiceContractId").Exists()) Delete.Column("ServiceContractId").FromTable("Invoices");

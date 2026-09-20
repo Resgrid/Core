@@ -258,4 +258,9 @@
   <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Insatsutlägg tillagt</value></data>
   <data name="TimeReportSubmitted" xml:space="preserve"><value>Tidrapport inskickad</value></data>
   <data name="TimeReportApproved" xml:space="preserve"><value>Tidrapport godkänd</value></data>
+  <data name="TimeReportCreated" xml:space="preserve"><value>Tidrapport skapad</value></data>
+  <data name="TimeReportVoided" xml:space="preserve"><value>Tidrapport makulerad</value></data>
+  <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Insatsfil tillagd</value></data>
+  <data name="AdpProtectedDeployment" xml:space="preserve"><value>Skyddad insats</value></data>
+  <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Skyddad tidrapport</value></data>
 </root>

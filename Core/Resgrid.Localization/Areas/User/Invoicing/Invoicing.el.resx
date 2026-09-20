@@ -356,4 +356,13 @@
   <data name="payments_disabled" xml:space="preserve"><value>Η διαδικτυακή είσπραξη είναι απενεργοποιημένη σε αυτόν τον διακομιστή.</value></data>
   <data name="payments_connection_revoked" xml:space="preserve"><value>Το Stripe αναφέρει ότι το Resgrid δεν έχει πλέον πρόσβαση σε αυτόν τον λογαριασμό. Συνδέστε τον ξανά για συνέχεια.</value></data>
   <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Τα προστατευμένα δεδομένα αυτής της εγγραφής δεν ήταν δυνατό να ασφαλιστούν, οπότε η αλλαγή δεν αποθηκεύτηκε.</value></data>
+  <data name="AdpProtectedInvoice" xml:space="preserve"><value>Προστατευμένο τιμολόγιο</value></data>
+  <data name="AdpProtectedBillingIdentity" xml:space="preserve"><value>Προστατευμένη ταυτότητα τιμολόγησης</value></data>
+  <data name="TimeReportProvenance" xml:space="preserve"><value>Τιμολογήθηκε από αυτή την ημερήσια αναφορά χρόνου</value></data>
+  <data name="SendWithPacket" xml:space="preserve"><value>Αποστολή με φάκελο</value></data>
+  <data name="SendWithPacketHelp" xml:space="preserve"><value>Επισυνάπτει το PDF τιμολογίου, τα PDF ημερήσιων αναφορών, τις αποδείξεις και τα έγγραφα συμμόρφωσης που απαιτεί η σύμβαση σε ένα zip.</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Λήψη φακέλου</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Άνοιγμα ανάπτυξης</value></data>
+  <data name="DefaultRateSchedule" xml:space="preserve"><value>Προεπιλεγμένος τιμοκατάλογος</value></data>
+  <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Χρέωση εργολάβου: χρησιμοποιείται για προσφορές και αναπτύξεις του πελάτη όταν καμία σύμβαση δεν ορίζει κατάλογο.</value></data>
 </root>

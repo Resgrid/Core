@@ -450,7 +450,7 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendInvoiceAsync(EmailNotification email, int departmentId, string invoiceUrl, string payUrl, string invoiceLabel)
+		public async Task<bool> SendInvoiceAsync(EmailNotification email, int departmentId, string invoiceUrl, string payUrl, string invoiceLabel, string attachmentContentType = "application/pdf")
 		{
 			if (email == null || string.IsNullOrWhiteSpace(email.To) || email.AttachmentData == null)
 				return false;
@@ -459,7 +459,7 @@ namespace Resgrid.Services
 
 			var branding = await GetEmailBrandingAsync(departmentId);
 			return await _emailProvider.SendInvoiceMail(email.To, email.Subject, email.Body ?? string.Empty, DateTime.UtcNow.ToString("G") + " UTC",
-				invoiceLabel, email.AttachmentName, email.AttachmentData, invoiceUrl, payUrl, branding);
+				invoiceLabel, email.AttachmentName, email.AttachmentData, invoiceUrl, payUrl, branding, attachmentContentType);
 		}
 
 		public async Task<bool> SendReportDeliveryAsync(EmailNotification email, int departmentId, string reportUrl, string reportName)

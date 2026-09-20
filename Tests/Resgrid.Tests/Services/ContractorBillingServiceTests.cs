@@ -91,7 +91,8 @@ namespace Resgrid.Tests.Services
 			var bids = Repo<IBidRepository, Bid>(_bids, b => b.BidId, (b, id) => b.BidId = id);
 			bids.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<string>(), DeptId)).ReturnsAsync((string id, int _) => _bids.FirstOrDefault(b => b.BidId == id));
 			bids.Setup(r => r.GetForDepartmentAsync(DeptId, It.IsAny<int?>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int _, int? status, int __, int ___) => _bids.Where(b => !b.IsDeleted && (!status.HasValue || b.Status == status)).ToList());
-			bids.Setup(r => r.GetByContactIdAsync(DeptId, It.IsAny<string>())).ReturnsAsync((int _, string contactId) => _bids.Where(b => b.ContactId == contactId && !b.IsDeleted).ToList());
+			bids.Setup(r => r.GetByContactIdAsync(DeptId, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int _, string contactId, int __, int ___) => _bids.Where(b => b.ContactId == contactId && !b.IsDeleted).ToList());
+			bids.Setup(r => r.GetByContractAsync(It.IsAny<string>())).ReturnsAsync((string contractId) => _bids.Where(b => b.ServiceContractId == contractId && !b.IsDeleted).ToList());
 			bids.Setup(r => r.GetExpiryCandidatesAsync(It.IsAny<DateTime>())).ReturnsAsync((DateTime asOf) => _bids.Where(b => b.Status == (int)BidStatuses.Submitted && b.ValidUntil < asOf).ToList());
 			var lines = Repo<IBidLineItemRepository, BidLineItem>(_lines, l => l.BidLineItemId, (l, id) => l.BidLineItemId = id);
 			lines.Setup(r => r.GetByBidAsync(It.IsAny<string>())).ReturnsAsync((string id) => _lines.Where(l => l.BidId == id).ToList());

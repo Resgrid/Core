@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="ActionQueue" xml:space="preserve"><value>File d'actions de l'incident</value></data>
+  <data name="Active" xml:space="preserve"><value>Actif</value></data>
+  <data name="ActualAmount" xml:space="preserve"><value>Montant réel</value></data>
+  <data name="ActualHours" xml:space="preserve"><value>Heures réelles (DTR)</value></data>
+  <data name="AddAgreement" xml:space="preserve"><value>Ajouter un accord</value></data>
+  <data name="AddInput" xml:space="preserve"><value>Ajouter une entrée</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Ajouter une ligne</value></data>
+  <data name="AddResource" xml:space="preserve"><value>Ajouter une ressource</value></data>
+  <data name="AddRotation" xml:space="preserve"><value>Ajouter une rotation</value></data>
+  <data name="Address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="AdminBlocker_double_count_unresolved" xml:space="preserve"><value>Des doubles comptages possibles sont encore en attente de révision.</value></data>
+  <data name="AdminBlocker_inputs_pending_review" xml:space="preserve"><value>Certaines entrées sont encore en attente de révision.</value></data>
+  <data name="AdminBlocker_no_direct_base" xml:space="preserve"><value>Aucune base de coûts directs admissible ; le taux ne peut pas être calculé.</value></data>
+  <data name="AdminBlocker_no_inputs" xml:space="preserve"><value>Aucune entrée de coûts réels ; l'option de minimis est le seul choix.</value></data>
+  <data name="AdminMethod" xml:space="preserve"><value>Méthode administrative</value></data>
+  <data name="AdminMethodCalculated" xml:space="preserve"><value>Calculé à partir des coûts réels</value></data>
+  <data name="AdminMethodDeMinimis" xml:space="preserve"><value>De minimis</value></data>
+  <data name="AdminMethodNone" xml:space="preserve"><value>Aucune</value></data>
+  <data name="AdministrativeInputs" xml:space="preserve"><value>Entrées du taux administratif</value></data>
+  <data name="AdministrativeInputsHelp" xml:space="preserve"><value>Coûts réels de l'année précédente par fonction et catégorie, classés direct / indirect / non admissible. Les budgets n'entrent jamais ici.</value></data>
+  <data name="AdministrativeRate" xml:space="preserve"><value>Taux administratif</value></data>
+  <data name="AdministrativeWorksheet" xml:space="preserve"><value>Feuille du taux administratif</value></data>
+  <data name="AdministrativeWorksheetHelp" xml:space="preserve"><value>Indirect admissible ÷ direct admissible à partir des entrées acceptées, comparé à l'option de minimis. Les doubles comptages non résolus bloquent le résultat.</value></data>
+  <data name="Age" xml:space="preserve"><value>Ancienneté</value></data>
+  <data name="Agency" xml:space="preserve"><value>Agence</value></data>
+  <data name="AgencyCategory" xml:space="preserve"><value>Catégorie d'agence</value></data>
+  <data name="AgencyIntro" xml:space="preserve"><value>La fiche agence MARS : désignateur MACS, contacts et identifiants imprimés sur chaque demande.</value></data>
+  <data name="AgencyName" xml:space="preserve"><value>Nom de l'agence</value></data>
+  <data name="AgencyProfile" xml:space="preserve"><value>Profil d'agence</value></data>
+  <data name="Agreement" xml:space="preserve"><value>Accord</value></data>
+  <data name="Agreements" xml:space="preserve"><value>Accords</value></data>
+  <data name="AgreementsIntro" xml:space="preserve"><value>Méthodes de rémunération MOU / MOA / GBR approuvées par classification. Un F-42 retient celle en vigueur à l'engagement initial.</value></data>
+  <data name="AllClassifications" xml:space="preserve"><value>Toutes les classifications</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>Tous les types</value></data>
+  <data name="AllYears" xml:space="preserve"><value>Toutes les années</value></data>
+  <data name="AllowableDirect" xml:space="preserve"><value>Direct admissible</value></data>
+  <data name="AllowableIndirect" xml:space="preserve"><value>Indirect admissible</value></data>
+  <data name="Amount" xml:space="preserve"><value>Montant</value></data>
+  <data name="AnnualRates" xml:space="preserve"><value>Taux annuels</value></data>
+  <data name="AnnualSubmissions" xml:space="preserve"><value>Soumissions annuelles en vigueur</value></data>
+  <data name="ApprovalAttachment" xml:space="preserve"><value>Pièce jointe d'approbation</value></data>
+  <data name="ApproveInvoice" xml:space="preserve"><value>Approuver</value></data>
+  <data name="ApproverName" xml:space="preserve"><value>Approbateur</value></data>
+  <data name="AttachmentId" xml:space="preserve"><value>Identifiant de pièce jointe du déploiement</value></data>
+  <data name="AttachmentIdHelp" xml:space="preserve"><value>Facultatif : l'accord signé téléversé en pièce jointe de déploiement.</value></data>
+  <data name="Authority" xml:space="preserve"><value>Autorité</value></data>
+  <data name="AuthorityAgencySpecialEquipment" xml:space="preserve"><value>Équipement spécial de l'agence</value></data>
+  <data name="AuthorityAgencySubmitted" xml:space="preserve"><value>Soumis par l'agence</value></data>
+  <data name="AuthorityCalOesBase" xml:space="preserve"><value>Taux de base Cal OES</value></data>
+  <data name="AuthorityCalOesRateLetter" xml:space="preserve"><value>Rate Letter Cal OES</value></data>
+  <data name="AuthorityFema" xml:space="preserve"><value>Barème FEMA</value></data>
+  <data name="AuthorityProfile" xml:space="preserve"><value>Profil d'autorité</value></data>
+  <data name="AuthorityStale" xml:space="preserve"><value>Aucun profil validé ne couvre cette date</value></data>
+  <data name="Back" xml:space="preserve"><value>Retour</value></data>
+  <data name="BaseRateAccepted" xml:space="preserve"><value>Taux de base Cal OES accepté</value></data>
+  <data name="BaseRateAcceptedHelp" xml:space="preserve"><value>L'agence retient le taux de base Cal OES au lieu de ses propres lignes d'enquête.</value></data>
+  <data name="Basis" xml:space="preserve"><value>Base</value></data>
+  <data name="BasisDaily" xml:space="preserve"><value>Journalier</value></data>
+  <data name="BasisFlat" xml:space="preserve"><value>Forfait</value></data>
+  <data name="BasisHourly" xml:space="preserve"><value>Horaire</value></data>
+  <data name="BasisPerMile" xml:space="preserve"><value>Par mile</value></data>
+  <data name="BasisPercent" xml:space="preserve"><value>Pourcentage</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Bloqué</value></data>
+  <data name="Blocker" xml:space="preserve"><value>Bloquant</value></data>
+  <data name="Box" xml:space="preserve"><value>Case</value></data>
+  <data name="BoxAgency" xml:space="preserve"><value>Agence intervenante</value></data>
+  <data name="BoxApparatus" xml:space="preserve"><value>Engins, véhicules de soutien et équipement</value></data>
+  <data name="BoxAttachments" xml:space="preserve"><value>Pièces jointes</value></data>
+  <data name="BoxComments" xml:space="preserve"><value>Commentaires, perte / dommage, numéros d'approvisionnement</value></data>
+  <data name="BoxDispatch" xml:space="preserve"><value>Engagement / mobilisation</value></data>
+  <data name="BoxIncident" xml:space="preserve"><value>Incident</value></data>
+  <data name="BoxOrder" xml:space="preserve"><value>Numéro de commande d'incident</value></data>
+  <data name="BoxPersonnel" xml:space="preserve"><value>Personnel</value></data>
+  <data name="BoxRequest" xml:space="preserve"><value>Numéro de demande</value></data>
+  <data name="BoxResource" xml:space="preserve"><value>Ressource</value></data>
+  <data name="BoxReturn" xml:space="preserve"><value>Retour / réengagement</value></data>
+  <data name="BoxRotation" xml:space="preserve"><value>Rotations d'équipe</value></data>
+  <data name="BoxSignatures" xml:space="preserve"><value>Signatures et autorisation</value></data>
+  <data name="BuildAdministrativeRate" xml:space="preserve"><value>Calculer le taux administratif</value></data>
+  <data name="CalOesMars" xml:space="preserve"><value>Cal OES MARS</value></data>
+  <data name="Calculate" xml:space="preserve"><value>Calculer</value></data>
+  <data name="CalculatedPercent" xml:space="preserve"><value>Taux calculé</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Annuler</value></data>
+  <data name="Category" xml:space="preserve"><value>Catégorie</value></data>
+  <data name="CategoryCode" xml:space="preserve"><value>Catégorie</value></data>
+  <data name="CategoryLodging" xml:space="preserve"><value>Hébergement</value></data>
+  <data name="CategoryMeal" xml:space="preserve"><value>Repas</value></data>
+  <data name="CategoryMiscellaneous" xml:space="preserve"><value>Divers</value></data>
+  <data name="CategoryRental" xml:space="preserve"><value>Location</value></data>
+  <data name="CheckDate" xml:space="preserve"><value>Vérifier la date</value></data>
+  <data name="Checklist" xml:space="preserve"><value>Liste de contrôle</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Somme de contrôle</value></data>
+  <data name="City" xml:space="preserve"><value>Ville</value></data>
+  <data name="Classification" xml:space="preserve"><value>Classification</value></data>
+  <data name="ClassificationTitle" xml:space="preserve"><value>Intitulé de classification</value></data>
+  <data name="CloseItem" xml:space="preserve"><value>Clôturer</value></data>
+  <data name="Comment" xml:space="preserve"><value>Commentaire</value></data>
+  <data name="Comments" xml:space="preserve"><value>Commentaires</value></data>
+  <data name="Committed" xml:space="preserve"><value>Mobilisé</value></data>
+  <data name="CommittedHours" xml:space="preserve"><value>Heures mobilisées</value></data>
+  <data name="CompensationMethod" xml:space="preserve"><value>Méthode de rémunération</value></data>
+  <data name="CompensationMethodActualHours" xml:space="preserve"><value>Heures réelles</value></data>
+  <data name="CompensationMethodPortalToPortal" xml:space="preserve"><value>Portail à portail</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Supprimer cet enregistrement ?</value></data>
+  <data name="ContactEmail" xml:space="preserve"><value>E-mail du contact</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Nom du contact</value></data>
+  <data name="ContactPhone" xml:space="preserve"><value>Téléphone du contact</value></data>
+  <data name="Copy" xml:space="preserve"><value>Copier</value></data>
+  <data name="CorrectionComment" xml:space="preserve"><value>Commentaire du réviseur</value></data>
+  <data name="CostClassDirect" xml:space="preserve"><value>Direct</value></data>
+  <data name="CostClassIndirect" xml:space="preserve"><value>Indirect</value></data>
+  <data name="CostClassUnallowable" xml:space="preserve"><value>Non admissible</value></data>
+  <data name="Counts" xml:space="preserve"><value>En un coup d'œil</value></data>
+  <data name="CoveredItems" xml:space="preserve"><value>Enregistrements couverts</value></data>
+  <data name="CoveredItemsHelp" xml:space="preserve"><value>Enregistrements F-42 / dépenses soumis que cette facture paie ; leurs totaux attendus sont comparés au montant facturé.</value></data>
+  <data name="Date" xml:space="preserve"><value>Date</value></data>
+  <data name="DeMinimisPercent" xml:space="preserve"><value>Option de minimis</value></data>
+  <data name="DecisionTitle" xml:space="preserve"><value>Décision de (nom / titre)</value></data>
+  <data name="Delete" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Déploiement</value></data>
+  <data name="Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Designator" xml:space="preserve"><value>Désignateur</value></data>
+  <data name="Detail" xml:space="preserve"><value>Détail</value></data>
+  <data name="DocumentKind" xml:space="preserve"><value>Type de document</value></data>
+  <data name="DocumentKindEquivalent" xml:space="preserve"><value>Équivalent</value></data>
+  <data name="DocumentKindGbr" xml:space="preserve"><value>GBR</value></data>
+  <data name="DocumentKindMoa" xml:space="preserve"><value>MOA</value></data>
+  <data name="DocumentKindMou" xml:space="preserve"><value>MOU</value></data>
+  <data name="DocumentationOnly" xml:space="preserve"><value>Documentation seule</value></data>
+  <data name="DocumentationOnlyHelp" xml:space="preserve"><value>L'enregistrement documente l'intervention sans demander de remboursement (voie Documentation Only de MARS).</value></data>
+  <data name="DoubleCountMarker" xml:space="preserve"><value>Double comptage possible</value></data>
+  <data name="DraftFromUnits" xml:space="preserve"><value>Brouillon depuis les unités</value></data>
+  <data name="DraftFromUnitsHelp" xml:space="preserve"><value>Sélectionnez des unités et créez des lignes pour celles qui n'en ont pas.</value></data>
+  <data name="EditAgency" xml:space="preserve"><value>Modifier l'agence</value></data>
+  <data name="EditAgreement" xml:space="preserve"><value>Modifier l'accord</value></data>
+  <data name="EditResource" xml:space="preserve"><value>Modifier la ressource</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>En vigueur le</value></data>
+  <data name="EligibilityEligible" xml:space="preserve"><value>Éligible</value></data>
+  <data name="EligibilityExcluded" xml:space="preserve"><value>Exclu</value></data>
+  <data name="EligibilityUncertain" xml:space="preserve"><value>Incertain</value></data>
+  <data name="EndOn" xml:space="preserve"><value>Fin</value></data>
+  <data name="EvidencePacket" xml:space="preserve"><value>Dossier de preuves</value></data>
+  <data name="ExcludedIncidentDirect" xml:space="preserve"><value>Exclu (facturé aux incidents)</value></data>
+  <data name="ExcludedUnallowable" xml:space="preserve"><value>Exclu (non admissible)</value></data>
+  <data name="Expected" xml:space="preserve"><value>Attendu</value></data>
+  <data name="ExpectedReimbursement" xml:space="preserve"><value>Remboursement attendu</value></data>
+  <data name="ExpectedReimbursementHelp" xml:space="preserve"><value>Une estimation à partir des taux et de l'accord en vigueur à l'engagement initial. Cal OES fixe le montant admis ; aucun coût interne n'entre dans ces lignes.</value></data>
+  <data name="ExpectedTotal" xml:space="preserve"><value>Total attendu</value></data>
+  <data name="ExpectedVsObserved" xml:space="preserve"><value>Attendu contre observé</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Expire le</value></data>
+  <data name="ExternalResourceName" xml:space="preserve"><value>Nom de la ressource externe</value></data>
+  <data name="F42Box_agency" xml:space="preserve"><value>Agence</value></data>
+  <data name="F42Box_apparatus" xml:space="preserve"><value>Engins</value></data>
+  <data name="F42Box_attachments" xml:space="preserve"><value>Pièces jointes</value></data>
+  <data name="F42Box_comments" xml:space="preserve"><value>Commentaires</value></data>
+  <data name="F42Box_dispatch" xml:space="preserve"><value>Engagement</value></data>
+  <data name="F42Box_incident" xml:space="preserve"><value>Incident</value></data>
+  <data name="F42Box_incident-signature" xml:space="preserve"><value>Autorisation d'incident</value></data>
+  <data name="F42Box_lines" xml:space="preserve"><value>Lignes de dépenses</value></data>
+  <data name="F42Box_order" xml:space="preserve"><value>Commande</value></data>
+  <data name="F42Box_personnel" xml:space="preserve"><value>Personnel</value></data>
+  <data name="F42Box_request" xml:space="preserve"><value>Demande</value></data>
+  <data name="F42Box_resource" xml:space="preserve"><value>Ressource</value></data>
+  <data name="F42Box_responding-signature" xml:space="preserve"><value>Signature de l'agence</value></data>
+  <data name="F42Box_return" xml:space="preserve"><value>Retour</value></data>
+  <data name="F42Box_rotation" xml:space="preserve"><value>Rotation</value></data>
+  <data name="F42Box_signature" xml:space="preserve"><value>Signature</value></data>
+  <data name="Fein" xml:space="preserve"><value>FEIN</value></data>
+  <data name="FillId" xml:space="preserve"><value>Demande / fill</value></data>
+  <data name="FillIdHelp" xml:space="preserve"><value>Identifiant fill de la commande externe RMS (requis si la commande a plusieurs demandes)</value></data>
+  <data name="FiscalSupplier" xml:space="preserve"><value>Fournisseur FI$Cal</value></data>
+  <data name="Fix" xml:space="preserve"><value>Corriger</value></data>
+  <data name="FunctionCode" xml:space="preserve"><value>Fonction</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>Généré</value></data>
+  <data name="HandoffAttestation" xml:space="preserve"><value>Je suis la personne autorisée à saisir cet enregistrement dans MARS et je copierai les valeurs affichées, pas le fichier de cette page.</value></data>
+  <data name="HandoffIntro" xml:space="preserve"><value>Vue de copie pour la saisie manuelle dans le portail MARS. Ni stockée, ni mise en cache, ni une soumission.</value></data>
+  <data name="HandoffNeedsReady" xml:space="preserve"><value>Lancez la liste de contrôle jusqu'à ce qu'elle soit propre ; le transfert s'ouvre à partir de Prêt pour le portail.</value></data>
+  <data name="HandoffWarning" xml:space="preserve"><value>Préparé pour MARS. Ouvrir cette vue crée une entrée d'audit et ne change rien ; l'enregistrement ne devient Observé dans MARS que lorsqu'un gestionnaire note ce que le portail affiche.</value></data>
+  <data name="HandoffWithErrors" xml:space="preserve"><value>La liste de contrôle contient encore des erreurs ; MARS peut renvoyer cet enregistrement.</value></data>
+  <data name="HelpAgency" xml:space="preserve"><value>Ces valeurs sont copiées sur les F-42 et demandes et stockées en clair (hors Advanced Data Protection). Modifier un identifiant efface la dernière vérification.</value></data>
+  <data name="HelpAgreements" xml:space="preserve"><value>Laissez la classification vide pour un accord à l'échelle du service. Un accord référencé par un enregistrement soumis est immuable ; le modifier crée une nouvelle version.</value></data>
+  <data name="HelpQueue" xml:space="preserve"><value>Les membres de terrain voient leurs propres brouillons ; les gestionnaires MARS voient la file du service. Ouvrir un transfert ou télécharger un dossier ne marque jamais un enregistrement comme soumis.</value></data>
+  <data name="HelpRates" xml:space="preserve"><value>Les taux sont des données liées à un profil d'autorité validé ; une nouvelle Rate Letter ou enquête est un nouvel instantané, et un engagement antérieur conserve celui en vigueur à son début.</value></data>
+  <data name="HelpReadiness" xml:space="preserve"><value>Les bloquants empêchent les nouveaux F-42 d'atteindre Prêt pour le portail ; corrigez les avertissements avant le prochain engagement.</value></data>
+  <data name="HelpReconciliation" xml:space="preserve"><value>Une facture MARS est un élément de travail, jamais une facture client de la phase B : pas de numéro, pas de balance âgée, pas d'e-mail. Payé n'est jamais qu'un fait de paiement observé.</value></data>
+  <data name="HelpResources" xml:space="preserve"><value>Les lignes brouillon copient le nom, la plaque et le VIN de l'unité à cet instant ; vérifiez-les, ajoutez le type de ressource MARS puis notez ce que MARS affiche.</value></data>
+  <data name="Hours" xml:space="preserve"><value>Heures</value></data>
+  <data name="Identifiers" xml:space="preserve"><value>Identifiants</value></data>
+  <data name="IncidentAuthorizer" xml:space="preserve"><value>Autorisation incident / AREP</value></data>
+  <data name="IncidentDirectExclusion" xml:space="preserve"><value>Facturé directement à un incident (exclu)</value></data>
+  <data name="IncludesUnemploymentInsurance" xml:space="preserve"><value>Inclut l'assurance chômage</value></data>
+  <data name="IncludesWorkersComp" xml:space="preserve"><value>Inclut l'assurance accidents du travail</value></data>
+  <data name="Incoming" xml:space="preserve"><value>Entrant</value></data>
+  <data name="InvoiceDate" xml:space="preserve"><value>Date de facture</value></data>
+  <data name="InvoiceIntro" xml:space="preserve"><value>Attendu contre observé, décision locale et faits de paiement pour une facture générée par MARS.</value></data>
+  <data name="Invoiced" xml:space="preserve"><value>Facturé</value></data>
+  <data name="InvoicesAwaiting" xml:space="preserve"><value>Factures en attente d'approbation locale</value></data>
+  <data name="Item" xml:space="preserve"><value>Élément</value></data>
+  <data name="Kind" xml:space="preserve"><value>Nature</value></data>
+  <data name="KindApparatus" xml:space="preserve"><value>Engin</value></data>
+  <data name="KindEquipment" xml:space="preserve"><value>Équipement spécial</value></data>
+  <data name="KindPOV" xml:space="preserve"><value>Véhicule personnel</value></data>
+  <data name="KindSupport" xml:space="preserve"><value>Véhicule de soutien</value></data>
+  <data name="LicensePlate" xml:space="preserve"><value>Plaque</value></data>
+  <data name="LineKind" xml:space="preserve"><value>Type de ligne</value></data>
+  <data name="LineKindAdministrative" xml:space="preserve"><value>Administratif</value></data>
+  <data name="LineKindAdministrativeRate" xml:space="preserve"><value>Taux administratif</value></data>
+  <data name="LineKindApparatus" xml:space="preserve"><value>Engin</value></data>
+  <data name="LineKindAttachmentANonSuppression" xml:space="preserve"><value>Annexe A (hors extinction)</value></data>
+  <data name="LineKindExpense" xml:space="preserve"><value>Dépense</value></data>
+  <data name="LineKindMealLodgingIncidentals" xml:space="preserve"><value>Repas, hébergement, frais accessoires</value></data>
+  <data name="LineKindOfficialApparatus" xml:space="preserve"><value>Engin officiel</value></data>
+  <data name="LineKindOfficialSupportVehicle" xml:space="preserve"><value>Véhicule de soutien officiel</value></data>
+  <data name="LineKindPersonnel" xml:space="preserve"><value>Personnel</value></data>
+  <data name="LineKindPovMileage" xml:space="preserve"><value>Kilométrage POV</value></data>
+  <data name="LineKindPrivatelyOwnedVehicle" xml:space="preserve"><value>Kilométrage POV</value></data>
+  <data name="LineKindRental" xml:space="preserve"><value>Location</value></data>
+  <data name="LineKindSalarySurvey" xml:space="preserve"><value>Enquête salariale</value></data>
+  <data name="LineKindSpecialEquipment" xml:space="preserve"><value>Équipement spécial</value></data>
+  <data name="LineKindSupportVehicle" xml:space="preserve"><value>Véhicule de soutien</value></data>
+  <data name="LinkedF42" xml:space="preserve"><value>F-42 lié</value></data>
+  <data name="LocalDecision" xml:space="preserve"><value>Décision de l'agence locale</value></data>
+  <data name="LocalDecisionHelp" xml:space="preserve"><value>Approuvez ou rejetez la facture en tant que représentant autorisé ; un rejet nécessite un commentaire. La décision est enregistrée ici et saisie dans MARS par vous.</value></data>
+  <data name="LossDamage" xml:space="preserve"><value>Perte / dommage</value></data>
+  <data name="MacsDesignator" xml:space="preserve"><value>Désignateur MACS</value></data>
+  <data name="ManageMutualAidReimbursement" xml:space="preserve"><value>Gérer le remboursement Cal OES MARS</value></data>
+  <data name="ManageMutualAidReimbursementNote" xml:space="preserve"><value>Fiches agence, ressources F-5, taux annuels et accords, transfert vers le portail, statuts MARS observés et approbation des factures/rapprochement des paiements. Les membres affectés préparent leurs propres brouillons F-42 et de dépenses sans cette permission.</value></data>
+  <data name="MarkVerified" xml:space="preserve"><value>Marquer vérifié aujourd'hui</value></data>
+  <data name="MarsInvoice" xml:space="preserve"><value>Facture MARS</value></data>
+  <data name="MarsInvoiceId" xml:space="preserve"><value>Identifiant de facture MARS</value></data>
+  <data name="MarsInvoiceNotPhaseB" xml:space="preserve"><value>Ceci est un élément de travail MARS. Il n'a pas de numéro de facture de phase B, n'apparaît jamais dans la balance âgée clients et ne peut être envoyé par e-mail ni payé en ligne.</value></data>
+  <data name="MarsInvoices" xml:space="preserve"><value>Factures MARS</value></data>
+  <data name="MarsRecordId" xml:space="preserve"><value>Identifiant d'enregistrement MARS</value></data>
+  <data name="MarsResourceId" xml:space="preserve"><value>Identifiant ressource MARS</value></data>
+  <data name="MethodChosen" xml:space="preserve"><value>Méthode retenue</value></data>
+  <data name="Miles" xml:space="preserve"><value>Miles</value></data>
+  <data name="Mine" xml:space="preserve"><value>Affecté à ce déploiement</value></data>
+  <data name="Mismatches" xml:space="preserve"><value>écarts</value></data>
+  <data name="Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="NewSubmission" xml:space="preserve"><value>Nouvelle soumission</value></data>
+  <data name="No" xml:space="preserve"><value>Non</value></data>
+  <data name="NoAgencyProfile" xml:space="preserve"><value>Pas encore de profil d'agence.</value></data>
+  <data name="NoAgreements" xml:space="preserve"><value>Pas encore d'accords.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>Aucune pièce jointe de déploiement.</value></data>
+  <data name="NoCostRecoveryDeployments" xml:space="preserve"><value>Aucun déploiement en recouvrement de coûts à préparer.</value></data>
+  <data name="NoCredentialsStored" xml:space="preserve"><value>Resgrid ne stocke aucun identifiant MARS, jeton MFA ou session de navigateur et n'écrit jamais dans le portail.</value></data>
+  <data name="NoCurrentRateProfiles" xml:space="preserve"><value>Aucune soumission annuelle ne couvre cette date.</value></data>
+  <data name="NoDeployment" xml:space="preserve"><value>Sans déploiement</value></data>
+  <data name="NoMarsInvoices" xml:space="preserve"><value>Aucune facture MARS enregistrée.</value></data>
+  <data name="NoQueueItems" xml:space="preserve"><value>Rien dans la file.</value></data>
+  <data name="NoRateProfiles" xml:space="preserve"><value>Pas encore de soumissions annuelles.</value></data>
+  <data name="NoReadinessIssues" xml:space="preserve"><value>Tout ce qu'il faut pour une soumission MARS est en place.</value></data>
+  <data name="NoResources" xml:space="preserve"><value>Pas encore de lignes de ressources F-5.</value></data>
+  <data name="NotAnImportFile" xml:space="preserve"><value>Le dossier de preuves n'est pas un fichier d'import accepté par MARS.</value></data>
+  <data name="NotCalculated" xml:space="preserve"><value>Pas encore calculé.</value></data>
+  <data name="NotCurrent" xml:space="preserve"><value>Non en vigueur</value></data>
+  <data name="NotInInventory" xml:space="preserve"><value>Absent de l'inventaire F-5</value></data>
+  <data name="NotValidated" xml:space="preserve"><value>Pas encore validé.</value></data>
+  <data name="ObserveInMars" xml:space="preserve"><value>Observé dans MARS</value></data>
+  <data name="ObservedOn" xml:space="preserve"><value>Observé le</value></data>
+  <data name="ObservedStatus" xml:space="preserve"><value>Statut observé</value></data>
+  <data name="ObservedSubmission" xml:space="preserve"><value>Soumission observée</value></data>
+  <data name="Odometer" xml:space="preserve"><value>Odomètre</value></data>
+  <data name="OfficialSources" xml:space="preserve"><value>Sources officielles</value></data>
+  <data name="Open" xml:space="preserve"><value>Ouvrir</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Ouvrir le déploiement</value></data>
+  <data name="OpenHandoff" xml:space="preserve"><value>Ouvrir la vue de transfert</value></data>
+  <data name="OpenPortal" xml:space="preserve"><value>Ouvrir le portail MARS</value></data>
+  <data name="OpenWorkItems" xml:space="preserve"><value>Éléments ouverts</value></data>
+  <data name="Outgoing" xml:space="preserve"><value>Sortant</value></data>
+  <data name="OverheadPosition" xml:space="preserve"><value>Poste overhead</value></data>
+  <data name="OvertimeEligible" xml:space="preserve"><value>Éligible aux heures sup.</value></data>
+  <data name="OvertimeMethod" xml:space="preserve"><value>Méthode d'heures sup.</value></data>
+  <data name="OvertimeMethodAfterEightHoursPerDay" xml:space="preserve"><value>Après 8 heures par jour</value></data>
+  <data name="OvertimeMethodAfterTwelveHoursPerDay" xml:space="preserve"><value>Après 12 heures par jour</value></data>
+  <data name="OvertimeMethodNone" xml:space="preserve"><value>Aucune</value></data>
+  <data name="OvertimeMethodPerAgreement" xml:space="preserve"><value>Selon l'accord (non modélisé)</value></data>
+  <data name="OvertimeRate" xml:space="preserve"><value>Taux heures sup.</value></data>
+  <data name="Ownership" xml:space="preserve"><value>Propriété</value></data>
+  <data name="OwnershipCalFire" xml:space="preserve"><value>CAL FIRE</value></data>
+  <data name="OwnershipCalOes" xml:space="preserve"><value>Cal OES</value></data>
+  <data name="OwnershipLocalAgency" xml:space="preserve"><value>Agence locale</value></data>
+  <data name="OwnershipOther" xml:space="preserve"><value>Autre</value></data>
+  <data name="OwnershipPrivate" xml:space="preserve"><value>Privé</value></data>
+  <data name="OwnershipRental" xml:space="preserve"><value>Location</value></data>
+  <data name="Paid" xml:space="preserve"><value>Payé</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Payé le</value></data>
+  <data name="PayingEntity" xml:space="preserve"><value>Entité payeuse</value></data>
+  <data name="PayingEntityStatus" xml:space="preserve"><value>Statut de l'entité payeuse</value></data>
+  <data name="PaymentReference" xml:space="preserve"><value>Référence de paiement</value></data>
+  <data name="PortalHandoff" xml:space="preserve"><value>Transfert vers le portail</value></data>
+  <data name="PortalReference" xml:space="preserve"><value>Référence du compte portail</value></data>
+  <data name="PortalReferenceHelp" xml:space="preserve"><value>Un libellé pour le compte MARS (jamais un mot de passe ou un jeton).</value></data>
+  <data name="PortalRole" xml:space="preserve"><value>Rôle sur le portail</value></data>
+  <data name="PortalToPortalEligible" xml:space="preserve"><value>Éligible portail à portail</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Pré-approuvé</value></data>
+  <data name="PrepareExpenseClaim" xml:space="preserve"><value>Préparer la demande de dépenses</value></data>
+  <data name="PrepareF42" xml:space="preserve"><value>Préparer le F-42</value></data>
+  <data name="PrepareRecord" xml:space="preserve"><value>Préparer un enregistrement</value></data>
+  <data name="PrepareRecordHelp" xml:space="preserve"><value>Un F-42 par ressource / demande commandée ; un réengagement remplace le précédent. Les demandes de dépenses se rattachent à un F-42 ou suivent la voie déplacement seul.</value></data>
+  <data name="PreparedNotSubmitted" xml:space="preserve"><value>Préparé pour MARS — rien n'est soumis tant qu'un gestionnaire n'a pas enregistré ce qui a été observé dans le portail.</value></data>
+  <data name="Printable" xml:space="preserve"><value>Imprimable</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Provenance</value></data>
+  <data name="QueueIntro" xml:space="preserve"><value>F-42 et demandes de dépenses à préparer, valider et transférer, groupés par déploiement ; statuts MARS observés et factures à côté.</value></data>
+  <data name="Rank" xml:space="preserve"><value>Grade</value></data>
+  <data name="RateEditIntro" xml:space="preserve"><value>En-tête, lignes et (pour le taux administratif) la feuille des coûts réels de l'année précédente.</value></data>
+  <data name="RateLines" xml:space="preserve"><value>Lignes de taux</value></data>
+  <data name="RateLinesHelp" xml:space="preserve"><value>Les lignes salariales nécessitent une classification ; les lignes d'équipement un code ressource ou FEMA. Les taux sont normal / heures sup. par base.</value></data>
+  <data name="RateLocked" xml:space="preserve"><value>Cette soumission est signée ou soumise ; les modifications nécessitent une nouvelle version.</value></data>
+  <data name="RateProfileVersion" xml:space="preserve"><value>Version du profil de taux</value></data>
+  <data name="RateStatusAccepted" xml:space="preserve"><value>Accepté</value></data>
+  <data name="RateStatusDraft" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="RateStatusReviewed" xml:space="preserve"><value>Vérifié</value></data>
+  <data name="RateStatusSignedLocally" xml:space="preserve"><value>Signé localement</value></data>
+  <data name="RateStatusSubmittedExternal" xml:space="preserve"><value>Soumis dans MARS</value></data>
+  <data name="RateStatusSuperseded" xml:space="preserve"><value>Remplacé</value></data>
+  <data name="RatesIntro" xml:space="preserve"><value>Enquête salariale, Annexe A, taux administratif, Rate Letter Cal OES et équipement spécial par année de soumission.</value></data>
+  <data name="ReadinessAdministrativeMissing" xml:space="preserve"><value>Aucun taux administratif enregistré pour cette date ; aucune ligne administrative ne sera estimée.</value></data>
+  <data name="ReadinessAgencyMissing" xml:space="preserve"><value>Le profil d'agence (désignateur MACS, contacts, identifiants) n'a pas été saisi.</value></data>
+  <data name="ReadinessAgencyUnverified" xml:space="preserve"><value>Le profil d'agence n'a pas été vérifié dans MARS depuis un an.</value></data>
+  <data name="ReadinessAgreementExpiring" xml:space="preserve"><value>Un accord se termine dans le délai d'alerte.</value></data>
+  <data name="ReadinessAgreementMissing" xml:space="preserve"><value>Aucune méthode de rémunération MOU/MOA/GBR ne couvre cette date ; le personnel est estimé aux heures réelles sans heures supplémentaires.</value></data>
+  <data name="ReadinessAsOf" xml:space="preserve"><value>Préparation au</value></data>
+  <data name="ReadinessAuthorityMissing" xml:space="preserve"><value>Aucun profil d'autorité Cal OES validé ne couvre cette date ; les nouvelles soumissions sont bloquées jusqu'à l'ajout d'un profil.</value></data>
+  <data name="ReadinessDashboard" xml:space="preserve"><value>Tableau de préparation</value></data>
+  <data name="ReadinessFeinMissing" xml:space="preserve"><value>Aucun FEIN enregistré pour l'agence.</value></data>
+  <data name="ReadinessFiscalMissing" xml:space="preserve"><value>Aucun identifiant fournisseur FI$Cal enregistré pour l'agence.</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Préparation de l'agence, des ressources F-5, des taux annuels et des accords pour une date d'engagement, avec liens vers la documentation officielle Cal OES.</value></data>
+  <data name="ReadinessInvoicesAwaiting" xml:space="preserve"><value>Des factures générées par MARS attendent la décision locale.</value></data>
+  <data name="ReadinessMacsMissing" xml:space="preserve"><value>Le désignateur MACS de l'agence est manquant.</value></data>
+  <data name="ReadinessNoResources" xml:space="preserve"><value>Aucune correspondance F-5 n'existe ; les engins d'un F-42 seront signalés comme hors inventaire.</value></data>
+  <data name="ReadinessRateExpiring" xml:space="preserve"><value>Une soumission annuelle expire dans le délai d'alerte.</value></data>
+  <data name="ReadinessRateLetterMissing" xml:space="preserve"><value>Aucune ligne de la Rate Letter Cal OES (engins, véhicules de soutien, kilométrage POV) ne couvre cette date.</value></data>
+  <data name="ReadinessRateUnsigned" xml:space="preserve"><value>Une soumission annuelle en vigueur n'a pas été signée localement.</value></data>
+  <data name="ReadinessResourceMismatch" xml:space="preserve"><value>Des ressources F-5 ne correspondent pas à ce que MARS affiche.</value></data>
+  <data name="ReadinessReturnedItems" xml:space="preserve"><value>Des enregistrements renvoyés par Cal OES pour révision attendent.</value></data>
+  <data name="ReadinessSalaryMissing" xml:space="preserve"><value>Aucune enquête salariale validée (ou taux de base accepté) ne couvre cette date ; les lignes de personnel ne peuvent pas être estimées.</value></data>
+  <data name="ReadinessUeiMissing" xml:space="preserve"><value>Aucun SAM UEI enregistré pour l'agence.</value></data>
+  <data name="Ready" xml:space="preserve"><value>Prêt</value></data>
+  <data name="ReadyForPortal" xml:space="preserve"><value>Prêt pour le portail.</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Reçu</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>Rapprochement des factures et paiements</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>Factures générées par MARS telles qu'observées, décision locale d'approbation / rejet, statut de l'entité payeuse et faits de paiement par rapport aux lignes attendues.</value></data>
+  <data name="RecordMarsInvoice" xml:space="preserve"><value>Enregistrer une facture MARS</value></data>
+  <data name="RecordMarsInvoiceHelp" xml:space="preserve"><value>Saisissez la facture générée par Cal OES telle qu'elle apparaît dans le portail, et les enregistrements soumis qu'elle couvre.</value></data>
+  <data name="RecordObservation" xml:space="preserve"><value>Enregistrer l'observation</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Enregistrer le paiement</value></data>
+  <data name="RecordPaymentHelp" xml:space="preserve"><value>Seul un paiement observé de l'entité payeuse marque la facture et ses enregistrements comme payés.</value></data>
+  <data name="RecordSubmission" xml:space="preserve"><value>Enregistrer la soumission observée dans MARS</value></data>
+  <data name="RecordType" xml:space="preserve"><value>Type d'enregistrement</value></data>
+  <data name="RecordTypeAdministrativeRate" xml:space="preserve"><value>Taux administratif</value></data>
+  <data name="RecordTypeAgencyProfile" xml:space="preserve"><value>Profil d'agence</value></data>
+  <data name="RecordTypeAgreement" xml:space="preserve"><value>Accord</value></data>
+  <data name="RecordTypeAttachmentA" xml:space="preserve"><value>Annexe A</value></data>
+  <data name="RecordTypeExpenseClaim" xml:space="preserve"><value>Demande de dépenses</value></data>
+  <data name="RecordTypeF42" xml:space="preserve"><value>F-42</value></data>
+  <data name="RecordTypeGeneratedInvoice" xml:space="preserve"><value>Facture MARS</value></data>
+  <data name="RecordTypeResourceInventoryF5" xml:space="preserve"><value>Inventaire F-5</value></data>
+  <data name="RecordTypeSalarySurvey" xml:space="preserve"><value>Enquête salariale</value></data>
+  <data name="RecordTypeSpecialEquipment" xml:space="preserve"><value>Équipement spécial</value></data>
+  <data name="Recorded" xml:space="preserve"><value>Enregistré</value></data>
+  <data name="Redispatch" xml:space="preserve"><value>Réengagement de</value></data>
+  <data name="RejectInvoice" xml:space="preserve"><value>Rejeter</value></data>
+  <data name="RelatedItems" xml:space="preserve"><value>Enregistrements liés</value></data>
+  <data name="ReleaseIsNotReturn" xml:space="preserve"><value>Libération n'est pas retour ; le F-42 exige l'heure de retour ou de réengagement.</value></data>
+  <data name="Released" xml:space="preserve"><value>Libéré</value></data>
+  <data name="ReportingLocation" xml:space="preserve"><value>Lieu de présentation</value></data>
+  <data name="Request" xml:space="preserve"><value>Demande</value></data>
+  <data name="ResourceCode" xml:space="preserve"><value>Code ressource</value></data>
+  <data name="ResourceInventory" xml:space="preserve"><value>Inventaire des ressources F-5</value></data>
+  <data name="ResourceKind" xml:space="preserve"><value>Nature de ressource</value></data>
+  <data name="ResourceProfiles" xml:space="preserve"><value>Ressources F-5</value></data>
+  <data name="ResourceType" xml:space="preserve"><value>Type de ressource</value></data>
+  <data name="ResourcesIntro" xml:space="preserve"><value>Correspondance entre les unités et actifs Resgrid et leur identité MARS / F-5. Prépare et rapproche l'inventaire ; n'écrit jamais le statut FAST.</value></data>
+  <data name="RespondingSigner" xml:space="preserve"><value>Signataire de l'agence</value></data>
+  <data name="ReturnedItems" xml:space="preserve"><value>Renvoyés pour révision</value></data>
+  <data name="ReviewReason" xml:space="preserve"><value>Motif</value></data>
+  <data name="ReviewState" xml:space="preserve"><value>État de révision</value></data>
+  <data name="ReviewStateDraft" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="ReviewStateMismatch" xml:space="preserve"><value>Écart</value></data>
+  <data name="ReviewStateObserved" xml:space="preserve"><value>Observé dans MARS</value></data>
+  <data name="ReviewStateReviewed" xml:space="preserve"><value>Vérifié</value></data>
+  <data name="ReviewStatus" xml:space="preserve"><value>Révision</value></data>
+  <data name="ReviewStatusAccepted" xml:space="preserve"><value>Accepté</value></data>
+  <data name="ReviewStatusExcluded" xml:space="preserve"><value>Exclu</value></data>
+  <data name="ReviewStatusPending" xml:space="preserve"><value>En attente</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>vérifié le</value></data>
+  <data name="RunChecklist" xml:space="preserve"><value>Lancer la liste de contrôle</value></data>
+  <data name="SamReference" xml:space="preserve"><value>Inscription SAM</value></data>
+  <data name="Save" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>La modification n'a pas pu être enregistrée.</value></data>
+  <data name="SaveInputs" xml:space="preserve"><value>Enregistrer les entrées</value></data>
+  <data name="SaveLines" xml:space="preserve"><value>Enregistrer les lignes</value></data>
+  <data name="Saved" xml:space="preserve"><value>Enregistré.</value></data>
+  <data name="SerialNumber" xml:space="preserve"><value>Numéro de série</value></data>
+  <data name="SetRateStatusAccepted" xml:space="preserve"><value>Observé accepté</value></data>
+  <data name="SetRateStatusDraft" xml:space="preserve"><value>Retour au brouillon</value></data>
+  <data name="SetRateStatusReviewed" xml:space="preserve"><value>Marquer vérifié</value></data>
+  <data name="SetRateStatusSignedLocally" xml:space="preserve"><value>Signer localement</value></data>
+  <data name="SetRateStatusSubmittedExternal" xml:space="preserve"><value>Observé soumis dans MARS</value></data>
+  <data name="SetRateStatusSuperseded" xml:space="preserve"><value>Remplacer</value></data>
+  <data name="Severity" xml:space="preserve"><value>Gravité</value></data>
+  <data name="SignedByName" xml:space="preserve"><value>Signé par (nom)</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>Signé le</value></data>
+  <data name="SignerName" xml:space="preserve"><value>Signataire</value></data>
+  <data name="Source" xml:space="preserve"><value>Source</value></data>
+  <data name="SourceArtifact" xml:space="preserve"><value>Artefact source</value></data>
+  <data name="SourceDate" xml:space="preserve"><value>Date source</value></data>
+  <data name="SourceLine" xml:space="preserve"><value>Ligne source</value></data>
+  <data name="SourceSystem" xml:space="preserve"><value>Système source</value></data>
+  <data name="SourceUrl" xml:space="preserve"><value>URL source</value></data>
+  <data name="StartOn" xml:space="preserve"><value>Début</value></data>
+  <data name="State" xml:space="preserve"><value>État</value></data>
+  <data name="StateApproved" xml:space="preserve"><value>Approuvé</value></data>
+  <data name="StateClosed" xml:space="preserve"><value>Clôturé</value></data>
+  <data name="StateDocumentationOnly" xml:space="preserve"><value>Documentation seule</value></data>
+  <data name="StateDraft" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="StateLocalAgencyRejected" xml:space="preserve"><value>Rejeté par l'agence locale</value></data>
+  <data name="StateNeedsReview" xml:space="preserve"><value>À réviser</value></data>
+  <data name="StatePaid" xml:space="preserve"><value>Payé</value></data>
+  <data name="StatePendingLocalAgencyApproval" xml:space="preserve"><value>En attente d'approbation locale</value></data>
+  <data name="StatePendingPayingEntityApproval" xml:space="preserve"><value>En attente de l'entité payeuse</value></data>
+  <data name="StateReadyForPortal" xml:space="preserve"><value>Prêt pour le portail</value></data>
+  <data name="StateReturnedForAgencyReview" xml:space="preserve"><value>Renvoyé pour révision</value></data>
+  <data name="StateSubmittedExternal" xml:space="preserve"><value>Observé dans MARS (revue Cal OES)</value></data>
+  <data name="Status" xml:space="preserve"><value>Statut</value></data>
+  <data name="StraightRate" xml:space="preserve"><value>Taux normal</value></data>
+  <data name="StrikeTeam" xml:space="preserve"><value>Strike team / task force</value></data>
+  <data name="Subject" xml:space="preserve"><value>Sujet</value></data>
+  <data name="SubjectType" xml:space="preserve"><value>Type de sujet</value></data>
+  <data name="SubjectTypeExternal" xml:space="preserve"><value>Ressource externe</value></data>
+  <data name="SubjectTypeInventoryAsset" xml:space="preserve"><value>Actif d'inventaire</value></data>
+  <data name="SubjectTypeUnit" xml:space="preserve"><value>Unité</value></data>
+  <data name="Submission" xml:space="preserve"><value>Soumission</value></data>
+  <data name="SubmissionType" xml:space="preserve"><value>Type de soumission</value></data>
+  <data name="SubmissionTypeAdministrativeRate" xml:space="preserve"><value>Taux administratif</value></data>
+  <data name="SubmissionTypeAttachmentA" xml:space="preserve"><value>Annexe A (hors extinction)</value></data>
+  <data name="SubmissionTypeRateLetter" xml:space="preserve"><value>Rate Letter Cal OES</value></data>
+  <data name="SubmissionTypeSalarySurvey" xml:space="preserve"><value>Enquête salariale</value></data>
+  <data name="SubmissionTypeSpecialEquipment" xml:space="preserve"><value>Équipement spécial / codes FEMA</value></data>
+  <data name="Supersedes" xml:space="preserve"><value>remplace</value></data>
+  <data name="SupplyNumbers" xml:space="preserve"><value>Numéros d'approvisionnement</value></data>
+  <data name="SupportingDocuments" xml:space="preserve"><value>Pièces justificatives</value></data>
+  <data name="TabAgency" xml:space="preserve"><value>Agence</value></data>
+  <data name="TabAgreements" xml:space="preserve"><value>Accords</value></data>
+  <data name="TabQueue" xml:space="preserve"><value>File d'actions</value></data>
+  <data name="TabRates" xml:space="preserve"><value>Taux annuels</value></data>
+  <data name="TabReadiness" xml:space="preserve"><value>Préparation</value></data>
+  <data name="TabReconciliation" xml:space="preserve"><value>Rapprochement</value></data>
+  <data name="TabResources" xml:space="preserve"><value>Ressources F-5</value></data>
+  <data name="TravelOnly" xml:space="preserve"><value>Déplacement seul (sans F-42)</value></data>
+  <data name="Uei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="Unit" xml:space="preserve"><value>Unité</value></data>
+  <data name="UnitDesignator" xml:space="preserve"><value>Désignateur d'unité</value></data>
+  <data name="ValidatedOn" xml:space="preserve"><value>Validé</value></data>
+  <data name="ValidationFailedSummary" xml:space="preserve"><value>Liste de contrôle : {0} erreur(s), {1} avertissement(s).</value></data>
+  <data name="Validation_agency_profile_missing" xml:space="preserve"><value>Le profil d'agence est manquant.</value></data>
+  <data name="Validation_agreement_missing" xml:space="preserve"><value>Aucun accord MOU / MOA / GBR ne couvre la date d'engagement.</value></data>
+  <data name="Validation_authority_profile_missing" xml:space="preserve"><value>Aucun profil d'autorité validé ne couvre cet enregistrement.</value></data>
+  <data name="Validation_classification_unmapped" xml:space="preserve"><value>La classification d'une personne n'est ni dans l'enquête salariale ni dans la liste de référence.</value></data>
+  <data name="Validation_dispatch_missing" xml:space="preserve"><value>L'heure d'engagement est manquante.</value></data>
+  <data name="Validation_documentation_only" xml:space="preserve"><value>Marqué Documentation seule : aucun remboursement demandé.</value></data>
+  <data name="Validation_duplicate_vehicle" xml:space="preserve"><value>Le même véhicule apparaît plus d'une fois.</value></data>
+  <data name="Validation_expense_approval_missing" xml:space="preserve"><value>L'approbateur de la demande est manquant.</value></data>
+  <data name="Validation_expense_f42_not_submitted" xml:space="preserve"><value>Le F-42 lié n'a pas été observé soumis dans MARS.</value></data>
+  <data name="Validation_expense_no_lines" xml:space="preserve"><value>La demande de dépenses n'a pas de lignes.</value></data>
+  <data name="Validation_expense_receipt_missing" xml:space="preserve"><value>Une ligne de dépense n'a pas de reçu.</value></data>
+  <data name="Validation_expense_signature_missing" xml:space="preserve"><value>La signature de la demande est manquante.</value></data>
+  <data name="Validation_incident_authorization_missing" xml:space="preserve"><value>L'autorisation incident / AREP est manquante.</value></data>
+  <data name="Validation_incident_missing" xml:space="preserve"><value>Nom ou numéro d'incident manquant.</value></data>
+  <data name="Validation_macs_missing" xml:space="preserve"><value>Le désignateur MACS est manquant.</value></data>
+  <data name="Validation_order_missing" xml:space="preserve"><value>Le numéro de commande d'incident est manquant.</value></data>
+  <data name="Validation_paper_fallback_missing" xml:space="preserve"><value>Aucun F-42 signé ou papier n'est joint au déploiement.</value></data>
+  <data name="Validation_personnel_interval_outside" xml:space="preserve"><value>L'intervalle de mobilisation d'une personne sort de la fenêtre engagement-retour.</value></data>
+  <data name="Validation_personnel_missing" xml:space="preserve"><value>Aucun personnel listé.</value></data>
+  <data name="Validation_rate_profile_missing" xml:space="preserve"><value>Aucune ligne de taux annuel n'est en vigueur à la date d'engagement.</value></data>
+  <data name="Validation_release_is_not_return" xml:space="preserve"><value>La ressource est libérée mais aucune heure de retour ou de réengagement n'est enregistrée.</value></data>
+  <data name="Validation_request_missing" xml:space="preserve"><value>Le numéro de demande est manquant.</value></data>
+  <data name="Validation_request_prefix_invalid" xml:space="preserve"><value>Le numéro de demande n'a pas de préfixe valide (E, O, C, S, A) et de numéro.</value></data>
+  <data name="Validation_resource_missing" xml:space="preserve"><value>Type, nature de ressource ou poste overhead manquant.</value></data>
+  <data name="Validation_responding_signature_missing" xml:space="preserve"><value>La signature de l'agence intervenante est manquante.</value></data>
+  <data name="Validation_return_before_dispatch" xml:space="preserve"><value>L'heure de retour précède l'engagement.</value></data>
+  <data name="Validation_rotation_undocumented" xml:space="preserve"><value>Une rotation d'équipe n'a pas de pièce jointe d'approbation.</value></data>
+  <data name="Validation_vehicle_not_in_inventory" xml:space="preserve"><value>Un véhicule n'a pas de ligne de correspondance F-5.</value></data>
+  <data name="Value" xml:space="preserve"><value>Valeur</value></data>
+  <data name="Variance" xml:space="preserve"><value>Écart</value></data>
+  <data name="Verification" xml:space="preserve"><value>Vérification</value></data>
+  <data name="VerificationHelp" xml:space="preserve"><value>Marquez le profil vérifié après l'avoir comparé à la fiche agence dans MARS. Le tableau avertit après un an.</value></data>
+  <data name="VerifiedOn" xml:space="preserve"><value>Vérifié le</value></data>
+  <data name="Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Warning" xml:space="preserve"><value>Avertissement</value></data>
+  <data name="Window" xml:space="preserve"><value>Période</value></data>
+  <data name="WorkItemIntro" xml:space="preserve"><value>Ordre officiel des cases, liens vers les faits immuables du déploiement, liste de contrôle, remboursement attendu et transfert vers le portail.</value></data>
+  <data name="Year" xml:space="preserve"><value>Année</value></data>
+  <data name="Yes" xml:space="preserve"><value>Oui</value></data>
+  <data name="calmars_admin_input_amount_invalid" xml:space="preserve"><value>Les montants d'entrée ne peuvent pas être négatifs.</value></data>
+  <data name="calmars_admin_input_classification_invalid" xml:space="preserve"><value>Une classification d'entrée n'est pas valide.</value></data>
+  <data name="calmars_admin_input_year_invalid" xml:space="preserve"><value>Un exercice d'entrée n'est pas valide (années antérieures uniquement).</value></data>
+  <data name="calmars_agency_name_required" xml:space="preserve"><value>Le nom de l'agence est requis.</value></data>
+  <data name="calmars_agency_not_found" xml:space="preserve"><value>Le profil d'agence est introuvable.</value></data>
+  <data name="calmars_agreement_in_use" xml:space="preserve"><value>L'accord est référencé par un élément et ne peut pas être supprimé.</value></data>
+  <data name="calmars_agreement_kind_invalid" xml:space="preserve"><value>Le type de document d'accord n'est pas valide.</value></data>
+  <data name="calmars_agreement_method_invalid" xml:space="preserve"><value>La méthode de rémunération n'est pas valide.</value></data>
+  <data name="calmars_agreement_not_found" xml:space="preserve"><value>L'accord est introuvable.</value></data>
+  <data name="calmars_agreement_overtime_invalid" xml:space="preserve"><value>La méthode d'heures supplémentaires n'est pas valide.</value></data>
+  <data name="calmars_attestation_required" xml:space="preserve"><value>Confirmez l'attestation avant d'ouvrir la vue de transfert.</value></data>
+  <data name="calmars_dates_invalid" xml:space="preserve"><value>La date de fin précède la date de début.</value></data>
+  <data name="calmars_decision_title_required" xml:space="preserve"><value>La décision nécessite le nom / titre du décideur.</value></data>
+  <data name="calmars_deployment_not_found" xml:space="preserve"><value>Le déploiement est introuvable.</value></data>
+  <data name="calmars_f42_not_found" xml:space="preserve"><value>Le F-42 lié est introuvable sur ce déploiement.</value></data>
+  <data name="calmars_fill_not_found" xml:space="preserve"><value>Cette demande / fill n'est pas sur la commande externe du déploiement.</value></data>
+  <data name="calmars_fill_required" xml:space="preserve"><value>La commande comporte plusieurs demandes ; choisissez la demande / fill pour ce F-42.</value></data>
+  <data name="calmars_invoice_amount_invalid" xml:space="preserve"><value>Le montant facturé ne peut pas être négatif.</value></data>
+  <data name="calmars_invoice_duplicate" xml:space="preserve"><value>Une facture MARS avec cet identifiant est déjà enregistrée.</value></data>
+  <data name="calmars_invoice_id_required" xml:space="preserve"><value>L'identifiant de facture MARS est requis.</value></data>
+  <data name="calmars_invoice_not_approved" xml:space="preserve"><value>Enregistrez l'approbation locale avant un paiement.</value></data>
+  <data name="calmars_invoice_not_payable" xml:space="preserve"><value>La facture n'est pas dans un état permettant d'enregistrer un paiement.</value></data>
+  <data name="calmars_invoice_not_pending" xml:space="preserve"><value>La facture n'est pas en attente d'approbation locale.</value></data>
+  <data name="calmars_not_ready" xml:space="preserve"><value>L'enregistrement n'est pas Prêt pour le portail ; lancez d'abord la liste de contrôle.</value></data>
+  <data name="calmars_payment_amount_invalid" xml:space="preserve"><value>Le montant payé ne peut pas être négatif.</value></data>
+  <data name="calmars_rate_empty" xml:space="preserve"><value>La soumission n'a ni lignes, ni taux administratif, ni taux de base accepté.</value></data>
+  <data name="calmars_rate_line_basis_invalid" xml:space="preserve"><value>Une base de ligne de taux n'est pas valide.</value></data>
+  <data name="calmars_rate_line_classification_required" xml:space="preserve"><value>Les lignes salariales nécessitent un code de classification.</value></data>
+  <data name="calmars_rate_line_kind_invalid" xml:space="preserve"><value>Un type de ligne de taux n'est pas valide.</value></data>
+  <data name="calmars_rate_line_rate_invalid" xml:space="preserve"><value>Les taux ne peuvent pas être négatifs.</value></data>
+  <data name="calmars_rate_line_resource_required" xml:space="preserve"><value>Les lignes d'équipement nécessitent un code ressource ou FEMA.</value></data>
+  <data name="calmars_rate_locked" xml:space="preserve"><value>Cette soumission est signée ou soumise et ne peut plus être modifiée.</value></data>
+  <data name="calmars_rate_not_found" xml:space="preserve"><value>La soumission annuelle est introuvable.</value></data>
+  <data name="calmars_rate_not_signed" xml:space="preserve"><value>Enregistrez la signature locale avant d'observer un statut externe.</value></data>
+  <data name="calmars_rate_percent_invalid" xml:space="preserve"><value>Le taux administratif doit être compris entre 0 et 100 %.</value></data>
+  <data name="calmars_rate_signer_required" xml:space="preserve"><value>La signature nécessite le nom du signataire.</value></data>
+  <data name="calmars_rate_transition_invalid" xml:space="preserve"><value>Ce changement de statut n'est pas autorisé.</value></data>
+  <data name="calmars_rate_type_invalid" xml:space="preserve"><value>Le type de soumission n'est pas valide.</value></data>
+  <data name="calmars_rate_year_invalid" xml:space="preserve"><value>L'année de soumission n'est pas valide.</value></data>
+  <data name="calmars_rejection_comment_required" xml:space="preserve"><value>Un rejet nécessite un commentaire.</value></data>
+  <data name="calmars_resource_name_required" xml:space="preserve"><value>Une ressource externe nécessite un nom.</value></data>
+  <data name="calmars_resource_not_found" xml:space="preserve"><value>La ligne de ressource est introuvable.</value></data>
+  <data name="calmars_resource_subject_invalid" xml:space="preserve"><value>Le type de sujet de la ressource n'est pas valide.</value></data>
+  <data name="calmars_resource_unit_not_found" xml:space="preserve"><value>L'unité est introuvable dans ce service.</value></data>
+  <data name="calmars_resource_unit_required" xml:space="preserve"><value>Une unité est requise pour une ressource d'unité.</value></data>
+  <data name="calmars_status_unknown" xml:space="preserve"><value>Ce statut externe n'est pas dans le vocabulaire du profil d'autorité.</value></data>
+  <data name="calmars_work_item_external" xml:space="preserve"><value>L'enregistrement a été observé dans MARS et n'est plus modifiable localement.</value></data>
+  <data name="calmars_work_item_not_calculable" xml:space="preserve"><value>Seuls les F-42 et demandes de dépenses ont un remboursement attendu.</value></data>
+  <data name="calmars_work_item_not_closable" xml:space="preserve"><value>Seuls les enregistrements approuvés, documentation seule, rejetés ou payés peuvent être clôturés.</value></data>
+  <data name="calmars_work_item_not_external" xml:space="preserve"><value>L'enregistrement n'a pas été observé soumis dans MARS.</value></data>
+  <data name="calmars_work_item_not_found" xml:space="preserve"><value>L'enregistrement est introuvable.</value></data>
+  <data name="calmars_work_item_not_invoice" xml:space="preserve"><value>L'enregistrement n'est pas une facture MARS.</value></data>
+  <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Seuls les F-42 et demandes de dépenses sont soumis à MARS.</value></data>
+  <data name="calmars_work_item_settled" xml:space="preserve"><value>L'enregistrement est payé ou clôturé ; ses lignes sont définitives.</value></data>
+  <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>L'enregistrement n'est pas du type attendu.</value></data>
+</root>

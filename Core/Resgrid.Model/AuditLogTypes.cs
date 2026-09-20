@@ -304,6 +304,42 @@ ChecklistReminderSettingsUpdated,
 		BidConverted,
 		BidDeleted,
 		TimeReportBilled,
-		DeploymentInvoiceGenerated
+		DeploymentInvoiceGenerated,
+
+		// Workforce & Business Operations plan Phase C-M3 (Cal OES MARS cost recovery). Append-only.
+		CalOesMarsAgencyProfileChanged,
+		CalOesMarsResourceProfileChanged,
+		CalOesMarsRateProfileChanged,
+		CalOesMarsRateDraftBuilt,
+		CalOesMarsRateReviewed,
+		CalOesMarsAgreementChanged,
+		CalOesMarsAgreementObserved,
+		CalOesMarsWorkItemPrepared,
+		CalOesMarsWorkItemValidated,
+		CalOesMarsReimbursementCalculated,
+		CalOesMarsWorkItemOpenedForHandoff,
+		CalOesMarsExternalStatusObserved,
+		CalOesMarsInvoiceApproved,
+		CalOesMarsInvoiceRejected,
+		CalOesMarsPaymentReconciled,
+		CalOesMarsWorkItemDeleted,
+
+		// Workforce & Business Operations plan Phase E (protected workforce pay data, field costing, California pay data reporting). Append-only.
+		WorkforceEmployerProfileChanged,
+		WorkforceEstablishmentChanged,
+		WorkforceEmploymentChanged,
+		WorkforceCompensationChanged,
+		WorkforceAnnualPayFactImported,
+		PayDataDemographicChanged,
+		PayDataReportCreated,
+		PayDataReportValidated,
+		PayDataReportFrozen,
+		PayDataReportExported,
+		PayDataReportMarkedCertified,
+		PayDataReportCorrected,
+		ResourceCostProfileChanged,
+		ResourceUsageChanged,
+		FieldCostRunCreated,
+		FieldCostRunFrozen
 	}
 }

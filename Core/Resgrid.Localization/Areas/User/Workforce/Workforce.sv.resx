@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AcquisitionCost" xml:space="preserve"><value>Anskaffningskostnad</value></data>
+  <data name="AcquisitionDate" xml:space="preserve"><value>Anskaffningsdatum</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="ActiveFrom" xml:space="preserve"><value>Aktiv från</value></data>
+  <data name="ActiveTo" xml:space="preserve"><value>Aktiv till</value></data>
+  <data name="Actual" xml:space="preserve"><value>Faktisk</value></data>
+  <data name="ActualWorkedHours" xml:space="preserve"><value>Faktiskt arbetade timmar</value></data>
+  <data name="AddAffiliate" xml:space="preserve"><value>Lägg till anknuten enhet</value></data>
+  <data name="AddAssignment" xml:space="preserve"><value>Lägg till tilldelning</value></data>
+  <data name="AddContractor" xml:space="preserve"><value>Lägg till leverantör</value></data>
+  <data name="AddDepartmentDefault" xml:space="preserve"><value>Lägg till avdelningsstandard</value></data>
+  <data name="AddEmployment" xml:space="preserve"><value>Lägg till anställning</value></data>
+  <data name="AddEstablishment" xml:space="preserve"><value>Lägg till arbetsställe</value></data>
+  <data name="AddFact" xml:space="preserve"><value>Lägg till faktum</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>Lägg till profil</value></data>
+  <data name="AddResourceProfile" xml:space="preserve"><value>Lägg till resursprofil</value></data>
+  <data name="AddRoleDefault" xml:space="preserve"><value>Lägg till rollstandard</value></data>
+  <data name="AddUsage" xml:space="preserve"><value>Lägg till avläsning</value></data>
+  <data name="AddWorkEntry" xml:space="preserve"><value>Lägg till post</value></data>
+  <data name="AddWorker" xml:space="preserve"><value>Lägg till arbetstagare</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Eller lägg till en extern arbetstagare via lönenyckel och etikett (båda skyddade).</value></data>
+  <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Välj en medlem för att skapa dennes arbetstagarpost.</value></data>
+  <data name="Address" xml:space="preserve"><value>Adress</value></data>
+  <data name="Affiliate" xml:space="preserve"><value>Anknuten enhet</value></data>
+  <data name="Affiliates" xml:space="preserve"><value>Anknutna enheter</value></data>
+  <data name="AffiliatesHelp" xml:space="preserve"><value>Endast för ett integrerat företag: de andra enheter rapporten omfattar.</value></data>
+  <data name="Aggregate" xml:space="preserve"><value>Aggregera rader</value></data>
+  <data name="AllocationBasis" xml:space="preserve"><value>Fördelningsgrund</value></data>
+  <data name="AllocationDay" xml:space="preserve"><value>Per dag</value></data>
+  <data name="AllocationEngineHour" xml:space="preserve"><value>Per motortimme</value></data>
+  <data name="AllocationKilometer" xml:space="preserve"><value>Per kilometer</value></data>
+  <data name="AllocationMile" xml:space="preserve"><value>Per mile</value></data>
+  <data name="AllocationOperatingHour" xml:space="preserve"><value>Per drifttimme</value></data>
+  <data name="Amount" xml:space="preserve"><value>Belopp</value></data>
+  <data name="AnnualFacts" xml:space="preserve"><value>Årliga lönefakta</value></data>
+  <data name="AnnualFactsIntro" xml:space="preserve"><value>W-2-inkomst, timmar och veckor per anställning för rapportåret — indata till varje CRD-ögonblicksbild.</value></data>
+  <data name="AnnualFactsMissing" xml:space="preserve"><value>Saknade årliga lönefakta</value></data>
+  <data name="ApplyOverride" xml:space="preserve"><value>Tillämpa överstyrning</value></data>
+  <data name="Approval" xml:space="preserve"><value>Godkännande</value></data>
+  <data name="ApprovalHelp" xml:space="preserve"><value>Ej godkända profiler prissätter fortfarande uppskattningar men flaggar varje rad för granskning. Varje satsändring tar bort godkännandet.</value></data>
+  <data name="ApproveProfile" xml:space="preserve"><value>Godkänn profil</value></data>
+  <data name="Approved" xml:space="preserve"><value>Godkänd</value></data>
+  <data name="ApprovedPayrollCost" xml:space="preserve"><value>Godkänd lönekostnad</value></data>
+  <data name="ApprovedPayrollCostHelp" xml:space="preserve"><value>Det faktiska från lönesystemet; när det finns ersätter det uppskattningen för dagen.</value></data>
+  <data name="Artifacts" xml:space="preserve"><value>Exportfiler</value></data>
+  <data name="ArtifactsHelp" xml:space="preserve"><value>CSV och XLSX i CRD-mallens kolumnordning, kontrollsummestabila för oförändrad indata, nedladdningsbara utan cache tills de rensas efter lagringsperioden.</value></data>
+  <data name="Back" xml:space="preserve"><value>Tillbaka</value></data>
+  <data name="BaseAmount" xml:space="preserve"><value>Grundbelopp</value></data>
+  <data name="BaseAmountHelp" xml:space="preserve"><value>Per timme, år, dag eller skift enligt lönegrunden.</value></data>
+  <data name="Basis" xml:space="preserve"><value>Grund</value></data>
+  <data name="Bid" xml:space="preserve"><value>Anbud</value></data>
+  <data name="BreakEven" xml:space="preserve"><value>Nollpunktsintäkt</value></data>
+  <data name="BuildSnapshots" xml:space="preserve"><value>Bygg ögonblicksbilder</value></data>
+  <data name="CaBasisAssignedToCaliforniaEstablishment" xml:space="preserve"><value>Placerad vid ett arbetsställe i Kalifornien</value></data>
+  <data name="CaBasisBoth" xml:space="preserve"><value>Båda</value></data>
+  <data name="CaBasisNotCalifornia" xml:space="preserve"><value>Ej Kalifornienanställd</value></data>
+  <data name="CaBasisWorksInCalifornia" xml:space="preserve"><value>Arbetar i Kalifornien</value></data>
+  <data name="CaliforniaBasis" xml:space="preserve"><value>Kaliforniengrund</value></data>
+  <data name="CaliforniaEmployeeCount" xml:space="preserve"><value>Anställda i Kalifornien</value></data>
+  <data name="CallId" xml:space="preserve"><value>Larm nr</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+  <data name="Cap" xml:space="preserve"><value>Tak</value></data>
+  <data name="Category" xml:space="preserve"><value>Kategori</value></data>
+  <data name="CategoryConsumable" xml:space="preserve"><value>Förbrukningsvara</value></data>
+  <data name="CategoryExpense" xml:space="preserve"><value>Utgift</value></data>
+  <data name="CategoryOverhead" xml:space="preserve"><value>Omkostnad</value></data>
+  <data name="CategoryPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="CategoryResource" xml:space="preserve"><value>Resurs</value></data>
+  <data name="CertificationReference" xml:space="preserve"><value>Portalens certifieringsreferens</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Kontrollsumma</value></data>
+  <data name="City" xml:space="preserve"><value>Ort</value></data>
+  <data name="ClientAllocatedEarnings" xml:space="preserve"><value>Klientallokerad inkomst</value></data>
+  <data name="ClientAllocatedHours" xml:space="preserve"><value>Klientallokerade timmar</value></data>
+  <data name="ClientAllocatedWeeks" xml:space="preserve"><value>Klientallokerade veckor</value></data>
+  <data name="ClientAllocationKey" xml:space="preserve"><value>Klientallokeringsnyckel</value></data>
+  <data name="Code" xml:space="preserve"><value>Kod</value></data>
+  <data name="CollectionSource" xml:space="preserve"><value>Insamlingskälla</value></data>
+  <data name="CollectionSourceEmploymentRecord" xml:space="preserve"><value>Anställningsuppgift</value></data>
+  <data name="CollectionSourceHelp" xml:space="preserve"><value>Hur denna post erhölls; observatörsuppfattning flaggas i varje rapportkörning.</value></data>
+  <data name="CollectionSourceObserverPerception" xml:space="preserve"><value>Observatörsuppfattning</value></data>
+  <data name="CollectionSourceReliableRecord" xml:space="preserve"><value>Annan tillförlitlig uppgift</value></data>
+  <data name="CollectionSourceSelfIdentified" xml:space="preserve"><value>Självidentifierad</value></data>
+  <data name="Commit" xml:space="preserve"><value>Genomför import</value></data>
+  <data name="Compensation" xml:space="preserve"><value>Ersättning</value></data>
+  <data name="CompensationIntro" xml:space="preserve"><value>Ersättningsprofiler för anställd, roll och avdelning med löne- och arbetsgivarkostnadskomponenter.</value></data>
+  <data name="CompensationProfile" xml:space="preserve"><value>Ersättningsprofil</value></data>
+  <data name="Completeness" xml:space="preserve"><value>Demografisk fullständighet</value></data>
+  <data name="Component" xml:space="preserve"><value>Komponent</value></data>
+  <data name="Components" xml:space="preserve"><value>Komponenter</value></data>
+  <data name="ConfirmCorrection" xml:space="preserve"><value>Skapa en korrigeringskörning? Den exporterade körningen förblir som inlämnad och markeras som korrigerad.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Ta bort denna post?</value></data>
+  <data name="ConfirmFreeze" xml:space="preserve"><value>Frys denna körning? En fryst körning är oföränderlig; en senare omräkning ersätter den.</value></data>
+  <data name="ConfirmImport" xml:space="preserve"><value>Genomför importen? Varje rad skapar en ny faktaversion.</value></data>
+  <data name="ConfirmVoid" xml:space="preserve"><value>Ogiltigförklara denna körning? Dess exportfiler rensas.</value></data>
+  <data name="Consumables" xml:space="preserve"><value>Förbrukningsvaror</value></data>
+  <data name="Consumption" xml:space="preserve"><value>Förbrukning</value></data>
+  <data name="ContactDetails" xml:space="preserve"><value>Kontaktuppgifter</value></data>
+  <data name="Context" xml:space="preserve"><value>Kontext</value></data>
+  <data name="ContextBid" xml:space="preserve"><value>Anbud</value></data>
+  <data name="ContextCall" xml:space="preserve"><value>Larm</value></data>
+  <data name="ContextDeployment" xml:space="preserve"><value>Insats</value></data>
+  <data name="ContractorsIntro" xml:space="preserve"><value>Leverantörer av bemanningsanställda som omfattas av den andra CRD-rapporten.</value></data>
+  <data name="CorrectFact" xml:space="preserve"><value>Korrigera faktum (ny version)</value></data>
+  <data name="CostCategoryAllocatedOverhead" xml:space="preserve"><value>Fördelade omkostnader</value></data>
+  <data name="CostCategoryEmployerPayrollTax" xml:space="preserve"><value>Arbetsgivaravgift</value></data>
+  <data name="CostCategoryFixedLaborCost" xml:space="preserve"><value>Fast arbetskostnad</value></data>
+  <data name="CostCategoryHealthBenefits" xml:space="preserve"><value>Hälsoförmåner</value></data>
+  <data name="CostCategoryOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="CostCategoryOtherBenefits" xml:space="preserve"><value>Övriga förmåner</value></data>
+  <data name="CostCategoryRetirementPension" xml:space="preserve"><value>Pension</value></data>
+  <data name="CostCategoryWorkersCompensation" xml:space="preserve"><value>Arbetsskadeförsäkring</value></data>
+  <data name="CostComponentBasisFixedAnnual" xml:space="preserve"><value>Fast årlig</value></data>
+  <data name="CostComponentBasisPerDay" xml:space="preserve"><value>Per dag</value></data>
+  <data name="CostComponentBasisPerHour" xml:space="preserve"><value>Per timme</value></data>
+  <data name="CostComponentBasisPerShift" xml:space="preserve"><value>Per skift</value></data>
+  <data name="CostComponentBasisPercentOfEligiblePay" xml:space="preserve"><value>% av berättigad lön</value></data>
+  <data name="CostComponents" xml:space="preserve"><value>Kostnadskomponenter</value></data>
+  <data name="CostComponentsHelp" xml:space="preserve"><value>Arbetsgivaravgifter, förmåner, pension och fördelade omkostnader — procent av berättigad lön, per timme, per skift eller fast årlig, med valfritt tak.</value></data>
+  <data name="CostRun" xml:space="preserve"><value>Kostnadskörning</value></data>
+  <data name="CostRuns" xml:space="preserve"><value>Kostnadskörningar</value></data>
+  <data name="CostRunsIntro" xml:space="preserve"><value>Intern totalkostnad och marginal för anbud (uppskattning), larm och insatser (faktisk). Intäkt är alltid bara ett observerat tal.</value></data>
+  <data name="CoverageCoveredBoth" xml:space="preserve"><value>Omfattad — båda rapporterna</value></data>
+  <data name="CoverageCoveredLaborContractor" xml:space="preserve"><value>Omfattad — Labor Contractor Employee-rapport</value></data>
+  <data name="CoverageCoveredPayroll" xml:space="preserve"><value>Omfattad — Payroll Employee-rapport</value></data>
+  <data name="CoverageHelp" xml:space="preserve"><value>Deklareras av arbetsgivaren efter att ha läst CRD:s vägledning; Resgrid avgör aldrig om du måste lämna in.</value></data>
+  <data name="CoverageNotCovered" xml:space="preserve"><value>Ej omfattad</value></data>
+  <data name="CoverageStatus" xml:space="preserve"><value>Omfattningsstatus</value></data>
+  <data name="CoverageUnknown" xml:space="preserve"><value>Ej deklarerad</value></data>
+  <data name="CreateCorrection" xml:space="preserve"><value>Skapa korrigering</value></data>
+  <data name="CreateRun" xml:space="preserve"><value>Skapa körning</value></data>
+  <data name="Created" xml:space="preserve"><value>Skapad</value></data>
+  <data name="Currency" xml:space="preserve"><value>Valuta</value></data>
+  <data name="CurrentResponse" xml:space="preserve"><value>Aktuellt svar</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Skyddade lönedata, intern fältkostnadsberäkning och Kaliforniens lönedatarapportering.</value></data>
+  <data name="Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="Days" xml:space="preserve"><value>Dagar</value></data>
+  <data name="DaysWorked" xml:space="preserve"><value>Arbetade dagar</value></data>
+  <data name="Dba" xml:space="preserve"><value>DBA</value></data>
+  <data name="DeclineToState" xml:space="preserve"><value>Vill inte uppge</value></data>
+  <data name="Declined" xml:space="preserve"><value>avböjda</value></data>
+  <data name="DefaultEstablishment" xml:space="preserve"><value>Standardarbetsställe</value></data>
+  <data name="DefaultProfiles" xml:space="preserve"><value>Standardprofiler</value></data>
+  <data name="DefaultProfilesHelp" xml:space="preserve"><value>Roll- och avdelningsstandarder prissätter anbudsuppskattningar och medlemmar utan egen profil.</value></data>
+  <data name="Delete" xml:space="preserve"><value>Ta bort</value></data>
+  <data name="DemographicCode" xml:space="preserve"><value>Ras/etnicitet/kön</value></data>
+  <data name="DemographicRecord" xml:space="preserve"><value>Demografisk post</value></data>
+  <data name="DemographicRecordIntro" xml:space="preserve"><value>Efterlevnadsansvarigs post för en arbetstagare som inte självidentifierat sig.</value></data>
+  <data name="DemographicRecordNotice" xml:space="preserve"><value>Använd anställnings- eller andra tillförlitliga uppgifter först; observatörsuppfattning är en sista utväg och flaggas på varje ögonblicksbild. Orsak krävs och granskas.</value></data>
+  <data name="DemographicsMissing" xml:space="preserve"><value>Saknade demografiska svar</value></data>
+  <data name="DemographicsVoluntary" xml:space="preserve"><value>Att svara är frivilligt. Att avstå är ett giltigt svar och rapporteras som sådant.</value></data>
+  <data name="Department" xml:space="preserve"><value>Avdelning</value></data>
+  <data name="DeployedDays" xml:space="preserve"><value>Insatsdagar</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Insats</value></data>
+  <data name="DeploymentId" xml:space="preserve"><value>Insats-id</value></data>
+  <data name="Depreciation" xml:space="preserve"><value>Avskrivning</value></data>
+  <data name="DepreciationRate" xml:space="preserve"><value>Avskrivning / enhet</value></data>
+  <data name="DisplayLabel" xml:space="preserve"><value>Visningsnamn</value></data>
+  <data name="Distance" xml:space="preserve"><value>Avstånd</value></data>
+  <data name="DistanceHelp" xml:space="preserve"><value>Ange vägmätaravläsningar eller ett avstånd; kilometer lagras som miles.</value></data>
+  <data name="DistanceUnit" xml:space="preserve"><value>Avståndsenhet</value></data>
+  <data name="Downloads" xml:space="preserve"><value>Nedladdningar</value></data>
+  <data name="DryRun" xml:space="preserve"><value>Provkörning</value></data>
+  <data name="DryRunResult" xml:space="preserve"><value>Provkörningsresultat</value></data>
+  <data name="DueDate" xml:space="preserve"><value>Förfallodatum</value></data>
+  <data name="EarningsSource" xml:space="preserve"><value>Inkomstkälla</value></data>
+  <data name="EarningsSourceClientAllocated" xml:space="preserve"><value>Klientallokerad</value></data>
+  <data name="EarningsSourceW2Box1Fallback" xml:space="preserve"><value>W-2 ruta 1 (reserv)</value></data>
+  <data name="EarningsSourceW2Box5" xml:space="preserve"><value>W-2 ruta 5</value></data>
+  <data name="EarningsUsed" xml:space="preserve"><value>Använd inkomst</value></data>
+  <data name="EddAddress" xml:space="preserve"><value>EDD-adress</value></data>
+  <data name="EditAssignment" xml:space="preserve"><value>Redigera tilldelning</value></data>
+  <data name="EditContractor" xml:space="preserve"><value>Redigera leverantör</value></data>
+  <data name="EditEmployment" xml:space="preserve"><value>Redigera anställning</value></data>
+  <data name="EditEstablishment" xml:space="preserve"><value>Redigera arbetsställe</value></data>
+  <data name="EditResourceProfile" xml:space="preserve"><value>Redigera resursprofil</value></data>
+  <data name="EditUsage" xml:space="preserve"><value>Redigera avläsning</value></data>
+  <data name="EditWorkEntry" xml:space="preserve"><value>Redigera post</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Gäller från</value></data>
+  <data name="EligiblePayCodes" xml:space="preserve"><value>Berättigade lönekoder</value></data>
+  <data name="EmployeeProfiles" xml:space="preserve"><value>Anställdprofiler</value></data>
+  <data name="Employees" xml:space="preserve"><value>Anställda</value></data>
+  <data name="Employer" xml:space="preserve"><value>Arbetsgivare</value></data>
+  <data name="EmployerCostComponents" xml:space="preserve"><value>Arbetsgivarkostnadskomponenter</value></data>
+  <data name="EmployerCosts" xml:space="preserve"><value>arbetsgivarkostnader</value></data>
+  <data name="EmployerIntro" xml:space="preserve"><value>Arbetsgivaridentiteten som CRD-rapporten lämnas under, med dess anknutna enheter.</value></data>
+  <data name="EmployerMissing" xml:space="preserve"><value>Ingen arbetsgivarprofil ännu.</value></data>
+  <data name="EmployerProfile" xml:space="preserve"><value>Arbetsgivarprofil</value></data>
+  <data name="EmployerSection" xml:space="preserve"><value>Arbetsgivaravsnitt</value></data>
+  <data name="Employment" xml:space="preserve"><value>Anställning</value></data>
+  <data name="EmploymentType" xml:space="preserve"><value>Anställningstyp</value></data>
+  <data name="EmploymentTypeFullTime" xml:space="preserve"><value>Heltid</value></data>
+  <data name="EmploymentTypeIntermittent" xml:space="preserve"><value>Intermittent</value></data>
+  <data name="EmploymentTypePartTime" xml:space="preserve"><value>Deltid</value></data>
+  <data name="EmploymentTypeUnknown" xml:space="preserve"><value>Okänd</value></data>
+  <data name="Employments" xml:space="preserve"><value>Anställningar</value></data>
+  <data name="EndEngineMeter" xml:space="preserve"><value>Motortimmätare slut</value></data>
+  <data name="EndOdometer" xml:space="preserve"><value>Vägmätare slut</value></data>
+  <data name="EndOn" xml:space="preserve"><value>Slut</value></data>
+  <data name="EngineHours" xml:space="preserve"><value>Motortimmar</value></data>
+  <data name="Errors" xml:space="preserve"><value>Fel</value></data>
+  <data name="Establishment" xml:space="preserve"><value>Arbetsställe</value></data>
+  <data name="Establishments" xml:space="preserve"><value>Arbetsställen</value></data>
+  <data name="EstablishmentsIntro" xml:space="preserve"><value>Varje fysisk plats där anställda placeras; CRD-rapporten lämnas per arbetsställe.</value></data>
+  <data name="Estimate" xml:space="preserve"><value>Uppskattning</value></data>
+  <data name="EstimateVsActual" xml:space="preserve"><value>Uppskattning mot faktisk</value></data>
+  <data name="Estimated" xml:space="preserve"><value>uppskattad</value></data>
+  <data name="Exceptions" xml:space="preserve"><value>Undantag</value></data>
+  <data name="ExemptProxyActualPlusPaidLeave" xml:space="preserve"><value>Faktisk + betald ledighet</value></data>
+  <data name="ExemptProxyDaysTimesAverageHours" xml:space="preserve"><value>Dagar × genomsnittstimmar</value></data>
+  <data name="ExemptProxyMethod" xml:space="preserve"><value>Proxymetod för undantagna</value></data>
+  <data name="ExemptProxyNone" xml:space="preserve"><value>Ingen</value></data>
+  <data name="Exemption" xml:space="preserve"><value>Undantag</value></data>
+  <data name="ExemptionExempt" xml:space="preserve"><value>Undantagen</value></data>
+  <data name="ExemptionNonExempt" xml:space="preserve"><value>Ej undantagen</value></data>
+  <data name="ExemptionUnknown" xml:space="preserve"><value>Okänd</value></data>
+  <data name="ExpectedAnnualUtilization" xml:space="preserve"><value>Förväntad årlig användning</value></data>
+  <data name="ExpectedAnnualUtilizationHelp" xml:space="preserve"><value>I fördelningsenheter per år; fördelar fasta årliga komponenter och tidsbaserad avskrivning.</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Utgifter</value></data>
+  <data name="Expires" xml:space="preserve"><value>Upphör</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Upphör</value></data>
+  <data name="ExportPayDataReporting" xml:space="preserve"><value>Exportera Kaliforniens lönedatarapporter</value></data>
+  <data name="ExportPayDataReportingNote" xml:space="preserve"><value>Frysa en validerad körning och ladda ner dess CSV/XLSX-filer och portalarbetsbladet (utan cache, granskat).</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>Externt id</value></data>
+  <data name="ExternalResourceKey" xml:space="preserve"><value>Extern resursnyckel</value></data>
+  <data name="ExternalResourceKeyHelp" xml:space="preserve"><value>Ett prislisteposts-id här låter anbudsuppskattningar prissätta fordons- och utrustningsrader per klass.</value></data>
+  <data name="ExternalSource" xml:space="preserve"><value>Extern källa</value></data>
+  <data name="ExternalWorkerKey" xml:space="preserve"><value>Extern arbetstagarnyckel</value></data>
+  <data name="FactVersionHelp" xml:space="preserve"><value>Lagrade fakta är oföränderliga: att spara skapar en ny version som ersätter den nuvarande.</value></data>
+  <data name="Fallback" xml:space="preserve"><value>reservprofil</value></data>
+  <data name="Fein" xml:space="preserve"><value>FEIN</value></data>
+  <data name="FieldCosting" xml:space="preserve"><value>Fältkostnader</value></data>
+  <data name="FieldCostingIntro" xml:space="preserve"><value>Intern totalkostnad och marginal för anbud, larm och insatser — endast aggregerade kategorier.</value></data>
+  <data name="File" xml:space="preserve"><value>Fil</value></data>
+  <data name="FilingContactEmail" xml:space="preserve"><value>Kontakt-e-post</value></data>
+  <data name="FilingContactName" xml:space="preserve"><value>Kontaktnamn för inlämning</value></data>
+  <data name="FilingContactPhone" xml:space="preserve"><value>Kontakttelefon</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrera</value></data>
+  <data name="Flags" xml:space="preserve"><value>Flaggor</value></data>
+  <data name="Format" xml:space="preserve"><value>Format</value></data>
+  <data name="Freeze" xml:space="preserve"><value>Frys</value></data>
+  <data name="FreezeAndExport" xml:space="preserve"><value>Frys och exportera</value></data>
+  <data name="Frozen" xml:space="preserve"><value>Fryst</value></data>
+  <data name="Fuel" xml:space="preserve"><value>Bränsle</value></data>
+  <data name="FuelActualCost" xml:space="preserve"><value>Faktisk bränslekostnad</value></data>
+  <data name="FuelQuantity" xml:space="preserve"><value>Bränslemängd</value></data>
+  <data name="FuelUnit" xml:space="preserve"><value>Bränsleenhet</value></data>
+  <data name="Headquarters" xml:space="preserve"><value>Huvudkontor</value></data>
+  <data name="HeadquartersAddress" xml:space="preserve"><value>Huvudkontorsadress</value></data>
+  <data name="HelpCompensation" xml:space="preserve"><value>Varje belopp och multiplikator är ett skyddat fält. Uppskattningar använder den anställdes profil, sedan rollens standard, sedan avdelningens; lönesystemets godkända kostnad vinner alltid.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Omfattningen deklareras av dig, aldrig av Resgrid. Identifierare och adresser är skyddade fält; ett oförändrat REDACTED-värde behåller det lagrade.</value></data>
+  <data name="HispanicLatino" xml:space="preserve"><value>Hispanisk eller latino</value></data>
+  <data name="HourlyRate" xml:space="preserve"><value>Timlön</value></data>
+  <data name="Hours" xml:space="preserve"><value>Timmar</value></data>
+  <data name="HoursPerDay" xml:space="preserve"><value>Timmar / dag</value></data>
+  <data name="HoursPerWeek" xml:space="preserve"><value>Timmar / vecka</value></data>
+  <data name="HoursPerYear" xml:space="preserve"><value>Timmar / år</value></data>
+  <data name="HoursType" xml:space="preserve"><value>Timtyp</value></data>
+  <data name="HoursTypeDoubleTime" xml:space="preserve"><value>Dubbel tid</value></data>
+  <data name="HoursTypeOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="HoursTypeOvertime" xml:space="preserve"><value>Övertid</value></data>
+  <data name="HoursTypePaidLeave" xml:space="preserve"><value>Betald ledighet</value></data>
+  <data name="HoursTypeRegular" xml:space="preserve"><value>Ordinarie</value></data>
+  <data name="HoursTypeStandby" xml:space="preserve"><value>Beredskap</value></data>
+  <data name="HoursTypeTravel" xml:space="preserve"><value>Resa</value></data>
+  <data name="IdentifierType" xml:space="preserve"><value>Identifierartyp</value></data>
+  <data name="IdleHours" xml:space="preserve"><value>Tomgångstimmar</value></data>
+  <data name="ImportFacts" xml:space="preserve"><value>Importera årliga lönefakta (CSV)</value></data>
+  <data name="ImportHelp" xml:space="preserve"><value>Klistra in löneexporten i kanonisk kolumnordning. En provkörning validerar och stämmer av varje rad innan något sparas; importerade fakta är ej godkända.</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>Importresultat</value></data>
+  <data name="Import_box1_fallback" xml:space="preserve"><value>Ruta 5 saknas — ruta 1 används (anmärkning krävs)</value></data>
+  <data name="Import_duplicate_row" xml:space="preserve"><value>dubblettrad</value></data>
+  <data name="Import_earnings_missing" xml:space="preserve"><value>inkomst saknas</value></data>
+  <data name="Import_employment_not_found" xml:space="preserve"><value>ingen anställning täcker året</value></data>
+  <data name="Import_empty" xml:space="preserve"><value>inget att importera</value></data>
+  <data name="Import_hours_missing" xml:space="preserve"><value>rapporterbara timmar saknas eller noll</value></data>
+  <data name="Import_worker_not_found" xml:space="preserve"><value>arbetstagare hittades inte</value></data>
+  <data name="Import_year_invalid" xml:space="preserve"><value>ogiltigt år</value></data>
+  <data name="Included" xml:space="preserve"><value>Inkluderad</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Inventarietillgång</value></data>
+  <data name="IsIntegratedEnterprise" xml:space="preserve"><value>Del av ett integrerat företag</value></data>
+  <data name="JobCategory" xml:space="preserve"><value>CRD-jobbkategori</value></data>
+  <data name="JobCategoryHelp" xml:space="preserve"><value>En av de tio CRD-jobbkategorierna i den granskade schemaprofilen.</value></data>
+  <data name="JobTitle" xml:space="preserve"><value>Befattning</value></data>
+  <data name="LaborContractor" xml:space="preserve"><value>Bemanningsföretag</value></data>
+  <data name="LaborContractors" xml:space="preserve"><value>Bemanningsföretag</value></data>
+  <data name="LegalName" xml:space="preserve"><value>Juridiskt namn</value></data>
+  <data name="Line" xml:space="preserve"><value>Rad</value></data>
+  <data name="Lines" xml:space="preserve"><value>Rader</value></data>
+  <data name="LinesHelp" xml:space="preserve"><value>Personalrader bär ingen sats i klartext; den prissatta detaljen är ett skyddat fält som bara visas med giltig behörighet.</value></data>
+  <data name="LinesRequireCompensationView" xml:space="preserve"><value>Rader syns med Visa ersättning; sammanfattningen ovan är den aggregerade vyn.</value></data>
+  <data name="MajorActivity" xml:space="preserve"><value>Huvudsaklig verksamhet</value></data>
+  <data name="ManagePayDataReporting" xml:space="preserve"><value>Hantera Kaliforniens lönedatarapportering</value></data>
+  <data name="ManagePayDataReportingNote" xml:space="preserve"><value>CRD-rapportguiden: körningar, ögonblicksbilder, överstyrningar, aggregering, validering, anmärkningar, certifieringsobservation, korrigeringar och efterlevnadsansvarigs demografiska poster. Varje medlem besvarar alltid sitt eget svar utan den.</value></data>
+  <data name="ManageWorkforceCompensation" xml:space="preserve"><value>Hantera personal och ersättning</value></data>
+  <data name="ManageWorkforceCompensationNote" xml:space="preserve"><value>Arbetsgivaridentitet, arbetsställen, arbetstagare, anställningsperioder, tjänstetilldelningar, ersättningsprofiler och komponenter, arbetsposter och import av årliga lönefakta. Värden kräver fortfarande giltig behörighet.</value></data>
+  <data name="MappingProvenance" xml:space="preserve"><value>Mappningens ursprung</value></data>
+  <data name="Margin" xml:space="preserve"><value>Täckningsbidrag</value></data>
+  <data name="MarkCertified" xml:space="preserve"><value>Registrera certifiering</value></data>
+  <data name="MarkCertifiedHelp" xml:space="preserve"><value>Endast det du observerade i CRD-portalen efter att ha certifierat där; Resgrid certifierar aldrig.</value></data>
+  <data name="MarsAuthorityProfile" xml:space="preserve"><value>MARS-auktoritetsprofil</value></data>
+  <data name="MarsClassification" xml:space="preserve"><value>Cal OES MARS-klassificering</value></data>
+  <data name="MeanRate" xml:space="preserve"><value>Medeltimlön</value></data>
+  <data name="MedianRate" xml:space="preserve"><value>Median timlön</value></data>
+  <data name="Member" xml:space="preserve"><value>Medlem</value></data>
+  <data name="Miles" xml:space="preserve"><value>Miles</value></data>
+  <data name="MissingInputs" xml:space="preserve"><value>Saknade indata</value></data>
+  <data name="MyDemographics" xml:space="preserve"><value>Mitt demografiska svar</value></data>
+  <data name="MyDemographicsIntro" xml:space="preserve"><value>Besvara eller uppdatera din frivilliga självidentifiering för Kaliforniens lönedatarapportering.</value></data>
+  <data name="Naics" xml:space="preserve"><value>NAICS</value></data>
+  <data name="Name" xml:space="preserve"><value>Namn</value></data>
+  <data name="NewRun" xml:space="preserve"><value>Ny körning</value></data>
+  <data name="No" xml:space="preserve"><value>Nej</value></data>
+  <data name="NoAnswer" xml:space="preserve"><value>Inget svar</value></data>
+  <data name="NoArtifacts" xml:space="preserve"><value>Inga exportfiler — frys och exportera en validerad körning.</value></data>
+  <data name="NoAssignments" xml:space="preserve"><value>Inga tjänstetilldelningar.</value></data>
+  <data name="NoContractors" xml:space="preserve"><value>Inga bemanningsföretag.</value></data>
+  <data name="NoEmployments" xml:space="preserve"><value>Inga anställningsperioder ännu.</value></data>
+  <data name="NoEstablishments" xml:space="preserve"><value>Inga arbetsställen ännu.</value></data>
+  <data name="NoFacts" xml:space="preserve"><value>Inga årliga lönefakta för detta år och rapporttyp.</value></data>
+  <data name="NoLines" xml:space="preserve"><value>Inga rader.</value></data>
+  <data name="NoProfiles" xml:space="preserve"><value>Inga ersättningsprofiler.</value></data>
+  <data name="NoResourceProfiles" xml:space="preserve"><value>Inga resurskostnadsprofiler.</value></data>
+  <data name="NoRows" xml:space="preserve"><value>Inga aggregerade rader ännu — aggregera när ögonblicksbilderna är klara.</value></data>
+  <data name="NoRuns" xml:space="preserve"><value>Inga körningar ännu.</value></data>
+  <data name="NoSnapshots" xml:space="preserve"><value>Inga ögonblicksbilder ännu — bygg dem först.</value></data>
+  <data name="NoUsage" xml:space="preserve"><value>Inga användningsavläsningar.</value></data>
+  <data name="NoWorkEntries" xml:space="preserve"><value>Inga poster i detta intervall.</value></data>
+  <data name="NoWorkers" xml:space="preserve"><value>Inga arbetstagare ännu.</value></data>
+  <data name="NonRemote" xml:space="preserve"><value>På plats</value></data>
+  <data name="None" xml:space="preserve"><value>Inga</value></data>
+  <data name="NotReadyToFreeze" xml:space="preserve"><value>blockerande fel kvarstår</value></data>
+  <data name="NotValidated" xml:space="preserve"><value>Inte validerad ännu.</value></data>
+  <data name="ObserverPerception" xml:space="preserve"><value>observatörsuppfattning</value></data>
+  <data name="OpenRuns" xml:space="preserve"><value>Öppna körningar</value></data>
+  <data name="OperatingHours" xml:space="preserve"><value>Drifttimmar</value></data>
+  <data name="OriginalDistance" xml:space="preserve"><value>Avstånd (avläst)</value></data>
+  <data name="Other" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="Overhead" xml:space="preserve"><value>Omkostnader</value></data>
+  <data name="OverrideReason" xml:space="preserve"><value>Orsak till överstyrning</value></data>
+  <data name="OwnershipName" xml:space="preserve"><value>Ägarens namn</value></data>
+  <data name="PaidLeaveHours" xml:space="preserve"><value>Betalda ledighetstimmar</value></data>
+  <data name="Pay" xml:space="preserve"><value>lön</value></data>
+  <data name="PayBand" xml:space="preserve"><value>Löneband</value></data>
+  <data name="PayBasis" xml:space="preserve"><value>Lönegrund</value></data>
+  <data name="PayBasisDaily" xml:space="preserve"><value>Per dag</value></data>
+  <data name="PayBasisHourly" xml:space="preserve"><value>Per timme</value></data>
+  <data name="PayBasisSalary" xml:space="preserve"><value>Månadslön</value></data>
+  <data name="PayBasisShift" xml:space="preserve"><value>Per skift</value></data>
+  <data name="PayBasisStipend" xml:space="preserve"><value>Arvode</value></data>
+  <data name="PayCategoryDifferential" xml:space="preserve"><value>Tillägg</value></data>
+  <data name="PayCategoryEducation" xml:space="preserve"><value>Utbildning</value></data>
+  <data name="PayCategoryEms" xml:space="preserve"><value>EMS</value></data>
+  <data name="PayCategoryHazMat" xml:space="preserve"><value>HazMat</value></data>
+  <data name="PayCategoryIncentive" xml:space="preserve"><value>Incitament</value></data>
+  <data name="PayCategoryLongevity" xml:space="preserve"><value>Tjänsteålder</value></data>
+  <data name="PayCategoryOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="PayCategorySpecialty" xml:space="preserve"><value>Specialitet</value></data>
+  <data name="PayCategoryUsar" xml:space="preserve"><value>USAR</value></data>
+  <data name="PayComponentBasisFixedAnnual" xml:space="preserve"><value>Fast årlig</value></data>
+  <data name="PayComponentBasisPerHour" xml:space="preserve"><value>Per timme</value></data>
+  <data name="PayComponentBasisPerPayPeriod" xml:space="preserve"><value>Per löneperiod</value></data>
+  <data name="PayComponentBasisPerShift" xml:space="preserve"><value>Per skift</value></data>
+  <data name="PayComponentBasisPercentOfBase" xml:space="preserve"><value>% av grund</value></data>
+  <data name="PayComponents" xml:space="preserve"><value>Lönekomponenter</value></data>
+  <data name="PayComponentsHelp" xml:space="preserve"><value>Tillägg, incitament och specialistlön utöver grunden. Fastperiodskomponenter betalas inte på övertid om de inte är flaggade per övertidstimme.</value></data>
+  <data name="PayDataDisclaimer" xml:space="preserve"><value>Resgrid förbereder och exporterar; det lämnar aldrig in, avgör aldrig om ni omfattas och certifierar aldrig. Allt på dessa skärmar är skyddade fält som levereras utan cache.</value></data>
+  <data name="PayDataIntro" xml:space="preserve"><value>Förbered Kaliforniens CRD-rapporter Payroll Employee och Labor Contractor Employee; du lämnar in dem själv i CRD-portalen.</value></data>
+  <data name="PayDataReporting" xml:space="preserve"><value>Lönedatarapportering</value></data>
+  <data name="PayDataRun" xml:space="preserve"><value>Rapportkörning</value></data>
+  <data name="PerOvertimeHour" xml:space="preserve"><value>Per ÖT-timme</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="PersonnelRole" xml:space="preserve"><value>Personalroll</value></data>
+  <data name="PersonnelRoleHelp" xml:space="preserve"><value>Används för att välja rollens standardersättningsprofil när den anställde saknar egen.</value></data>
+  <data name="Phase" xml:space="preserve"><value>Fas</value></data>
+  <data name="PhaseIncident" xml:space="preserve"><value>Insats</value></data>
+  <data name="PhaseMobilization" xml:space="preserve"><value>Mobilisering</value></data>
+  <data name="PhaseReturn" xml:space="preserve"><value>Återresa</value></data>
+  <data name="PhaseStandby" xml:space="preserve"><value>Beredskap</value></data>
+  <data name="PhysicalAddress" xml:space="preserve"><value>Gatuadress</value></data>
+  <data name="PortalWorksheet" xml:space="preserve"><value>Portalarbetsblad</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postnummer</value></data>
+  <data name="PreviewEightHours" xml:space="preserve"><value>Totalkostnad för en ordinarie 8-timmarsdag</value></data>
+  <data name="ProfileUnavailable" xml:space="preserve"><value>ingen granskad schemaprofil</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Identifierare, adresser, lönesatser, inkomster, demografiska svar och exportfiler är fält för avancerat dataskydd (katalog 28). De visas som REDACTED utan giltig behörighet och cachas eller loggas aldrig.</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Ursprung</value></data>
+  <data name="ProvenanceHelp" xml:space="preserve"><value>Var identiteten kommer ifrån (avtal, W-9, portalpost).</value></data>
+  <data name="ProxyAverageHoursPerDay" xml:space="preserve"><value>Genomsnittstimmar per dag</value></data>
+  <data name="Purged" xml:space="preserve"><value>rensad</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Antal</value></data>
+  <data name="RaceEthnicity" xml:space="preserve"><value>Ras / etnicitet</value></data>
+  <data name="RaceHelp" xml:space="preserve"><value>Välj alla kategorier som gäller; två eller fler rapporteras som flerrasig.</value></data>
+  <data name="Race_B" xml:space="preserve"><value>Vit</value></data>
+  <data name="Race_C" xml:space="preserve"><value>Svart eller afroamerikan</value></data>
+  <data name="Race_D" xml:space="preserve"><value>Hawaiian eller annan stillahavsöbo</value></data>
+  <data name="Race_E" xml:space="preserve"><value>Asiat</value></data>
+  <data name="Race_F" xml:space="preserve"><value>Amerikansk urinvånare eller Alaska Native</value></data>
+  <data name="Race_H" xml:space="preserve"><value>Mellanöstern eller Nordafrika</value></data>
+  <data name="Rate" xml:space="preserve"><value>Sats</value></data>
+  <data name="RateMultipliers" xml:space="preserve"><value>Satsmultiplikatorer</value></data>
+  <data name="RateMultipliersHelp" xml:space="preserve"><value>JSON per lönekod; saknade koder använder 1,5 (övertid), 2 (dubbel) och 1.</value></data>
+  <data name="Readiness" xml:space="preserve"><value>Beredskap</value></data>
+  <data name="ReadyToFreeze" xml:space="preserve"><value>redo att frysas</value></data>
+  <data name="Reason" xml:space="preserve"><value>Orsak</value></data>
+  <data name="Reconciled" xml:space="preserve"><value>Avstämd</value></data>
+  <data name="RegularHourlyEquivalent" xml:space="preserve"><value>Ordinarie timekvivalent</value></data>
+  <data name="RegularHourlyEquivalentHelp" xml:space="preserve"><value>Valfri överstyrning; annars härledd från grundbelopp och standardtimmar.</value></data>
+  <data name="Relationship" xml:space="preserve"><value>Relation</value></data>
+  <data name="RelationshipEnd" xml:space="preserve"><value>Relationens slut</value></data>
+  <data name="RelationshipStart" xml:space="preserve"><value>Relationens start</value></data>
+  <data name="RemoteInCa" xml:space="preserve"><value>Distans i CA</value></data>
+  <data name="RemoteOutsideCa" xml:space="preserve"><value>Distans utanför CA</value></data>
+  <data name="ReportType" xml:space="preserve"><value>Rapporttyp</value></data>
+  <data name="ReportTypeLaborContractorEmployee" xml:space="preserve"><value>Labor Contractor Employee-rapport</value></data>
+  <data name="ReportTypePayrollEmployee" xml:space="preserve"><value>Payroll Employee-rapport</value></data>
+  <data name="ReportableHours" xml:space="preserve"><value>Rapporterbara timmar</value></data>
+  <data name="ResourceBasisFixedAnnual" xml:space="preserve"><value>Fast årlig</value></data>
+  <data name="ResourceBasisPerDay" xml:space="preserve"><value>Per dag</value></data>
+  <data name="ResourceBasisPerDeployment" xml:space="preserve"><value>Per insats</value></data>
+  <data name="ResourceBasisPerEngineHour" xml:space="preserve"><value>Per motortimme</value></data>
+  <data name="ResourceBasisPerIdleHour" xml:space="preserve"><value>Per tomgångstimme</value></data>
+  <data name="ResourceBasisPerKilometer" xml:space="preserve"><value>Per kilometer</value></data>
+  <data name="ResourceBasisPerMile" xml:space="preserve"><value>Per mile</value></data>
+  <data name="ResourceBasisPerOperatingHour" xml:space="preserve"><value>Per drifttimme</value></data>
+  <data name="ResourceCategoryConsumables" xml:space="preserve"><value>Förbrukningsvaror</value></data>
+  <data name="ResourceCategoryDepreciation" xml:space="preserve"><value>Avskrivning</value></data>
+  <data name="ResourceCategoryFixedOverhead" xml:space="preserve"><value>Fasta omkostnader</value></data>
+  <data name="ResourceCategoryFuelEnergy" xml:space="preserve"><value>Bränsle / energi</value></data>
+  <data name="ResourceCategoryInsuranceLicensing" xml:space="preserve"><value>Försäkring / registrering</value></data>
+  <data name="ResourceCategoryLeaseRental" xml:space="preserve"><value>Leasing / hyra</value></data>
+  <data name="ResourceCategoryMaintenance" xml:space="preserve"><value>Underhåll</value></data>
+  <data name="ResourceCategoryOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="ResourceCategoryStorage" xml:space="preserve"><value>Förvaring</value></data>
+  <data name="ResourceCategoryTiresWear" xml:space="preserve"><value>Däck / slitage</value></data>
+  <data name="ResourceComponentsHelp" xml:space="preserve"><value>Bränsle (sats eller förbrukning × enhetspris), underhåll (manuellt eller rullande arbetsorderfaktisk med mätarfönster), däck, försäkring, leasing, förvaring, fasta omkostnader och förbrukningsvaror.</value></data>
+  <data name="ResourceCosts" xml:space="preserve"><value>Resurskostnader</value></data>
+  <data name="ResourceCostsIntro" xml:space="preserve"><value>Avskrivning, bränsle, underhåll och fasta kostnader per enhet, tillgång eller extern resursklass.</value></data>
+  <data name="ResourceProfiles" xml:space="preserve"><value>Resursprofiler</value></data>
+  <data name="ResourceProfilesHelp" xml:space="preserve"><value>Rena numeriska data skyddade av Visa interna kostnader — ingen person prissätts här.</value></data>
+  <data name="ResourceSourceAcquisitionCalculated" xml:space="preserve"><value>Beräknad från anskaffning</value></data>
+  <data name="ResourceSourceImported" xml:space="preserve"><value>Importerad</value></data>
+  <data name="ResourceSourceManual" xml:space="preserve"><value>Manuell</value></data>
+  <data name="ResourceSourceWorkOrderRollingActual" xml:space="preserve"><value>Rullande arbetsorderfaktisk</value></data>
+  <data name="ResourceUsage" xml:space="preserve"><value>Resursanvändning</value></data>
+  <data name="Resources" xml:space="preserve"><value>Resurser</value></data>
+  <data name="Revenue" xml:space="preserve"><value>Intäkt</value></data>
+  <data name="RevenueBidEstimate" xml:space="preserve"><value>Anbudets uppskattade total</value></data>
+  <data name="RevenueCalOesMarsApproved" xml:space="preserve"><value>Cal OES MARS godkänd</value></data>
+  <data name="RevenueCalOesMarsExpected" xml:space="preserve"><value>Cal OES MARS förväntad</value></data>
+  <data name="RevenueCalOesMarsPaid" xml:space="preserve"><value>Cal OES MARS betald</value></data>
+  <data name="RevenueCustomerInvoice" xml:space="preserve"><value>Kundfakturor</value></data>
+  <data name="RevenueNone" xml:space="preserve"><value>Ingen</value></data>
+  <data name="RevenueSource" xml:space="preserve"><value>Intäktskälla</value></data>
+  <data name="Review" xml:space="preserve"><value>Granskning</value></data>
+  <data name="Review_approved_payroll_cost_used" xml:space="preserve"><value>godkänd lönekostnad använd</value></data>
+  <data name="Review_class_default_fallback" xml:space="preserve"><value>klassprofil använd</value></data>
+  <data name="Review_component_unapproved" xml:space="preserve"><value>komponent ej godkänd</value></data>
+  <data name="Review_currency_mismatch" xml:space="preserve"><value>valutaavvikelse</value></data>
+  <data name="Review_department_default_fallback" xml:space="preserve"><value>avdelningsstandard använd</value></data>
+  <data name="Review_depreciation_inputs_missing" xml:space="preserve"><value>avskrivningsindata saknas</value></data>
+  <data name="Review_distance_conflict" xml:space="preserve"><value>automatiskt och manuellt avstånd skiljer sig</value></data>
+  <data name="Review_fuel_inputs_missing" xml:space="preserve"><value>bränsleindata saknas</value></data>
+  <data name="Review_no_compensation_profile" xml:space="preserve"><value>ingen ersättningsprofil</value></data>
+  <data name="Review_no_employment_for_member" xml:space="preserve"><value>ingen anställningsperiod för medlemmen</value></data>
+  <data name="Review_no_rate_for_basis" xml:space="preserve"><value>ingen sats för grunden</value></data>
+  <data name="Review_no_resource_profile" xml:space="preserve"><value>ingen resursprofil</value></data>
+  <data name="Review_pay_code_multiplier_missing" xml:space="preserve"><value>lönekodsmultiplikator saknas (standard använd)</value></data>
+  <data name="Review_repair_double_counted" xml:space="preserve"><value>reparation redan debiterad direkt</value></data>
+  <data name="Review_role_default_fallback" xml:space="preserve"><value>rollstandard använd</value></data>
+  <data name="Review_rolling_window_insufficient" xml:space="preserve"><value>rullande underhållsfönster otillräckligt</value></data>
+  <data name="Review_unapproved_profile" xml:space="preserve"><value>ej godkänd profil</value></data>
+  <data name="Review_usage_needs_review" xml:space="preserve"><value>användningsavläsning behöver granskas</value></data>
+  <data name="Review_utilization_missing" xml:space="preserve"><value>årlig användning saknas</value></data>
+  <data name="Rows" xml:space="preserve"><value>Rader</value></data>
+  <data name="RunBidEstimate" xml:space="preserve"><value>Uppskatta anbudskostnad</value></data>
+  <data name="RunBidEstimateHelp" xml:space="preserve"><value>Anbudsrader × avdelningens standardersättning och klassresursprofiler; intäkt = anbudets uppskattade total.</value></data>
+  <data name="RunCallCost" xml:space="preserve"><value>Beräkna larmkostnad</value></data>
+  <data name="RunCallCostHelp" xml:space="preserve"><value>Arbetsposter och användningsavläsningar för larmet; ingen intäkt.</value></data>
+  <data name="RunDeploymentCost" xml:space="preserve"><value>Beräkna insatskostnad</value></data>
+  <data name="RunDeploymentCostHelp" xml:space="preserve"><value>Godkända dagliga tidrapporter, användningsavläsningar och utgifter till datumet.</value></data>
+  <data name="RunRemarks" xml:space="preserve"><value>Förtydligande anmärkningar</value></data>
+  <data name="RunRemarksHelp" xml:space="preserve"><value>Upp till 500 tecken; krävs när ruta 1-inkomst använts eller en undantagsproxy gäller.</value></data>
+  <data name="RunStatusDraft" xml:space="preserve"><value>Utkast</value></data>
+  <data name="RunStatusFrozen" xml:space="preserve"><value>Fryst</value></data>
+  <data name="RunStatusNeedsReview" xml:space="preserve"><value>Behöver granskas</value></data>
+  <data name="RunStatusSuperseded" xml:space="preserve"><value>Ersatt</value></data>
+  <data name="RunType" xml:space="preserve"><value>Körningstyp</value></data>
+  <data name="RunTypeActual" xml:space="preserve"><value>Faktisk</value></data>
+  <data name="RunTypeEstimate" xml:space="preserve"><value>Uppskattning</value></data>
+  <data name="Runs" xml:space="preserve"><value>Rapportkörningar</value></data>
+  <data name="SalvageValue" xml:space="preserve"><value>Restvärde</value></data>
+  <data name="Save" xml:space="preserve"><value>Spara</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Ändringen kunde inte sparas.</value></data>
+  <data name="SaveResponse" xml:space="preserve"><value>Spara svar</value></data>
+  <data name="Saved" xml:space="preserve"><value>Sparat.</value></data>
+  <data name="SchemaProfile" xml:space="preserve"><value>Schemaprofil</value></data>
+  <data name="Scope" xml:space="preserve"><value>Omfattning</value></data>
+  <data name="ScopeDepartmentDefault" xml:space="preserve"><value>Avdelningsstandard</value></data>
+  <data name="ScopeEmployee" xml:space="preserve"><value>Anställd</value></data>
+  <data name="ScopeRoleDefault" xml:space="preserve"><value>Rollstandard</value></data>
+  <data name="Sein" xml:space="preserve"><value>SEIN (EDD)</value></data>
+  <data name="SelfIdentification" xml:space="preserve"><value>Frivillig självidentifiering</value></data>
+  <data name="SelfIdentificationNotice" xml:space="preserve"><value>Dina svar lagras separat från din personalakt, krypterade, och används endast för att förbereda den aggregerade CRD-rapporten. Ingen i avdelningen ser dem på någon annan skärm.</value></data>
+  <data name="SelfIdentified" xml:space="preserve"><value>självidentifierade</value></data>
+  <data name="Sex" xml:space="preserve"><value>Kön</value></data>
+  <data name="Sex_10" xml:space="preserve"><value>Kvinna</value></data>
+  <data name="Sex_20" xml:space="preserve"><value>Man</value></data>
+  <data name="Sex_30" xml:space="preserve"><value>Icke-binär</value></data>
+  <data name="Size" xml:space="preserve"><value>Storlek</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Överhoppad</value></data>
+  <data name="Snapshot" xml:space="preserve"><value>Ögonblicksbild</value></data>
+  <data name="SnapshotEmployeeCount" xml:space="preserve"><value>Anställda i ögonblicksbilden</value></data>
+  <data name="SnapshotEnd" xml:space="preserve"><value>Ögonblicksbild slut</value></data>
+  <data name="SnapshotStart" xml:space="preserve"><value>Ögonblicksbild start</value></data>
+  <data name="SnapshotWindowHelp" xml:space="preserve"><value>En enda löneperiod mellan</value></data>
+  <data name="Snapshots" xml:space="preserve"><value>Anställdas ögonblicksbilder</value></data>
+  <data name="SnapshotsHelp" xml:space="preserve"><value>En rad per Kalifornienanställd i perioden; demografisk kod, inkomst och timlön är skyddade fält. Överstyrningar kräver orsak och granskas.</value></data>
+  <data name="SocCode" xml:space="preserve"><value>SOC-kod</value></data>
+  <data name="SocVersion" xml:space="preserve"><value>SOC-version</value></data>
+  <data name="SosNumber" xml:space="preserve"><value>CA Secretary of State-nummer</value></data>
+  <data name="Source" xml:space="preserve"><value>Källa</value></data>
+  <data name="StartEngineMeter" xml:space="preserve"><value>Motortimmätare start</value></data>
+  <data name="StartOdometer" xml:space="preserve"><value>Vägmätare start</value></data>
+  <data name="StartOn" xml:space="preserve"><value>Start</value></data>
+  <data name="State" xml:space="preserve"><value>Delstat</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="StatusCertifiedExternally" xml:space="preserve"><value>Certifierad externt</value></data>
+  <data name="StatusCorrection" xml:space="preserve"><value>Korrigerad</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Utkast</value></data>
+  <data name="StatusExported" xml:space="preserve"><value>Exporterad</value></data>
+  <data name="StatusFrozenForExport" xml:space="preserve"><value>Fryst</value></data>
+  <data name="StatusValidated" xml:space="preserve"><value>Validerad</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Ogiltig</value></data>
+  <data name="Subject" xml:space="preserve"><value>Objekt</value></data>
+  <data name="SubjectType" xml:space="preserve"><value>Objekttyp</value></data>
+  <data name="SubjectTypeExternal" xml:space="preserve"><value>Extern klass</value></data>
+  <data name="SubjectTypeInventoryAsset" xml:space="preserve"><value>Inventarietillgång</value></data>
+  <data name="SubjectTypeUnit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="Summary" xml:space="preserve"><value>Sammanfattning</value></data>
+  <data name="TabAnnualFacts" xml:space="preserve"><value>Årliga lönefakta</value></data>
+  <data name="TabCompensation" xml:space="preserve"><value>Ersättning</value></data>
+  <data name="TabContractors" xml:space="preserve"><value>Bemanningsföretag</value></data>
+  <data name="TabCostRuns" xml:space="preserve"><value>Kostnadskörningar</value></data>
+  <data name="TabDashboard" xml:space="preserve"><value>Översikt</value></data>
+  <data name="TabEmployer" xml:space="preserve"><value>Arbetsgivare</value></data>
+  <data name="TabEstablishments" xml:space="preserve"><value>Arbetsställen</value></data>
+  <data name="TabPayData" xml:space="preserve"><value>Lönedatarapportering</value></data>
+  <data name="TabResourceCosts" xml:space="preserve"><value>Resurskostnader</value></data>
+  <data name="TabWorkEntries" xml:space="preserve"><value>Arbetsposter</value></data>
+  <data name="TabWorkers" xml:space="preserve"><value>Arbetstagare</value></data>
+  <data name="ThroughDate" xml:space="preserve"><value>Till datum</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Tidszon</value></data>
+  <data name="Total" xml:space="preserve"><value>Totalt</value></data>
+  <data name="TotalLoadedCost" xml:space="preserve"><value>Total kostnad</value></data>
+  <data name="Unapproved" xml:space="preserve"><value>ej godkänd</value></data>
+  <data name="Unit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="UnitPrice" xml:space="preserve"><value>Enhetspris</value></data>
+  <data name="UnresolvedExceptions" xml:space="preserve"><value>Olösta undantag</value></data>
+  <data name="Updated" xml:space="preserve"><value>Uppdaterad</value></data>
+  <data name="UsEmployeeCount" xml:space="preserve"><value>Anställda i USA</value></data>
+  <data name="UsageEntries" xml:space="preserve"><value>Användningsposter</value></data>
+  <data name="UsageIntro" xml:space="preserve"><value>Vägmätar-, motortimmar-, tim- och bränsleavläsningar per enhet och dag; avstånd lagras i miles och motstridiga avläsningar köas för granskning.</value></data>
+  <data name="UsageSourceDtr" xml:space="preserve"><value>Daglig tidrapport</value></data>
+  <data name="UsageSourceGps" xml:space="preserve"><value>GPS</value></data>
+  <data name="UsageSourceHardwareTracker" xml:space="preserve"><value>Hårdvaruspårare</value></data>
+  <data name="UsageSourceImport" xml:space="preserve"><value>Import</value></data>
+  <data name="UsageSourceManual" xml:space="preserve"><value>Manuell</value></data>
+  <data name="UsefulLifeMonths" xml:space="preserve"><value>Livslängd (månader)</value></data>
+  <data name="UsefulLifeQuantity" xml:space="preserve"><value>Livslängd (enheter)</value></data>
+  <data name="UsefulLifeQuantityHelp" xml:space="preserve"><value>Miles, timmar eller dagar över livslängden; linjär = (kostnad − restvärde) ÷ livslängd.</value></data>
+  <data name="Validate" xml:space="preserve"><value>Validera</value></data>
+  <data name="ValidatedOn" xml:space="preserve"><value>Validerad</value></data>
+  <data name="Validation" xml:space="preserve"><value>Validering</value></data>
+  <data name="Validation_annual_fact_missing" xml:space="preserve"><value>årligt lönefaktum saknas</value></data>
+  <data name="Validation_annual_fact_unapproved" xml:space="preserve"><value>årligt lönefaktum ej godkänt</value></data>
+  <data name="Validation_assignment_overlap" xml:space="preserve"><value>överlappande tjänstetilldelningar</value></data>
+  <data name="Validation_contractor_identity_missing" xml:space="preserve"><value>bemanningsföretagets identitet saknas</value></data>
+  <data name="Validation_coverage_undeclared" xml:space="preserve"><value>omfattningsstatus ej deklarerad</value></data>
+  <data name="Validation_demographic_missing" xml:space="preserve"><value>demografiskt svar saknas eller avböjt</value></data>
+  <data name="Validation_earnings_box1_fallback" xml:space="preserve"><value>W-2 ruta 1 använd i stället för ruta 5 (anmärkning krävs)</value></data>
+  <data name="Validation_earnings_missing" xml:space="preserve"><value>inkomst saknas</value></data>
+  <data name="Validation_employee_count_mismatch" xml:space="preserve"><value>radernas antal anställda stämmer inte med ögonblicksbilderna</value></data>
+  <data name="Validation_employer_identity_missing" xml:space="preserve"><value>arbetsgivaridentitet ofullständig (namn, FEIN, SEIN, EDD-adress)</value></data>
+  <data name="Validation_establishment_address_missing" xml:space="preserve"><value>arbetsställets adress ofullständig</value></data>
+  <data name="Validation_establishment_missing" xml:space="preserve"><value>arbetsställe saknas</value></data>
+  <data name="Validation_establishment_naics_missing" xml:space="preserve"><value>arbetsställets NAICS saknas</value></data>
+  <data name="Validation_exempt_proxy_used" xml:space="preserve"><value>proxy för undantagna timmar använd (anmärkning krävs)</value></data>
+  <data name="Validation_field_too_long" xml:space="preserve"><value>fältet överskrider mallens längd</value></data>
+  <data name="Validation_file_too_large" xml:space="preserve"><value>exporten skulle överskrida portalens filstorleksgräns</value></data>
+  <data name="Validation_hours_zero" xml:space="preserve"><value>rapporterbara timmar är noll</value></data>
+  <data name="Validation_job_category_missing" xml:space="preserve"><value>jobbkategori saknas</value></data>
+  <data name="Validation_job_category_unknown" xml:space="preserve"><value>jobbkategori finns inte i schemaprofilen</value></data>
+  <data name="Validation_manual_override" xml:space="preserve"><value>manuell överstyrning tillämpad</value></data>
+  <data name="Validation_no_employees" xml:space="preserve"><value>inga anställda i ögonblicksbilden</value></data>
+  <data name="Validation_observer_perception_used" xml:space="preserve"><value>observatörsuppfattning använd för demografisk kod</value></data>
+  <data name="Validation_profile_stale" xml:space="preserve"><value>schemaprofilen ändrades sedan körningen skapades</value></data>
+  <data name="Validation_remote_counts_mismatch" xml:space="preserve"><value>distansantalen stämmer inte med antalet anställda</value></data>
+  <data name="Validation_required" xml:space="preserve"><value>obligatorisk mallkolumn är tom</value></data>
+  <data name="Validation_rows_not_aggregated" xml:space="preserve"><value>rader inte aggregerade ännu</value></data>
+  <data name="Validation_snapshot_outside_window" xml:space="preserve"><value>ögonblicksperiod utanför tillåtet fönster</value></data>
+  <data name="Validation_weeks_missing" xml:space="preserve"><value>arbetade veckor saknas</value></data>
+  <data name="Validation_work_mode_unresolved" xml:space="preserve"><value>arbetsform olöst (ingen tilldelning)</value></data>
+  <data name="Variance" xml:space="preserve"><value>Avvikelse</value></data>
+  <data name="Version" xml:space="preserve"><value>Version</value></data>
+  <data name="ViewInternalCosts" xml:space="preserve"><value>Visa interna kostnader</value></data>
+  <data name="ViewInternalCostsNote" xml:space="preserve"><value>Aggregerade fältkostnadssammanfattningar och marginaler för anbud, larm och insatser — kategorier och totaler, aldrig en rad, sats eller person — plus resurskostnadsprofiler och användningsavläsningar.</value></data>
+  <data name="ViewWorkforceCompensation" xml:space="preserve"><value>Visa ersättning</value></data>
+  <data name="ViewWorkforceCompensationNote" xml:space="preserve"><value>Läsa ersättningsprofiler, arbetsposter, årliga lönefakta och kostnadskörningsrader. Värden kräver fortfarande giltig behörighet.</value></data>
+  <data name="Void" xml:space="preserve"><value>Ogiltigförklara</value></data>
+  <data name="W2Box1" xml:space="preserve"><value>W-2 ruta 1</value></data>
+  <data name="W2Box5" xml:space="preserve"><value>W-2 ruta 5</value></data>
+  <data name="Warnings" xml:space="preserve"><value>Varningar</value></data>
+  <data name="WasFiledPriorYear" xml:space="preserve"><value>Rapporterat föregående år</value></data>
+  <data name="WeeksWorked" xml:space="preserve"><value>Arbetade veckor</value></data>
+  <data name="WhyWeAsk" xml:space="preserve"><value>Varför vi frågar</value></data>
+  <data name="WhyWeAskText" xml:space="preserve"><value>Kaliforniens Government Code § 12999 kräver att omfattade arbetsgivare rapporterar lönedata grupperade efter jobbkategori, ras/etnicitet och kön. Rapporten innehåller endast aggregerade antal och satser; den namnger aldrig någon.</value></data>
+  <data name="WizardSteps" xml:space="preserve"><value>1. Bygg de anställdas ögonblicksbilder · 2. Aggregera raderna · 3. Validera · 4. Frys och exportera · intyga sedan i CRD-portalen och registrera certifieringen här.</value></data>
+  <data name="WorkCountry" xml:space="preserve"><value>Land</value></data>
+  <data name="WorkEntries" xml:space="preserve"><value>Arbetsposter</value></data>
+  <data name="WorkEntriesIntro" xml:space="preserve"><value>Timmar per arbetstagare och dag från lön, insatser och larm; den lönegodkända kostnaden ersätter varje uppskattning när den finns.</value></data>
+  <data name="WorkLocation" xml:space="preserve"><value>Arbetsplats</value></data>
+  <data name="WorkMode" xml:space="preserve"><value>Arbetsform</value></data>
+  <data name="WorkModeNonRemote" xml:space="preserve"><value>På plats</value></data>
+  <data name="WorkModeRemoteOutsideCaliforniaAssignedToCaliforniaEstablishment" xml:space="preserve"><value>Distans utanför Kalifornien (placerad vid CA-arbetsställe)</value></data>
+  <data name="WorkModeRemoteWithinCalifornia" xml:space="preserve"><value>Distans inom Kalifornien</value></data>
+  <data name="WorkSubdivision" xml:space="preserve"><value>Delstat / provins</value></data>
+  <data name="Worker" xml:space="preserve"><value>Arbetstagare</value></data>
+  <data name="WorkerIntro" xml:space="preserve"><value>Anställningsperioder överlappar aldrig; varje period bär sina tjänstetilldelningar över tid.</value></data>
+  <data name="WorkerKind" xml:space="preserve"><value>Typ av arbetstagare</value></data>
+  <data name="WorkerKindIndependentContractor" xml:space="preserve"><value>Egenföretagare</value></data>
+  <data name="WorkerKindLaborContractorEmployee" xml:space="preserve"><value>Bemanningsanställd</value></data>
+  <data name="WorkerKindPayrollEmployee" xml:space="preserve"><value>Löneanställd</value></data>
+  <data name="WorkerKindVolunteer" xml:space="preserve"><value>Frivillig</value></data>
+  <data name="Workers" xml:space="preserve"><value>Arbetstagare</value></data>
+  <data name="WorkersIntro" xml:space="preserve"><value>Varje person avdelningen betalar eller rapporterar — medlemmar och externa arbetstagare — med anställningsperioder.</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Personal</value></data>
+  <data name="WorksheetIntro" xml:space="preserve"><value>Arbetsgivarvärdena du anger i CRD-portalen vid sidan av den uppladdade filen.</value></data>
+  <data name="WorksheetNoStore" xml:space="preserve"><value>Levereras utan cache och granskas; stäng fliken när du är klar. Resgrid loggar aldrig in på portalen.</value></data>
+  <data name="Year" xml:space="preserve"><value>År</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="paydata_artifact_not_found" xml:space="preserve"><value>Exportfilen hittades inte.</value></data>
+  <data name="paydata_artifact_unavailable" xml:space="preserve"><value>Exportfilen har upphört eller rensats.</value></data>
+  <data name="paydata_certification_reference_required" xml:space="preserve"><value>Portalens certifieringsreferens krävs.</value></data>
+  <data name="paydata_collection_source_invalid" xml:space="preserve"><value>Insamlingskällan är ogiltig.</value></data>
+  <data name="paydata_correction_exists" xml:space="preserve"><value>En korrigeringskörning finns redan.</value></data>
+  <data name="paydata_hispanic_invalid" xml:space="preserve"><value>Svaret hispanisk eller latino är ogiltigt.</value></data>
+  <data name="paydata_no_snapshots" xml:space="preserve"><value>Bygg de anställdas ögonblicksbilder först.</value></data>
+  <data name="paydata_profile_unavailable" xml:space="preserve"><value>Ingen granskad CRD-schemaprofil täcker det rapportåret.</value></data>
+  <data name="paydata_race_invalid" xml:space="preserve"><value>En ras/etnicitetskod är ogiltig.</value></data>
+  <data name="paydata_race_required" xml:space="preserve"><value>Ange ras/etnicitet eller avstå.</value></data>
+  <data name="paydata_reason_required" xml:space="preserve"><value>En orsak krävs.</value></data>
+  <data name="paydata_remarks_too_long" xml:space="preserve"><value>Anmärkningar är begränsade till 500 tecken.</value></data>
+  <data name="paydata_run_certified" xml:space="preserve"><value>En certifierad körning kan inte ogiltigförklaras; skapa en korrigering.</value></data>
+  <data name="paydata_run_frozen" xml:space="preserve"><value>Körningen är fryst; skapa en korrigering i stället.</value></data>
+  <data name="paydata_run_not_exported" xml:space="preserve"><value>Endast en exporterad körning kan markeras certifierad.</value></data>
+  <data name="paydata_run_not_found" xml:space="preserve"><value>Rapportkörningen hittades inte.</value></data>
+  <data name="paydata_run_not_frozen" xml:space="preserve"><value>Endast en exporterad eller certifierad körning kan korrigeras.</value></data>
+  <data name="paydata_sex_invalid" xml:space="preserve"><value>Könskoden är ogiltig.</value></data>
+  <data name="paydata_sex_required" xml:space="preserve"><value>Ange kön eller avstå.</value></data>
+  <data name="paydata_snapshot_not_found" xml:space="preserve"><value>Den anställdes ögonblicksbild hittades inte.</value></data>
+  <data name="paydata_snapshot_window_invalid" xml:space="preserve"><value>Ögonblicksperioden måste vara en löneperiod inom det tillåtna fönstret.</value></data>
+  <data name="paydata_validation_failed" xml:space="preserve"><value>Valideringen rapporterar fortfarande blockerande fel.</value></data>
+  <data name="paydata_workload_denied" xml:space="preserve"><value>Rapporteringsprocessen kunde inte dekryptera de skyddade värdena.</value></data>
+  <data name="workforce_affiliate_name_required" xml:space="preserve"><value>Den anknutna enhetens juridiska namn krävs.</value></data>
+  <data name="workforce_allocation_invalid" xml:space="preserve"><value>Fördelningsgrunden är ogiltig.</value></data>
+  <data name="workforce_amount_invalid" xml:space="preserve"><value>Ett belopp är negativt.</value></data>
+  <data name="workforce_asset_required" xml:space="preserve"><value>En inventarietillgång krävs.</value></data>
+  <data name="workforce_assignment_overlap" xml:space="preserve"><value>Tilldelningen överlappar en annan tilldelning i denna anställning.</value></data>
+  <data name="workforce_bid_not_found" xml:space="preserve"><value>Anbudet hittades inte.</value></data>
+  <data name="workforce_component_invalid" xml:space="preserve"><value>En komponentkategori eller grund är ogiltig.</value></data>
+  <data name="workforce_contractor_name_required" xml:space="preserve"><value>Leverantörens juridiska namn krävs.</value></data>
+  <data name="workforce_contractor_required" xml:space="preserve"><value>En bemanningsanställd behöver ett bemanningsföretag.</value></data>
+  <data name="workforce_coverage_invalid" xml:space="preserve"><value>Omfattningsstatusen är ogiltig.</value></data>
+  <data name="workforce_dates_invalid" xml:space="preserve"><value>Slutdatumet ligger före startdatumet.</value></data>
+  <data name="workforce_deployment_not_found" xml:space="preserve"><value>Insatsen hittades inte.</value></data>
+  <data name="workforce_employer_name_required" xml:space="preserve"><value>Arbetsgivarens juridiska namn krävs.</value></data>
+  <data name="workforce_employment_not_found" xml:space="preserve"><value>Anställningen hittades inte.</value></data>
+  <data name="workforce_employment_overlap" xml:space="preserve"><value>Perioden överlappar en annan anställning för denna arbetstagare.</value></data>
+  <data name="workforce_establishment_code_duplicate" xml:space="preserve"><value>Ett annat arbetsställe använder redan den koden.</value></data>
+  <data name="workforce_establishment_code_required" xml:space="preserve"><value>Ett arbetsställe behöver kod och namn.</value></data>
+  <data name="workforce_establishment_not_found" xml:space="preserve"><value>Arbetsstället hittades inte.</value></data>
+  <data name="workforce_external_key_required" xml:space="preserve"><value>En extern resursnyckel krävs.</value></data>
+  <data name="workforce_hours_invalid" xml:space="preserve"><value>Timmar måste vara mellan 0 och 24.</value></data>
+  <data name="workforce_hours_type_invalid" xml:space="preserve"><value>Timtypen är ogiltig.</value></data>
+  <data name="workforce_job_category_invalid" xml:space="preserve"><value>Jobbkategorin finns inte i schemaprofilen.</value></data>
+  <data name="workforce_naics_invalid" xml:space="preserve"><value>NAICS måste vara sex siffror.</value></data>
+  <data name="workforce_no_inputs" xml:space="preserve"><value>Inget att kostnadsberäkna: inga arbetsposter eller användningsavläsningar.</value></data>
+  <data name="workforce_not_found" xml:space="preserve"><value>Posten hittades inte.</value></data>
+  <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>Lönegrunden är ogiltig.</value></data>
+  <data name="workforce_profile_overlap" xml:space="preserve"><value>Perioden överlappar en annan profil med samma omfattning.</value></data>
+  <data name="workforce_protected_write_refused" xml:space="preserve"><value>Den skyddade skrivningen nekades.</value></data>
+  <data name="workforce_report_type_invalid" xml:space="preserve"><value>Rapporttypen är ogiltig.</value></data>
+  <data name="workforce_role_required" xml:space="preserve"><value>En rollstandard behöver en personalroll.</value></data>
+  <data name="workforce_run_frozen" xml:space="preserve"><value>Körningen är fryst och kan inte ändras.</value></data>
+  <data name="workforce_scope_invalid" xml:space="preserve"><value>Profilens omfattning är ogiltig.</value></data>
+  <data name="workforce_subject_invalid" xml:space="preserve"><value>Objekttypen är ogiltig.</value></data>
+  <data name="workforce_unit_not_found" xml:space="preserve"><value>Enheten hittades inte.</value></data>
+  <data name="workforce_unit_required" xml:space="preserve"><value>En enhet krävs.</value></data>
+  <data name="workforce_usage_context_required" xml:space="preserve"><value>En användningsavläsning behöver en insats eller ett larm.</value></data>
+  <data name="workforce_usage_invalid" xml:space="preserve"><value>Användningsavläsningen är ogiltig.</value></data>
+  <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Arbetsformen är ogiltig.</value></data>
+  <data name="workforce_worker_duplicate" xml:space="preserve"><value>Den medlemmen har redan en arbetstagarpost.</value></data>
+  <data name="workforce_worker_identity_required" xml:space="preserve"><value>En arbetstagare behöver en medlem eller en extern nyckel.</value></data>
+  <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Typen av arbetstagare är ogiltig.</value></data>
+  <data name="workforce_worker_not_found" xml:space="preserve"><value>Arbetstagaren hittades inte.</value></data>
+  <data name="workforce_worker_required" xml:space="preserve"><value>En arbetstagare krävs.</value></data>
+  <data name="workforce_year_invalid" xml:space="preserve"><value>Rapportåret är ogiltigt.</value></data>
+</root>

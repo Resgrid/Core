@@ -41,6 +41,11 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<int> CountForDepartmentAsync(int departmentId, bool openOnly) =>
 			ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl("Deployments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False}" + (openOnly ? $" AND {OpenStatuses}" : string.Empty), new { DepartmentId = departmentId });
+
+		public Task<IEnumerable<Deployment>> GetByContractAsync(int departmentId, string serviceContractId) =>
+			QueryAsync<Deployment>(
+				$"SELECT * FROM {Tbl("Deployments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ServiceContractId")} = {P}ContractId AND {Col("IsDeleted")} = {False} ORDER BY {Col("AddedOn")} DESC {Paging()}",
+				new { DepartmentId = departmentId, ContractId = serviceContractId, Skip = 0, Take = 500 });
 	}
 
 	public class DeploymentUnitRepository : RmsRepositoryBase<DeploymentUnit>, IDeploymentUnitRepository

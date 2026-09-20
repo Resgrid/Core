@@ -358,6 +358,12 @@ namespace Resgrid.Tests.Services
 				"UnitCertifications", "PersonnelCertificationCredits",
 				// Deployment core, catalog v27 (Phase C): the wrapper's internal notes, read with DeploymentProtectedFields accessors (DeploymentService.Protection.cs).
 				"Deployments",
+				// Workforce pay data, field costing and California pay data reporting, catalog v28 (Phase E): read with
+				// WorkforceProtectedFields accessors through WorkforceProtectionSeam (grant reads and the workforce-costing /
+				// pay-data-reporting workload purposes); export bytes use the binary resolver.
+				"WorkforceEmployerProfiles", "WorkforceAffiliatedEntities", "WorkforceEstablishments", "WorkforceLaborContractors", "WorkforceWorkers",
+				"EmployeeCompensationProfiles", "EmployeePayComponents", "EmployeeCostComponents", "WorkforceWorkEntries", "WorkforceAnnualPayFacts",
+				"FieldCostLines", "PayDataReportingDemographics", "PayDataReportRuns", "PayDataReportEmployeeSnapshots", "PayDataReportRows", "PayDataExportArtifacts",
 				// RMS-5 prevention and investigations plus the RMS-4 quality review, catalog v13: read through the generic Records resolvers.
 				"RmsOccupancies", "RmsOccupancyHazards", "RmsInspections", "RmsViolations", "RmsPermits", "RmsPlanReviews",
 				"RmsInvestigationCases", "RmsInvestigationNotes", "RmsInvestigationEvidence", "RmsInvestigationCustody", "RmsInvestigationReferrals",

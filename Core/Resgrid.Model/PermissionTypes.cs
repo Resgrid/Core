@@ -187,8 +187,24 @@ ViewChecklistResults = 113,
 		ManageDeployments = 118,
 		/// <summary>Phase C deployment core (registry 119): approve and void submitted daily time reports (TimeReports_Approve). Defaults to department administrators.</summary>
 		ApproveTimeReports = 119,
-		/// <summary>Phase C Cal OES MARS (registry 79): agency/rate/agreement management, protected portal handoff, external status observation and MARS invoice reconciliation. Defaults to department administrators. Chain wired by the MARS milestone.</summary>
-		ManageMutualAidReimbursement = 79
+		/// <summary>Phase C Cal OES MARS (registry 79): agency/rate/agreement management, portal handoff, external status observation and MARS invoice reconciliation. Defaults to department administrators. Chain wired by C-M3 (2026-09-19).</summary>
+		ManageMutualAidReimbursement = 79,
+
+		// -- Workforce & Business Operations Phase E (registry 74-78) ----------------------------------------
+		// Protected workforce pay data, field costing and California pay data reporting (2026-09-19). All fall
+		// back to department administrators; a member always sees and answers their own demographic response
+		// and files their own resource usage without any of them.
+
+		/// <summary>Phase E (registry 74): aggregate internal field-cost summaries and margins for bids, calls and deployments — categories and totals, never a line, rate or person. Defaults to department administrators.</summary>
+		ViewInternalCosts = 74,
+		/// <summary>Phase E (registry 75): employer identity, establishments, workers, employment periods, job assignments, compensation profiles, pay / employer-cost components and annual pay fact imports. Defaults to department administrators.</summary>
+		ManageWorkforceCompensation = 75,
+		/// <summary>Phase E (registry 76): read compensation profiles, work entries and cost-run lines (values still require a current Protected Data Grant). Defaults to department administrators.</summary>
+		ViewWorkforceCompensation = 76,
+		/// <summary>Phase E (registry 77): the California CRD report wizard — runs, employee snapshots, overrides, aggregation, validation, remarks, certification observation, corrections and the compliance officer's demographic records. Defaults to department administrators.</summary>
+		ManagePayDataReporting = 77,
+		/// <summary>Phase E (registry 78): freeze a validated run and download its export artifacts and portal worksheet. Defaults to department administrators.</summary>
+		ExportPayDataReporting = 78
 	}
 
 }

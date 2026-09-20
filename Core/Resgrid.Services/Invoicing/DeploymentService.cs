@@ -117,6 +117,14 @@ namespace Resgrid.Services.Invoicing
 
 		public Task<int> CountDeploymentsForDepartmentAsync(int departmentId, bool openOnly) => _deployments.CountForDepartmentAsync(departmentId, openOnly);
 
+		public async Task<List<Deployment>> GetDeploymentsForContractAsync(string serviceContractId, int departmentId)
+		{
+			if (string.IsNullOrWhiteSpace(serviceContractId)) return new List<Deployment>();
+			var deployments = (await _deployments.GetByContractAsync(departmentId, serviceContractId))?.ToList() ?? new List<Deployment>();
+			await ResolveDeploymentsAsync(deployments, departmentId);
+			return deployments;
+		}
+
 		public async Task<List<Deployment>> GetDeploymentsForUserAsync(int departmentId, string userId, bool openOnly)
 		{
 			var rows = (await _personnel.GetForUserAsync(departmentId, userId))?.ToList() ?? new List<DeploymentPersonnel>();

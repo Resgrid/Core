@@ -31,6 +31,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public sealed class ContractsController : SecureBaseController
 	{
 		private static readonly string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt", "xls", "xlsx", "csv", "heic" };
+		// Requirement names are user text rendered inside a <script> block; EscapeHtml keeps "</script>" out of the page.
+		private static readonly JsonSerializerSettings ScriptJson = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
 
 		private readonly IServiceContractService _contracts;
 		private readonly IRateScheduleService _rateSchedules;
@@ -149,7 +151,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanManage) return Unauthorized();
 			var contract = await _contracts.GetContractByIdAsync(id, DepartmentId);
 			if (contract == null) return NotFound();
-			var view = Page(new ContractEditView { Contract = contract, RequirementsJson = JsonConvert.SerializeObject(contract.Requirements.Select(r => new { r.ServiceContractDocumentRequirementId, r.Name, r.Stage, r.ComplianceDocumentType, r.IsMandatory, r.SortOrder })) });
+			var view = Page(new ContractEditView { Contract = contract, RequirementsJson = JsonConvert.SerializeObject(contract.Requirements.Select(r => new { r.ServiceContractDocumentRequirementId, r.Name, r.Stage, r.ComplianceDocumentType, r.IsMandatory, r.SortOrder }), ScriptJson) });
 			await FillLookupsAsync(view);
 			return View(view);
 		}
@@ -196,9 +198,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var view = Page(new ContractDetailView { Contract = contract });
 			view.ContactName = (await ContactNamesAsync(new[] { contract.ContactId })).TryGetValue(contract.ContactId, out var name) ? name : contract.ContactId;
 			if (!string.IsNullOrWhiteSpace(contract.RateScheduleId)) view.ScheduleName = (await _rateSchedules.GetScheduleByIdAsync(contract.RateScheduleId, DepartmentId, includeInactive: true))?.Name;
-			view.Bids = (await _bids.GetBidsByContactIdAsync(contract.ContactId, DepartmentId)).Where(b => string.Equals(b.ServiceContractId, id, StringComparison.OrdinalIgnoreCase)).ToList();
-			view.Deployments = (await _deployments.GetDeploymentsForDepartmentAsync(DepartmentId, openOnly: false, 0, 500)).Where(d => string.Equals(d.ServiceContractId, id, StringComparison.OrdinalIgnoreCase)).ToList();
-			try { view.Invoices = (await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, new InvoiceListFilter { ContactId = contract.ContactId, Take = 200 })).Where(i => string.Equals(i.ServiceContractId, id, StringComparison.OrdinalIgnoreCase)).ToList(); }
+			// Contract-scoped queries: filtering a department-wide page after the 500/200 caps would drop this contract's rows once unrelated ones fill the page.
+			view.Bids = await _bids.GetBidsForContractAsync(id, DepartmentId);
+			view.Deployments = await _deployments.GetDeploymentsForContractAsync(id, DepartmentId);
+			try { view.Invoices = await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, new InvoiceListFilter { ContactId = contract.ContactId, ServiceContractId = id, Take = 200 }); }
 			catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex, "Contract detail: invoices unavailable."); }
 			view.Compliance = await _contracts.GetContractComplianceForContractAsync(id, DepartmentId);
 			foreach (ServiceContractStatuses candidate in Enum.GetValues(typeof(ServiceContractStatuses)))

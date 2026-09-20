@@ -1,0 +1,71 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsReconciliationView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Reconciliation"];
+    ViewData["Title"] = localizer["Reconciliation"].Value;
+    ViewData["Subtitle"] = localizer["ReconciliationIntro"].Value;
+    ViewData["MarsTab"] = "reconciliation";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var authority = Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsAuthorityProfile.Current;
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["MarsInvoices"]</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpReconciliation"]</div>
+                    @if (Model.Invoices.Count == 0) { <p class="text-muted">@localizer["NoMarsInvoices"]</p> }
+                    else
+                    {
+                        <table class="table table-striped table-hover">
+                            <thead><tr><th>@localizer["MarsInvoiceId"]</th><th>@localizer["Deployment"]</th><th>@localizer["State"]</th><th class="text-right">@localizer["Expected"]</th><th class="text-right">@localizer["Invoiced"]</th><th class="text-right">@localizer["Paid"]</th><th>@localizer["ObservedOn"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var i in Model.Invoices)
+                                {
+                                    <tr>
+                                        <td><a asp-action="Invoice" asp-route-id="@i.CalOesMarsWorkItemId">@i.MarsInvoiceId</a></td>
+                                        <td>@(Model.DeploymentNames.TryGetValue(i.DeploymentId ?? string.Empty, out var name) ? name : "—")</td>
+                                        <td>@await Html.PartialAsync("_WorkItemStateBadge", i.LocalState)</td>
+                                        <td class="text-right">@((i.ExpectedTotal ?? 0).ToString("N2"))</td>
+                                        <td class="text-right">@(i.ApprovedTotal?.ToString("N2") ?? "—")</td>
+                                        <td class="text-right">@(i.PaidTotal?.ToString("N2") ?? "—")</td>
+                                        <td>@(i.ObservedOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                        <td class="text-right"><a asp-action="Invoice" asp-route-id="@i.CalOesMarsWorkItemId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (Model.CanReconcile)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["RecordMarsInvoice"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["RecordMarsInvoiceHelp"]</p>
+                        <form method="post" asp-action="RecordInvoice">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group"><label>@localizer["MarsInvoiceId"] *</label><input type="text" name="MarsInvoiceId" class="form-control" maxlength="100" required /></div>
+                            <div class="row"><div class="col-xs-6 form-group"><label>@localizer["InvoiceDate"]</label><input type="date" name="InvoiceDate" class="form-control" /></div><div class="col-xs-6 form-group"><label>@localizer["Invoiced"] *</label><input type="number" step="0.01" min="0" name="InvoicedTotal" class="form-control" required /></div></div>
+                            <div class="form-group"><label>@localizer["PayingEntity"]</label><input type="text" name="PayingEntity" class="form-control" /></div>
+                            <div class="form-group"><label>@localizer["ObservedStatus"]</label><select name="ExternalStatus" class="form-control">@foreach (var s in authority.InvoiceStatusMap.Keys) { <option value="@s">@s</option> }</select></div>
+                            <div class="form-group"><label>@localizer["ObservedOn"]</label><input type="datetime-local" name="ObservedOn" class="form-control" /></div>
+                            <div class="form-group"><label>@localizer["CoveredItems"]</label><select name="CoveredWorkItemIds" multiple size="5" class="form-control">@foreach (var c in Model.Coverable) { <option value="@c.CalOesMarsWorkItemId">@localizer["RecordType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes)c.RecordType] · @(Model.DeploymentNames.TryGetValue(c.DeploymentId ?? string.Empty, out var n) ? n : c.CalOesMarsWorkItemId.Substring(0, 8)) · @(c.MarsRecordId ?? "—")</option> }</select><span class="help-block">@localizer["CoveredItemsHelp"]</span></div>
+                            <div class="form-group"><label>@localizer["Comment"]</label><textarea name="Comment" class="form-control" rows="2"></textarea></div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-eye"></i> @localizer["RecordObservation"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

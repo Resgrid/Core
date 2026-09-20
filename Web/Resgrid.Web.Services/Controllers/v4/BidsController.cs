@@ -80,7 +80,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<BidsResult>("contractor_billing_disabled", StatusCodes.Status403Forbidden);
 			var bids = string.IsNullOrWhiteSpace(contactId)
 				? await _bids.GetBidsForDepartmentAsync(DepartmentId, status.HasValue && Enum.IsDefined(typeof(BidStatuses), status.Value) ? (BidStatuses?)status.Value : null, skip, take)
-				: await _bids.GetBidsByContactIdAsync(contactId, DepartmentId);
+				: await _bids.GetBidsByContactIdAsync(contactId, DepartmentId, skip, take);
 			var result = new BidsResult { Data = bids.Select(b => Map(b, false)).ToList(), PageSize = bids.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;

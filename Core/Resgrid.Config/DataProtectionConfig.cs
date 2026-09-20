@@ -60,7 +60,7 @@ namespace Resgrid.Config
 		/// Workforce &amp; Business Operations plan's document renders and the DTR void-reason append). Empty
 		/// disables the lane; callers fail closed with workload_purpose_denied.
 		/// </summary>
-		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing";
+		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing,workforce-costing,pay-data-reporting";
 
 		/// <summary>True on the broker host to run the ADP migration coordinator sweep there (the only
 		/// host with a real KMS adapter). Workers.Console keeps its sweep for liveness/offboarding

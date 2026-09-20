@@ -1,0 +1,82 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforcePayDataView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PayDataReporting"];
+    ViewData["Title"] = localizer["PayDataReporting"].Value;
+    ViewData["Subtitle"] = localizer["PayDataIntro"].Value;
+    ViewData["WorkforceTab"] = "paydata";
+    ViewData["WorkforcePage"] = Model;
+    var rd = Model.Readiness;
+    var profile = CaPayDataSchemaProfile.ForYear(Model.ReportingYear);
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="alert alert-warning"><i class="fa fa-info-circle"></i> @localizer["PayDataDisclaimer"]</div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Readiness"] @Model.ReportingYear</h5>
+                    <div class="ibox-tools"><form method="get" asp-action="PayData" class="form-inline" style="display:inline"><input type="number" name="year" class="form-control input-sm" value="@Model.ReportingYear" style="width:90px" /> <button type="submit" class="btn btn-xs btn-default">@localizer["Filter"]</button></form></div>
+                </div>
+                <div class="ibox-content">
+                    <p>@localizer["DueDate"]: <strong>@rd.DueDate.ToString("yyyy-MM-dd")</strong></p>
+                    <p>@localizer["SchemaProfile"]: <strong>@(rd.ProfileCode ?? localizer["ProfileUnavailable"].Value)</strong></p>
+                    <p>@localizer["CoverageStatus"]: <strong>@localizer["Coverage" + (CaliforniaPayDataCoverageStatuses)rd.CoverageStatus]</strong></p>
+                    <p>@localizer["OpenRuns"]: <strong>@rd.OpenRuns</strong> &middot; @localizer["UnresolvedExceptions"]: <strong>@rd.UnresolvedExceptions</strong></p>
+                    <p>@localizer["DemographicsMissing"]: <strong>@rd.DemographicsMissing</strong> &middot; @localizer["AnnualFactsMissing"]: <strong>@rd.AnnualFactsMissing</strong></p>
+                    <p class="small text-muted">@localizer["Completeness"]: @Model.Completeness.WithResponse / @Model.Completeness.ActiveWorkers (@localizer["SelfIdentified"] @Model.Completeness.SelfIdentified, @localizer["Declined"] @Model.Completeness.Declined, @localizer["ObserverPerception"] @Model.Completeness.ObserverPerception)</p>
+                </div>
+            </div>
+            @if (Model.CanManagePayData && profile != null)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["NewRun"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="CreatePayDataRun">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="reportingYear" value="@Model.ReportingYear" />
+                            <div class="form-group"><label>@localizer["ReportType"]</label><select name="reportType" class="form-control">@foreach (PayDataReportTypes t in Enum.GetValues(typeof(PayDataReportTypes))) { <option value="@((int)t)">@localizer["ReportType" + t]</option> }</select></div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["SnapshotStart"]</label><input type="date" name="snapshotStart" class="form-control" required value="@profile.SnapshotWindowStart.ToString("yyyy-MM-dd")" /></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["SnapshotEnd"]</label><input type="date" name="snapshotEnd" class="form-control" required value="@profile.SnapshotWindowStart.AddDays(30).ToString("yyyy-MM-dd")" /></div></div>
+                            </div>
+                            <span class="help-block">@localizer["SnapshotWindowHelp"] @profile.SnapshotWindowStart.ToString("yyyy-MM-dd") – @profile.SnapshotWindowEnd.ToString("yyyy-MM-dd")</span>
+                            <button type="submit" class="btn btn-primary">@localizer["CreateRun"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Runs"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Year"]</th><th>@localizer["ReportType"]</th><th>@localizer["Snapshot"]</th><th>@localizer["Status"]</th><th>@localizer["Employees"]</th><th>@localizer["Rows"]</th><th>@localizer["Exceptions"]</th><th>@localizer["Created"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var run in Model.Runs)
+                        {
+                            <tr>
+                                <td>@run.ReportingYear</td><td>@localizer["ReportType" + (PayDataReportTypes)run.ReportType]</td>
+                                <td>@run.SnapshotStart.ToString("MM-dd") – @run.SnapshotEnd.ToString("MM-dd")</td>
+                                <td><span class="label @(run.Status == (int)PayDataReportRunStatuses.CertifiedExternally ? "label-primary" : run.IsFrozen ? "label-info" : run.Status == (int)PayDataReportRunStatuses.Void ? "label-default" : "label-warning")">@localizer["Status" + (PayDataReportRunStatuses)run.Status]</span></td>
+                                <td>@run.EmployeeCount</td><td>@run.RowCount</td><td>@run.ExceptionCount / @run.WarningCount</td><td>@run.AddedOn.ToString("yyyy-MM-dd")</td>
+                                <td class="text-right"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i></a></td>
+                            </tr>
+                        }
+                        @if (Model.Runs.Count == 0)
+                        {
+                            <tr><td colspan="9" class="text-muted">@localizer["NoRuns"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

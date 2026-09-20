@@ -1,0 +1,139 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsDashboardView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CalOesMars"];
+    ViewData["Title"] = localizer["ReadinessDashboard"].Value;
+    ViewData["Subtitle"] = localizer["ReadinessIntro"].Value;
+    ViewData["MarsTab"] = "readiness";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var r = Model.Readiness;
+    var blockers = r.Items.Where(i => i.Severity == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsReadinessSeverities.Blocker).ToList();
+    var warnings = r.Items.Where(i => i.Severity == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsReadinessSeverities.Warning).ToList();
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> @localizer["HelpReadiness"]
+        <strong>@localizer["AuthorityProfile"]:</strong> @(r.AuthorityProfileCode ?? "—") (@localizer["ReviewedOn"] @Model.Authority.ReviewedOn.ToString("yyyy-MM-dd"))
+        @if (!r.AuthorityProfileCurrent) { <span class="label label-danger">@localizer["AuthorityStale"]</span> }
+        · <a href="@Model.PortalUrl" target="_blank" rel="noopener noreferrer">@localizer["OpenPortal"] <i class="fa fa-external-link"></i></a>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["ReadinessAsOf"] @r.AsOf.ToString("yyyy-MM-dd") @if (r.IsReady) { <span class="label label-primary">@localizer["Ready"]</span> } else { <span class="label label-danger">@localizer["Blocked"]</span> }</h5>
+                    <div class="ibox-tools">
+                        <form method="get" asp-action="Index" class="form-inline inline">
+                            <input type="date" name="asOf" class="form-control input-sm" value="@Model.AsOf.ToString("yyyy-MM-dd")" />
+                            <button type="submit" class="btn btn-xs btn-default">@localizer["CheckDate"]</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @if (r.Items.Count == 0)
+                    {
+                        <p class="text-navy"><i class="fa fa-check"></i> @localizer["NoReadinessIssues"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["Severity"]</th><th>@localizer["Item"]</th><th>@localizer["Detail"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var item in blockers.Concat(warnings))
+                                {
+                                    <tr>
+                                        <td>@if (item.Severity == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsReadinessSeverities.Blocker) { <span class="label label-danger">@localizer["Blocker"]</span> } else { <span class="label label-warning">@localizer["Warning"]</span> }</td>
+                                        <td>@localizer[item.MessageKey]</td>
+                                        <td class="text-muted">@item.Detail</td>
+                                        <td class="text-right">@if (Model.IsManager && !string.IsNullOrWhiteSpace(item.Area)) { <a asp-action="@item.Area" class="btn btn-xs btn-default">@localizer["Fix"]</a> }</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["AnnualSubmissions"]</h5></div>
+                <div class="ibox-content">
+                    @if (r.CurrentRateProfiles.Count == 0) { <p class="text-muted">@localizer["NoCurrentRateProfiles"]</p> }
+                    else
+                    {
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["SubmissionType"]</th><th>@localizer["Year"]</th><th>@localizer["Status"]</th><th>@localizer["Window"]</th><th>@localizer["ObservedStatus"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var p in r.CurrentRateProfiles)
+                                {
+                                    <tr>
+                                        <td>@if (Model.IsManager) { <a asp-action="Rate" asp-route-id="@p.CalOesMarsRateProfileId">@localizer["SubmissionType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes)p.SubmissionType]</a> } else { @localizer["SubmissionType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes)p.SubmissionType] }</td>
+                                        <td>@p.SubmissionYear</td>
+                                        <td>@localizer["RateStatus" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses)p.Status]</td>
+                                        <td>@(p.EffectiveOn?.ToString("yyyy-MM-dd") ?? "—") → @(p.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                        <td>@(p.ObservedExternalStatus ?? "—")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Agency"]</h5></div>
+                <div class="ibox-content">
+                    @if (r.Agency == null) { <p class="text-muted">@localizer["NoAgencyProfile"]</p> }
+                    else
+                    {
+                        <dl class="dl-horizontal">
+                            <dt>@localizer["MacsDesignator"]</dt><dd>@(r.Agency.MacsDesignator ?? "—")</dd>
+                            <dt>@localizer["AgencyName"]</dt><dd>@r.Agency.AgencyName</dd>
+                            <dt>@localizer["Fein"]</dt><dd>@(string.IsNullOrWhiteSpace(r.Agency.FeinReference) ? "—" : localizer["Recorded"].Value)</dd>
+                            <dt>@localizer["Uei"]</dt><dd>@(string.IsNullOrWhiteSpace(r.Agency.UeiReference) ? "—" : localizer["Recorded"].Value)</dd>
+                            <dt>@localizer["FiscalSupplier"]</dt><dd>@(string.IsNullOrWhiteSpace(r.Agency.FiscalSupplierReference) ? "—" : localizer["Recorded"].Value)</dd>
+                            <dt>@localizer["PortalRole"]</dt><dd>@(r.Agency.PortalAccountRole ?? "—")</dd>
+                            <dt>@localizer["VerifiedOn"]</dt><dd>@(r.Agency.VerifiedOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
+                        </dl>
+                    }
+                    @if (Model.IsManager)
+                    {
+                        <a asp-action="Agency" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["EditAgency"]</a>
+                        @if (r.Agency != null)
+                        {
+                            <form method="post" asp-action="VerifyAgency" class="inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check"></i> @localizer["MarkVerified"]</button></form>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Counts"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["ResourceProfiles"]</dt><dd>@r.ResourceProfiles @if (r.ResourceMismatches > 0) { <span class="label label-warning">@r.ResourceMismatches @localizer["Mismatches"]</span> }</dd>
+                        <dt>@localizer["Agreements"]</dt><dd>@r.CurrentAgreements.Count</dd>
+                        <dt>@localizer["OpenWorkItems"]</dt><dd><a asp-action="Queue">@r.OpenWorkItems</a></dd>
+                        <dt>@localizer["ReturnedItems"]</dt><dd>@r.ReturnedWorkItems</dd>
+                        <dt>@localizer["InvoicesAwaiting"]</dt><dd>@if (Model.IsManager || Model.CanReconcile) { <a asp-action="Reconciliation">@r.InvoicesAwaitingLocalApproval</a> } else { @r.InvoicesAwaitingLocalApproval }</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["OfficialSources"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="list-unstyled">
+                        @foreach (var source in Model.Authority.Sources)
+                        {
+                            <li><a href="@source.Url" target="_blank" rel="noopener noreferrer">@source.Title</a> <small class="text-muted">@source.PublishedOn.ToString("yyyy-MM-dd")</small></li>
+                        }
+                    </ul>
+                    <p class="text-muted small">@localizer["NoCredentialsStored"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

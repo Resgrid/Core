@@ -57,6 +57,12 @@ namespace Resgrid.Tests.Rms
 			((int)PermissionTypes.ManageDeployments).Should().Be(118);
 			((int)PermissionTypes.ApproveTimeReports).Should().Be(119);
 			((int)PermissionTypes.ManageMutualAidReimbursement).Should().Be(79);
+			// Workforce & Business Operations Phase E took 74-78 on 2026-09-19 (registry).
+			((int)PermissionTypes.ViewInternalCosts).Should().Be(74);
+			((int)PermissionTypes.ManageWorkforceCompensation).Should().Be(75);
+			((int)PermissionTypes.ViewWorkforceCompensation).Should().Be(76);
+			((int)PermissionTypes.ManagePayDataReporting).Should().Be(77);
+			((int)PermissionTypes.ExportPayDataReporting).Should().Be(78);
 		}
 
 		[Test]

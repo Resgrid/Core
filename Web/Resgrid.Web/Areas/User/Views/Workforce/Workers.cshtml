@@ -1,0 +1,63 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceWorkersView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Workers"];
+    ViewData["Title"] = localizer["Workers"].Value;
+    ViewData["Subtitle"] = localizer["WorkersIntro"].Value;
+    ViewData["WorkforceTab"] = "workers";
+    ViewData["WorkforcePage"] = Model;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Workers"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["Member"]</th><th>@localizer["ExternalWorkerKey"]</th><th>@localizer["Employments"]</th><th>@localizer["Active"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var row in Model.Workers)
+                        {
+                            <tr>
+                                <td><a asp-action="Worker" asp-route-id="@row.WorkforceWorkerId">@row.DisplayName</a></td>
+                                <td>@(string.IsNullOrWhiteSpace(row.UserId) ? localizer["No"] : localizer["Yes"])</td>
+                                <td>@ProtectedDataEnvelope.SafeDisplay(row.ExternalWorkerKey)</td>
+                                <td>@(Model.EmploymentCounts.TryGetValue(row.WorkforceWorkerId, out var n) ? n : 0)</td>
+                                <td>@(row.IsActive ? localizer["Yes"] : localizer["No"])</td>
+                                <td class="text-right"><a asp-action="Worker" asp-route-id="@row.WorkforceWorkerId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i></a></td>
+                            </tr>
+                        }
+                        @if (Model.Workers.Count == 0)
+                        {
+                            <tr><td colspan="6" class="text-muted">@localizer["NoWorkers"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (Model.CanManage)
+        {
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["AddWorker"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="AddWorker">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group"><label>@localizer["Member"]</label><select name="userId" class="form-control"><option value="">—</option>@foreach (var item in Model.Members) { <option value="@item.Value">@item.Text</option> }</select><span class="help-block">@localizer["AddWorkerMemberHelp"]</span></div>
+                            <div class="form-group"><label>@localizer["ExternalWorkerKey"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="externalWorkerKey" class="form-control" maxlength="100" /></div>
+                            <div class="form-group"><label>@localizer["DisplayLabel"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="displayLabel" class="form-control" maxlength="100" /><span class="help-block">@localizer["AddWorkerExternalHelp"]</span></div>
+                            <button type="submit" class="btn btn-primary">@localizer["AddWorker"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

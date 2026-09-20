@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="ActionQueue" xml:space="preserve"><value>قائمة إجراءات الحادث</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="ActualAmount" xml:space="preserve"><value>المبلغ الفعلي</value></data>
+  <data name="ActualHours" xml:space="preserve"><value>الساعات الفعلية (DTR)</value></data>
+  <data name="AddAgreement" xml:space="preserve"><value>إضافة اتفاقية</value></data>
+  <data name="AddInput" xml:space="preserve"><value>إضافة مدخل</value></data>
+  <data name="AddLine" xml:space="preserve"><value>إضافة بند</value></data>
+  <data name="AddResource" xml:space="preserve"><value>إضافة مورد</value></data>
+  <data name="AddRotation" xml:space="preserve"><value>إضافة تناوب</value></data>
+  <data name="Address" xml:space="preserve"><value>العنوان</value></data>
+  <data name="AdminBlocker_double_count_unresolved" xml:space="preserve"><value>لا تزال الاحتسابات المزدوجة المحتملة بانتظار المراجعة.</value></data>
+  <data name="AdminBlocker_inputs_pending_review" xml:space="preserve"><value>لا تزال بعض المدخلات بانتظار المراجعة.</value></data>
+  <data name="AdminBlocker_no_direct_base" xml:space="preserve"><value>لا توجد قاعدة تكاليف مباشرة مسموح بها؛ لا يمكن احتساب المعدل.</value></data>
+  <data name="AdminBlocker_no_inputs" xml:space="preserve"><value>لا توجد مدخلات تكاليف فعلية؛ خيار الحد الأدنى هو الخيار الوحيد.</value></data>
+  <data name="AdminMethod" xml:space="preserve"><value>الطريقة الإدارية</value></data>
+  <data name="AdminMethodCalculated" xml:space="preserve"><value>محسوب من التكاليف الفعلية</value></data>
+  <data name="AdminMethodDeMinimis" xml:space="preserve"><value>الحد الأدنى (de minimis)</value></data>
+  <data name="AdminMethodNone" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="AdministrativeInputs" xml:space="preserve"><value>مدخلات المعدل الإداري</value></data>
+  <data name="AdministrativeInputsHelp" xml:space="preserve"><value>التكاليف الفعلية للعام السابق حسب الوظيفة والفئة، مصنّفة مباشرة / غير مباشرة / غير مسموح بها. لا تُدخل الميزانيات هنا أبدًا.</value></data>
+  <data name="AdministrativeRate" xml:space="preserve"><value>المعدل الإداري</value></data>
+  <data name="AdministrativeWorksheet" xml:space="preserve"><value>ورقة المعدل الإداري</value></data>
+  <data name="AdministrativeWorksheetHelp" xml:space="preserve"><value>غير المباشر المسموح ÷ المباشر المسموح من المدخلات المقبولة، مقارنةً بخيار الحد الأدنى. تعيق علامات الاحتساب المزدوج غير المحلولة النتيجة.</value></data>
+  <data name="Age" xml:space="preserve"><value>العمر</value></data>
+  <data name="Agency" xml:space="preserve"><value>الوكالة</value></data>
+  <data name="AgencyCategory" xml:space="preserve"><value>فئة الوكالة</value></data>
+  <data name="AgencyIntro" xml:space="preserve"><value>سجل الوكالة في MARS: معرّف MACS وجهات الاتصال والمعرّفات المطبوعة على كل مطالبة.</value></data>
+  <data name="AgencyName" xml:space="preserve"><value>اسم الوكالة</value></data>
+  <data name="AgencyProfile" xml:space="preserve"><value>ملف الوكالة</value></data>
+  <data name="Agreement" xml:space="preserve"><value>الاتفاقية</value></data>
+  <data name="Agreements" xml:space="preserve"><value>الاتفاقيات</value></data>
+  <data name="AgreementsIntro" xml:space="preserve"><value>طرق التعويض المعتمدة MOU / MOA / GBR حسب التصنيف. يختار F-42 الطريقة السارية عند الإرسال الأول.</value></data>
+  <data name="AllClassifications" xml:space="preserve"><value>كل التصنيفات</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>كل الأنواع</value></data>
+  <data name="AllYears" xml:space="preserve"><value>كل السنوات</value></data>
+  <data name="AllowableDirect" xml:space="preserve"><value>المباشر المسموح</value></data>
+  <data name="AllowableIndirect" xml:space="preserve"><value>غير المباشر المسموح</value></data>
+  <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
+  <data name="AnnualRates" xml:space="preserve"><value>الأسعار السنوية</value></data>
+  <data name="AnnualSubmissions" xml:space="preserve"><value>التقديمات السنوية السارية</value></data>
+  <data name="ApprovalAttachment" xml:space="preserve"><value>مرفق الموافقة</value></data>
+  <data name="ApproveInvoice" xml:space="preserve"><value>موافقة</value></data>
+  <data name="ApproverName" xml:space="preserve"><value>المعتمِد</value></data>
+  <data name="AttachmentId" xml:space="preserve"><value>معرّف مرفق الانتشار</value></data>
+  <data name="AttachmentIdHelp" xml:space="preserve"><value>اختياري: الاتفاقية الموقّعة المرفوعة كمرفق انتشار.</value></data>
+  <data name="Authority" xml:space="preserve"><value>المرجعية</value></data>
+  <data name="AuthorityAgencySpecialEquipment" xml:space="preserve"><value>المعدات الخاصة بالوكالة</value></data>
+  <data name="AuthorityAgencySubmitted" xml:space="preserve"><value>مقدَّم من الوكالة</value></data>
+  <data name="AuthorityCalOesBase" xml:space="preserve"><value>السعر الأساسي لـ Cal OES</value></data>
+  <data name="AuthorityCalOesRateLetter" xml:space="preserve"><value>خطاب أسعار Cal OES</value></data>
+  <data name="AuthorityFema" xml:space="preserve"><value>جدول FEMA</value></data>
+  <data name="AuthorityProfile" xml:space="preserve"><value>ملف الجهة المرجعية</value></data>
+  <data name="AuthorityStale" xml:space="preserve"><value>لا يوجد ملف مُراجَع يغطي هذا التاريخ</value></data>
+  <data name="Back" xml:space="preserve"><value>رجوع</value></data>
+  <data name="BaseRateAccepted" xml:space="preserve"><value>قُبل السعر الأساسي لـ Cal OES</value></data>
+  <data name="BaseRateAcceptedHelp" xml:space="preserve"><value>تعتمد الوكالة السعر الأساسي لـ Cal OES بدلًا من تقديم صفوف الاستبيان الخاصة بها.</value></data>
+  <data name="Basis" xml:space="preserve"><value>الأساس</value></data>
+  <data name="BasisDaily" xml:space="preserve"><value>يومي</value></data>
+  <data name="BasisFlat" xml:space="preserve"><value>ثابت</value></data>
+  <data name="BasisHourly" xml:space="preserve"><value>بالساعة</value></data>
+  <data name="BasisPerMile" xml:space="preserve"><value>لكل ميل</value></data>
+  <data name="BasisPercent" xml:space="preserve"><value>نسبة مئوية</value></data>
+  <data name="Blocked" xml:space="preserve"><value>محظور</value></data>
+  <data name="Blocker" xml:space="preserve"><value>عائق</value></data>
+  <data name="Box" xml:space="preserve"><value>الخانة</value></data>
+  <data name="BoxAgency" xml:space="preserve"><value>الوكالة المستجيبة</value></data>
+  <data name="BoxApparatus" xml:space="preserve"><value>الآليات ومركبات الدعم والمعدات</value></data>
+  <data name="BoxAttachments" xml:space="preserve"><value>المرفقات</value></data>
+  <data name="BoxComments" xml:space="preserve"><value>التعليقات والفقد / التلف وأرقام الإمداد</value></data>
+  <data name="BoxDispatch" xml:space="preserve"><value>الإرسال / الالتزام</value></data>
+  <data name="BoxIncident" xml:space="preserve"><value>الحادث</value></data>
+  <data name="BoxOrder" xml:space="preserve"><value>رقم أمر الحادث</value></data>
+  <data name="BoxPersonnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="BoxRequest" xml:space="preserve"><value>رقم الطلب</value></data>
+  <data name="BoxResource" xml:space="preserve"><value>المورد</value></data>
+  <data name="BoxReturn" xml:space="preserve"><value>العودة / إعادة الإرسال</value></data>
+  <data name="BoxRotation" xml:space="preserve"><value>تناوب الطاقم</value></data>
+  <data name="BoxSignatures" xml:space="preserve"><value>التوقيعات والتفويض</value></data>
+  <data name="BuildAdministrativeRate" xml:space="preserve"><value>احتساب المعدل الإداري</value></data>
+  <data name="CalOesMars" xml:space="preserve"><value>Cal OES MARS</value></data>
+  <data name="Calculate" xml:space="preserve"><value>احتساب</value></data>
+  <data name="CalculatedPercent" xml:space="preserve"><value>المعدل المحسوب</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Category" xml:space="preserve"><value>الفئة</value></data>
+  <data name="CategoryCode" xml:space="preserve"><value>الفئة</value></data>
+  <data name="CategoryLodging" xml:space="preserve"><value>إقامة</value></data>
+  <data name="CategoryMeal" xml:space="preserve"><value>وجبة</value></data>
+  <data name="CategoryMiscellaneous" xml:space="preserve"><value>متنوع</value></data>
+  <data name="CategoryRental" xml:space="preserve"><value>استئجار</value></data>
+  <data name="CheckDate" xml:space="preserve"><value>تحقق من التاريخ</value></data>
+  <data name="Checklist" xml:space="preserve"><value>قائمة التحقق</value></data>
+  <data name="Checksum" xml:space="preserve"><value>المجموع الاختباري</value></data>
+  <data name="City" xml:space="preserve"><value>المدينة</value></data>
+  <data name="Classification" xml:space="preserve"><value>التصنيف</value></data>
+  <data name="ClassificationTitle" xml:space="preserve"><value>عنوان التصنيف</value></data>
+  <data name="CloseItem" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Comment" xml:space="preserve"><value>تعليق</value></data>
+  <data name="Comments" xml:space="preserve"><value>التعليقات</value></data>
+  <data name="Committed" xml:space="preserve"><value>ملتزم</value></data>
+  <data name="CommittedHours" xml:space="preserve"><value>ساعات الالتزام</value></data>
+  <data name="CompensationMethod" xml:space="preserve"><value>طريقة التعويض</value></data>
+  <data name="CompensationMethodActualHours" xml:space="preserve"><value>الساعات الفعلية</value></data>
+  <data name="CompensationMethodPortalToPortal" xml:space="preserve"><value>من البوابة إلى البوابة</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>هل تريد حذف هذا السجل؟</value></data>
+  <data name="ContactEmail" xml:space="preserve"><value>بريد جهة الاتصال</value></data>
+  <data name="ContactName" xml:space="preserve"><value>اسم جهة الاتصال</value></data>
+  <data name="ContactPhone" xml:space="preserve"><value>هاتف جهة الاتصال</value></data>
+  <data name="Copy" xml:space="preserve"><value>نسخ</value></data>
+  <data name="CorrectionComment" xml:space="preserve"><value>تعليق المراجع</value></data>
+  <data name="CostClassDirect" xml:space="preserve"><value>مباشر</value></data>
+  <data name="CostClassIndirect" xml:space="preserve"><value>غير مباشر</value></data>
+  <data name="CostClassUnallowable" xml:space="preserve"><value>غير مسموح به</value></data>
+  <data name="Counts" xml:space="preserve"><value>نظرة سريعة</value></data>
+  <data name="CoveredItems" xml:space="preserve"><value>السجلات المشمولة</value></data>
+  <data name="CoveredItemsHelp" xml:space="preserve"><value>سجلات F-42 / المصروفات المقدَّمة التي تدفعها هذه الفاتورة؛ تُقارن إجمالياتها المتوقعة بالمبلغ المفوتر.</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="DeMinimisPercent" xml:space="preserve"><value>خيار الحد الأدنى</value></data>
+  <data name="DecisionTitle" xml:space="preserve"><value>القرار من (الاسم / المنصب)</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Deployment" xml:space="preserve"><value>الانتشار</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Designator" xml:space="preserve"><value>المعرّف</value></data>
+  <data name="Detail" xml:space="preserve"><value>التفاصيل</value></data>
+  <data name="DocumentKind" xml:space="preserve"><value>نوع المستند</value></data>
+  <data name="DocumentKindEquivalent" xml:space="preserve"><value>مكافئ</value></data>
+  <data name="DocumentKindGbr" xml:space="preserve"><value>قرار مجلس (GBR)</value></data>
+  <data name="DocumentKindMoa" xml:space="preserve"><value>مذكرة اتفاق (MOA)</value></data>
+  <data name="DocumentKindMou" xml:space="preserve"><value>مذكرة تفاهم (MOU)</value></data>
+  <data name="DocumentationOnly" xml:space="preserve"><value>للتوثيق فقط</value></data>
+  <data name="DocumentationOnlyHelp" xml:space="preserve"><value>يوثّق السجل الاستجابة دون المطالبة بتعويض (مسار Documentation Only في MARS).</value></data>
+  <data name="DoubleCountMarker" xml:space="preserve"><value>احتمال احتساب مزدوج</value></data>
+  <data name="DraftFromUnits" xml:space="preserve"><value>مسودة من الوحدات</value></data>
+  <data name="DraftFromUnitsHelp" xml:space="preserve"><value>حدد الوحدات وأنشئ صفوفًا لتلك التي ليس لها صف.</value></data>
+  <data name="EditAgency" xml:space="preserve"><value>تعديل الوكالة</value></data>
+  <data name="EditAgreement" xml:space="preserve"><value>تعديل الاتفاقية</value></data>
+  <data name="EditResource" xml:space="preserve"><value>تعديل المورد</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>ساري من</value></data>
+  <data name="EligibilityEligible" xml:space="preserve"><value>مؤهل</value></data>
+  <data name="EligibilityExcluded" xml:space="preserve"><value>مستبعد</value></data>
+  <data name="EligibilityUncertain" xml:space="preserve"><value>غير مؤكد</value></data>
+  <data name="EndOn" xml:space="preserve"><value>النهاية</value></data>
+  <data name="EvidencePacket" xml:space="preserve"><value>حزمة الأدلة</value></data>
+  <data name="ExcludedIncidentDirect" xml:space="preserve"><value>مستبعد (مُحمَّل على الحوادث)</value></data>
+  <data name="ExcludedUnallowable" xml:space="preserve"><value>مستبعد (غير مسموح)</value></data>
+  <data name="Expected" xml:space="preserve"><value>المتوقع</value></data>
+  <data name="ExpectedReimbursement" xml:space="preserve"><value>التعويض المتوقع</value></data>
+  <data name="ExpectedReimbursementHelp" xml:space="preserve"><value>تقدير من الأسعار والاتفاقية السارية عند الإرسال الأول. يحدد Cal OES المبلغ المسموح؛ ولا تدخل أي تكلفة داخلية في هذه البنود.</value></data>
+  <data name="ExpectedTotal" xml:space="preserve"><value>الإجمالي المتوقع</value></data>
+  <data name="ExpectedVsObserved" xml:space="preserve"><value>المتوقع مقابل الملاحظ</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>ينتهي في</value></data>
+  <data name="ExternalResourceName" xml:space="preserve"><value>اسم المورد الخارجي</value></data>
+  <data name="F42Box_agency" xml:space="preserve"><value>الوكالة</value></data>
+  <data name="F42Box_apparatus" xml:space="preserve"><value>الآليات</value></data>
+  <data name="F42Box_attachments" xml:space="preserve"><value>المرفقات</value></data>
+  <data name="F42Box_comments" xml:space="preserve"><value>التعليقات</value></data>
+  <data name="F42Box_dispatch" xml:space="preserve"><value>الإرسال</value></data>
+  <data name="F42Box_incident" xml:space="preserve"><value>الحادث</value></data>
+  <data name="F42Box_incident-signature" xml:space="preserve"><value>تفويض الحادث</value></data>
+  <data name="F42Box_lines" xml:space="preserve"><value>بنود المصروفات</value></data>
+  <data name="F42Box_order" xml:space="preserve"><value>الأمر</value></data>
+  <data name="F42Box_personnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="F42Box_request" xml:space="preserve"><value>الطلب</value></data>
+  <data name="F42Box_resource" xml:space="preserve"><value>المورد</value></data>
+  <data name="F42Box_responding-signature" xml:space="preserve"><value>توقيع الوكالة</value></data>
+  <data name="F42Box_return" xml:space="preserve"><value>العودة</value></data>
+  <data name="F42Box_rotation" xml:space="preserve"><value>التناوب</value></data>
+  <data name="F42Box_signature" xml:space="preserve"><value>التوقيع</value></data>
+  <data name="Fein" xml:space="preserve"><value>FEIN</value></data>
+  <data name="FillId" xml:space="preserve"><value>الطلب / التعبئة</value></data>
+  <data name="FillIdHelp" xml:space="preserve"><value>معرّف تعبئة الطلب الخارجي في RMS (مطلوب عندما يحتوي الطلب على أكثر من طلب فرعي)</value></data>
+  <data name="FiscalSupplier" xml:space="preserve"><value>مورّد FI$Cal</value></data>
+  <data name="Fix" xml:space="preserve"><value>إصلاح</value></data>
+  <data name="FunctionCode" xml:space="preserve"><value>الوظيفة</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>أُنشئ</value></data>
+  <data name="HandoffAttestation" xml:space="preserve"><value>أنا الشخص المخوّل بإدخال هذا السجل في MARS وسأنسخ القيم المعروضة، لا ملف هذه الصفحة.</value></data>
+  <data name="HandoffIntro" xml:space="preserve"><value>عرض نسخ جنبًا إلى جنب للإدخال اليدوي في بوابة MARS. لا يُخزَّن ولا يُحفظ مؤقتًا وليس تقديمًا.</value></data>
+  <data name="HandoffNeedsReady" xml:space="preserve"><value>شغّل قائمة التحقق حتى تخلو من الأخطاء؛ يُفتح التسليم من حالة جاهز للبوابة.</value></data>
+  <data name="HandoffWarning" xml:space="preserve"><value>مُعدّ لـ MARS. يسجّل فتح هذا العرض قيد تدقيق ولا يغيّر شيئًا؛ يصبح السجل ملاحظًا في MARS فقط عندما يسجّل مدير ما تعرضه البوابة.</value></data>
+  <data name="HandoffWithErrors" xml:space="preserve"><value>لا تزال قائمة التحقق تحتوي على أخطاء؛ قد يعيد MARS هذا السجل.</value></data>
+  <data name="HelpAgency" xml:space="preserve"><value>تُنسخ هذه القيم إلى نماذج F-42 والمطالبات وتُخزَّن كبيانات (خارج الحماية المتقدمة للبيانات). يؤدي تغيير معرّف إلى مسح آخر تحقق.</value></data>
+  <data name="HelpAgreements" xml:space="preserve"><value>اترك التصنيف فارغًا لاتفاقية على مستوى الإدارة. الاتفاقية المشار إليها في سجل مقدَّم غير قابلة للتغيير؛ يؤدي تعديلها إلى إصدار جديد.</value></data>
+  <data name="HelpQueue" xml:space="preserve"><value>يرى أفراد الميدان مسوداتهم المرتبطة بالحادث؛ ويرى مديرو MARS قائمة الإدارة. لا يؤدي فتح تسليم أو تنزيل حزمة أبدًا إلى وسم سجل بأنه مقدَّم.</value></data>
+  <data name="HelpRates" xml:space="preserve"><value>الأسعار بيانات مثبّتة على ملف مرجعي مُراجَع؛ خطاب الأسعار أو الاستبيان الجديد لقطة جديدة، ويحتفظ الإرسال السابق بما كان ساريًا عند بدايته.</value></data>
+  <data name="HelpReadiness" xml:space="preserve"><value>تمنع العوائق وصول نماذج F-42 الجديدة إلى حالة جاهز للبوابة؛ ويُستحسن معالجة التحذيرات قبل الإرسال التالي.</value></data>
+  <data name="HelpReconciliation" xml:space="preserve"><value>فاتورة MARS عنصر عمل وليست فاتورة عميل من المرحلة B أبدًا: لا رقم فاتورة ولا تقادم ولا بريد. المدفوع دائمًا حقيقة دفع ملاحظة فقط.</value></data>
+  <data name="HelpResources" xml:space="preserve"><value>تنسخ صفوف المسودة اسم الوحدة ولوحتها ورقم VIN في تلك اللحظة؛ راجعها وأضف نوع مورد MARS ثم سجّل ما يعرضه MARS.</value></data>
+  <data name="Hours" xml:space="preserve"><value>الساعات</value></data>
+  <data name="Identifiers" xml:space="preserve"><value>المعرّفات</value></data>
+  <data name="IncidentAuthorizer" xml:space="preserve"><value>مفوّض الحادث / AREP</value></data>
+  <data name="IncidentDirectExclusion" xml:space="preserve"><value>مُحمَّل مباشرة على حادث (مستبعد)</value></data>
+  <data name="IncludesUnemploymentInsurance" xml:space="preserve"><value>يشمل تأمين البطالة</value></data>
+  <data name="IncludesWorkersComp" xml:space="preserve"><value>يشمل تعويض العمال</value></data>
+  <data name="Incoming" xml:space="preserve"><value>القادم</value></data>
+  <data name="InvoiceDate" xml:space="preserve"><value>تاريخ الفاتورة</value></data>
+  <data name="InvoiceIntro" xml:space="preserve"><value>المتوقع مقابل الملاحظ، والقرار المحلي، وحقائق الدفع لفاتورة واحدة أنشأها MARS.</value></data>
+  <data name="Invoiced" xml:space="preserve"><value>المفوتر</value></data>
+  <data name="InvoicesAwaiting" xml:space="preserve"><value>فواتير بانتظار الموافقة المحلية</value></data>
+  <data name="Item" xml:space="preserve"><value>العنصر</value></data>
+  <data name="Kind" xml:space="preserve"><value>الصنف</value></data>
+  <data name="KindApparatus" xml:space="preserve"><value>آلية</value></data>
+  <data name="KindEquipment" xml:space="preserve"><value>معدات خاصة</value></data>
+  <data name="KindPOV" xml:space="preserve"><value>مركبة خاصة</value></data>
+  <data name="KindSupport" xml:space="preserve"><value>مركبة دعم</value></data>
+  <data name="LicensePlate" xml:space="preserve"><value>لوحة الترخيص</value></data>
+  <data name="LineKind" xml:space="preserve"><value>نوع البند</value></data>
+  <data name="LineKindAdministrative" xml:space="preserve"><value>إداري</value></data>
+  <data name="LineKindAdministrativeRate" xml:space="preserve"><value>المعدل الإداري</value></data>
+  <data name="LineKindApparatus" xml:space="preserve"><value>آلية</value></data>
+  <data name="LineKindAttachmentANonSuppression" xml:space="preserve"><value>الملحق A (غير الإطفاء)</value></data>
+  <data name="LineKindExpense" xml:space="preserve"><value>مصروف</value></data>
+  <data name="LineKindMealLodgingIncidentals" xml:space="preserve"><value>الوجبات والإقامة والنثريات</value></data>
+  <data name="LineKindOfficialApparatus" xml:space="preserve"><value>آلية رسمية</value></data>
+  <data name="LineKindOfficialSupportVehicle" xml:space="preserve"><value>مركبة دعم رسمية</value></data>
+  <data name="LineKindPersonnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="LineKindPovMileage" xml:space="preserve"><value>أميال المركبة الخاصة</value></data>
+  <data name="LineKindPrivatelyOwnedVehicle" xml:space="preserve"><value>أميال المركبة الخاصة</value></data>
+  <data name="LineKindRental" xml:space="preserve"><value>استئجار</value></data>
+  <data name="LineKindSalarySurvey" xml:space="preserve"><value>استبيان الرواتب</value></data>
+  <data name="LineKindSpecialEquipment" xml:space="preserve"><value>معدات خاصة</value></data>
+  <data name="LineKindSupportVehicle" xml:space="preserve"><value>مركبة دعم</value></data>
+  <data name="LinkedF42" xml:space="preserve"><value>F-42 المرتبط</value></data>
+  <data name="LocalDecision" xml:space="preserve"><value>قرار الوكالة المحلية</value></data>
+  <data name="LocalDecisionHelp" xml:space="preserve"><value>وافق على الفاتورة أو ارفضها بصفتك الممثل المخوّل؛ يتطلب الرفض تعليقًا. يُسجَّل القرار هنا وتدخله أنت في MARS.</value></data>
+  <data name="LossDamage" xml:space="preserve"><value>الفقد / التلف</value></data>
+  <data name="MacsDesignator" xml:space="preserve"><value>معرّف MACS</value></data>
+  <data name="ManageMutualAidReimbursement" xml:space="preserve"><value>إدارة تعويض Cal OES MARS</value></data>
+  <data name="ManageMutualAidReimbursementNote" xml:space="preserve"><value>سجلات الوكالة وموارد F-5 والأسعار السنوية والاتفاقيات، وتسليم البوابة، وحالات MARS الملاحظة، والموافقة على الفواتير/تسوية المدفوعات. يُعدّ الأعضاء المدرجون مسودات F-42 والمصروفات الخاصة بهم بدونها.</value></data>
+  <data name="MarkVerified" xml:space="preserve"><value>وضع علامة تم التحقق اليوم</value></data>
+  <data name="MarsInvoice" xml:space="preserve"><value>فاتورة MARS</value></data>
+  <data name="MarsInvoiceId" xml:space="preserve"><value>معرّف فاتورة MARS</value></data>
+  <data name="MarsInvoiceNotPhaseB" xml:space="preserve"><value>هذا عنصر عمل MARS. ليس له رقم فاتورة من المرحلة B، ولا يظهر أبدًا في تقادم العملاء، ولا يمكن إرساله بالبريد أو دفعه عبر الإنترنت.</value></data>
+  <data name="MarsInvoices" xml:space="preserve"><value>فواتير MARS</value></data>
+  <data name="MarsRecordId" xml:space="preserve"><value>معرّف سجل MARS</value></data>
+  <data name="MarsResourceId" xml:space="preserve"><value>معرّف مورد MARS</value></data>
+  <data name="MethodChosen" xml:space="preserve"><value>الطريقة المختارة</value></data>
+  <data name="Miles" xml:space="preserve"><value>الأميال</value></data>
+  <data name="Mine" xml:space="preserve"><value>مدرج في هذا الانتشار</value></data>
+  <data name="Mismatches" xml:space="preserve"><value>تعارضات</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NewSubmission" xml:space="preserve"><value>تقديم جديد</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+  <data name="NoAgencyProfile" xml:space="preserve"><value>لا يوجد ملف وكالة بعد.</value></data>
+  <data name="NoAgreements" xml:space="preserve"><value>لا توجد اتفاقيات بعد.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>لا توجد مرفقات انتشار.</value></data>
+  <data name="NoCostRecoveryDeployments" xml:space="preserve"><value>لا توجد انتشارات استرداد تكاليف للإعداد منها.</value></data>
+  <data name="NoCredentialsStored" xml:space="preserve"><value>لا يخزّن Resgrid بيانات اعتماد MARS أو رموز MFA أو جلسات المتصفح ولا يكتب أبدًا في البوابة.</value></data>
+  <data name="NoCurrentRateProfiles" xml:space="preserve"><value>لا يوجد تقديم سنوي يغطي هذا التاريخ.</value></data>
+  <data name="NoDeployment" xml:space="preserve"><value>بدون انتشار</value></data>
+  <data name="NoMarsInvoices" xml:space="preserve"><value>لا توجد فواتير MARS مسجّلة.</value></data>
+  <data name="NoQueueItems" xml:space="preserve"><value>لا شيء في القائمة.</value></data>
+  <data name="NoRateProfiles" xml:space="preserve"><value>لا توجد تقديمات سنوية بعد.</value></data>
+  <data name="NoReadinessIssues" xml:space="preserve"><value>كل ما يلزم لتقديم MARS متوفر.</value></data>
+  <data name="NoResources" xml:space="preserve"><value>لا توجد صفوف موارد F-5 بعد.</value></data>
+  <data name="NotAnImportFile" xml:space="preserve"><value>حزمة الأدلة ليست ملف استيراد مقبولًا في MARS.</value></data>
+  <data name="NotCalculated" xml:space="preserve"><value>لم يُحسب بعد.</value></data>
+  <data name="NotCurrent" xml:space="preserve"><value>غير ساري</value></data>
+  <data name="NotInInventory" xml:space="preserve"><value>غير مدرج في جرد F-5</value></data>
+  <data name="NotValidated" xml:space="preserve"><value>لم يتم التحقق بعد.</value></data>
+  <data name="ObserveInMars" xml:space="preserve"><value>لوحظ في MARS</value></data>
+  <data name="ObservedOn" xml:space="preserve"><value>لوحظ في</value></data>
+  <data name="ObservedStatus" xml:space="preserve"><value>الحالة الملاحظة</value></data>
+  <data name="ObservedSubmission" xml:space="preserve"><value>التقديم الملاحظ</value></data>
+  <data name="Odometer" xml:space="preserve"><value>عداد المسافة</value></data>
+  <data name="OfficialSources" xml:space="preserve"><value>المصادر الرسمية</value></data>
+  <data name="Open" xml:space="preserve"><value>فتح</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>فتح الانتشار</value></data>
+  <data name="OpenHandoff" xml:space="preserve"><value>فتح عرض التسليم</value></data>
+  <data name="OpenPortal" xml:space="preserve"><value>فتح بوابة MARS</value></data>
+  <data name="OpenWorkItems" xml:space="preserve"><value>العناصر المفتوحة</value></data>
+  <data name="Outgoing" xml:space="preserve"><value>المغادر</value></data>
+  <data name="OverheadPosition" xml:space="preserve"><value>منصب overhead</value></data>
+  <data name="OvertimeEligible" xml:space="preserve"><value>مؤهل للعمل الإضافي</value></data>
+  <data name="OvertimeMethod" xml:space="preserve"><value>طريقة العمل الإضافي</value></data>
+  <data name="OvertimeMethodAfterEightHoursPerDay" xml:space="preserve"><value>بعد 8 ساعات يوميًا</value></data>
+  <data name="OvertimeMethodAfterTwelveHoursPerDay" xml:space="preserve"><value>بعد 12 ساعة يوميًا</value></data>
+  <data name="OvertimeMethodNone" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="OvertimeMethodPerAgreement" xml:space="preserve"><value>حسب الاتفاقية (غير مُنمذج)</value></data>
+  <data name="OvertimeRate" xml:space="preserve"><value>سعر العمل الإضافي</value></data>
+  <data name="Ownership" xml:space="preserve"><value>الملكية</value></data>
+  <data name="OwnershipCalFire" xml:space="preserve"><value>CAL FIRE</value></data>
+  <data name="OwnershipCalOes" xml:space="preserve"><value>Cal OES</value></data>
+  <data name="OwnershipLocalAgency" xml:space="preserve"><value>وكالة محلية</value></data>
+  <data name="OwnershipOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="OwnershipPrivate" xml:space="preserve"><value>خاص</value></data>
+  <data name="OwnershipRental" xml:space="preserve"><value>مستأجر</value></data>
+  <data name="Paid" xml:space="preserve"><value>المدفوع</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>دُفع في</value></data>
+  <data name="PayingEntity" xml:space="preserve"><value>الجهة الدافعة</value></data>
+  <data name="PayingEntityStatus" xml:space="preserve"><value>حالة الجهة الدافعة</value></data>
+  <data name="PaymentReference" xml:space="preserve"><value>مرجع الدفع</value></data>
+  <data name="PortalHandoff" xml:space="preserve"><value>تسليم البوابة</value></data>
+  <data name="PortalReference" xml:space="preserve"><value>مرجع حساب البوابة</value></data>
+  <data name="PortalReferenceHelp" xml:space="preserve"><value>تسمية لحساب MARS (ليست كلمة مرور أو رمزًا أبدًا).</value></data>
+  <data name="PortalRole" xml:space="preserve"><value>الدور في البوابة</value></data>
+  <data name="PortalToPortalEligible" xml:space="preserve"><value>مؤهل من البوابة إلى البوابة</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>معتمد مسبقًا</value></data>
+  <data name="PrepareExpenseClaim" xml:space="preserve"><value>إعداد مطالبة المصروفات</value></data>
+  <data name="PrepareF42" xml:space="preserve"><value>إعداد F-42</value></data>
+  <data name="PrepareRecord" xml:space="preserve"><value>إعداد سجل</value></data>
+  <data name="PrepareRecordHelp" xml:space="preserve"><value>نموذج F-42 واحد لكل مورد / طلب مأمور به؛ يحلّ إعادة الإرسال محل السابق. ترتبط مطالبات المصروفات بنموذج F-42 أو تسلك مسار السفر فقط.</value></data>
+  <data name="PreparedNotSubmitted" xml:space="preserve"><value>مُعدّ لـ MARS — لا شيء هنا مقدَّم حتى يسجّل مدير ما لوحظ في البوابة.</value></data>
+  <data name="Printable" xml:space="preserve"><value>قابل للطباعة</value></data>
+  <data name="Provenance" xml:space="preserve"><value>المصدر والتتبع</value></data>
+  <data name="QueueIntro" xml:space="preserve"><value>نماذج F-42 ومطالبات المصروفات للإعداد والتحقق والتسليم، مجمّعة حسب الانتشار؛ وبجانبها حالات MARS الملاحظة والفواتير.</value></data>
+  <data name="Rank" xml:space="preserve"><value>الرتبة</value></data>
+  <data name="RateEditIntro" xml:space="preserve"><value>الترويسة والبنود و(للمعدل الإداري) ورقة التكاليف الفعلية للعام السابق.</value></data>
+  <data name="RateLines" xml:space="preserve"><value>بنود الأسعار</value></data>
+  <data name="RateLinesHelp" xml:space="preserve"><value>تحتاج بنود الرواتب إلى تصنيف؛ وبنود المعدات إلى رمز مورد أو FEMA. الأسعار عادية / إضافية حسب الأساس.</value></data>
+  <data name="RateLocked" xml:space="preserve"><value>هذا التقديم موقّع أو مقدَّم؛ تتطلب التعديلات إصدارًا جديدًا.</value></data>
+  <data name="RateProfileVersion" xml:space="preserve"><value>إصدار ملف الأسعار</value></data>
+  <data name="RateStatusAccepted" xml:space="preserve"><value>مقبول</value></data>
+  <data name="RateStatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="RateStatusReviewed" xml:space="preserve"><value>مُراجَع</value></data>
+  <data name="RateStatusSignedLocally" xml:space="preserve"><value>موقّع محليًا</value></data>
+  <data name="RateStatusSubmittedExternal" xml:space="preserve"><value>مقدَّم في MARS</value></data>
+  <data name="RateStatusSuperseded" xml:space="preserve"><value>مُستبدل</value></data>
+  <data name="RatesIntro" xml:space="preserve"><value>استبيان الرواتب والملحق A والمعدل الإداري وخطاب أسعار Cal OES والمعدات الخاصة حسب سنة التقديم.</value></data>
+  <data name="ReadinessAdministrativeMissing" xml:space="preserve"><value>لا يوجد معدل إداري مسجّل لهذا التاريخ؛ لن يُقدَّر أي بند إداري.</value></data>
+  <data name="ReadinessAgencyMissing" xml:space="preserve"><value>لم يُدخل ملف الوكالة (معرّف MACS، جهات الاتصال، المعرّفات).</value></data>
+  <data name="ReadinessAgencyUnverified" xml:space="preserve"><value>لم يتم التحقق من ملف الوكالة مقابل MARS خلال العام الماضي.</value></data>
+  <data name="ReadinessAgreementExpiring" xml:space="preserve"><value>تنتهي اتفاقية ضمن فترة الإنذار.</value></data>
+  <data name="ReadinessAgreementMissing" xml:space="preserve"><value>لا توجد طريقة تعويض MOU/MOA/GBR تغطي هذا التاريخ؛ يُقدَّر الأفراد بالساعات الفعلية دون عمل إضافي.</value></data>
+  <data name="ReadinessAsOf" xml:space="preserve"><value>الجاهزية حتى</value></data>
+  <data name="ReadinessAuthorityMissing" xml:space="preserve"><value>لا يوجد ملف مرجعي مُراجَع من Cal OES يغطي هذا التاريخ؛ التقديمات الجديدة محظورة حتى إضافة ملف.</value></data>
+  <data name="ReadinessDashboard" xml:space="preserve"><value>لوحة الجاهزية</value></data>
+  <data name="ReadinessFeinMissing" xml:space="preserve"><value>لم يُسجَّل FEIN للوكالة.</value></data>
+  <data name="ReadinessFiscalMissing" xml:space="preserve"><value>لم يُسجَّل معرّف مورّد FI$Cal للوكالة.</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>جاهزية الوكالة وموارد F-5 والأسعار السنوية والاتفاقيات لتاريخ الإرسال، مع روابط إلى مواد Cal OES الرسمية.</value></data>
+  <data name="ReadinessInvoicesAwaiting" xml:space="preserve"><value>فواتير أنشأها MARS بانتظار قرار الوكالة المحلي.</value></data>
+  <data name="ReadinessMacsMissing" xml:space="preserve"><value>معرّف MACS للوكالة مفقود.</value></data>
+  <data name="ReadinessNoResources" xml:space="preserve"><value>لا توجد صفوف مطابقة F-5؛ ستُوسم الآليات في F-42 بأنها غير مدرجة في الجرد.</value></data>
+  <data name="ReadinessRateExpiring" xml:space="preserve"><value>ينتهي تقديم سنوي ضمن فترة الإنذار.</value></data>
+  <data name="ReadinessRateLetterMissing" xml:space="preserve"><value>لا توجد بنود في خطاب أسعار Cal OES (الآليات، مركبات الدعم، أميال POV) تغطي هذا التاريخ.</value></data>
+  <data name="ReadinessRateUnsigned" xml:space="preserve"><value>تقديم سنوي ساري لم يُوقَّع محليًا.</value></data>
+  <data name="ReadinessResourceMismatch" xml:space="preserve"><value>صفوف موارد F-5 لا تطابق ما يعرضه MARS.</value></data>
+  <data name="ReadinessReturnedItems" xml:space="preserve"><value>سجلات أعادها Cal OES لمراجعة الوكالة بانتظار المعالجة.</value></data>
+  <data name="ReadinessSalaryMissing" xml:space="preserve"><value>لا يوجد استبيان رواتب مُراجَع (أو سعر أساسي مقبول) يغطي هذا التاريخ؛ لا يمكن تقدير بنود الأفراد.</value></data>
+  <data name="ReadinessUeiMissing" xml:space="preserve"><value>لم يُسجَّل SAM UEI للوكالة.</value></data>
+  <data name="Ready" xml:space="preserve"><value>جاهز</value></data>
+  <data name="ReadyForPortal" xml:space="preserve"><value>جاهز للبوابة.</value></data>
+  <data name="Receipt" xml:space="preserve"><value>الإيصال</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>تسوية الفواتير والمدفوعات</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>فواتير MARS كما لوحظت، وقرار الموافقة / الرفض المحلي، وحالة الجهة الدافعة، وحقائق الدفع مقابل البنود المتوقعة.</value></data>
+  <data name="RecordMarsInvoice" xml:space="preserve"><value>تسجيل فاتورة MARS</value></data>
+  <data name="RecordMarsInvoiceHelp" xml:space="preserve"><value>سجّل الفاتورة التي أنشأها Cal OES كما تراها في البوابة، والسجلات المقدَّمة التي تغطيها.</value></data>
+  <data name="RecordObservation" xml:space="preserve"><value>تسجيل الملاحظة</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>تسجيل الدفع</value></data>
+  <data name="RecordPaymentHelp" xml:space="preserve"><value>فقط دفعة ملاحظة من الجهة الدافعة تضع الفاتورة وسجلاتها في حالة مدفوع.</value></data>
+  <data name="RecordSubmission" xml:space="preserve"><value>تسجيل التقديم الملاحظ في MARS</value></data>
+  <data name="RecordType" xml:space="preserve"><value>نوع السجل</value></data>
+  <data name="RecordTypeAdministrativeRate" xml:space="preserve"><value>المعدل الإداري</value></data>
+  <data name="RecordTypeAgencyProfile" xml:space="preserve"><value>ملف الوكالة</value></data>
+  <data name="RecordTypeAgreement" xml:space="preserve"><value>اتفاقية</value></data>
+  <data name="RecordTypeAttachmentA" xml:space="preserve"><value>الملحق A</value></data>
+  <data name="RecordTypeExpenseClaim" xml:space="preserve"><value>مطالبة مصروفات</value></data>
+  <data name="RecordTypeF42" xml:space="preserve"><value>F-42</value></data>
+  <data name="RecordTypeGeneratedInvoice" xml:space="preserve"><value>فاتورة MARS</value></data>
+  <data name="RecordTypeResourceInventoryF5" xml:space="preserve"><value>جرد موارد F-5</value></data>
+  <data name="RecordTypeSalarySurvey" xml:space="preserve"><value>استبيان الرواتب</value></data>
+  <data name="RecordTypeSpecialEquipment" xml:space="preserve"><value>المعدات الخاصة</value></data>
+  <data name="Recorded" xml:space="preserve"><value>مسجّل</value></data>
+  <data name="Redispatch" xml:space="preserve"><value>إعادة إرسال</value></data>
+  <data name="RejectInvoice" xml:space="preserve"><value>رفض</value></data>
+  <data name="RelatedItems" xml:space="preserve"><value>السجلات ذات الصلة</value></data>
+  <data name="ReleaseIsNotReturn" xml:space="preserve"><value>الإفراج ليس عودة؛ يحتاج F-42 إلى وقت العودة أو إعادة الإرسال.</value></data>
+  <data name="Released" xml:space="preserve"><value>أُفرج عنه</value></data>
+  <data name="ReportingLocation" xml:space="preserve"><value>موقع الإبلاغ</value></data>
+  <data name="Request" xml:space="preserve"><value>الطلب</value></data>
+  <data name="ResourceCode" xml:space="preserve"><value>رمز المورد</value></data>
+  <data name="ResourceInventory" xml:space="preserve"><value>جرد موارد F-5</value></data>
+  <data name="ResourceKind" xml:space="preserve"><value>صنف المورد</value></data>
+  <data name="ResourceProfiles" xml:space="preserve"><value>موارد F-5</value></data>
+  <data name="ResourceType" xml:space="preserve"><value>نوع المورد</value></data>
+  <data name="ResourcesIntro" xml:space="preserve"><value>مطابقة وحدات وأصول Resgrid مع هويتها في MARS / F-5. تُعدّ الجرد وتسويه؛ ولا تكتب حالة FAST أبدًا.</value></data>
+  <data name="RespondingSigner" xml:space="preserve"><value>الموقّع عن الوكالة</value></data>
+  <data name="ReturnedItems" xml:space="preserve"><value>أُعيدت للمراجعة</value></data>
+  <data name="ReviewReason" xml:space="preserve"><value>السبب</value></data>
+  <data name="ReviewState" xml:space="preserve"><value>حالة المراجعة</value></data>
+  <data name="ReviewStateDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="ReviewStateMismatch" xml:space="preserve"><value>تعارض</value></data>
+  <data name="ReviewStateObserved" xml:space="preserve"><value>لوحظ في MARS</value></data>
+  <data name="ReviewStateReviewed" xml:space="preserve"><value>مُراجَع</value></data>
+  <data name="ReviewStatus" xml:space="preserve"><value>المراجعة</value></data>
+  <data name="ReviewStatusAccepted" xml:space="preserve"><value>مقبول</value></data>
+  <data name="ReviewStatusExcluded" xml:space="preserve"><value>مستبعد</value></data>
+  <data name="ReviewStatusPending" xml:space="preserve"><value>معلّق</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>روجع في</value></data>
+  <data name="RunChecklist" xml:space="preserve"><value>تشغيل قائمة التحقق</value></data>
+  <data name="SamReference" xml:space="preserve"><value>تسجيل SAM</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>تعذر حفظ التغيير.</value></data>
+  <data name="SaveInputs" xml:space="preserve"><value>حفظ المدخلات</value></data>
+  <data name="SaveLines" xml:space="preserve"><value>حفظ البنود</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="SerialNumber" xml:space="preserve"><value>الرقم التسلسلي</value></data>
+  <data name="SetRateStatusAccepted" xml:space="preserve"><value>لوحظ قبوله</value></data>
+  <data name="SetRateStatusDraft" xml:space="preserve"><value>العودة إلى المسودة</value></data>
+  <data name="SetRateStatusReviewed" xml:space="preserve"><value>وضع علامة مُراجَع</value></data>
+  <data name="SetRateStatusSignedLocally" xml:space="preserve"><value>توقيع محلي</value></data>
+  <data name="SetRateStatusSubmittedExternal" xml:space="preserve"><value>لوحظ تقديمه في MARS</value></data>
+  <data name="SetRateStatusSuperseded" xml:space="preserve"><value>استبدال</value></data>
+  <data name="Severity" xml:space="preserve"><value>الخطورة</value></data>
+  <data name="SignedByName" xml:space="preserve"><value>وقّعه (الاسم)</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>وُقّع في</value></data>
+  <data name="SignerName" xml:space="preserve"><value>الموقّع</value></data>
+  <data name="Source" xml:space="preserve"><value>المصدر</value></data>
+  <data name="SourceArtifact" xml:space="preserve"><value>المستند المصدر</value></data>
+  <data name="SourceDate" xml:space="preserve"><value>تاريخ المصدر</value></data>
+  <data name="SourceLine" xml:space="preserve"><value>السطر المصدر</value></data>
+  <data name="SourceSystem" xml:space="preserve"><value>النظام المصدر</value></data>
+  <data name="SourceUrl" xml:space="preserve"><value>رابط المصدر</value></data>
+  <data name="StartOn" xml:space="preserve"><value>البداية</value></data>
+  <data name="State" xml:space="preserve"><value>الحالة المحلية</value></data>
+  <data name="StateApproved" xml:space="preserve"><value>معتمد</value></data>
+  <data name="StateClosed" xml:space="preserve"><value>مغلق</value></data>
+  <data name="StateDocumentationOnly" xml:space="preserve"><value>للتوثيق فقط</value></data>
+  <data name="StateDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="StateLocalAgencyRejected" xml:space="preserve"><value>مرفوض من الوكالة المحلية</value></data>
+  <data name="StateNeedsReview" xml:space="preserve"><value>يحتاج مراجعة</value></data>
+  <data name="StatePaid" xml:space="preserve"><value>مدفوع</value></data>
+  <data name="StatePendingLocalAgencyApproval" xml:space="preserve"><value>بانتظار موافقة الوكالة المحلية</value></data>
+  <data name="StatePendingPayingEntityApproval" xml:space="preserve"><value>بانتظار الجهة الدافعة</value></data>
+  <data name="StateReadyForPortal" xml:space="preserve"><value>جاهز للبوابة</value></data>
+  <data name="StateReturnedForAgencyReview" xml:space="preserve"><value>أُعيد لمراجعة الوكالة</value></data>
+  <data name="StateSubmittedExternal" xml:space="preserve"><value>لوحظ في MARS (مراجعة Cal OES)</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="StraightRate" xml:space="preserve"><value>السعر العادي</value></data>
+  <data name="StrikeTeam" xml:space="preserve"><value>فريق الضربة / فرقة العمل</value></data>
+  <data name="Subject" xml:space="preserve"><value>الموضوع</value></data>
+  <data name="SubjectType" xml:space="preserve"><value>نوع الموضوع</value></data>
+  <data name="SubjectTypeExternal" xml:space="preserve"><value>مورد خارجي</value></data>
+  <data name="SubjectTypeInventoryAsset" xml:space="preserve"><value>أصل جرد</value></data>
+  <data name="SubjectTypeUnit" xml:space="preserve"><value>وحدة</value></data>
+  <data name="Submission" xml:space="preserve"><value>التقديم</value></data>
+  <data name="SubmissionType" xml:space="preserve"><value>نوع التقديم</value></data>
+  <data name="SubmissionTypeAdministrativeRate" xml:space="preserve"><value>المعدل الإداري</value></data>
+  <data name="SubmissionTypeAttachmentA" xml:space="preserve"><value>الملحق A (غير الإطفاء)</value></data>
+  <data name="SubmissionTypeRateLetter" xml:space="preserve"><value>خطاب أسعار Cal OES</value></data>
+  <data name="SubmissionTypeSalarySurvey" xml:space="preserve"><value>استبيان الرواتب</value></data>
+  <data name="SubmissionTypeSpecialEquipment" xml:space="preserve"><value>المعدات الخاصة / رموز FEMA</value></data>
+  <data name="Supersedes" xml:space="preserve"><value>يحل محل</value></data>
+  <data name="SupplyNumbers" xml:space="preserve"><value>أرقام الإمداد</value></data>
+  <data name="SupportingDocuments" xml:space="preserve"><value>المستندات الداعمة</value></data>
+  <data name="TabAgency" xml:space="preserve"><value>الوكالة</value></data>
+  <data name="TabAgreements" xml:space="preserve"><value>الاتفاقيات</value></data>
+  <data name="TabQueue" xml:space="preserve"><value>قائمة الإجراءات</value></data>
+  <data name="TabRates" xml:space="preserve"><value>الأسعار السنوية</value></data>
+  <data name="TabReadiness" xml:space="preserve"><value>الجاهزية</value></data>
+  <data name="TabReconciliation" xml:space="preserve"><value>التسوية</value></data>
+  <data name="TabResources" xml:space="preserve"><value>موارد F-5</value></data>
+  <data name="TravelOnly" xml:space="preserve"><value>سفر فقط (بدون F-42)</value></data>
+  <data name="Uei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="UnitDesignator" xml:space="preserve"><value>معرّف الوحدة</value></data>
+  <data name="ValidatedOn" xml:space="preserve"><value>تم التحقق</value></data>
+  <data name="ValidationFailedSummary" xml:space="preserve"><value>قائمة التحقق: {0} خطأ، {1} تحذير.</value></data>
+  <data name="Validation_agency_profile_missing" xml:space="preserve"><value>ملف الوكالة مفقود.</value></data>
+  <data name="Validation_agreement_missing" xml:space="preserve"><value>لا توجد اتفاقية MOU / MOA / GBR تغطي تاريخ الإرسال.</value></data>
+  <data name="Validation_authority_profile_missing" xml:space="preserve"><value>لا يوجد ملف مرجعي مُراجَع يغطي هذا السجل.</value></data>
+  <data name="Validation_classification_unmapped" xml:space="preserve"><value>تصنيف شخص ليس في استبيان الرواتب ولا في القائمة المثبتة.</value></data>
+  <data name="Validation_dispatch_missing" xml:space="preserve"><value>وقت الإرسال مفقود.</value></data>
+  <data name="Validation_documentation_only" xml:space="preserve"><value>موسوم للتوثيق فقط: لا يُطالب بأي تعويض.</value></data>
+  <data name="Validation_duplicate_vehicle" xml:space="preserve"><value>تظهر المركبة نفسها أكثر من مرة.</value></data>
+  <data name="Validation_expense_approval_missing" xml:space="preserve"><value>معتمِد المطالبة مفقود.</value></data>
+  <data name="Validation_expense_f42_not_submitted" xml:space="preserve"><value>لم يُلاحظ تقديم F-42 المرتبط في MARS.</value></data>
+  <data name="Validation_expense_no_lines" xml:space="preserve"><value>مطالبة المصروفات بلا بنود.</value></data>
+  <data name="Validation_expense_receipt_missing" xml:space="preserve"><value>بند مصروف بلا إيصال.</value></data>
+  <data name="Validation_expense_signature_missing" xml:space="preserve"><value>توقيع المطالبة مفقود.</value></data>
+  <data name="Validation_incident_authorization_missing" xml:space="preserve"><value>تفويض الحادث / AREP مفقود.</value></data>
+  <data name="Validation_incident_missing" xml:space="preserve"><value>اسم الحادث أو رقمه مفقود.</value></data>
+  <data name="Validation_macs_missing" xml:space="preserve"><value>معرّف MACS مفقود.</value></data>
+  <data name="Validation_order_missing" xml:space="preserve"><value>رقم أمر الحادث مفقود.</value></data>
+  <data name="Validation_paper_fallback_missing" xml:space="preserve"><value>لا يوجد F-42 موقّع أو ورقي مرفق بالانتشار.</value></data>
+  <data name="Validation_personnel_interval_outside" xml:space="preserve"><value>فترة التزام شخص تقع خارج نافذة الإرسال-العودة للمورد.</value></data>
+  <data name="Validation_personnel_missing" xml:space="preserve"><value>لا يوجد أفراد مدرجون.</value></data>
+  <data name="Validation_rate_profile_missing" xml:space="preserve"><value>لا توجد بنود أسعار سنوية سارية لتاريخ الإرسال.</value></data>
+  <data name="Validation_release_is_not_return" xml:space="preserve"><value>المورد مُفرج عنه لكن لم يُسجَّل وقت عودة أو إعادة إرسال.</value></data>
+  <data name="Validation_request_missing" xml:space="preserve"><value>رقم الطلب مفقود.</value></data>
+  <data name="Validation_request_prefix_invalid" xml:space="preserve"><value>لا يحمل رقم الطلب بادئة صالحة (E, O, C, S, A) ورقمًا.</value></data>
+  <data name="Validation_resource_missing" xml:space="preserve"><value>نوع المورد أو صنفه أو منصب overhead مفقود.</value></data>
+  <data name="Validation_responding_signature_missing" xml:space="preserve"><value>توقيع الوكالة المستجيبة مفقود.</value></data>
+  <data name="Validation_return_before_dispatch" xml:space="preserve"><value>وقت العودة قبل وقت الإرسال.</value></data>
+  <data name="Validation_rotation_undocumented" xml:space="preserve"><value>تناوب طاقم بلا مرفق موافقة.</value></data>
+  <data name="Validation_vehicle_not_in_inventory" xml:space="preserve"><value>لا يوجد صف مطابقة F-5 لمركبة.</value></data>
+  <data name="Value" xml:space="preserve"><value>القيمة</value></data>
+  <data name="Variance" xml:space="preserve"><value>الفرق</value></data>
+  <data name="Verification" xml:space="preserve"><value>التحقق</value></data>
+  <data name="VerificationHelp" xml:space="preserve"><value>ضع علامة تم التحقق بعد مقارنة الملف بسجل الوكالة في MARS. تحذر لوحة الجاهزية بعد عام.</value></data>
+  <data name="VerifiedOn" xml:space="preserve"><value>تم التحقق في</value></data>
+  <data name="Version" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="Warning" xml:space="preserve"><value>تحذير</value></data>
+  <data name="Window" xml:space="preserve"><value>الفترة</value></data>
+  <data name="WorkItemIntro" xml:space="preserve"><value>ترتيب الخانات الرسمي، وروابط إلى حقائق الانتشار الثابتة، وقائمة التحقق، والتعويض المتوقع، وتسليم البوابة.</value></data>
+  <data name="Year" xml:space="preserve"><value>السنة</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="calmars_admin_input_amount_invalid" xml:space="preserve"><value>لا يمكن أن تكون مبالغ المدخلات سالبة.</value></data>
+  <data name="calmars_admin_input_classification_invalid" xml:space="preserve"><value>تصنيف مدخل غير صالح.</value></data>
+  <data name="calmars_admin_input_year_invalid" xml:space="preserve"><value>السنة المالية لمدخل غير صالحة (السنوات السابقة فقط).</value></data>
+  <data name="calmars_agency_name_required" xml:space="preserve"><value>اسم الوكالة مطلوب.</value></data>
+  <data name="calmars_agency_not_found" xml:space="preserve"><value>لم يُعثر على ملف الوكالة.</value></data>
+  <data name="calmars_agreement_in_use" xml:space="preserve"><value>الاتفاقية مشار إليها في عنصر عمل ولا يمكن حذفها.</value></data>
+  <data name="calmars_agreement_kind_invalid" xml:space="preserve"><value>نوع مستند الاتفاقية غير صالح.</value></data>
+  <data name="calmars_agreement_method_invalid" xml:space="preserve"><value>طريقة التعويض غير صالحة.</value></data>
+  <data name="calmars_agreement_not_found" xml:space="preserve"><value>لم يُعثر على الاتفاقية.</value></data>
+  <data name="calmars_agreement_overtime_invalid" xml:space="preserve"><value>طريقة العمل الإضافي غير صالحة.</value></data>
+  <data name="calmars_attestation_required" xml:space="preserve"><value>أكّد الإقرار قبل فتح عرض التسليم.</value></data>
+  <data name="calmars_dates_invalid" xml:space="preserve"><value>تاريخ الانتهاء قبل تاريخ البدء.</value></data>
+  <data name="calmars_decision_title_required" xml:space="preserve"><value>يتطلب القرار اسم / منصب صاحب القرار.</value></data>
+  <data name="calmars_deployment_not_found" xml:space="preserve"><value>لم يُعثر على الانتشار.</value></data>
+  <data name="calmars_f42_not_found" xml:space="preserve"><value>لم يُعثر على F-42 المرتبط في هذا الانتشار.</value></data>
+  <data name="calmars_fill_not_found" xml:space="preserve"><value>هذا الطلب / التعبئة ليس على الطلب الخارجي للانتشار.</value></data>
+  <data name="calmars_fill_required" xml:space="preserve"><value>يحتوي الطلب على عدة طلبات فرعية؛ اختر الطلب / التعبئة لهذا F-42.</value></data>
+  <data name="calmars_invoice_amount_invalid" xml:space="preserve"><value>لا يمكن أن يكون المبلغ المفوتر سالبًا.</value></data>
+  <data name="calmars_invoice_duplicate" xml:space="preserve"><value>فاتورة MARS بهذا المعرّف مسجّلة بالفعل.</value></data>
+  <data name="calmars_invoice_id_required" xml:space="preserve"><value>معرّف فاتورة MARS مطلوب.</value></data>
+  <data name="calmars_invoice_not_approved" xml:space="preserve"><value>سجّل الموافقة المحلية قبل الدفع.</value></data>
+  <data name="calmars_invoice_not_payable" xml:space="preserve"><value>الفاتورة ليست في حالة تسمح بتسجيل دفعة.</value></data>
+  <data name="calmars_invoice_not_pending" xml:space="preserve"><value>الفاتورة ليست بانتظار الموافقة المحلية.</value></data>
+  <data name="calmars_not_ready" xml:space="preserve"><value>السجل ليس جاهزًا للبوابة؛ شغّل قائمة التحقق أولًا.</value></data>
+  <data name="calmars_payment_amount_invalid" xml:space="preserve"><value>لا يمكن أن يكون المبلغ المدفوع سالبًا.</value></data>
+  <data name="calmars_rate_empty" xml:space="preserve"><value>التقديم بلا بنود ولا معدل إداري ولا سعر أساسي مقبول.</value></data>
+  <data name="calmars_rate_line_basis_invalid" xml:space="preserve"><value>أساس بند السعر غير صالح.</value></data>
+  <data name="calmars_rate_line_classification_required" xml:space="preserve"><value>تحتاج بنود الرواتب إلى رمز تصنيف.</value></data>
+  <data name="calmars_rate_line_kind_invalid" xml:space="preserve"><value>نوع بند السعر غير صالح.</value></data>
+  <data name="calmars_rate_line_rate_invalid" xml:space="preserve"><value>لا يمكن أن تكون الأسعار سالبة.</value></data>
+  <data name="calmars_rate_line_resource_required" xml:space="preserve"><value>تحتاج بنود المعدات إلى رمز مورد أو FEMA.</value></data>
+  <data name="calmars_rate_locked" xml:space="preserve"><value>هذا التقديم موقّع أو مقدَّم ولا يمكن تعديله بعد الآن.</value></data>
+  <data name="calmars_rate_not_found" xml:space="preserve"><value>لم يُعثر على التقديم السنوي.</value></data>
+  <data name="calmars_rate_not_signed" xml:space="preserve"><value>سجّل التوقيع المحلي قبل ملاحظة حالة خارجية.</value></data>
+  <data name="calmars_rate_percent_invalid" xml:space="preserve"><value>يجب أن يكون المعدل الإداري بين 0 و100 بالمئة.</value></data>
+  <data name="calmars_rate_signer_required" xml:space="preserve"><value>يتطلب التوقيع اسم الموقّع.</value></data>
+  <data name="calmars_rate_transition_invalid" xml:space="preserve"><value>تغيير الحالة هذا غير مسموح.</value></data>
+  <data name="calmars_rate_type_invalid" xml:space="preserve"><value>نوع التقديم غير صالح.</value></data>
+  <data name="calmars_rate_year_invalid" xml:space="preserve"><value>سنة التقديم غير صالحة.</value></data>
+  <data name="calmars_rejection_comment_required" xml:space="preserve"><value>يتطلب الرفض تعليقًا.</value></data>
+  <data name="calmars_resource_name_required" xml:space="preserve"><value>المورد الخارجي يحتاج إلى اسم.</value></data>
+  <data name="calmars_resource_not_found" xml:space="preserve"><value>لم يُعثر على صف المورد.</value></data>
+  <data name="calmars_resource_subject_invalid" xml:space="preserve"><value>نوع موضوع المورد غير صالح.</value></data>
+  <data name="calmars_resource_unit_not_found" xml:space="preserve"><value>لم يُعثر على الوحدة في هذه الإدارة.</value></data>
+  <data name="calmars_resource_unit_required" xml:space="preserve"><value>الوحدة مطلوبة لمورد من نوع وحدة.</value></data>
+  <data name="calmars_status_unknown" xml:space="preserve"><value>هذه الحالة الخارجية ليست في مفردات الملف المرجعي.</value></data>
+  <data name="calmars_work_item_external" xml:space="preserve"><value>لوحظ السجل في MARS ولم يعد قابلًا للتعديل محليًا.</value></data>
+  <data name="calmars_work_item_not_calculable" xml:space="preserve"><value>فقط نماذج F-42 ومطالبات المصروفات لها تعويض متوقع.</value></data>
+  <data name="calmars_work_item_not_closable" xml:space="preserve"><value>يمكن إغلاق السجلات المعتمدة أو للتوثيق فقط أو المرفوضة أو المدفوعة فقط.</value></data>
+  <data name="calmars_work_item_not_external" xml:space="preserve"><value>لم يُلاحظ تقديم السجل في MARS.</value></data>
+  <data name="calmars_work_item_not_found" xml:space="preserve"><value>لم يُعثر على السجل.</value></data>
+  <data name="calmars_work_item_not_invoice" xml:space="preserve"><value>السجل ليس فاتورة MARS.</value></data>
+  <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>فقط نماذج F-42 ومطالبات المصروفات تُقدَّم إلى MARS.</value></data>
+  <data name="calmars_work_item_settled" xml:space="preserve"><value>السجل مدفوع أو مغلق؛ بنوده نهائية.</value></data>
+  <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>السجل ليس من النوع المتوقع.</value></data>
+</root>

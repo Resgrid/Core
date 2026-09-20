@@ -1,0 +1,55 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceCompensationView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Compensation"];
+    ViewData["Title"] = localizer["Compensation"].Value;
+    ViewData["Subtitle"] = localizer["CompensationIntro"].Value;
+    ViewData["WorkforceTab"] = "compensation";
+    ViewData["WorkforcePage"] = Model;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["HelpCompensation"]</div>
+    @if (!string.IsNullOrWhiteSpace(Model.EmploymentId))
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["EmployeeProfiles"] — @Model.WorkerName</h5>
+                        @if (Model.CanManageCompensation)
+                        {
+                            <div class="ibox-tools"><a asp-action="CompensationProfile" asp-route-employmentId="@Model.EmploymentId" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddProfile"]</a></div>
+                        }
+                    </div>
+                    <div class="ibox-content">
+                        @await Html.PartialAsync("_CompensationTable", Model.Employee, new ViewDataDictionary(ViewData) { { "RoleNames", Model.RoleNames }, { "EmploymentId", Model.EmploymentId } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["DefaultProfiles"]</h5>
+                    @if (Model.CanManageCompensation)
+                    {
+                        <div class="ibox-tools">
+                            <a asp-action="CompensationProfile" asp-route-scope="@((int)CompensationScopes.RoleDefault)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> @localizer["AddRoleDefault"]</a>
+                            <a asp-action="CompensationProfile" asp-route-scope="@((int)CompensationScopes.DepartmentDefault)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> @localizer["AddDepartmentDefault"]</a>
+                        </div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    <p class="small text-muted">@localizer["DefaultProfilesHelp"]</p>
+                    @await Html.PartialAsync("_CompensationTable", Model.Defaults, new ViewDataDictionary(ViewData) { { "RoleNames", Model.RoleNames }, { "EmploymentId", (string)null } })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceCompensationProfileView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CompensationProfile"];
+    ViewData["Title"] = localizer["CompensationProfile"].Value;
+    ViewData["Subtitle"] = Model.WorkerName;
+    ViewData["WorkforceTab"] = "compensation";
+    ViewData["WorkforcePage"] = Model;
+    var p = Model.Profile;
+    var isNew = string.IsNullOrWhiteSpace(p.EmployeeCompensationProfileId);
+    var readOnly = !Model.CanManageCompensation;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <form method="post" asp-action="SaveCompensationProfile" id="profileForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="EmployeeCompensationProfileId" value="@p.EmployeeCompensationProfileId" />
+        <input type="hidden" name="WorkforceEmploymentId" value="@p.WorkforceEmploymentId" />
+        <input type="hidden" name="Scope" value="@p.Scope" />
+        <input type="hidden" name="payComponentsJson" id="payComponentsJson" />
+        <input type="hidden" name="costComponentsJson" id="costComponentsJson" />
+        <div class="row">
+            <div class="col-md-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Scope" + (CompensationScopes)p.Scope] @(p.IsApproved ? "" : "— " + localizer["Unapproved"])</h5></div>
+                    <div class="ibox-content">
+                        <fieldset disabled="@readOnly">
+                            @if (p.Scope == (int)CompensationScopes.RoleDefault)
+                            {
+                                <div class="form-group"><label>@localizer["PersonnelRole"] *</label><select name="PersonnelRoleId" class="form-control" required>@foreach (var item in Model.Roles) { <option value="@item.Value" selected="@(item.Value == p.PersonnelRoleId?.ToString())">@item.Text</option> }</select></div>
+                            }
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["EffectiveOn"] *</label><input type="date" name="EffectiveOn" class="form-control" required value="@p.EffectiveOn.ToString("yyyy-MM-dd")" /></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["ExpiresOn"]</label><input type="date" name="ExpiresOn" class="form-control" value="@p.ExpiresOn?.ToString("yyyy-MM-dd")" /></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["PayBasis"]</label><select name="PayBasis" class="form-control">@foreach (PayBases b in Enum.GetValues(typeof(PayBases))) { <option value="@((int)b)" selected="@(p.PayBasis == (int)b)">@localizer["PayBasis" + b]</option> }</select></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Currency"]</label><input type="text" name="Currency" class="form-control" maxlength="3" value="@p.Currency" /></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["BaseAmount"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="BaseAmount" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(p.BaseAmount)" /><span class="help-block">@localizer["BaseAmountHelp"]</span></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["RegularHourlyEquivalent"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="RegularHourlyEquivalent" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(p.RegularHourlyEquivalent)" /><span class="help-block">@localizer["RegularHourlyEquivalentHelp"]</span></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["HoursPerDay"]</label><input type="number" step="0.01" name="StandardHoursPerDay" class="form-control" value="@p.StandardHoursPerDay" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["HoursPerWeek"]</label><input type="number" step="0.01" name="StandardHoursPerWeek" class="form-control" value="@p.StandardHoursPerWeek" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["HoursPerYear"]</label><input type="number" step="0.01" name="StandardHoursPerYear" class="form-control" value="@p.StandardHoursPerYear" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["RateMultipliers"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="RateMultipliersJson" class="form-control" placeholder='{"Overtime":1.5,"DoubleTime":2,"Standby":1,"Travel":1}' value="@ProtectedDataEnvelope.SafeDisplay(p.RateMultipliersJson)" /><span class="help-block">@localizer["RateMultipliersHelp"]</span></div>
+                            <div class="form-group"><label>@localizer["Source"]</label><input type="text" name="Source" class="form-control" maxlength="100" value="@p.Source" /></div>
+                        </fieldset>
+                        @if (Model.CanManageCompensation)
+                        {
+                            <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                            <a asp-action="Compensation" asp-route-employmentId="@p.WorkforceEmploymentId" class="btn btn-default">@localizer["Cancel"]</a>
+                        }
+                    </div>
+                </div>
+                @if (!isNew)
+                {
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@localizer["Approval"]</h5></div>
+                        <div class="ibox-content">
+                            @if (p.IsApproved)
+                            {
+                                <p><span class="label label-primary">@localizer["Approved"]</span> @p.ApprovedOn?.ToString("yyyy-MM-dd")</p>
+                            }
+                            else
+                            {
+                                <p class="text-warning">@localizer["ApprovalHelp"]</p>
+                            }
+                            @if (Model.Preview != null)
+                            {
+                                <p class="small text-muted">@localizer["PreviewEightHours"]: <strong>@Model.Preview.LoadedCost.ToString("N2") @p.Currency</strong> (@localizer["Pay"] @Model.Preview.PayAmount.ToString("N2") + @localizer["PayComponents"] @Model.Preview.PayComponentAmount.ToString("N2") + @localizer["EmployerCosts"] @Model.Preview.EmployerCostAmount.ToString("N2"))</p>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-md-7">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["PayComponents"]</h5>@if (Model.CanManageCompensation) { <div class="ibox-tools"><button type="button" class="btn btn-xs btn-default" id="addPay"><i class="fa fa-plus"></i></button></div> }</div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@localizer["PayComponentsHelp"]</p>
+                        <table class="table table-condensed" id="payTable">
+                            <thead><tr><th>@localizer["Category"]</th><th>@localizer["Name"]</th><th>@localizer["Basis"]</th><th>@localizer["Amount"] <i class="fa fa-lock text-muted"></i></th><th>@localizer["EligiblePayCodes"]</th><th>@localizer["PerOvertimeHour"]</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["EmployerCostComponents"]</h5>@if (Model.CanManageCompensation) { <div class="ibox-tools"><button type="button" class="btn btn-xs btn-default" id="addCost"><i class="fa fa-plus"></i></button></div> }</div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@localizer["CostComponentsHelp"]</p>
+                        <table class="table table-condensed" id="costTable">
+                            <thead><tr><th>@localizer["Category"]</th><th>@localizer["Name"]</th><th>@localizer["Basis"]</th><th>@localizer["Rate"] <i class="fa fa-lock text-muted"></i></th><th>@localizer["Cap"] <i class="fa fa-lock text-muted"></i></th><th>@localizer["EligiblePayCodes"]</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    @if (!isNew && Model.CanManageCompensation && !p.IsApproved)
+    {
+        <form method="post" asp-action="ApproveCompensationProfile">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.EmployeeCompensationProfileId" /><button type="submit" class="btn btn-success">@localizer["ApproveProfile"]</button></form>
+    }
+</div>
+
+@section Scripts {
+<script>
+    (function () {
+        var readOnly = @(readOnly ? "true" : "false");
+        var pay = @Html.Raw(Model.PayComponentsJson ?? "[]");
+        var cost = @Html.Raw(Model.CostComponentsJson ?? "[]");
+        var payCategories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(PayComponentCategories)).Cast<PayComponentCategories>().Select(c => new { v = (int)c, t = localizer["PayCategory" + c].Value })));
+        var payBases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(PayComponentBases)).Cast<PayComponentBases>().Select(c => new { v = (int)c, t = localizer["PayComponentBasis" + c].Value })));
+        var costCategories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(CostComponentCategories)).Cast<CostComponentCategories>().Select(c => new { v = (int)c, t = localizer["CostCategory" + c].Value })));
+        var costBases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(CostComponentBases)).Cast<CostComponentBases>().Select(c => new { v = (int)c, t = localizer["CostComponentBasis" + c].Value })));
+        function select(name, options, value) { var s = $('<select class="form-control input-sm"></select>').attr('data-f', name); options.forEach(function (o) { s.append($('<option></option>').val(o.v).text(o.t).prop('selected', o.v == value)); }); return s; }
+        function input(name, value, type) { return $('<input class="form-control input-sm" />').attr('type', type || 'text').attr('data-f', name).val(value == null ? '' : value); }
+        function payRow(c) {
+            var tr = $('<tr></tr>').data('id', c.EmployeePayComponentId || '');
+            tr.append($('<td></td>').append(select('Category', payCategories, c.Category || 0)));
+            tr.append($('<td></td>').append(input('Name', c.Name)));
+            tr.append($('<td></td>').append(select('Basis', payBases, c.Basis || 0)));
+            tr.append($('<td></td>').append(input('Amount', c.Amount)));
+            tr.append($('<td></td>').append(input('EligiblePayCodesCsv', c.EligiblePayCodesCsv)));
+            tr.append($('<td></td>').append($('<input type="checkbox" />').attr('data-f', 'PaidForEachOvertimeHour').prop('checked', !!c.PaidForEachOvertimeHour)));
+            tr.append($('<td></td>').append(readOnly ? '' : $('<button type="button" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>').on('click', function () { tr.remove(); })));
+            return tr;
+        }
+        function costRow(c) {
+            var tr = $('<tr></tr>').data('id', c.EmployeeCostComponentId || '');
+            tr.append($('<td></td>').append(select('Category', costCategories, c.Category || 0)));
+            tr.append($('<td></td>').append(input('Name', c.Name)));
+            tr.append($('<td></td>').append(select('Basis', costBases, c.Basis || 0)));
+            tr.append($('<td></td>').append(input('RateAmount', c.RateAmount)));
+            tr.append($('<td></td>').append(input('Cap', c.Cap)));
+            tr.append($('<td></td>').append(input('EligiblePayCodesCsv', c.EligiblePayCodesCsv)));
+            tr.append($('<td></td>').append(readOnly ? '' : $('<button type="button" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>').on('click', function () { tr.remove(); })));
+            return tr;
+        }
+        pay.forEach(function (c) { $('#payTable tbody').append(payRow(c)); });
+        cost.forEach(function (c) { $('#costTable tbody').append(costRow(c)); });
+        $('#addPay').on('click', function () { $('#payTable tbody').append(payRow({})); });
+        $('#addCost').on('click', function () { $('#costTable tbody').append(costRow({})); });
+        if (readOnly) { $('#payTable input, #payTable select, #costTable input, #costTable select').prop('disabled', true); }
+        function collect(table, idName) {
+            var rows = [];
+            $(table + ' tbody tr').each(function () {
+                var o = {}; o[idName] = $(this).data('id') || null;
+                $(this).find('[data-f]').each(function () { var f = $(this).attr('data-f'); o[f] = $(this).is(':checkbox') ? $(this).is(':checked') : ($(this).val() === '' ? null : $(this).val()); });
+                rows.push(o);
+            });
+            return JSON.stringify(rows);
+        }
+        $('#profileForm').on('submit', function () {
+            $('#payComponentsJson').val(collect('#payTable', 'EmployeePayComponentId'));
+            $('#costComponentsJson').val(collect('#costTable', 'EmployeeCostComponentId'));
+        });
+    })();
+</script>
+}

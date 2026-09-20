@@ -1,0 +1,109 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceUsageView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ResourceUsage"];
+    ViewData["Title"] = localizer["ResourceUsage"].Value + " — " + Model.ContextLabel;
+    ViewData["Subtitle"] = localizer["UsageIntro"].Value;
+    ViewData["WorkforceTab"] = "costruns";
+    ViewData["WorkforcePage"] = Model;
+    var x = Model.Editing;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-@(x == null ? 12 : 7)">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["UsageEntries"]</h5>
+                    <div class="ibox-tools">
+                        <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddUsage"]</a>
+                        <a asp-action="CostRuns" class="btn btn-xs btn-default">@localizer["TabCostRuns"]</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Date"]</th><th>@localizer["Unit"]</th><th>@localizer["Phase"]</th><th>@localizer["Miles"]</th><th>@localizer["EngineHours"]</th><th>@localizer["OperatingHours"]</th><th>@localizer["Days"]</th><th>@localizer["Fuel"]</th><th>@localizer["Source"]</th><th>@localizer["Review"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var u in Model.Entries)
+                        {
+                            <tr class="@(u.NeedsReview ? "warning" : "")">
+                                <td>@u.UsageDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(u.UnitId.HasValue && Model.UnitNames.TryGetValue(u.UnitId.Value, out var n) ? n : u.InventoryAssetId ?? u.ExternalResourceKey)</td>
+                                <td>@localizer["Phase" + (UsagePhases)u.Phase]</td>
+                                <td>@u.CanonicalDistanceMiles?.ToString("N1") @(u.DistanceUnit == "km" && u.OriginalDistance.HasValue ? "(" + u.OriginalDistance.Value.ToString("N1") + " km)" : "")</td>
+                                <td>@u.EngineHours?.ToString("N1")</td><td>@u.OperatingHours?.ToString("N1")</td><td>@((u.DeployedDays ?? 0) + (u.StandbyDays ?? 0))</td>
+                                <td>@(u.FuelActualCost.HasValue ? u.FuelActualCost.Value.ToString("N2") : u.FuelQuantity.HasValue ? u.FuelQuantity.Value.ToString("N1") + " " + u.FuelUnit : "")</td>
+                                <td>@localizer["UsageSource" + (UsageSources)u.Source]</td>
+                                <td>@(u.NeedsReview ? localizer["Review_" + u.ReviewReason] : "")</td>
+                                <td class="text-right">
+                                    <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" asp-route-edit="@u.ResourceUsageEntryId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                    <form method="post" asp-action="DeleteUsage" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@u.ResourceUsageEntryId" /><input type="hidden" name="deploymentId" value="@Model.DeploymentId" /><input type="hidden" name="callId" value="@Model.CallId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Entries.Count == 0)
+                        {
+                            <tr><td colspan="11" class="text-muted">@localizer["NoUsage"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (x != null)
+        {
+            <div class="col-md-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(x.ResourceUsageEntryId) ? localizer["AddUsage"] : localizer["EditUsage"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="SaveUsage">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="ResourceUsageEntryId" value="@x.ResourceUsageEntryId" />
+                            <input type="hidden" name="DeploymentId" value="@x.DeploymentId" /><input type="hidden" name="CallId" value="@x.CallId" />
+                            <input type="hidden" name="SubjectType" value="@((int)ResourceSubjectTypes.Unit)" />
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Unit"] *</label><select name="UnitId" class="form-control" required>@foreach (var item in Model.Units) { <option value="@item.Value" selected="@(item.Value == x.UnitId?.ToString())">@item.Text</option> }</select></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Date"] *</label><input type="date" name="UsageDate" class="form-control" required value="@x.UsageDate.ToString("yyyy-MM-dd")" /></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Phase"]</label><select name="Phase" class="form-control">@foreach (UsagePhases p in Enum.GetValues(typeof(UsagePhases))) { <option value="@((int)p)" selected="@(x.Phase == (int)p)">@localizer["Phase" + p]</option> }</select></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Source"]</label><select name="Source" class="form-control">@foreach (UsageSources s in Enum.GetValues(typeof(UsageSources))) { <option value="@((int)s)" selected="@(x.Source == (int)s)">@localizer["UsageSource" + s]</option> }</select></div></div>
+                            </div>
+                            <h4>@localizer["Distance"]</h4>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["StartOdometer"]</label><input type="number" step="0.1" name="StartOdometer" class="form-control" value="@x.StartOdometer" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["EndOdometer"]</label><input type="number" step="0.1" name="EndOdometer" class="form-control" value="@x.EndOdometer" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["DistanceUnit"]</label><select name="DistanceUnit" class="form-control"><option value="mi" selected="@(x.DistanceUnit != "km")">mi</option><option value="km" selected="@(x.DistanceUnit == "km")">km</option></select></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["OriginalDistance"]</label><input type="number" step="0.1" name="OriginalDistance" class="form-control" value="@x.OriginalDistance" /><span class="help-block">@localizer["DistanceHelp"]</span></div>
+                            <h4>@localizer["Hours"]</h4>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["StartEngineMeter"]</label><input type="number" step="0.1" name="StartEngineMeter" class="form-control" value="@x.StartEngineMeter" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["EndEngineMeter"]</label><input type="number" step="0.1" name="EndEngineMeter" class="form-control" value="@x.EndEngineMeter" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["EngineHours"]</label><input type="number" step="0.1" name="EngineHours" class="form-control" value="@x.EngineHours" /></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["OperatingHours"]</label><input type="number" step="0.1" name="OperatingHours" class="form-control" value="@x.OperatingHours" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["IdleHours"]</label><input type="number" step="0.1" name="IdleHours" class="form-control" value="@x.IdleHours" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["DeployedDays"]</label><input type="number" step="0.5" name="DeployedDays" class="form-control" value="@x.DeployedDays" /></div></div>
+                            </div>
+                            <h4>@localizer["Fuel"]</h4>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["FuelQuantity"]</label><input type="number" step="0.01" name="FuelQuantity" class="form-control" value="@x.FuelQuantity" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["FuelUnit"]</label><input type="text" name="FuelUnit" class="form-control" maxlength="10" value="@x.FuelUnit" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["FuelActualCost"]</label><input type="number" step="0.01" name="FuelActualCost" class="form-control" value="@x.FuelActualCost" /></div></div>
+                            </div>
+                            <input type="hidden" name="StandbyDays" value="@x.StandbyDays" />
+                            <div class="checkbox"><label><input type="checkbox" name="IsApproved" value="true" checked="@x.IsApproved" /> @localizer["Approved"]</label></div>
+                            <div class="m-t-sm"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" class="btn btn-default">@localizer["Cancel"]</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

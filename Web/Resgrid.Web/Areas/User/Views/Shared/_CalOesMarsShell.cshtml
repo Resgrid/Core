@@ -1,0 +1,50 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> calOesStrings
+@*
+    Page heading + module tabs shared by the Cal OES MARS screens (Workforce & Business Operations plan, Phase C-M3 / C6).
+    ViewData["Title"] heading; ViewData["Subtitle"] optional; ViewData["MarsTab"] the active tab key.
+*@
+@{
+    var title = (string)ViewData["Title"] ?? calOesStrings["CalOesMars"].Value;
+    var subtitle = (string)ViewData["Subtitle"];
+    var tab = (string)ViewData["MarsTab"] ?? "readiness";
+    var isManager = ViewData["MarsIsManager"] as bool? ?? false;
+    var canReconcile = ViewData["MarsCanReconcile"] as bool? ?? false;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            @if (tab == "readiness")
+            {
+                <li class="active"><strong>@calOesStrings["CalOesMars"]</strong></li>
+            }
+            else
+            {
+                <li><a asp-controller="CalOesMars" asp-action="Index" asp-route-area="User">@calOesStrings["CalOesMars"]</a></li>
+                <li class="active"><strong>@title</strong></li>
+            }
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+        <div class="m-t-sm">
+            <div class="btn-group">
+                <a asp-controller="CalOesMars" asp-action="Index" class="btn btn-xs @(tab == "readiness" ? "btn-primary" : "btn-default")"><i class="fa fa-dashboard"></i> @calOesStrings["TabReadiness"]</a>
+                <a asp-controller="CalOesMars" asp-action="Queue" class="btn btn-xs @(tab == "queue" ? "btn-primary" : "btn-default")"><i class="fa fa-tasks"></i> @calOesStrings["TabQueue"]</a>
+                @if (isManager)
+                {
+                    <a asp-controller="CalOesMars" asp-action="Rates" class="btn btn-xs @(tab == "rates" ? "btn-primary" : "btn-default")"><i class="fa fa-table"></i> @calOesStrings["TabRates"]</a>
+                    <a asp-controller="CalOesMars" asp-action="Agreements" class="btn btn-xs @(tab == "agreements" ? "btn-primary" : "btn-default")"><i class="fa fa-file-text-o"></i> @calOesStrings["TabAgreements"]</a>
+                    <a asp-controller="CalOesMars" asp-action="Resources" class="btn btn-xs @(tab == "resources" ? "btn-primary" : "btn-default")"><i class="fa fa-truck"></i> @calOesStrings["TabResources"]</a>
+                    <a asp-controller="CalOesMars" asp-action="Agency" class="btn btn-xs @(tab == "agency" ? "btn-primary" : "btn-default")"><i class="fa fa-building"></i> @calOesStrings["TabAgency"]</a>
+                }
+                @if (isManager || canReconcile)
+                {
+                    <a asp-controller="CalOesMars" asp-action="Reconciliation" class="btn btn-xs @(tab == "reconciliation" ? "btn-primary" : "btn-default")"><i class="fa fa-balance-scale"></i> @calOesStrings["TabReconciliation"]</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

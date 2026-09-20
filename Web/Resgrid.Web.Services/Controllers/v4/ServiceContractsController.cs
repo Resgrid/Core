@@ -187,6 +187,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			byte[] data = null;
 			if (!string.IsNullOrWhiteSpace(input.FileBase64))
 			{
+				// Base64 is 4 characters per 3 bytes: refuse on the encoded length before decoding allocates the oversized buffer.
+				if (input.FileBase64.Length > Resgrid.Services.Invoicing.DeploymentService.MaxAttachmentBytes / 3 * 4 + 4) return Failed<ComplianceDocumentResult>("compliance_file_too_large");
 				try { data = Convert.FromBase64String(input.FileBase64); }
 				catch (FormatException) { return Failed<ComplianceDocumentResult>("compliance_file_invalid"); }
 			}

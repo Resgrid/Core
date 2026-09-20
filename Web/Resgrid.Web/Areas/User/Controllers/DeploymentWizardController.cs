@@ -28,6 +28,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public sealed class DeploymentWizardController : SecureBaseController
 	{
+		// Bid, contract, schedule and roster names are user text rendered inside a <script> block; EscapeHtml keeps "</script>" out of the page.
+		private static readonly JsonSerializerSettings ScriptJson = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+
 		private readonly IBidsService _bids;
 		private readonly IDeploymentService _deployments;
 		private readonly IDepartmentsService _departments;
@@ -101,7 +104,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					premiums = context.Schedule.Premiums.Select(p => new { p.RatePremiumId, p.Name, p.DeploymentAdder, p.Overtime1Adder, p.StandbyAdder })
 				},
 				units = view.Units, personnel = view.Personnel, roles = view.Roles, timeZone = view.Department?.TimeZone
-			});
+			}, ScriptJson);
 			return View(view);
 		}
 

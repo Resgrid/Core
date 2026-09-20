@@ -26,6 +26,8 @@ namespace Resgrid.Providers.Claims
 			public const string PreventionAdmin = "PreventionAdmin";
 			/// <summary>Configure a feature's catalog/rules/settings (Phase D certification setup).</summary>
 			public const string Setup = "Setup";
+			/// <summary>Reconcile an external system's invoice / payment against local records (Cal OES MARS, Phase C-M3).</summary>
+			public const string Reconcile = "Reconcile";
 		}
 
 		public static class Memberships
@@ -67,6 +69,13 @@ namespace Resgrid.Providers.Claims
 			public const string TimeReports = "TimeReports";
 			public const string Bids = "Bids";
 			public const string ServiceContracts = "ServiceContracts";
+			/// <summary>Cal OES MARS cost recovery (Workforce & Business Operations plan, C-M3; permission 79).</summary>
+			public const string MutualAidReimbursement = "MutualAidReimbursement";
+			/// <summary>Workforce & Business Operations plan, Phase E (permissions 74-78): employer / establishments / workers / employments.</summary>
+			public const string Workforce = "Workforce";
+			public const string WorkforceCompensation = "WorkforceCompensation";
+			public const string InternalCosts = "InternalCosts";
+			public const string PayDataReporting = "PayDataReporting";
 			public const string Checklist = "Checklist";
 			public const string ChecklistResults = "ChecklistResults";
 			// Resources

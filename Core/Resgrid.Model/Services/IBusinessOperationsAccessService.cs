@@ -19,8 +19,11 @@ namespace Resgrid.Model.Services
 		/// <summary>The department may use the Cal OES MARS cost-recovery workspace (Phase C).</summary>
 		Task<bool> CanUseCostRecoveryAsync(int departmentId);
 
-		/// <summary>The department may use workforce pay data, field costing and California pay data reporting (Phase E; also requires ADP).</summary>
+		/// <summary>The department may use protected workforce pay data and field costing (Phase E, Workforce.InternalCosting).</summary>
 		Task<bool> CanUseWorkforceAsync(int departmentId);
+
+		/// <summary>The department may use California pay data reporting (Phase E, Compliance.CaliforniaPayDataReporting); additionally requires the department's Advanced Data Protection state to be Enabled.</summary>
+		Task<bool> CanUsePayDataReportingAsync(int departmentId);
 
 		/// <summary>The department holds an active Business Operations add-on window right now (no flag or module checks).</summary>
 		Task<bool> HasActiveAddonAsync(int departmentId);

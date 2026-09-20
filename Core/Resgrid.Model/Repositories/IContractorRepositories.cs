@@ -63,7 +63,7 @@ namespace Resgrid.Model.Repositories
 		Task<Bid> GetByIdForDepartmentAsync(string bidId, int departmentId);
 		Task<IEnumerable<Bid>> GetForDepartmentAsync(int departmentId, int? status, int skip, int take);
 		Task<int> CountForDepartmentAsync(int departmentId, int? status);
-		Task<IEnumerable<Bid>> GetByContactIdAsync(int departmentId, string contactId);
+		Task<IEnumerable<Bid>> GetByContactIdAsync(int departmentId, string contactId, int skip, int take);
 		Task<IEnumerable<Bid>> GetByContractAsync(string serviceContractId);
 		/// <summary>Submitted bids (all departments) whose <c>ValidUntil</c> is behind <paramref name="asOfUtc"/>.</summary>
 		Task<IEnumerable<Bid>> GetExpiryCandidatesAsync(DateTime asOfUtc);

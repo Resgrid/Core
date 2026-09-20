@@ -1,0 +1,93 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsAgreementsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Agreements"];
+    ViewData["Title"] = localizer["Agreements"].Value;
+    ViewData["Subtitle"] = localizer["AgreementsIntro"].Value;
+    ViewData["MarsTab"] = "agreements";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var editing = Model.Editing ?? new Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsAgreementSnapshot();
+    var kinds = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsDocumentKinds>();
+    var methods = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsCompensationMethods>();
+    var overtime = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsOvertimeMethods>();
+    var today = DateTime.UtcNow;
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Agreements"]</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpAgreements"]</div>
+                    @if (Model.Agreements.Count == 0) { <p class="text-muted">@localizer["NoAgreements"]</p> }
+                    else
+                    {
+                        <table class="table table-striped table-condensed">
+                            <thead><tr><th>@localizer["Classification"]</th><th>@localizer["DocumentKind"]</th><th>@localizer["CompensationMethod"]</th><th>@localizer["OvertimeMethod"]</th><th>@localizer["Window"]</th><th>@localizer["ObservedStatus"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var a in Model.Agreements)
+                                {
+                                    <tr class="@(a.CoversDate(today) ? "" : "text-muted")">
+                                        <td>@(a.ClassificationTitle ?? a.ClassificationCode ?? localizer["AllClassifications"].Value)</td>
+                                        <td>@localizer["DocumentKind" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsDocumentKinds)a.DocumentKind]</td>
+                                        <td>@localizer["CompensationMethod" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsCompensationMethods)a.CompensationMethod]</td>
+                                        <td>@localizer["OvertimeMethod" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsOvertimeMethods)a.OvertimeMethod]</td>
+                                        <td>@(a.StartOn?.ToString("yyyy-MM-dd") ?? "—") → @(a.EndOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                        <td>@(a.ExternalApprovalStatus ?? "—") <small class="text-muted">v@(a.RowVersion)</small></td>
+                                        <td class="text-right">
+                                            @if (Model.IsManager)
+                                            {
+                                                <a asp-action="Agreements" asp-route-edit="@a.CalOesMarsAgreementSnapshotId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                                <form method="post" asp-action="DeleteAgreement" asp-route-id="@a.CalOesMarsAgreementSnapshotId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (Model.IsManager)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(Model.Editing == null ? localizer["AddAgreement"] : localizer["EditAgreement"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="SaveAgreement">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="CalOesMarsAgreementSnapshotId" value="@editing.CalOesMarsAgreementSnapshotId" />
+                            <div class="form-group"><label>@localizer["Classification"]</label><input type="text" name="ClassificationCode" class="form-control" list="class-list" maxlength="100" value="@editing.ClassificationCode" placeholder="@localizer["AllClassifications"]" /><datalist id="class-list">@foreach (var c in Model.Classifications) { <option value="@c"></option> }</datalist></div>
+                            <div class="form-group"><label>@localizer["ClassificationTitle"]</label><input type="text" name="ClassificationTitle" class="form-control" maxlength="250" value="@editing.ClassificationTitle" /></div>
+                            <div class="form-group"><label>@localizer["DocumentKind"]</label><select name="DocumentKind" class="form-control">@foreach (var k in kinds) { <option value="@((int)k)" selected="@((int)k == editing.DocumentKind)">@localizer["DocumentKind" + k]</option> }</select></div>
+                            <div class="form-group"><label>@localizer["CompensationMethod"]</label><select name="CompensationMethod" class="form-control">@foreach (var m in methods) { <option value="@((int)m)" selected="@((int)m == editing.CompensationMethod)">@localizer["CompensationMethod" + m]</option> }</select></div>
+                            <div class="form-group"><label>@localizer["OvertimeMethod"]</label><select name="OvertimeMethod" class="form-control">@foreach (var o in overtime) { <option value="@((int)o)" selected="@((int)o == editing.OvertimeMethod)">@localizer["OvertimeMethod" + o]</option> }</select></div>
+                            <div class="row"><div class="col-xs-6 form-group"><label>@localizer["StartOn"]</label><input type="date" name="StartOn" class="form-control" value="@(editing.StartOn?.ToString("yyyy-MM-dd"))" /></div><div class="col-xs-6 form-group"><label>@localizer["EndOn"]</label><input type="date" name="EndOn" class="form-control" value="@(editing.EndOn?.ToString("yyyy-MM-dd"))" /></div></div>
+                            <div class="form-group"><label>@localizer["AttachmentId"]</label><input type="number" name="AttachmentId" class="form-control" value="@editing.AttachmentId" /><span class="help-block">@localizer["AttachmentIdHelp"]</span></div>
+                            <div class="form-group"><label>@localizer["Checksum"]</label><input type="text" name="AttachmentChecksum" class="form-control" maxlength="128" value="@editing.AttachmentChecksum" /></div>
+                            <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                            @if (Model.Editing != null) { <a asp-action="Agreements" class="btn btn-default">@localizer["Cancel"]</a> }
+                        </form>
+                        @if (Model.Editing != null && Model.CanSubmit)
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <h5>@localizer["ObserveInMars"]</h5>
+                            <form method="post" asp-action="ObserveAgreement" asp-route-id="@Model.Editing.CalOesMarsAgreementSnapshotId">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group"><label>@localizer["ObservedStatus"]</label><input type="text" name="ExternalStatus" class="form-control" placeholder="Approved" required /></div>
+                                <div class="form-group"><label>@localizer["ObservedOn"]</label><input type="datetime-local" name="ObservedOn" class="form-control" /></div>
+                                <button type="submit" class="btn btn-default"><i class="fa fa-eye"></i> @localizer["RecordObservation"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

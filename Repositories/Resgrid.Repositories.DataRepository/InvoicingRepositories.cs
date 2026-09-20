@@ -156,6 +156,11 @@ namespace Resgrid.Repositories.DataRepository
 				sql.Append($" AND {Col("ContactId")} = {P}ContactId");
 				parameters.Add("ContactId", filter.ContactId);
 			}
+			if (!string.IsNullOrWhiteSpace(filter.ServiceContractId))
+			{
+				sql.Append($" AND {Col("ServiceContractId")} = {P}ServiceContractId");
+				parameters.Add("ServiceContractId", filter.ServiceContractId);
+			}
 			if (filter.IssuedFromUtc.HasValue)
 			{
 				sql.Append($" AND {Col("IssuedOn")} >= {P}IssuedFrom");

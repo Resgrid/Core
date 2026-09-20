@@ -82,10 +82,17 @@ namespace Resgrid.Services.Invoicing
 
 		public Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status = null) => _bids.CountForDepartmentAsync(departmentId, status.HasValue ? (int?)status.Value : null);
 
-		public async Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId)
+		public async Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId, int skip = 0, int take = 100)
 		{
 			if (string.IsNullOrWhiteSpace(contactId)) return new List<Bid>();
-			return (await _bids.GetByContactIdAsync(departmentId, contactId))?.ToList() ?? new List<Bid>();
+			return (await _bids.GetByContactIdAsync(departmentId, contactId, skip, take))?.ToList() ?? new List<Bid>();
+		}
+
+		public async Task<List<Bid>> GetBidsForContractAsync(string serviceContractId, int departmentId)
+		{
+			if (string.IsNullOrWhiteSpace(serviceContractId)) return new List<Bid>();
+			// The contract query is keyed on the contract id alone; the department filter keeps a guessed id from another department's page.
+			return (await _bids.GetByContractAsync(serviceContractId))?.Where(b => b.DepartmentId == departmentId).ToList() ?? new List<Bid>();
 		}
 
 		public Task<Bid> GetBidByIdAsync(string bidId, int departmentId) => LoadAsync(bidId, departmentId);

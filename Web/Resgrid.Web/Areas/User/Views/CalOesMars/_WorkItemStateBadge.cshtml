@@ -1,0 +1,21 @@
+@model int
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    var state = (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates)Model;
+    var css = state switch
+    {
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.Draft => "label-default",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.NeedsReview => "label-warning",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.ReadyForPortal => "label-info",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.SubmittedExternal => "label-primary",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.ReturnedForAgencyReview => "label-danger",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.Approved => "label-success",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.DocumentationOnly => "label-default",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.PendingLocalAgencyApproval => "label-warning",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.LocalAgencyRejected => "label-danger",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.PendingPayingEntityApproval => "label-primary",
+        Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.Paid => "label-success",
+        _ => "label-default"
+    };
+}
+<span class="label @css">@localizer["State" + state]</span>

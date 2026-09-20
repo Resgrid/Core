@@ -1,0 +1,78 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsHandoffView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    var w = Model.Item;
+    var m = Model.Manifest;
+    ViewBag.Title = "Resgrid | " + localizer["PortalHandoff"];
+    ViewData["Title"] = localizer["PortalHandoff"].Value;
+    ViewData["Subtitle"] = localizer["HandoffIntro"].Value;
+    ViewData["MarsTab"] = "queue";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["HandoffWarning"]</div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["RecordType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes)w.RecordType] @await Html.PartialAsync("_WorkItemStateBadge", w.LocalState)</h5>
+                    <div class="ibox-tools">
+                        <a href="@m.PortalUrl" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-xs"><i class="fa fa-external-link"></i> @localizer["OpenPortal"]</a>
+                        <a asp-action="WorkItem" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-default btn-xs">@localizer["Back"]</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-condensed" id="handoff">
+                        <thead><tr><th>@localizer["Box"]</th><th>@localizer["Value"]</th><th>@localizer["Source"]</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var field in m.Fields)
+                            {
+                                <tr>
+                                    <td>@field.Label</td>
+                                    <td><code class="copy-value">@(field.Value ?? "")</code></td>
+                                    <td class="text-muted small">@field.Source</td>
+                                    <td class="text-right">@if (!string.IsNullOrWhiteSpace(field.Value)) { <button type="button" class="btn btn-xs btn-default copy-btn" title="@localizer["Copy"]"><i class="fa fa-copy"></i></button> }</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (m.SupportingAttachmentNames.Count > 0)
+                    {
+                        <h5>@localizer["SupportingDocuments"]</h5>
+                        <ul>@foreach (var name in m.SupportingAttachmentNames) { <li>@name</li> }</ul>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Provenance"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["AuthorityProfile"]</dt><dd>@m.AuthorityProfileCode</dd>
+                        <dt>@localizer["RateProfileVersion"]</dt><dd><small>@(m.RateProfileVersion ?? "—")</small></dd>
+                        <dt>@localizer["Agreement"]</dt><dd><small>@(m.AgreementSnapshotId ?? "—")</small></dd>
+                        <dt>@localizer["Checksum"]</dt><dd><small>@m.Checksum</small></dd>
+                        <dt>@localizer["GeneratedOn"]</dt><dd>@m.GeneratedOn.ToString("yyyy-MM-dd HH:mm") UTC</dd>
+                    </dl>
+                    <p class="text-muted small">@localizer["NotAnImportFile"]</p>
+                    @if (m.Validation != null && !m.Validation.IsReadyForPortal) { <p class="text-danger">@localizer["HandoffWithErrors"]</p> }
+                    <a asp-action="Packet" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-default btn-sm"><i class="fa fa-file-archive-o"></i> @localizer["EvidencePacket"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#handoff').on('click', '.copy-btn', function () {
+            var text = $(this).closest('tr').find('.copy-value').text();
+            if (navigator.clipboard) { navigator.clipboard.writeText(text); }
+        });
+    </script>
+}

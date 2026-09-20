@@ -7,6 +7,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> calOesLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer
 @{
@@ -32,6 +34,12 @@
             case PermissionTypes.ApproveTimeReports: return deploymentLocalizer[row.Type.ToString()].Value;
             case PermissionTypes.ManageBids:
             case PermissionTypes.ManageContracts: return contractorLocalizer[row.Type.ToString()].Value;
+            case PermissionTypes.ManageMutualAidReimbursement: return calOesLocalizer[row.Type.ToString()].Value;
+            case PermissionTypes.ViewInternalCosts:
+            case PermissionTypes.ManageWorkforceCompensation:
+            case PermissionTypes.ViewWorkforceCompensation:
+            case PermissionTypes.ManagePayDataReporting:
+            case PermissionTypes.ExportPayDataReporting: return workforceLocalizer[row.Type.ToString()].Value;
             case PermissionTypes.ManageInvoicing: return invoicingLocalizer["ManageInvoicing"].Value;
             case PermissionTypes.ViewInvoicing: return invoicingLocalizer["ViewInvoicing"].Value;
             case PermissionTypes.ManageWorkOrders: return workOrderLocalizer["ManageWorkOrders"].Value;
@@ -53,6 +61,12 @@
             case PermissionTypes.ApproveTimeReports: return deploymentLocalizer[row.Type + "Note"].Value;
             case PermissionTypes.ManageBids:
             case PermissionTypes.ManageContracts: return contractorLocalizer[row.Type + "Note"].Value;
+            case PermissionTypes.ManageMutualAidReimbursement: return calOesLocalizer[row.Type + "Note"].Value;
+            case PermissionTypes.ViewInternalCosts:
+            case PermissionTypes.ManageWorkforceCompensation:
+            case PermissionTypes.ViewWorkforceCompensation:
+            case PermissionTypes.ManagePayDataReporting:
+            case PermissionTypes.ExportPayDataReporting: return workforceLocalizer[row.Type + "Note"].Value;
             case PermissionTypes.ManageInvoicing: return invoicingLocalizer["ManageInvoicingNote"].Value;
             case PermissionTypes.ViewInvoicing: return invoicingLocalizer["ViewInvoicingNote"].Value;
             case PermissionTypes.ManageWorkOrders: return workOrderLocalizer["ManageWorkOrdersNote"].Value;
@@ -511,6 +525,8 @@
                                         if (row.Type == PermissionTypes.ManageCertifications) { <tr><td colspan="5"><strong>@certificationLocalizer["Certifications"]</strong></td></tr> }
                                         if (row.Type == PermissionTypes.ManageDeployments) { <tr><td colspan="5"><strong>@deploymentLocalizer["Deployments"]</strong></td></tr> }
                                         if (row.Type == PermissionTypes.ManageBids) { <tr><td colspan="5"><strong>@contractorLocalizer["ContractorBilling"]</strong></td></tr> }
+                                        if (row.Type == PermissionTypes.ManageMutualAidReimbursement) { <tr><td colspan="5"><strong>@calOesLocalizer["CalOesMars"]</strong></td></tr> }
+                                        if (row.Type == PermissionTypes.ViewInternalCosts) { <tr><td colspan="5"><strong>@workforceLocalizer["Workforce"]</strong></td></tr> }
                                         <tr data-record-perm="@row.PermissionType" data-record-el="@row.ElementId">
                                             <td>@RecordsPermissionLabel(row)</td>
                                             <td style="max-width: 350px">@RecordsPermissionNote(row)</td>

@@ -119,5 +119,11 @@ namespace Resgrid.Model
 
 		/// <summary>Phase C Cal OES MARS cost recovery. Child of Business.Operations. Seeded off by M0219.</summary>
 		public const string CalOesMars = "CostRecovery.CalOesMars";
+
+		/// <summary>Workforce &amp; Business Operations plan Phase E: protected compensation, work entries, resource costing and field-cost runs. Child of Business.Operations. Seeded off by M0224.</summary>
+		public const string WorkforceInternalCosting = "Workforce.InternalCosting";
+
+		/// <summary>Workforce &amp; Business Operations plan Phase E: the California CRD pay data report wizard and demographic self-identification. Child of Business.Operations; also requires the department's Advanced Data Protection state to be Enabled. Seeded off by M0224.</summary>
+		public const string CaliforniaPayDataReporting = "Compliance.CaliforniaPayDataReporting";
 	}
 }

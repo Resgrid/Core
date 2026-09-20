@@ -1,0 +1,126 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceAnnualFactsView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AnnualFacts"];
+    ViewData["Title"] = localizer["AnnualFacts"].Value;
+    ViewData["Subtitle"] = localizer["AnnualFactsIntro"].Value;
+    ViewData["WorkforceTab"] = "annualfacts";
+    ViewData["WorkforcePage"] = Model;
+    var x = Model.Editing;
+    var isContractor = Model.ReportType == PayDataReportTypes.LaborContractorEmployee;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["AnnualFacts"] @Model.ReportingYear — @localizer["ReportType" + Model.ReportType]</h5>
+                    <div class="ibox-tools">
+                        <form method="get" asp-action="AnnualFacts" class="form-inline" style="display:inline">
+                            <input type="number" name="year" class="form-control input-sm" value="@Model.ReportingYear" style="width:90px" />
+                            <select name="type" class="form-control input-sm">@foreach (PayDataReportTypes t in Enum.GetValues(typeof(PayDataReportTypes))) { <option value="@((int)t)" selected="@(Model.ReportType == t)">@localizer["ReportType" + t]</option> }</select>
+                            <button type="submit" class="btn btn-xs btn-default">@localizer["Filter"]</button>
+                        </form>
+                        @if (Model.CanManageCompensation)
+                        {
+                            <a asp-action="AnnualFacts" asp-route-year="@Model.ReportingYear" asp-route-type="@((int)Model.ReportType)" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddFact"]</a>
+                        }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Employment"]</th><th>@localizer["EarningsUsed"] <i class="fa fa-lock text-muted"></i></th><th>@localizer["EarningsSource"]</th><th>@localizer["ReportableHours"]</th><th>@localizer["WeeksWorked"]</th><th>@localizer["Version"]</th><th>@localizer["Approved"]</th><th>@localizer["Source"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var f in Model.Facts)
+                        {
+                            <tr>
+                                <td>@(Model.EmploymentLabels.TryGetValue(f.WorkforceEmploymentId, out var label) ? label : f.WorkforceEmploymentId) @(string.IsNullOrWhiteSpace(f.ClientAllocationKey) ? "" : "[" + f.ClientAllocationKey + "]")</td>
+                                <td>@ProtectedDataEnvelope.SafeDisplay(f.EarningsUsed)</td>
+                                <td>@localizer["EarningsSource" + (EarningsSources)f.EarningsSource]</td>
+                                <td>@f.ReportableHours?.ToString("N2")</td><td>@f.WeeksWorked?.ToString("N1")</td>
+                                <td>@f.Version</td><td>@(f.IsApproved ? localizer["Yes"] : localizer["No"])</td><td>@f.Source</td>
+                                <td class="text-right">@if (Model.CanManageCompensation) { <a asp-action="AnnualFacts" asp-route-year="@Model.ReportingYear" asp-route-type="@((int)Model.ReportType)" asp-route-edit="@f.WorkforceAnnualPayFactId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a> }</td>
+                            </tr>
+                        }
+                        @if (Model.Facts.Count == 0)
+                        {
+                            <tr><td colspan="9" class="text-muted">@localizer["NoFacts"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if (Model.CanManageCompensation)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["ImportFacts"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@localizer["ImportHelp"]</p>
+                        <pre class="small">ExternalWorkerKey,UserId,ReportingYear,ReportType,ClientAllocationKey,W2Box5,W2Box1,ActualWorkedHours,PaidLeaveHours,DaysWorked,WeeksWorked,ExemptProxyMethod,ProxyAverageHoursPerDay,ClientAllocatedEarnings,ClientAllocatedHours,ClientAllocatedWeeks</pre>
+                        @if (Model.ImportResult != null)
+                        {
+                            <div class="alert @(Model.ImportResult.HasErrors ? "alert-danger" : "alert-success")">
+                                <strong>@(Model.ImportResult.DryRun ? localizer["DryRunResult"] : localizer["ImportResult"])</strong>:
+                                @localizer["Total"] @Model.ImportResult.Total &middot; @localizer["Created"] @Model.ImportResult.Created &middot; @localizer["Updated"] @Model.ImportResult.Updated &middot; @localizer["Skipped"] @Model.ImportResult.Skipped
+                                @if (Model.ImportResult.Issues.Count > 0)
+                                {
+                                    <ul class="m-t-xs">
+                                    @foreach (var issue in Model.ImportResult.Issues.Take(50))
+                                    {
+                                        <li>@localizer["Line"] @issue.Line: @localizer["Import_" + issue.Code] @issue.Detail</li>
+                                    }
+                                    </ul>
+                                }
+                            </div>
+                        }
+                        <form method="post" asp-action="ImportAnnualFacts">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="year" value="@Model.ReportingYear" /><input type="hidden" name="type" value="@((int)Model.ReportType)" />
+                            <div class="form-group"><textarea name="csv" class="form-control" rows="8" placeholder="CSV">@Model.Csv</textarea></div>
+                            <button type="submit" name="commit" value="false" class="btn btn-default">@localizer["DryRun"]</button>
+                            <button type="submit" name="commit" value="true" class="btn btn-primary" onclick="return confirm('@localizer["ConfirmImport"]');">@localizer["Commit"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (x != null && Model.CanManageCompensation)
+        {
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(x.WorkforceAnnualPayFactId) ? localizer["AddFact"] : localizer["CorrectFact"])</h5></div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@localizer["FactVersionHelp"]</p>
+                        <form method="post" asp-action="SaveAnnualFact">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="ReportingYear" value="@x.ReportingYear" /><input type="hidden" name="ReportType" value="@x.ReportType" />
+                            <div class="form-group"><label>@localizer["Employment"] *</label><select name="WorkforceEmploymentId" class="form-control" required>@foreach (var item in Model.Employments) { <option value="@item.Value" selected="@(item.Value == x.WorkforceEmploymentId)">@item.Text</option> }</select></div>
+                            @if (isContractor)
+                            {
+                                <div class="form-group"><label>@localizer["ClientAllocationKey"]</label><input type="text" name="ClientAllocationKey" class="form-control" value="@x.ClientAllocationKey" /></div>
+                                <div class="form-group"><label>@localizer["ClientAllocatedEarnings"] <i class="fa fa-lock text-muted"></i></label><input type="number" step="0.01" name="clientAllocatedEarnings" class="form-control" value="@x.ClientAllocatedEarningsValue" /></div>
+                                <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["ClientAllocatedHours"]</label><input type="number" step="0.01" name="ClientAllocatedHours" class="form-control" value="@x.ClientAllocatedHours" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["ClientAllocatedWeeks"]</label><input type="number" step="0.1" name="ClientAllocatedWeeks" class="form-control" value="@x.ClientAllocatedWeeks" /></div></div></div>
+                            }
+                            else
+                            {
+                                <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["W2Box5"] <i class="fa fa-lock text-muted"></i></label><input type="number" step="0.01" name="w2Box5" class="form-control" value="@x.W2Box5Value" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["W2Box1"] <i class="fa fa-lock text-muted"></i></label><input type="number" step="0.01" name="w2Box1" class="form-control" value="@x.W2Box1Value" /></div></div></div>
+                                <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["ActualWorkedHours"]</label><input type="number" step="0.01" name="ActualWorkedHours" class="form-control" value="@x.ActualWorkedHours" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["PaidLeaveHours"]</label><input type="number" step="0.01" name="PaidLeaveHours" class="form-control" value="@x.PaidLeaveHours" /></div></div></div>
+                                <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["DaysWorked"]</label><input type="number" name="DaysWorked" class="form-control" value="@x.DaysWorked" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["WeeksWorked"]</label><input type="number" step="0.1" name="WeeksWorked" class="form-control" value="@x.WeeksWorked" /></div></div></div>
+                                <div class="form-group"><label>@localizer["ExemptProxyMethod"]</label><select name="ExemptProxyMethod" class="form-control">@foreach (ExemptProxyMethods m in Enum.GetValues(typeof(ExemptProxyMethods))) { <option value="@((int)m)" selected="@(x.ExemptProxyMethod == (int)m)">@localizer["ExemptProxy" + m]</option> }</select></div>
+                                <div class="form-group"><label>@localizer["ProxyAverageHoursPerDay"]</label><input type="number" step="0.01" name="ProxyAverageHoursPerDay" class="form-control" value="@x.ProxyAverageHoursPerDay" /></div>
+                            }
+                            <div class="checkbox"><label><input type="checkbox" name="IsApproved" value="true" checked="@x.IsApproved" /> @localizer["Approved"]</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="IsReconciled" value="true" checked="@x.IsReconciled" /> @localizer["Reconciled"]</label></div>
+                            <div class="m-t-sm"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="AnnualFacts" asp-route-year="@Model.ReportingYear" asp-route-type="@((int)Model.ReportType)" class="btn btn-default">@localizer["Cancel"]</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -12,20 +12,39 @@ namespace Resgrid.Services
 		private readonly IFeatureToggleService _flags;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly ISubscriptionsService _subscriptions;
+		private readonly IDepartmentDataProtectionService _dataProtection;
 
-		public BusinessOperationsAccessService(IFeatureToggleService flags, IDepartmentSettingsService settings, ISubscriptionsService subscriptions)
+		public BusinessOperationsAccessService(IFeatureToggleService flags, IDepartmentSettingsService settings, ISubscriptionsService subscriptions, IDepartmentDataProtectionService dataProtection = null)
 		{
 			_flags = flags;
 			_settings = settings;
 			_subscriptions = subscriptions;
+			_dataProtection = dataProtection;
 		}
 
 		public Task<bool> CanUseInvoicingAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.CustomerInvoicing);
 
 		public Task<bool> CanUseContractorBillingAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.ContractorBilling);
 		public Task<bool> CanUseCostRecoveryAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.CalOesMars);
-		// The Phase E flag key is declared when that phase is authored; until then the capability is off.
-		public Task<bool> CanUseWorkforceAsync(int departmentId) => CanUseAsync(departmentId, "Workforce.InternalCosting");
+		public Task<bool> CanUseWorkforceAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.WorkforceInternalCosting);
+
+		/// <summary>Phase E reporting: the capability flag plus an Enabled ADP state — the report's inputs and outputs only exist as protected data.</summary>
+		public async Task<bool> CanUsePayDataReportingAsync(int departmentId)
+		{
+			if (!await CanUseAsync(departmentId, FeatureFlagKeys.CaliforniaPayDataReporting))
+				return false;
+			try
+			{
+				if (_dataProtection == null)
+					return false;
+				return await _dataProtection.GetStateAsync(departmentId, bypassCache: true) == DepartmentDataProtectionState.Enabled;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+				return false;
+			}
+		}
 
 		private async Task<bool> CanUseAsync(int departmentId, string capabilityFlag)
 		{

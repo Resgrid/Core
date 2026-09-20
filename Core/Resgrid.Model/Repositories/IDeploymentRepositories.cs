@@ -18,6 +18,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Deployment>> GetForDepartmentAsync(int departmentId, bool openOnly, int skip, int take);
 		Task<int> CountForDepartmentAsync(int departmentId, bool openOnly);
 		Task<IEnumerable<Deployment>> GetByIdsAsync(int departmentId, IEnumerable<string> deploymentIds);
+		/// <summary>Non-deleted deployments raised under one service contract, newest first (capped at 500).</summary>
+		Task<IEnumerable<Deployment>> GetByContractAsync(int departmentId, string serviceContractId);
 	}
 
 	public interface IDeploymentUnitRepository : IRepository<DeploymentUnit>

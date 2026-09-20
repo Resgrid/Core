@@ -1,0 +1,239 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsRateEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    var p = Model.Profile;
+    var typeName = localizer["SubmissionType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes)p.SubmissionType].Value;
+    ViewBag.Title = "Resgrid | " + typeName;
+    ViewData["Title"] = Model.IsNew ? localizer["NewSubmission"].Value : $"{typeName} {p.SubmissionYear}";
+    ViewData["Subtitle"] = localizer["RateEditIntro"].Value;
+    ViewData["MarsTab"] = "rates";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var types = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes>();
+    var methods = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsAdministrativeRateMethods>();
+    var lineKinds = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateLineKinds>();
+    var bases = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateBases>();
+    var authorities = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateAuthorities>();
+    var classifications = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsCostClassifications>();
+    var reviews = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsInputReviewStatuses>();
+    var isAdmin = p.SubmissionType == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes.AdministrativeRate;
+    var editable = Model.IsNew || p.IsEditable;
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    @if (!editable) { <div class="alert alert-warning"><i class="fa fa-lock"></i> @localizer["RateLocked"]</div> }
+    <div class="row">
+        <div class="col-md-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Submission"] @if (!Model.IsNew) { <span class="label label-primary">@localizer["RateStatus" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses)p.Status]</span> }</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="SaveRate" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CalOesMarsRateProfileId" value="@p.CalOesMarsRateProfileId" />
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["SubmissionType"]</label><div class="col-sm-8"><select name="SubmissionType" class="form-control" disabled="@(!editable)">@foreach (var t in types) { <option value="@((int)t)" selected="@((int)t == p.SubmissionType)">@localizer["SubmissionType" + t]</option> }</select></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["Year"] *</label><div class="col-sm-8"><input type="number" name="SubmissionYear" class="form-control" min="2000" max="2100" required value="@p.SubmissionYear" disabled="@(!editable)" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["EffectiveOn"]</label><div class="col-sm-8"><input type="date" name="EffectiveOn" class="form-control" value="@(p.EffectiveOn?.ToString("yyyy-MM-dd"))" disabled="@(!editable)" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["ExpiresOn"]</label><div class="col-sm-8"><input type="date" name="ExpiresOn" class="form-control" value="@(p.ExpiresOn?.ToString("yyyy-MM-dd"))" disabled="@(!editable)" /></div></div>
+                        <div class="form-group"><div class="col-sm-8 col-sm-offset-4"><div class="checkbox"><label><input type="checkbox" name="BaseRateAccepted" value="true" checked="@p.BaseRateAccepted" disabled="@(!editable)" /> @localizer["BaseRateAccepted"]</label></div><span class="help-block">@localizer["BaseRateAcceptedHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["AdminMethod"]</label><div class="col-sm-8"><select name="AdministrativeRateMethod" class="form-control" disabled="@(!editable)">@foreach (var m in methods) { <option value="@((int)m)" selected="@((int)m == p.AdministrativeRateMethod)">@localizer["AdminMethod" + m]</option> }</select></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["AdministrativeRate"] %</label><div class="col-sm-8"><input type="number" step="0.0001" min="0" max="100" name="AdministrativeRateValue" class="form-control" value="@p.AdministrativeRateValue" disabled="@(!editable)" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["SourceUrl"]</label><div class="col-sm-8"><input type="url" name="SourceUrl" class="form-control" value="@p.SourceUrl" disabled="@(!editable)" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["SourceDate"]</label><div class="col-sm-8"><input type="date" name="SourceDate" class="form-control" value="@(p.SourceDate?.ToString("yyyy-MM-dd"))" disabled="@(!editable)" /></div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["Checksum"]</label><div class="col-sm-8"><input type="text" name="SourceChecksum" class="form-control" maxlength="128" value="@p.SourceChecksum" disabled="@(!editable)" /></div></div>
+                        @if (editable)
+                        {
+                            <div class="form-group"><div class="col-sm-8 col-sm-offset-4"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Rates" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                        }
+                    </form>
+                    @if (!Model.IsNew)
+                    {
+                        <div class="hr-line-dashed"></div>
+                        <dl class="dl-horizontal">
+                            <dt>@localizer["AuthorityProfile"]</dt><dd>@p.AuthorityProfileCode</dd>
+                            <dt>@localizer["SignedOn"]</dt><dd>@(p.SignedOn?.ToString("yyyy-MM-dd") ?? "—") @p.SignedByName</dd>
+                            <dt>@localizer["ObservedStatus"]</dt><dd>@(p.ObservedExternalStatus ?? "—") @(p.ObservedOn?.ToString("yyyy-MM-dd"))</dd>
+                            <dt>@localizer["Version"]</dt><dd>@p.RowVersion</dd>
+                        </dl>
+                        @foreach (var next in Model.NextStatuses)
+                        {
+                            <form method="post" asp-action="SetRateStatus" asp-route-id="@p.CalOesMarsRateProfileId" asp-route-status="@((int)next)" class="inline m-r-xs">
+                                @Html.AntiForgeryToken()
+                                @if (next == Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses.SignedLocally) { <input type="text" name="signedByName" class="form-control input-sm inline" style="width:180px" placeholder="@localizer["SignedByName"]" required /> }
+                                <button type="submit" class="btn btn-sm @(next == Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses.Superseded ? "btn-danger" : "btn-default")">@localizer["SetRateStatus" + next]</button>
+                            </form>
+                        }
+                        @if (p.IsEditable)
+                        {
+                            <form method="post" asp-action="DeleteRate" asp-route-id="@p.CalOesMarsRateProfileId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                        }
+                        @if (Model.CanSubmit && p.Status >= (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses.SignedLocally)
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <h5>@localizer["ObserveInMars"]</h5>
+                            <form method="post" asp-action="ObserveRate" asp-route-id="@p.CalOesMarsRateProfileId" class="form-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="text" name="ExternalStatus" class="form-control input-sm" placeholder="Submitted / Accepted" required />
+                                <input type="datetime-local" name="ObservedOn" class="form-control input-sm" />
+                                <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-eye"></i> @localizer["RecordObservation"]</button>
+                            </form>
+                        }
+                    }
+                </div>
+            </div>
+            @if (!Model.IsNew && (isAdmin || Model.AdministrativeDraft != null))
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["AdministrativeWorksheet"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["AdministrativeWorksheetHelp"]</p>
+                        @if (Model.AdministrativeDraft != null)
+                        {
+                            var d = Model.AdministrativeDraft;
+                            <dl class="dl-horizontal">
+                                <dt>@localizer["AllowableDirect"]</dt><dd>@d.AllowableDirect.ToString("N2")</dd>
+                                <dt>@localizer["AllowableIndirect"]</dt><dd>@d.AllowableIndirect.ToString("N2")</dd>
+                                <dt>@localizer["ExcludedUnallowable"]</dt><dd>@d.ExcludedUnallowable.ToString("N2")</dd>
+                                <dt>@localizer["ExcludedIncidentDirect"]</dt><dd>@d.ExcludedIncidentDirect.ToString("N2")</dd>
+                                <dt>@localizer["CalculatedPercent"]</dt><dd>@(d.CalculatedPercent?.ToString("0.####") ?? "—") %</dd>
+                                <dt>@localizer["DeMinimisPercent"]</dt><dd>@d.DeMinimisPercent.ToString("0.##") %</dd>
+                                <dt>@localizer["MethodChosen"]</dt><dd>@localizer["AdminMethod" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsAdministrativeRateMethods)d.MethodChosen] @(d.ChosenPercent?.ToString("0.####")) %</dd>
+                            </dl>
+                            @foreach (var blocker in d.Blockers) { <p class="text-danger"><i class="fa fa-ban"></i> @localizer["AdminBlocker_" + blocker]</p> }
+                        }
+                        @if (editable)
+                        {
+                            <form method="post" asp-action="BuildAdministrativeRate" asp-route-id="@p.CalOesMarsRateProfileId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-calculator"></i> @localizer["BuildAdministrativeRate"]</button></form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-7">
+            @if (!Model.IsNew)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["RateLines"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["RateLinesHelp"]</p>
+                        <form method="post" asp-action="SaveRateLines" asp-route-id="@p.CalOesMarsRateProfileId" id="linesForm">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="linesJson" id="linesJson" />
+                            <div class="table-responsive">
+                                <table class="table table-condensed" id="linesTable">
+                                    <thead><tr><th>@localizer["LineKind"]</th><th>@localizer["Classification"]</th><th>@localizer["ResourceCode"]</th><th>FEMA</th><th>@localizer["Basis"]</th><th>@localizer["StraightRate"]</th><th>@localizer["OvertimeRate"]</th><th title="@localizer["PortalToPortalEligible"]">P2P</th><th title="@localizer["OvertimeEligible"]">OT</th><th title="@localizer["IncludesWorkersComp"]">WC</th><th title="@localizer["IncludesUnemploymentInsurance"]">UI</th><th>@localizer["Authority"]</th><th></th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            @if (editable)
+                            {
+                                <button type="button" class="btn btn-default btn-xs" id="line-add"><i class="fa fa-plus"></i> @localizer["AddLine"]</button>
+                                <button type="submit" class="btn btn-primary btn-xs">@localizer["SaveLines"]</button>
+                            }
+                        </form>
+                    </div>
+                </div>
+                @if (isAdmin || p.AdministrativeInputs.Count > 0)
+                {
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@localizer["AdministrativeInputs"]</h5></div>
+                        <div class="ibox-content">
+                            <p class="text-muted small">@localizer["AdministrativeInputsHelp"]</p>
+                            <form method="post" asp-action="SaveAdministrativeInputs" asp-route-id="@p.CalOesMarsRateProfileId" id="inputsForm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="inputsJson" id="inputsJson" />
+                                <div class="table-responsive">
+                                    <table class="table table-condensed" id="inputsTable">
+                                        <thead><tr><th>FY</th><th>@localizer["FunctionCode"]</th><th>@localizer["CategoryCode"]</th><th>@localizer["Classification"]</th><th>@localizer["ActualAmount"]</th><th>@localizer["SourceSystem"]</th><th>@localizer["SourceLine"]</th><th title="@localizer["IncidentDirectExclusion"]">Inc.</th><th title="@localizer["DoubleCountMarker"]">2x</th><th>@localizer["ReviewStatus"]</th><th>@localizer["ReviewReason"]</th><th></th></tr></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                @if (editable)
+                                {
+                                    <button type="button" class="btn btn-default btn-xs" id="input-add"><i class="fa fa-plus"></i> @localizer["AddInput"]</button>
+                                    <button type="submit" class="btn btn-primary btn-xs">@localizer["SaveInputs"]</button>
+                                }
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var editable = @(editable ? "true" : "false");
+            var lines = @Html.Raw(Model.LinesJson ?? "[]");
+            var inputs = @Html.Raw(Model.InputsJson ?? "[]");
+            var kinds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(lineKinds.Select(k => new { v = (int)k, t = localizer["LineKind" + k].Value })));
+            var bases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(bases.Select(b => new { v = (int)b, t = localizer["Basis" + b].Value })));
+            var authorities = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(authorities.Select(a => new { v = (int)a, t = localizer["Authority" + a].Value })));
+            var classes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(classifications.Select(c => new { v = (int)c, t = localizer["CostClass" + c].Value })));
+            var reviews = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(reviews.Select(r => new { v = (int)r, t = localizer["ReviewStatus" + r].Value })));
+            var classificationList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Classifications));
+            function esc(v) { return (v == null ? '' : String(v)).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+            function opts(list, selected) { return list.map(function (o) { return '<option value="' + o.v + '"' + (o.v === selected ? ' selected' : '') + '>' + esc(o.t) + '</option>'; }).join(''); }
+            function dis() { return editable ? '' : ' disabled'; }
+            function lineRow(r) {
+                r = r || { Basis: 0, Authority: 0, LineKind: 0 };
+                return '<tr data-id="' + esc(r.CalOesMarsRateLineId || '') + '">' +
+                    '<td><select class="form-control input-sm l-kind"' + dis() + '>' + opts(kinds, r.LineKind) + '</select></td>' +
+                    '<td><input class="form-control input-sm l-class" list="class-list" value="' + esc(r.ClassificationCode) + '"' + dis() + ' /></td>' +
+                    '<td><input class="form-control input-sm l-res" value="' + esc(r.ResourceCode) + '"' + dis() + ' /></td>' +
+                    '<td><input class="form-control input-sm l-fema" value="' + esc(r.FemaCode) + '"' + dis() + ' style="width:70px" /></td>' +
+                    '<td><select class="form-control input-sm l-basis"' + dis() + '>' + opts(bases, r.Basis) + '</select></td>' +
+                    '<td><input type="number" step="0.0001" min="0" class="form-control input-sm l-straight" value="' + esc(r.StraightRate) + '"' + dis() + ' style="width:90px" /></td>' +
+                    '<td><input type="number" step="0.0001" min="0" class="form-control input-sm l-ot" value="' + esc(r.OvertimeRate) + '"' + dis() + ' style="width:90px" /></td>' +
+                    '<td><input type="checkbox" class="l-p2p"' + (r.PortalToPortalEligible ? ' checked' : '') + dis() + ' /></td>' +
+                    '<td><input type="checkbox" class="l-ote"' + (r.OvertimeEligible ? ' checked' : '') + dis() + ' /></td>' +
+                    '<td><input type="checkbox" class="l-wc"' + (r.IncludesWorkersComp ? ' checked' : '') + dis() + ' /></td>' +
+                    '<td><input type="checkbox" class="l-ui"' + (r.IncludesUnemploymentInsurance ? ' checked' : '') + dis() + ' /></td>' +
+                    '<td><select class="form-control input-sm l-auth"' + dis() + '>' + opts(authorities, r.Authority) + '</select></td>' +
+                    '<td>' + (editable ? '<button type="button" class="btn btn-xs btn-danger l-del"><i class="fa fa-times"></i></button>' : '') + '</td></tr>';
+            }
+            function inputRow(r) {
+                r = r || { FiscalYear: @(p.SubmissionYear - 1), Classification: 0, ReviewStatus: 0 };
+                return '<tr data-id="' + esc(r.CalOesMarsAdministrativeRateInputId || '') + '">' +
+                    '<td><input type="number" class="form-control input-sm i-fy" value="' + esc(r.FiscalYear) + '"' + dis() + ' style="width:80px" /></td>' +
+                    '<td><input class="form-control input-sm i-fn" value="' + esc(r.FunctionCode) + '"' + dis() + ' /></td>' +
+                    '<td><input class="form-control input-sm i-cat" value="' + esc(r.CategoryCode) + '"' + dis() + ' /></td>' +
+                    '<td><select class="form-control input-sm i-class"' + dis() + '>' + opts(classes, r.Classification) + '</select></td>' +
+                    '<td><input type="number" step="0.01" min="0" class="form-control input-sm i-amt" value="' + esc(r.Amount) + '"' + dis() + ' style="width:110px" /></td>' +
+                    '<td><input class="form-control input-sm i-sys" value="' + esc(r.SourceSystem) + '"' + dis() + ' /></td>' +
+                    '<td><input class="form-control input-sm i-line" value="' + esc(r.SourceLine) + '"' + dis() + ' /></td>' +
+                    '<td><input type="checkbox" class="i-inc"' + (r.IncidentDirectExclusion ? ' checked' : '') + dis() + ' /></td>' +
+                    '<td><input type="checkbox" class="i-dbl"' + (r.DoubleCountMarker ? ' checked' : '') + dis() + ' /></td>' +
+                    '<td><select class="form-control input-sm i-rev"' + dis() + '>' + opts(reviews, r.ReviewStatus) + '</select></td>' +
+                    '<td><input class="form-control input-sm i-reason" value="' + esc(r.ReviewReason) + '"' + dis() + ' /></td>' +
+                    '<td>' + (editable ? '<button type="button" class="btn btn-xs btn-danger i-del"><i class="fa fa-times"></i></button>' : '') + '</td></tr>';
+            }
+            $('body').append('<datalist id="class-list">' + classificationList.map(function (c) { return '<option value="' + esc(c) + '"></option>'; }).join('') + '</datalist>');
+            $('#linesTable tbody').html(lines.map(lineRow).join(''));
+            $('#inputsTable tbody').html(inputs.map(inputRow).join(''));
+            $('#line-add').on('click', function () { $('#linesTable tbody').append(lineRow()); });
+            $('#input-add').on('click', function () { $('#inputsTable tbody').append(inputRow()); });
+            $('#linesTable').on('click', '.l-del', function () { $(this).closest('tr').remove(); });
+            $('#inputsTable').on('click', '.i-del', function () { $(this).closest('tr').remove(); });
+            function num(v) { return v === '' || v == null ? null : parseFloat(v); }
+            $('#linesForm').on('submit', function () {
+                var rows = [];
+                $('#linesTable tbody tr').each(function () {
+                    rows.push({ CalOesMarsRateLineId: $(this).data('id') || null, LineKind: parseInt($(this).find('.l-kind').val(), 10), ClassificationCode: $(this).find('.l-class').val(), ResourceCode: $(this).find('.l-res').val(), FemaCode: $(this).find('.l-fema').val(), Basis: parseInt($(this).find('.l-basis').val(), 10), StraightRate: num($(this).find('.l-straight').val()), OvertimeRate: num($(this).find('.l-ot').val()), PortalToPortalEligible: $(this).find('.l-p2p').is(':checked'), OvertimeEligible: $(this).find('.l-ote').is(':checked'), IncludesWorkersComp: $(this).find('.l-wc').is(':checked'), IncludesUnemploymentInsurance: $(this).find('.l-ui').is(':checked'), Authority: parseInt($(this).find('.l-auth').val(), 10) });
+                });
+                $('#linesJson').val(JSON.stringify(rows));
+            });
+            $('#inputsForm').on('submit', function () {
+                var rows = [];
+                $('#inputsTable tbody tr').each(function () {
+                    rows.push({ CalOesMarsAdministrativeRateInputId: $(this).data('id') || null, FiscalYear: parseInt($(this).find('.i-fy').val(), 10), FunctionCode: $(this).find('.i-fn').val(), CategoryCode: $(this).find('.i-cat').val(), Classification: parseInt($(this).find('.i-class').val(), 10), Amount: num($(this).find('.i-amt').val()) || 0, SourceSystem: $(this).find('.i-sys').val(), SourceLine: $(this).find('.i-line').val(), IncidentDirectExclusion: $(this).find('.i-inc').is(':checked'), DoubleCountMarker: $(this).find('.i-dbl').is(':checked'), ReviewStatus: parseInt($(this).find('.i-rev').val(), 10), ReviewReason: $(this).find('.i-reason').val() });
+                });
+                $('#inputsJson').val(JSON.stringify(rows));
+            });
+        })();
+    </script>
+}

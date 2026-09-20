@@ -49,6 +49,16 @@ namespace Resgrid.Services
 			builder.RegisterType<Invoicing.ServiceContractService>().As<IServiceContractService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.BidsService>().As<IBidsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.ContractorBillingEngine>().As<IContractorBillingEngine>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan, Phase C-M3: Cal OES MARS cost recovery (manual gateway only).
+			builder.RegisterType<CostRecovery.CalOesMarsReimbursementCalculator>().As<ICalOesMarsReimbursementCalculator>().SingleInstance();
+			builder.RegisterType<CostRecovery.ManualCalOesMarsGateway>().As<ICalOesMarsExternalGateway>().SingleInstance();
+			builder.RegisterType<CostRecovery.CalOesMarsService>().As<ICalOesMarsService>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan, Phase E: protected workforce pay data, field costing and California pay data reporting.
+			builder.RegisterType<Workforce.WorkforceService>().As<IWorkforceService>().InstancePerLifetimeScope();
+			builder.RegisterType<Workforce.CompensationCostService>().As<ICompensationCostService>().InstancePerLifetimeScope();
+			builder.RegisterType<Workforce.FieldCostingService>().As<IFieldCostingService>().InstancePerLifetimeScope();
+			builder.RegisterType<Workforce.PayDataDemographicsService>().As<IPayDataDemographicsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Workforce.CaPayDataReportingService>().As<ICaPayDataReportingService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().As<IWorkOrderReportingService>().As<IWorkOrderOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();

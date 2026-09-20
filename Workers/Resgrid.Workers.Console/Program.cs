@@ -534,6 +534,14 @@ namespace Resgrid.Workers.Console
 					Cron.Daily(4, 30),
 					stoppingToken);
 
+				// Worker ID 49 (Identifier Allocation Registry, Workforce & Business Operations plan E5): California pay data
+				// readiness digest (filing season only, value-free) and export artifact purge. Daily tick.
+				_logger.Log(LogLevel.Information, "Scheduling Pay Data Reporting Readiness");
+				await Client.ScheduleAsync("Pay Data Reporting Readiness",
+					new Commands.PayDataReportingReadinessCommand(49),
+					Cron.Daily(4, 45),
+					stoppingToken);
+
 				// Worker ID 34 (Identifier Allocation Registry, Workforce & Business Operations plan D5): certification expiry
 				// sweep. Hourly tick; each department runs once per local day at CertificationConfig.SweepLocalHour.
 				_logger.Log(LogLevel.Information, "Scheduling Certification Expiry");

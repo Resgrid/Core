@@ -1,0 +1,81 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceCostRunsView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CostRuns"];
+    ViewData["Title"] = localizer["CostRuns"].Value;
+    ViewData["Subtitle"] = localizer["CostRunsIntro"].Value;
+    ViewData["WorkforceTab"] = "costruns";
+    ViewData["WorkforcePage"] = Model;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["CostRuns"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Created"]</th><th>@localizer["Context"]</th><th>@localizer["RunType"]</th><th>@localizer["Status"]</th><th class="text-right">@localizer["TotalLoadedCost"]</th><th class="text-right">@localizer["Revenue"]</th><th class="text-right">@localizer["Margin"]</th><th>@localizer["MissingInputs"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var r in Model.Runs)
+                        {
+                            var label = r.ContextType == (int)FieldCostContextTypes.Deployment ? (Model.ContextLabels.TryGetValue("D:" + r.DeploymentId, out var d) ? d : r.DeploymentId) : r.ContextType == (int)FieldCostContextTypes.Bid ? (Model.ContextLabels.TryGetValue("B:" + r.BidId, out var b) ? b : r.BidId) : "Call #" + r.CallId;
+                            <tr>
+                                <td>@r.AddedOn.ToString("yyyy-MM-dd")</td>
+                                <td>@localizer["Context" + (FieldCostContextTypes)r.ContextType]: @label</td>
+                                <td>@localizer["RunType" + (FieldCostRunTypes)r.RunType]</td>
+                                <td><span class="label @(r.Status == (int)FieldCostRunStatuses.Frozen ? "label-primary" : r.Status == (int)FieldCostRunStatuses.NeedsReview ? "label-warning" : "label-default")">@localizer["RunStatus" + (FieldCostRunStatuses)r.Status]</span></td>
+                                <td class="text-right">@r.TotalLoadedCost.ToString("N2") @r.Currency</td>
+                                <td class="text-right">@(r.RevenueAmount?.ToString("N2") ?? "—")</td>
+                                <td class="text-right">@(r.ContributionMargin.HasValue ? r.ContributionMargin.Value.ToString("N2") + " (" + (r.ContributionMarginPercent ?? 0).ToString("N1") + "%)" : "—")</td>
+                                <td>@r.MissingInputCount</td>
+                                <td class="text-right"><a asp-action="CostRun" asp-route-id="@r.FieldCostRunId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i></a></td>
+                            </tr>
+                        }
+                        @if (Model.Runs.Count == 0)
+                        {
+                            <tr><td colspan="9" class="text-muted">@localizer["NoRuns"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["NewRun"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="RunDeploymentCost" class="m-b-md">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group"><label>@localizer["Deployment"]</label><select name="deploymentId" class="form-control" required>@foreach (var item in Model.Deployments) { <option value="@item.Value">@item.Text</option> }</select></div>
+                        <div class="row">
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["ThroughDate"]</label><input type="date" name="throughDate" class="form-control" /></div></div>
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["RevenueSource"]</label><select name="revenueSource" class="form-control">@foreach (RevenueSources s in Enum.GetValues(typeof(RevenueSources))) { <option value="@((int)s)">@localizer["Revenue" + s]</option> }</select></div></div>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">@localizer["RunDeploymentCost"]</button>
+                        <span class="help-block">@localizer["RunDeploymentCostHelp"]</span>
+                    </form>
+                    <hr />
+                    <form method="post" asp-action="RunBidEstimate" class="m-b-md">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group"><label>@localizer["Bid"]</label><select name="bidId" class="form-control" required>@foreach (var item in Model.Bids) { <option value="@item.Value">@item.Text</option> }</select></div>
+                        <button type="submit" class="btn btn-sm btn-primary">@localizer["RunBidEstimate"]</button>
+                        <span class="help-block">@localizer["RunBidEstimateHelp"]</span>
+                    </form>
+                    <hr />
+                    <form method="post" asp-action="RunCallCost">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group"><label>@localizer["CallId"]</label><input type="number" name="callId" class="form-control" required /></div>
+                        <button type="submit" class="btn btn-sm btn-primary">@localizer["RunCallCost"]</button>
+                        <span class="help-block">@localizer["RunCallCostHelp"]</span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

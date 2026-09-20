@@ -1,0 +1,306 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsWorkItemView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    var w = Model.Item;
+    var recordType = (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes)w.RecordType;
+    var typeName = localizer["RecordType" + recordType].Value;
+    ViewBag.Title = "Resgrid | " + typeName;
+    ViewData["Title"] = $"{typeName} — {w.DeploymentName ?? w.CalOesMarsWorkItemId}";
+    ViewData["Subtitle"] = localizer["WorkItemIntro"].Value;
+    ViewData["MarsTab"] = "queue";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var f = Model.F42;
+    var e = Model.Expense;
+    var v = Model.Validation;
+    var stateName = (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates)w.LocalState;
+    var recordStatuses = Model.Authority.RecordStatusMap.Keys.ToList();
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@typeName @await Html.PartialAsync("_WorkItemStateBadge", w.LocalState)</h5>
+                    <div class="ibox-tools">
+                        <a asp-action="Print" asp-route-id="@w.CalOesMarsWorkItemId" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-print"></i> @localizer["Printable"]</a>
+                        <a asp-action="Packet" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-default btn-xs"><i class="fa fa-file-archive-o"></i> @localizer["EvidencePacket"]</a>
+                        @if (!string.IsNullOrWhiteSpace(w.DeploymentId)) { <a asp-controller="Deployments" asp-action="View" asp-route-id="@w.DeploymentId" class="btn btn-default btn-xs"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a> }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <p class="text-muted small"><i class="fa fa-info-circle"></i> @localizer["PreparedNotSubmitted"] · @localizer["AuthorityProfile"] @w.AuthorityProfileCode · @localizer["Version"] @w.RowVersion @if (!string.IsNullOrWhiteSpace(w.SupersedesWorkItemId)) { <text>· @localizer["Supersedes"] <a asp-action="WorkItem" asp-route-id="@w.SupersedesWorkItemId">@w.SupersedesWorkItemId.Substring(0, 8)</a></text> }</p>
+                    @if (!string.IsNullOrWhiteSpace(w.CorrectionComment)) { <div class="alert alert-danger"><strong>@localizer["CorrectionComment"]:</strong> @w.CorrectionComment</div> }
+
+                    @if (f != null)
+                    {
+                        <form method="post" asp-action="SaveF42" asp-route-id="@w.CalOesMarsWorkItemId" id="f42Form" class="form-horizontal">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="snapshotJson" id="snapshotJson" />
+                            <h4>@localizer["BoxAgency"]</h4>
+                            <dl class="dl-horizontal">
+                                <dt>@localizer["MacsDesignator"]</dt><dd>@(f.MacsDesignator ?? "—") @f.AgencyName</dd>
+                                <dt>@localizer["BoxIncident"]</dt><dd>@f.IncidentName @(string.IsNullOrWhiteSpace(f.IncidentNumber) ? "" : "· " + f.IncidentNumber)</dd>
+                                <dt>@localizer["BoxOrder"]</dt><dd>@(f.OrderNumber ?? "—")</dd>
+                                <dt>@localizer["BoxRequest"]</dt><dd>@(f.RequestNumber ?? "—") @(string.IsNullOrWhiteSpace(f.ParentRequestNumber) ? "" : "(" + f.ParentRequestNumber + ")") @if (f.IsRedispatch) { <span class="label label-info">@localizer["Redispatch"] @f.PreviousOrderNumber/@f.PreviousRequestNumber</span> }</dd>
+                            </dl>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["ResourceType"]</label><div class="col-sm-4"><input type="text" class="form-control f-field" data-field="ResourceType" value="@f.ResourceType" disabled="@(!Model.CanEdit)" /></div><label class="col-sm-2 control-label">@localizer["StrikeTeam"]</label><div class="col-sm-3"><input type="text" class="form-control f-field" data-field="StrikeTeamOrTaskForce" value="@f.StrikeTeamOrTaskForce" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportingLocation"]</label><div class="col-sm-4"><input type="text" class="form-control f-field" data-field="ReportingLocation" value="@f.ReportingLocation" disabled="@(!Model.CanEdit)" /></div><label class="col-sm-2 control-label">@localizer["OverheadPosition"]</label><div class="col-sm-3"><input type="text" class="form-control f-field" data-field="OverheadPosition" value="@f.OverheadPosition" disabled="@(!Model.CanEdit)" /></div></div>
+                            <dl class="dl-horizontal">
+                                <dt>@localizer["BoxDispatch"]</dt><dd>@(f.DispatchedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—") · @localizer["Committed"] @(f.CommittedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</dd>
+                                <dt>@localizer["Released"]</dt><dd>@(f.ReleasedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—") <small class="text-muted">@localizer["ReleaseIsNotReturn"]</small></dd>
+                            </dl>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["BoxReturn"]</label><div class="col-sm-4"><input type="datetime-local" class="form-control f-field" data-field="ReturnedOn" value="@(f.ReturnedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+
+                            <h4>@localizer["BoxApparatus"]</h4>
+                            <table class="table table-condensed" id="vehicles">
+                                <thead><tr><th>@localizer["Kind"]</th><th>@localizer["Designator"]</th><th>@localizer["ResourceCode"]</th><th>@localizer["Identifiers"]</th><th>@localizer["Hours"]</th><th>@localizer["Miles"]</th><th>@localizer["Odometer"]</th><th>FEMA</th></tr></thead>
+                                <tbody>
+                                    @for (var i = 0; i < f.Vehicles.Count; i++)
+                                    {
+                                        var vh = f.Vehicles[i];
+                                        <tr data-index="@i" data-unit="@vh.DeploymentUnitId" data-equipment="@vh.DeploymentEquipmentId">
+                                            <td><select class="form-control input-sm v-kind" disabled="@(!Model.CanEdit)">@foreach (var k in new[] { "Apparatus", "Support", "POV", "Equipment" }) { <option value="@k" selected="@(vh.Kind == k)">@localizer["Kind" + k]</option> }</select></td>
+                                            <td>@vh.Designator @if (string.IsNullOrWhiteSpace(vh.ResourceProfileId) && vh.Kind != "Equipment") { <i class="fa fa-exclamation-triangle text-warning" title="@localizer["NotInInventory"]"></i> }</td>
+                                            <td><input type="text" class="form-control input-sm v-code" value="@vh.ResourceCode" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><small>@vh.LicensePlate @(string.IsNullOrWhiteSpace(vh.Vin) ? "" : "· " + vh.Vin)</small></td>
+                                            <td><input type="number" step="0.01" min="0" class="form-control input-sm v-hours" value="@vh.CommittedHours" style="width:80px" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="number" step="0.1" min="0" class="form-control input-sm v-miles" value="@vh.Miles" style="width:80px" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="number" step="1" min="0" class="form-control input-sm v-start" value="@vh.StartOdometer" style="width:80px" placeholder="start" disabled="@(!Model.CanEdit)" /> <input type="number" step="1" min="0" class="form-control input-sm v-end" value="@vh.EndOdometer" style="width:80px" placeholder="end" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="text" class="form-control input-sm v-fema" value="@vh.FemaCode" style="width:80px" disabled="@(!Model.CanEdit)" /></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <h4>@localizer["BoxPersonnel"]</h4>
+                            <table class="table table-condensed" id="personnel">
+                                <thead><tr><th>@localizer["Name"]</th><th>@localizer["Rank"]</th><th>@localizer["Classification"]</th><th>@localizer["Committed"]</th><th>@localizer["Released"]</th><th>@localizer["CommittedHours"]</th><th>@localizer["ActualHours"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var p in f.Personnel)
+                                    {
+                                        <tr data-id="@p.DeploymentPersonnelId">
+                                            <td>@p.Name</td>
+                                            <td><input type="text" class="form-control input-sm p-rank" value="@p.Rank" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="text" class="form-control input-sm p-class" list="class-list" value="@p.ClassificationCode" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="datetime-local" class="form-control input-sm p-committed" value="@(p.CommittedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="datetime-local" class="form-control input-sm p-released" value="@(p.ReleasedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></td>
+                                            <td>@p.CommittedHours.ToString("0.##")</td>
+                                            <td>@(p.ActualHours.Count == 0 ? "—" : p.ActualHours.Sum(h => h.Hours).ToString("0.##") + " (" + p.ActualHours.Count + " d)")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <datalist id="class-list">@foreach (var c in Model.Classifications) { <option value="@c"></option> }</datalist>
+
+                            <h4>@localizer["BoxRotation"]</h4>
+                            <table class="table table-condensed" id="rotations">
+                                <thead><tr><th>@localizer["Date"]</th><th>@localizer["Outgoing"]</th><th>@localizer["Incoming"]</th><th>@localizer["ApprovalAttachment"]</th><th></th></tr></thead>
+                                <tbody>
+                                    @foreach (var r in f.Rotations)
+                                    {
+                                        <tr>
+                                            <td><input type="date" class="form-control input-sm r-on" value="@r.On.ToString("yyyy-MM-dd")" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><select class="form-control input-sm r-out" disabled="@(!Model.CanEdit)"><option value="">—</option>@foreach (var p in f.Personnel) { <option value="@p.UserId" selected="@(p.UserId == r.OutgoingUserId)">@p.Name</option> }</select></td>
+                                            <td><select class="form-control input-sm r-in" disabled="@(!Model.CanEdit)"><option value="">—</option>@foreach (var p in f.Personnel) { <option value="@p.UserId" selected="@(p.UserId == r.IncomingUserId)">@p.Name</option> }</select></td>
+                                            <td><select class="form-control input-sm r-att" disabled="@(!Model.CanEdit)"><option value="">—</option>@foreach (var a in Model.Attachments) { <option value="@a.DeploymentAttachmentId" selected="@(a.DeploymentAttachmentId == r.ApprovalAttachmentId)">@a.Name</option> }</select></td>
+                                            <td>@if (Model.CanEdit) { <button type="button" class="btn btn-xs btn-danger r-del"><i class="fa fa-times"></i></button> }</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @if (Model.CanEdit) { <button type="button" class="btn btn-default btn-xs" id="rotation-add"><i class="fa fa-plus"></i> @localizer["AddRotation"]</button> }
+
+                            <h4>@localizer["BoxComments"]</h4>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["Comments"]</label><div class="col-sm-9"><textarea class="form-control f-field" data-field="Comments" rows="2" disabled="@(!Model.CanEdit)">@f.Comments</textarea></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["LossDamage"]</label><div class="col-sm-9"><textarea class="form-control f-field" data-field="LossDamage" rows="2" disabled="@(!Model.CanEdit)">@f.LossDamage</textarea></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["SupplyNumbers"]</label><div class="col-sm-9"><input type="text" class="form-control f-field" data-field="SupplyNumbers" value="@f.SupplyNumbers" disabled="@(!Model.CanEdit)" /></div></div>
+
+                            <h4>@localizer["BoxSignatures"]</h4>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["RespondingSigner"]</label><div class="col-sm-5"><input type="text" class="form-control f-field" data-field="RespondingSignerName" value="@f.RespondingSignerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" class="form-control f-field" data-field="RespondingSignedOn" value="@(f.RespondingSignedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["IncidentAuthorizer"]</label><div class="col-sm-5"><input type="text" class="form-control f-field" data-field="IncidentAuthorizerName" value="@f.IncidentAuthorizerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" class="form-control f-field" data-field="IncidentAuthorizedOn" value="@(f.IncidentAuthorizedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" id="docOnly" checked="@f.DocumentationOnly" disabled="@(!Model.CanEdit)" /> @localizer["DocumentationOnly"]</label></div><span class="help-block">@localizer["DocumentationOnlyHelp"]</span></div></div>
+
+                            <h4>@localizer["BoxAttachments"]</h4>
+                            @if (Model.Attachments.Count == 0) { <p class="text-muted">@localizer["NoAttachments"]</p> }
+                            else
+                            {
+                                <ul class="list-unstyled">
+                                    @foreach (var a in Model.Attachments)
+                                    {
+                                        <li>@if (f.AttachmentIds.Contains(a.DeploymentAttachmentId)) { <i class="fa fa-check text-navy"></i> } else { <i class="fa fa-minus text-muted"></i> } @a.Name <small class="text-muted">(@((Resgrid.Model.Invoicing.DeploymentAttachmentTypes)a.AttachmentType))</small></li>
+                                    }
+                                </ul>
+                            }
+                            @if (Model.CanEdit)
+                            {
+                                <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div></div>
+                            }
+                        </form>
+                    }
+                    else if (e != null)
+                    {
+                        <form method="post" asp-action="SaveExpense" asp-route-id="@w.CalOesMarsWorkItemId" class="form-horizontal">
+                            @Html.AntiForgeryToken()
+                            <dl class="dl-horizontal">
+                                <dt>@localizer["LinkedF42"]</dt><dd>@if (e.TravelOnly) { <span class="label label-default">@localizer["TravelOnly"]</span> } else if (!string.IsNullOrWhiteSpace(e.F42WorkItemId)) { <a asp-action="WorkItem" asp-route-id="@e.F42WorkItemId">@e.RequestNumber · @e.IncidentNumber</a> }</dd>
+                            </dl>
+                            <table class="table table-condensed">
+                                <thead><tr><th>@localizer["Date"]</th><th>@localizer["City"]</th><th>@localizer["Category"]</th><th class="text-right">@localizer["Amount"]</th><th>@localizer["Description"]</th><th>@localizer["Receipt"]</th><th>@localizer["PreApproved"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var line in e.Lines)
+                                    {
+                                        <tr><td>@line.Date.ToString("yyyy-MM-dd")</td><td>@line.City</td><td>@localizer["Category" + line.Category]</td><td class="text-right">@line.Amount.ToString("N2")</td><td>@line.Description</td><td>@if (line.ReceiptAttachmentId.HasValue) { <i class="fa fa-check text-navy"></i> } else { <i class="fa fa-times text-danger"></i> }</td><td>@(line.PreApproved ? localizer["Yes"] : localizer["No"])</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["SignerName"]</label><div class="col-sm-5"><input type="text" name="SignerName" class="form-control" value="@e.SignerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" name="SignedOn" class="form-control" value="@(e.SignedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["ApproverName"]</label><div class="col-sm-5"><input type="text" name="ApproverName" class="form-control" value="@e.ApproverName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" name="ApprovedOn" class="form-control" value="@(e.ApprovedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" name="TravelOnly" value="true" checked="@e.TravelOnly" disabled="@(!Model.CanEdit)" /> @localizer["TravelOnly"]</label></div></div></div>
+                            @if (Model.CanEdit) { <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div></div> }
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Checklist"]</h5></div>
+                <div class="ibox-content">
+                    @if (v == null) { <p class="text-muted">@localizer["NotValidated"]</p> }
+                    else
+                    {
+                        <p class="small text-muted">@localizer["ValidatedOn"] @v.ValidatedOn.ToString("yyyy-MM-dd HH:mm")</p>
+                        @if (v.IsReadyForPortal) { <p class="text-navy"><i class="fa fa-check"></i> @localizer["ReadyForPortal"]</p> }
+                        foreach (var issue in v.Errors) { <p class="text-danger"><i class="fa fa-ban"></i> <strong>@localizer["F42Box_" + issue.Box]</strong> @localizer["Validation_" + issue.Code] <small>@issue.Detail</small></p> }
+                        foreach (var issue in v.Warnings) { <p class="text-warning"><i class="fa fa-exclamation-triangle"></i> <strong>@localizer["F42Box_" + issue.Box]</strong> @localizer["Validation_" + issue.Code] <small>@issue.Detail</small></p> }
+                    }
+                    @if (Model.CanEdit)
+                    {
+                        <form method="post" asp-action="Validate" asp-route-id="@w.CalOesMarsWorkItemId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-check-square-o"></i> @localizer["RunChecklist"]</button></form>
+                    }
+                </div>
+            </div>
+            @if (Model.IsManager)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["ExpectedReimbursement"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["ExpectedReimbursementHelp"]</p>
+                        @if (w.Lines.Count == 0) { <p class="text-muted">@localizer["NotCalculated"]</p> }
+                        else
+                        {
+                            <table class="table table-condensed">
+                                <tbody>
+                                    @foreach (var line in w.Lines)
+                                    {
+                                        <tr class="@(line.EligibilityState == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsEligibilityStates.Excluded ? "text-muted" : "")"><td>@localizer["LineKind" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLineKinds)line.LineKind] <small>@line.SubjectName</small></td><td class="text-right">@line.Quantity.ToString("0.##") @line.Unit × @line.Rate.ToString("N2")</td><td class="text-right">@line.ExpectedAmount.ToString("N2")</td><td>@if (line.EligibilityState != (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsEligibilityStates.Eligible) { <span class="label label-warning" title="@line.EligibilityReason">@localizer["Eligibility" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsEligibilityStates)line.EligibilityState]</span> }</td></tr>
+                                    }
+                                    <tr><td colspan="2" class="text-right"><strong>@localizer["ExpectedTotal"]</strong></td><td class="text-right"><strong>@((w.ExpectedTotal ?? 0).ToString("N2"))</strong></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        }
+                        @if (w.LocalState < (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.Paid)
+                        {
+                            <form method="post" asp-action="Calculate" asp-route-id="@w.CalOesMarsWorkItemId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-calculator"></i> @localizer["Calculate"]</button></form>
+                        }
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["PortalHandoff"]</h5></div>
+                    <div class="ibox-content">
+                        @if (w.LocalState == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.ReadyForPortal || w.IsExternal)
+                        {
+                            <form method="post" asp-action="Handoff" asp-route-id="@w.CalOesMarsWorkItemId" class="m-b-sm">
+                                @Html.AntiForgeryToken()
+                                <div class="checkbox"><label><input type="checkbox" name="attested" value="true" required /> @localizer["HandoffAttestation"]</label></div>
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-external-link"></i> @localizer["OpenHandoff"]</button>
+                            </form>
+                        }
+                        else { <p class="text-muted small">@localizer["HandoffNeedsReady"]</p> }
+                        @if (Model.CanSubmit && w.LocalState == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.ReadyForPortal)
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <h5>@localizer["ObservedSubmission"]</h5>
+                            <form method="post" asp-action="ObserveSubmission" asp-route-id="@w.CalOesMarsWorkItemId">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group"><input type="text" name="ExternalId" class="form-control input-sm" placeholder="@localizer["MarsRecordId"]" /></div>
+                                <div class="form-group"><input type="datetime-local" name="ObservedOn" class="form-control input-sm" /></div>
+                                <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-eye"></i> @localizer["RecordSubmission"]</button>
+                            </form>
+                        }
+                        @if (Model.CanSubmit && w.IsExternal && w.LocalState < (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.PendingLocalAgencyApproval)
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <h5>@localizer["ObservedStatus"]</h5>
+                            <p class="small">@localizer["MarsRecordId"]: <strong>@(w.MarsRecordId ?? "—")</strong> · @(w.ObservedExternalStatus ?? "—") @(w.ObservedOn?.ToString("yyyy-MM-dd"))</p>
+                            <form method="post" asp-action="ObserveStatus" asp-route-id="@w.CalOesMarsWorkItemId">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group"><select name="ExternalStatus" class="form-control input-sm">@foreach (var s in recordStatuses) { <option value="@s">@s</option> }</select></div>
+                                <div class="form-group"><input type="datetime-local" name="ObservedOn" class="form-control input-sm" /></div>
+                                <div class="form-group"><textarea name="Comment" class="form-control input-sm" rows="2" placeholder="@localizer["CorrectionComment"]"></textarea></div>
+                                <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-eye"></i> @localizer["RecordObservation"]</button>
+                            </form>
+                        }
+                        @if (w.LocalState is (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.Approved or (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.DocumentationOnly or (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.Paid)
+                        {
+                            <form method="post" asp-action="Close" asp-route-id="@w.CalOesMarsWorkItemId" class="m-t-sm">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-archive"></i> @localizer["CloseItem"]</button></form>
+                        }
+                        @if (!w.IsExternal)
+                        {
+                            <form method="post" asp-action="Delete" asp-route-id="@w.CalOesMarsWorkItemId" class="m-t-sm" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.Related.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["RelatedItems"]</h5></div>
+                    <div class="ibox-content">
+                        <ul class="list-unstyled">
+                            @foreach (var r in Model.Related) { <li><a asp-action="@(r.RecordType == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes.GeneratedInvoice ? "Invoice" : "WorkItem")" asp-route-id="@r.CalOesMarsWorkItemId">@localizer["RecordType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes)r.RecordType]</a> @await Html.PartialAsync("_WorkItemStateBadge", r.LocalState)</li> }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (f != null)
+    {
+        <script>
+            (function () {
+                var snapshot = @Html.Raw(Model.SnapshotJson);
+                $('#rotation-add').on('click', function () {
+                    var people = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(f.Personnel.Select(p => new { p.UserId, p.Name })));
+                    var attachments = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Attachments.Select(a => new { a.DeploymentAttachmentId, a.Name })));
+                    var people_opts = '<option value="">—</option>' + people.map(function (p) { return '<option value="' + p.UserId + '">' + $('<span>').text(p.Name).html() + '</option>'; }).join('');
+                    var att_opts = '<option value="">—</option>' + attachments.map(function (a) { return '<option value="' + a.DeploymentAttachmentId + '">' + $('<span>').text(a.Name).html() + '</option>'; }).join('');
+                    $('#rotations tbody').append('<tr><td><input type="date" class="form-control input-sm r-on" /></td><td><select class="form-control input-sm r-out">' + people_opts + '</select></td><td><select class="form-control input-sm r-in">' + people_opts + '</select></td><td><select class="form-control input-sm r-att">' + att_opts + '</select></td><td><button type="button" class="btn btn-xs btn-danger r-del"><i class="fa fa-times"></i></button></td></tr>');
+                });
+                $('#rotations').on('click', '.r-del', function () { $(this).closest('tr').remove(); });
+                function val(v) { return v === '' || v == null ? null : v; }
+                function num(v) { return v === '' || v == null ? null : parseFloat(v); }
+                $('#f42Form').on('submit', function () {
+                    var s = {};
+                    $('.f-field').each(function () { s[$(this).data('field')] = val($(this).val()); });
+                    s.DocumentationOnly = $('#docOnly').is(':checked');
+                    s.Personnel = [];
+                    $('#personnel tbody tr').each(function () { s.Personnel.push({ DeploymentPersonnelId: $(this).data('id'), Rank: val($(this).find('.p-rank').val()), ClassificationCode: val($(this).find('.p-class').val()), CommittedOn: val($(this).find('.p-committed').val()), ReleasedOn: val($(this).find('.p-released').val()) }); });
+                    s.Vehicles = [];
+                    $('#vehicles tbody tr').each(function () { s.Vehicles.push({ DeploymentUnitId: val($(this).data('unit')), DeploymentEquipmentId: val($(this).data('equipment')), Kind: $(this).find('.v-kind').val(), ResourceCode: val($(this).find('.v-code').val()), CommittedHours: num($(this).find('.v-hours').val()) || 0, Miles: num($(this).find('.v-miles').val()), StartOdometer: num($(this).find('.v-start').val()), EndOdometer: num($(this).find('.v-end').val()), FemaCode: val($(this).find('.v-fema').val()) }); });
+                    s.Rotations = [];
+                    $('#rotations tbody tr').each(function () { var on = $(this).find('.r-on').val(); if (!on) return; s.Rotations.push({ On: on, OutgoingUserId: val($(this).find('.r-out').val()), IncomingUserId: val($(this).find('.r-in').val()), ApprovalAttachmentId: num($(this).find('.r-att').val()) }); });
+                    $('#snapshotJson').val(JSON.stringify(s));
+                });
+            })();
+        </script>
+    }
+}

@@ -1,0 +1,184 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforcePayDataRunView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PayDataRun"];
+    ViewData["Title"] = localizer["PayDataRun"].Value + " " + Model.Run.ReportingYear + " — " + localizer["ReportType" + (PayDataReportTypes)Model.Run.ReportType].Value;
+    ViewData["Subtitle"] = localizer["Status" + (PayDataReportRunStatuses)Model.Run.Status].Value + " · " + Model.Run.SchemaProfileCode;
+    ViewData["WorkforceTab"] = "paydata";
+    ViewData["WorkforcePage"] = Model;
+    var run = Model.Run;
+    var editable = run.IsEditable && Model.CanManagePayData;
+    string Tab(string key) => Model.Tab == key ? "active" : "";
+    string Establishment(string id) => string.IsNullOrWhiteSpace(id) ? "—" : Model.EstablishmentLabels.TryGetValue(id, out var l) ? l : id;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <p><strong>@localizer["Snapshot"]:</strong> @run.SnapshotStart.ToString("yyyy-MM-dd") – @run.SnapshotEnd.ToString("yyyy-MM-dd") &middot; <strong>@localizer["Employees"]:</strong> @run.EmployeeCount &middot; <strong>@localizer["Rows"]:</strong> @run.RowCount &middot; <strong>@localizer["Exceptions"]:</strong> @run.ExceptionCount &middot; <strong>@localizer["Warnings"]:</strong> @run.WarningCount</p>
+                            <p class="small text-muted">@localizer["WizardSteps"]</p>
+                        </div>
+                        <div class="col-sm-4 text-right">
+                            @if (editable)
+                            {
+                                <form method="post" asp-action="BuildSnapshots" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-default">1. @localizer["BuildSnapshots"]</button></form>
+                                <form method="post" asp-action="AggregateRows" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-default">2. @localizer["Aggregate"]</button></form>
+                                <form method="post" asp-action="ValidateRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-default">3. @localizer["Validate"]</button></form>
+                            }
+                            @if (run.Status == (int)PayDataReportRunStatuses.Validated && Model.CanExportPayData)
+                            {
+                                <form method="post" asp-action="FreezeAndExport" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@localizer["ConfirmFreeze"]');"><i class="fa fa-lock"></i> 4. @localizer["FreezeAndExport"]</button></form>
+                            }
+                            @if (run.IsEditable && Model.CanManagePayData || run.Status == (int)PayDataReportRunStatuses.Exported && Model.CanManagePayData)
+                            {
+                                <form method="post" asp-action="VoidRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@localizer["ConfirmVoid"]');">@localizer["Void"]</button></form>
+                            }
+                            @if ((run.Status == (int)PayDataReportRunStatuses.Exported || run.Status == (int)PayDataReportRunStatuses.CertifiedExternally) && Model.CanManagePayData)
+                            {
+                                <form method="post" asp-action="CreateCorrection" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('@localizer["ConfirmCorrection"]');">@localizer["CreateCorrection"]</button></form>
+                            }
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs">
+                        <li class="@Tab("snapshots")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="snapshots">@localizer["Snapshots"] (@Model.Snapshots.Count)</a></li>
+                        <li class="@Tab("rows")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="rows">@localizer["Rows"] (@Model.Rows.Count)</a></li>
+                        <li class="@Tab("validation")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="validation">@localizer["Validation"]</a></li>
+                        <li class="@Tab("artifacts")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="artifacts">@localizer["Artifacts"] (@Model.Artifacts.Count)</a></li>
+                    </ul>
+                    <div class="tab-content m-t-md">
+                        @if (Model.Tab == "snapshots")
+                        {
+                            <p class="small text-muted"><i class="fa fa-lock"></i> @localizer["SnapshotsHelp"]</p>
+                            <table class="table table-striped table-condensed">
+                                <thead><tr><th>@localizer["Worker"]</th><th>@localizer["Establishment"]</th><th>@localizer["JobCategory"]</th><th>@localizer["DemographicCode"]</th><th>@localizer["PayBand"]</th><th>@localizer["Hours"]</th><th>@localizer["HourlyRate"]</th><th>@localizer["WorkMode"]</th><th>@localizer["Included"]</th><th>@localizer["Exceptions"]</th><th></th></tr></thead>
+                                <tbody>
+                                @foreach (var s in Model.Snapshots)
+                                {
+                                    <tr class="@(s.ExceptionCodes.Any(Resgrid.Services.Workforce.CaPayDataReportingService.IsBlocking) ? "danger" : s.ExceptionCodes.Count > 0 ? "warning" : "")">
+                                        <td>@s.WorkerDisplayName</td><td>@Establishment(s.WorkforceEstablishmentId)</td><td>@s.JobCategoryCode</td>
+                                        <td>@ProtectedDataEnvelope.SafeDisplay(s.DemographicCode)</td><td>@s.PayBandCode</td><td>@s.AnnualHours.ToString("N0")</td><td>@ProtectedDataEnvelope.SafeDisplay(s.HourlyRate)</td>
+                                        <td>@localizer["WorkMode" + (WorkModes)s.WorkMode]</td><td>@(s.IsIncluded ? localizer["Yes"] : localizer["No"])</td>
+                                        <td>@foreach (var code in s.ExceptionCodes) { <span class="label @(Resgrid.Services.Workforce.CaPayDataReportingService.IsBlocking(code) ? "label-danger" : "label-warning")">@localizer["Validation_" + code]</span> }</td>
+                                        <td class="text-right">
+                                            @if (editable)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-default" data-toggle="collapse" data-target="#ov-@s.PayDataReportEmployeeSnapshotId"><i class="fa fa-pencil"></i></button>
+                                            }
+                                        </td>
+                                    </tr>
+                                    if (editable)
+                                    {
+                                        <tr class="collapse" id="ov-@s.PayDataReportEmployeeSnapshotId"><td colspan="11">
+                                            <form method="post" asp-action="OverrideSnapshot" class="form-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@run.PayDataReportRunId" /><input type="hidden" name="snapshotId" value="@s.PayDataReportEmployeeSnapshotId" />
+                                                <label><input type="checkbox" name="include" value="true" checked="@s.IsIncluded" /> @localizer["Included"]</label>
+                                                <select name="jobCategoryCode" class="form-control input-sm"><option value="">@localizer["JobCategory"] —</option>@foreach (var j in Model.Profile.JobCategories) { <option value="@j.Code" selected="@(j.Code == s.JobCategoryCode)">@j.Code — @j.Label</option> }</select>
+                                                <select name="workMode" class="form-control input-sm"><option value="">@localizer["WorkMode"] —</option>@foreach (WorkModes m in Enum.GetValues(typeof(WorkModes))) { <option value="@((int)m)" selected="@(s.WorkMode == (int)m)">@localizer["WorkMode" + m]</option> }</select>
+                                                <input type="text" name="reason" class="form-control input-sm" placeholder="@localizer["OverrideReason"]" required />
+                                                <button type="submit" class="btn btn-sm btn-primary">@localizer["ApplyOverride"]</button>
+                                            </form>
+                                        </td></tr>
+                                    }
+                                }
+                                @if (Model.Snapshots.Count == 0)
+                                {
+                                    <tr><td colspan="11" class="text-muted">@localizer["NoSnapshots"]</td></tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                        else if (Model.Tab == "rows")
+                        {
+                            <table class="table table-striped table-condensed">
+                                <thead><tr><th>@localizer["Establishment"]</th><th>@localizer["JobCategory"]</th><th>@localizer["DemographicCode"]</th><th>@localizer["PayBand"]</th><th>@localizer["Employees"]</th><th>@localizer["Hours"]</th><th>@localizer["MeanRate"]</th><th>@localizer["MedianRate"]</th><th>@localizer["NonRemote"]</th><th>@localizer["RemoteInCa"]</th><th>@localizer["RemoteOutsideCa"]</th></tr></thead>
+                                <tbody>
+                                @foreach (var r in Model.Rows)
+                                {
+                                    <tr><td>@Establishment(r.WorkforceEstablishmentId)</td><td>@r.JobCategoryCode</td><td>@ProtectedDataEnvelope.SafeDisplay(r.DemographicCode)</td><td>@r.PayBandCode</td><td>@r.EmployeeCount</td><td>@r.AnnualHours.ToString("N0")</td><td>@ProtectedDataEnvelope.SafeDisplay(r.MeanHourlyRate)</td><td>@ProtectedDataEnvelope.SafeDisplay(r.MedianHourlyRate)</td><td>@r.NonRemoteCount</td><td>@r.RemoteWithinCaliforniaCount</td><td>@r.RemoteOutsideCaliforniaCount</td></tr>
+                                }
+                                @if (Model.Rows.Count == 0)
+                                {
+                                    <tr><td colspan="11" class="text-muted">@localizer["NoRows"]</td></tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                        else if (Model.Tab == "validation")
+                        {
+                            <div class="row">
+                                <div class="col-md-7">
+                                    @if (Model.Validation == null)
+                                    {
+                                        <p class="text-muted">@localizer["NotValidated"]</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@localizer["ValidatedOn"]: <strong>@Model.Validation.ValidatedOn.ToString("yyyy-MM-dd HH:mm")</strong> — @(Model.Validation.CanFreeze ? localizer["ReadyToFreeze"] : localizer["NotReadyToFreeze"])</p>
+                                        <h4>@localizer["Errors"] (@Model.Validation.Errors.Count)</h4>
+                                        <ul>@foreach (var e in Model.Validation.Errors) { <li class="text-danger">@localizer[e.Code.StartsWith("required_") ? "Validation_required" : "Validation_" + e.Code] <span class="text-muted small">@e.Scope @e.Detail</span></li> }</ul>
+                                        <h4>@localizer["Warnings"] (@Model.Validation.Warnings.Count)</h4>
+                                        <ul>@foreach (var w in Model.Validation.Warnings) { <li class="text-warning">@localizer["Validation_" + w.Code] <span class="text-muted small">@w.Scope @w.Detail</span></li> }</ul>
+                                    }
+                                </div>
+                                <div class="col-md-5">
+                                    <form method="post" asp-action="SaveRemarks">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@run.PayDataReportRunId" />
+                                        <div class="form-group"><label>@localizer["RunRemarks"] <i class="fa fa-lock text-muted"></i></label><textarea name="runRemarks" class="form-control" rows="4" maxlength="500" disabled="@(!editable)">@ProtectedDataEnvelope.SafeDisplay(run.RunRemarks)</textarea><span class="help-block">@localizer["RunRemarksHelp"]</span></div>
+                                        @if (editable) { <button type="submit" class="btn btn-sm btn-primary">@localizer["Save"]</button> }
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="small text-muted"><i class="fa fa-lock"></i> @localizer["ArtifactsHelp"]</p>
+                            <table class="table table-condensed">
+                                <thead><tr><th>@localizer["File"]</th><th>@localizer["Format"]</th><th>@localizer["Size"]</th><th>@localizer["Checksum"]</th><th>@localizer["Created"]</th><th>@localizer["Expires"]</th><th>@localizer["Downloads"]</th><th></th></tr></thead>
+                                <tbody>
+                                @foreach (var a in Model.Artifacts)
+                                {
+                                    <tr><td>@a.FileName</td><td>@((PayDataExportFormats)a.Format)</td><td>@a.Size</td><td class="small"><code>@a.Checksum</code></td><td>@a.CreatedOn.ToString("yyyy-MM-dd")</td><td>@(a.PurgedOn.HasValue ? localizer["Purged"].Value : a.ExpiresOn.ToString("yyyy-MM-dd"))</td><td>@a.DownloadCount</td>
+                                        <td class="text-right">@if (a.IsAvailable && Model.CanExportPayData) { <a asp-action="DownloadArtifact" asp-route-id="@a.PayDataExportArtifactId" asp-route-runId="@run.PayDataReportRunId" class="btn btn-xs btn-primary"><i class="fa fa-download"></i></a> }</td></tr>
+                                }
+                                @if (Model.Artifacts.Count == 0)
+                                {
+                                    <tr><td colspan="8" class="text-muted">@localizer["NoArtifacts"]</td></tr>
+                                }
+                                </tbody>
+                            </table>
+                            @if (run.IsFrozen && (Model.CanExportPayData || Model.CanManagePayData))
+                            {
+                                <a asp-action="Worksheet" asp-route-id="@run.PayDataReportRunId" class="btn btn-sm btn-default"><i class="fa fa-list-alt"></i> @localizer["PortalWorksheet"]</a>
+                            }
+                            @if (run.Status == (int)PayDataReportRunStatuses.Exported && Model.CanManagePayData)
+                            {
+                                <form method="post" asp-action="MarkCertified" class="form-inline m-t-md">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@run.PayDataReportRunId" />
+                                    <input type="text" name="certificationReference" class="form-control" placeholder="@localizer["CertificationReference"]" required />
+                                    <button type="submit" class="btn btn-sm btn-success">@localizer["MarkCertified"]</button>
+                                    <span class="help-block">@localizer["MarkCertifiedHelp"]</span>
+                                </form>
+                            }
+                            @if (run.Status == (int)PayDataReportRunStatuses.CertifiedExternally)
+                            {
+                                <p class="m-t-md"><span class="label label-primary">@localizer["StatusCertifiedExternally"]</span> @run.CertifiedOn?.ToString("yyyy-MM-dd") &middot; @localizer["CertificationReference"]: @run.CertificationReference &middot; @localizer["Checksum"]: <code>@run.CertifiedArtifactChecksum</code></p>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

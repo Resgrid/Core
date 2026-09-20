@@ -1,0 +1,85 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceDemographicsView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["MyDemographics"];
+    ViewData["Title"] = Model.IsOwn ? localizer["MyDemographics"].Value : localizer["DemographicRecord"].Value + " — " + Model.WorkerName;
+    ViewData["Subtitle"] = Model.IsOwn ? localizer["MyDemographicsIntro"].Value : localizer["DemographicRecordIntro"].Value;
+    ViewData["WorkforceTab"] = Model.IsOwn ? "mydemographics" : "workers";
+    ViewData["WorkforcePage"] = Model;
+    var r = Model.Response;
+    var races = (ProtectedDataEnvelope.SafeDisplay(r.RaceEthnicityCodes) ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToList();
+    var hispanic = ProtectedDataEnvelope.SafeDisplay(r.HispanicLatino);
+    var sex = ProtectedDataEnvelope.SafeDisplay(r.SexCode);
+    var hasResponse = !string.IsNullOrWhiteSpace(r.PayDataReportingDemographicId);
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@(Model.IsOwn ? localizer["SelfIdentification"] : localizer["DemographicRecord"])</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-lock"></i> @(Model.IsOwn ? localizer["SelfIdentificationNotice"] : localizer["DemographicRecordNotice"])</div>
+                    @if (hasResponse)
+                    {
+                        <p class="small text-muted">@localizer["CurrentResponse"]: @localizer["CollectionSource" + (DemographicCollectionSources)r.CollectionSource] · @localizer["Version"] @r.Version · @r.CollectedOn?.ToString("yyyy-MM-dd")</p>
+                    }
+                    <form method="post" asp-action="@(Model.IsOwn ? "SaveMyDemographics" : "SaveWorkerDemographics")" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        @if (!Model.IsOwn)
+                        {
+                            <input type="hidden" name="workerId" value="@Model.WorkerId" />
+                            <div class="form-group"><label class="col-sm-4 control-label">@localizer["CollectionSource"] *</label><div class="col-sm-8"><select name="CollectionSource" class="form-control">
+                                @foreach (DemographicCollectionSources s in Enum.GetValues(typeof(DemographicCollectionSources)))
+                                {
+                                    if (s == DemographicCollectionSources.SelfIdentified) { continue; }
+                                    <option value="@((int)s)" selected="@(r.CollectionSource == (int)s)">@localizer["CollectionSource" + s]</option>
+                                }
+                            </select><span class="help-block">@localizer["CollectionSourceHelp"]</span></div></div>
+                            <div class="form-group"><label class="col-sm-4 control-label">@localizer["Reason"] *</label><div class="col-sm-8"><input type="text" name="Reason" class="form-control" required maxlength="250" /></div></div>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="CollectionSource" value="@((int)DemographicCollectionSources.SelfIdentified)" />
+                        }
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["HispanicLatino"]</label><div class="col-sm-8">
+                            <label class="radio-inline"><input type="radio" name="HispanicLatino" value="Yes" checked="@(hispanic == "Yes")" /> @localizer["Yes"]</label>
+                            <label class="radio-inline"><input type="radio" name="HispanicLatino" value="No" checked="@(hispanic == "No")" /> @localizer["No"]</label>
+                            <label class="radio-inline"><input type="radio" name="HispanicLatino" value="" checked="@(string.IsNullOrEmpty(hispanic))" /> @localizer["NoAnswer"]</label>
+                        </div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["RaceEthnicity"]</label><div class="col-sm-8">
+                            @foreach (var race in Model.Races.Where(x => x.Code != "A" && x.Code != "G"))
+                            {
+                                <div class="checkbox"><label><input type="checkbox" name="RaceCodes" value="@race.Code" checked="@races.Contains(race.Code)" /> @localizer["Race_" + race.Code]</label></div>
+                            }
+                            <div class="checkbox"><label><input type="checkbox" name="DeclinedRaceEthnicity" value="true" checked="@r.DeclinedRaceEthnicity" /> <em>@localizer["DeclineToState"]</em></label></div>
+                            <span class="help-block">@localizer["RaceHelp"]</span>
+                        </div></div>
+                        <div class="form-group"><label class="col-sm-4 control-label">@localizer["Sex"]</label><div class="col-sm-8">
+                            @foreach (var s in Model.Sexes)
+                            {
+                                <label class="radio-inline"><input type="radio" name="SexCode" value="@s.Code" checked="@(sex == s.Code)" /> @localizer["Sex_" + s.Code]</label>
+                            }
+                            <div class="checkbox"><label><input type="checkbox" name="DeclinedSex" value="true" checked="@r.DeclinedSex" /> <em>@localizer["DeclineToState"]</em></label></div>
+                        </div></div>
+                        <div class="form-group"><div class="col-sm-8 col-sm-offset-4"><button type="submit" class="btn btn-primary">@localizer["SaveResponse"]</button></div></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["WhyWeAsk"]</h5></div>
+                <div class="ibox-content">
+                    <p class="small">@localizer["WhyWeAskText"]</p>
+                    <p class="small text-muted">@localizer["DemographicsVoluntary"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

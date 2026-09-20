@@ -1,0 +1,82 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceDashboardView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Workforce"];
+    ViewData["Title"] = localizer["Workforce"].Value;
+    ViewData["Subtitle"] = localizer["DashboardIntro"].Value;
+    ViewData["WorkforceTab"] = "dashboard";
+    ViewData["WorkforcePage"] = Model;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["ProtectedNotice"]</div>
+    <div class="row">
+        @if (Model.WorkforceEnabled && (Model.CanManage || Model.CanViewCompensation || Model.CanViewPayData))
+        {
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Employer"]</h5></div>
+                    <div class="ibox-content">
+                        @if (Model.Employer == null)
+                        {
+                            <p class="text-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["EmployerMissing"]</p>
+                        }
+                        else
+                        {
+                            <p><strong>@Model.Employer.LegalName</strong></p>
+                            <p class="small text-muted">@localizer["CoverageStatus"]: @localizer["Coverage" + ((CaliforniaPayDataCoverageStatuses)Model.Employer.CoverageStatus)]</p>
+                        }
+                        <p>@localizer["Establishments"]: <strong>@Model.EstablishmentCount</strong> &middot; @localizer["Workers"]: <strong>@Model.WorkerCount</strong> &middot; @localizer["Employments"]: <strong>@Model.EmploymentCount</strong></p>
+                        <a asp-action="Employer" class="btn btn-xs btn-default">@localizer["TabEmployer"]</a>
+                        <a asp-action="Workers" class="btn btn-xs btn-default">@localizer["TabWorkers"]</a>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.WorkforceEnabled && Model.CanViewInternalCosts)
+        {
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["FieldCosting"]</h5></div>
+                    <div class="ibox-content">
+                        <p>@localizer["ResourceProfiles"]: <strong>@Model.ResourceProfileCount</strong> &middot; @localizer["CostRuns"]: <strong>@Model.CostRunCount</strong></p>
+                        <p class="small text-muted">@localizer["FieldCostingIntro"]</p>
+                        <a asp-action="CostRuns" class="btn btn-xs btn-default">@localizer["TabCostRuns"]</a>
+                        <a asp-action="ResourceCosts" class="btn btn-xs btn-default">@localizer["TabResourceCosts"]</a>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.PayDataEnabled && Model.CanViewPayData && Model.Readiness != null)
+        {
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["PayDataReporting"] @Model.ReportingYear</h5></div>
+                    <div class="ibox-content">
+                        <p>@localizer["DueDate"]: <strong>@Model.Readiness.DueDate.ToString("yyyy-MM-dd")</strong> @(Model.Readiness.ProfileAvailable ? "" : "(" + localizer["ProfileUnavailable"] + ")")</p>
+                        <p>@localizer["OpenRuns"]: <strong>@Model.Readiness.OpenRuns</strong> &middot; @localizer["UnresolvedExceptions"]: <strong>@Model.Readiness.UnresolvedExceptions</strong></p>
+                        <p>@localizer["DemographicsMissing"]: <strong>@Model.Readiness.DemographicsMissing</strong> &middot; @localizer["AnnualFactsMissing"]: <strong>@Model.Readiness.AnnualFactsMissing</strong></p>
+                        @if (Model.Readiness.HasCertifiedRun)
+                        {
+                            <span class="label label-primary">@localizer["StatusCertifiedExternally"]</span>
+                        }
+                        else if (Model.Readiness.HasFrozenRun)
+                        {
+                            <span class="label label-info">@localizer["StatusExported"]</span>
+                        }
+                        <div class="m-t-sm"><a asp-action="PayData" class="btn btn-xs btn-default">@localizer["TabPayData"]</a></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @if (Model.PayDataEnabled && !(Model.CanManage || Model.CanViewCompensation || Model.CanViewInternalCosts || Model.CanViewPayData))
+    {
+        <div class="row"><div class="col-md-6"><div class="ibox"><div class="ibox-content"><p>@localizer["MyDemographicsIntro"]</p><a asp-action="MyDemographics" class="btn btn-primary">@localizer["MyDemographics"]</a></div></div></div></div>
+    }
+</div>

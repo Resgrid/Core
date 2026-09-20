@@ -1,0 +1,77 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceWorksheetView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PortalWorksheet"];
+    ViewData["Title"] = localizer["PortalWorksheet"].Value;
+    ViewData["Subtitle"] = localizer["WorksheetIntro"].Value;
+    ViewData["WorkforceTab"] = "paydata";
+    ViewData["WorkforcePage"] = Model;
+    var w = Model.Worksheet;
+    string D(string v) => ProtectedDataEnvelope.SafeDisplay(v) ?? "—";
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="alert alert-warning"><i class="fa fa-lock"></i> @localizer["WorksheetNoStore"]</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["EmployerSection"] — @w.ReportingYear @localizer["ReportType" + (PayDataReportTypes)w.ReportType]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-condensed">
+                        <tr><td>@localizer["LegalName"]</td><td>@w.EmployerLegalName</td></tr>
+                        <tr><td>@localizer["Fein"]</td><td>@D(w.EmployerFein)</td></tr>
+                        <tr><td>@localizer["Sein"]</td><td>@D(w.EmployerSein)</td></tr>
+                        <tr><td>@localizer["SosNumber"]</td><td>@D(w.EmployerSosNumber)</td></tr>
+                        <tr><td>@localizer["Naics"]</td><td>@w.EmployerNaics</td></tr>
+                        <tr><td>@localizer["EddAddress"]</td><td>@D(w.EddAddress)</td></tr>
+                        <tr><td>@localizer["HeadquartersAddress"]</td><td>@D(w.HeadquartersAddress)</td></tr>
+                        <tr><td>@localizer["IsIntegratedEnterprise"]</td><td>@(w.IsIntegratedEnterprise ? localizer["Yes"] : localizer["No"])</td></tr>
+                        <tr><td>@localizer["UsEmployeeCount"]</td><td>@w.UsEmployeeCount</td></tr>
+                        <tr><td>@localizer["CaliforniaEmployeeCount"]</td><td>@w.CaliforniaEmployeeCount</td></tr>
+                        <tr><td>@localizer["SnapshotEmployeeCount"]</td><td>@w.SnapshotEmployeeCount</td></tr>
+                        <tr><td>@localizer["Snapshot"]</td><td>@w.SnapshotStart.ToString("yyyy-MM-dd") – @w.SnapshotEnd.ToString("yyyy-MM-dd")</td></tr>
+                        <tr><td>@localizer["DueDate"]</td><td>@w.DueDate.ToString("yyyy-MM-dd")</td></tr>
+                        <tr><td>@localizer["FilingContactName"]</td><td>@D(w.FilingContactName)</td></tr>
+                        <tr><td>@localizer["FilingContactEmail"]</td><td>@D(w.FilingContactEmail)</td></tr>
+                        <tr><td>@localizer["FilingContactPhone"]</td><td>@D(w.FilingContactPhone)</td></tr>
+                        <tr><td>@localizer["RunRemarks"]</td><td>@D(w.RunRemarks)</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Establishments"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-condensed">
+                        <thead><tr><th>@localizer["Code"]</th><th>@localizer["Name"]</th><th>@localizer["Address"]</th><th>@localizer["Naics"]</th><th>@localizer["Employees"]</th><th>@localizer["Headquarters"]</th><th>@localizer["WasFiledPriorYear"]</th></tr></thead>
+                        <tbody>
+                        @foreach (var e in w.Establishments)
+                        {
+                            <tr><td>@e.Code</td><td>@e.Name</td><td>@D(e.Address), @e.City @e.State @e.Zip</td><td>@e.Naics</td><td>@e.EmployeeCount</td><td>@(e.IsHeadquarters ? localizer["Yes"] : localizer["No"])</td><td>@(e.WasFiledPriorYear == true ? localizer["Yes"] : localizer["No"])</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if (w.Affiliates.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Affiliates"]</h5></div>
+                    <div class="ibox-content">
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["LegalName"]</th><th>@localizer["Fein"]</th><th>@localizer["Sein"]</th><th>@localizer["SosNumber"]</th></tr></thead>
+                            <tbody>@foreach (var a in w.Affiliates) { <tr><td>@a.LegalName</td><td>@D(a.Fein)</td><td>@D(a.Sein)</td><td>@D(a.SosNumber)</td></tr> }</tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            <a asp-action="PayDataRun" asp-route-id="@w.RunId" asp-route-tab="artifacts" class="btn btn-default">@localizer["Back"]</a>
+        </div>
+    </div>
+</div>

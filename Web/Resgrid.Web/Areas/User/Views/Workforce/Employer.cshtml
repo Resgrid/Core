@@ -1,0 +1,100 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceEmployerView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Employer"];
+    ViewData["Title"] = localizer["Employer"].Value;
+    ViewData["Subtitle"] = localizer["EmployerIntro"].Value;
+    ViewData["WorkforceTab"] = "employer";
+    ViewData["WorkforcePage"] = Model;
+    var e = Model.Employer;
+    var a = Model.EditingAffiliate ?? new WorkforceAffiliatedEntity();
+    var readOnly = !Model.CanManage;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["EmployerProfile"]</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["HelpEmployer"]</div>
+                    <form method="post" asp-action="SaveEmployer" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <fieldset disabled="@readOnly">
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["LegalName"] *</label><div class="col-sm-9"><input type="text" name="LegalName" class="form-control" maxlength="250" required value="@e.LegalName" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["Fein"]</label><div class="col-sm-3"><input type="text" name="Fein" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(e.Fein)" /></div>
+                                <label class="col-sm-3 control-label">@localizer["Sein"]</label><div class="col-sm-3"><input type="text" name="Sein" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(e.Sein)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["SosNumber"]</label><div class="col-sm-3"><input type="text" name="SosNumber" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(e.SosNumber)" /></div>
+                                <label class="col-sm-3 control-label">@localizer["Naics"]</label><div class="col-sm-3"><input type="text" name="Naics" class="form-control" maxlength="6" value="@e.Naics" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["EddAddress"]</label><div class="col-sm-9"><textarea name="EddAddress" class="form-control" rows="2">@ProtectedDataEnvelope.SafeDisplay(e.EddAddress)</textarea></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["HeadquartersAddress"]</label><div class="col-sm-9"><textarea name="HeadquartersAddress" class="form-control" rows="2">@ProtectedDataEnvelope.SafeDisplay(e.HeadquartersAddress)</textarea></div></div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["FilingContactName"]</label><div class="col-sm-9"><input type="text" name="FilingContactName" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(e.FilingContactName)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["FilingContactEmail"]</label><div class="col-sm-4"><input type="text" name="FilingContactEmail" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(e.FilingContactEmail)" /></div>
+                                <label class="col-sm-2 control-label">@localizer["FilingContactPhone"]</label><div class="col-sm-3"><input type="text" name="FilingContactPhone" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(e.FilingContactPhone)" /></div></div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["CoverageStatus"]</label><div class="col-sm-9"><select name="CoverageStatus" class="form-control">
+                                @foreach (CaliforniaPayDataCoverageStatuses status in Enum.GetValues(typeof(CaliforniaPayDataCoverageStatuses)))
+                                {
+                                    <option value="@((int)status)" selected="@(e.CoverageStatus == (int)status)">@localizer["Coverage" + status]</option>
+                                }
+                            </select><span class="help-block">@localizer["CoverageHelp"]</span></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["UsEmployeeCount"]</label><div class="col-sm-3"><input type="number" name="UsEmployeeCount" class="form-control" min="0" value="@e.UsEmployeeCount" /></div>
+                                <label class="col-sm-3 control-label">@localizer["CaliforniaEmployeeCount"]</label><div class="col-sm-3"><input type="number" name="CaliforniaEmployeeCount" class="form-control" min="0" value="@e.CaliforniaEmployeeCount" /></div></div>
+                            <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" name="IsIntegratedEnterprise" value="true" checked="@e.IsIntegratedEnterprise" /> @localizer["IsIntegratedEnterprise"]</label></div></div></div>
+                            @if (Model.CanManage)
+                            {
+                                <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                            }
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Affiliates"]</h5></div>
+                <div class="ibox-content">
+                    <p class="small text-muted">@localizer["AffiliatesHelp"]</p>
+                    <table class="table table-condensed">
+                        <thead><tr><th>@localizer["LegalName"]</th><th>@localizer["Fein"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var row in Model.Affiliates)
+                        {
+                            <tr><td>@row.LegalName</td><td>@ProtectedDataEnvelope.SafeDisplay(row.Fein)</td><td class="text-right">
+                                @if (Model.CanManage)
+                                {
+                                    <a asp-action="Employer" asp-route-affiliate="@row.WorkforceAffiliatedEntityId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                    <form method="post" asp-action="DeleteAffiliate" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceAffiliatedEntityId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                }
+                            </td></tr>
+                        }
+                        @if (Model.Affiliates.Count == 0)
+                        {
+                            <tr><td colspan="3" class="text-muted">@localizer["None"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                    @if (Model.CanManage)
+                    {
+                        <form method="post" asp-action="SaveAffiliate">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="WorkforceAffiliatedEntityId" value="@a.WorkforceAffiliatedEntityId" />
+                            <div class="form-group"><label>@localizer["LegalName"] *</label><input type="text" name="LegalName" class="form-control" required value="@a.LegalName" /></div>
+                            <div class="form-group"><label>@localizer["Fein"]</label><input type="text" name="Fein" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(a.Fein)" /></div>
+                            <div class="form-group"><label>@localizer["Sein"]</label><input type="text" name="Sein" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(a.Sein)" /></div>
+                            <div class="form-group"><label>@localizer["SosNumber"]</label><input type="text" name="SosNumber" class="form-control" value="@ProtectedDataEnvelope.SafeDisplay(a.SosNumber)" /></div>
+                            <div class="form-group"><label>@localizer["HeadquartersAddress"]</label><textarea name="HeadquartersAddress" class="form-control" rows="2">@ProtectedDataEnvelope.SafeDisplay(a.HeadquartersAddress)</textarea></div>
+                            <button type="submit" class="btn btn-sm btn-primary">@(string.IsNullOrWhiteSpace(a.WorkforceAffiliatedEntityId) ? localizer["AddAffiliate"] : localizer["Save"])</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

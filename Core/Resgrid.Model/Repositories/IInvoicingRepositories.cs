@@ -51,6 +51,8 @@ namespace Resgrid.Model.Repositories
 	{
 		public IEnumerable<int> Statuses { get; set; }
 		public string ContactId { get; set; }
+		/// <summary>Invoices generated under one service contract (Phase C contractor billing).</summary>
+		public string ServiceContractId { get; set; }
 		public DateTime? IssuedFromUtc { get; set; }
 		public DateTime? IssuedToUtc { get; set; }
 		public int Skip { get; set; }

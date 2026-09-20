@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="ActionQueue" xml:space="preserve"><value>Ουρά ενεργειών συμβάντος</value></data>
+  <data name="Active" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="ActualAmount" xml:space="preserve"><value>Πραγματικό ποσό</value></data>
+  <data name="ActualHours" xml:space="preserve"><value>Πραγματικές ώρες (DTR)</value></data>
+  <data name="AddAgreement" xml:space="preserve"><value>Προσθήκη συμφωνίας</value></data>
+  <data name="AddInput" xml:space="preserve"><value>Προσθήκη εισόδου</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Προσθήκη γραμμής</value></data>
+  <data name="AddResource" xml:space="preserve"><value>Προσθήκη πόρου</value></data>
+  <data name="AddRotation" xml:space="preserve"><value>Προσθήκη εναλλαγής</value></data>
+  <data name="Address" xml:space="preserve"><value>Διεύθυνση</value></data>
+  <data name="AdminBlocker_double_count_unresolved" xml:space="preserve"><value>Πιθανές διπλές καταμετρήσεις εκκρεμούν ακόμη για έλεγχο.</value></data>
+  <data name="AdminBlocker_inputs_pending_review" xml:space="preserve"><value>Ορισμένες είσοδοι εκκρεμούν ακόμη για έλεγχο.</value></data>
+  <data name="AdminBlocker_no_direct_base" xml:space="preserve"><value>Καμία επιτρεπτή βάση άμεσου κόστους· το ποσοστό δεν υπολογίζεται.</value></data>
+  <data name="AdminBlocker_no_inputs" xml:space="preserve"><value>Δεν υπάρχουν είσοδοι πραγματικού κόστους· η επιλογή de minimis είναι η μόνη.</value></data>
+  <data name="AdminMethod" xml:space="preserve"><value>Διοικητική μέθοδος</value></data>
+  <data name="AdminMethodCalculated" xml:space="preserve"><value>Υπολογισμένο από πραγματικά</value></data>
+  <data name="AdminMethodDeMinimis" xml:space="preserve"><value>De minimis</value></data>
+  <data name="AdminMethodNone" xml:space="preserve"><value>Καμία</value></data>
+  <data name="AdministrativeInputs" xml:space="preserve"><value>Είσοδοι διοικητικού ποσοστού</value></data>
+  <data name="AdministrativeInputsHelp" xml:space="preserve"><value>Πραγματικά κόστη προηγούμενου έτους ανά λειτουργία και κατηγορία, ταξινομημένα άμεσα / έμμεσα / μη επιτρεπτά. Οι προϋπολογισμοί δεν μπαίνουν ποτέ εδώ.</value></data>
+  <data name="AdministrativeRate" xml:space="preserve"><value>Διοικητικό ποσοστό</value></data>
+  <data name="AdministrativeWorksheet" xml:space="preserve"><value>Φύλλο διοικητικού ποσοστού</value></data>
+  <data name="AdministrativeWorksheetHelp" xml:space="preserve"><value>Επιτρεπτό έμμεσο ÷ επιτρεπτό άμεσο από τις αποδεκτές εισόδους, σε σύγκριση με την επιλογή de minimis. Οι άλυτες διπλές καταμετρήσεις μπλοκάρουν το αποτέλεσμα.</value></data>
+  <data name="Age" xml:space="preserve"><value>Ηλικία</value></data>
+  <data name="Agency" xml:space="preserve"><value>Υπηρεσία</value></data>
+  <data name="AgencyCategory" xml:space="preserve"><value>Κατηγορία υπηρεσίας</value></data>
+  <data name="AgencyIntro" xml:space="preserve"><value>Η εγγραφή υπηρεσίας MARS: προσδιοριστικό MACS, επαφές και αναγνωριστικά που τυπώνονται σε κάθε αίτημα.</value></data>
+  <data name="AgencyName" xml:space="preserve"><value>Όνομα υπηρεσίας</value></data>
+  <data name="AgencyProfile" xml:space="preserve"><value>Προφίλ υπηρεσίας</value></data>
+  <data name="Agreement" xml:space="preserve"><value>Συμφωνία</value></data>
+  <data name="Agreements" xml:space="preserve"><value>Συμφωνίες</value></data>
+  <data name="AgreementsIntro" xml:space="preserve"><value>Εγκεκριμένες μέθοδοι αποζημίωσης MOU / MOA / GBR ανά ταξινόμηση. Ένα F-42 επιλέγει όση ίσχυε στην αρχική αποστολή.</value></data>
+  <data name="AllClassifications" xml:space="preserve"><value>Όλες οι ταξινομήσεις</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>Όλοι οι τύποι</value></data>
+  <data name="AllYears" xml:space="preserve"><value>Όλα τα έτη</value></data>
+  <data name="AllowableDirect" xml:space="preserve"><value>Επιτρεπτό άμεσο</value></data>
+  <data name="AllowableIndirect" xml:space="preserve"><value>Επιτρεπτό έμμεσο</value></data>
+  <data name="Amount" xml:space="preserve"><value>Ποσό</value></data>
+  <data name="AnnualRates" xml:space="preserve"><value>Ετήσιες τιμές</value></data>
+  <data name="AnnualSubmissions" xml:space="preserve"><value>Ετήσιες υποβολές σε ισχύ</value></data>
+  <data name="ApprovalAttachment" xml:space="preserve"><value>Συνημμένο έγκρισης</value></data>
+  <data name="ApproveInvoice" xml:space="preserve"><value>Έγκριση</value></data>
+  <data name="ApproverName" xml:space="preserve"><value>Εγκρίνων</value></data>
+  <data name="AttachmentId" xml:space="preserve"><value>Αναγνωριστικό συνημμένου ανάπτυξης</value></data>
+  <data name="AttachmentIdHelp" xml:space="preserve"><value>Προαιρετικό: η υπογεγραμμένη συμφωνία που μεταφορτώθηκε ως συνημμένο ανάπτυξης.</value></data>
+  <data name="Authority" xml:space="preserve"><value>Αρχή</value></data>
+  <data name="AuthorityAgencySpecialEquipment" xml:space="preserve"><value>Ειδικός εξοπλισμός υπηρεσίας</value></data>
+  <data name="AuthorityAgencySubmitted" xml:space="preserve"><value>Υποβλήθηκε από υπηρεσία</value></data>
+  <data name="AuthorityCalOesBase" xml:space="preserve"><value>Βασική τιμή Cal OES</value></data>
+  <data name="AuthorityCalOesRateLetter" xml:space="preserve"><value>Rate Letter Cal OES</value></data>
+  <data name="AuthorityFema" xml:space="preserve"><value>Πίνακας FEMA</value></data>
+  <data name="AuthorityProfile" xml:space="preserve"><value>Προφίλ αρχής</value></data>
+  <data name="AuthorityStale" xml:space="preserve"><value>Κανένα ελεγμένο προφίλ δεν καλύπτει την ημερομηνία</value></data>
+  <data name="Back" xml:space="preserve"><value>Πίσω</value></data>
+  <data name="BaseRateAccepted" xml:space="preserve"><value>Αποδεκτή βασική τιμή Cal OES</value></data>
+  <data name="BaseRateAcceptedHelp" xml:space="preserve"><value>Η υπηρεσία δέχεται τη βασική τιμή Cal OES αντί δικών της γραμμών έρευνας.</value></data>
+  <data name="Basis" xml:space="preserve"><value>Βάση</value></data>
+  <data name="BasisDaily" xml:space="preserve"><value>Ημερήσια</value></data>
+  <data name="BasisFlat" xml:space="preserve"><value>Εφάπαξ</value></data>
+  <data name="BasisHourly" xml:space="preserve"><value>Ωριαία</value></data>
+  <data name="BasisPerMile" xml:space="preserve"><value>Ανά μίλι</value></data>
+  <data name="BasisPercent" xml:space="preserve"><value>Ποσοστό</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Αποκλεισμένο</value></data>
+  <data name="Blocker" xml:space="preserve"><value>Εμπόδιο</value></data>
+  <data name="Box" xml:space="preserve"><value>Πεδίο</value></data>
+  <data name="BoxAgency" xml:space="preserve"><value>Υπηρεσία ανταπόκρισης</value></data>
+  <data name="BoxApparatus" xml:space="preserve"><value>Οχήματα, υποστήριξη και εξοπλισμός</value></data>
+  <data name="BoxAttachments" xml:space="preserve"><value>Συνημμένα</value></data>
+  <data name="BoxComments" xml:space="preserve"><value>Σχόλια, απώλεια / ζημιά, αριθμοί εφοδίων</value></data>
+  <data name="BoxDispatch" xml:space="preserve"><value>Αποστολή / δέσμευση</value></data>
+  <data name="BoxIncident" xml:space="preserve"><value>Συμβάν</value></data>
+  <data name="BoxOrder" xml:space="preserve"><value>Αριθμός παραγγελίας συμβάντος</value></data>
+  <data name="BoxPersonnel" xml:space="preserve"><value>Προσωπικό</value></data>
+  <data name="BoxRequest" xml:space="preserve"><value>Αριθμός αιτήματος</value></data>
+  <data name="BoxResource" xml:space="preserve"><value>Πόρος</value></data>
+  <data name="BoxReturn" xml:space="preserve"><value>Επιστροφή / επαναποστολή</value></data>
+  <data name="BoxRotation" xml:space="preserve"><value>Εναλλαγές πληρώματος</value></data>
+  <data name="BoxSignatures" xml:space="preserve"><value>Υπογραφές και εξουσιοδότηση</value></data>
+  <data name="BuildAdministrativeRate" xml:space="preserve"><value>Υπολογισμός διοικητικού ποσοστού</value></data>
+  <data name="CalOesMars" xml:space="preserve"><value>Cal OES MARS</value></data>
+  <data name="Calculate" xml:space="preserve"><value>Υπολογισμός</value></data>
+  <data name="CalculatedPercent" xml:space="preserve"><value>Υπολογισμένο ποσοστό</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="Category" xml:space="preserve"><value>Κατηγορία</value></data>
+  <data name="CategoryCode" xml:space="preserve"><value>Κατηγορία</value></data>
+  <data name="CategoryLodging" xml:space="preserve"><value>Διαμονή</value></data>
+  <data name="CategoryMeal" xml:space="preserve"><value>Γεύμα</value></data>
+  <data name="CategoryMiscellaneous" xml:space="preserve"><value>Διάφορα</value></data>
+  <data name="CategoryRental" xml:space="preserve"><value>Ενοικίαση</value></data>
+  <data name="CheckDate" xml:space="preserve"><value>Έλεγχος ημερομηνίας</value></data>
+  <data name="Checklist" xml:space="preserve"><value>Λίστα ελέγχου</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Άθροισμα ελέγχου</value></data>
+  <data name="City" xml:space="preserve"><value>Πόλη</value></data>
+  <data name="Classification" xml:space="preserve"><value>Ταξινόμηση</value></data>
+  <data name="ClassificationTitle" xml:space="preserve"><value>Τίτλος ταξινόμησης</value></data>
+  <data name="CloseItem" xml:space="preserve"><value>Κλείσιμο</value></data>
+  <data name="Comment" xml:space="preserve"><value>Σχόλιο</value></data>
+  <data name="Comments" xml:space="preserve"><value>Σχόλια</value></data>
+  <data name="Committed" xml:space="preserve"><value>Δεσμευμένο</value></data>
+  <data name="CommittedHours" xml:space="preserve"><value>Δεσμευμένες ώρες</value></data>
+  <data name="CompensationMethod" xml:space="preserve"><value>Μέθοδος αποζημίωσης</value></data>
+  <data name="CompensationMethodActualHours" xml:space="preserve"><value>Πραγματικές ώρες</value></data>
+  <data name="CompensationMethodPortalToPortal" xml:space="preserve"><value>Portal-to-portal</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Διαγραφή αυτής της εγγραφής;</value></data>
+  <data name="ContactEmail" xml:space="preserve"><value>E-mail επαφής</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Όνομα επαφής</value></data>
+  <data name="ContactPhone" xml:space="preserve"><value>Τηλέφωνο επαφής</value></data>
+  <data name="Copy" xml:space="preserve"><value>Αντιγραφή</value></data>
+  <data name="CorrectionComment" xml:space="preserve"><value>Σχόλιο ελεγκτή</value></data>
+  <data name="CostClassDirect" xml:space="preserve"><value>Άμεσο</value></data>
+  <data name="CostClassIndirect" xml:space="preserve"><value>Έμμεσο</value></data>
+  <data name="CostClassUnallowable" xml:space="preserve"><value>Μη επιτρεπτό</value></data>
+  <data name="Counts" xml:space="preserve"><value>Με μια ματιά</value></data>
+  <data name="CoveredItems" xml:space="preserve"><value>Καλυπτόμενες εγγραφές</value></data>
+  <data name="CoveredItemsHelp" xml:space="preserve"><value>Υποβληθείσες εγγραφές F-42 / δαπανών που πληρώνει το τιμολόγιο· τα αναμενόμενα σύνολά τους συγκρίνονται με το τιμολογημένο ποσό.</value></data>
+  <data name="Date" xml:space="preserve"><value>Ημερομηνία</value></data>
+  <data name="DeMinimisPercent" xml:space="preserve"><value>Επιλογή de minimis</value></data>
+  <data name="DecisionTitle" xml:space="preserve"><value>Απόφαση από (όνομα / τίτλος)</value></data>
+  <data name="Delete" xml:space="preserve"><value>Διαγραφή</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Ανάπτυξη</value></data>
+  <data name="Description" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="Designator" xml:space="preserve"><value>Προσδιοριστικό</value></data>
+  <data name="Detail" xml:space="preserve"><value>Λεπτομέρεια</value></data>
+  <data name="DocumentKind" xml:space="preserve"><value>Είδος εγγράφου</value></data>
+  <data name="DocumentKindEquivalent" xml:space="preserve"><value>Ισοδύναμο</value></data>
+  <data name="DocumentKindGbr" xml:space="preserve"><value>GBR</value></data>
+  <data name="DocumentKindMoa" xml:space="preserve"><value>MOA</value></data>
+  <data name="DocumentKindMou" xml:space="preserve"><value>MOU</value></data>
+  <data name="DocumentationOnly" xml:space="preserve"><value>Μόνο τεκμηρίωση</value></data>
+  <data name="DocumentationOnlyHelp" xml:space="preserve"><value>Η εγγραφή τεκμηριώνει την ανταπόκριση χωρίς αίτημα αποζημίωσης (διαδρομή Documentation Only του MARS).</value></data>
+  <data name="DoubleCountMarker" xml:space="preserve"><value>Πιθανή διπλή καταμέτρηση</value></data>
+  <data name="DraftFromUnits" xml:space="preserve"><value>Πρόχειρο από μονάδες</value></data>
+  <data name="DraftFromUnitsHelp" xml:space="preserve"><value>Επιλέξτε μονάδες και δημιουργήστε γραμμές για όσες δεν έχουν.</value></data>
+  <data name="EditAgency" xml:space="preserve"><value>Επεξεργασία υπηρεσίας</value></data>
+  <data name="EditAgreement" xml:space="preserve"><value>Επεξεργασία συμφωνίας</value></data>
+  <data name="EditResource" xml:space="preserve"><value>Επεξεργασία πόρου</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Ισχύει από</value></data>
+  <data name="EligibilityEligible" xml:space="preserve"><value>Επιλέξιμο</value></data>
+  <data name="EligibilityExcluded" xml:space="preserve"><value>Εξαιρείται</value></data>
+  <data name="EligibilityUncertain" xml:space="preserve"><value>Αβέβαιο</value></data>
+  <data name="EndOn" xml:space="preserve"><value>Λήξη</value></data>
+  <data name="EvidencePacket" xml:space="preserve"><value>Πακέτο τεκμηρίων</value></data>
+  <data name="ExcludedIncidentDirect" xml:space="preserve"><value>Εξαιρέθηκε (χρεώθηκε σε συμβάντα)</value></data>
+  <data name="ExcludedUnallowable" xml:space="preserve"><value>Εξαιρέθηκε (μη επιτρεπτό)</value></data>
+  <data name="Expected" xml:space="preserve"><value>Αναμενόμενο</value></data>
+  <data name="ExpectedReimbursement" xml:space="preserve"><value>Αναμενόμενη αποζημίωση</value></data>
+  <data name="ExpectedReimbursementHelp" xml:space="preserve"><value>Εκτίμηση από τις τιμές και τη συμφωνία σε ισχύ στην αρχική αποστολή. Το Cal OES ορίζει το επιτρεπόμενο ποσό· κανένα εσωτερικό κόστος δεν μπαίνει στις γραμμές.</value></data>
+  <data name="ExpectedTotal" xml:space="preserve"><value>Αναμενόμενο σύνολο</value></data>
+  <data name="ExpectedVsObserved" xml:space="preserve"><value>Αναμενόμενο έναντι παρατηρούμενου</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Λήγει στις</value></data>
+  <data name="ExternalResourceName" xml:space="preserve"><value>Όνομα εξωτερικού πόρου</value></data>
+  <data name="F42Box_agency" xml:space="preserve"><value>Υπηρεσία</value></data>
+  <data name="F42Box_apparatus" xml:space="preserve"><value>Οχήματα</value></data>
+  <data name="F42Box_attachments" xml:space="preserve"><value>Συνημμένα</value></data>
+  <data name="F42Box_comments" xml:space="preserve"><value>Σχόλια</value></data>
+  <data name="F42Box_dispatch" xml:space="preserve"><value>Αποστολή</value></data>
+  <data name="F42Box_incident" xml:space="preserve"><value>Συμβάν</value></data>
+  <data name="F42Box_incident-signature" xml:space="preserve"><value>Εξουσιοδότηση συμβάντος</value></data>
+  <data name="F42Box_lines" xml:space="preserve"><value>Γραμμές δαπανών</value></data>
+  <data name="F42Box_order" xml:space="preserve"><value>Παραγγελία</value></data>
+  <data name="F42Box_personnel" xml:space="preserve"><value>Προσωπικό</value></data>
+  <data name="F42Box_request" xml:space="preserve"><value>Αίτημα</value></data>
+  <data name="F42Box_resource" xml:space="preserve"><value>Πόρος</value></data>
+  <data name="F42Box_responding-signature" xml:space="preserve"><value>Υπογραφή υπηρεσίας</value></data>
+  <data name="F42Box_return" xml:space="preserve"><value>Επιστροφή</value></data>
+  <data name="F42Box_rotation" xml:space="preserve"><value>Εναλλαγή</value></data>
+  <data name="F42Box_signature" xml:space="preserve"><value>Υπογραφή</value></data>
+  <data name="Fein" xml:space="preserve"><value>FEIN</value></data>
+  <data name="FillId" xml:space="preserve"><value>Αίτημα / fill</value></data>
+  <data name="FillIdHelp" xml:space="preserve"><value>Αναγνωριστικό fill εξωτερικής παραγγελίας RMS (απαιτείται όταν η παραγγελία έχει πάνω από ένα αίτημα)</value></data>
+  <data name="FiscalSupplier" xml:space="preserve"><value>Προμηθευτής FI$Cal</value></data>
+  <data name="Fix" xml:space="preserve"><value>Διόρθωση</value></data>
+  <data name="FunctionCode" xml:space="preserve"><value>Λειτουργία</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>Δημιουργήθηκε</value></data>
+  <data name="HandoffAttestation" xml:space="preserve"><value>Είμαι το εξουσιοδοτημένο άτομο που καταχωρεί την εγγραφή στο MARS και θα αντιγράψω τις εμφανιζόμενες τιμές, όχι το αρχείο της σελίδας.</value></data>
+  <data name="HandoffIntro" xml:space="preserve"><value>Προβολή αντιγραφής για χειροκίνητη καταχώρηση στην πύλη MARS. Δεν αποθηκεύεται, δεν αποθηκεύεται προσωρινά και δεν είναι υποβολή.</value></data>
+  <data name="HandoffNeedsReady" xml:space="preserve"><value>Εκτελέστε τη λίστα ελέγχου μέχρι να είναι καθαρή· η παράδοση ανοίγει από το Έτοιμο για πύλη.</value></data>
+  <data name="HandoffWarning" xml:space="preserve"><value>Προετοιμασμένο για MARS. Το άνοιγμα καταγράφει εγγραφή ελέγχου και δεν αλλάζει τίποτα· η εγγραφή γίνεται Παρατηρήθηκε στο MARS μόνο όταν διαχειριστής καταγράψει τι δείχνει η πύλη.</value></data>
+  <data name="HandoffWithErrors" xml:space="preserve"><value>Η λίστα ελέγχου έχει ακόμη σφάλματα· το MARS μπορεί να επιστρέψει την εγγραφή.</value></data>
+  <data name="HelpAgency" xml:space="preserve"><value>Οι τιμές αντιγράφονται σε F-42 και αιτήματα και αποθηκεύονται ως δεδομένα (εκτός Advanced Data Protection). Η αλλαγή αναγνωριστικού μηδενίζει την τελευταία επαλήθευση.</value></data>
+  <data name="HelpAgreements" xml:space="preserve"><value>Αφήστε την ταξινόμηση κενή για συμφωνία σε επίπεδο τμήματος. Συμφωνία που αναφέρεται από υποβληθείσα εγγραφή είναι αμετάβλητη· η επεξεργασία δημιουργεί νέα έκδοση.</value></data>
+  <data name="HelpQueue" xml:space="preserve"><value>Τα μέλη πεδίου βλέπουν τα δικά τους πρόχειρα· οι διαχειριστές MARS την ουρά του τμήματος. Το άνοιγμα παράδοσης ή η λήψη πακέτου δεν σημαίνει ποτέ υποβολή.</value></data>
+  <data name="HelpRates" xml:space="preserve"><value>Οι τιμές είναι δεδομένα δεσμευμένα σε ελεγμένο προφίλ αρχής· ένα νέο Rate Letter ή έρευνα είναι νέο στιγμιότυπο, και μια προηγούμενη αποστολή κρατά όσο ίσχυε στην έναρξή της.</value></data>
+  <data name="HelpReadiness" xml:space="preserve"><value>Τα εμπόδια αποτρέπουν τα νέα F-42 από το να φτάσουν σε Έτοιμο για πύλη· οι προειδοποιήσεις αξίζει να διορθωθούν πριν την επόμενη αποστολή.</value></data>
+  <data name="HelpReconciliation" xml:space="preserve"><value>Το τιμολόγιο MARS είναι στοιχείο εργασίας, ποτέ τιμολόγιο πελάτη Φάσης Β: χωρίς αριθμό, χωρίς παλαίωση, χωρίς e-mail. Το Πληρώθηκε είναι πάντα μόνο παρατηρούμενο γεγονός πληρωμής.</value></data>
+  <data name="HelpResources" xml:space="preserve"><value>Οι πρόχειρες γραμμές αντιγράφουν όνομα, πινακίδα και VIN της μονάδας εκείνη τη στιγμή· ελέγξτε τις, προσθέστε τύπο πόρου MARS και καταγράψτε τι δείχνει το MARS.</value></data>
+  <data name="Hours" xml:space="preserve"><value>Ώρες</value></data>
+  <data name="Identifiers" xml:space="preserve"><value>Αναγνωριστικά</value></data>
+  <data name="IncidentAuthorizer" xml:space="preserve"><value>Εξουσιοδοτών συμβάντος / AREP</value></data>
+  <data name="IncidentDirectExclusion" xml:space="preserve"><value>Χρεώθηκε απευθείας σε συμβάν (εξαιρείται)</value></data>
+  <data name="IncludesUnemploymentInsurance" xml:space="preserve"><value>Περιλαμβάνει ασφάλιση ανεργίας</value></data>
+  <data name="IncludesWorkersComp" xml:space="preserve"><value>Περιλαμβάνει ασφάλιση εργατικών ατυχημάτων</value></data>
+  <data name="Incoming" xml:space="preserve"><value>Εισερχόμενος</value></data>
+  <data name="InvoiceDate" xml:space="preserve"><value>Ημερομηνία τιμολογίου</value></data>
+  <data name="InvoiceIntro" xml:space="preserve"><value>Αναμενόμενο έναντι παρατηρούμενου, η τοπική απόφαση και τα γεγονότα πληρωμής για ένα τιμολόγιο MARS.</value></data>
+  <data name="Invoiced" xml:space="preserve"><value>Τιμολογήθηκε</value></data>
+  <data name="InvoicesAwaiting" xml:space="preserve"><value>Τιμολόγια σε αναμονή τοπικής έγκρισης</value></data>
+  <data name="Item" xml:space="preserve"><value>Στοιχείο</value></data>
+  <data name="Kind" xml:space="preserve"><value>Είδος</value></data>
+  <data name="KindApparatus" xml:space="preserve"><value>Όχημα</value></data>
+  <data name="KindEquipment" xml:space="preserve"><value>Ειδικός εξοπλισμός</value></data>
+  <data name="KindPOV" xml:space="preserve"><value>Ιδιωτικό όχημα</value></data>
+  <data name="KindSupport" xml:space="preserve"><value>Όχημα υποστήριξης</value></data>
+  <data name="LicensePlate" xml:space="preserve"><value>Πινακίδα</value></data>
+  <data name="LineKind" xml:space="preserve"><value>Είδος γραμμής</value></data>
+  <data name="LineKindAdministrative" xml:space="preserve"><value>Διοικητικό</value></data>
+  <data name="LineKindAdministrativeRate" xml:space="preserve"><value>Διοικητικό ποσοστό</value></data>
+  <data name="LineKindApparatus" xml:space="preserve"><value>Όχημα</value></data>
+  <data name="LineKindAttachmentANonSuppression" xml:space="preserve"><value>Παράρτημα Α (μη κατάσβεση)</value></data>
+  <data name="LineKindExpense" xml:space="preserve"><value>Δαπάνη</value></data>
+  <data name="LineKindMealLodgingIncidentals" xml:space="preserve"><value>Γεύματα, διαμονή, έξοδα</value></data>
+  <data name="LineKindOfficialApparatus" xml:space="preserve"><value>Επίσημο όχημα</value></data>
+  <data name="LineKindOfficialSupportVehicle" xml:space="preserve"><value>Επίσημο όχημα υποστήριξης</value></data>
+  <data name="LineKindPersonnel" xml:space="preserve"><value>Προσωπικό</value></data>
+  <data name="LineKindPovMileage" xml:space="preserve"><value>Χιλιόμετρα POV</value></data>
+  <data name="LineKindPrivatelyOwnedVehicle" xml:space="preserve"><value>Χιλιόμετρα POV</value></data>
+  <data name="LineKindRental" xml:space="preserve"><value>Ενοικίαση</value></data>
+  <data name="LineKindSalarySurvey" xml:space="preserve"><value>Έρευνα μισθών</value></data>
+  <data name="LineKindSpecialEquipment" xml:space="preserve"><value>Ειδικός εξοπλισμός</value></data>
+  <data name="LineKindSupportVehicle" xml:space="preserve"><value>Όχημα υποστήριξης</value></data>
+  <data name="LinkedF42" xml:space="preserve"><value>Συνδεδεμένο F-42</value></data>
+  <data name="LocalDecision" xml:space="preserve"><value>Απόφαση τοπικής υπηρεσίας</value></data>
+  <data name="LocalDecisionHelp" xml:space="preserve"><value>Εγκρίνετε ή απορρίψτε το τιμολόγιο ως εξουσιοδοτημένος εκπρόσωπος· η απόρριψη απαιτεί σχόλιο. Η απόφαση καταγράφεται εδώ και καταχωρείται στο MARS από εσάς.</value></data>
+  <data name="LossDamage" xml:space="preserve"><value>Απώλεια / ζημιά</value></data>
+  <data name="MacsDesignator" xml:space="preserve"><value>Προσδιοριστικό MACS</value></data>
+  <data name="ManageMutualAidReimbursement" xml:space="preserve"><value>Διαχείριση αποζημίωσης Cal OES MARS</value></data>
+  <data name="ManageMutualAidReimbursementNote" xml:space="preserve"><value>Εγγραφές υπηρεσίας, πόρων F-5, ετήσιων τιμών και συμφωνιών, παράδοση στην πύλη, παρατηρούμενες καταστάσεις MARS και έγκριση τιμολογίων/συμφωνία πληρωμών. Τα μέλη της σύνθεσης ετοιμάζουν τα δικά τους πρόχειρα F-42 και δαπανών χωρίς αυτό.</value></data>
+  <data name="MarkVerified" xml:space="preserve"><value>Σήμανση ως επαληθευμένο σήμερα</value></data>
+  <data name="MarsInvoice" xml:space="preserve"><value>Τιμολόγιο MARS</value></data>
+  <data name="MarsInvoiceId" xml:space="preserve"><value>Αναγνωριστικό τιμολογίου MARS</value></data>
+  <data name="MarsInvoiceNotPhaseB" xml:space="preserve"><value>Αυτό είναι στοιχείο εργασίας MARS. Δεν έχει αριθμό τιμολογίου Φάσης Β, δεν εμφανίζεται ποτέ στην παλαίωση πελατών και δεν στέλνεται με e-mail ούτε πληρώνεται online.</value></data>
+  <data name="MarsInvoices" xml:space="preserve"><value>Τιμολόγια MARS</value></data>
+  <data name="MarsRecordId" xml:space="preserve"><value>Αναγνωριστικό εγγραφής MARS</value></data>
+  <data name="MarsResourceId" xml:space="preserve"><value>Αναγνωριστικό πόρου MARS</value></data>
+  <data name="MethodChosen" xml:space="preserve"><value>Επιλεγμένη μέθοδος</value></data>
+  <data name="Miles" xml:space="preserve"><value>Μίλια</value></data>
+  <data name="Mine" xml:space="preserve"><value>Στη σύνθεση αυτής της ανάπτυξης</value></data>
+  <data name="Mismatches" xml:space="preserve"><value>αναντιστοιχίες</value></data>
+  <data name="Name" xml:space="preserve"><value>Όνομα</value></data>
+  <data name="NewSubmission" xml:space="preserve"><value>Νέα υποβολή</value></data>
+  <data name="No" xml:space="preserve"><value>Όχι</value></data>
+  <data name="NoAgencyProfile" xml:space="preserve"><value>Δεν υπάρχει ακόμη προφίλ υπηρεσίας.</value></data>
+  <data name="NoAgreements" xml:space="preserve"><value>Δεν υπάρχουν ακόμη συμφωνίες.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>Χωρίς συνημμένα ανάπτυξης.</value></data>
+  <data name="NoCostRecoveryDeployments" xml:space="preserve"><value>Δεν υπάρχουν αναπτύξεις ανάκτησης κόστους για προετοιμασία.</value></data>
+  <data name="NoCredentialsStored" xml:space="preserve"><value>Το Resgrid δεν αποθηκεύει διαπιστευτήρια MARS, διακριτικά MFA ή συνεδρίες προγράμματος περιήγησης και δεν γράφει ποτέ στην πύλη.</value></data>
+  <data name="NoCurrentRateProfiles" xml:space="preserve"><value>Καμία ετήσια υποβολή δεν καλύπτει την ημερομηνία.</value></data>
+  <data name="NoDeployment" xml:space="preserve"><value>Χωρίς ανάπτυξη</value></data>
+  <data name="NoMarsInvoices" xml:space="preserve"><value>Δεν έχουν καταγραφεί τιμολόγια MARS.</value></data>
+  <data name="NoQueueItems" xml:space="preserve"><value>Τίποτα στην ουρά.</value></data>
+  <data name="NoRateProfiles" xml:space="preserve"><value>Δεν υπάρχουν ακόμη ετήσιες υποβολές.</value></data>
+  <data name="NoReadinessIssues" xml:space="preserve"><value>Όλα όσα χρειάζονται για υποβολή MARS είναι έτοιμα.</value></data>
+  <data name="NoResources" xml:space="preserve"><value>Δεν υπάρχουν ακόμη γραμμές πόρων F-5.</value></data>
+  <data name="NotAnImportFile" xml:space="preserve"><value>Το πακέτο τεκμηρίων δεν είναι αποδεκτό αρχείο εισαγωγής MARS.</value></data>
+  <data name="NotCalculated" xml:space="preserve"><value>Δεν έχει υπολογιστεί ακόμη.</value></data>
+  <data name="NotCurrent" xml:space="preserve"><value>Μη τρέχον</value></data>
+  <data name="NotInInventory" xml:space="preserve"><value>Εκτός απογραφής F-5</value></data>
+  <data name="NotValidated" xml:space="preserve"><value>Δεν έχει επικυρωθεί ακόμη.</value></data>
+  <data name="ObserveInMars" xml:space="preserve"><value>Παρατηρήθηκε στο MARS</value></data>
+  <data name="ObservedOn" xml:space="preserve"><value>Παρατηρήθηκε στις</value></data>
+  <data name="ObservedStatus" xml:space="preserve"><value>Παρατηρούμενη κατάσταση</value></data>
+  <data name="ObservedSubmission" xml:space="preserve"><value>Παρατηρούμενη υποβολή</value></data>
+  <data name="Odometer" xml:space="preserve"><value>Οδόμετρο</value></data>
+  <data name="OfficialSources" xml:space="preserve"><value>Επίσημες πηγές</value></data>
+  <data name="Open" xml:space="preserve"><value>Άνοιγμα</value></data>
+  <data name="OpenDeployment" xml:space="preserve"><value>Άνοιγμα ανάπτυξης</value></data>
+  <data name="OpenHandoff" xml:space="preserve"><value>Άνοιγμα προβολής παράδοσης</value></data>
+  <data name="OpenPortal" xml:space="preserve"><value>Άνοιγμα πύλης MARS</value></data>
+  <data name="OpenWorkItems" xml:space="preserve"><value>Ανοιχτά στοιχεία</value></data>
+  <data name="Outgoing" xml:space="preserve"><value>Εξερχόμενος</value></data>
+  <data name="OverheadPosition" xml:space="preserve"><value>Θέση overhead</value></data>
+  <data name="OvertimeEligible" xml:space="preserve"><value>Επιλέξιμο για υπερωρίες</value></data>
+  <data name="OvertimeMethod" xml:space="preserve"><value>Μέθοδος υπερωριών</value></data>
+  <data name="OvertimeMethodAfterEightHoursPerDay" xml:space="preserve"><value>Μετά από 8 ώρες ημερησίως</value></data>
+  <data name="OvertimeMethodAfterTwelveHoursPerDay" xml:space="preserve"><value>Μετά από 12 ώρες ημερησίως</value></data>
+  <data name="OvertimeMethodNone" xml:space="preserve"><value>Καμία</value></data>
+  <data name="OvertimeMethodPerAgreement" xml:space="preserve"><value>Κατά συμφωνία (χωρίς μοντέλο)</value></data>
+  <data name="OvertimeRate" xml:space="preserve"><value>Υπερωριακή τιμή</value></data>
+  <data name="Ownership" xml:space="preserve"><value>Ιδιοκτησία</value></data>
+  <data name="OwnershipCalFire" xml:space="preserve"><value>CAL FIRE</value></data>
+  <data name="OwnershipCalOes" xml:space="preserve"><value>Cal OES</value></data>
+  <data name="OwnershipLocalAgency" xml:space="preserve"><value>Τοπική υπηρεσία</value></data>
+  <data name="OwnershipOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="OwnershipPrivate" xml:space="preserve"><value>Ιδιωτική</value></data>
+  <data name="OwnershipRental" xml:space="preserve"><value>Ενοικίαση</value></data>
+  <data name="Paid" xml:space="preserve"><value>Πληρώθηκε</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Πληρώθηκε στις</value></data>
+  <data name="PayingEntity" xml:space="preserve"><value>Φορέας πληρωμής</value></data>
+  <data name="PayingEntityStatus" xml:space="preserve"><value>Κατάσταση φορέα πληρωμής</value></data>
+  <data name="PaymentReference" xml:space="preserve"><value>Αναφορά πληρωμής</value></data>
+  <data name="PortalHandoff" xml:space="preserve"><value>Παράδοση στην πύλη</value></data>
+  <data name="PortalReference" xml:space="preserve"><value>Αναφορά λογαριασμού πύλης</value></data>
+  <data name="PortalReferenceHelp" xml:space="preserve"><value>Ετικέτα για τον λογαριασμό MARS (ποτέ κωδικός ή διακριτικό).</value></data>
+  <data name="PortalRole" xml:space="preserve"><value>Ρόλος πύλης</value></data>
+  <data name="PortalToPortalEligible" xml:space="preserve"><value>Επιλέξιμο portal-to-portal</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Προεγκεκριμένο</value></data>
+  <data name="PrepareExpenseClaim" xml:space="preserve"><value>Προετοιμασία αιτήματος δαπανών</value></data>
+  <data name="PrepareF42" xml:space="preserve"><value>Προετοιμασία F-42</value></data>
+  <data name="PrepareRecord" xml:space="preserve"><value>Προετοιμασία εγγραφής</value></data>
+  <data name="PrepareRecordHelp" xml:space="preserve"><value>Ένα F-42 ανά παραγγελθέντα πόρο / αίτημα· μια επαναποστολή αντικαθιστά το προηγούμενο. Τα αιτήματα δαπανών συνδέονται με F-42 ή ακολουθούν τη διαδρομή μόνο ταξιδιού.</value></data>
+  <data name="PreparedNotSubmitted" xml:space="preserve"><value>Προετοιμασμένο για MARS — τίποτα δεν υποβάλλεται μέχρι ένας διαχειριστής να καταγράψει ό,τι παρατηρήθηκε στην πύλη.</value></data>
+  <data name="Printable" xml:space="preserve"><value>Εκτυπώσιμο</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Προέλευση</value></data>
+  <data name="QueueIntro" xml:space="preserve"><value>F-42 και αιτήματα δαπανών για προετοιμασία, επικύρωση και παράδοση, ομαδοποιημένα ανά ανάπτυξη· δίπλα οι παρατηρούμενες καταστάσεις MARS και τα τιμολόγια.</value></data>
+  <data name="Rank" xml:space="preserve"><value>Βαθμός</value></data>
+  <data name="RateEditIntro" xml:space="preserve"><value>Επικεφαλίδα, γραμμές και (για το διοικητικό ποσοστό) το φύλλο πραγματικού κόστους προηγούμενου έτους.</value></data>
+  <data name="RateLines" xml:space="preserve"><value>Γραμμές τιμών</value></data>
+  <data name="RateLinesHelp" xml:space="preserve"><value>Οι μισθολογικές γραμμές χρειάζονται ταξινόμηση· οι γραμμές εξοπλισμού κωδικό πόρου ή FEMA. Οι τιμές είναι κανονικές / υπερωριακές ανά βάση.</value></data>
+  <data name="RateLocked" xml:space="preserve"><value>Η υποβολή είναι υπογεγραμμένη ή υποβληθείσα· οι αλλαγές απαιτούν νέα έκδοση.</value></data>
+  <data name="RateProfileVersion" xml:space="preserve"><value>Έκδοση προφίλ τιμών</value></data>
+  <data name="RateStatusAccepted" xml:space="preserve"><value>Αποδεκτό</value></data>
+  <data name="RateStatusDraft" xml:space="preserve"><value>Πρόχειρο</value></data>
+  <data name="RateStatusReviewed" xml:space="preserve"><value>Ελεγμένο</value></data>
+  <data name="RateStatusSignedLocally" xml:space="preserve"><value>Υπογεγραμμένο τοπικά</value></data>
+  <data name="RateStatusSubmittedExternal" xml:space="preserve"><value>Υποβλήθηκε στο MARS</value></data>
+  <data name="RateStatusSuperseded" xml:space="preserve"><value>Αντικαταστάθηκε</value></data>
+  <data name="RatesIntro" xml:space="preserve"><value>Salary Survey, Παράρτημα Α, διοικητικό ποσοστό, Rate Letter Cal OES και ειδικός εξοπλισμός ανά έτος υποβολής.</value></data>
+  <data name="ReadinessAdministrativeMissing" xml:space="preserve"><value>Δεν έχει καταγραφεί διοικητικό ποσοστό για την ημερομηνία· δεν θα εκτιμηθεί διοικητική γραμμή.</value></data>
+  <data name="ReadinessAgencyMissing" xml:space="preserve"><value>Το προφίλ υπηρεσίας (προσδιοριστικό MACS, επαφές, αναγνωριστικά) δεν έχει καταχωρηθεί.</value></data>
+  <data name="ReadinessAgencyUnverified" xml:space="preserve"><value>Το προφίλ υπηρεσίας δεν έχει επαληθευτεί με το MARS τον τελευταίο χρόνο.</value></data>
+  <data name="ReadinessAgreementExpiring" xml:space="preserve"><value>Μια συμφωνία λήγει εντός του περιθωρίου.</value></data>
+  <data name="ReadinessAgreementMissing" xml:space="preserve"><value>Καμία μέθοδος αποζημίωσης MOU/MOA/GBR δεν καλύπτει την ημερομηνία· το προσωπικό εκτιμάται σε πραγματικές ώρες χωρίς υπερωρίες.</value></data>
+  <data name="ReadinessAsOf" xml:space="preserve"><value>Ετοιμότητα έως</value></data>
+  <data name="ReadinessAuthorityMissing" xml:space="preserve"><value>Κανένα ελεγμένο προφίλ αρχής Cal OES δεν καλύπτει την ημερομηνία· οι νέες υποβολές μπλοκάρονται μέχρι να προστεθεί.</value></data>
+  <data name="ReadinessDashboard" xml:space="preserve"><value>Πίνακας ετοιμότητας</value></data>
+  <data name="ReadinessFeinMissing" xml:space="preserve"><value>Δεν έχει καταγραφεί FEIN για την υπηρεσία.</value></data>
+  <data name="ReadinessFiscalMissing" xml:space="preserve"><value>Δεν έχει καταγραφεί αναγνωριστικό προμηθευτή FI$Cal.</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Ετοιμότητα υπηρεσίας, πόρων F-5, ετήσιων τιμών και συμφωνιών για μια ημερομηνία αποστολής, με συνδέσμους στο επίσημο υλικό Cal OES.</value></data>
+  <data name="ReadinessInvoicesAwaiting" xml:space="preserve"><value>Τιμολόγια που δημιούργησε το MARS αναμένουν την τοπική απόφαση.</value></data>
+  <data name="ReadinessMacsMissing" xml:space="preserve"><value>Λείπει το προσδιοριστικό MACS της υπηρεσίας.</value></data>
+  <data name="ReadinessNoResources" xml:space="preserve"><value>Δεν υπάρχουν γραμμές αντιστοίχισης F-5· τα οχήματα σε F-42 θα επισημανθούν ως εκτός απογραφής.</value></data>
+  <data name="ReadinessRateExpiring" xml:space="preserve"><value>Μια ετήσια υποβολή λήγει εντός του περιθωρίου.</value></data>
+  <data name="ReadinessRateLetterMissing" xml:space="preserve"><value>Καμία γραμμή Rate Letter του Cal OES (οχήματα, υποστήριξη, χιλιόμετρα POV) δεν καλύπτει την ημερομηνία.</value></data>
+  <data name="ReadinessRateUnsigned" xml:space="preserve"><value>Μια ετήσια υποβολή σε ισχύ δεν έχει υπογραφεί τοπικά.</value></data>
+  <data name="ReadinessResourceMismatch" xml:space="preserve"><value>Γραμμές πόρων F-5 δεν ταιριάζουν με όσα δείχνει το MARS.</value></data>
+  <data name="ReadinessReturnedItems" xml:space="preserve"><value>Εγγραφές που επέστρεψε το Cal OES για έλεγχο υπηρεσίας εκκρεμούν.</value></data>
+  <data name="ReadinessSalaryMissing" xml:space="preserve"><value>Καμία ελεγμένη έρευνα μισθών (ή αποδεκτή βασική τιμή) δεν καλύπτει την ημερομηνία· οι γραμμές προσωπικού δεν εκτιμώνται.</value></data>
+  <data name="ReadinessUeiMissing" xml:space="preserve"><value>Δεν έχει καταγραφεί SAM UEI για την υπηρεσία.</value></data>
+  <data name="Ready" xml:space="preserve"><value>Έτοιμο</value></data>
+  <data name="ReadyForPortal" xml:space="preserve"><value>Έτοιμο για την πύλη.</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Απόδειξη</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>Συμφωνία τιμολογίων και πληρωμών</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>Τιμολόγια που δημιούργησε το MARS όπως παρατηρήθηκαν, η τοπική απόφαση έγκρισης / απόρριψης, η κατάσταση φορέα πληρωμής και τα γεγονότα πληρωμής έναντι των αναμενόμενων γραμμών.</value></data>
+  <data name="RecordMarsInvoice" xml:space="preserve"><value>Καταγραφή τιμολογίου MARS</value></data>
+  <data name="RecordMarsInvoiceHelp" xml:space="preserve"><value>Καταγράψτε το τιμολόγιο που δημιούργησε το Cal OES όπως το βλέπετε στην πύλη και τις υποβληθείσες εγγραφές που καλύπτει.</value></data>
+  <data name="RecordObservation" xml:space="preserve"><value>Καταγραφή παρατήρησης</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Καταγραφή πληρωμής</value></data>
+  <data name="RecordPaymentHelp" xml:space="preserve"><value>Μόνο μια παρατηρούμενη πληρωμή του φορέα πληρωμής σημειώνει το τιμολόγιο και τις εγγραφές του ως Πληρώθηκε.</value></data>
+  <data name="RecordSubmission" xml:space="preserve"><value>Καταγραφή υποβολής που παρατηρήθηκε στο MARS</value></data>
+  <data name="RecordType" xml:space="preserve"><value>Τύπος εγγραφής</value></data>
+  <data name="RecordTypeAdministrativeRate" xml:space="preserve"><value>Διοικητικό ποσοστό</value></data>
+  <data name="RecordTypeAgencyProfile" xml:space="preserve"><value>Προφίλ υπηρεσίας</value></data>
+  <data name="RecordTypeAgreement" xml:space="preserve"><value>Συμφωνία</value></data>
+  <data name="RecordTypeAttachmentA" xml:space="preserve"><value>Παράρτημα Α</value></data>
+  <data name="RecordTypeExpenseClaim" xml:space="preserve"><value>Αίτημα δαπανών</value></data>
+  <data name="RecordTypeF42" xml:space="preserve"><value>F-42</value></data>
+  <data name="RecordTypeGeneratedInvoice" xml:space="preserve"><value>Τιμολόγιο MARS</value></data>
+  <data name="RecordTypeResourceInventoryF5" xml:space="preserve"><value>Απογραφή F-5</value></data>
+  <data name="RecordTypeSalarySurvey" xml:space="preserve"><value>Έρευνα μισθών</value></data>
+  <data name="RecordTypeSpecialEquipment" xml:space="preserve"><value>Ειδικός εξοπλισμός</value></data>
+  <data name="Recorded" xml:space="preserve"><value>Καταγεγραμμένο</value></data>
+  <data name="Redispatch" xml:space="preserve"><value>Επαναποστολή του</value></data>
+  <data name="RejectInvoice" xml:space="preserve"><value>Απόρριψη</value></data>
+  <data name="RelatedItems" xml:space="preserve"><value>Σχετικές εγγραφές</value></data>
+  <data name="ReleaseIsNotReturn" xml:space="preserve"><value>Η αποδέσμευση δεν είναι επιστροφή· το F-42 χρειάζεται ώρα επιστροφής ή επαναποστολής.</value></data>
+  <data name="Released" xml:space="preserve"><value>Αποδεσμεύτηκε</value></data>
+  <data name="ReportingLocation" xml:space="preserve"><value>Τόπος αναφοράς</value></data>
+  <data name="Request" xml:space="preserve"><value>Αίτημα</value></data>
+  <data name="ResourceCode" xml:space="preserve"><value>Κωδικός πόρου</value></data>
+  <data name="ResourceInventory" xml:space="preserve"><value>Απογραφή πόρων F-5</value></data>
+  <data name="ResourceKind" xml:space="preserve"><value>Είδος πόρου</value></data>
+  <data name="ResourceProfiles" xml:space="preserve"><value>Πόροι F-5</value></data>
+  <data name="ResourceType" xml:space="preserve"><value>Τύπος πόρου</value></data>
+  <data name="ResourcesIntro" xml:space="preserve"><value>Αντιστοίχιση μονάδων και παγίων Resgrid με την ταυτότητά τους στο MARS / F-5. Προετοιμάζει και συμφωνεί την απογραφή· δεν γράφει ποτέ κατάσταση FAST.</value></data>
+  <data name="RespondingSigner" xml:space="preserve"><value>Υπογράφων υπηρεσίας</value></data>
+  <data name="ReturnedItems" xml:space="preserve"><value>Επιστράφηκαν για έλεγχο</value></data>
+  <data name="ReviewReason" xml:space="preserve"><value>Αιτία</value></data>
+  <data name="ReviewState" xml:space="preserve"><value>Κατάσταση ελέγχου</value></data>
+  <data name="ReviewStateDraft" xml:space="preserve"><value>Πρόχειρο</value></data>
+  <data name="ReviewStateMismatch" xml:space="preserve"><value>Αναντιστοιχία</value></data>
+  <data name="ReviewStateObserved" xml:space="preserve"><value>Παρατηρήθηκε στο MARS</value></data>
+  <data name="ReviewStateReviewed" xml:space="preserve"><value>Ελεγμένο</value></data>
+  <data name="ReviewStatus" xml:space="preserve"><value>Έλεγχος</value></data>
+  <data name="ReviewStatusAccepted" xml:space="preserve"><value>Αποδεκτό</value></data>
+  <data name="ReviewStatusExcluded" xml:space="preserve"><value>Εξαιρέθηκε</value></data>
+  <data name="ReviewStatusPending" xml:space="preserve"><value>Εκκρεμεί</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>ελέγχθηκε</value></data>
+  <data name="RunChecklist" xml:space="preserve"><value>Εκτέλεση λίστας ελέγχου</value></data>
+  <data name="SamReference" xml:space="preserve"><value>Εγγραφή SAM</value></data>
+  <data name="Save" xml:space="preserve"><value>Αποθήκευση</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Η αλλαγή δεν αποθηκεύτηκε.</value></data>
+  <data name="SaveInputs" xml:space="preserve"><value>Αποθήκευση εισόδων</value></data>
+  <data name="SaveLines" xml:space="preserve"><value>Αποθήκευση γραμμών</value></data>
+  <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
+  <data name="SerialNumber" xml:space="preserve"><value>Σειριακός αριθμός</value></data>
+  <data name="SetRateStatusAccepted" xml:space="preserve"><value>Παρατηρήθηκε αποδοχή</value></data>
+  <data name="SetRateStatusDraft" xml:space="preserve"><value>Πίσω σε πρόχειρο</value></data>
+  <data name="SetRateStatusReviewed" xml:space="preserve"><value>Σήμανση ως ελεγμένο</value></data>
+  <data name="SetRateStatusSignedLocally" xml:space="preserve"><value>Τοπική υπογραφή</value></data>
+  <data name="SetRateStatusSubmittedExternal" xml:space="preserve"><value>Παρατηρήθηκε υποβολή στο MARS</value></data>
+  <data name="SetRateStatusSuperseded" xml:space="preserve"><value>Αντικατάσταση</value></data>
+  <data name="Severity" xml:space="preserve"><value>Σοβαρότητα</value></data>
+  <data name="SignedByName" xml:space="preserve"><value>Υπογράφηκε από (όνομα)</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>Υπογράφηκε στις</value></data>
+  <data name="SignerName" xml:space="preserve"><value>Υπογράφων</value></data>
+  <data name="Source" xml:space="preserve"><value>Πηγή</value></data>
+  <data name="SourceArtifact" xml:space="preserve"><value>Τεκμήριο πηγής</value></data>
+  <data name="SourceDate" xml:space="preserve"><value>Ημερομηνία πηγής</value></data>
+  <data name="SourceLine" xml:space="preserve"><value>Γραμμή πηγής</value></data>
+  <data name="SourceSystem" xml:space="preserve"><value>Σύστημα πηγής</value></data>
+  <data name="SourceUrl" xml:space="preserve"><value>URL πηγής</value></data>
+  <data name="StartOn" xml:space="preserve"><value>Έναρξη</value></data>
+  <data name="State" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="StateApproved" xml:space="preserve"><value>Εγκρίθηκε</value></data>
+  <data name="StateClosed" xml:space="preserve"><value>Κλειστό</value></data>
+  <data name="StateDocumentationOnly" xml:space="preserve"><value>Μόνο τεκμηρίωση</value></data>
+  <data name="StateDraft" xml:space="preserve"><value>Πρόχειρο</value></data>
+  <data name="StateLocalAgencyRejected" xml:space="preserve"><value>Απορρίφθηκε από τοπική υπηρεσία</value></data>
+  <data name="StateNeedsReview" xml:space="preserve"><value>Χρειάζεται έλεγχο</value></data>
+  <data name="StatePaid" xml:space="preserve"><value>Πληρώθηκε</value></data>
+  <data name="StatePendingLocalAgencyApproval" xml:space="preserve"><value>Εκκρεμεί τοπική έγκριση</value></data>
+  <data name="StatePendingPayingEntityApproval" xml:space="preserve"><value>Εκκρεμεί ο φορέας πληρωμής</value></data>
+  <data name="StateReadyForPortal" xml:space="preserve"><value>Έτοιμο για πύλη</value></data>
+  <data name="StateReturnedForAgencyReview" xml:space="preserve"><value>Επιστράφηκε για έλεγχο υπηρεσίας</value></data>
+  <data name="StateSubmittedExternal" xml:space="preserve"><value>Παρατηρήθηκε στο MARS (έλεγχος Cal OES)</value></data>
+  <data name="Status" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="StraightRate" xml:space="preserve"><value>Κανονική τιμή</value></data>
+  <data name="StrikeTeam" xml:space="preserve"><value>Strike team / task force</value></data>
+  <data name="Subject" xml:space="preserve"><value>Αντικείμενο</value></data>
+  <data name="SubjectType" xml:space="preserve"><value>Τύπος αντικειμένου</value></data>
+  <data name="SubjectTypeExternal" xml:space="preserve"><value>Εξωτερικός πόρος</value></data>
+  <data name="SubjectTypeInventoryAsset" xml:space="preserve"><value>Πάγιο απογραφής</value></data>
+  <data name="SubjectTypeUnit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="Submission" xml:space="preserve"><value>Υποβολή</value></data>
+  <data name="SubmissionType" xml:space="preserve"><value>Τύπος υποβολής</value></data>
+  <data name="SubmissionTypeAdministrativeRate" xml:space="preserve"><value>Διοικητικό ποσοστό</value></data>
+  <data name="SubmissionTypeAttachmentA" xml:space="preserve"><value>Παράρτημα Α (μη κατάσβεση)</value></data>
+  <data name="SubmissionTypeRateLetter" xml:space="preserve"><value>Rate Letter Cal OES</value></data>
+  <data name="SubmissionTypeSalarySurvey" xml:space="preserve"><value>Έρευνα μισθών</value></data>
+  <data name="SubmissionTypeSpecialEquipment" xml:space="preserve"><value>Ειδικός εξοπλισμός / κωδικοί FEMA</value></data>
+  <data name="Supersedes" xml:space="preserve"><value>αντικαθιστά</value></data>
+  <data name="SupplyNumbers" xml:space="preserve"><value>Αριθμοί εφοδίων</value></data>
+  <data name="SupportingDocuments" xml:space="preserve"><value>Υποστηρικτικά έγγραφα</value></data>
+  <data name="TabAgency" xml:space="preserve"><value>Υπηρεσία</value></data>
+  <data name="TabAgreements" xml:space="preserve"><value>Συμφωνίες</value></data>
+  <data name="TabQueue" xml:space="preserve"><value>Ουρά ενεργειών</value></data>
+  <data name="TabRates" xml:space="preserve"><value>Ετήσιες τιμές</value></data>
+  <data name="TabReadiness" xml:space="preserve"><value>Ετοιμότητα</value></data>
+  <data name="TabReconciliation" xml:space="preserve"><value>Συμφωνία</value></data>
+  <data name="TabResources" xml:space="preserve"><value>Πόροι F-5</value></data>
+  <data name="TravelOnly" xml:space="preserve"><value>Μόνο ταξίδι (χωρίς F-42)</value></data>
+  <data name="Uei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="Unit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="UnitDesignator" xml:space="preserve"><value>Προσδιοριστικό μονάδας</value></data>
+  <data name="ValidatedOn" xml:space="preserve"><value>Επικυρώθηκε</value></data>
+  <data name="ValidationFailedSummary" xml:space="preserve"><value>Λίστα ελέγχου: {0} σφάλμα(τα), {1} προειδοποίηση(εις).</value></data>
+  <data name="Validation_agency_profile_missing" xml:space="preserve"><value>Λείπει το προφίλ υπηρεσίας.</value></data>
+  <data name="Validation_agreement_missing" xml:space="preserve"><value>Καμία συμφωνία MOU / MOA / GBR δεν καλύπτει την ημερομηνία αποστολής.</value></data>
+  <data name="Validation_authority_profile_missing" xml:space="preserve"><value>Κανένα ελεγμένο προφίλ αρχής δεν καλύπτει την εγγραφή.</value></data>
+  <data name="Validation_classification_unmapped" xml:space="preserve"><value>Η ταξινόμηση ατόμου δεν υπάρχει στην έρευνα μισθών ούτε στη λίστα αναφοράς.</value></data>
+  <data name="Validation_dispatch_missing" xml:space="preserve"><value>Λείπει η ώρα αποστολής.</value></data>
+  <data name="Validation_documentation_only" xml:space="preserve"><value>Σημειώθηκε Μόνο τεκμηρίωση: δεν ζητείται αποζημίωση.</value></data>
+  <data name="Validation_duplicate_vehicle" xml:space="preserve"><value>Το ίδιο όχημα εμφανίζεται πάνω από μία φορά.</value></data>
+  <data name="Validation_expense_approval_missing" xml:space="preserve"><value>Λείπει ο εγκρίνων του αιτήματος.</value></data>
+  <data name="Validation_expense_f42_not_submitted" xml:space="preserve"><value>Το συνδεδεμένο F-42 δεν παρατηρήθηκε υποβληθέν στο MARS.</value></data>
+  <data name="Validation_expense_no_lines" xml:space="preserve"><value>Το αίτημα δαπανών δεν έχει γραμμές.</value></data>
+  <data name="Validation_expense_receipt_missing" xml:space="preserve"><value>Μια γραμμή δαπάνης δεν έχει απόδειξη.</value></data>
+  <data name="Validation_expense_signature_missing" xml:space="preserve"><value>Λείπει η υπογραφή του αιτήματος.</value></data>
+  <data name="Validation_incident_authorization_missing" xml:space="preserve"><value>Λείπει η εξουσιοδότηση συμβάντος / AREP.</value></data>
+  <data name="Validation_incident_missing" xml:space="preserve"><value>Λείπει όνομα ή αριθμός συμβάντος.</value></data>
+  <data name="Validation_macs_missing" xml:space="preserve"><value>Λείπει το προσδιοριστικό MACS.</value></data>
+  <data name="Validation_order_missing" xml:space="preserve"><value>Λείπει ο αριθμός παραγγελίας συμβάντος.</value></data>
+  <data name="Validation_paper_fallback_missing" xml:space="preserve"><value>Δεν έχει επισυναφθεί υπογεγραμμένο ή έντυπο F-42 στην ανάπτυξη.</value></data>
+  <data name="Validation_personnel_interval_outside" xml:space="preserve"><value>Το διάστημα δέσμευσης ατόμου είναι εκτός του παραθύρου αποστολής-επιστροφής.</value></data>
+  <data name="Validation_personnel_missing" xml:space="preserve"><value>Δεν αναφέρεται προσωπικό.</value></data>
+  <data name="Validation_rate_profile_missing" xml:space="preserve"><value>Καμία γραμμή ετήσιων τιμών δεν ισχύει για την ημερομηνία αποστολής.</value></data>
+  <data name="Validation_release_is_not_return" xml:space="preserve"><value>Ο πόρος αποδεσμεύτηκε αλλά δεν καταγράφηκε ώρα επιστροφής ή επαναποστολής.</value></data>
+  <data name="Validation_request_missing" xml:space="preserve"><value>Λείπει ο αριθμός αιτήματος.</value></data>
+  <data name="Validation_request_prefix_invalid" xml:space="preserve"><value>Ο αριθμός αιτήματος δεν έχει έγκυρο πρόθεμα (E, O, C, S, A) και αριθμό.</value></data>
+  <data name="Validation_resource_missing" xml:space="preserve"><value>Λείπει τύπος, είδος πόρου ή θέση overhead.</value></data>
+  <data name="Validation_responding_signature_missing" xml:space="preserve"><value>Λείπει η υπογραφή της υπηρεσίας ανταπόκρισης.</value></data>
+  <data name="Validation_return_before_dispatch" xml:space="preserve"><value>Η ώρα επιστροφής προηγείται της αποστολής.</value></data>
+  <data name="Validation_rotation_undocumented" xml:space="preserve"><value>Μια εναλλαγή πληρώματος δεν έχει συνημμένο έγκρισης.</value></data>
+  <data name="Validation_vehicle_not_in_inventory" xml:space="preserve"><value>Ένα όχημα δεν έχει γραμμή αντιστοίχισης F-5.</value></data>
+  <data name="Value" xml:space="preserve"><value>Τιμή</value></data>
+  <data name="Variance" xml:space="preserve"><value>Απόκλιση</value></data>
+  <data name="Verification" xml:space="preserve"><value>Επαλήθευση</value></data>
+  <data name="VerificationHelp" xml:space="preserve"><value>Σημειώστε το προφίλ ως επαληθευμένο μετά τη σύγκριση με την εγγραφή υπηρεσίας στο MARS. Ο πίνακας προειδοποιεί μετά από ένα έτος.</value></data>
+  <data name="VerifiedOn" xml:space="preserve"><value>Επαληθεύτηκε στις</value></data>
+  <data name="Version" xml:space="preserve"><value>Έκδοση</value></data>
+  <data name="Warning" xml:space="preserve"><value>Προειδοποίηση</value></data>
+  <data name="Window" xml:space="preserve"><value>Περίοδος</value></data>
+  <data name="WorkItemIntro" xml:space="preserve"><value>Επίσημη σειρά πεδίων, σύνδεσμοι στα αμετάβλητα γεγονότα ανάπτυξης, λίστα ελέγχου, αναμενόμενη αποζημίωση και παράδοση στην πύλη.</value></data>
+  <data name="Year" xml:space="preserve"><value>Έτος</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ναι</value></data>
+  <data name="calmars_admin_input_amount_invalid" xml:space="preserve"><value>Τα ποσά εισόδου δεν μπορούν να είναι αρνητικά.</value></data>
+  <data name="calmars_admin_input_classification_invalid" xml:space="preserve"><value>Μια ταξινόμηση εισόδου δεν είναι έγκυρη.</value></data>
+  <data name="calmars_admin_input_year_invalid" xml:space="preserve"><value>Ένα οικονομικό έτος εισόδου δεν είναι έγκυρο (μόνο προηγούμενα έτη).</value></data>
+  <data name="calmars_agency_name_required" xml:space="preserve"><value>Το όνομα υπηρεσίας απαιτείται.</value></data>
+  <data name="calmars_agency_not_found" xml:space="preserve"><value>Το προφίλ υπηρεσίας δεν βρέθηκε.</value></data>
+  <data name="calmars_agreement_in_use" xml:space="preserve"><value>Η συμφωνία αναφέρεται από στοιχείο εργασίας και δεν διαγράφεται.</value></data>
+  <data name="calmars_agreement_kind_invalid" xml:space="preserve"><value>Το είδος εγγράφου συμφωνίας δεν είναι έγκυρο.</value></data>
+  <data name="calmars_agreement_method_invalid" xml:space="preserve"><value>Η μέθοδος αποζημίωσης δεν είναι έγκυρη.</value></data>
+  <data name="calmars_agreement_not_found" xml:space="preserve"><value>Η συμφωνία δεν βρέθηκε.</value></data>
+  <data name="calmars_agreement_overtime_invalid" xml:space="preserve"><value>Η μέθοδος υπερωριών δεν είναι έγκυρη.</value></data>
+  <data name="calmars_attestation_required" xml:space="preserve"><value>Επιβεβαιώστε τη βεβαίωση πριν ανοίξετε την προβολή παράδοσης.</value></data>
+  <data name="calmars_dates_invalid" xml:space="preserve"><value>Η ημερομηνία λήξης προηγείται της έναρξης.</value></data>
+  <data name="calmars_decision_title_required" xml:space="preserve"><value>Η απόφαση απαιτεί όνομα / τίτλο του αποφασίζοντος.</value></data>
+  <data name="calmars_deployment_not_found" xml:space="preserve"><value>Η ανάπτυξη δεν βρέθηκε.</value></data>
+  <data name="calmars_f42_not_found" xml:space="preserve"><value>Το συνδεδεμένο F-42 δεν βρέθηκε σε αυτή την ανάπτυξη.</value></data>
+  <data name="calmars_fill_not_found" xml:space="preserve"><value>Αυτό το αίτημα / fill δεν ανήκει στην εξωτερική παραγγελία της ανάπτυξης.</value></data>
+  <data name="calmars_fill_required" xml:space="preserve"><value>Η παραγγελία έχει πολλά αιτήματα· επιλέξτε αίτημα / fill για αυτό το F-42.</value></data>
+  <data name="calmars_invoice_amount_invalid" xml:space="preserve"><value>Το τιμολογημένο ποσό δεν μπορεί να είναι αρνητικό.</value></data>
+  <data name="calmars_invoice_duplicate" xml:space="preserve"><value>Τιμολόγιο MARS με αυτό το αναγνωριστικό έχει ήδη καταγραφεί.</value></data>
+  <data name="calmars_invoice_id_required" xml:space="preserve"><value>Το αναγνωριστικό τιμολογίου MARS απαιτείται.</value></data>
+  <data name="calmars_invoice_not_approved" xml:space="preserve"><value>Καταγράψτε την τοπική έγκριση πριν από πληρωμή.</value></data>
+  <data name="calmars_invoice_not_payable" xml:space="preserve"><value>Το τιμολόγιο δεν είναι σε κατάσταση που επιτρέπει καταγραφή πληρωμής.</value></data>
+  <data name="calmars_invoice_not_pending" xml:space="preserve"><value>Το τιμολόγιο δεν εκκρεμεί για τοπική έγκριση.</value></data>
+  <data name="calmars_not_ready" xml:space="preserve"><value>Η εγγραφή δεν είναι Έτοιμη για πύλη· εκτελέστε πρώτα τη λίστα ελέγχου.</value></data>
+  <data name="calmars_payment_amount_invalid" xml:space="preserve"><value>Το πληρωμένο ποσό δεν μπορεί να είναι αρνητικό.</value></data>
+  <data name="calmars_rate_empty" xml:space="preserve"><value>Η υποβολή δεν έχει γραμμές, διοικητικό ποσοστό ή αποδεκτή βασική τιμή.</value></data>
+  <data name="calmars_rate_line_basis_invalid" xml:space="preserve"><value>Μια βάση γραμμής τιμής δεν είναι έγκυρη.</value></data>
+  <data name="calmars_rate_line_classification_required" xml:space="preserve"><value>Οι μισθολογικές γραμμές χρειάζονται κωδικό ταξινόμησης.</value></data>
+  <data name="calmars_rate_line_kind_invalid" xml:space="preserve"><value>Ένα είδος γραμμής τιμής δεν είναι έγκυρο.</value></data>
+  <data name="calmars_rate_line_rate_invalid" xml:space="preserve"><value>Οι τιμές δεν μπορούν να είναι αρνητικές.</value></data>
+  <data name="calmars_rate_line_resource_required" xml:space="preserve"><value>Οι γραμμές εξοπλισμού χρειάζονται κωδικό πόρου ή FEMA.</value></data>
+  <data name="calmars_rate_locked" xml:space="preserve"><value>Η υποβολή είναι υπογεγραμμένη ή υποβληθείσα και δεν επεξεργάζεται πλέον.</value></data>
+  <data name="calmars_rate_not_found" xml:space="preserve"><value>Η ετήσια υποβολή δεν βρέθηκε.</value></data>
+  <data name="calmars_rate_not_signed" xml:space="preserve"><value>Καταγράψτε την τοπική υπογραφή πριν παρατηρήσετε εξωτερική κατάσταση.</value></data>
+  <data name="calmars_rate_percent_invalid" xml:space="preserve"><value>Το διοικητικό ποσοστό πρέπει να είναι μεταξύ 0 και 100 τοις εκατό.</value></data>
+  <data name="calmars_rate_signer_required" xml:space="preserve"><value>Η υπογραφή απαιτεί το όνομα του υπογράφοντος.</value></data>
+  <data name="calmars_rate_transition_invalid" xml:space="preserve"><value>Αυτή η αλλαγή κατάστασης δεν επιτρέπεται.</value></data>
+  <data name="calmars_rate_type_invalid" xml:space="preserve"><value>Ο τύπος υποβολής δεν είναι έγκυρος.</value></data>
+  <data name="calmars_rate_year_invalid" xml:space="preserve"><value>Το έτος υποβολής δεν είναι έγκυρο.</value></data>
+  <data name="calmars_rejection_comment_required" xml:space="preserve"><value>Η απόρριψη απαιτεί σχόλιο.</value></data>
+  <data name="calmars_resource_name_required" xml:space="preserve"><value>Ο εξωτερικός πόρος χρειάζεται όνομα.</value></data>
+  <data name="calmars_resource_not_found" xml:space="preserve"><value>Η γραμμή πόρου δεν βρέθηκε.</value></data>
+  <data name="calmars_resource_subject_invalid" xml:space="preserve"><value>Ο τύπος αντικειμένου πόρου δεν είναι έγκυρος.</value></data>
+  <data name="calmars_resource_unit_not_found" xml:space="preserve"><value>Η μονάδα δεν βρέθηκε σε αυτό το τμήμα.</value></data>
+  <data name="calmars_resource_unit_required" xml:space="preserve"><value>Απαιτείται μονάδα για πόρο μονάδας.</value></data>
+  <data name="calmars_status_unknown" xml:space="preserve"><value>Αυτή η εξωτερική κατάσταση δεν ανήκει στο λεξιλόγιο του προφίλ αρχής.</value></data>
+  <data name="calmars_work_item_external" xml:space="preserve"><value>Η εγγραφή παρατηρήθηκε στο MARS και δεν επεξεργάζεται πλέον τοπικά.</value></data>
+  <data name="calmars_work_item_not_calculable" xml:space="preserve"><value>Μόνο τα F-42 και τα αιτήματα δαπανών έχουν αναμενόμενη αποζημίωση.</value></data>
+  <data name="calmars_work_item_not_closable" xml:space="preserve"><value>Μόνο εγκεκριμένες, μόνο τεκμηρίωσης, απορριφθείσες ή πληρωμένες εγγραφές κλείνουν.</value></data>
+  <data name="calmars_work_item_not_external" xml:space="preserve"><value>Η εγγραφή δεν παρατηρήθηκε υποβληθείσα στο MARS.</value></data>
+  <data name="calmars_work_item_not_found" xml:space="preserve"><value>Η εγγραφή δεν βρέθηκε.</value></data>
+  <data name="calmars_work_item_not_invoice" xml:space="preserve"><value>Η εγγραφή δεν είναι τιμολόγιο MARS.</value></data>
+  <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Μόνο F-42 και αιτήματα δαπανών υποβάλλονται στο MARS.</value></data>
+  <data name="calmars_work_item_settled" xml:space="preserve"><value>Η εγγραφή είναι πληρωμένη ή κλειστή· οι γραμμές της είναι οριστικές.</value></data>
+  <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Η εγγραφή δεν είναι του αναμενόμενου τύπου.</value></data>
+</root>

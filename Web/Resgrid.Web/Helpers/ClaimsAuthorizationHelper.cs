@@ -327,6 +327,18 @@ namespace Resgrid.Web.Helpers
 		public static bool CanViewBids() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Bids, ResgridClaimTypes.Actions.View);
 		public static bool CanManageContracts() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ServiceContracts, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewContracts() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ServiceContracts, ResgridClaimTypes.Actions.View);
+		public static bool CanViewMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.View);
+		public static bool CanManageMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Update);
+		public static bool CanSubmitMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Submit);
+		public static bool CanReconcileMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Reconcile);
+		public static bool CanViewWorkforce() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View);
+		public static bool CanManageWorkforce() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewWorkforceCompensation() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.View);
+		public static bool CanManageWorkforceCompensation() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewInternalCosts() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.InternalCosts, ResgridClaimTypes.Actions.View);
+		public static bool CanViewPayDataReporting() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.View);
+		public static bool CanManagePayDataReporting() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.Update);
+		public static bool CanExportPayDataReporting() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.Export);
 		public static bool CanManageChecklists() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewChecklistResults() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View);
 

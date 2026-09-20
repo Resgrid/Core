@@ -267,6 +267,38 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<BidRepository>().As<IBidRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<BidLineItemRepository>().As<IBidLineItemRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<BidNumberSequenceRepository>().As<IBidNumberSequenceRepository>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan, Phase C-M3: Cal OES MARS shadow tables (registry M0219).
+			builder.RegisterType<CalOesMarsAgencyProfileRepository>().As<ICalOesMarsAgencyProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsResourceProfileRepository>().As<ICalOesMarsResourceProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsRateProfileRepository>().As<ICalOesMarsRateProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsRateLineRepository>().As<ICalOesMarsRateLineRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsAdministrativeRateInputRepository>().As<ICalOesMarsAdministrativeRateInputRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsAgreementSnapshotRepository>().As<ICalOesMarsAgreementSnapshotRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsWorkItemRepository>().As<ICalOesMarsWorkItemRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CalOesMarsReimbursementLineRepository>().As<ICalOesMarsReimbursementLineRepository>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan, Phase E: protected workforce pay data, costing and CRD reporting (registry M0220–M0223).
+			builder.RegisterType<WorkforceEmployerProfileRepository>().As<IWorkforceEmployerProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceAffiliatedEntityRepository>().As<IWorkforceAffiliatedEntityRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceEstablishmentRepository>().As<IWorkforceEstablishmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceLaborContractorRepository>().As<IWorkforceLaborContractorRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceWorkerRepository>().As<IWorkforceWorkerRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceEmploymentRepository>().As<IWorkforceEmploymentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceJobAssignmentRepository>().As<IWorkforceJobAssignmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<EmployeeCompensationProfileRepository>().As<IEmployeeCompensationProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<EmployeePayComponentRepository>().As<IEmployeePayComponentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<EmployeeCostComponentRepository>().As<IEmployeeCostComponentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceWorkEntryRepository>().As<IWorkforceWorkEntryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceAnnualPayFactRepository>().As<IWorkforceAnnualPayFactRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceCostProfileRepository>().As<IResourceCostProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceCostComponentRepository>().As<IResourceCostComponentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceUsageEntryRepository>().As<IResourceUsageEntryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FieldCostRunRepository>().As<IFieldCostRunRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FieldCostLineRepository>().As<IFieldCostLineRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PayDataReportingDemographicRepository>().As<IPayDataReportingDemographicRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PayDataReportRunRepository>().As<IPayDataReportRunRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PayDataReportEmployeeSnapshotRepository>().As<IPayDataReportEmployeeSnapshotRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PayDataReportRowRepository>().As<IPayDataReportRowRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PayDataExportArtifactRepository>().As<IPayDataExportArtifactRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentBillingIdentityRepository>().As<IDepartmentBillingIdentityRepository>().InstancePerLifetimeScope();
 
 			// Indoor Maps Repositories

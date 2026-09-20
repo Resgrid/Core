@@ -223,6 +223,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			byte[] receipt = null;
 			if (!string.IsNullOrWhiteSpace(input.ReceiptData))
 			{
+				// Base64 is 4 characters per 3 bytes: refuse on the encoded length before decoding allocates the oversized buffer.
+				if (input.ReceiptData.Length > Resgrid.Services.Invoicing.DeploymentService.MaxAttachmentBytes / 3 * 4 + 4) return Failed<ExpenseResult>("deployments_attachment_too_large");
 				try { receipt = Convert.FromBase64String(input.ReceiptData); }
 				catch (FormatException) { return Failed<ExpenseResult>("expenses_receipt_invalid"); }
 				if (receipt.Length > Resgrid.Services.Invoicing.DeploymentService.MaxAttachmentBytes) return Failed<ExpenseResult>("deployments_attachment_too_large");

@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AcquisitionCost" xml:space="preserve"><value>Anschaffungskosten</value></data>
+  <data name="AcquisitionDate" xml:space="preserve"><value>Anschaffungsdatum</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="ActiveFrom" xml:space="preserve"><value>Aktiv ab</value></data>
+  <data name="ActiveTo" xml:space="preserve"><value>Aktiv bis</value></data>
+  <data name="Actual" xml:space="preserve"><value>Ist</value></data>
+  <data name="ActualWorkedHours" xml:space="preserve"><value>Tatsächlich gearbeitete Stunden</value></data>
+  <data name="AddAffiliate" xml:space="preserve"><value>Verbundenes Unternehmen hinzufügen</value></data>
+  <data name="AddAssignment" xml:space="preserve"><value>Zuordnung hinzufügen</value></data>
+  <data name="AddContractor" xml:space="preserve"><value>Dienstleister hinzufügen</value></data>
+  <data name="AddDepartmentDefault" xml:space="preserve"><value>Organisationsstandard hinzufügen</value></data>
+  <data name="AddEmployment" xml:space="preserve"><value>Beschäftigung hinzufügen</value></data>
+  <data name="AddEstablishment" xml:space="preserve"><value>Betriebsstätte hinzufügen</value></data>
+  <data name="AddFact" xml:space="preserve"><value>Datensatz hinzufügen</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>Profil hinzufügen</value></data>
+  <data name="AddResourceProfile" xml:space="preserve"><value>Ressourcenprofil hinzufügen</value></data>
+  <data name="AddRoleDefault" xml:space="preserve"><value>Rollenstandard hinzufügen</value></data>
+  <data name="AddUsage" xml:space="preserve"><value>Ablesung hinzufügen</value></data>
+  <data name="AddWorkEntry" xml:space="preserve"><value>Arbeitseintrag hinzufügen</value></data>
+  <data name="AddWorker" xml:space="preserve"><value>Beschäftigten hinzufügen</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Oder legen Sie eine externe Person über Lohnschlüssel und Anzeigename an (beide geschützt).</value></data>
+  <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Wählen Sie ein Mitglied, um dessen Beschäftigtendatensatz anzulegen.</value></data>
+  <data name="Address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="Affiliate" xml:space="preserve"><value>Verbundenes Unternehmen</value></data>
+  <data name="Affiliates" xml:space="preserve"><value>Verbundene Unternehmen</value></data>
+  <data name="AffiliatesHelp" xml:space="preserve"><value>Nur bei einem integrierten Unternehmen: die weiteren von der Meldung erfassten Einheiten.</value></data>
+  <data name="Aggregate" xml:space="preserve"><value>Zeilen aggregieren</value></data>
+  <data name="AllocationBasis" xml:space="preserve"><value>Zuordnungsbasis</value></data>
+  <data name="AllocationDay" xml:space="preserve"><value>Pro Tag</value></data>
+  <data name="AllocationEngineHour" xml:space="preserve"><value>Pro Motorstunde</value></data>
+  <data name="AllocationKilometer" xml:space="preserve"><value>Pro Kilometer</value></data>
+  <data name="AllocationMile" xml:space="preserve"><value>Pro Meile</value></data>
+  <data name="AllocationOperatingHour" xml:space="preserve"><value>Pro Betriebsstunde</value></data>
+  <data name="Amount" xml:space="preserve"><value>Betrag</value></data>
+  <data name="AnnualFacts" xml:space="preserve"><value>Jahreslohndaten</value></data>
+  <data name="AnnualFactsIntro" xml:space="preserve"><value>W-2-Einkünfte, Stunden und Wochen je Beschäftigung für das Meldejahr – die Grundlage jeder CRD-Momentaufnahme.</value></data>
+  <data name="AnnualFactsMissing" xml:space="preserve"><value>Fehlende Jahreslohndaten</value></data>
+  <data name="ApplyOverride" xml:space="preserve"><value>Überschreibung anwenden</value></data>
+  <data name="Approval" xml:space="preserve"><value>Genehmigung</value></data>
+  <data name="ApprovalHelp" xml:space="preserve"><value>Nicht genehmigte Profile bewerten Schätzungen weiterhin, kennzeichnen aber jede Position zur Prüfung. Jede Satzänderung hebt die Genehmigung auf.</value></data>
+  <data name="ApproveProfile" xml:space="preserve"><value>Profil genehmigen</value></data>
+  <data name="Approved" xml:space="preserve"><value>Genehmigt</value></data>
+  <data name="ApprovedPayrollCost" xml:space="preserve"><value>Freigegebene Lohnkosten</value></data>
+  <data name="ApprovedPayrollCostHelp" xml:space="preserve"><value>Der Ist-Wert aus dem Lohnsystem; falls vorhanden, ersetzt er die Schätzung für diesen Tag.</value></data>
+  <data name="Artifacts" xml:space="preserve"><value>Exportdateien</value></data>
+  <data name="ArtifactsHelp" xml:space="preserve"><value>CSV und XLSX in der Spaltenreihenfolge der CRD-Vorlage, prüfsummenstabil bei unveränderter Eingabe, ohne Zwischenspeicherung herunterladbar bis zur Löschung nach der Aufbewahrungsfrist.</value></data>
+  <data name="Back" xml:space="preserve"><value>Zurück</value></data>
+  <data name="BaseAmount" xml:space="preserve"><value>Grundbetrag</value></data>
+  <data name="BaseAmountHelp" xml:space="preserve"><value>Pro Stunde, Jahr, Tag oder Schicht je nach Lohnbasis.</value></data>
+  <data name="Basis" xml:space="preserve"><value>Basis</value></data>
+  <data name="Bid" xml:space="preserve"><value>Angebot</value></data>
+  <data name="BreakEven" xml:space="preserve"><value>Break-even-Umsatz</value></data>
+  <data name="BuildSnapshots" xml:space="preserve"><value>Momentaufnahmen erstellen</value></data>
+  <data name="CaBasisAssignedToCaliforniaEstablishment" xml:space="preserve"><value>Einer kalifornischen Betriebsstätte zugeordnet</value></data>
+  <data name="CaBasisBoth" xml:space="preserve"><value>Beides</value></data>
+  <data name="CaBasisNotCalifornia" xml:space="preserve"><value>Kein kalifornischer Beschäftigter</value></data>
+  <data name="CaBasisWorksInCalifornia" xml:space="preserve"><value>Arbeitet in Kalifornien</value></data>
+  <data name="CaliforniaBasis" xml:space="preserve"><value>Kalifornien-Bezug</value></data>
+  <data name="CaliforniaEmployeeCount" xml:space="preserve"><value>Beschäftigte in Kalifornien</value></data>
+  <data name="CallId" xml:space="preserve"><value>Einsatz-Nr.</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Cap" xml:space="preserve"><value>Obergrenze</value></data>
+  <data name="Category" xml:space="preserve"><value>Kategorie</value></data>
+  <data name="CategoryConsumable" xml:space="preserve"><value>Verbrauchsmaterial</value></data>
+  <data name="CategoryExpense" xml:space="preserve"><value>Ausgabe</value></data>
+  <data name="CategoryOverhead" xml:space="preserve"><value>Gemeinkosten</value></data>
+  <data name="CategoryPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="CategoryResource" xml:space="preserve"><value>Ressource</value></data>
+  <data name="CertificationReference" xml:space="preserve"><value>Portal-Bescheinigungsreferenz</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Prüfsumme</value></data>
+  <data name="City" xml:space="preserve"><value>Stadt</value></data>
+  <data name="ClientAllocatedEarnings" xml:space="preserve"><value>Kundenzugeordnete Einkünfte</value></data>
+  <data name="ClientAllocatedHours" xml:space="preserve"><value>Kundenzugeordnete Stunden</value></data>
+  <data name="ClientAllocatedWeeks" xml:space="preserve"><value>Kundenzugeordnete Wochen</value></data>
+  <data name="ClientAllocationKey" xml:space="preserve"><value>Kundenzuordnungsschlüssel</value></data>
+  <data name="Code" xml:space="preserve"><value>Code</value></data>
+  <data name="CollectionSource" xml:space="preserve"><value>Erhebungsquelle</value></data>
+  <data name="CollectionSourceEmploymentRecord" xml:space="preserve"><value>Beschäftigungsakte</value></data>
+  <data name="CollectionSourceHelp" xml:space="preserve"><value>Wie dieser Eintrag erhoben wurde; Fremdwahrnehmung wird in jedem Meldelauf gekennzeichnet.</value></data>
+  <data name="CollectionSourceObserverPerception" xml:space="preserve"><value>Fremdwahrnehmung</value></data>
+  <data name="CollectionSourceReliableRecord" xml:space="preserve"><value>Andere verlässliche Aufzeichnung</value></data>
+  <data name="CollectionSourceSelfIdentified" xml:space="preserve"><value>Selbstauskunft</value></data>
+  <data name="Commit" xml:space="preserve"><value>Import übernehmen</value></data>
+  <data name="Compensation" xml:space="preserve"><value>Vergütung</value></data>
+  <data name="CompensationIntro" xml:space="preserve"><value>Vergütungsprofile für Beschäftigte, Rollen- und Organisationsstandards mit Lohn- und Arbeitgeberkostenkomponenten.</value></data>
+  <data name="CompensationProfile" xml:space="preserve"><value>Vergütungsprofil</value></data>
+  <data name="Completeness" xml:space="preserve"><value>Vollständigkeit der Demografie</value></data>
+  <data name="Component" xml:space="preserve"><value>Komponente</value></data>
+  <data name="Components" xml:space="preserve"><value>Komponenten</value></data>
+  <data name="ConfirmCorrection" xml:space="preserve"><value>Einen Korrekturlauf anlegen? Der exportierte Lauf bleibt wie gemeldet und wird als korrigiert markiert.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>Diesen Datensatz löschen?</value></data>
+  <data name="ConfirmFreeze" xml:space="preserve"><value>Diesen Lauf einfrieren? Ein eingefrorener Lauf ist unveränderlich; eine spätere Neuberechnung ersetzt ihn.</value></data>
+  <data name="ConfirmImport" xml:space="preserve"><value>Import übernehmen? Jede Zeile erzeugt eine neue Datenversion.</value></data>
+  <data name="ConfirmVoid" xml:space="preserve"><value>Diesen Lauf stornieren? Seine Exportdateien werden gelöscht.</value></data>
+  <data name="Consumables" xml:space="preserve"><value>Verbrauchsmaterial</value></data>
+  <data name="Consumption" xml:space="preserve"><value>Verbrauch</value></data>
+  <data name="ContactDetails" xml:space="preserve"><value>Kontaktdaten</value></data>
+  <data name="Context" xml:space="preserve"><value>Kontext</value></data>
+  <data name="ContextBid" xml:space="preserve"><value>Angebot</value></data>
+  <data name="ContextCall" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="ContextDeployment" xml:space="preserve"><value>Entsendung</value></data>
+  <data name="ContractorsIntro" xml:space="preserve"><value>Dienstleister, die Labor-Contractor-Beschäftigte für die zweite CRD-Meldung stellen.</value></data>
+  <data name="CorrectFact" xml:space="preserve"><value>Datensatz korrigieren (neue Version)</value></data>
+  <data name="CostCategoryAllocatedOverhead" xml:space="preserve"><value>Umgelegte Gemeinkosten</value></data>
+  <data name="CostCategoryEmployerPayrollTax" xml:space="preserve"><value>Arbeitgeber-Lohnsteuer</value></data>
+  <data name="CostCategoryFixedLaborCost" xml:space="preserve"><value>Fixe Personalkosten</value></data>
+  <data name="CostCategoryHealthBenefits" xml:space="preserve"><value>Gesundheitsleistungen</value></data>
+  <data name="CostCategoryOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="CostCategoryOtherBenefits" xml:space="preserve"><value>Sonstige Leistungen</value></data>
+  <data name="CostCategoryRetirementPension" xml:space="preserve"><value>Altersvorsorge / Pension</value></data>
+  <data name="CostCategoryWorkersCompensation" xml:space="preserve"><value>Unfallversicherung</value></data>
+  <data name="CostComponentBasisFixedAnnual" xml:space="preserve"><value>Jährlich fix</value></data>
+  <data name="CostComponentBasisPerDay" xml:space="preserve"><value>Pro Tag</value></data>
+  <data name="CostComponentBasisPerHour" xml:space="preserve"><value>Pro Stunde</value></data>
+  <data name="CostComponentBasisPerShift" xml:space="preserve"><value>Pro Schicht</value></data>
+  <data name="CostComponentBasisPercentOfEligiblePay" xml:space="preserve"><value>% des anrechenbaren Lohns</value></data>
+  <data name="CostComponents" xml:space="preserve"><value>Kostenkomponenten</value></data>
+  <data name="CostComponentsHelp" xml:space="preserve"><value>Lohnsteuern, Leistungen, Pension und umgelegte Gemeinkosten – Prozent des anrechenbaren Lohns, pro Stunde, pro Schicht oder jährlich fix, mit optionaler Obergrenze.</value></data>
+  <data name="CostRun" xml:space="preserve"><value>Kostenlauf</value></data>
+  <data name="CostRuns" xml:space="preserve"><value>Kostenläufe</value></data>
+  <data name="CostRunsIntro" xml:space="preserve"><value>Interne Vollkosten und Marge für Angebote (Schätzung), Einsätze und Entsendungen (Ist). Umsatz ist immer nur ein beobachteter Wert.</value></data>
+  <data name="CoverageCoveredBoth" xml:space="preserve"><value>Meldepflichtig – beide Meldungen</value></data>
+  <data name="CoverageCoveredLaborContractor" xml:space="preserve"><value>Meldepflichtig – Labor-Contractor-Employee-Meldung</value></data>
+  <data name="CoverageCoveredPayroll" xml:space="preserve"><value>Meldepflichtig – Payroll-Employee-Meldung</value></data>
+  <data name="CoverageHelp" xml:space="preserve"><value>Vom Arbeitgeber nach Lektüre der CRD-Leitlinien erklärt; Resgrid entscheidet nie, ob Sie melden müssen.</value></data>
+  <data name="CoverageNotCovered" xml:space="preserve"><value>Nicht meldepflichtig</value></data>
+  <data name="CoverageStatus" xml:space="preserve"><value>Meldepflichtstatus</value></data>
+  <data name="CoverageUnknown" xml:space="preserve"><value>Nicht erklärt</value></data>
+  <data name="CreateCorrection" xml:space="preserve"><value>Korrektur anlegen</value></data>
+  <data name="CreateRun" xml:space="preserve"><value>Lauf anlegen</value></data>
+  <data name="Created" xml:space="preserve"><value>Erstellt</value></data>
+  <data name="Currency" xml:space="preserve"><value>Währung</value></data>
+  <data name="CurrentResponse" xml:space="preserve"><value>Aktuelle Angabe</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Geschützte Lohndaten, interne Einsatzkostenrechnung und kalifornische Lohndatenmeldung.</value></data>
+  <data name="Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="Days" xml:space="preserve"><value>Tage</value></data>
+  <data name="DaysWorked" xml:space="preserve"><value>Gearbeitete Tage</value></data>
+  <data name="Dba" xml:space="preserve"><value>DBA</value></data>
+  <data name="DeclineToState" xml:space="preserve"><value>Keine Angabe</value></data>
+  <data name="Declined" xml:space="preserve"><value>abgelehnt</value></data>
+  <data name="DefaultEstablishment" xml:space="preserve"><value>Standard-Betriebsstätte</value></data>
+  <data name="DefaultProfiles" xml:space="preserve"><value>Standardprofile</value></data>
+  <data name="DefaultProfilesHelp" xml:space="preserve"><value>Rollen- und Organisationsstandards bewerten Angebotsschätzungen und Mitglieder ohne Beschäftigtenprofil.</value></data>
+  <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="DemographicCode" xml:space="preserve"><value>Ethnie/Geschlecht</value></data>
+  <data name="DemographicRecord" xml:space="preserve"><value>Demografischer Eintrag</value></data>
+  <data name="DemographicRecordIntro" xml:space="preserve"><value>Eintrag der Compliance-Verantwortlichen für eine Person ohne Selbstauskunft.</value></data>
+  <data name="DemographicRecordNotice" xml:space="preserve"><value>Nutzen Sie zuerst Beschäftigungs- oder andere verlässliche Aufzeichnungen; Fremdwahrnehmung ist das letzte Mittel und wird bei jeder Momentaufnahme gekennzeichnet. Ein Grund ist erforderlich und wird protokolliert.</value></data>
+  <data name="DemographicsMissing" xml:space="preserve"><value>Fehlende demografische Angaben</value></data>
+  <data name="DemographicsVoluntary" xml:space="preserve"><value>Die Beantwortung ist freiwillig. „Keine Angabe“ ist eine gültige Antwort und wird so gemeldet.</value></data>
+  <data name="Department" xml:space="preserve"><value>Organisation</value></data>
+  <data name="DeployedDays" xml:space="preserve"><value>Einsatztage</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Entsendung</value></data>
+  <data name="DeploymentId" xml:space="preserve"><value>Entsendungs-ID</value></data>
+  <data name="Depreciation" xml:space="preserve"><value>Abschreibung</value></data>
+  <data name="DepreciationRate" xml:space="preserve"><value>Abschreibung / Einheit</value></data>
+  <data name="DisplayLabel" xml:space="preserve"><value>Anzeigename</value></data>
+  <data name="Distance" xml:space="preserve"><value>Distanz</value></data>
+  <data name="DistanceHelp" xml:space="preserve"><value>Kilometerzählerstände oder eine Distanz eingeben; Kilometer werden als Meilen gespeichert.</value></data>
+  <data name="DistanceUnit" xml:space="preserve"><value>Distanzeinheit</value></data>
+  <data name="Downloads" xml:space="preserve"><value>Downloads</value></data>
+  <data name="DryRun" xml:space="preserve"><value>Probelauf</value></data>
+  <data name="DryRunResult" xml:space="preserve"><value>Ergebnis des Probelaufs</value></data>
+  <data name="DueDate" xml:space="preserve"><value>Fälligkeit</value></data>
+  <data name="EarningsSource" xml:space="preserve"><value>Einkunftsquelle</value></data>
+  <data name="EarningsSourceClientAllocated" xml:space="preserve"><value>Kundenzugeordnet</value></data>
+  <data name="EarningsSourceW2Box1Fallback" xml:space="preserve"><value>W-2 Box 1 (Ersatz)</value></data>
+  <data name="EarningsSourceW2Box5" xml:space="preserve"><value>W-2 Box 5</value></data>
+  <data name="EarningsUsed" xml:space="preserve"><value>Verwendete Einkünfte</value></data>
+  <data name="EddAddress" xml:space="preserve"><value>EDD-Adresse</value></data>
+  <data name="EditAssignment" xml:space="preserve"><value>Zuordnung bearbeiten</value></data>
+  <data name="EditContractor" xml:space="preserve"><value>Dienstleister bearbeiten</value></data>
+  <data name="EditEmployment" xml:space="preserve"><value>Beschäftigung bearbeiten</value></data>
+  <data name="EditEstablishment" xml:space="preserve"><value>Betriebsstätte bearbeiten</value></data>
+  <data name="EditResourceProfile" xml:space="preserve"><value>Ressourcenprofil bearbeiten</value></data>
+  <data name="EditUsage" xml:space="preserve"><value>Ablesung bearbeiten</value></data>
+  <data name="EditWorkEntry" xml:space="preserve"><value>Arbeitseintrag bearbeiten</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Gültig ab</value></data>
+  <data name="EligiblePayCodes" xml:space="preserve"><value>Anrechenbare Lohncodes</value></data>
+  <data name="EmployeeProfiles" xml:space="preserve"><value>Beschäftigtenprofile</value></data>
+  <data name="Employees" xml:space="preserve"><value>Beschäftigte</value></data>
+  <data name="Employer" xml:space="preserve"><value>Arbeitgeber</value></data>
+  <data name="EmployerCostComponents" xml:space="preserve"><value>Arbeitgeberkostenkomponenten</value></data>
+  <data name="EmployerCosts" xml:space="preserve"><value>Arbeitgeberkosten</value></data>
+  <data name="EmployerIntro" xml:space="preserve"><value>Die Arbeitgeberidentität, unter der die CRD-Meldung eingereicht wird, samt verbundener Unternehmen.</value></data>
+  <data name="EmployerMissing" xml:space="preserve"><value>Noch kein Arbeitgeberprofil.</value></data>
+  <data name="EmployerProfile" xml:space="preserve"><value>Arbeitgeberprofil</value></data>
+  <data name="EmployerSection" xml:space="preserve"><value>Abschnitt Arbeitgeber</value></data>
+  <data name="Employment" xml:space="preserve"><value>Beschäftigung</value></data>
+  <data name="EmploymentType" xml:space="preserve"><value>Beschäftigungstyp</value></data>
+  <data name="EmploymentTypeFullTime" xml:space="preserve"><value>Vollzeit</value></data>
+  <data name="EmploymentTypeIntermittent" xml:space="preserve"><value>Unregelmäßig</value></data>
+  <data name="EmploymentTypePartTime" xml:space="preserve"><value>Teilzeit</value></data>
+  <data name="EmploymentTypeUnknown" xml:space="preserve"><value>Unbekannt</value></data>
+  <data name="Employments" xml:space="preserve"><value>Beschäftigungen</value></data>
+  <data name="EndEngineMeter" xml:space="preserve"><value>Betriebsstundenzähler Ende</value></data>
+  <data name="EndOdometer" xml:space="preserve"><value>Kilometerzähler Ende</value></data>
+  <data name="EndOn" xml:space="preserve"><value>Ende</value></data>
+  <data name="EngineHours" xml:space="preserve"><value>Motorstunden</value></data>
+  <data name="Errors" xml:space="preserve"><value>Fehler</value></data>
+  <data name="Establishment" xml:space="preserve"><value>Betriebsstätte</value></data>
+  <data name="Establishments" xml:space="preserve"><value>Betriebsstätten</value></data>
+  <data name="EstablishmentsIntro" xml:space="preserve"><value>Jeder physische Standort, dem Beschäftigte zugeordnet sind; die CRD-Meldung erfolgt je Betriebsstätte.</value></data>
+  <data name="Estimate" xml:space="preserve"><value>Schätzung</value></data>
+  <data name="EstimateVsActual" xml:space="preserve"><value>Schätzung vs. Ist</value></data>
+  <data name="Estimated" xml:space="preserve"><value>geschätzt</value></data>
+  <data name="Exceptions" xml:space="preserve"><value>Ausnahmen</value></data>
+  <data name="ExemptProxyActualPlusPaidLeave" xml:space="preserve"><value>Tatsächlich + bezahlter Urlaub</value></data>
+  <data name="ExemptProxyDaysTimesAverageHours" xml:space="preserve"><value>Tage × Durchschnittsstunden</value></data>
+  <data name="ExemptProxyMethod" xml:space="preserve"><value>Ersatzmethode für befreite Stunden</value></data>
+  <data name="ExemptProxyNone" xml:space="preserve"><value>Keine</value></data>
+  <data name="Exemption" xml:space="preserve"><value>Befreiungsstatus</value></data>
+  <data name="ExemptionExempt" xml:space="preserve"><value>Befreit</value></data>
+  <data name="ExemptionNonExempt" xml:space="preserve"><value>Nicht befreit</value></data>
+  <data name="ExemptionUnknown" xml:space="preserve"><value>Unbekannt</value></data>
+  <data name="ExpectedAnnualUtilization" xml:space="preserve"><value>Erwartete Jahresnutzung</value></data>
+  <data name="ExpectedAnnualUtilizationHelp" xml:space="preserve"><value>In Zuordnungseinheiten pro Jahr; verteilt jährlich fixe Komponenten und zeitbasierte Abschreibung.</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Ausgaben</value></data>
+  <data name="Expires" xml:space="preserve"><value>Läuft ab</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="ExportPayDataReporting" xml:space="preserve"><value>Kalifornische Lohndatenmeldungen exportieren</value></data>
+  <data name="ExportPayDataReportingNote" xml:space="preserve"><value>Einen validierten Lauf einfrieren und seine CSV-/XLSX-Dateien sowie das Portal-Arbeitsblatt herunterladen (ohne Zwischenspeicherung, protokolliert).</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>Externe ID</value></data>
+  <data name="ExternalResourceKey" xml:space="preserve"><value>Externer Ressourcenschlüssel</value></data>
+  <data name="ExternalResourceKeyHelp" xml:space="preserve"><value>Eine Ratenplan-Eintrags-ID hier ermöglicht Angebotsschätzungen die Bewertung von Fahrzeug- und Ausrüstungspositionen nach Klasse.</value></data>
+  <data name="ExternalSource" xml:space="preserve"><value>Externe Quelle</value></data>
+  <data name="ExternalWorkerKey" xml:space="preserve"><value>Externer Beschäftigtenschlüssel</value></data>
+  <data name="FactVersionHelp" xml:space="preserve"><value>Gespeicherte Daten sind unveränderlich: Speichern erzeugt eine neue Version, die die aktuelle ersetzt.</value></data>
+  <data name="Fallback" xml:space="preserve"><value>Ersatzprofil</value></data>
+  <data name="Fein" xml:space="preserve"><value>FEIN</value></data>
+  <data name="FieldCosting" xml:space="preserve"><value>Einsatzkostenrechnung</value></data>
+  <data name="FieldCostingIntro" xml:space="preserve"><value>Interne Vollkosten und Marge für Angebote, Einsätze und Entsendungen – nur aggregierte Kategorien.</value></data>
+  <data name="File" xml:space="preserve"><value>Datei</value></data>
+  <data name="FilingContactEmail" xml:space="preserve"><value>E-Mail der Kontaktperson</value></data>
+  <data name="FilingContactName" xml:space="preserve"><value>Name der meldenden Kontaktperson</value></data>
+  <data name="FilingContactPhone" xml:space="preserve"><value>Telefon der Kontaktperson</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtern</value></data>
+  <data name="Flags" xml:space="preserve"><value>Kennzeichen</value></data>
+  <data name="Format" xml:space="preserve"><value>Format</value></data>
+  <data name="Freeze" xml:space="preserve"><value>Einfrieren</value></data>
+  <data name="FreezeAndExport" xml:space="preserve"><value>Einfrieren und exportieren</value></data>
+  <data name="Frozen" xml:space="preserve"><value>Eingefroren</value></data>
+  <data name="Fuel" xml:space="preserve"><value>Kraftstoff</value></data>
+  <data name="FuelActualCost" xml:space="preserve"><value>Tatsächliche Kraftstoffkosten</value></data>
+  <data name="FuelQuantity" xml:space="preserve"><value>Kraftstoffmenge</value></data>
+  <data name="FuelUnit" xml:space="preserve"><value>Kraftstoffeinheit</value></data>
+  <data name="Headquarters" xml:space="preserve"><value>Hauptsitz</value></data>
+  <data name="HeadquartersAddress" xml:space="preserve"><value>Adresse des Hauptsitzes</value></data>
+  <data name="HelpCompensation" xml:space="preserve"><value>Jeder Betrag und Multiplikator ist ein geschütztes Feld. Schätzungen nutzen das Beschäftigtenprofil, dann den Rollen-, dann den Organisationsstandard; die vom Lohnsystem freigegebenen Kosten haben stets Vorrang.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Die Meldepflicht erklären Sie selbst; Resgrid bestimmt sie nie. Kennungen und Adressen sind geschützte Felder; ein unverändert belassener REDACTED-Wert behält den gespeicherten Wert.</value></data>
+  <data name="HispanicLatino" xml:space="preserve"><value>Hispanisch oder Latino</value></data>
+  <data name="HourlyRate" xml:space="preserve"><value>Stundensatz</value></data>
+  <data name="Hours" xml:space="preserve"><value>Stunden</value></data>
+  <data name="HoursPerDay" xml:space="preserve"><value>Stunden / Tag</value></data>
+  <data name="HoursPerWeek" xml:space="preserve"><value>Stunden / Woche</value></data>
+  <data name="HoursPerYear" xml:space="preserve"><value>Stunden / Jahr</value></data>
+  <data name="HoursType" xml:space="preserve"><value>Stundenart</value></data>
+  <data name="HoursTypeDoubleTime" xml:space="preserve"><value>Doppelzeit</value></data>
+  <data name="HoursTypeOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="HoursTypeOvertime" xml:space="preserve"><value>Überstunden</value></data>
+  <data name="HoursTypePaidLeave" xml:space="preserve"><value>Bezahlter Urlaub</value></data>
+  <data name="HoursTypeRegular" xml:space="preserve"><value>Regulär</value></data>
+  <data name="HoursTypeStandby" xml:space="preserve"><value>Bereitschaft</value></data>
+  <data name="HoursTypeTravel" xml:space="preserve"><value>Reise</value></data>
+  <data name="IdentifierType" xml:space="preserve"><value>Kennungstyp</value></data>
+  <data name="IdleHours" xml:space="preserve"><value>Leerlaufstunden</value></data>
+  <data name="ImportFacts" xml:space="preserve"><value>Jahreslohndaten importieren (CSV)</value></data>
+  <data name="ImportHelp" xml:space="preserve"><value>Fügen Sie den Lohnexport in der kanonischen Spaltenreihenfolge ein. Ein Probelauf prüft und stimmt jede Zeile ab, bevor etwas übernommen wird; importierte Daten sind zunächst nicht genehmigt.</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>Importergebnis</value></data>
+  <data name="Import_box1_fallback" xml:space="preserve"><value>Box 5 fehlt – Box 1 verwendet (Anmerkung erforderlich)</value></data>
+  <data name="Import_duplicate_row" xml:space="preserve"><value>doppelte Zeile</value></data>
+  <data name="Import_earnings_missing" xml:space="preserve"><value>Einkünfte fehlen</value></data>
+  <data name="Import_employment_not_found" xml:space="preserve"><value>keine Beschäftigung deckt das Jahr ab</value></data>
+  <data name="Import_empty" xml:space="preserve"><value>nichts zu importieren</value></data>
+  <data name="Import_hours_missing" xml:space="preserve"><value>meldbare Stunden fehlen oder null</value></data>
+  <data name="Import_worker_not_found" xml:space="preserve"><value>Person nicht gefunden</value></data>
+  <data name="Import_year_invalid" xml:space="preserve"><value>Meldejahr ungültig</value></data>
+  <data name="Included" xml:space="preserve"><value>Enthalten</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Inventaranlage</value></data>
+  <data name="IsIntegratedEnterprise" xml:space="preserve"><value>Teil eines integrierten Unternehmens</value></data>
+  <data name="JobCategory" xml:space="preserve"><value>CRD-Tätigkeitskategorie</value></data>
+  <data name="JobCategoryHelp" xml:space="preserve"><value>Eine der zehn CRD-Tätigkeitskategorien des geprüften Schemaprofils.</value></data>
+  <data name="JobTitle" xml:space="preserve"><value>Tätigkeitsbezeichnung</value></data>
+  <data name="LaborContractor" xml:space="preserve"><value>Personaldienstleister</value></data>
+  <data name="LaborContractors" xml:space="preserve"><value>Personaldienstleister</value></data>
+  <data name="LegalName" xml:space="preserve"><value>Rechtlicher Name</value></data>
+  <data name="Line" xml:space="preserve"><value>Zeile</value></data>
+  <data name="Lines" xml:space="preserve"><value>Positionen</value></data>
+  <data name="LinesHelp" xml:space="preserve"><value>Personalpositionen enthalten keinen Satz im Klartext; das bewertete Detail ist ein geschütztes Feld, das nur mit gültiger Freigabe erscheint.</value></data>
+  <data name="LinesRequireCompensationView" xml:space="preserve"><value>Positionen sind mit „Vergütung anzeigen“ sichtbar; die Zusammenfassung oben ist die aggregierte Ansicht.</value></data>
+  <data name="MajorActivity" xml:space="preserve"><value>Haupttätigkeit</value></data>
+  <data name="ManagePayDataReporting" xml:space="preserve"><value>Kalifornische Lohndatenmeldung verwalten</value></data>
+  <data name="ManagePayDataReportingNote" xml:space="preserve"><value>Der CRD-Meldeassistent: Läufe, Beschäftigten-Momentaufnahmen, Überschreibungen, Aggregation, Validierung, Anmerkungen, Bescheinigungsbeobachtung, Korrekturen und die demografischen Einträge der Compliance-Verantwortlichen. Jedes Mitglied beantwortet seine eigene Angabe auch ohne diese Berechtigung.</value></data>
+  <data name="ManageWorkforceCompensation" xml:space="preserve"><value>Belegschaft und Vergütung verwalten</value></data>
+  <data name="ManageWorkforceCompensationNote" xml:space="preserve"><value>Arbeitgeberidentität, Betriebsstätten, Beschäftigte, Beschäftigungszeiträume, Tätigkeitszuordnungen, Vergütungsprofile und -komponenten, Arbeitseinträge und Jahreslohndaten-Importe. Werte benötigen weiterhin eine gültige Freigabe.</value></data>
+  <data name="MappingProvenance" xml:space="preserve"><value>Herkunft der Zuordnung</value></data>
+  <data name="Margin" xml:space="preserve"><value>Deckungsbeitrag</value></data>
+  <data name="MarkCertified" xml:space="preserve"><value>Bescheinigung erfassen</value></data>
+  <data name="MarkCertifiedHelp" xml:space="preserve"><value>Nur das, was Sie nach der Bescheinigung im CRD-Portal beobachtet haben; Resgrid bescheinigt nie.</value></data>
+  <data name="MarsAuthorityProfile" xml:space="preserve"><value>MARS-Autoritätsprofil</value></data>
+  <data name="MarsClassification" xml:space="preserve"><value>Cal OES MARS-Klassifikation</value></data>
+  <data name="MeanRate" xml:space="preserve"><value>Mittlerer Stundensatz</value></data>
+  <data name="MedianRate" xml:space="preserve"><value>Median-Stundensatz</value></data>
+  <data name="Member" xml:space="preserve"><value>Mitglied</value></data>
+  <data name="Miles" xml:space="preserve"><value>Meilen</value></data>
+  <data name="MissingInputs" xml:space="preserve"><value>Fehlende Eingaben</value></data>
+  <data name="MyDemographics" xml:space="preserve"><value>Meine demografischen Angaben</value></data>
+  <data name="MyDemographicsIntro" xml:space="preserve"><value>Beantworten oder aktualisieren Sie Ihre freiwillige Selbstauskunft für die kalifornische Lohndatenmeldung.</value></data>
+  <data name="Naics" xml:space="preserve"><value>NAICS</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="NewRun" xml:space="preserve"><value>Neuer Lauf</value></data>
+  <data name="No" xml:space="preserve"><value>Nein</value></data>
+  <data name="NoAnswer" xml:space="preserve"><value>Keine Angabe</value></data>
+  <data name="NoArtifacts" xml:space="preserve"><value>Keine Exportdateien – einen validierten Lauf einfrieren und exportieren.</value></data>
+  <data name="NoAssignments" xml:space="preserve"><value>Keine Tätigkeitszuordnungen.</value></data>
+  <data name="NoContractors" xml:space="preserve"><value>Keine Personaldienstleister.</value></data>
+  <data name="NoEmployments" xml:space="preserve"><value>Noch keine Beschäftigungszeiträume.</value></data>
+  <data name="NoEstablishments" xml:space="preserve"><value>Noch keine Betriebsstätten.</value></data>
+  <data name="NoFacts" xml:space="preserve"><value>Keine Jahreslohndaten für dieses Jahr und diesen Meldetyp.</value></data>
+  <data name="NoLines" xml:space="preserve"><value>Keine Positionen.</value></data>
+  <data name="NoProfiles" xml:space="preserve"><value>Keine Vergütungsprofile.</value></data>
+  <data name="NoResourceProfiles" xml:space="preserve"><value>Keine Ressourcenkostenprofile.</value></data>
+  <data name="NoRows" xml:space="preserve"><value>Noch keine aggregierten Zeilen – nach Abschluss der Momentaufnahmen aggregieren.</value></data>
+  <data name="NoRuns" xml:space="preserve"><value>Noch keine Läufe.</value></data>
+  <data name="NoSnapshots" xml:space="preserve"><value>Noch keine Momentaufnahmen – zuerst erstellen.</value></data>
+  <data name="NoUsage" xml:space="preserve"><value>Keine Nutzungsablesungen.</value></data>
+  <data name="NoWorkEntries" xml:space="preserve"><value>Keine Arbeitseinträge in diesem Zeitraum.</value></data>
+  <data name="NoWorkers" xml:space="preserve"><value>Noch keine Beschäftigten.</value></data>
+  <data name="NonRemote" xml:space="preserve"><value>Vor Ort</value></data>
+  <data name="None" xml:space="preserve"><value>Keine</value></data>
+  <data name="NotReadyToFreeze" xml:space="preserve"><value>blockierende Fehler bestehen</value></data>
+  <data name="NotValidated" xml:space="preserve"><value>Noch nicht validiert.</value></data>
+  <data name="ObserverPerception" xml:space="preserve"><value>Fremdwahrnehmung</value></data>
+  <data name="OpenRuns" xml:space="preserve"><value>Offene Läufe</value></data>
+  <data name="OperatingHours" xml:space="preserve"><value>Betriebsstunden</value></data>
+  <data name="OriginalDistance" xml:space="preserve"><value>Distanz (abgelesen)</value></data>
+  <data name="Other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Overhead" xml:space="preserve"><value>Gemeinkosten</value></data>
+  <data name="OverrideReason" xml:space="preserve"><value>Grund der Überschreibung</value></data>
+  <data name="OwnershipName" xml:space="preserve"><value>Name des Eigentümers</value></data>
+  <data name="PaidLeaveHours" xml:space="preserve"><value>Bezahlte Urlaubsstunden</value></data>
+  <data name="Pay" xml:space="preserve"><value>Lohn</value></data>
+  <data name="PayBand" xml:space="preserve"><value>Lohnband</value></data>
+  <data name="PayBasis" xml:space="preserve"><value>Lohnbasis</value></data>
+  <data name="PayBasisDaily" xml:space="preserve"><value>Täglich</value></data>
+  <data name="PayBasisHourly" xml:space="preserve"><value>Stündlich</value></data>
+  <data name="PayBasisSalary" xml:space="preserve"><value>Gehalt</value></data>
+  <data name="PayBasisShift" xml:space="preserve"><value>Pro Schicht</value></data>
+  <data name="PayBasisStipend" xml:space="preserve"><value>Aufwandsentschädigung</value></data>
+  <data name="PayCategoryDifferential" xml:space="preserve"><value>Zulage</value></data>
+  <data name="PayCategoryEducation" xml:space="preserve"><value>Ausbildung</value></data>
+  <data name="PayCategoryEms" xml:space="preserve"><value>Rettungsdienst</value></data>
+  <data name="PayCategoryHazMat" xml:space="preserve"><value>Gefahrgut</value></data>
+  <data name="PayCategoryIncentive" xml:space="preserve"><value>Anreiz</value></data>
+  <data name="PayCategoryLongevity" xml:space="preserve"><value>Dienstalter</value></data>
+  <data name="PayCategoryOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="PayCategorySpecialty" xml:space="preserve"><value>Fachzulage</value></data>
+  <data name="PayCategoryUsar" xml:space="preserve"><value>USAR</value></data>
+  <data name="PayComponentBasisFixedAnnual" xml:space="preserve"><value>Jährlich fix</value></data>
+  <data name="PayComponentBasisPerHour" xml:space="preserve"><value>Pro Stunde</value></data>
+  <data name="PayComponentBasisPerPayPeriod" xml:space="preserve"><value>Pro Abrechnungszeitraum</value></data>
+  <data name="PayComponentBasisPerShift" xml:space="preserve"><value>Pro Schicht</value></data>
+  <data name="PayComponentBasisPercentOfBase" xml:space="preserve"><value>% der Basis</value></data>
+  <data name="PayComponents" xml:space="preserve"><value>Lohnkomponenten</value></data>
+  <data name="PayComponentsHelp" xml:space="preserve"><value>Zulagen, Anreize und Fachzulagen zusätzlich zur Basis. Komponenten mit festem Zeitraum werden bei Überstunden nur gezahlt, wenn sie pro Überstunde markiert sind.</value></data>
+  <data name="PayDataDisclaimer" xml:space="preserve"><value>Resgrid bereitet vor und exportiert; es reicht nie ein, entscheidet nie über die Meldepflicht und bescheinigt nie. Alles auf diesen Seiten ist ein geschütztes Feld und wird ohne Zwischenspeicherung ausgeliefert.</value></data>
+  <data name="PayDataIntro" xml:space="preserve"><value>Bereiten Sie die kalifornischen CRD-Meldungen für Payroll Employee und Labor Contractor Employee vor; eingereicht werden sie von Ihnen selbst im CRD-Portal.</value></data>
+  <data name="PayDataReporting" xml:space="preserve"><value>Lohndatenmeldung</value></data>
+  <data name="PayDataRun" xml:space="preserve"><value>Meldelauf</value></data>
+  <data name="PerOvertimeHour" xml:space="preserve"><value>Pro Überstunde</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="PersonnelRole" xml:space="preserve"><value>Personalrolle</value></data>
+  <data name="PersonnelRoleHelp" xml:space="preserve"><value>Dient zur Auswahl eines Rollen-Standardvergütungsprofils, wenn kein Beschäftigtenprofil existiert.</value></data>
+  <data name="Phase" xml:space="preserve"><value>Phase</value></data>
+  <data name="PhaseIncident" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="PhaseMobilization" xml:space="preserve"><value>Mobilisierung</value></data>
+  <data name="PhaseReturn" xml:space="preserve"><value>Rückkehr</value></data>
+  <data name="PhaseStandby" xml:space="preserve"><value>Bereitschaft</value></data>
+  <data name="PhysicalAddress" xml:space="preserve"><value>Straßenadresse</value></data>
+  <data name="PortalWorksheet" xml:space="preserve"><value>Portal-Arbeitsblatt</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>PLZ</value></data>
+  <data name="PreviewEightHours" xml:space="preserve"><value>Vollkosten eines regulären 8-Stunden-Tags</value></data>
+  <data name="ProfileUnavailable" xml:space="preserve"><value>kein geprüftes Schemaprofil</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Kennungen, Adressen, Lohnsätze, Einkünfte, demografische Angaben und Exportdateien sind Felder der erweiterten Datensicherung (Katalog 28). Ohne gültige Freigabe erscheinen sie als REDACTED und werden nie zwischengespeichert oder protokolliert.</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Herkunft</value></data>
+  <data name="ProvenanceHelp" xml:space="preserve"><value>Woher die Identität stammt (Vertrag, W-9, Portaleintrag).</value></data>
+  <data name="ProxyAverageHoursPerDay" xml:space="preserve"><value>Durchschnittsstunden pro Tag</value></data>
+  <data name="Purged" xml:space="preserve"><value>gelöscht</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Menge</value></data>
+  <data name="RaceEthnicity" xml:space="preserve"><value>Ethnische Zugehörigkeit</value></data>
+  <data name="RaceHelp" xml:space="preserve"><value>Wählen Sie alle zutreffenden Kategorien; zwei oder mehr werden als multiethnisch gemeldet.</value></data>
+  <data name="Race_B" xml:space="preserve"><value>Weiß</value></data>
+  <data name="Race_C" xml:space="preserve"><value>Schwarz oder Afroamerikanisch</value></data>
+  <data name="Race_D" xml:space="preserve"><value>Hawaiianisch oder pazifische Inselbevölkerung</value></data>
+  <data name="Race_E" xml:space="preserve"><value>Asiatisch</value></data>
+  <data name="Race_F" xml:space="preserve"><value>Indigen (American Indian / Alaska Native)</value></data>
+  <data name="Race_H" xml:space="preserve"><value>Nahöstlich oder Nordafrikanisch</value></data>
+  <data name="Rate" xml:space="preserve"><value>Satz</value></data>
+  <data name="RateMultipliers" xml:space="preserve"><value>Satzmultiplikatoren</value></data>
+  <data name="RateMultipliersHelp" xml:space="preserve"><value>JSON je Lohncode; fehlende Codes verwenden 1,5 (Überstunden), 2 (Doppelzeit) und 1.</value></data>
+  <data name="Readiness" xml:space="preserve"><value>Bereitschaft</value></data>
+  <data name="ReadyToFreeze" xml:space="preserve"><value>bereit zum Einfrieren</value></data>
+  <data name="Reason" xml:space="preserve"><value>Grund</value></data>
+  <data name="Reconciled" xml:space="preserve"><value>Abgestimmt</value></data>
+  <data name="RegularHourlyEquivalent" xml:space="preserve"><value>Regulärer Stundenäquivalent</value></data>
+  <data name="RegularHourlyEquivalentHelp" xml:space="preserve"><value>Optionale Überschreibung; sonst aus Grundbetrag und Standardstunden abgeleitet.</value></data>
+  <data name="Relationship" xml:space="preserve"><value>Beziehung</value></data>
+  <data name="RelationshipEnd" xml:space="preserve"><value>Ende der Beziehung</value></data>
+  <data name="RelationshipStart" xml:space="preserve"><value>Beginn der Beziehung</value></data>
+  <data name="RemoteInCa" xml:space="preserve"><value>Remote in CA</value></data>
+  <data name="RemoteOutsideCa" xml:space="preserve"><value>Remote außerhalb CA</value></data>
+  <data name="ReportType" xml:space="preserve"><value>Meldetyp</value></data>
+  <data name="ReportTypeLaborContractorEmployee" xml:space="preserve"><value>Labor Contractor Employee Report</value></data>
+  <data name="ReportTypePayrollEmployee" xml:space="preserve"><value>Payroll Employee Report</value></data>
+  <data name="ReportableHours" xml:space="preserve"><value>Meldbare Stunden</value></data>
+  <data name="ResourceBasisFixedAnnual" xml:space="preserve"><value>Jährlich fix</value></data>
+  <data name="ResourceBasisPerDay" xml:space="preserve"><value>Pro Tag</value></data>
+  <data name="ResourceBasisPerDeployment" xml:space="preserve"><value>Pro Entsendung</value></data>
+  <data name="ResourceBasisPerEngineHour" xml:space="preserve"><value>Pro Motorstunde</value></data>
+  <data name="ResourceBasisPerIdleHour" xml:space="preserve"><value>Pro Leerlaufstunde</value></data>
+  <data name="ResourceBasisPerKilometer" xml:space="preserve"><value>Pro Kilometer</value></data>
+  <data name="ResourceBasisPerMile" xml:space="preserve"><value>Pro Meile</value></data>
+  <data name="ResourceBasisPerOperatingHour" xml:space="preserve"><value>Pro Betriebsstunde</value></data>
+  <data name="ResourceCategoryConsumables" xml:space="preserve"><value>Verbrauchsmaterial</value></data>
+  <data name="ResourceCategoryDepreciation" xml:space="preserve"><value>Abschreibung</value></data>
+  <data name="ResourceCategoryFixedOverhead" xml:space="preserve"><value>Fixe Gemeinkosten</value></data>
+  <data name="ResourceCategoryFuelEnergy" xml:space="preserve"><value>Kraftstoff / Energie</value></data>
+  <data name="ResourceCategoryInsuranceLicensing" xml:space="preserve"><value>Versicherung / Zulassung</value></data>
+  <data name="ResourceCategoryLeaseRental" xml:space="preserve"><value>Leasing / Miete</value></data>
+  <data name="ResourceCategoryMaintenance" xml:space="preserve"><value>Wartung</value></data>
+  <data name="ResourceCategoryOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="ResourceCategoryStorage" xml:space="preserve"><value>Lagerung</value></data>
+  <data name="ResourceCategoryTiresWear" xml:space="preserve"><value>Reifen / Verschleiß</value></data>
+  <data name="ResourceComponentsHelp" xml:space="preserve"><value>Kraftstoff (Satz oder Verbrauch × Stückpreis), Wartung (manuell oder rollierender Auftrags-Ist mit Zählerfenster), Reifen, Versicherung, Leasing, Lagerung, fixe Gemeinkosten und Verbrauchsmaterial.</value></data>
+  <data name="ResourceCosts" xml:space="preserve"><value>Ressourcenkosten</value></data>
+  <data name="ResourceCostsIntro" xml:space="preserve"><value>Abschreibung, Kraftstoff, Wartung und Fixkosten je Einheit, Anlage oder externer Ressourcenklasse.</value></data>
+  <data name="ResourceProfiles" xml:space="preserve"><value>Ressourcenprofile</value></data>
+  <data name="ResourceProfilesHelp" xml:space="preserve"><value>Reine Zahlenwerte, geschützt durch „Interne Kosten anzeigen“ – hier wird keine Person bewertet.</value></data>
+  <data name="ResourceSourceAcquisitionCalculated" xml:space="preserve"><value>Aus Anschaffung berechnet</value></data>
+  <data name="ResourceSourceImported" xml:space="preserve"><value>Importiert</value></data>
+  <data name="ResourceSourceManual" xml:space="preserve"><value>Manuell</value></data>
+  <data name="ResourceSourceWorkOrderRollingActual" xml:space="preserve"><value>Rollierender Auftrags-Ist</value></data>
+  <data name="ResourceUsage" xml:space="preserve"><value>Ressourcennutzung</value></data>
+  <data name="Resources" xml:space="preserve"><value>Ressourcen</value></data>
+  <data name="Revenue" xml:space="preserve"><value>Umsatz</value></data>
+  <data name="RevenueBidEstimate" xml:space="preserve"><value>Angebotssumme</value></data>
+  <data name="RevenueCalOesMarsApproved" xml:space="preserve"><value>Cal OES MARS genehmigt</value></data>
+  <data name="RevenueCalOesMarsExpected" xml:space="preserve"><value>Cal OES MARS erwartet</value></data>
+  <data name="RevenueCalOesMarsPaid" xml:space="preserve"><value>Cal OES MARS bezahlt</value></data>
+  <data name="RevenueCustomerInvoice" xml:space="preserve"><value>Kundenrechnungen</value></data>
+  <data name="RevenueNone" xml:space="preserve"><value>Keiner</value></data>
+  <data name="RevenueSource" xml:space="preserve"><value>Umsatzquelle</value></data>
+  <data name="Review" xml:space="preserve"><value>Prüfung</value></data>
+  <data name="Review_approved_payroll_cost_used" xml:space="preserve"><value>freigegebene Lohnkosten verwendet</value></data>
+  <data name="Review_class_default_fallback" xml:space="preserve"><value>Klassenprofil verwendet</value></data>
+  <data name="Review_component_unapproved" xml:space="preserve"><value>Komponente nicht genehmigt</value></data>
+  <data name="Review_currency_mismatch" xml:space="preserve"><value>Währungsabweichung</value></data>
+  <data name="Review_department_default_fallback" xml:space="preserve"><value>Organisationsstandard verwendet</value></data>
+  <data name="Review_depreciation_inputs_missing" xml:space="preserve"><value>Abschreibungsangaben fehlen</value></data>
+  <data name="Review_distance_conflict" xml:space="preserve"><value>automatische und manuelle Distanz weichen ab</value></data>
+  <data name="Review_fuel_inputs_missing" xml:space="preserve"><value>Kraftstoffangaben fehlen</value></data>
+  <data name="Review_no_compensation_profile" xml:space="preserve"><value>kein Vergütungsprofil</value></data>
+  <data name="Review_no_employment_for_member" xml:space="preserve"><value>kein Beschäftigungszeitraum für das Mitglied</value></data>
+  <data name="Review_no_rate_for_basis" xml:space="preserve"><value>kein Satz für die Basis</value></data>
+  <data name="Review_no_resource_profile" xml:space="preserve"><value>kein Ressourcenprofil</value></data>
+  <data name="Review_pay_code_multiplier_missing" xml:space="preserve"><value>Lohncode-Multiplikator fehlt (Standard verwendet)</value></data>
+  <data name="Review_repair_double_counted" xml:space="preserve"><value>Reparatur bereits direkt berechnet</value></data>
+  <data name="Review_role_default_fallback" xml:space="preserve"><value>Rollenstandard verwendet</value></data>
+  <data name="Review_rolling_window_insufficient" xml:space="preserve"><value>rollierendes Wartungsfenster unzureichend</value></data>
+  <data name="Review_unapproved_profile" xml:space="preserve"><value>nicht genehmigtes Profil</value></data>
+  <data name="Review_usage_needs_review" xml:space="preserve"><value>Nutzungsablesung prüfen</value></data>
+  <data name="Review_utilization_missing" xml:space="preserve"><value>Jahresnutzung fehlt</value></data>
+  <data name="Rows" xml:space="preserve"><value>Zeilen</value></data>
+  <data name="RunBidEstimate" xml:space="preserve"><value>Angebotskosten schätzen</value></data>
+  <data name="RunBidEstimateHelp" xml:space="preserve"><value>Angebotspositionen × Organisationsstandard-Vergütung und Klassen-Ressourcenprofile; Umsatz = Angebotssumme.</value></data>
+  <data name="RunCallCost" xml:space="preserve"><value>Einsatzkosten berechnen</value></data>
+  <data name="RunCallCostHelp" xml:space="preserve"><value>Arbeitseinträge und Nutzungsablesungen zum Einsatz; kein Umsatz.</value></data>
+  <data name="RunDeploymentCost" xml:space="preserve"><value>Entsendungskosten berechnen</value></data>
+  <data name="RunDeploymentCostHelp" xml:space="preserve"><value>Freigegebene Tageszeitberichte, Nutzungsablesungen und Ausgaben bis zum Datum.</value></data>
+  <data name="RunRemarks" xml:space="preserve"><value>Erläuternde Anmerkungen</value></data>
+  <data name="RunRemarksHelp" xml:space="preserve"><value>Bis zu 500 Zeichen; erforderlich, wenn Box-1-Einkünfte verwendet wurden oder eine Ersatzmethode für Befreite gilt.</value></data>
+  <data name="RunStatusDraft" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="RunStatusFrozen" xml:space="preserve"><value>Eingefroren</value></data>
+  <data name="RunStatusNeedsReview" xml:space="preserve"><value>Prüfung nötig</value></data>
+  <data name="RunStatusSuperseded" xml:space="preserve"><value>Ersetzt</value></data>
+  <data name="RunType" xml:space="preserve"><value>Lauftyp</value></data>
+  <data name="RunTypeActual" xml:space="preserve"><value>Ist</value></data>
+  <data name="RunTypeEstimate" xml:space="preserve"><value>Schätzung</value></data>
+  <data name="Runs" xml:space="preserve"><value>Meldeläufe</value></data>
+  <data name="SalvageValue" xml:space="preserve"><value>Restwert</value></data>
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Die Änderung konnte nicht gespeichert werden.</value></data>
+  <data name="SaveResponse" xml:space="preserve"><value>Angabe speichern</value></data>
+  <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
+  <data name="SchemaProfile" xml:space="preserve"><value>Schemaprofil</value></data>
+  <data name="Scope" xml:space="preserve"><value>Geltungsbereich</value></data>
+  <data name="ScopeDepartmentDefault" xml:space="preserve"><value>Organisationsstandard</value></data>
+  <data name="ScopeEmployee" xml:space="preserve"><value>Beschäftigte(r)</value></data>
+  <data name="ScopeRoleDefault" xml:space="preserve"><value>Rollenstandard</value></data>
+  <data name="Sein" xml:space="preserve"><value>SEIN (EDD)</value></data>
+  <data name="SelfIdentification" xml:space="preserve"><value>Freiwillige Selbstauskunft</value></data>
+  <data name="SelfIdentificationNotice" xml:space="preserve"><value>Ihre Angaben werden getrennt von Ihrer Personalakte verschlüsselt gespeichert und nur zur Erstellung der aggregierten CRD-Meldung verwendet. Niemand in der Organisation sieht sie auf einer anderen Seite.</value></data>
+  <data name="SelfIdentified" xml:space="preserve"><value>selbst angegeben</value></data>
+  <data name="Sex" xml:space="preserve"><value>Geschlecht</value></data>
+  <data name="Sex_10" xml:space="preserve"><value>Weiblich</value></data>
+  <data name="Sex_20" xml:space="preserve"><value>Männlich</value></data>
+  <data name="Sex_30" xml:space="preserve"><value>Nicht-binär</value></data>
+  <data name="Size" xml:space="preserve"><value>Größe</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Übersprungen</value></data>
+  <data name="Snapshot" xml:space="preserve"><value>Momentaufnahme</value></data>
+  <data name="SnapshotEmployeeCount" xml:space="preserve"><value>Beschäftigte in der Momentaufnahme</value></data>
+  <data name="SnapshotEnd" xml:space="preserve"><value>Ende der Momentaufnahme</value></data>
+  <data name="SnapshotStart" xml:space="preserve"><value>Beginn der Momentaufnahme</value></data>
+  <data name="SnapshotWindowHelp" xml:space="preserve"><value>Ein einzelner Abrechnungszeitraum zwischen</value></data>
+  <data name="Snapshots" xml:space="preserve"><value>Beschäftigten-Momentaufnahmen</value></data>
+  <data name="SnapshotsHelp" xml:space="preserve"><value>Eine Zeile je kalifornischem Beschäftigten im Zeitraum; demografischer Code, Einkünfte und Stundensatz sind geschützte Felder. Überschreibungen benötigen einen Grund und werden protokolliert.</value></data>
+  <data name="SocCode" xml:space="preserve"><value>SOC-Code</value></data>
+  <data name="SocVersion" xml:space="preserve"><value>SOC-Version</value></data>
+  <data name="SosNumber" xml:space="preserve"><value>Nummer beim CA Secretary of State</value></data>
+  <data name="Source" xml:space="preserve"><value>Quelle</value></data>
+  <data name="StartEngineMeter" xml:space="preserve"><value>Betriebsstundenzähler Start</value></data>
+  <data name="StartOdometer" xml:space="preserve"><value>Kilometerzähler Start</value></data>
+  <data name="StartOn" xml:space="preserve"><value>Beginn</value></data>
+  <data name="State" xml:space="preserve"><value>Bundesstaat</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="StatusCertifiedExternally" xml:space="preserve"><value>Extern bescheinigt</value></data>
+  <data name="StatusCorrection" xml:space="preserve"><value>Korrigiert</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="StatusExported" xml:space="preserve"><value>Exportiert</value></data>
+  <data name="StatusFrozenForExport" xml:space="preserve"><value>Eingefroren</value></data>
+  <data name="StatusValidated" xml:space="preserve"><value>Validiert</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Storniert</value></data>
+  <data name="Subject" xml:space="preserve"><value>Gegenstand</value></data>
+  <data name="SubjectType" xml:space="preserve"><value>Gegenstandstyp</value></data>
+  <data name="SubjectTypeExternal" xml:space="preserve"><value>Externe Klasse</value></data>
+  <data name="SubjectTypeInventoryAsset" xml:space="preserve"><value>Inventaranlage</value></data>
+  <data name="SubjectTypeUnit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="Summary" xml:space="preserve"><value>Zusammenfassung</value></data>
+  <data name="TabAnnualFacts" xml:space="preserve"><value>Jahreslohndaten</value></data>
+  <data name="TabCompensation" xml:space="preserve"><value>Vergütung</value></data>
+  <data name="TabContractors" xml:space="preserve"><value>Personaldienstleister</value></data>
+  <data name="TabCostRuns" xml:space="preserve"><value>Kostenläufe</value></data>
+  <data name="TabDashboard" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="TabEmployer" xml:space="preserve"><value>Arbeitgeber</value></data>
+  <data name="TabEstablishments" xml:space="preserve"><value>Betriebsstätten</value></data>
+  <data name="TabPayData" xml:space="preserve"><value>Lohndatenmeldung</value></data>
+  <data name="TabResourceCosts" xml:space="preserve"><value>Ressourcenkosten</value></data>
+  <data name="TabWorkEntries" xml:space="preserve"><value>Arbeitseinträge</value></data>
+  <data name="TabWorkers" xml:space="preserve"><value>Beschäftigte</value></data>
+  <data name="ThroughDate" xml:space="preserve"><value>Bis Datum</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Zeitzone</value></data>
+  <data name="Total" xml:space="preserve"><value>Gesamt</value></data>
+  <data name="TotalLoadedCost" xml:space="preserve"><value>Gesamte Vollkosten</value></data>
+  <data name="Unapproved" xml:space="preserve"><value>nicht genehmigt</value></data>
+  <data name="Unit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="UnitPrice" xml:space="preserve"><value>Stückpreis</value></data>
+  <data name="UnresolvedExceptions" xml:space="preserve"><value>Ungelöste Ausnahmen</value></data>
+  <data name="Updated" xml:space="preserve"><value>Aktualisiert</value></data>
+  <data name="UsEmployeeCount" xml:space="preserve"><value>US-Beschäftigte</value></data>
+  <data name="UsageEntries" xml:space="preserve"><value>Nutzungseinträge</value></data>
+  <data name="UsageIntro" xml:space="preserve"><value>Kilometerzähler, Betriebsstundenzähler, Stunden und Kraftstoff je Einheit und Tag; Distanz wird in Meilen gespeichert, widersprüchliche Ablesungen kommen in die Prüfung.</value></data>
+  <data name="UsageSourceDtr" xml:space="preserve"><value>Tageszeitbericht</value></data>
+  <data name="UsageSourceGps" xml:space="preserve"><value>GPS</value></data>
+  <data name="UsageSourceHardwareTracker" xml:space="preserve"><value>Hardware-Tracker</value></data>
+  <data name="UsageSourceImport" xml:space="preserve"><value>Import</value></data>
+  <data name="UsageSourceManual" xml:space="preserve"><value>Manuell</value></data>
+  <data name="UsefulLifeMonths" xml:space="preserve"><value>Nutzungsdauer (Monate)</value></data>
+  <data name="UsefulLifeQuantity" xml:space="preserve"><value>Nutzungsdauer (Einheiten)</value></data>
+  <data name="UsefulLifeQuantityHelp" xml:space="preserve"><value>Meilen, Stunden oder Tage über die Nutzungsdauer; linear = (Kosten − Restwert) ÷ Nutzungsdauer.</value></data>
+  <data name="Validate" xml:space="preserve"><value>Validieren</value></data>
+  <data name="ValidatedOn" xml:space="preserve"><value>Validiert am</value></data>
+  <data name="Validation" xml:space="preserve"><value>Validierung</value></data>
+  <data name="Validation_annual_fact_missing" xml:space="preserve"><value>Jahreslohndaten fehlen</value></data>
+  <data name="Validation_annual_fact_unapproved" xml:space="preserve"><value>Jahreslohndaten nicht genehmigt</value></data>
+  <data name="Validation_assignment_overlap" xml:space="preserve"><value>überlappende Tätigkeitszuordnungen</value></data>
+  <data name="Validation_contractor_identity_missing" xml:space="preserve"><value>Identität des Personaldienstleisters fehlt</value></data>
+  <data name="Validation_coverage_undeclared" xml:space="preserve"><value>Meldepflichtstatus nicht erklärt</value></data>
+  <data name="Validation_demographic_missing" xml:space="preserve"><value>demografische Angabe fehlt oder abgelehnt</value></data>
+  <data name="Validation_earnings_box1_fallback" xml:space="preserve"><value>W-2 Box 1 statt Box 5 verwendet (Anmerkung erforderlich)</value></data>
+  <data name="Validation_earnings_missing" xml:space="preserve"><value>Einkünfte fehlen</value></data>
+  <data name="Validation_employee_count_mismatch" xml:space="preserve"><value>Zeilen-Beschäftigtenzahlen stimmen nicht mit den Momentaufnahmen überein</value></data>
+  <data name="Validation_employer_identity_missing" xml:space="preserve"><value>Arbeitgeberidentität unvollständig (Name, FEIN, SEIN, EDD-Adresse)</value></data>
+  <data name="Validation_establishment_address_missing" xml:space="preserve"><value>Adresse der Betriebsstätte unvollständig</value></data>
+  <data name="Validation_establishment_missing" xml:space="preserve"><value>Betriebsstätte fehlt</value></data>
+  <data name="Validation_establishment_naics_missing" xml:space="preserve"><value>NAICS der Betriebsstätte fehlt</value></data>
+  <data name="Validation_exempt_proxy_used" xml:space="preserve"><value>Ersatzmethode für befreite Stunden verwendet (Anmerkung erforderlich)</value></data>
+  <data name="Validation_field_too_long" xml:space="preserve"><value>Feld überschreitet die Vorlagenlänge</value></data>
+  <data name="Validation_file_too_large" xml:space="preserve"><value>Export würde die Dateigrößenbeschränkung des Portals überschreiten</value></data>
+  <data name="Validation_hours_zero" xml:space="preserve"><value>meldbare Stunden sind null</value></data>
+  <data name="Validation_job_category_missing" xml:space="preserve"><value>Tätigkeitskategorie fehlt</value></data>
+  <data name="Validation_job_category_unknown" xml:space="preserve"><value>Tätigkeitskategorie nicht im Schemaprofil</value></data>
+  <data name="Validation_manual_override" xml:space="preserve"><value>manuelle Überschreibung angewendet</value></data>
+  <data name="Validation_no_employees" xml:space="preserve"><value>keine Beschäftigten in der Momentaufnahme</value></data>
+  <data name="Validation_observer_perception_used" xml:space="preserve"><value>Fremdwahrnehmung für den demografischen Code verwendet</value></data>
+  <data name="Validation_profile_stale" xml:space="preserve"><value>Schemaprofil hat sich seit Anlage des Laufs geändert</value></data>
+  <data name="Validation_remote_counts_mismatch" xml:space="preserve"><value>Remote-Zahlen stimmen nicht mit der Beschäftigtenzahl überein</value></data>
+  <data name="Validation_required" xml:space="preserve"><value>erforderliche Vorlagenspalte ist leer</value></data>
+  <data name="Validation_rows_not_aggregated" xml:space="preserve"><value>Zeilen noch nicht aggregiert</value></data>
+  <data name="Validation_snapshot_outside_window" xml:space="preserve"><value>Momentaufnahme außerhalb des zulässigen Fensters</value></data>
+  <data name="Validation_weeks_missing" xml:space="preserve"><value>gearbeitete Wochen fehlen</value></data>
+  <data name="Validation_work_mode_unresolved" xml:space="preserve"><value>Arbeitsmodus ungeklärt (keine Zuordnung)</value></data>
+  <data name="Variance" xml:space="preserve"><value>Abweichung</value></data>
+  <data name="Version" xml:space="preserve"><value>Version</value></data>
+  <data name="ViewInternalCosts" xml:space="preserve"><value>Interne Kosten anzeigen</value></data>
+  <data name="ViewInternalCostsNote" xml:space="preserve"><value>Aggregierte Einsatzkosten und Margen für Angebote, Einsätze und Entsendungen – Kategorien und Summen, nie eine Position, ein Satz oder eine Person – sowie Ressourcenkostenprofile und Nutzungsablesungen.</value></data>
+  <data name="ViewWorkforceCompensation" xml:space="preserve"><value>Vergütung anzeigen</value></data>
+  <data name="ViewWorkforceCompensationNote" xml:space="preserve"><value>Vergütungsprofile, Arbeitseinträge, Jahreslohndaten und Kostenlauf-Positionen lesen. Werte benötigen weiterhin eine gültige Freigabe.</value></data>
+  <data name="Void" xml:space="preserve"><value>Stornieren</value></data>
+  <data name="W2Box1" xml:space="preserve"><value>W-2 Box 1</value></data>
+  <data name="W2Box5" xml:space="preserve"><value>W-2 Box 5</value></data>
+  <data name="Warnings" xml:space="preserve"><value>Warnungen</value></data>
+  <data name="WasFiledPriorYear" xml:space="preserve"><value>Im Vorjahr gemeldet</value></data>
+  <data name="WeeksWorked" xml:space="preserve"><value>Gearbeitete Wochen</value></data>
+  <data name="WhyWeAsk" xml:space="preserve"><value>Warum wir fragen</value></data>
+  <data name="WhyWeAskText" xml:space="preserve"><value>Der California Government Code § 12999 verpflichtet meldepflichtige Arbeitgeber, Lohndaten nach Tätigkeitskategorie, Ethnie und Geschlecht gruppiert zu melden. Die Meldung enthält nur aggregierte Zahlen und Sätze; sie nennt niemanden.</value></data>
+  <data name="WizardSteps" xml:space="preserve"><value>1. Beschäftigten-Momentaufnahmen erstellen · 2. Zeilen aggregieren · 3. Validieren · 4. Einfrieren und exportieren · dann im CRD-Portal bestätigen und die Bescheinigung hier erfassen.</value></data>
+  <data name="WorkCountry" xml:space="preserve"><value>Land</value></data>
+  <data name="WorkEntries" xml:space="preserve"><value>Arbeitseinträge</value></data>
+  <data name="WorkEntriesIntro" xml:space="preserve"><value>Stunden je Person und Tag aus Lohnsystem, Entsendungen und Einsätzen; die vom Lohnsystem freigegebenen Kosten ersetzen jede Schätzung.</value></data>
+  <data name="WorkLocation" xml:space="preserve"><value>Arbeitsort</value></data>
+  <data name="WorkMode" xml:space="preserve"><value>Arbeitsmodus</value></data>
+  <data name="WorkModeNonRemote" xml:space="preserve"><value>Vor Ort</value></data>
+  <data name="WorkModeRemoteOutsideCaliforniaAssignedToCaliforniaEstablishment" xml:space="preserve"><value>Remote außerhalb Kaliforniens (kalifornischer Betriebsstätte zugeordnet)</value></data>
+  <data name="WorkModeRemoteWithinCalifornia" xml:space="preserve"><value>Remote innerhalb Kaliforniens</value></data>
+  <data name="WorkSubdivision" xml:space="preserve"><value>Bundesstaat / Provinz</value></data>
+  <data name="Worker" xml:space="preserve"><value>Beschäftigte(r)</value></data>
+  <data name="WorkerIntro" xml:space="preserve"><value>Beschäftigungszeiträume überschneiden sich nie; jeder Zeitraum trägt seine Tätigkeitszuordnungen im Zeitverlauf.</value></data>
+  <data name="WorkerKind" xml:space="preserve"><value>Beschäftigungsart</value></data>
+  <data name="WorkerKindIndependentContractor" xml:space="preserve"><value>Selbstständige(r)</value></data>
+  <data name="WorkerKindLaborContractorEmployee" xml:space="preserve"><value>Labor-Contractor-Beschäftigte(r)</value></data>
+  <data name="WorkerKindPayrollEmployee" xml:space="preserve"><value>Payroll-Beschäftigte(r)</value></data>
+  <data name="WorkerKindVolunteer" xml:space="preserve"><value>Ehrenamtliche(r)</value></data>
+  <data name="Workers" xml:space="preserve"><value>Beschäftigte</value></data>
+  <data name="WorkersIntro" xml:space="preserve"><value>Jede Person, die die Organisation bezahlt oder meldet – Mitglieder und externe Beschäftigte – mit ihren Beschäftigungszeiträumen.</value></data>
+  <data name="Workforce" xml:space="preserve"><value>Belegschaft</value></data>
+  <data name="WorksheetIntro" xml:space="preserve"><value>Die Arbeitgeberwerte, die Sie neben der hochgeladenen Datei in das CRD-Portal eingeben.</value></data>
+  <data name="WorksheetNoStore" xml:space="preserve"><value>Ohne Zwischenspeicherung ausgeliefert und protokolliert; Tab nach Gebrauch schließen. Resgrid meldet sich nie am Portal an.</value></data>
+  <data name="Year" xml:space="preserve"><value>Jahr</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="paydata_artifact_not_found" xml:space="preserve"><value>Die Exportdatei wurde nicht gefunden.</value></data>
+  <data name="paydata_artifact_unavailable" xml:space="preserve"><value>Die Exportdatei ist abgelaufen oder wurde gelöscht.</value></data>
+  <data name="paydata_certification_reference_required" xml:space="preserve"><value>Die Portal-Bescheinigungsreferenz ist erforderlich.</value></data>
+  <data name="paydata_collection_source_invalid" xml:space="preserve"><value>Die Erhebungsquelle ist ungültig.</value></data>
+  <data name="paydata_correction_exists" xml:space="preserve"><value>Ein Korrekturlauf existiert bereits.</value></data>
+  <data name="paydata_hispanic_invalid" xml:space="preserve"><value>Die Angabe „Hispanisch oder Latino“ ist ungültig.</value></data>
+  <data name="paydata_no_snapshots" xml:space="preserve"><value>Erstellen Sie zuerst die Beschäftigten-Momentaufnahmen.</value></data>
+  <data name="paydata_profile_unavailable" xml:space="preserve"><value>Kein geprüftes CRD-Schemaprofil deckt dieses Meldejahr ab.</value></data>
+  <data name="paydata_race_invalid" xml:space="preserve"><value>Ein Ethnie-Code ist ungültig.</value></data>
+  <data name="paydata_race_required" xml:space="preserve"><value>Geben Sie die Ethnie an oder wählen Sie „Keine Angabe“.</value></data>
+  <data name="paydata_reason_required" xml:space="preserve"><value>Ein Grund ist erforderlich.</value></data>
+  <data name="paydata_remarks_too_long" xml:space="preserve"><value>Anmerkungen sind auf 500 Zeichen begrenzt.</value></data>
+  <data name="paydata_run_certified" xml:space="preserve"><value>Ein bescheinigter Lauf kann nicht storniert werden; legen Sie eine Korrektur an.</value></data>
+  <data name="paydata_run_frozen" xml:space="preserve"><value>Der Lauf ist eingefroren; legen Sie stattdessen eine Korrektur an.</value></data>
+  <data name="paydata_run_not_exported" xml:space="preserve"><value>Nur ein exportierter Lauf kann als bescheinigt markiert werden.</value></data>
+  <data name="paydata_run_not_found" xml:space="preserve"><value>Der Meldelauf wurde nicht gefunden.</value></data>
+  <data name="paydata_run_not_frozen" xml:space="preserve"><value>Nur ein exportierter oder bescheinigter Lauf kann korrigiert werden.</value></data>
+  <data name="paydata_sex_invalid" xml:space="preserve"><value>Der Geschlechtscode ist ungültig.</value></data>
+  <data name="paydata_sex_required" xml:space="preserve"><value>Geben Sie das Geschlecht an oder wählen Sie „Keine Angabe“.</value></data>
+  <data name="paydata_snapshot_not_found" xml:space="preserve"><value>Die Beschäftigten-Momentaufnahme wurde nicht gefunden.</value></data>
+  <data name="paydata_snapshot_window_invalid" xml:space="preserve"><value>Der Momentaufnahmezeitraum muss ein Abrechnungszeitraum innerhalb des zulässigen Fensters sein.</value></data>
+  <data name="paydata_validation_failed" xml:space="preserve"><value>Die Validierung meldet weiterhin blockierende Fehler.</value></data>
+  <data name="paydata_workload_denied" xml:space="preserve"><value>Der Meldeprozess konnte die geschützten Werte nicht entschlüsseln.</value></data>
+  <data name="workforce_affiliate_name_required" xml:space="preserve"><value>Der Name des verbundenen Unternehmens ist erforderlich.</value></data>
+  <data name="workforce_allocation_invalid" xml:space="preserve"><value>Die Zuordnungsbasis ist ungültig.</value></data>
+  <data name="workforce_amount_invalid" xml:space="preserve"><value>Ein Betrag ist negativ.</value></data>
+  <data name="workforce_asset_required" xml:space="preserve"><value>Eine Inventaranlage ist erforderlich.</value></data>
+  <data name="workforce_assignment_overlap" xml:space="preserve"><value>Die Zuordnung überschneidet sich mit einer anderen Zuordnung dieser Beschäftigung.</value></data>
+  <data name="workforce_bid_not_found" xml:space="preserve"><value>Das Angebot wurde nicht gefunden.</value></data>
+  <data name="workforce_component_invalid" xml:space="preserve"><value>Eine Komponentenkategorie oder -basis ist ungültig.</value></data>
+  <data name="workforce_contractor_name_required" xml:space="preserve"><value>Der rechtliche Name des Dienstleisters ist erforderlich.</value></data>
+  <data name="workforce_contractor_required" xml:space="preserve"><value>Ein Labor-Contractor-Beschäftigter benötigt einen Personaldienstleister.</value></data>
+  <data name="workforce_coverage_invalid" xml:space="preserve"><value>Der Meldepflichtstatus ist ungültig.</value></data>
+  <data name="workforce_dates_invalid" xml:space="preserve"><value>Das Enddatum liegt vor dem Startdatum.</value></data>
+  <data name="workforce_deployment_not_found" xml:space="preserve"><value>Die Entsendung wurde nicht gefunden.</value></data>
+  <data name="workforce_employer_name_required" xml:space="preserve"><value>Der rechtliche Name des Arbeitgebers ist erforderlich.</value></data>
+  <data name="workforce_employment_not_found" xml:space="preserve"><value>Die Beschäftigung wurde nicht gefunden.</value></data>
+  <data name="workforce_employment_overlap" xml:space="preserve"><value>Der Zeitraum überschneidet sich mit einer anderen Beschäftigung dieser Person.</value></data>
+  <data name="workforce_establishment_code_duplicate" xml:space="preserve"><value>Eine andere Betriebsstätte verwendet diesen Code bereits.</value></data>
+  <data name="workforce_establishment_code_required" xml:space="preserve"><value>Eine Betriebsstätte benötigt Code und Name.</value></data>
+  <data name="workforce_establishment_not_found" xml:space="preserve"><value>Die Betriebsstätte wurde nicht gefunden.</value></data>
+  <data name="workforce_external_key_required" xml:space="preserve"><value>Ein externer Ressourcenschlüssel ist erforderlich.</value></data>
+  <data name="workforce_hours_invalid" xml:space="preserve"><value>Stunden müssen zwischen 0 und 24 liegen.</value></data>
+  <data name="workforce_hours_type_invalid" xml:space="preserve"><value>Die Stundenart ist ungültig.</value></data>
+  <data name="workforce_job_category_invalid" xml:space="preserve"><value>Die Tätigkeitskategorie ist nicht im Schemaprofil.</value></data>
+  <data name="workforce_naics_invalid" xml:space="preserve"><value>NAICS muss sechs Ziffern haben.</value></data>
+  <data name="workforce_no_inputs" xml:space="preserve"><value>Nichts zu berechnen: keine Arbeitseinträge oder Nutzungsablesungen.</value></data>
+  <data name="workforce_not_found" xml:space="preserve"><value>Der Datensatz wurde nicht gefunden.</value></data>
+  <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>Die Lohnbasis ist ungültig.</value></data>
+  <data name="workforce_profile_overlap" xml:space="preserve"><value>Der Zeitraum überschneidet sich mit einem anderen Profil desselben Geltungsbereichs.</value></data>
+  <data name="workforce_protected_write_refused" xml:space="preserve"><value>Der geschützte Schreibvorgang wurde abgelehnt.</value></data>
+  <data name="workforce_report_type_invalid" xml:space="preserve"><value>Der Meldetyp ist ungültig.</value></data>
+  <data name="workforce_role_required" xml:space="preserve"><value>Ein Rollenstandard benötigt eine Personalrolle.</value></data>
+  <data name="workforce_run_frozen" xml:space="preserve"><value>Der Lauf ist eingefroren und kann nicht geändert werden.</value></data>
+  <data name="workforce_scope_invalid" xml:space="preserve"><value>Der Geltungsbereich des Profils ist ungültig.</value></data>
+  <data name="workforce_subject_invalid" xml:space="preserve"><value>Der Gegenstandstyp ist ungültig.</value></data>
+  <data name="workforce_unit_not_found" xml:space="preserve"><value>Die Einheit wurde nicht gefunden.</value></data>
+  <data name="workforce_unit_required" xml:space="preserve"><value>Eine Einheit ist erforderlich.</value></data>
+  <data name="workforce_usage_context_required" xml:space="preserve"><value>Eine Nutzungsablesung benötigt eine Entsendung oder einen Einsatz.</value></data>
+  <data name="workforce_usage_invalid" xml:space="preserve"><value>Die Nutzungsablesung ist ungültig.</value></data>
+  <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Der Arbeitsmodus ist ungültig.</value></data>
+  <data name="workforce_worker_duplicate" xml:space="preserve"><value>Dieses Mitglied hat bereits einen Beschäftigtendatensatz.</value></data>
+  <data name="workforce_worker_identity_required" xml:space="preserve"><value>Eine Person benötigt ein Mitglied oder einen externen Schlüssel.</value></data>
+  <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Die Beschäftigungsart ist ungültig.</value></data>
+  <data name="workforce_worker_not_found" xml:space="preserve"><value>Die Person wurde nicht gefunden.</value></data>
+  <data name="workforce_worker_required" xml:space="preserve"><value>Eine Person ist erforderlich.</value></data>
+  <data name="workforce_year_invalid" xml:space="preserve"><value>Das Meldejahr ist ungültig.</value></data>
+</root>

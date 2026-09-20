@@ -1,0 +1,68 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceStrings
+@*
+    Page heading + module tabs shared by the workforce screens (Workforce & Business Operations plan, Phase E / E6).
+    ViewData["Title"] heading; ViewData["Subtitle"] optional; ViewData["WorkforceTab"] the active tab key; the
+    WorkforcePageView flags decide which tabs render.
+*@
+@{
+    var title = (string)ViewData["Title"] ?? workforceStrings["Workforce"].Value;
+    var subtitle = (string)ViewData["Subtitle"];
+    var tab = (string)ViewData["WorkforceTab"] ?? "dashboard";
+    var page = ViewData["WorkforcePage"] as Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView ?? new Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView();
+    var canView = page.CanManage || page.CanViewCompensation || page.CanViewInternalCosts || page.CanViewPayData;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            @if (tab == "dashboard")
+            {
+                <li class="active"><strong>@workforceStrings["Workforce"]</strong></li>
+            }
+            else
+            {
+                <li><a asp-controller="Workforce" asp-action="Index" asp-route-area="User">@workforceStrings["Workforce"]</a></li>
+                <li class="active"><strong>@title</strong></li>
+            }
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+        @if (canView)
+        {
+            <div class="m-t-sm">
+                <div class="btn-group">
+                    <a asp-controller="Workforce" asp-action="Index" class="btn btn-xs @(tab == "dashboard" ? "btn-primary" : "btn-default")"><i class="fa fa-dashboard"></i> @workforceStrings["TabDashboard"]</a>
+                    @if (page.WorkforceEnabled && (page.CanManage || page.CanViewCompensation || page.CanViewPayData))
+                    {
+                        <a asp-controller="Workforce" asp-action="Employer" class="btn btn-xs @(tab == "employer" ? "btn-primary" : "btn-default")"><i class="fa fa-building"></i> @workforceStrings["TabEmployer"]</a>
+                        <a asp-controller="Workforce" asp-action="Establishments" class="btn btn-xs @(tab == "establishments" ? "btn-primary" : "btn-default")"><i class="fa fa-map-marker"></i> @workforceStrings["TabEstablishments"]</a>
+                        <a asp-controller="Workforce" asp-action="Contractors" class="btn btn-xs @(tab == "contractors" ? "btn-primary" : "btn-default")"><i class="fa fa-briefcase"></i> @workforceStrings["TabContractors"]</a>
+                        <a asp-controller="Workforce" asp-action="Workers" class="btn btn-xs @(tab == "workers" ? "btn-primary" : "btn-default")"><i class="fa fa-users"></i> @workforceStrings["TabWorkers"]</a>
+                    }
+                    @if (page.WorkforceEnabled && page.CanViewCompensation)
+                    {
+                        <a asp-controller="Workforce" asp-action="Compensation" class="btn btn-xs @(tab == "compensation" ? "btn-primary" : "btn-default")"><i class="fa fa-money"></i> @workforceStrings["TabCompensation"]</a>
+                        <a asp-controller="Workforce" asp-action="WorkEntries" class="btn btn-xs @(tab == "workentries" ? "btn-primary" : "btn-default")"><i class="fa fa-clock-o"></i> @workforceStrings["TabWorkEntries"]</a>
+                        <a asp-controller="Workforce" asp-action="AnnualFacts" class="btn btn-xs @(tab == "annualfacts" ? "btn-primary" : "btn-default")"><i class="fa fa-file-text-o"></i> @workforceStrings["TabAnnualFacts"]</a>
+                    }
+                    @if (page.WorkforceEnabled && page.CanViewInternalCosts)
+                    {
+                        <a asp-controller="Workforce" asp-action="ResourceCosts" class="btn btn-xs @(tab == "resourcecosts" ? "btn-primary" : "btn-default")"><i class="fa fa-truck"></i> @workforceStrings["TabResourceCosts"]</a>
+                        <a asp-controller="Workforce" asp-action="CostRuns" class="btn btn-xs @(tab == "costruns" ? "btn-primary" : "btn-default")"><i class="fa fa-calculator"></i> @workforceStrings["TabCostRuns"]</a>
+                    }
+                    @if (page.PayDataEnabled && page.CanViewPayData)
+                    {
+                        <a asp-controller="Workforce" asp-action="PayData" class="btn btn-xs @(tab == "paydata" ? "btn-primary" : "btn-default")"><i class="fa fa-bar-chart"></i> @workforceStrings["TabPayData"]</a>
+                    }
+                    @if (page.PayDataEnabled)
+                    {
+                        <a asp-controller="Workforce" asp-action="MyDemographics" class="btn btn-xs @(tab == "mydemographics" ? "btn-primary" : "btn-default")"><i class="fa fa-user-secret"></i> @workforceStrings["MyDemographics"]</a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

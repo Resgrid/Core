@@ -1,0 +1,93 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceEstablishmentsView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Establishments"];
+    ViewData["Title"] = localizer["Establishments"].Value;
+    ViewData["Subtitle"] = localizer["EstablishmentsIntro"].Value;
+    ViewData["WorkforceTab"] = "establishments";
+    ViewData["WorkforcePage"] = Model;
+    var x = Model.Editing;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-@(x == null ? 12 : 7)">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Establishments"]</h5>
+                    @if (Model.CanManage)
+                    {
+                        <div class="ibox-tools"><a asp-action="Establishments" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddEstablishment"]</a></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Code"]</th><th>@localizer["Name"]</th><th>@localizer["City"]</th><th>@localizer["State"]</th><th>@localizer["Naics"]</th><th>@localizer["Headquarters"]</th><th>@localizer["Active"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var row in Model.Establishments)
+                        {
+                            <tr>
+                                <td>@row.Code</td><td>@row.Name</td><td>@row.City</td><td>@row.StateCode</td><td>@row.Naics</td>
+                                <td>@(row.IsHeadquarters ? localizer["Yes"] : "")</td>
+                                <td>@(row.IsActiveOn(DateTime.UtcNow) ? localizer["Yes"] : localizer["No"])</td>
+                                <td class="text-right">
+                                    @if (Model.CanManage)
+                                    {
+                                        <a asp-action="Establishments" asp-route-edit="@row.WorkforceEstablishmentId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                        <form method="post" asp-action="DeleteEstablishment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceEstablishmentId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Establishments.Count == 0)
+                        {
+                            <tr><td colspan="8" class="text-muted">@localizer["NoEstablishments"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (x != null)
+        {
+            <div class="col-md-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(x.WorkforceEstablishmentId) ? localizer["AddEstablishment"] : localizer["EditEstablishment"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="SaveEstablishment">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="WorkforceEstablishmentId" value="@x.WorkforceEstablishmentId" />
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["Code"] *</label><input type="text" name="Code" class="form-control" maxlength="20" required value="@x.Code" /></div></div>
+                                <div class="col-sm-8"><div class="form-group"><label>@localizer["Name"] *</label><input type="text" name="Name" class="form-control" maxlength="100" required value="@x.Name" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["PhysicalAddress"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="PhysicalAddress" class="form-control" maxlength="100" value="@ProtectedDataEnvelope.SafeDisplay(x.PhysicalAddress)" /></div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["City"]</label><input type="text" name="City" class="form-control" maxlength="50" value="@x.City" /></div></div>
+                                <div class="col-sm-2"><div class="form-group"><label>@localizer["State"]</label><input type="text" name="StateCode" class="form-control" maxlength="2" value="@x.StateCode" /></div></div>
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["PostalCode"]</label><input type="text" name="PostalCode" class="form-control" maxlength="10" value="@x.PostalCode" /></div></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["Naics"]</label><input type="text" name="Naics" class="form-control" maxlength="6" value="@x.Naics" /></div></div>
+                                <div class="col-sm-8"><div class="form-group"><label>@localizer["MajorActivity"]</label><input type="text" name="MajorActivity" class="form-control" maxlength="100" value="@x.MajorActivity" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["Affiliate"]</label><select name="WorkforceAffiliatedEntityId" class="form-control"><option value="">—</option>@foreach (var item in Model.Affiliates) { <option value="@item.Value" selected="@(item.Value == x.WorkforceAffiliatedEntityId)">@item.Text</option> }</select></div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["ActiveFrom"]</label><input type="date" name="ActiveFrom" class="form-control" value="@x.ActiveFrom?.ToString("yyyy-MM-dd")" /></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["ActiveTo"]</label><input type="date" name="ActiveTo" class="form-control" value="@x.ActiveTo?.ToString("yyyy-MM-dd")" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["TimeZone"]</label><input type="text" name="TimeZoneId" class="form-control" value="@x.TimeZoneId" /></div>
+                            <div class="checkbox"><label><input type="checkbox" name="IsHeadquarters" value="true" checked="@x.IsHeadquarters" /> @localizer["Headquarters"]</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="WasFiledPriorYear" value="true" checked="@(x.WasFiledPriorYear == true)" /> @localizer["WasFiledPriorYear"]</label></div>
+                            <div class="m-t-sm"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Establishments" class="btn btn-default">@localizer["Cancel"]</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

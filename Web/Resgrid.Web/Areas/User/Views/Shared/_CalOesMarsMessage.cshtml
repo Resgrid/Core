@@ -1,0 +1,10 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> calOesStrings
+@if (Model.SaveSuccess)
+{
+    <div class="alert alert-success">@calOesStrings["Saved"]</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-danger">@Model.Message</div>
+}

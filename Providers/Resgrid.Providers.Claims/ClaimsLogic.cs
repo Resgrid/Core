@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All))
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All).Concat(WorkforcePermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1792,6 +1792,45 @@ namespace Resgrid.Providers.Claims
 					{
 						new RecordClaimGrant(ResgridClaimTypes.Resources.ServiceContracts, ResgridClaimTypes.Actions.Update),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.ServiceContracts, ResgridClaimTypes.Actions.View)
+					};
+				case PermissionTypes.ManageMutualAidReimbursement:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Submit),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Reconcile)
+					};
+				// Workforce & Business Operations plan, Phase E (registry 74-78).
+				case PermissionTypes.ViewInternalCosts:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.InternalCosts, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageWorkforceCompensation:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ViewWorkforceCompensation:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.View)
+					};
+				case PermissionTypes.ManagePayDataReporting:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ExportPayDataReporting:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.Export)
 					};
 				case PermissionTypes.ManageChecklists:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update) };

@@ -190,7 +190,7 @@
             var add = document.getElementById('addRow');
             if (add) add.addEventListener('click', function () {
                 var rows = body.querySelectorAll('tr'); var clone;
-                if (rows.length) { clone = rows[rows.length - 1].cloneNode(true); clone.querySelectorAll('input[type=text],input[type=number],input.entry-id').forEach(function (i) { i.value = ''; i.removeAttribute('data-adp-field'); }); }
+                if (rows.length) { clone = rows[rows.length - 1].cloneNode(true); clone.querySelectorAll('input[type=text],input[type=number],input.entry-id,input[name$=".CertificationCode"]').forEach(function (i) { i.value = ''; i.removeAttribute('data-adp-field'); }); }
                 else {
                     clone = document.createElement('tr');
                     clone.innerHTML = '<td><select name="entries[0].SubjectId" class="form-control input-sm">@Html.Raw(string.Join("", Model.Subjects.Select(s => $"<option value=\"{s.Id}\">{System.Net.WebUtility.HtmlEncode(s.Name)}</option>")))</select></td>' +

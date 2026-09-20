@@ -531,6 +531,15 @@
             <param name="cancellationToken">The cancellation token</param>
             <returns>ActionResult.</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CalOesMarsController">
+            <summary>
+            Cal OES MARS cost recovery (Workforce &amp; Business Operations plan, C5). Gated by the CostRecovery.CalOesMars
+            entitlement. Rostered personnel get / save / validate their own incident-bound F-42 and expense drafts and see
+            them in the queue; MutualAidReimbursement_View exposes the department queue and readiness metadata,
+            _Update the expected-reimbursement run, _Submit the manual external observations. Agency identifiers, annual
+            rate inputs, the attested handoff and invoice decisions stay MVC-only in P0. Nothing here writes to MARS.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CertificationsController">
             <summary>
             Certification catalog, personnel and unit records, role requirements and settings (Workforce &amp; Business
@@ -1853,6 +1862,23 @@
             <summary>
             Gets calls and other data formatted for different feed formats, like RSS.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FieldCostController">
+            <summary>
+            Internal field costing (Workforce &amp; Business Operations plan, Phase E / E6). Gated by the
+            Workforce.InternalCosting entitlement. InternalCosts_View (74) exposes aggregate cost summaries for a deployment
+            or call — categories, totals, revenue and margin only; rostered members file their own resource usage readings
+            for a deployment they are seated on. Compensation, cost lines, pay data and every protected value stay MVC-only.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldCostController.GetFieldCostSummaries(System.String,System.Nullable{System.Int32})">
+            <summary>Aggregate summaries of every run for a deployment or call (ViewInternalCosts). Never a line, rate or person.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldCostController.GetResourceUsage(System.String)">
+            <summary>Usage entries for a deployment the caller is rostered on (or any, with ViewInternalCosts).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldCostController.AddResourceUsage(Resgrid.Web.Services.Models.v4.Workforce.AddResourceUsageInput)">
+            <summary>A rostered member's own reading for a unit on their deployment (or any, with ViewInternalCosts). Distance is canonicalised to miles; conflicting readings are queued for review.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FieldRecordsController">
             <summary>
@@ -11074,6 +11100,15 @@
         <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ContractorChargeLineData.Kind">
             <summary>ContractorChargeKinds value.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CostRecovery.CalOesMars.CalOesMarsAccessData.Enabled">
+            <summary>CostRecovery.CalOesMars entitlement (paid add-on + flag).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CostRecovery.CalOesMars.CalOesMarsQueueItemData.ExpectedTotal">
+            <summary>Managers only; null for rostered members.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CostRecovery.CalOesMars.CalOesMarsWorkItemData.ExpectedTotal">
+            <summary>Managers only.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">
             <summary>
             Custom defined Status for Personnel and Units
@@ -15915,6 +15950,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Workflows.SaveCredentialInput.PlaintextCredentialJson">
             <summary>Plaintext credential JSON — will be AES-encrypted server-side before storage.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Workforce.FieldCostAccessData.Enabled">
+            <summary>Workforce.InternalCosting entitlement (paid add-on + flag).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Workforce.AddResourceUsageInput.Phase">
+            <summary>UsagePhases.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Workforce.AddResourceUsageInput.DistanceUnit">
+            <summary>"mi" or "km"; the server keeps the reading and stores canonical miles.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Properties.Resources">
             <summary>

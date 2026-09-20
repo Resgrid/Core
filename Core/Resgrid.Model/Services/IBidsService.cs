@@ -16,7 +16,9 @@ namespace Resgrid.Model.Services
 	{
 		Task<List<Bid>> GetBidsForDepartmentAsync(int departmentId, BidStatuses? status = null, int skip = 0, int take = 100);
 		Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status = null);
-		Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId);
+		Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId, int skip = 0, int take = 100);
+		/// <summary>The department's bids raised under one contract (the contract detail page), newest first.</summary>
+		Task<List<Bid>> GetBidsForContractAsync(string serviceContractId, int departmentId);
 		/// <summary>The bid with its lines; null when missing or deleted.</summary>
 		Task<Bid> GetBidByIdAsync(string bidId, int departmentId);
 

@@ -94,7 +94,7 @@ namespace Resgrid.Services.Invoicing
 				To = recipient,
 				Subject = $"{label} from {await DepartmentDisplayNameAsync(departmentId)}",
 				Body = $"{label} for {FormatMoney(invoice.Total, invoice.Currency)} is attached." + (invoice.DueOn.HasValue ? $" Payment is due by {invoice.DueOn.Value:yyyy-MM-dd}." : string.Empty)
-					   + (useCallerAttachment && attachment.Contents.Count > 0 ? " The packet also contains: " + string.Join("; ", attachment.Contents) + "." : string.Empty),
+					   + (useCallerAttachment && attachment.Contents?.Count > 0 ? " The packet also contains: " + string.Join("; ", attachment.Contents) + "." : string.Empty),
 				AttachmentName = useCallerAttachment ? attachment.FileName : $"invoice-{invoice.InvoiceNumber}.pdf",
 				AttachmentData = pdf
 			};

@@ -1,0 +1,89 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceWorkEntriesView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["WorkEntries"];
+    ViewData["Title"] = localizer["WorkEntries"].Value;
+    ViewData["Subtitle"] = localizer["WorkEntriesIntro"].Value;
+    ViewData["WorkforceTab"] = "workentries";
+    ViewData["WorkforcePage"] = Model;
+    var x = Model.Editing;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-@(x == null ? 12 : 8)">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["WorkEntries"]</h5>
+                    <div class="ibox-tools">
+                        <form method="get" asp-action="WorkEntries" class="form-inline" style="display:inline">
+                            <input type="date" name="from" class="form-control input-sm" value="@Model.From.ToString("yyyy-MM-dd")" />
+                            <input type="date" name="to" class="form-control input-sm" value="@Model.To.ToString("yyyy-MM-dd")" />
+                            <button type="submit" class="btn btn-xs btn-default">@localizer["Filter"]</button>
+                        </form>
+                        @if (Model.CanManageCompensation)
+                        {
+                            <a asp-action="WorkEntries" asp-route-from="@Model.From.ToString("yyyy-MM-dd")" asp-route-to="@Model.To.ToString("yyyy-MM-dd")" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddWorkEntry"]</a>
+                        }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Date"]</th><th>@localizer["Worker"]</th><th>@localizer["Hours"]</th><th>@localizer["HoursType"]</th><th>@localizer["Establishment"]</th><th>@localizer["Context"]</th><th>@localizer["ApprovedPayrollCost"] <i class="fa fa-lock text-muted"></i></th><th>@localizer["Approved"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var e in Model.Entries)
+                        {
+                            <tr>
+                                <td>@e.WorkDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(Model.WorkerNames.TryGetValue(e.WorkforceWorkerId, out var n) ? n : e.WorkforceWorkerId)</td>
+                                <td>@e.Hours.ToString("N2")</td><td>@localizer["HoursType" + (WorkHoursTypes)e.HoursType]</td>
+                                <td>@(Model.Establishments.FirstOrDefault(s => s.Value == e.WorkforceEstablishmentId)?.Text)</td>
+                                <td>@(e.CallId.HasValue ? "Call #" + e.CallId : !string.IsNullOrWhiteSpace(e.DeploymentId) ? localizer["Deployment"].Value : e.ExternalSource)</td>
+                                <td>@ProtectedDataEnvelope.SafeDisplay(e.ApprovedPayrollCost)</td>
+                                <td>@(e.IsApproved ? localizer["Yes"] : localizer["No"])</td>
+                                <td class="text-right">@if (Model.CanManageCompensation) { <a asp-action="WorkEntries" asp-route-from="@Model.From.ToString("yyyy-MM-dd")" asp-route-to="@Model.To.ToString("yyyy-MM-dd")" asp-route-edit="@e.WorkforceWorkEntryId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a> }</td>
+                            </tr>
+                        }
+                        @if (Model.Entries.Count == 0)
+                        {
+                            <tr><td colspan="9" class="text-muted">@localizer["NoWorkEntries"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (x != null && Model.CanManageCompensation)
+        {
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(x.WorkforceWorkEntryId) ? localizer["AddWorkEntry"] : localizer["EditWorkEntry"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="SaveWorkEntry">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="WorkforceWorkEntryId" value="@x.WorkforceWorkEntryId" />
+                            <div class="form-group"><label>@localizer["Worker"] *</label><select name="WorkforceWorkerId" class="form-control" required>@foreach (var item in Model.Workers) { <option value="@item.Value" selected="@(item.Value == x.WorkforceWorkerId)">@item.Text</option> }</select></div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Date"] *</label><input type="date" name="WorkDate" class="form-control" required value="@x.WorkDate.ToString("yyyy-MM-dd")" /></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["Hours"] *</label><input type="number" step="0.01" min="0" max="24" name="Hours" class="form-control" required value="@x.Hours" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["HoursType"]</label><select name="HoursType" class="form-control">@foreach (WorkHoursTypes t in Enum.GetValues(typeof(WorkHoursTypes))) { <option value="@((int)t)" selected="@(x.HoursType == (int)t)">@localizer["HoursType" + t]</option> }</select></div>
+                            <div class="form-group"><label>@localizer["Establishment"]</label><select name="WorkforceEstablishmentId" class="form-control"><option value="">—</option>@foreach (var item in Model.Establishments) { <option value="@item.Value" selected="@(item.Value == x.WorkforceEstablishmentId)">@item.Text</option> }</select></div>
+                            <div class="form-group"><label>@localizer["WorkMode"]</label><select name="WorkMode" class="form-control">@foreach (WorkModes m in Enum.GetValues(typeof(WorkModes))) { <option value="@((int)m)" selected="@(x.WorkMode == (int)m)">@localizer["WorkMode" + m]</option> }</select></div>
+                            <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["WorkCountry"]</label><input type="text" name="WorkCountry" class="form-control" maxlength="2" value="@x.WorkCountry" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["WorkSubdivision"]</label><input type="text" name="WorkSubdivision" class="form-control" maxlength="5" value="@x.WorkSubdivision" /></div></div></div>
+                            <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["CallId"]</label><input type="number" name="CallId" class="form-control" value="@x.CallId" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["DeploymentId"]</label><input type="text" name="DeploymentId" class="form-control" value="@x.DeploymentId" /></div></div></div>
+                            <div class="form-group"><label>@localizer["ApprovedPayrollCost"] <i class="fa fa-lock text-muted"></i></label><input type="number" step="0.01" name="approvedPayrollCost" class="form-control" value="@x.ApprovedPayrollCostValue" /><span class="help-block">@localizer["ApprovedPayrollCostHelp"]</span></div>
+                            <div class="row"><div class="col-sm-6"><div class="form-group"><label>@localizer["ExternalSource"]</label><input type="text" name="ExternalSource" class="form-control" value="@x.ExternalSource" /></div></div><div class="col-sm-6"><div class="form-group"><label>@localizer["ExternalId"]</label><input type="text" name="ExternalId" class="form-control" value="@x.ExternalId" /></div></div></div>
+                            <div class="checkbox"><label><input type="checkbox" name="IsApproved" value="true" checked="@x.IsApproved" /> @localizer["Approved"]</label></div>
+                            <div class="m-t-sm"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="WorkEntries" class="btn btn-default">@localizer["Cancel"]</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

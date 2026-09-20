@@ -159,8 +159,9 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<int> CountForDepartmentAsync(int departmentId, int? status) =>
 			ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False}" + (status.HasValue ? $" AND {Col("Status")} = {P}Status" : string.Empty), new { DepartmentId = departmentId, Status = status ?? 0 });
 
-		public Task<IEnumerable<Bid>> GetByContactIdAsync(int departmentId, string contactId) =>
-			QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ContactId")} = {P}ContactId AND {Col("IsDeleted")} = {False} ORDER BY {Col("BidNumber")} DESC", new { DepartmentId = departmentId, ContactId = contactId });
+		public Task<IEnumerable<Bid>> GetByContactIdAsync(int departmentId, string contactId, int skip, int take) =>
+			QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ContactId")} = {P}ContactId AND {Col("IsDeleted")} = {False} ORDER BY {Col("BidNumber")} DESC {Paging()}",
+				new { DepartmentId = departmentId, ContactId = contactId, Skip = Math.Max(0, skip), Take = Math.Clamp(take, 1, 500) });
 
 		public Task<IEnumerable<Bid>> GetByContractAsync(string serviceContractId) =>
 			QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("ServiceContractId")} = {P}Id AND {Col("IsDeleted")} = {False} ORDER BY {Col("BidNumber")} DESC", new { Id = serviceContractId });

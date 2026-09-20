@@ -1,0 +1,112 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceCostRunView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CostRun"];
+    ViewData["Title"] = localizer["Context" + (FieldCostContextTypes)Model.Run.ContextType].Value + ": " + Model.ContextLabel;
+    ViewData["Subtitle"] = localizer["RunType" + (FieldCostRunTypes)Model.Run.RunType].Value + " · " + localizer["RunStatus" + (FieldCostRunStatuses)Model.Run.Status].Value;
+    ViewData["WorkforceTab"] = "costruns";
+    ViewData["WorkforcePage"] = Model;
+    var r = Model.Run;
+    var s = Model.Summary;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Summary"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-condensed">
+                        <tr><td>@localizer["Personnel"]</td><td class="text-right">@s.PersonnelTotal.ToString("N2")</td></tr>
+                        <tr><td>@localizer["Resources"]</td><td class="text-right">@s.ResourceTotal.ToString("N2")</td></tr>
+                        <tr><td>@localizer["Consumables"]</td><td class="text-right">@s.ConsumableTotal.ToString("N2")</td></tr>
+                        <tr><td>@localizer["Expenses"]</td><td class="text-right">@s.ExpenseTotal.ToString("N2")</td></tr>
+                        <tr><td>@localizer["Overhead"]</td><td class="text-right">@s.OverheadTotal.ToString("N2")</td></tr>
+                        <tr class="active"><td><strong>@localizer["TotalLoadedCost"]</strong></td><td class="text-right"><strong>@s.TotalLoadedCost.ToString("N2") @s.Currency</strong></td></tr>
+                        <tr><td>@localizer["Revenue"] (@localizer["Revenue" + (RevenueSources)s.RevenueSource])</td><td class="text-right">@(s.RevenueAmount?.ToString("N2") ?? "—")</td></tr>
+                        <tr><td>@localizer["Margin"]</td><td class="text-right">@(s.ContributionMargin.HasValue ? s.ContributionMargin.Value.ToString("N2") + " (" + (s.ContributionMarginPercent ?? 0).ToString("N1") + "%)" : "—")</td></tr>
+                        <tr><td>@localizer["BreakEven"]</td><td class="text-right">@s.BreakEvenRevenue.ToString("N2")</td></tr>
+                        <tr><td>@localizer["MissingInputs"]</td><td class="text-right">@s.MissingInputCount</td></tr>
+                        <tr><td>@localizer["ThroughDate"]</td><td class="text-right">@(s.ThroughDate?.ToString("yyyy-MM-dd") ?? "—")</td></tr>
+                        <tr><td>@localizer["Frozen"]</td><td class="text-right">@(s.FrozenOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td></tr>
+                    </table>
+                    @if (!r.IsFrozen)
+                    {
+                        <form method="post" asp-action="FreezeCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@localizer["ConfirmFreeze"]');"><i class="fa fa-lock"></i> @localizer["Freeze"]</button></form>
+                        <form method="post" asp-action="DeleteCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(r.DeploymentId))
+                    {
+                        <a asp-action="Usage" asp-route-deploymentId="@r.DeploymentId" class="btn btn-sm btn-default"><i class="fa fa-truck"></i> @localizer["ResourceUsage"]</a>
+                    }
+                    else if (r.CallId.HasValue)
+                    {
+                        <a asp-action="Usage" asp-route-callId="@r.CallId" class="btn btn-sm btn-default"><i class="fa fa-truck"></i> @localizer["ResourceUsage"]</a>
+                    }
+                </div>
+            </div>
+            @if (Model.Comparison?.Estimate != null && Model.Comparison.Actual != null)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["EstimateVsActual"]</h5></div>
+                    <div class="ibox-content">
+                        <table class="table table-condensed">
+                            <thead><tr><th></th><th class="text-right">@localizer["Estimate"]</th><th class="text-right">@localizer["Actual"]</th><th class="text-right">@localizer["Variance"]</th></tr></thead>
+                            <tr><td>@localizer["Personnel"]</td><td class="text-right">@Model.Comparison.Estimate.PersonnelTotal.ToString("N2")</td><td class="text-right">@Model.Comparison.Actual.PersonnelTotal.ToString("N2")</td><td class="text-right">@Model.Comparison.PersonnelVariance.ToString("N2")</td></tr>
+                            <tr><td>@localizer["Resources"]</td><td class="text-right">@Model.Comparison.Estimate.ResourceTotal.ToString("N2")</td><td class="text-right">@Model.Comparison.Actual.ResourceTotal.ToString("N2")</td><td class="text-right">@Model.Comparison.ResourceVariance.ToString("N2")</td></tr>
+                            <tr><td>@localizer["Expenses"]</td><td class="text-right">@Model.Comparison.Estimate.ExpenseTotal.ToString("N2")</td><td class="text-right">@Model.Comparison.Actual.ExpenseTotal.ToString("N2")</td><td class="text-right">@Model.Comparison.ExpenseVariance.ToString("N2")</td></tr>
+                            <tr class="active"><td><strong>@localizer["Total"]</strong></td><td class="text-right">@Model.Comparison.Estimate.TotalLoadedCost.ToString("N2")</td><td class="text-right">@Model.Comparison.Actual.TotalLoadedCost.ToString("N2")</td><td class="text-right"><strong>@Model.Comparison.TotalVariance.ToString("N2")</strong></td></tr>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Lines"]</h5></div>
+                <div class="ibox-content">
+                    @if (!Model.CanViewCompensation)
+                    {
+                        <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["LinesRequireCompensationView"]</div>
+                    }
+                    else
+                    {
+                        <p class="small text-muted">@localizer["LinesHelp"]</p>
+                        <table class="table table-striped table-condensed">
+                            <thead><tr><th>@localizer["Date"]</th><th>@localizer["Category"]</th><th>@localizer["Subject"]</th><th>@localizer["Component"]</th><th class="text-right">@localizer["Quantity"]</th><th>@localizer["Unit"]</th><th class="text-right">@localizer["Rate"]</th><th class="text-right">@localizer["Amount"]</th><th>@localizer["Flags"]</th></tr></thead>
+                            <tbody>
+                            @foreach (var l in r.Lines)
+                            {
+                                <tr class="@(string.IsNullOrWhiteSpace(l.ReviewReason) ? "" : "warning")">
+                                    <td>@l.LineDate?.ToString("yyyy-MM-dd")</td><td>@localizer["Category" + (FieldCostCategories)l.Category]</td><td>@l.SubjectLabel</td><td>@l.Component</td>
+                                    <td class="text-right">@l.Quantity.ToString("N2")</td><td>@l.Unit</td>
+                                    <td class="text-right">@(l.Rate.HasValue ? l.Rate.Value.ToString("N4") : l.Category == (int)FieldCostCategories.Personnel ? "🔒" : "—")</td>
+                                    <td class="text-right">@l.Amount.ToString("N2")</td>
+                                    <td>
+                                        @if (l.IsEstimated) { <span class="label label-default">@localizer["Estimated"]</span> }
+                                        @if (l.IsFallback) { <span class="label label-info">@localizer["Fallback"]</span> }
+                                        @if (!string.IsNullOrWhiteSpace(l.ReviewReason)) { foreach (var reason in l.ReviewReason.Split(',')) { <span class="label label-warning">@localizer["Review_" + reason]</span> } }
+                                    </td>
+                                </tr>
+                                @if (l.Category == (int)FieldCostCategories.Personnel && !string.IsNullOrWhiteSpace(l.ProtectedDetailJson) && !ProtectedDataEnvelope.HasEnvelopePrefix(l.ProtectedDetailJson) && l.ProtectedDetailJson != ProtectedDataEnvelope.RedactionValue)
+                                {
+                                    <tr class="small text-muted"><td></td><td colspan="8"><code>@l.ProtectedDetailJson</code></td></tr>
+                                }
+                            }
+                            @if (r.Lines.Count == 0)
+                            {
+                                <tr><td colspan="9" class="text-muted">@localizer["NoLines"]</td></tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

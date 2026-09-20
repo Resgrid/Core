@@ -1,0 +1,97 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsResourcesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ResourceInventory"];
+    ViewData["Title"] = localizer["ResourceInventory"].Value;
+    ViewData["Subtitle"] = localizer["ResourcesIntro"].Value;
+    ViewData["MarsTab"] = "resources";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var editing = Model.Editing ?? new Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsResourceProfile { ResourceKind = "Apparatus" };
+    var ownerships = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsOwnerships>();
+    var subjectTypes = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubjectTypes>();
+    var today = DateTime.UtcNow;
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["ResourceInventory"]</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpResources"]</div>
+                    <form method="post" asp-action="BuildResources" class="form-inline m-b-sm">
+                        @Html.AntiForgeryToken()
+                        <select name="unitIds" multiple class="form-control" size="4" style="min-width:260px">@foreach (var u in Model.Units) { <option value="@u.Value">@u.Text</option> }</select>
+                        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-magic"></i> @localizer["DraftFromUnits"]</button>
+                        <span class="help-block">@localizer["DraftFromUnitsHelp"]</span>
+                    </form>
+                    @if (Model.Resources.Count == 0) { <p class="text-muted">@localizer["NoResources"]</p> }
+                    else
+                    {
+                        <table class="table table-striped table-condensed">
+                            <thead><tr><th>@localizer["Subject"]</th><th>@localizer["ResourceType"]</th><th>@localizer["Identifiers"]</th><th>@localizer["Ownership"]</th><th>@localizer["MarsResourceId"]</th><th>@localizer["ReviewState"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var r in Model.Resources)
+                                {
+                                    <tr>
+                                        <td>@r.SubjectName <small class="text-muted">@localizer["SubjectType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubjectTypes)r.SubjectType]</small></td>
+                                        <td>@(r.ResourceType ?? "—") <small class="text-muted">@r.ResourceKind</small></td>
+                                        <td><small>@r.UnitDesignator @(string.IsNullOrWhiteSpace(r.LicensePlate) ? "" : "· " + r.LicensePlate) @(string.IsNullOrWhiteSpace(r.Vin) ? "" : "· VIN " + r.Vin)</small></td>
+                                        <td>@localizer["Ownership" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsOwnerships)r.Ownership]</td>
+                                        <td>@(r.MarsResourceId ?? "—")</td>
+                                        <td>@localizer["ReviewState" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsReviewStates)r.ReviewState] @if (!r.IsCurrent(today)) { <span class="label label-default">@localizer["NotCurrent"]</span> }</td>
+                                        <td class="text-right">
+                                            <a asp-action="Resources" asp-route-edit="@r.CalOesMarsResourceProfileId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                            <form method="post" asp-action="DeleteResource" asp-route-id="@r.CalOesMarsResourceProfileId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@(Model.Editing == null ? localizer["AddResource"] : localizer["EditResource"])</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="SaveResource">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CalOesMarsResourceProfileId" value="@editing.CalOesMarsResourceProfileId" />
+                        <input type="hidden" name="ReviewState" value="@editing.ReviewState" />
+                        <div class="form-group"><label>@localizer["SubjectType"]</label><select name="SubjectType" class="form-control">@foreach (var t in subjectTypes) { <option value="@((int)t)" selected="@((int)t == editing.SubjectType)">@localizer["SubjectType" + t]</option> }</select></div>
+                        <div class="form-group"><label>@localizer["Unit"]</label><select name="UnitId" class="form-control"><option value="">—</option>@foreach (var u in Model.Units) { <option value="@u.Value" selected="@(editing.UnitId?.ToString() == u.Value)">@u.Text</option> }</select></div>
+                        <div class="form-group"><label>@localizer["ExternalResourceName"]</label><input type="text" name="ExternalResourceName" class="form-control" maxlength="250" value="@editing.ExternalResourceName" /></div>
+                        <div class="form-group"><label>@localizer["ResourceType"]</label><input type="text" name="ResourceType" class="form-control" list="resource-types" maxlength="100" value="@editing.ResourceType" /><datalist id="resource-types">@foreach (var t in Model.ResourceTypes) { <option value="@t"></option> }</datalist></div>
+                        <div class="form-group"><label>@localizer["ResourceKind"]</label><select name="ResourceKind" class="form-control">@foreach (var k in new[] { "Apparatus", "Support", "POV", "Equipment" }) { <option value="@k" selected="@(editing.ResourceKind == k)">@localizer["Kind" + k]</option> }</select></div>
+                        <div class="form-group"><label>@localizer["UnitDesignator"]</label><input type="text" name="UnitDesignator" class="form-control" maxlength="100" value="@editing.UnitDesignator" /></div>
+                        <div class="row"><div class="col-xs-6 form-group"><label>@localizer["LicensePlate"]</label><input type="text" name="LicensePlate" class="form-control" value="@editing.LicensePlate" /></div><div class="col-xs-6 form-group"><label>VIN</label><input type="text" name="Vin" class="form-control" value="@editing.Vin" /></div></div>
+                        <div class="form-group"><label>@localizer["SerialNumber"]</label><input type="text" name="SerialNumber" class="form-control" value="@editing.SerialNumber" /></div>
+                        <div class="form-group"><label>@localizer["Ownership"]</label><select name="Ownership" class="form-control">@foreach (var o in ownerships) { <option value="@((int)o)" selected="@((int)o == editing.Ownership)">@localizer["Ownership" + o]</option> }</select></div>
+                        <div class="row"><div class="col-xs-6 form-group"><label>@localizer["EffectiveOn"]</label><input type="date" name="EffectiveOn" class="form-control" value="@(editing.EffectiveOn?.ToString("yyyy-MM-dd"))" /></div><div class="col-xs-6 form-group"><label>@localizer["ExpiresOn"]</label><input type="date" name="ExpiresOn" class="form-control" value="@(editing.ExpiresOn?.ToString("yyyy-MM-dd"))" /></div></div>
+                        <div class="form-group"><label>@localizer["MarsResourceId"]</label><input type="text" name="MarsResourceId" class="form-control" maxlength="100" value="@editing.MarsResourceId" /></div>
+                        <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                        @if (Model.Editing != null) { <a asp-action="Resources" class="btn btn-default">@localizer["Cancel"]</a> }
+                    </form>
+                    @if (Model.Editing != null && Model.CanSubmit)
+                    {
+                        <div class="hr-line-dashed"></div>
+                        <h5>@localizer["ObserveInMars"]</h5>
+                        <form method="post" asp-action="ObserveResource" asp-route-id="@Model.Editing.CalOesMarsResourceProfileId">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group"><label>@localizer["MarsResourceId"]</label><input type="text" name="ExternalId" class="form-control" value="@Model.Editing.MarsResourceId" /></div>
+                            <div class="form-group"><label>@localizer["ObservedStatus"]</label><input type="text" name="ExternalStatus" class="form-control" placeholder="Accepted / mismatch" /></div>
+                            <div class="form-group"><label>@localizer["ObservedOn"]</label><input type="datetime-local" name="ObservedOn" class="form-control" /></div>
+                            <button type="submit" class="btn btn-default"><i class="fa fa-eye"></i> @localizer["RecordObservation"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

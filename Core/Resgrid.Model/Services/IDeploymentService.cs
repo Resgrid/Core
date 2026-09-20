@@ -20,6 +20,8 @@ namespace Resgrid.Model.Services
 		Task<Deployment> GetDeploymentByExternalOrderIdAsync(string rmsExternalOrderId, int departmentId);
 		Task<List<Deployment>> GetDeploymentsForDepartmentAsync(int departmentId, bool openOnly, int skip = 0, int take = 100);
 		Task<int> CountDeploymentsForDepartmentAsync(int departmentId, bool openOnly);
+		/// <summary>Deployments raised under one service contract (the contract detail page), newest first.</summary>
+		Task<List<Deployment>> GetDeploymentsForContractAsync(string serviceContractId, int departmentId);
 		/// <summary>Deployments the member is or was rostered on (the field user's scope).</summary>
 		Task<List<Deployment>> GetDeploymentsForUserAsync(int departmentId, string userId, bool openOnly);
 		Task<bool> IsRosteredAsync(string deploymentId, int departmentId, string userId);

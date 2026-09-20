@@ -258,8 +258,11 @@ namespace Resgrid.Services.Invoicing
 		public async Task<int> RunFinanceReminderSweepAsync(DateTime asOfUtc, int unbilledDays, Func<int, Task<bool>> departmentEnabled = null, CancellationToken cancellationToken = default)
 		{
 			if (_reports == null || _deploymentRows == null || _departmentsService == null || _communication?.Value == null) return 0;
-			var stale = (await _reports.GetUnbilledApprovedBeforeAsync(asOfUtc.AddDays(-Math.Max(0, unbilledDays))))?.ToList() ?? new List<DeploymentTimeReport>();
-			var recent = (await _reports.GetUnbilledApprovedBeforeAsync(asOfUtc))?.Where(r => !stale.Any(s => s.DeploymentTimeReportId == r.DeploymentTimeReportId)).ToList() ?? new List<DeploymentTimeReport>();
+			// One system-wide read, split on ApprovedOn (the repository already excludes null ApprovedOn and uses an inclusive bound).
+			var cutoff = asOfUtc.AddDays(-Math.Max(0, unbilledDays));
+			var unbilled = (await _reports.GetUnbilledApprovedBeforeAsync(asOfUtc))?.ToList() ?? new List<DeploymentTimeReport>();
+			var stale = unbilled.Where(r => r.ApprovedOn.HasValue && r.ApprovedOn.Value <= cutoff).ToList();
+			var recent = unbilled.Where(r => !r.ApprovedOn.HasValue || r.ApprovedOn.Value > cutoff).ToList();
 			var notified = 0;
 			var dayKey = asOfUtc.Date.GetHashCode();
 			foreach (var group in stale.Concat(recent).GroupBy(r => r.DepartmentId))

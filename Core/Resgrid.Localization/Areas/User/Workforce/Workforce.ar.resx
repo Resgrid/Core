@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AcquisitionCost" xml:space="preserve"><value>تكلفة الاقتناء</value></data>
+  <data name="AcquisitionDate" xml:space="preserve"><value>تاريخ الاقتناء</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="ActiveFrom" xml:space="preserve"><value>نشط من</value></data>
+  <data name="ActiveTo" xml:space="preserve"><value>نشط حتى</value></data>
+  <data name="Actual" xml:space="preserve"><value>الفعلي</value></data>
+  <data name="ActualWorkedHours" xml:space="preserve"><value>ساعات العمل الفعلية</value></data>
+  <data name="AddAffiliate" xml:space="preserve"><value>إضافة كيان تابع</value></data>
+  <data name="AddAssignment" xml:space="preserve"><value>إضافة تعيين</value></data>
+  <data name="AddContractor" xml:space="preserve"><value>إضافة مقاول</value></data>
+  <data name="AddDepartmentDefault" xml:space="preserve"><value>إضافة افتراضي القسم</value></data>
+  <data name="AddEmployment" xml:space="preserve"><value>إضافة فترة عمل</value></data>
+  <data name="AddEstablishment" xml:space="preserve"><value>إضافة منشأة</value></data>
+  <data name="AddFact" xml:space="preserve"><value>إضافة بيان</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>إضافة ملف</value></data>
+  <data name="AddResourceProfile" xml:space="preserve"><value>إضافة ملف مورد</value></data>
+  <data name="AddRoleDefault" xml:space="preserve"><value>إضافة افتراضي الدور</value></data>
+  <data name="AddUsage" xml:space="preserve"><value>إضافة قراءة</value></data>
+  <data name="AddWorkEntry" xml:space="preserve"><value>إضافة سجل</value></data>
+  <data name="AddWorker" xml:space="preserve"><value>إضافة عامل</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>أو أضف عاملًا خارجيًا بمفتاح الرواتب والتسمية (كلاهما محمي).</value></data>
+  <data name="AddWorkerMemberHelp" xml:space="preserve"><value>اختر عضوًا لإنشاء سجل العامل الخاص به.</value></data>
+  <data name="Address" xml:space="preserve"><value>العنوان</value></data>
+  <data name="Affiliate" xml:space="preserve"><value>كيان تابع</value></data>
+  <data name="Affiliates" xml:space="preserve"><value>الكيانات التابعة</value></data>
+  <data name="AffiliatesHelp" xml:space="preserve"><value>فقط للمؤسسة المتكاملة: الكيانات الأخرى التي يغطيها التقرير.</value></data>
+  <data name="Aggregate" xml:space="preserve"><value>تجميع الصفوف</value></data>
+  <data name="AllocationBasis" xml:space="preserve"><value>أساس التخصيص</value></data>
+  <data name="AllocationDay" xml:space="preserve"><value>لكل يوم</value></data>
+  <data name="AllocationEngineHour" xml:space="preserve"><value>لكل ساعة محرك</value></data>
+  <data name="AllocationKilometer" xml:space="preserve"><value>لكل كيلومتر</value></data>
+  <data name="AllocationMile" xml:space="preserve"><value>لكل ميل</value></data>
+  <data name="AllocationOperatingHour" xml:space="preserve"><value>لكل ساعة تشغيل</value></data>
+  <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
+  <data name="AnnualFacts" xml:space="preserve"><value>بيانات الأجور السنوية</value></data>
+  <data name="AnnualFactsIntro" xml:space="preserve"><value>دخل W-2 والساعات والأسابيع لكل فترة عمل لسنة الإبلاغ — مدخل كل لقطة CRD.</value></data>
+  <data name="AnnualFactsMissing" xml:space="preserve"><value>بيانات الأجور السنوية مفقودة</value></data>
+  <data name="ApplyOverride" xml:space="preserve"><value>تطبيق التجاوز</value></data>
+  <data name="Approval" xml:space="preserve"><value>الاعتماد</value></data>
+  <data name="ApprovalHelp" xml:space="preserve"><value>الملفات غير المعتمدة تسعّر التقديرات لكنها تعلّم كل بند للمراجعة. أي تغيير في المعدل يلغي الاعتماد.</value></data>
+  <data name="ApproveProfile" xml:space="preserve"><value>اعتماد الملف</value></data>
+  <data name="Approved" xml:space="preserve"><value>معتمد</value></data>
+  <data name="ApprovedPayrollCost" xml:space="preserve"><value>تكلفة الرواتب المعتمدة</value></data>
+  <data name="ApprovedPayrollCostHelp" xml:space="preserve"><value>القيمة الفعلية من نظام الرواتب؛ عند وجودها تحل محل تقدير هذا اليوم.</value></data>
+  <data name="Artifacts" xml:space="preserve"><value>ملفات التصدير</value></data>
+  <data name="ArtifactsHelp" xml:space="preserve"><value>CSV وXLSX بترتيب أعمدة قالب CRD، بمجموع تحقق ثابت للمدخلات غير المتغيرة، قابلة للتنزيل بدون تخزين مؤقت حتى الحذف بعد فترة الاحتفاظ.</value></data>
+  <data name="Back" xml:space="preserve"><value>رجوع</value></data>
+  <data name="BaseAmount" xml:space="preserve"><value>المبلغ الأساسي</value></data>
+  <data name="BaseAmountHelp" xml:space="preserve"><value>لكل ساعة أو سنة أو يوم أو وردية حسب أساس الأجر.</value></data>
+  <data name="Basis" xml:space="preserve"><value>الأساس</value></data>
+  <data name="Bid" xml:space="preserve"><value>العرض</value></data>
+  <data name="BreakEven" xml:space="preserve"><value>إيراد نقطة التعادل</value></data>
+  <data name="BuildSnapshots" xml:space="preserve"><value>إنشاء اللقطات</value></data>
+  <data name="CaBasisAssignedToCaliforniaEstablishment" xml:space="preserve"><value>معيّن في منشأة بكاليفورنيا</value></data>
+  <data name="CaBasisBoth" xml:space="preserve"><value>كلاهما</value></data>
+  <data name="CaBasisNotCalifornia" xml:space="preserve"><value>ليس موظفًا في كاليفورنيا</value></data>
+  <data name="CaBasisWorksInCalifornia" xml:space="preserve"><value>يعمل في كاليفورنيا</value></data>
+  <data name="CaliforniaBasis" xml:space="preserve"><value>أساس كاليفورنيا</value></data>
+  <data name="CaliforniaEmployeeCount" xml:space="preserve"><value>الموظفون في كاليفورنيا</value></data>
+  <data name="CallId" xml:space="preserve"><value>رقم النداء</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Cap" xml:space="preserve"><value>الحد الأقصى</value></data>
+  <data name="Category" xml:space="preserve"><value>الفئة</value></data>
+  <data name="CategoryConsumable" xml:space="preserve"><value>مستهلك</value></data>
+  <data name="CategoryExpense" xml:space="preserve"><value>نفقة</value></data>
+  <data name="CategoryOverhead" xml:space="preserve"><value>نفقات عامة</value></data>
+  <data name="CategoryPersonnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="CategoryResource" xml:space="preserve"><value>مورد</value></data>
+  <data name="CertificationReference" xml:space="preserve"><value>مرجع مصادقة البوابة</value></data>
+  <data name="Checksum" xml:space="preserve"><value>مجموع التحقق</value></data>
+  <data name="City" xml:space="preserve"><value>المدينة</value></data>
+  <data name="ClientAllocatedEarnings" xml:space="preserve"><value>الدخل المخصص للعميل</value></data>
+  <data name="ClientAllocatedHours" xml:space="preserve"><value>الساعات المخصصة للعميل</value></data>
+  <data name="ClientAllocatedWeeks" xml:space="preserve"><value>الأسابيع المخصصة للعميل</value></data>
+  <data name="ClientAllocationKey" xml:space="preserve"><value>مفتاح تخصيص العميل</value></data>
+  <data name="Code" xml:space="preserve"><value>الرمز</value></data>
+  <data name="CollectionSource" xml:space="preserve"><value>مصدر الجمع</value></data>
+  <data name="CollectionSourceEmploymentRecord" xml:space="preserve"><value>سجل التوظيف</value></data>
+  <data name="CollectionSourceHelp" xml:space="preserve"><value>كيف تم الحصول على هذا السجل؛ إدراك المراقب يُعلَّم في كل عملية تقرير.</value></data>
+  <data name="CollectionSourceObserverPerception" xml:space="preserve"><value>إدراك المراقب</value></data>
+  <data name="CollectionSourceReliableRecord" xml:space="preserve"><value>سجل موثوق آخر</value></data>
+  <data name="CollectionSourceSelfIdentified" xml:space="preserve"><value>تعريف ذاتي</value></data>
+  <data name="Commit" xml:space="preserve"><value>تأكيد الاستيراد</value></data>
+  <data name="Compensation" xml:space="preserve"><value>التعويض</value></data>
+  <data name="CompensationIntro" xml:space="preserve"><value>ملفات التعويض للموظف والدور الافتراضي والقسم مع مكوّنات الأجر وتكلفة صاحب العمل.</value></data>
+  <data name="CompensationProfile" xml:space="preserve"><value>ملف التعويض</value></data>
+  <data name="Completeness" xml:space="preserve"><value>اكتمال البيانات الديموغرافية</value></data>
+  <data name="Component" xml:space="preserve"><value>المكوّن</value></data>
+  <data name="Components" xml:space="preserve"><value>المكوّنات</value></data>
+  <data name="ConfirmCorrection" xml:space="preserve"><value>إنشاء عملية تصحيح؟ تبقى العملية المصدَّرة كما قُدمت وتُعلَّم بأنها مصحَّحة.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>هل تريد حذف هذا السجل؟</value></data>
+  <data name="ConfirmFreeze" xml:space="preserve"><value>تجميد هذه العملية؟ العملية المجمّدة غير قابلة للتغيير؛ وإعادة الحساب لاحقًا تحل محلها.</value></data>
+  <data name="ConfirmImport" xml:space="preserve"><value>تأكيد الاستيراد؟ كل صف ينشئ إصدارًا جديدًا من البيانات.</value></data>
+  <data name="ConfirmVoid" xml:space="preserve"><value>إبطال هذه العملية؟ سيتم حذف ملفات التصدير الخاصة بها.</value></data>
+  <data name="Consumables" xml:space="preserve"><value>المستهلكات</value></data>
+  <data name="Consumption" xml:space="preserve"><value>الاستهلاك</value></data>
+  <data name="ContactDetails" xml:space="preserve"><value>بيانات الاتصال</value></data>
+  <data name="Context" xml:space="preserve"><value>السياق</value></data>
+  <data name="ContextBid" xml:space="preserve"><value>عرض</value></data>
+  <data name="ContextCall" xml:space="preserve"><value>نداء</value></data>
+  <data name="ContextDeployment" xml:space="preserve"><value>انتشار</value></data>
+  <data name="ContractorsIntro" xml:space="preserve"><value>المقاولون الذين يوفرون موظفين مشمولين بتقرير CRD الثاني.</value></data>
+  <data name="CorrectFact" xml:space="preserve"><value>تصحيح البيان (إصدار جديد)</value></data>
+  <data name="CostCategoryAllocatedOverhead" xml:space="preserve"><value>نفقات عامة مخصصة</value></data>
+  <data name="CostCategoryEmployerPayrollTax" xml:space="preserve"><value>ضريبة الرواتب على صاحب العمل</value></data>
+  <data name="CostCategoryFixedLaborCost" xml:space="preserve"><value>تكلفة عمالة ثابتة</value></data>
+  <data name="CostCategoryHealthBenefits" xml:space="preserve"><value>المزايا الصحية</value></data>
+  <data name="CostCategoryOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="CostCategoryOtherBenefits" xml:space="preserve"><value>مزايا أخرى</value></data>
+  <data name="CostCategoryRetirementPension" xml:space="preserve"><value>التقاعد / المعاش</value></data>
+  <data name="CostCategoryWorkersCompensation" xml:space="preserve"><value>تعويض العمال</value></data>
+  <data name="CostComponentBasisFixedAnnual" xml:space="preserve"><value>سنوي ثابت</value></data>
+  <data name="CostComponentBasisPerDay" xml:space="preserve"><value>لكل يوم</value></data>
+  <data name="CostComponentBasisPerHour" xml:space="preserve"><value>لكل ساعة</value></data>
+  <data name="CostComponentBasisPerShift" xml:space="preserve"><value>لكل وردية</value></data>
+  <data name="CostComponentBasisPercentOfEligiblePay" xml:space="preserve"><value>% من الأجر المؤهل</value></data>
+  <data name="CostComponents" xml:space="preserve"><value>مكوّنات التكلفة</value></data>
+  <data name="CostComponentsHelp" xml:space="preserve"><value>ضرائب الرواتب والمزايا والمعاش والنفقات العامة المخصصة — نسبة من الأجر المؤهل أو لكل ساعة أو لكل وردية أو سنوية ثابتة، مع حد أقصى اختياري.</value></data>
+  <data name="CostRun" xml:space="preserve"><value>عملية حساب التكلفة</value></data>
+  <data name="CostRuns" xml:space="preserve"><value>عمليات حساب التكلفة</value></data>
+  <data name="CostRunsIntro" xml:space="preserve"><value>التكلفة الداخلية الكاملة والهامش للعروض (تقدير) والنداءات والانتشارات (فعلي). الإيراد دائمًا رقم مرصود فقط.</value></data>
+  <data name="CoverageCoveredBoth" xml:space="preserve"><value>مشمول — كلا التقريرين</value></data>
+  <data name="CoverageCoveredLaborContractor" xml:space="preserve"><value>مشمول — تقرير موظفي مقاول العمالة</value></data>
+  <data name="CoverageCoveredPayroll" xml:space="preserve"><value>مشمول — تقرير موظفي الرواتب</value></data>
+  <data name="CoverageHelp" xml:space="preserve"><value>يُعلنه صاحب العمل بعد قراءة إرشادات CRD؛ Resgrid لا تقرر أبدًا ما إذا كان عليك التقديم.</value></data>
+  <data name="CoverageNotCovered" xml:space="preserve"><value>غير مشمول</value></data>
+  <data name="CoverageStatus" xml:space="preserve"><value>حالة التغطية</value></data>
+  <data name="CoverageUnknown" xml:space="preserve"><value>غير معلن</value></data>
+  <data name="CreateCorrection" xml:space="preserve"><value>إنشاء تصحيح</value></data>
+  <data name="CreateRun" xml:space="preserve"><value>إنشاء عملية</value></data>
+  <data name="Created" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="CurrentResponse" xml:space="preserve"><value>الإجابة الحالية</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>بيانات أجور محمية وحساب تكاليف ميدانية داخلية وتقارير بيانات الأجور في كاليفورنيا.</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Days" xml:space="preserve"><value>الأيام</value></data>
+  <data name="DaysWorked" xml:space="preserve"><value>الأيام المعمولة</value></data>
+  <data name="Dba" xml:space="preserve"><value>DBA</value></data>
+  <data name="DeclineToState" xml:space="preserve"><value>أفضّل عدم الإجابة</value></data>
+  <data name="Declined" xml:space="preserve"><value>رفضوا</value></data>
+  <data name="DefaultEstablishment" xml:space="preserve"><value>المنشأة الافتراضية</value></data>
+  <data name="DefaultProfiles" xml:space="preserve"><value>الملفات الافتراضية</value></data>
+  <data name="DefaultProfilesHelp" xml:space="preserve"><value>تسعّر الافتراضات للدور والقسم تقديرات العروض والأعضاء بدون ملف موظف.</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="DemographicCode" xml:space="preserve"><value>العرق/الإثنية/الجنس</value></data>
+  <data name="DemographicRecord" xml:space="preserve"><value>السجل الديموغرافي</value></data>
+  <data name="DemographicRecordIntro" xml:space="preserve"><value>سجل مسؤول الامتثال لعامل لم يعرّف نفسه ذاتيًا.</value></data>
+  <data name="DemographicRecordNotice" xml:space="preserve"><value>استخدم سجلات التوظيف أو سجلات موثوقة أخرى أولًا؛ إدراك المراقب هو الملاذ الأخير ويُعلَّم في كل لقطة. السبب مطلوب ويُدقق.</value></data>
+  <data name="DemographicsMissing" xml:space="preserve"><value>إجابات ديموغرافية مفقودة</value></data>
+  <data name="DemographicsVoluntary" xml:space="preserve"><value>الإجابة طوعية. تفضيل عدم الإجابة إجابة صالحة ويُبلَّغ عنها كذلك.</value></data>
+  <data name="Department" xml:space="preserve"><value>القسم</value></data>
+  <data name="DeployedDays" xml:space="preserve"><value>أيام الانتشار</value></data>
+  <data name="Deployment" xml:space="preserve"><value>الانتشار</value></data>
+  <data name="DeploymentId" xml:space="preserve"><value>معرّف الانتشار</value></data>
+  <data name="Depreciation" xml:space="preserve"><value>الإهلاك</value></data>
+  <data name="DepreciationRate" xml:space="preserve"><value>الإهلاك / وحدة</value></data>
+  <data name="DisplayLabel" xml:space="preserve"><value>تسمية العرض</value></data>
+  <data name="Distance" xml:space="preserve"><value>المسافة</value></data>
+  <data name="DistanceHelp" xml:space="preserve"><value>أدخل قراءات العداد أو مسافة؛ تُخزَّن الكيلومترات كأميال.</value></data>
+  <data name="DistanceUnit" xml:space="preserve"><value>وحدة المسافة</value></data>
+  <data name="Downloads" xml:space="preserve"><value>التنزيلات</value></data>
+  <data name="DryRun" xml:space="preserve"><value>تشغيل تجريبي</value></data>
+  <data name="DryRunResult" xml:space="preserve"><value>نتيجة التشغيل التجريبي</value></data>
+  <data name="DueDate" xml:space="preserve"><value>تاريخ الاستحقاق</value></data>
+  <data name="EarningsSource" xml:space="preserve"><value>مصدر الدخل</value></data>
+  <data name="EarningsSourceClientAllocated" xml:space="preserve"><value>مخصص للعميل</value></data>
+  <data name="EarningsSourceW2Box1Fallback" xml:space="preserve"><value>W-2 الخانة 1 (بديل)</value></data>
+  <data name="EarningsSourceW2Box5" xml:space="preserve"><value>W-2 الخانة 5</value></data>
+  <data name="EarningsUsed" xml:space="preserve"><value>الدخل المستخدم</value></data>
+  <data name="EddAddress" xml:space="preserve"><value>عنوان EDD</value></data>
+  <data name="EditAssignment" xml:space="preserve"><value>تعديل التعيين</value></data>
+  <data name="EditContractor" xml:space="preserve"><value>تعديل المقاول</value></data>
+  <data name="EditEmployment" xml:space="preserve"><value>تعديل فترة العمل</value></data>
+  <data name="EditEstablishment" xml:space="preserve"><value>تعديل المنشأة</value></data>
+  <data name="EditResourceProfile" xml:space="preserve"><value>تعديل ملف المورد</value></data>
+  <data name="EditUsage" xml:space="preserve"><value>تعديل القراءة</value></data>
+  <data name="EditWorkEntry" xml:space="preserve"><value>تعديل السجل</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>ساري من</value></data>
+  <data name="EligiblePayCodes" xml:space="preserve"><value>رموز الأجر المؤهلة</value></data>
+  <data name="EmployeeProfiles" xml:space="preserve"><value>ملفات الموظف</value></data>
+  <data name="Employees" xml:space="preserve"><value>الموظفون</value></data>
+  <data name="Employer" xml:space="preserve"><value>صاحب العمل</value></data>
+  <data name="EmployerCostComponents" xml:space="preserve"><value>مكوّنات تكلفة صاحب العمل</value></data>
+  <data name="EmployerCosts" xml:space="preserve"><value>تكاليف صاحب العمل</value></data>
+  <data name="EmployerIntro" xml:space="preserve"><value>هوية صاحب العمل التي يُقدَّم بها تقرير CRD مع الكيانات التابعة.</value></data>
+  <data name="EmployerMissing" xml:space="preserve"><value>لا يوجد ملف صاحب عمل بعد.</value></data>
+  <data name="EmployerProfile" xml:space="preserve"><value>ملف صاحب العمل</value></data>
+  <data name="EmployerSection" xml:space="preserve"><value>قسم صاحب العمل</value></data>
+  <data name="Employment" xml:space="preserve"><value>فترة العمل</value></data>
+  <data name="EmploymentType" xml:space="preserve"><value>نوع التوظيف</value></data>
+  <data name="EmploymentTypeFullTime" xml:space="preserve"><value>دوام كامل</value></data>
+  <data name="EmploymentTypeIntermittent" xml:space="preserve"><value>متقطع</value></data>
+  <data name="EmploymentTypePartTime" xml:space="preserve"><value>دوام جزئي</value></data>
+  <data name="EmploymentTypeUnknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="Employments" xml:space="preserve"><value>فترات العمل</value></data>
+  <data name="EndEngineMeter" xml:space="preserve"><value>عداد المحرك النهاية</value></data>
+  <data name="EndOdometer" xml:space="preserve"><value>عداد النهاية</value></data>
+  <data name="EndOn" xml:space="preserve"><value>النهاية</value></data>
+  <data name="EngineHours" xml:space="preserve"><value>ساعات المحرك</value></data>
+  <data name="Errors" xml:space="preserve"><value>الأخطاء</value></data>
+  <data name="Establishment" xml:space="preserve"><value>المنشأة</value></data>
+  <data name="Establishments" xml:space="preserve"><value>المنشآت</value></data>
+  <data name="EstablishmentsIntro" xml:space="preserve"><value>كل موقع فعلي يُعيَّن فيه الموظفون؛ يُقدَّم تقرير CRD لكل منشأة.</value></data>
+  <data name="Estimate" xml:space="preserve"><value>التقدير</value></data>
+  <data name="EstimateVsActual" xml:space="preserve"><value>التقدير مقابل الفعلي</value></data>
+  <data name="Estimated" xml:space="preserve"><value>مقدّر</value></data>
+  <data name="Exceptions" xml:space="preserve"><value>الاستثناءات</value></data>
+  <data name="ExemptProxyActualPlusPaidLeave" xml:space="preserve"><value>الفعلي + الإجازة المدفوعة</value></data>
+  <data name="ExemptProxyDaysTimesAverageHours" xml:space="preserve"><value>الأيام × متوسط الساعات</value></data>
+  <data name="ExemptProxyMethod" xml:space="preserve"><value>طريقة بديلة للمعفيين</value></data>
+  <data name="ExemptProxyNone" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="Exemption" xml:space="preserve"><value>الإعفاء</value></data>
+  <data name="ExemptionExempt" xml:space="preserve"><value>معفى</value></data>
+  <data name="ExemptionNonExempt" xml:space="preserve"><value>غير معفى</value></data>
+  <data name="ExemptionUnknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="ExpectedAnnualUtilization" xml:space="preserve"><value>الاستخدام السنوي المتوقع</value></data>
+  <data name="ExpectedAnnualUtilizationHelp" xml:space="preserve"><value>بوحدات التخصيص سنويًا؛ يوزع المكوّنات السنوية الثابتة والإهلاك الزمني.</value></data>
+  <data name="Expenses" xml:space="preserve"><value>النفقات</value></data>
+  <data name="Expires" xml:space="preserve"><value>ينتهي</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>ينتهي</value></data>
+  <data name="ExportPayDataReporting" xml:space="preserve"><value>تصدير تقارير بيانات الأجور في كاليفورنيا</value></data>
+  <data name="ExportPayDataReportingNote" xml:space="preserve"><value>تجميد عملية تم التحقق منها وتنزيل ملفات CSV / XLSX وورقة عمل البوابة (بدون تخزين مؤقت، مدقق).</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>المعرّف الخارجي</value></data>
+  <data name="ExternalResourceKey" xml:space="preserve"><value>مفتاح المورد الخارجي</value></data>
+  <data name="ExternalResourceKeyHelp" xml:space="preserve"><value>معرّف بند جدول الأسعار هنا يتيح لتقديرات العروض تسعير بنود المركبات والمعدات حسب الفئة.</value></data>
+  <data name="ExternalSource" xml:space="preserve"><value>المصدر الخارجي</value></data>
+  <data name="ExternalWorkerKey" xml:space="preserve"><value>مفتاح العامل الخارجي</value></data>
+  <data name="FactVersionHelp" xml:space="preserve"><value>البيانات المخزنة غير قابلة للتغيير: الحفظ ينشئ إصدارًا جديدًا يحل محل الحالي.</value></data>
+  <data name="Fallback" xml:space="preserve"><value>ملف بديل</value></data>
+  <data name="Fein" xml:space="preserve"><value>FEIN</value></data>
+  <data name="FieldCosting" xml:space="preserve"><value>حساب التكاليف الميدانية</value></data>
+  <data name="FieldCostingIntro" xml:space="preserve"><value>التكلفة الداخلية الكاملة والهامش للعروض والنداءات والانتشارات — فئات مجمعة فقط.</value></data>
+  <data name="File" xml:space="preserve"><value>الملف</value></data>
+  <data name="FilingContactEmail" xml:space="preserve"><value>البريد الإلكتروني لجهة الاتصال</value></data>
+  <data name="FilingContactName" xml:space="preserve"><value>اسم جهة اتصال التقديم</value></data>
+  <data name="FilingContactPhone" xml:space="preserve"><value>هاتف جهة الاتصال</value></data>
+  <data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+  <data name="Flags" xml:space="preserve"><value>العلامات</value></data>
+  <data name="Format" xml:space="preserve"><value>التنسيق</value></data>
+  <data name="Freeze" xml:space="preserve"><value>تجميد</value></data>
+  <data name="FreezeAndExport" xml:space="preserve"><value>تجميد وتصدير</value></data>
+  <data name="Frozen" xml:space="preserve"><value>مجمّد</value></data>
+  <data name="Fuel" xml:space="preserve"><value>الوقود</value></data>
+  <data name="FuelActualCost" xml:space="preserve"><value>تكلفة الوقود الفعلية</value></data>
+  <data name="FuelQuantity" xml:space="preserve"><value>كمية الوقود</value></data>
+  <data name="FuelUnit" xml:space="preserve"><value>وحدة الوقود</value></data>
+  <data name="Headquarters" xml:space="preserve"><value>المقر الرئيسي</value></data>
+  <data name="HeadquartersAddress" xml:space="preserve"><value>عنوان المقر الرئيسي</value></data>
+  <data name="HelpCompensation" xml:space="preserve"><value>كل مبلغ ومضاعف حقل محمي. تستخدم التقديرات ملف الموظف ثم افتراضي الدور ثم افتراضي القسم؛ والتكلفة المعتمدة من نظام الرواتب تسود دائمًا.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>تُعلن التغطية من قبلك ولا تحددها Resgrid أبدًا. المعرّفات والعناوين حقول محمية؛ قيمة REDACTED غير المعدّلة تحتفظ بما هو مخزّن.</value></data>
+  <data name="HispanicLatino" xml:space="preserve"><value>من أصل إسباني أو لاتيني</value></data>
+  <data name="HourlyRate" xml:space="preserve"><value>المعدل الساعي</value></data>
+  <data name="Hours" xml:space="preserve"><value>الساعات</value></data>
+  <data name="HoursPerDay" xml:space="preserve"><value>ساعات / يوم</value></data>
+  <data name="HoursPerWeek" xml:space="preserve"><value>ساعات / أسبوع</value></data>
+  <data name="HoursPerYear" xml:space="preserve"><value>ساعات / سنة</value></data>
+  <data name="HoursType" xml:space="preserve"><value>نوع الساعات</value></data>
+  <data name="HoursTypeDoubleTime" xml:space="preserve"><value>وقت مضاعف</value></data>
+  <data name="HoursTypeOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="HoursTypeOvertime" xml:space="preserve"><value>إضافية</value></data>
+  <data name="HoursTypePaidLeave" xml:space="preserve"><value>إجازة مدفوعة</value></data>
+  <data name="HoursTypeRegular" xml:space="preserve"><value>عادية</value></data>
+  <data name="HoursTypeStandby" xml:space="preserve"><value>استعداد</value></data>
+  <data name="HoursTypeTravel" xml:space="preserve"><value>سفر</value></data>
+  <data name="IdentifierType" xml:space="preserve"><value>نوع المعرّف</value></data>
+  <data name="IdleHours" xml:space="preserve"><value>ساعات الخمول</value></data>
+  <data name="ImportFacts" xml:space="preserve"><value>استيراد بيانات الأجور السنوية (CSV)</value></data>
+  <data name="ImportHelp" xml:space="preserve"><value>الصق تصدير الرواتب بترتيب الأعمدة القياسي. التشغيل التجريبي يتحقق ويسوّي كل صف قبل الحفظ؛ البيانات المستوردة تصل غير معتمدة.</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>نتيجة الاستيراد</value></data>
+  <data name="Import_box1_fallback" xml:space="preserve"><value>الخانة 5 غائبة — استُخدمت الخانة 1 (ملاحظة مطلوبة)</value></data>
+  <data name="Import_duplicate_row" xml:space="preserve"><value>صف مكرر</value></data>
+  <data name="Import_earnings_missing" xml:space="preserve"><value>الدخل مفقود</value></data>
+  <data name="Import_employment_not_found" xml:space="preserve"><value>لا توجد فترة عمل تغطي السنة</value></data>
+  <data name="Import_empty" xml:space="preserve"><value>لا شيء للاستيراد</value></data>
+  <data name="Import_hours_missing" xml:space="preserve"><value>الساعات القابلة للإبلاغ مفقودة أو صفر</value></data>
+  <data name="Import_worker_not_found" xml:space="preserve"><value>العامل غير موجود</value></data>
+  <data name="Import_year_invalid" xml:space="preserve"><value>سنة غير صالحة</value></data>
+  <data name="Included" xml:space="preserve"><value>مشمول</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>أصل مخزون</value></data>
+  <data name="IsIntegratedEnterprise" xml:space="preserve"><value>جزء من مؤسسة متكاملة</value></data>
+  <data name="JobCategory" xml:space="preserve"><value>فئة الوظيفة CRD</value></data>
+  <data name="JobCategoryHelp" xml:space="preserve"><value>إحدى فئات الوظائف العشر لـ CRD في ملف المخطط المراجَع.</value></data>
+  <data name="JobTitle" xml:space="preserve"><value>المسمى الوظيفي</value></data>
+  <data name="LaborContractor" xml:space="preserve"><value>مقاول العمالة</value></data>
+  <data name="LaborContractors" xml:space="preserve"><value>مقاولو العمالة</value></data>
+  <data name="LegalName" xml:space="preserve"><value>الاسم القانوني</value></data>
+  <data name="Line" xml:space="preserve"><value>السطر</value></data>
+  <data name="Lines" xml:space="preserve"><value>البنود</value></data>
+  <data name="LinesHelp" xml:space="preserve"><value>بنود الأفراد لا تحمل معدلًا ظاهرًا؛ التفاصيل المسعّرة حقل محمي يُعرض فقط مع تفويض ساري.</value></data>
+  <data name="LinesRequireCompensationView" xml:space="preserve"><value>تظهر البنود مع صلاحية عرض التعويض؛ الملخص أعلاه هو العرض المجمع.</value></data>
+  <data name="MajorActivity" xml:space="preserve"><value>النشاط الرئيسي</value></data>
+  <data name="ManagePayDataReporting" xml:space="preserve"><value>إدارة تقارير بيانات الأجور في كاليفورنيا</value></data>
+  <data name="ManagePayDataReportingNote" xml:space="preserve"><value>معالج تقارير CRD: العمليات ولقطات الموظفين والتجاوزات والتجميع والتحقق والملاحظات ورصد المصادقة والتصحيحات وسجلات مسؤول الامتثال الديموغرافية. كل عضو يجيب دائمًا عن نفسه بدونها.</value></data>
+  <data name="ManageWorkforceCompensation" xml:space="preserve"><value>إدارة القوى العاملة والتعويض</value></data>
+  <data name="ManageWorkforceCompensationNote" xml:space="preserve"><value>هوية صاحب العمل والمنشآت والعاملون وفترات العمل والتعيينات الوظيفية وملفات ومكوّنات التعويض وسجلات العمل واستيراد بيانات الأجور السنوية. لا تزال القيم تتطلب تفويضًا ساريًا.</value></data>
+  <data name="MappingProvenance" xml:space="preserve"><value>مصدر المطابقة</value></data>
+  <data name="Margin" xml:space="preserve"><value>هامش المساهمة</value></data>
+  <data name="MarkCertified" xml:space="preserve"><value>تسجيل المصادقة</value></data>
+  <data name="MarkCertifiedHelp" xml:space="preserve"><value>فقط ما لاحظته في بوابة CRD بعد المصادقة هناك؛ Resgrid لا تصادق أبدًا.</value></data>
+  <data name="MarsAuthorityProfile" xml:space="preserve"><value>ملف سلطة MARS</value></data>
+  <data name="MarsClassification" xml:space="preserve"><value>تصنيف Cal OES MARS</value></data>
+  <data name="MeanRate" xml:space="preserve"><value>متوسط المعدل الساعي</value></data>
+  <data name="MedianRate" xml:space="preserve"><value>المعدل الساعي الوسيط</value></data>
+  <data name="Member" xml:space="preserve"><value>عضو</value></data>
+  <data name="Miles" xml:space="preserve"><value>الأميال</value></data>
+  <data name="MissingInputs" xml:space="preserve"><value>المدخلات المفقودة</value></data>
+  <data name="MyDemographics" xml:space="preserve"><value>إجابتي الديموغرافية</value></data>
+  <data name="MyDemographicsIntro" xml:space="preserve"><value>أجب أو حدّث تعريفك الذاتي الطوعي لتقارير بيانات الأجور في كاليفورنيا.</value></data>
+  <data name="Naics" xml:space="preserve"><value>NAICS</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NewRun" xml:space="preserve"><value>عملية جديدة</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+  <data name="NoAnswer" xml:space="preserve"><value>لا إجابة</value></data>
+  <data name="NoArtifacts" xml:space="preserve"><value>لا توجد ملفات تصدير — جمّد وصدّر عملية تم التحقق منها.</value></data>
+  <data name="NoAssignments" xml:space="preserve"><value>لا توجد تعيينات وظيفية.</value></data>
+  <data name="NoContractors" xml:space="preserve"><value>لا يوجد مقاولو عمالة.</value></data>
+  <data name="NoEmployments" xml:space="preserve"><value>لا توجد فترات عمل بعد.</value></data>
+  <data name="NoEstablishments" xml:space="preserve"><value>لا توجد منشآت بعد.</value></data>
+  <data name="NoFacts" xml:space="preserve"><value>لا توجد بيانات أجور سنوية لهذه السنة ونوع التقرير.</value></data>
+  <data name="NoLines" xml:space="preserve"><value>لا توجد بنود.</value></data>
+  <data name="NoProfiles" xml:space="preserve"><value>لا توجد ملفات تعويض.</value></data>
+  <data name="NoResourceProfiles" xml:space="preserve"><value>لا توجد ملفات تكلفة موارد.</value></data>
+  <data name="NoRows" xml:space="preserve"><value>لا توجد صفوف مجمعة بعد — جمّع بعد اكتمال اللقطات.</value></data>
+  <data name="NoRuns" xml:space="preserve"><value>لا توجد عمليات بعد.</value></data>
+  <data name="NoSnapshots" xml:space="preserve"><value>لا توجد لقطات بعد — أنشئها أولًا.</value></data>
+  <data name="NoUsage" xml:space="preserve"><value>لا توجد قراءات استخدام.</value></data>
+  <data name="NoWorkEntries" xml:space="preserve"><value>لا توجد سجلات في هذه الفترة.</value></data>
+  <data name="NoWorkers" xml:space="preserve"><value>لا يوجد عاملون بعد.</value></data>
+  <data name="NonRemote" xml:space="preserve"><value>حضوري</value></data>
+  <data name="None" xml:space="preserve"><value>لا يوجد</value></data>
+  <data name="NotReadyToFreeze" xml:space="preserve"><value>لا تزال هناك أخطاء مانعة</value></data>
+  <data name="NotValidated" xml:space="preserve"><value>لم يتم التحقق بعد.</value></data>
+  <data name="ObserverPerception" xml:space="preserve"><value>إدراك المراقب</value></data>
+  <data name="OpenRuns" xml:space="preserve"><value>العمليات المفتوحة</value></data>
+  <data name="OperatingHours" xml:space="preserve"><value>ساعات التشغيل</value></data>
+  <data name="OriginalDistance" xml:space="preserve"><value>المسافة (كما قُرئت)</value></data>
+  <data name="Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="Overhead" xml:space="preserve"><value>النفقات العامة</value></data>
+  <data name="OverrideReason" xml:space="preserve"><value>سبب التجاوز</value></data>
+  <data name="OwnershipName" xml:space="preserve"><value>اسم المالك</value></data>
+  <data name="PaidLeaveHours" xml:space="preserve"><value>ساعات الإجازة المدفوعة</value></data>
+  <data name="Pay" xml:space="preserve"><value>أجر</value></data>
+  <data name="PayBand" xml:space="preserve"><value>شريحة الأجر</value></data>
+  <data name="PayBasis" xml:space="preserve"><value>أساس الأجر</value></data>
+  <data name="PayBasisDaily" xml:space="preserve"><value>يومي</value></data>
+  <data name="PayBasisHourly" xml:space="preserve"><value>بالساعة</value></data>
+  <data name="PayBasisSalary" xml:space="preserve"><value>راتب</value></data>
+  <data name="PayBasisShift" xml:space="preserve"><value>لكل وردية</value></data>
+  <data name="PayBasisStipend" xml:space="preserve"><value>مكافأة</value></data>
+  <data name="PayCategoryDifferential" xml:space="preserve"><value>فرق</value></data>
+  <data name="PayCategoryEducation" xml:space="preserve"><value>التعليم</value></data>
+  <data name="PayCategoryEms" xml:space="preserve"><value>الإسعاف</value></data>
+  <data name="PayCategoryHazMat" xml:space="preserve"><value>المواد الخطرة</value></data>
+  <data name="PayCategoryIncentive" xml:space="preserve"><value>حافز</value></data>
+  <data name="PayCategoryLongevity" xml:space="preserve"><value>الأقدمية</value></data>
+  <data name="PayCategoryOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="PayCategorySpecialty" xml:space="preserve"><value>تخصص</value></data>
+  <data name="PayCategoryUsar" xml:space="preserve"><value>USAR</value></data>
+  <data name="PayComponentBasisFixedAnnual" xml:space="preserve"><value>سنوي ثابت</value></data>
+  <data name="PayComponentBasisPerHour" xml:space="preserve"><value>لكل ساعة</value></data>
+  <data name="PayComponentBasisPerPayPeriod" xml:space="preserve"><value>لكل فترة دفع</value></data>
+  <data name="PayComponentBasisPerShift" xml:space="preserve"><value>لكل وردية</value></data>
+  <data name="PayComponentBasisPercentOfBase" xml:space="preserve"><value>% من الأساس</value></data>
+  <data name="PayComponents" xml:space="preserve"><value>مكوّنات الأجر</value></data>
+  <data name="PayComponentsHelp" xml:space="preserve"><value>الفروقات والحوافز وأجور التخصص فوق الأساس. مكوّنات الفترة الثابتة لا تُدفع على الوقت الإضافي ما لم تُعلَّم لكل ساعة إضافية.</value></data>
+  <data name="PayDataDisclaimer" xml:space="preserve"><value>Resgrid تُعدّ وتُصدّر؛ لا تقدّم أبدًا ولا تقرر ما إذا كنت مشمولًا ولا تصادق أبدًا. كل ما في هذه الشاشات حقل محمي يُقدَّم بدون تخزين مؤقت.</value></data>
+  <data name="PayDataIntro" xml:space="preserve"><value>أعدّ تقارير CRD في كاليفورنيا لموظفي الرواتب وموظفي مقاول العمالة؛ وتقدّمها بنفسك في بوابة CRD.</value></data>
+  <data name="PayDataReporting" xml:space="preserve"><value>تقارير بيانات الأجور</value></data>
+  <data name="PayDataRun" xml:space="preserve"><value>عملية التقرير</value></data>
+  <data name="PerOvertimeHour" xml:space="preserve"><value>لكل ساعة إضافية</value></data>
+  <data name="Personnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="PersonnelRole" xml:space="preserve"><value>دور الأفراد</value></data>
+  <data name="PersonnelRoleHelp" xml:space="preserve"><value>يُستخدم لاختيار ملف تعويض افتراضي للدور عند عدم وجود ملف للموظف.</value></data>
+  <data name="Phase" xml:space="preserve"><value>المرحلة</value></data>
+  <data name="PhaseIncident" xml:space="preserve"><value>الحادث</value></data>
+  <data name="PhaseMobilization" xml:space="preserve"><value>التعبئة</value></data>
+  <data name="PhaseReturn" xml:space="preserve"><value>العودة</value></data>
+  <data name="PhaseStandby" xml:space="preserve"><value>استعداد</value></data>
+  <data name="PhysicalAddress" xml:space="preserve"><value>العنوان</value></data>
+  <data name="PortalWorksheet" xml:space="preserve"><value>ورقة عمل البوابة</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>الرمز البريدي</value></data>
+  <data name="PreviewEightHours" xml:space="preserve"><value>التكلفة الكاملة ليوم عادي من 8 ساعات</value></data>
+  <data name="ProfileUnavailable" xml:space="preserve"><value>لا يوجد ملف مخطط مراجَع</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>المعرّفات والعناوين ومعدلات الأجور والدخل والإجابات الديموغرافية وملفات التصدير هي حقول حماية بيانات متقدمة (الفهرس 28). تُعرض كـ REDACTED بدون تفويض ساري ولا يتم تخزينها مؤقتًا أو تسجيلها أبدًا.</value></data>
+  <data name="Provenance" xml:space="preserve"><value>المصدر</value></data>
+  <data name="ProvenanceHelp" xml:space="preserve"><value>مصدر الهوية (عقد، W-9، سجل البوابة).</value></data>
+  <data name="ProxyAverageHoursPerDay" xml:space="preserve"><value>متوسط الساعات في اليوم</value></data>
+  <data name="Purged" xml:space="preserve"><value>محذوف</value></data>
+  <data name="Quantity" xml:space="preserve"><value>الكمية</value></data>
+  <data name="RaceEthnicity" xml:space="preserve"><value>العرق / الإثنية</value></data>
+  <data name="RaceHelp" xml:space="preserve"><value>اختر كل الفئات المنطبقة؛ فئتان أو أكثر تُبلَّغ كمتعدد الأعراق.</value></data>
+  <data name="Race_B" xml:space="preserve"><value>أبيض</value></data>
+  <data name="Race_C" xml:space="preserve"><value>أسود أو أمريكي من أصل أفريقي</value></data>
+  <data name="Race_D" xml:space="preserve"><value>من سكان هاواي الأصليين أو جزر المحيط الهادئ</value></data>
+  <data name="Race_E" xml:space="preserve"><value>آسيوي</value></data>
+  <data name="Race_F" xml:space="preserve"><value>من الهنود الأمريكيين أو سكان ألاسكا الأصليين</value></data>
+  <data name="Race_H" xml:space="preserve"><value>من الشرق الأوسط أو شمال أفريقيا</value></data>
+  <data name="Rate" xml:space="preserve"><value>المعدل</value></data>
+  <data name="RateMultipliers" xml:space="preserve"><value>مضاعفات المعدل</value></data>
+  <data name="RateMultipliersHelp" xml:space="preserve"><value>JSON حسب رمز الأجر؛ الرموز المفقودة تستخدم 1.5 (إضافي) و2 (مضاعف) و1.</value></data>
+  <data name="Readiness" xml:space="preserve"><value>الجاهزية</value></data>
+  <data name="ReadyToFreeze" xml:space="preserve"><value>جاهز للتجميد</value></data>
+  <data name="Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="Reconciled" xml:space="preserve"><value>تمت التسوية</value></data>
+  <data name="RegularHourlyEquivalent" xml:space="preserve"><value>المعادل الساعي العادي</value></data>
+  <data name="RegularHourlyEquivalentHelp" xml:space="preserve"><value>تجاوز اختياري؛ وإلا يُشتق من المبلغ الأساسي والساعات القياسية.</value></data>
+  <data name="Relationship" xml:space="preserve"><value>العلاقة</value></data>
+  <data name="RelationshipEnd" xml:space="preserve"><value>نهاية العلاقة</value></data>
+  <data name="RelationshipStart" xml:space="preserve"><value>بداية العلاقة</value></data>
+  <data name="RemoteInCa" xml:space="preserve"><value>عن بُعد في CA</value></data>
+  <data name="RemoteOutsideCa" xml:space="preserve"><value>عن بُعد خارج CA</value></data>
+  <data name="ReportType" xml:space="preserve"><value>نوع التقرير</value></data>
+  <data name="ReportTypeLaborContractorEmployee" xml:space="preserve"><value>تقرير موظفي مقاول العمالة</value></data>
+  <data name="ReportTypePayrollEmployee" xml:space="preserve"><value>تقرير موظفي الرواتب</value></data>
+  <data name="ReportableHours" xml:space="preserve"><value>الساعات القابلة للإبلاغ</value></data>
+  <data name="ResourceBasisFixedAnnual" xml:space="preserve"><value>سنوي ثابت</value></data>
+  <data name="ResourceBasisPerDay" xml:space="preserve"><value>لكل يوم</value></data>
+  <data name="ResourceBasisPerDeployment" xml:space="preserve"><value>لكل انتشار</value></data>
+  <data name="ResourceBasisPerEngineHour" xml:space="preserve"><value>لكل ساعة محرك</value></data>
+  <data name="ResourceBasisPerIdleHour" xml:space="preserve"><value>لكل ساعة خمول</value></data>
+  <data name="ResourceBasisPerKilometer" xml:space="preserve"><value>لكل كيلومتر</value></data>
+  <data name="ResourceBasisPerMile" xml:space="preserve"><value>لكل ميل</value></data>
+  <data name="ResourceBasisPerOperatingHour" xml:space="preserve"><value>لكل ساعة تشغيل</value></data>
+  <data name="ResourceCategoryConsumables" xml:space="preserve"><value>المستهلكات</value></data>
+  <data name="ResourceCategoryDepreciation" xml:space="preserve"><value>الإهلاك</value></data>
+  <data name="ResourceCategoryFixedOverhead" xml:space="preserve"><value>نفقات عامة ثابتة</value></data>
+  <data name="ResourceCategoryFuelEnergy" xml:space="preserve"><value>الوقود / الطاقة</value></data>
+  <data name="ResourceCategoryInsuranceLicensing" xml:space="preserve"><value>التأمين / الترخيص</value></data>
+  <data name="ResourceCategoryLeaseRental" xml:space="preserve"><value>الإيجار</value></data>
+  <data name="ResourceCategoryMaintenance" xml:space="preserve"><value>الصيانة</value></data>
+  <data name="ResourceCategoryOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="ResourceCategoryStorage" xml:space="preserve"><value>التخزين</value></data>
+  <data name="ResourceCategoryTiresWear" xml:space="preserve"><value>الإطارات / التآكل</value></data>
+  <data name="ResourceComponentsHelp" xml:space="preserve"><value>الوقود (معدل أو استهلاك × سعر الوحدة)، الصيانة (يدوية أو فعلية من أوامر العمل مع نافذة عداد)، الإطارات، التأمين، الإيجار، التخزين، النفقات الثابتة والمستهلكات.</value></data>
+  <data name="ResourceCosts" xml:space="preserve"><value>تكاليف الموارد</value></data>
+  <data name="ResourceCostsIntro" xml:space="preserve"><value>الإهلاك والوقود والصيانة والتكاليف الثابتة لكل وحدة أو أصل أو فئة مورد خارجي.</value></data>
+  <data name="ResourceProfiles" xml:space="preserve"><value>ملفات الموارد</value></data>
+  <data name="ResourceProfilesHelp" xml:space="preserve"><value>بيانات رقمية عادية محمية بصلاحية عرض التكاليف الداخلية — لا يُسعَّر أي شخص هنا.</value></data>
+  <data name="ResourceSourceAcquisitionCalculated" xml:space="preserve"><value>محسوب من الاقتناء</value></data>
+  <data name="ResourceSourceImported" xml:space="preserve"><value>مستورد</value></data>
+  <data name="ResourceSourceManual" xml:space="preserve"><value>يدوي</value></data>
+  <data name="ResourceSourceWorkOrderRollingActual" xml:space="preserve"><value>فعلي متجدد من أوامر العمل</value></data>
+  <data name="ResourceUsage" xml:space="preserve"><value>استخدام الموارد</value></data>
+  <data name="Resources" xml:space="preserve"><value>الموارد</value></data>
+  <data name="Revenue" xml:space="preserve"><value>الإيراد</value></data>
+  <data name="RevenueBidEstimate" xml:space="preserve"><value>إجمالي العرض المقدّر</value></data>
+  <data name="RevenueCalOesMarsApproved" xml:space="preserve"><value>Cal OES MARS معتمد</value></data>
+  <data name="RevenueCalOesMarsExpected" xml:space="preserve"><value>Cal OES MARS متوقع</value></data>
+  <data name="RevenueCalOesMarsPaid" xml:space="preserve"><value>Cal OES MARS مدفوع</value></data>
+  <data name="RevenueCustomerInvoice" xml:space="preserve"><value>فواتير العميل</value></data>
+  <data name="RevenueNone" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="RevenueSource" xml:space="preserve"><value>مصدر الإيراد</value></data>
+  <data name="Review" xml:space="preserve"><value>المراجعة</value></data>
+  <data name="Review_approved_payroll_cost_used" xml:space="preserve"><value>استُخدمت تكلفة الرواتب المعتمدة</value></data>
+  <data name="Review_class_default_fallback" xml:space="preserve"><value>استُخدم ملف الفئة</value></data>
+  <data name="Review_component_unapproved" xml:space="preserve"><value>المكوّن غير معتمد</value></data>
+  <data name="Review_currency_mismatch" xml:space="preserve"><value>عدم تطابق العملة</value></data>
+  <data name="Review_department_default_fallback" xml:space="preserve"><value>استُخدم افتراضي القسم</value></data>
+  <data name="Review_depreciation_inputs_missing" xml:space="preserve"><value>مدخلات الإهلاك مفقودة</value></data>
+  <data name="Review_distance_conflict" xml:space="preserve"><value>المسافة التلقائية واليدوية متعارضتان</value></data>
+  <data name="Review_fuel_inputs_missing" xml:space="preserve"><value>مدخلات الوقود مفقودة</value></data>
+  <data name="Review_no_compensation_profile" xml:space="preserve"><value>لا يوجد ملف تعويض</value></data>
+  <data name="Review_no_employment_for_member" xml:space="preserve"><value>لا توجد فترة عمل للعضو</value></data>
+  <data name="Review_no_rate_for_basis" xml:space="preserve"><value>لا يوجد معدل للأساس</value></data>
+  <data name="Review_no_resource_profile" xml:space="preserve"><value>لا يوجد ملف مورد</value></data>
+  <data name="Review_pay_code_multiplier_missing" xml:space="preserve"><value>مضاعف رمز الأجر مفقود (استُخدم الافتراضي)</value></data>
+  <data name="Review_repair_double_counted" xml:space="preserve"><value>الإصلاح محسوب مباشرة بالفعل</value></data>
+  <data name="Review_role_default_fallback" xml:space="preserve"><value>استُخدم افتراضي الدور</value></data>
+  <data name="Review_rolling_window_insufficient" xml:space="preserve"><value>نافذة الصيانة المتجددة غير كافية</value></data>
+  <data name="Review_unapproved_profile" xml:space="preserve"><value>ملف غير معتمد</value></data>
+  <data name="Review_usage_needs_review" xml:space="preserve"><value>قراءة الاستخدام تحتاج مراجعة</value></data>
+  <data name="Review_utilization_missing" xml:space="preserve"><value>الاستخدام السنوي مفقود</value></data>
+  <data name="Rows" xml:space="preserve"><value>الصفوف</value></data>
+  <data name="RunBidEstimate" xml:space="preserve"><value>تقدير تكلفة العرض</value></data>
+  <data name="RunBidEstimateHelp" xml:space="preserve"><value>بنود العرض × التعويض الافتراضي للقسم وملفات موارد الفئة؛ الإيراد = إجمالي العرض المقدّر.</value></data>
+  <data name="RunCallCost" xml:space="preserve"><value>حساب تكلفة النداء</value></data>
+  <data name="RunCallCostHelp" xml:space="preserve"><value>سجلات العمل وقراءات الاستخدام للنداء؛ بدون إيراد.</value></data>
+  <data name="RunDeploymentCost" xml:space="preserve"><value>حساب تكلفة الانتشار</value></data>
+  <data name="RunDeploymentCostHelp" xml:space="preserve"><value>تقارير الوقت اليومية المعتمدة وقراءات الاستخدام والنفقات حتى التاريخ.</value></data>
+  <data name="RunRemarks" xml:space="preserve"><value>ملاحظات توضيحية</value></data>
+  <data name="RunRemarksHelp" xml:space="preserve"><value>حتى 500 حرف؛ مطلوبة عند استخدام دخل الخانة 1 أو تطبيق طريقة بديلة للمعفيين.</value></data>
+  <data name="RunStatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="RunStatusFrozen" xml:space="preserve"><value>مجمّد</value></data>
+  <data name="RunStatusNeedsReview" xml:space="preserve"><value>يحتاج مراجعة</value></data>
+  <data name="RunStatusSuperseded" xml:space="preserve"><value>مستبدل</value></data>
+  <data name="RunType" xml:space="preserve"><value>نوع العملية</value></data>
+  <data name="RunTypeActual" xml:space="preserve"><value>فعلي</value></data>
+  <data name="RunTypeEstimate" xml:space="preserve"><value>تقدير</value></data>
+  <data name="Runs" xml:space="preserve"><value>عمليات التقرير</value></data>
+  <data name="SalvageValue" xml:space="preserve"><value>القيمة المتبقية</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>تعذر حفظ التغيير.</value></data>
+  <data name="SaveResponse" xml:space="preserve"><value>حفظ الإجابة</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="SchemaProfile" xml:space="preserve"><value>ملف المخطط</value></data>
+  <data name="Scope" xml:space="preserve"><value>النطاق</value></data>
+  <data name="ScopeDepartmentDefault" xml:space="preserve"><value>افتراضي القسم</value></data>
+  <data name="ScopeEmployee" xml:space="preserve"><value>موظف</value></data>
+  <data name="ScopeRoleDefault" xml:space="preserve"><value>افتراضي الدور</value></data>
+  <data name="Sein" xml:space="preserve"><value>SEIN (EDD)</value></data>
+  <data name="SelfIdentification" xml:space="preserve"><value>التعريف الذاتي الطوعي</value></data>
+  <data name="SelfIdentificationNotice" xml:space="preserve"><value>تُخزَّن إجاباتك بشكل منفصل عن ملفك الوظيفي ومشفّرة وتُستخدم فقط لإعداد تقرير CRD المجمع. لا يراها أحد في القسم على أي شاشة أخرى.</value></data>
+  <data name="SelfIdentified" xml:space="preserve"><value>تعريف ذاتي</value></data>
+  <data name="Sex" xml:space="preserve"><value>الجنس</value></data>
+  <data name="Sex_10" xml:space="preserve"><value>أنثى</value></data>
+  <data name="Sex_20" xml:space="preserve"><value>ذكر</value></data>
+  <data name="Sex_30" xml:space="preserve"><value>غير ثنائي</value></data>
+  <data name="Size" xml:space="preserve"><value>الحجم</value></data>
+  <data name="Skipped" xml:space="preserve"><value>تم التخطي</value></data>
+  <data name="Snapshot" xml:space="preserve"><value>اللقطة</value></data>
+  <data name="SnapshotEmployeeCount" xml:space="preserve"><value>الموظفون في اللقطة</value></data>
+  <data name="SnapshotEnd" xml:space="preserve"><value>نهاية اللقطة</value></data>
+  <data name="SnapshotStart" xml:space="preserve"><value>بداية اللقطة</value></data>
+  <data name="SnapshotWindowHelp" xml:space="preserve"><value>فترة دفع واحدة بين</value></data>
+  <data name="Snapshots" xml:space="preserve"><value>لقطات الموظفين</value></data>
+  <data name="SnapshotsHelp" xml:space="preserve"><value>صف واحد لكل موظف في كاليفورنيا خلال الفترة؛ الرمز الديموغرافي والدخل والمعدل الساعي حقول محمية. التجاوزات تتطلب سببًا وتُدقق.</value></data>
+  <data name="SocCode" xml:space="preserve"><value>رمز SOC</value></data>
+  <data name="SocVersion" xml:space="preserve"><value>إصدار SOC</value></data>
+  <data name="SosNumber" xml:space="preserve"><value>رقم وزير خارجية كاليفورنيا</value></data>
+  <data name="Source" xml:space="preserve"><value>المصدر</value></data>
+  <data name="StartEngineMeter" xml:space="preserve"><value>عداد المحرك البداية</value></data>
+  <data name="StartOdometer" xml:space="preserve"><value>عداد البداية</value></data>
+  <data name="StartOn" xml:space="preserve"><value>البداية</value></data>
+  <data name="State" xml:space="preserve"><value>الولاية</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="StatusCertifiedExternally" xml:space="preserve"><value>مصادق عليه خارجيًا</value></data>
+  <data name="StatusCorrection" xml:space="preserve"><value>مصحَّح</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="StatusExported" xml:space="preserve"><value>مُصدَّر</value></data>
+  <data name="StatusFrozenForExport" xml:space="preserve"><value>مجمّد</value></data>
+  <data name="StatusValidated" xml:space="preserve"><value>تم التحقق</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>ملغى</value></data>
+  <data name="Subject" xml:space="preserve"><value>الموضوع</value></data>
+  <data name="SubjectType" xml:space="preserve"><value>نوع الموضوع</value></data>
+  <data name="SubjectTypeExternal" xml:space="preserve"><value>فئة خارجية</value></data>
+  <data name="SubjectTypeInventoryAsset" xml:space="preserve"><value>أصل مخزون</value></data>
+  <data name="SubjectTypeUnit" xml:space="preserve"><value>وحدة</value></data>
+  <data name="Summary" xml:space="preserve"><value>الملخص</value></data>
+  <data name="TabAnnualFacts" xml:space="preserve"><value>بيانات الأجور السنوية</value></data>
+  <data name="TabCompensation" xml:space="preserve"><value>التعويض</value></data>
+  <data name="TabContractors" xml:space="preserve"><value>مقاولو العمالة</value></data>
+  <data name="TabCostRuns" xml:space="preserve"><value>عمليات حساب التكلفة</value></data>
+  <data name="TabDashboard" xml:space="preserve"><value>نظرة عامة</value></data>
+  <data name="TabEmployer" xml:space="preserve"><value>صاحب العمل</value></data>
+  <data name="TabEstablishments" xml:space="preserve"><value>المنشآت</value></data>
+  <data name="TabPayData" xml:space="preserve"><value>تقارير بيانات الأجور</value></data>
+  <data name="TabResourceCosts" xml:space="preserve"><value>تكاليف الموارد</value></data>
+  <data name="TabWorkEntries" xml:space="preserve"><value>سجلات العمل</value></data>
+  <data name="TabWorkers" xml:space="preserve"><value>العاملون</value></data>
+  <data name="ThroughDate" xml:space="preserve"><value>حتى تاريخ</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>المنطقة الزمنية</value></data>
+  <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="TotalLoadedCost" xml:space="preserve"><value>إجمالي التكلفة الكاملة</value></data>
+  <data name="Unapproved" xml:space="preserve"><value>غير معتمد</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="UnitPrice" xml:space="preserve"><value>سعر الوحدة</value></data>
+  <data name="UnresolvedExceptions" xml:space="preserve"><value>الاستثناءات غير المحلولة</value></data>
+  <data name="Updated" xml:space="preserve"><value>تم التحديث</value></data>
+  <data name="UsEmployeeCount" xml:space="preserve"><value>الموظفون في الولايات المتحدة</value></data>
+  <data name="UsageEntries" xml:space="preserve"><value>سجلات الاستخدام</value></data>
+  <data name="UsageIntro" xml:space="preserve"><value>قراءات العداد وعداد المحرك والساعات والوقود لكل وحدة ويوم؛ تُخزَّن المسافة بالأميال وتُحال القراءات المتعارضة للمراجعة.</value></data>
+  <data name="UsageSourceDtr" xml:space="preserve"><value>تقرير الوقت اليومي</value></data>
+  <data name="UsageSourceGps" xml:space="preserve"><value>GPS</value></data>
+  <data name="UsageSourceHardwareTracker" xml:space="preserve"><value>متتبع الأجهزة</value></data>
+  <data name="UsageSourceImport" xml:space="preserve"><value>استيراد</value></data>
+  <data name="UsageSourceManual" xml:space="preserve"><value>يدوي</value></data>
+  <data name="UsefulLifeMonths" xml:space="preserve"><value>العمر الإنتاجي (أشهر)</value></data>
+  <data name="UsefulLifeQuantity" xml:space="preserve"><value>العمر الإنتاجي (وحدات)</value></data>
+  <data name="UsefulLifeQuantityHelp" xml:space="preserve"><value>الأميال أو الساعات أو الأيام على مدى العمر؛ القسط الثابت = (التكلفة − المتبقي) ÷ العمر.</value></data>
+  <data name="Validate" xml:space="preserve"><value>تحقق</value></data>
+  <data name="ValidatedOn" xml:space="preserve"><value>تم التحقق في</value></data>
+  <data name="Validation" xml:space="preserve"><value>التحقق</value></data>
+  <data name="Validation_annual_fact_missing" xml:space="preserve"><value>بيان الأجر السنوي مفقود</value></data>
+  <data name="Validation_annual_fact_unapproved" xml:space="preserve"><value>بيان الأجر السنوي غير معتمد</value></data>
+  <data name="Validation_assignment_overlap" xml:space="preserve"><value>تعيينات وظيفية متداخلة</value></data>
+  <data name="Validation_contractor_identity_missing" xml:space="preserve"><value>هوية مقاول العمالة مفقودة</value></data>
+  <data name="Validation_coverage_undeclared" xml:space="preserve"><value>حالة التغطية غير معلنة</value></data>
+  <data name="Validation_demographic_missing" xml:space="preserve"><value>الإجابة الديموغرافية مفقودة أو مرفوضة</value></data>
+  <data name="Validation_earnings_box1_fallback" xml:space="preserve"><value>استُخدمت W-2 الخانة 1 بدل الخانة 5 (ملاحظة مطلوبة)</value></data>
+  <data name="Validation_earnings_missing" xml:space="preserve"><value>الدخل مفقود</value></data>
+  <data name="Validation_employee_count_mismatch" xml:space="preserve"><value>أعداد الموظفين في الصفوف لا تتطابق مع اللقطات</value></data>
+  <data name="Validation_employer_identity_missing" xml:space="preserve"><value>هوية صاحب العمل غير مكتملة (الاسم، FEIN، SEIN، عنوان EDD)</value></data>
+  <data name="Validation_establishment_address_missing" xml:space="preserve"><value>عنوان المنشأة غير مكتمل</value></data>
+  <data name="Validation_establishment_missing" xml:space="preserve"><value>المنشأة مفقودة</value></data>
+  <data name="Validation_establishment_naics_missing" xml:space="preserve"><value>NAICS المنشأة مفقود</value></data>
+  <data name="Validation_exempt_proxy_used" xml:space="preserve"><value>استُخدمت طريقة بديلة للمعفيين (ملاحظة مطلوبة)</value></data>
+  <data name="Validation_field_too_long" xml:space="preserve"><value>الحقل يتجاوز طول القالب</value></data>
+  <data name="Validation_file_too_large" xml:space="preserve"><value>سيتجاوز التصدير حد حجم ملف البوابة</value></data>
+  <data name="Validation_hours_zero" xml:space="preserve"><value>الساعات القابلة للإبلاغ صفر</value></data>
+  <data name="Validation_job_category_missing" xml:space="preserve"><value>فئة الوظيفة مفقودة</value></data>
+  <data name="Validation_job_category_unknown" xml:space="preserve"><value>فئة الوظيفة ليست في ملف المخطط</value></data>
+  <data name="Validation_manual_override" xml:space="preserve"><value>تم تطبيق تجاوز يدوي</value></data>
+  <data name="Validation_no_employees" xml:space="preserve"><value>لا يوجد موظفون في اللقطة</value></data>
+  <data name="Validation_observer_perception_used" xml:space="preserve"><value>استُخدم إدراك المراقب للرمز الديموغرافي</value></data>
+  <data name="Validation_profile_stale" xml:space="preserve"><value>تغيّر ملف المخطط منذ إنشاء العملية</value></data>
+  <data name="Validation_remote_counts_mismatch" xml:space="preserve"><value>أعداد العمل عن بُعد لا تتطابق مع عدد الموظفين</value></data>
+  <data name="Validation_required" xml:space="preserve"><value>عمود القالب المطلوب فارغ</value></data>
+  <data name="Validation_rows_not_aggregated" xml:space="preserve"><value>الصفوف لم تُجمّع بعد</value></data>
+  <data name="Validation_snapshot_outside_window" xml:space="preserve"><value>فترة اللقطة خارج النافذة المسموحة</value></data>
+  <data name="Validation_weeks_missing" xml:space="preserve"><value>الأسابيع المعمولة مفقودة</value></data>
+  <data name="Validation_work_mode_unresolved" xml:space="preserve"><value>نمط العمل غير محدد (لا يوجد تعيين)</value></data>
+  <data name="Variance" xml:space="preserve"><value>الفرق</value></data>
+  <data name="Version" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="ViewInternalCosts" xml:space="preserve"><value>عرض التكاليف الداخلية</value></data>
+  <data name="ViewInternalCostsNote" xml:space="preserve"><value>ملخصات مجمعة لتكاليف الميدان والهوامش للعروض والنداءات والانتشارات — فئات وإجماليات، وليس بندًا أو معدلًا أو شخصًا — بالإضافة إلى ملفات تكلفة الموارد وقراءات الاستخدام.</value></data>
+  <data name="ViewWorkforceCompensation" xml:space="preserve"><value>عرض التعويض</value></data>
+  <data name="ViewWorkforceCompensationNote" xml:space="preserve"><value>قراءة ملفات التعويض وسجلات العمل وبيانات الأجور السنوية وبنود عمليات التكلفة. لا تزال القيم تتطلب تفويضًا ساريًا.</value></data>
+  <data name="Void" xml:space="preserve"><value>إبطال</value></data>
+  <data name="W2Box1" xml:space="preserve"><value>W-2 الخانة 1</value></data>
+  <data name="W2Box5" xml:space="preserve"><value>W-2 الخانة 5</value></data>
+  <data name="Warnings" xml:space="preserve"><value>التحذيرات</value></data>
+  <data name="WasFiledPriorYear" xml:space="preserve"><value>تم الإبلاغ عنه في العام السابق</value></data>
+  <data name="WeeksWorked" xml:space="preserve"><value>الأسابيع المعمولة</value></data>
+  <data name="WhyWeAsk" xml:space="preserve"><value>لماذا نسأل</value></data>
+  <data name="WhyWeAskText" xml:space="preserve"><value>تُلزم المادة 12999 من قانون حكومة كاليفورنيا أصحاب العمل المشمولين بالإبلاغ عن بيانات الأجور مجمّعة حسب فئة الوظيفة والعرق/الإثنية والجنس. يحتوي التقرير على أعداد ومعدلات مجمعة فقط؛ ولا يذكر أي شخص بالاسم.</value></data>
+  <data name="WizardSteps" xml:space="preserve"><value>1. إنشاء لقطات الموظفين · 2. تجميع الصفوف · 3. التحقق · 4. التجميد والتصدير · ثم الإقرار في بوابة CRD وتسجيل المصادقة هنا.</value></data>
+  <data name="WorkCountry" xml:space="preserve"><value>الدولة</value></data>
+  <data name="WorkEntries" xml:space="preserve"><value>سجلات العمل</value></data>
+  <data name="WorkEntriesIntro" xml:space="preserve"><value>ساعات لكل عامل ويوم من الرواتب والانتشارات والنداءات؛ التكلفة المعتمدة من الرواتب، إن وُجدت، تحل محل أي تقدير.</value></data>
+  <data name="WorkLocation" xml:space="preserve"><value>موقع العمل</value></data>
+  <data name="WorkMode" xml:space="preserve"><value>نمط العمل</value></data>
+  <data name="WorkModeNonRemote" xml:space="preserve"><value>حضوري</value></data>
+  <data name="WorkModeRemoteOutsideCaliforniaAssignedToCaliforniaEstablishment" xml:space="preserve"><value>عن بُعد خارج كاليفورنيا (معيّن في منشأة بكاليفورنيا)</value></data>
+  <data name="WorkModeRemoteWithinCalifornia" xml:space="preserve"><value>عن بُعد داخل كاليفورنيا</value></data>
+  <data name="WorkSubdivision" xml:space="preserve"><value>الولاية / المقاطعة</value></data>
+  <data name="Worker" xml:space="preserve"><value>عامل</value></data>
+  <data name="WorkerIntro" xml:space="preserve"><value>فترات العمل لا تتداخل أبدًا؛ كل فترة تحمل تعييناتها الوظيفية عبر الزمن.</value></data>
+  <data name="WorkerKind" xml:space="preserve"><value>نوع العامل</value></data>
+  <data name="WorkerKindIndependentContractor" xml:space="preserve"><value>متعاقد مستقل</value></data>
+  <data name="WorkerKindLaborContractorEmployee" xml:space="preserve"><value>موظف مقاول عمالة</value></data>
+  <data name="WorkerKindPayrollEmployee" xml:space="preserve"><value>موظف على كشف الرواتب</value></data>
+  <data name="WorkerKindVolunteer" xml:space="preserve"><value>متطوع</value></data>
+  <data name="Workers" xml:space="preserve"><value>العاملون</value></data>
+  <data name="WorkersIntro" xml:space="preserve"><value>كل شخص يدفع له القسم أو يبلّغ عنه — الأعضاء والعاملون الخارجيون — مع فترات عملهم.</value></data>
+  <data name="Workforce" xml:space="preserve"><value>القوى العاملة</value></data>
+  <data name="WorksheetIntro" xml:space="preserve"><value>قيم صاحب العمل التي تُدخلها في بوابة CRD إلى جانب الملف المرفوع.</value></data>
+  <data name="WorksheetNoStore" xml:space="preserve"><value>يُقدَّم بدون تخزين مؤقت ويُدقق؛ أغلق التبويب عند الانتهاء. Resgrid لا تسجل الدخول إلى البوابة أبدًا.</value></data>
+  <data name="Year" xml:space="preserve"><value>السنة</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="paydata_artifact_not_found" xml:space="preserve"><value>لم يتم العثور على ملف التصدير.</value></data>
+  <data name="paydata_artifact_unavailable" xml:space="preserve"><value>انتهت صلاحية ملف التصدير أو تم حذفه.</value></data>
+  <data name="paydata_certification_reference_required" xml:space="preserve"><value>مرجع مصادقة البوابة مطلوب.</value></data>
+  <data name="paydata_collection_source_invalid" xml:space="preserve"><value>مصدر الجمع غير صالح.</value></data>
+  <data name="paydata_correction_exists" xml:space="preserve"><value>توجد عملية تصحيح بالفعل.</value></data>
+  <data name="paydata_hispanic_invalid" xml:space="preserve"><value>إجابة الأصل الإسباني أو اللاتيني غير صالحة.</value></data>
+  <data name="paydata_no_snapshots" xml:space="preserve"><value>أنشئ لقطات الموظفين أولًا.</value></data>
+  <data name="paydata_profile_unavailable" xml:space="preserve"><value>لا يوجد ملف مخطط CRD مراجَع يغطي سنة الإبلاغ تلك.</value></data>
+  <data name="paydata_race_invalid" xml:space="preserve"><value>رمز العرق/الإثنية غير صالح.</value></data>
+  <data name="paydata_race_required" xml:space="preserve"><value>أجب عن العرق/الإثنية أو اختر عدم الإجابة.</value></data>
+  <data name="paydata_reason_required" xml:space="preserve"><value>السبب مطلوب.</value></data>
+  <data name="paydata_remarks_too_long" xml:space="preserve"><value>الملاحظات محدودة بـ 500 حرف.</value></data>
+  <data name="paydata_run_certified" xml:space="preserve"><value>لا يمكن إبطال عملية مصادق عليها؛ أنشئ تصحيحًا.</value></data>
+  <data name="paydata_run_frozen" xml:space="preserve"><value>العملية مجمّدة؛ أنشئ تصحيحًا بدلًا من ذلك.</value></data>
+  <data name="paydata_run_not_exported" xml:space="preserve"><value>فقط العملية المصدَّرة يمكن تعليمها كمصادق عليها.</value></data>
+  <data name="paydata_run_not_found" xml:space="preserve"><value>لم يتم العثور على عملية التقرير.</value></data>
+  <data name="paydata_run_not_frozen" xml:space="preserve"><value>فقط العملية المصدَّرة أو المصادق عليها يمكن تصحيحها.</value></data>
+  <data name="paydata_sex_invalid" xml:space="preserve"><value>رمز الجنس غير صالح.</value></data>
+  <data name="paydata_sex_required" xml:space="preserve"><value>أجب عن الجنس أو اختر عدم الإجابة.</value></data>
+  <data name="paydata_snapshot_not_found" xml:space="preserve"><value>لم يتم العثور على لقطة الموظف.</value></data>
+  <data name="paydata_snapshot_window_invalid" xml:space="preserve"><value>يجب أن تكون فترة اللقطة فترة دفع واحدة ضمن النافذة المسموحة.</value></data>
+  <data name="paydata_validation_failed" xml:space="preserve"><value>لا يزال التحقق يبلغ عن أخطاء مانعة.</value></data>
+  <data name="paydata_workload_denied" xml:space="preserve"><value>تعذر على عملية الإبلاغ فك تشفير القيم المحمية.</value></data>
+  <data name="workforce_affiliate_name_required" xml:space="preserve"><value>الاسم القانوني للكيان التابع مطلوب.</value></data>
+  <data name="workforce_allocation_invalid" xml:space="preserve"><value>أساس التخصيص غير صالح.</value></data>
+  <data name="workforce_amount_invalid" xml:space="preserve"><value>أحد المبالغ سالب.</value></data>
+  <data name="workforce_asset_required" xml:space="preserve"><value>أصل المخزون مطلوب.</value></data>
+  <data name="workforce_assignment_overlap" xml:space="preserve"><value>يتداخل التعيين مع تعيين آخر لفترة العمل هذه.</value></data>
+  <data name="workforce_bid_not_found" xml:space="preserve"><value>لم يتم العثور على العرض.</value></data>
+  <data name="workforce_component_invalid" xml:space="preserve"><value>فئة أو أساس المكوّن غير صالح.</value></data>
+  <data name="workforce_contractor_name_required" xml:space="preserve"><value>الاسم القانوني للمقاول مطلوب.</value></data>
+  <data name="workforce_contractor_required" xml:space="preserve"><value>يحتاج موظف مقاول العمالة إلى مقاول عمالة.</value></data>
+  <data name="workforce_coverage_invalid" xml:space="preserve"><value>حالة التغطية غير صالحة.</value></data>
+  <data name="workforce_dates_invalid" xml:space="preserve"><value>تاريخ النهاية قبل تاريخ البداية.</value></data>
+  <data name="workforce_deployment_not_found" xml:space="preserve"><value>لم يتم العثور على الانتشار.</value></data>
+  <data name="workforce_employer_name_required" xml:space="preserve"><value>الاسم القانوني لصاحب العمل مطلوب.</value></data>
+  <data name="workforce_employment_not_found" xml:space="preserve"><value>لم يتم العثور على فترة العمل.</value></data>
+  <data name="workforce_employment_overlap" xml:space="preserve"><value>تتداخل الفترة مع فترة عمل أخرى لهذا العامل.</value></data>
+  <data name="workforce_establishment_code_duplicate" xml:space="preserve"><value>منشأة أخرى تستخدم هذا الرمز بالفعل.</value></data>
+  <data name="workforce_establishment_code_required" xml:space="preserve"><value>تحتاج المنشأة إلى رمز واسم.</value></data>
+  <data name="workforce_establishment_not_found" xml:space="preserve"><value>لم يتم العثور على المنشأة.</value></data>
+  <data name="workforce_external_key_required" xml:space="preserve"><value>مفتاح المورد الخارجي مطلوب.</value></data>
+  <data name="workforce_hours_invalid" xml:space="preserve"><value>يجب أن تكون الساعات بين 0 و24.</value></data>
+  <data name="workforce_hours_type_invalid" xml:space="preserve"><value>نوع الساعات غير صالح.</value></data>
+  <data name="workforce_job_category_invalid" xml:space="preserve"><value>فئة الوظيفة ليست في ملف المخطط.</value></data>
+  <data name="workforce_naics_invalid" xml:space="preserve"><value>يجب أن يتكون NAICS من ستة أرقام.</value></data>
+  <data name="workforce_no_inputs" xml:space="preserve"><value>لا شيء لحسابه: لا توجد سجلات عمل أو قراءات استخدام.</value></data>
+  <data name="workforce_not_found" xml:space="preserve"><value>لم يتم العثور على السجل.</value></data>
+  <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>أساس الأجر غير صالح.</value></data>
+  <data name="workforce_profile_overlap" xml:space="preserve"><value>تتداخل الفترة مع ملف آخر بنفس النطاق.</value></data>
+  <data name="workforce_protected_write_refused" xml:space="preserve"><value>تم رفض الكتابة المحمية.</value></data>
+  <data name="workforce_report_type_invalid" xml:space="preserve"><value>نوع التقرير غير صالح.</value></data>
+  <data name="workforce_role_required" xml:space="preserve"><value>يحتاج افتراضي الدور إلى دور أفراد.</value></data>
+  <data name="workforce_run_frozen" xml:space="preserve"><value>العملية مجمّدة ولا يمكن تغييرها.</value></data>
+  <data name="workforce_scope_invalid" xml:space="preserve"><value>نطاق الملف غير صالح.</value></data>
+  <data name="workforce_subject_invalid" xml:space="preserve"><value>نوع الموضوع غير صالح.</value></data>
+  <data name="workforce_unit_not_found" xml:space="preserve"><value>لم يتم العثور على الوحدة.</value></data>
+  <data name="workforce_unit_required" xml:space="preserve"><value>الوحدة مطلوبة.</value></data>
+  <data name="workforce_usage_context_required" xml:space="preserve"><value>تحتاج قراءة الاستخدام إلى انتشار أو نداء.</value></data>
+  <data name="workforce_usage_invalid" xml:space="preserve"><value>قراءة الاستخدام غير صالحة.</value></data>
+  <data name="workforce_work_mode_invalid" xml:space="preserve"><value>نمط العمل غير صالح.</value></data>
+  <data name="workforce_worker_duplicate" xml:space="preserve"><value>هذا العضو لديه سجل عامل بالفعل.</value></data>
+  <data name="workforce_worker_identity_required" xml:space="preserve"><value>يحتاج العامل إلى عضو أو مفتاح خارجي.</value></data>
+  <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>نوع العامل غير صالح.</value></data>
+  <data name="workforce_worker_not_found" xml:space="preserve"><value>لم يتم العثور على العامل.</value></data>
+  <data name="workforce_worker_required" xml:space="preserve"><value>العامل مطلوب.</value></data>
+  <data name="workforce_year_invalid" xml:space="preserve"><value>سنة الإبلاغ غير صالحة.</value></data>
+</root>

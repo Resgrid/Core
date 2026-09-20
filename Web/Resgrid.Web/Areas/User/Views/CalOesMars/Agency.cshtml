@@ -1,0 +1,60 @@
+@model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsAgencyView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AgencyProfile"];
+    ViewData["Title"] = localizer["AgencyProfile"].Value;
+    ViewData["Subtitle"] = localizer["AgencyIntro"].Value;
+    ViewData["MarsTab"] = "agency";
+    ViewData["MarsIsManager"] = Model.IsManager;
+    ViewData["MarsCanReconcile"] = Model.CanReconcile;
+    var a = Model.Agency;
+}
+
+@await Html.PartialAsync("_CalOesMarsShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["AgencyProfile"]</h5></div>
+                <div class="ibox-content">
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpAgency"]</div>
+                    <form method="post" asp-action="SaveAgency" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CalOesMarsAgencyProfileId" value="@a.CalOesMarsAgencyProfileId" />
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["AgencyName"] *</label><div class="col-sm-9"><input type="text" name="AgencyName" class="form-control" maxlength="250" required value="@a.AgencyName" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["MacsDesignator"]</label><div class="col-sm-3"><input type="text" name="MacsDesignator" class="form-control" maxlength="20" value="@a.MacsDesignator" /></div>
+                            <label class="col-sm-3 control-label">@localizer["AgencyCategory"]</label><div class="col-sm-3"><input type="text" name="AgencyCategory" class="form-control" maxlength="50" value="@a.AgencyCategory" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["ContactName"]</label><div class="col-sm-9"><input type="text" name="ContactName" class="form-control" value="@a.ContactName" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["ContactPhone"]</label><div class="col-sm-4"><input type="text" name="ContactPhone" class="form-control" value="@a.ContactPhone" /></div>
+                            <label class="col-sm-2 control-label">@localizer["ContactEmail"]</label><div class="col-sm-3"><input type="email" name="ContactEmail" class="form-control" value="@a.ContactEmail" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Address"]</label><div class="col-sm-9"><textarea name="Address" class="form-control" rows="2">@a.Address</textarea></div></div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["Fein"]</label><div class="col-sm-3"><input type="text" name="FeinReference" class="form-control" value="@a.FeinReference" /></div>
+                            <label class="col-sm-3 control-label">@localizer["Uei"]</label><div class="col-sm-3"><input type="text" name="UeiReference" class="form-control" value="@a.UeiReference" /></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["SamReference"]</label><div class="col-sm-3"><input type="text" name="SamReference" class="form-control" value="@a.SamReference" /></div>
+                            <label class="col-sm-3 control-label">@localizer["FiscalSupplier"]</label><div class="col-sm-3"><input type="text" name="FiscalSupplierReference" class="form-control" value="@a.FiscalSupplierReference" /></div></div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["PortalRole"]</label><div class="col-sm-3"><select name="PortalAccountRole" class="form-control"><option value="">—</option><option value="Primary" selected="@(a.PortalAccountRole == "Primary")">Primary</option><option value="Secondary" selected="@(a.PortalAccountRole == "Secondary")">Secondary</option></select></div>
+                            <label class="col-sm-3 control-label">@localizer["PortalReference"]</label><div class="col-sm-3"><input type="text" name="PortalAccountReference" class="form-control" maxlength="200" value="@a.PortalAccountReference" /><span class="help-block">@localizer["PortalReferenceHelp"]</span></div></div>
+                        <div class="form-group"><label class="col-sm-3 control-label">@localizer["SourceArtifact"]</label><div class="col-sm-6"><input type="text" name="SourceArtifact" class="form-control" value="@a.SourceArtifact" /></div>
+                            <div class="col-sm-3"><input type="text" name="SourceChecksum" class="form-control" placeholder="@localizer["Checksum"]" maxlength="128" value="@a.SourceChecksum" /></div></div>
+                        <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" checked="@a.IsActive" /> @localizer["Active"]</label></div></div></div>
+                        <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a></div></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Verification"]</h5></div>
+                <div class="ibox-content">
+                    <p>@localizer["VerifiedOn"]: <strong>@(a.VerifiedOn?.ToString("yyyy-MM-dd") ?? "—")</strong></p>
+                    <p class="text-muted small">@localizer["VerificationHelp"]</p>
+                    <p class="text-muted small">@localizer["NoCredentialsStored"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

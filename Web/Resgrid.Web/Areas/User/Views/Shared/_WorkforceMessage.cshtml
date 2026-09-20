@@ -1,0 +1,10 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceStrings
+@if (Model.SaveSuccess)
+{
+    <div class="alert alert-success">@workforceStrings["Saved"]</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-danger">@Model.Message</div>
+}

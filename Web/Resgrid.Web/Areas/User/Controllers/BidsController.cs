@@ -27,6 +27,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public sealed class BidsController : SecureBaseController
 	{
+		// Line descriptions, entry and premium names are user text rendered inside a <script> block; EscapeHtml keeps "</script>" out of the page.
+		private static readonly JsonSerializerSettings ScriptJson = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+
 		private readonly IBidsService _bids;
 		private readonly IServiceContractService _contracts;
 		private readonly IRateScheduleService _rateSchedules;
@@ -164,13 +167,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			view.Schedules = schedules.OrderBy(s => s.Name).Select(s => new SelectListItem(s.Name + (s.IsActive ? string.Empty : " (" + _strings["Inactive"].Value + ")"), s.RateScheduleId, string.Equals(s.RateScheduleId, bid.RateScheduleId, StringComparison.OrdinalIgnoreCase))).ToList();
 			view.Schedule = string.IsNullOrWhiteSpace(bid.RateScheduleId) ? null : await _rateSchedules.GetScheduleByIdAsync(bid.RateScheduleId, DepartmentId);
 			view.Currency = view.Schedule?.Currency ?? "USD";
-			view.LinesJson = JsonConvert.SerializeObject(bid.LineItems.Select(l => new { id = l.BidLineItemId, entryId = l.RateScheduleEntryId, lineType = l.LineType, description = l.Description, crewSize = l.CrewSize, quantity = l.Quantity, hoursPerDay = l.EstimatedHoursPerDay, days = l.EstimatedDays, unitRate = l.UnitRate, premiumIds = l.PremiumIds, taxable = l.Taxable, amount = l.EstimatedAmount }));
+			view.LinesJson = JsonConvert.SerializeObject(bid.LineItems.Select(l => new { id = l.BidLineItemId, entryId = l.RateScheduleEntryId, lineType = l.LineType, description = l.Description, crewSize = l.CrewSize, quantity = l.Quantity, hoursPerDay = l.EstimatedHoursPerDay, days = l.EstimatedDays, unitRate = l.UnitRate, premiumIds = l.PremiumIds, taxable = l.Taxable, amount = l.EstimatedAmount }), ScriptJson);
 			view.EntriesJson = JsonConvert.SerializeObject((view.Schedule?.Entries ?? new List<RateScheduleEntry>()).Select(e => new
 			{
 				id = e.RateScheduleEntryId, name = e.Name, entryType = e.EntryType, basis = e.BillingBasis, groupKey = e.GroupKey, crewSize = e.CrewSize, code = e.Code,
 				rate = Resgrid.Services.Invoicing.BidsService.SnapshotRate(view.Schedule, new BidLineItem { RateScheduleEntryId = e.RateScheduleEntryId })
-			}));
-			view.PremiumsJson = JsonConvert.SerializeObject((view.Schedule?.Premiums ?? new List<RatePremium>()).Select(p => new { id = p.RatePremiumId, name = p.Name, deploymentAdder = p.DeploymentAdder }));
+			}), ScriptJson);
+			view.PremiumsJson = JsonConvert.SerializeObject((view.Schedule?.Premiums ?? new List<RatePremium>()).Select(p => new { id = p.RatePremiumId, name = p.Name, deploymentAdder = p.DeploymentAdder }), ScriptJson);
 			return View(view);
 		}
 

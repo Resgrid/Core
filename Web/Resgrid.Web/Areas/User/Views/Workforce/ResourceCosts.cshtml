@@ -1,0 +1,161 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceResourceCostsView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ResourceCosts"];
+    ViewData["Title"] = localizer["ResourceCosts"].Value;
+    ViewData["Subtitle"] = localizer["ResourceCostsIntro"].Value;
+    ViewData["WorkforceTab"] = "resourcecosts";
+    ViewData["WorkforcePage"] = Model;
+    var x = Model.Editing;
+    var canEdit = Model.CanViewInternalCosts && Model.CanManage;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-@(x == null ? 12 : 5)">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["ResourceProfiles"]</h5>
+                    @if (canEdit)
+                    {
+                        <div class="ibox-tools"><a asp-action="ResourceCosts" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddResourceProfile"]</a></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    <p class="small text-muted">@localizer["ResourceProfilesHelp"]</p>
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["Subject"]</th><th>@localizer["Name"]</th><th>@localizer["EffectiveOn"]</th><th>@localizer["AllocationBasis"]</th><th>@localizer["DepreciationRate"]</th><th>@localizer["Components"]</th><th>@localizer["Approved"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var p in Model.Profiles)
+                        {
+                            var rate = Resgrid.Services.Workforce.FieldCostCalculator.DepreciationRate(p);
+                            <tr>
+                                <td>@localizer["SubjectType" + (ResourceSubjectTypes)p.SubjectType]: @p.SubjectName</td><td>@p.Name</td>
+                                <td>@p.EffectiveOn.ToString("yyyy-MM-dd")</td><td>@localizer["Allocation" + (AllocationBases)p.AllocationBasis]</td>
+                                <td>@(rate.HasValue ? rate.Value.ToString("N4") : "—")</td><td>@p.Components.Count</td>
+                                <td>@(p.IsApproved ? localizer["Yes"] : localizer["No"])</td>
+                                <td class="text-right">
+                                    <a asp-action="ResourceCosts" asp-route-edit="@p.ResourceCostProfileId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                    @if (canEdit)
+                                    {
+                                        <form method="post" asp-action="DeleteResourceCost" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.ResourceCostProfileId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Profiles.Count == 0)
+                        {
+                            <tr><td colspan="8" class="text-muted">@localizer["NoResourceProfiles"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (x != null)
+        {
+            <div class="col-md-7">
+                <form method="post" asp-action="SaveResourceCost" id="resourceForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ResourceCostProfileId" value="@x.ResourceCostProfileId" />
+                    <input type="hidden" name="componentsJson" id="componentsJson" />
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(x.ResourceCostProfileId) ? localizer["AddResourceProfile"] : localizer["EditResourceProfile"])</h5></div>
+                        <div class="ibox-content">
+                            <fieldset disabled="@(!canEdit)">
+                                <div class="row">
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["SubjectType"]</label><select name="SubjectType" class="form-control" id="subjectType">@foreach (ResourceSubjectTypes t in Enum.GetValues(typeof(ResourceSubjectTypes))) { <option value="@((int)t)" selected="@(x.SubjectType == (int)t)">@localizer["SubjectType" + t]</option> }</select></div></div>
+                                    <div class="col-sm-8">
+                                        <div class="form-group subject-unit"><label>@localizer["Unit"]</label><select name="UnitId" class="form-control"><option value="">—</option>@foreach (var item in Model.Units) { <option value="@item.Value" selected="@(item.Value == x.UnitId?.ToString())">@item.Text</option> }</select></div>
+                                        <div class="form-group subject-asset"><label>@localizer["InventoryAsset"]</label><input type="text" name="InventoryAssetId" class="form-control" value="@x.InventoryAssetId" /></div>
+                                        <div class="form-group subject-external"><label>@localizer["ExternalResourceKey"]</label><input type="text" name="ExternalResourceKey" class="form-control" value="@x.ExternalResourceKey" /><span class="help-block">@localizer["ExternalResourceKeyHelp"]</span></div>
+                                    </div>
+                                </div>
+                                <div class="form-group"><label>@localizer["Name"]</label><input type="text" name="Name" class="form-control" maxlength="100" value="@x.Name" /></div>
+                                <div class="row">
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["EffectiveOn"] *</label><input type="date" name="EffectiveOn" class="form-control" required value="@x.EffectiveOn.ToString("yyyy-MM-dd")" /></div></div>
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["ExpiresOn"]</label><input type="date" name="ExpiresOn" class="form-control" value="@x.ExpiresOn?.ToString("yyyy-MM-dd")" /></div></div>
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["Currency"]</label><input type="text" name="Currency" class="form-control" maxlength="3" value="@x.Currency" /></div></div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <h4>@localizer["Depreciation"]</h4>
+                                <div class="row">
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["AcquisitionCost"]</label><input type="number" step="0.01" name="AcquisitionCost" class="form-control" value="@x.AcquisitionCost" /></div></div>
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["SalvageValue"]</label><input type="number" step="0.01" name="SalvageValue" class="form-control" value="@x.SalvageValue" /></div></div>
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["AcquisitionDate"]</label><input type="date" name="AcquisitionDate" class="form-control" value="@x.AcquisitionDate?.ToString("yyyy-MM-dd")" /></div></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["AllocationBasis"]</label><select name="AllocationBasis" class="form-control">@foreach (AllocationBases b in Enum.GetValues(typeof(AllocationBases))) { <option value="@((int)b)" selected="@(x.AllocationBasis == (int)b)">@localizer["Allocation" + b]</option> }</select></div></div>
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["UsefulLifeQuantity"]</label><input type="number" step="0.01" name="UsefulLifeQuantity" class="form-control" value="@x.UsefulLifeQuantity" /><span class="help-block">@localizer["UsefulLifeQuantityHelp"]</span></div></div>
+                                    <div class="col-sm-4"><div class="form-group"><label>@localizer["UsefulLifeMonths"]</label><input type="number" name="UsefulLifeMonths" class="form-control" value="@x.UsefulLifeMonths" /></div></div>
+                                </div>
+                                <div class="form-group"><label>@localizer["ExpectedAnnualUtilization"]</label><input type="number" step="0.01" name="ExpectedAnnualUtilization" class="form-control" value="@x.ExpectedAnnualUtilization" /><span class="help-block">@localizer["ExpectedAnnualUtilizationHelp"]</span></div>
+                                <input type="hidden" name="InServiceDate" value="@x.InServiceDate?.ToString("yyyy-MM-dd")" />
+                                <div class="checkbox"><label><input type="checkbox" name="IsApproved" value="true" checked="@x.IsApproved" /> @localizer["Approved"]</label></div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@localizer["CostComponents"]</h5>@if (canEdit) { <div class="ibox-tools"><button type="button" class="btn btn-xs btn-default" id="addComponent"><i class="fa fa-plus"></i></button></div> }</div>
+                        <div class="ibox-content">
+                            <p class="small text-muted">@localizer["ResourceComponentsHelp"]</p>
+                            <table class="table table-condensed" id="componentTable">
+                                <thead><tr><th>@localizer["Category"]</th><th>@localizer["Basis"]</th><th>@localizer["Rate"]</th><th>@localizer["Consumption"]</th><th>@localizer["UnitPrice"]</th><th>@localizer["Source"]</th><th>@localizer["Approved"]</th><th></th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                            @if (canEdit)
+                            {
+                                <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                                <a asp-action="ResourceCosts" class="btn btn-default">@localizer["Cancel"]</a>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    (function () {
+        var readOnly = @(canEdit ? "false" : "true");
+        var rows = @Html.Raw(Model.ComponentsJson ?? "[]");
+        var categories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(ResourceCostCategories)).Cast<ResourceCostCategories>().Select(c => new { v = (int)c, t = localizer["ResourceCategory" + c].Value })));
+        var bases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(ResourceCostBases)).Cast<ResourceCostBases>().Select(c => new { v = (int)c, t = localizer["ResourceBasis" + c].Value })));
+        var sources = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(ResourceCostSources)).Cast<ResourceCostSources>().Select(c => new { v = (int)c, t = localizer["ResourceSource" + c].Value })));
+        function select(name, options, value) { var s = $('<select class="form-control input-sm"></select>').attr('data-f', name); options.forEach(function (o) { s.append($('<option></option>').val(o.v).text(o.t).prop('selected', o.v == value)); }); return s; }
+        function input(name, value, ph) { return $('<input class="form-control input-sm" type="text" />').attr('data-f', name).attr('placeholder', ph || '').val(value == null ? '' : value); }
+        function row(c) {
+            var tr = $('<tr></tr>').data('id', c.ResourceCostComponentId || '');
+            tr.append($('<td></td>').append(select('Category', categories, c.Category || 0)));
+            tr.append($('<td></td>').append(select('Basis', bases, c.Basis || 0)));
+            tr.append($('<td></td>').append(input('Rate', c.Rate)));
+            tr.append($('<td></td>').append(input('ConsumptionQuantity', c.ConsumptionQuantity, 'qty')).append(input('ConsumptionUnit', c.ConsumptionUnit, 'unit')));
+            tr.append($('<td></td>').append(input('UnitPrice', c.UnitPrice)));
+            tr.append($('<td></td>').append(select('Source', sources, c.Source || 0)).append(input('SourceMeterStart', c.SourceMeterStart, 'meter start')).append(input('SourceMeterEnd', c.SourceMeterEnd, 'meter end')));
+            tr.append($('<td></td>').append($('<input type="checkbox" />').attr('data-f', 'IsApproved').prop('checked', c.IsApproved !== false)));
+            tr.append($('<td></td>').append(readOnly ? '' : $('<button type="button" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>').on('click', function () { tr.remove(); })));
+            return tr;
+        }
+        rows.forEach(function (c) { $('#componentTable tbody').append(row(c)); });
+        $('#addComponent').on('click', function () { $('#componentTable tbody').append(row({})); });
+        if (readOnly) { $('#componentTable input, #componentTable select').prop('disabled', true); }
+        function subject() { var t = $('#subjectType').val(); $('.subject-unit').toggle(t === '0'); $('.subject-asset').toggle(t === '1'); $('.subject-external').toggle(t === '2'); }
+        $('#subjectType').on('change', subject); subject();
+        $('#resourceForm').on('submit', function () {
+            var list = [];
+            $('#componentTable tbody tr').each(function () {
+                var o = { ResourceCostComponentId: $(this).data('id') || null };
+                $(this).find('[data-f]').each(function () { var f = $(this).attr('data-f'); o[f] = $(this).is(':checkbox') ? $(this).is(':checked') : ($(this).val() === '' ? null : $(this).val()); });
+                list.push(o);
+            });
+            $('#componentsJson').val(JSON.stringify(list));
+        });
+    })();
+</script>
+}

@@ -1,0 +1,37 @@
+@model List<Resgrid.Model.Workforce.EmployeeCompensationProfile>
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    var roleNames = ViewData["RoleNames"] as Dictionary<int, string> ?? new Dictionary<int, string>();
+    var employmentId = ViewData["EmploymentId"] as string;
+    var page = ViewData["WorkforcePage"] as Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView ?? new Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView();
+}
+<table class="table table-striped table-condensed">
+    <thead><tr><th>@localizer["Scope"]</th><th>@localizer["Subject"]</th><th>@localizer["EffectiveOn"]</th><th>@localizer["ExpiresOn"]</th><th>@localizer["PayBasis"]</th><th>@localizer["BaseAmount"] <i class="fa fa-lock text-muted"></i></th><th>@localizer["Currency"]</th><th>@localizer["Approved"]</th><th>@localizer["Components"]</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td>@localizer["Scope" + (CompensationScopes)p.Scope]</td>
+            <td>@(p.Scope == (int)CompensationScopes.RoleDefault ? (p.PersonnelRoleId.HasValue && roleNames.TryGetValue(p.PersonnelRoleId.Value, out var r) ? r : p.PersonnelRoleId?.ToString()) : p.Scope == (int)CompensationScopes.DepartmentDefault ? localizer["Department"].Value : "")</td>
+            <td>@p.EffectiveOn.ToString("yyyy-MM-dd")</td><td>@(p.ExpiresOn?.ToString("yyyy-MM-dd") ?? "…")</td>
+            <td>@localizer["PayBasis" + (PayBases)p.PayBasis]</td>
+            <td>@ProtectedDataEnvelope.SafeDisplay(p.BaseAmount)</td><td>@p.Currency</td>
+            <td>@(p.IsApproved ? localizer["Yes"] : localizer["No"])</td>
+            <td>@p.PayComponents.Count / @p.CostComponents.Count</td>
+            <td class="text-right">
+                <a asp-action="CompensationProfile" asp-route-id="@p.EmployeeCompensationProfileId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                @if (page.CanManageCompensation)
+                {
+                    <form method="post" asp-action="DeleteCompensationProfile" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.EmployeeCompensationProfileId" /><input type="hidden" name="employmentId" value="@employmentId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                }
+            </td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr><td colspan="10" class="text-muted">@localizer["NoProfiles"]</td></tr>
+    }
+    </tbody>
+</table>

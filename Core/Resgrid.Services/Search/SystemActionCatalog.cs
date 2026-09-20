@@ -15,6 +15,7 @@ namespace Resgrid.Services.Search
 		public const string View = "View";
 		public const string Create = "Create";
 		public const string Update = "Update";
+		public const string Reconcile = "Reconcile";
 
 		// ResgridClaimTypes.Resources
 		private const string Call = "Call";
@@ -37,6 +38,11 @@ namespace Resgrid.Services.Search
 		private const string Deployments = "Deployments";
 		private const string Bids = "Bids";
 		private const string ServiceContracts = "ServiceContracts";
+		private const string MutualAidReimbursement = "MutualAidReimbursement";
+		private const string Workforce = "Workforce";
+		private const string WorkforceCompensation = "WorkforceCompensation";
+		private const string InternalCosts = "InternalCosts";
+		private const string PayDataReporting = "PayDataReporting";
 		private const string Group = "Group";
 		private const string Protocols = "Protocols";
 		private const string Forms = "Forms";
@@ -167,6 +173,19 @@ namespace Resgrid.Services.Search
 			Act("new-contract", "New Contract", "Create a service contract for a customer", "/User/Contracts/New", SystemActionCategories.Create, new[] { "contract", "agreement" }, ServiceContracts, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
 			Nav("compliance-documents", "Compliance Documents", "Insurance, workers' comp, SAM, licences and bonds with expiry alerts", "/User/Contracts/Compliance", new[] { "compliance", "insurance", "workers comp", "sam", "cage", "bond", "licence", "license" }, ServiceContracts, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
 			Nav("rate-schedules", "Rate Schedules", "Contractor rate tables: certifications, crews, vehicles, equipment, premiums and policies", "/User/RateSchedules", new[] { "rate schedule", "rates", "crew rate", "overtime", "premium", "per diem", "mileage" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
+			// Cal OES MARS cost recovery (Phase C-M3): readiness, annual rates, the incident action queue and reconciliation. Every CalOesMars* table stays out of the search index (decision 41).
+			Nav("cal-oes-mars", "Cal OES MARS", "CFAA cost recovery readiness: agency, F-5 resources, annual rates and agreements", "/User/CalOesMars", new[] { "mars", "cal oes", "cfaa", "mutual aid reimbursement", "cost recovery", "f-42", "f42" }, MutualAidReimbursement, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CalOesMars),
+			Nav("cal-oes-mars-queue", "MARS Action Queue", "F-42 and expense claims to prepare, validate and hand off to the MARS portal", "/User/CalOesMars/Queue", new[] { "mars queue", "f-42", "expense claim", "mars handoff" }, MutualAidReimbursement, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CalOesMars),
+			Nav("cal-oes-mars-rates", "MARS Annual Rates", "Salary Survey, Attachment A, Administrative Rate, Rate Letter and Special Equipment snapshots", "/User/CalOesMars/Rates", new[] { "salary survey", "administrative rate", "rate letter", "attachment a", "special equipment" }, MutualAidReimbursement, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.CalOesMars),
+			Nav("cal-oes-mars-reconciliation", "MARS Reconciliation", "Observed MARS invoices, local approval and payment reconciliation", "/User/CalOesMars/Reconciliation", new[] { "mars invoice", "reconciliation", "paying entity", "cfaa payment" }, MutualAidReimbursement, Reconcile, SystemActionModules.BusinessOperations, FeatureFlagKeys.CalOesMars),
+			// Workforce pay data, field costing and California pay data reporting (Phase E). Every Workforce* / Employee* / PayData* / FieldCost* table stays out of the search index.
+			Nav("workforce", "Workforce", "Employer identity, establishments, workers, employments and job assignments", "/User/Workforce", new[] { "workforce", "employer", "establishment", "employment", "job assignment", "labor contractor" }, Workforce, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.WorkforceInternalCosting),
+			Nav("workforce-compensation", "Compensation Profiles", "Employee, role-default and department-default compensation with pay and employer-cost components", "/User/Workforce/Compensation", new[] { "compensation", "pay rate", "hourly rate", "salary", "employer cost", "benefits", "overtime multiplier" }, WorkforceCompensation, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.WorkforceInternalCosting),
+			Nav("workforce-annual-facts", "Annual Pay Facts", "W-2 earnings and hours per employment for pay data reporting, with CSV import", "/User/Workforce/AnnualFacts", new[] { "w-2", "w2", "annual earnings", "pay facts", "import" }, WorkforceCompensation, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.WorkforceInternalCosting),
+			Nav("resource-costs", "Resource Cost Profiles", "Depreciation, fuel, maintenance and fixed costs per unit or asset", "/User/Workforce/ResourceCosts", new[] { "resource cost", "depreciation", "fuel", "maintenance cost", "vehicle cost", "engine hour" }, InternalCosts, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.WorkforceInternalCosting),
+			Nav("cost-runs", "Field Cost Runs", "Internal loaded cost and margin for bids, calls and deployments", "/User/Workforce/CostRuns", new[] { "cost run", "margin", "loaded cost", "break even", "bid estimate", "deployment cost" }, InternalCosts, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.WorkforceInternalCosting),
+			Nav("pay-data-reporting", "California Pay Data Reporting", "CRD pay data report runs: snapshots, aggregation, validation, export and the portal worksheet", "/User/Workforce/PayData", new[] { "pay data", "crd", "california", "12999", "pay data report", "demographics" }, PayDataReporting, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CaliforniaPayDataReporting),
+			Nav("my-demographics", "My Demographic Response", "Your voluntary self-identification for California pay data reporting", "/User/Workforce/MyDemographics", new[] { "self-identification", "demographics", "race", "ethnicity", "sex" }, flag: FeatureFlagKeys.CaliforniaPayDataReporting),
 
 			// ---- Messaging / chat
 			Nav("inbox", "Inbox", "Your messages inbox", "/User/Messages/Inbox", new[] { "messages", "mail", "read" }, Messages, View, SystemActionModules.Messaging),

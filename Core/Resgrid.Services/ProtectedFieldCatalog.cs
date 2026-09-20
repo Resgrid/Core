@@ -743,6 +743,15 @@ namespace Resgrid.Services
 				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ContactsFamily, table, column,
 					binary ? ProtectedFieldStorageKind.Binary : ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Sensitive,
 					PermissionTypes.ViewProtectedContactData, PermissionTypes.ViewProtectedContactData, Resgrid.Model.Invoicing.DeploymentProtectedFields.CatalogVersion));
+
+			// Workforce & Business Operations plan, Phase E (catalog 28, registered with M0220–M0224): everything that identifies
+			// or prices a person — employer / affiliate / contractor identifiers and addresses, external worker keys, compensation,
+			// pay and cost components, approved payroll cost, annual earnings, demographic responses, report snapshots, aggregate
+			// rows, remarks and export files (Personnel family). Hours, dates, codes, counts and run totals stay metadata.
+			foreach (var (table, column, binary) in Resgrid.Model.Workforce.WorkforceProtectedFields.All())
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", PersonnelFamily, table, column,
+					binary ? ProtectedFieldStorageKind.Binary : ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Pii,
+					PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData, Resgrid.Model.Workforce.WorkforceProtectedFields.CatalogVersion));
 			return list;
 		}
 	}

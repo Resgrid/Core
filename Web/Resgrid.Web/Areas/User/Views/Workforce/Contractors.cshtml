@@ -1,0 +1,85 @@
+@model Resgrid.Web.Areas.User.Models.Workforce.WorkforceContractorsView
+@using Resgrid.Model
+@using Resgrid.Model.Workforce
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["LaborContractors"];
+    ViewData["Title"] = localizer["LaborContractors"].Value;
+    ViewData["Subtitle"] = localizer["ContractorsIntro"].Value;
+    ViewData["WorkforceTab"] = "contractors";
+    ViewData["WorkforcePage"] = Model;
+    var x = Model.Editing;
+}
+
+@await Html.PartialAsync("_WorkforceShell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
+    <div class="row">
+        <div class="col-md-@(x == null ? 12 : 7)">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["LaborContractors"]</h5>
+                    @if (Model.CanManage)
+                    {
+                        <div class="ibox-tools"><a asp-action="Contractors" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddContractor"]</a></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed">
+                        <thead><tr><th>@localizer["LegalName"]</th><th>@localizer["Dba"]</th><th>@localizer["Fein"]</th><th>@localizer["Relationship"]</th><th>@localizer["Active"]</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var row in Model.Contractors)
+                        {
+                            <tr>
+                                <td>@row.LegalName</td><td>@row.Dba</td><td>@ProtectedDataEnvelope.SafeDisplay(row.Fein)</td>
+                                <td>@row.RelationshipStartOn?.ToString("yyyy-MM-dd") – @(row.RelationshipEndOn?.ToString("yyyy-MM-dd") ?? "…")</td>
+                                <td>@(row.IsActive ? localizer["Yes"] : localizer["No"])</td>
+                                <td class="text-right">
+                                    @if (Model.CanManage)
+                                    {
+                                        <a asp-action="Contractors" asp-route-edit="@row.WorkforceLaborContractorId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                        <form method="post" asp-action="DeleteContractor" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceLaborContractorId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Contractors.Count == 0)
+                        {
+                            <tr><td colspan="6" class="text-muted">@localizer["NoContractors"]</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (x != null)
+        {
+            <div class="col-md-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(x.WorkforceLaborContractorId) ? localizer["AddContractor"] : localizer["EditContractor"])</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="SaveContractor">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="WorkforceLaborContractorId" value="@x.WorkforceLaborContractorId" />
+                            <div class="form-group"><label>@localizer["LegalName"] *</label><input type="text" name="LegalName" class="form-control" maxlength="100" required value="@x.LegalName" /></div>
+                            <div class="form-group"><label>@localizer["OwnershipName"]</label><input type="text" name="OwnershipName" class="form-control" maxlength="100" value="@x.OwnershipName" /></div>
+                            <div class="form-group"><label>@localizer["Dba"]</label><input type="text" name="Dba" class="form-control" maxlength="100" value="@x.Dba" /></div>
+                            <div class="row">
+                                <div class="col-sm-4"><div class="form-group"><label>@localizer["IdentifierType"]</label><select name="IdentifierType" class="form-control"><option value="FEIN" selected="@(x.IdentifierType == "FEIN")">FEIN</option><option value="SEIN" selected="@(x.IdentifierType == "SEIN")">SEIN</option><option value="Other" selected="@(x.IdentifierType == "Other")">@localizer["Other"]</option></select></div></div>
+                                <div class="col-sm-8"><div class="form-group"><label>@localizer["Fein"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="Fein" class="form-control" maxlength="10" value="@ProtectedDataEnvelope.SafeDisplay(x.Fein)" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["ContactDetails"] <i class="fa fa-lock text-muted"></i></label><textarea name="ContactDetails" class="form-control" rows="2">@ProtectedDataEnvelope.SafeDisplay(x.ContactDetails)</textarea></div>
+                            <div class="row">
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["RelationshipStart"]</label><input type="date" name="RelationshipStartOn" class="form-control" value="@x.RelationshipStartOn?.ToString("yyyy-MM-dd")" /></div></div>
+                                <div class="col-sm-6"><div class="form-group"><label>@localizer["RelationshipEnd"]</label><input type="date" name="RelationshipEndOn" class="form-control" value="@x.RelationshipEndOn?.ToString("yyyy-MM-dd")" /></div></div>
+                            </div>
+                            <div class="form-group"><label>@localizer["Provenance"]</label><input type="text" name="Provenance" class="form-control" maxlength="250" value="@x.Provenance" /><span class="help-block">@localizer["ProvenanceHelp"]</span></div>
+                            <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" checked="@x.IsActive" /> @localizer["Active"]</label></div>
+                            <div class="m-t-sm"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Contractors" class="btn btn-default">@localizer["Cancel"]</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

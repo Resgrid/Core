@@ -121,6 +121,86 @@ namespace Resgrid.Services
 				{
 					Text("Deployments", "Notes")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceEmployerProfiles.
+				AdpTableBinding.Direct("WorkforceEmployerProfiles", "WorkforceEmployerProfileId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceEmployerProfiles", "Fein"), Text("WorkforceEmployerProfiles", "Sein"), Text("WorkforceEmployerProfiles", "SosNumber"), Text("WorkforceEmployerProfiles", "EddAddress"), Text("WorkforceEmployerProfiles", "HeadquartersAddress"), Text("WorkforceEmployerProfiles", "FilingContactName"), Text("WorkforceEmployerProfiles", "FilingContactEmail"), Text("WorkforceEmployerProfiles", "FilingContactPhone")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceAffiliatedEntities.
+				AdpTableBinding.Direct("WorkforceAffiliatedEntities", "WorkforceAffiliatedEntityId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceAffiliatedEntities", "Fein"), Text("WorkforceAffiliatedEntities", "Sein"), Text("WorkforceAffiliatedEntities", "SosNumber"), Text("WorkforceAffiliatedEntities", "HeadquartersAddress")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceEstablishments.
+				AdpTableBinding.Direct("WorkforceEstablishments", "WorkforceEstablishmentId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceEstablishments", "PhysicalAddress")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceLaborContractors.
+				AdpTableBinding.Direct("WorkforceLaborContractors", "WorkforceLaborContractorId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceLaborContractors", "Fein"), Text("WorkforceLaborContractors", "ContactDetails")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceWorkers.
+				AdpTableBinding.Direct("WorkforceWorkers", "WorkforceWorkerId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceWorkers", "ExternalWorkerKey"), Text("WorkforceWorkers", "DisplayLabel")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): EmployeeCompensationProfiles.
+				AdpTableBinding.Direct("EmployeeCompensationProfiles", "EmployeeCompensationProfileId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("EmployeeCompensationProfiles", "BaseAmount"), Text("EmployeeCompensationProfiles", "RegularHourlyEquivalent"), Text("EmployeeCompensationProfiles", "RateMultipliersJson")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): EmployeePayComponents.
+				AdpTableBinding.Direct("EmployeePayComponents", "EmployeePayComponentId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("EmployeePayComponents", "Amount")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): EmployeeCostComponents.
+				AdpTableBinding.Direct("EmployeeCostComponents", "EmployeeCostComponentId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("EmployeeCostComponents", "RateAmount"), Text("EmployeeCostComponents", "Cap")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceWorkEntries.
+				AdpTableBinding.Direct("WorkforceWorkEntries", "WorkforceWorkEntryId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceWorkEntries", "ApprovedPayrollCost")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceAnnualPayFacts.
+				AdpTableBinding.Direct("WorkforceAnnualPayFacts", "WorkforceAnnualPayFactId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("WorkforceAnnualPayFacts", "W2Box5"), Text("WorkforceAnnualPayFacts", "W2Box1"), Text("WorkforceAnnualPayFacts", "EarningsUsed"), Text("WorkforceAnnualPayFacts", "ClientAllocatedEarnings")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): FieldCostLines.
+				AdpTableBinding.Direct("FieldCostLines", "FieldCostLineId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("FieldCostLines", "ProtectedDetailJson")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): PayDataReportingDemographics.
+				AdpTableBinding.Direct("PayDataReportingDemographics", "PayDataReportingDemographicId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("PayDataReportingDemographics", "HispanicLatino"), Text("PayDataReportingDemographics", "RaceEthnicityCodes"), Text("PayDataReportingDemographics", "SexCode")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): PayDataReportRuns.
+				AdpTableBinding.Direct("PayDataReportRuns", "PayDataReportRunId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("PayDataReportRuns", "EmployerSnapshotJson"), Text("PayDataReportRuns", "RunRemarks")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): PayDataReportEmployeeSnapshots.
+				AdpTableBinding.Direct("PayDataReportEmployeeSnapshots", "PayDataReportEmployeeSnapshotId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("PayDataReportEmployeeSnapshots", "DemographicCode"), Text("PayDataReportEmployeeSnapshots", "AnnualEarnings"), Text("PayDataReportEmployeeSnapshots", "HourlyRate")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): PayDataReportRows.
+				AdpTableBinding.Direct("PayDataReportRows", "PayDataReportRowId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("PayDataReportRows", "DemographicCode"), Text("PayDataReportRows", "MeanHourlyRate"), Text("PayDataReportRows", "MedianHourlyRate"), Text("PayDataReportRows", "RowRemarks")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// Workforce & Business Operations plan, Phase E (ADP catalog 28): PayDataExportArtifacts.
+				AdpTableBinding.Direct("PayDataExportArtifacts", "PayDataExportArtifactId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Binary("PayDataExportArtifacts", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("Contacts", "ContactId", pkIsNumeric: false, "DepartmentId", new[]
 				{

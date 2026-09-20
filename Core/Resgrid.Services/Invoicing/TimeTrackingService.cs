@@ -548,8 +548,6 @@ namespace Resgrid.Services.Invoicing
 				expense.ReceiptAttachmentId ??= existing.ReceiptAttachmentId;
 				expense.AddedOn = existing.AddedOn;
 				expense.AddedByUserId = existing.AddedByUserId;
-				expense.IsProtected = existing.IsProtected;
-				expense.ProtectedCatalogVersion = existing.ProtectedCatalogVersion;
 				expense.EditedOn = DateTime.UtcNow;
 				expense.EditedByUserId = userId;
 			}

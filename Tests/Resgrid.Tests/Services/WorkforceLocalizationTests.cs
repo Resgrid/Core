@@ -33,7 +33,7 @@ namespace Resgrid.Tests.Services
 			var web = Path.Combine(root, "Web", "Resgrid.Web", "Areas", "User");
 			var own = Directory.GetFiles(Path.Combine(web, "Views", "Workforce"), "*.cshtml")
 				.Concat(Directory.GetFiles(Path.Combine(root, "Core", "Resgrid.Services", "Workforce"), "*.cs"))
-				.Concat(new[] { Path.Combine(web, "Controllers", "WorkforceController.cs"), Path.Combine(web, "Views", "Shared", "_WorkforceShell.cshtml"), Path.Combine(web, "Views", "Shared", "_WorkforceMessage.cshtml") }).ToList();
+				.Concat(new[] { Path.Combine(web, "Controllers", "WorkforceController.cs"), Path.Combine(web, "Views", "Shared", "_WorkforceShell.cshtml"), Path.Combine(web, "Views", "Shared", "_WorkforceMessage.cshtml"), Path.Combine(web, "Views", "Shared", "_FieldCostCard.cshtml") }).ToList();
 			var shared = new[] { Path.Combine(web, "Views", "Security", "Index.cshtml"), Path.Combine(web, "Views", "Shared", "_Navigation.cshtml") };
 
 			var keys = new HashSet<string>(StringComparer.Ordinal);

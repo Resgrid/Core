@@ -57,8 +57,6 @@ namespace Resgrid.Model.Invoicing
 		/// <summary>Null when a provider webhook recorded the payment.</summary>
 		public string RecordedByUserId { get; set; }
 		public DateTime AddedOn { get; set; }
-		public bool IsProtected { get; set; }
-		public int ProtectedCatalogVersion { get; set; }
 
 		/// <summary>The amount still counting toward the invoice after refunds and lost disputes.</summary>
 		[NotMapped]

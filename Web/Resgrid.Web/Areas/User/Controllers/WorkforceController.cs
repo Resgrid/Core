@@ -75,6 +75,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static bool CanExportPayData => IsAdmin || ClaimsAuthorizationHelper.CanExportPayDataReporting();
 		private static readonly HashSet<string> PayDataActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "PayData", "PayDataRun", "CreatePayDataRun", "BuildSnapshots", "OverrideSnapshot", "AggregateRows", "SaveRemarks", "ValidateRun", "FreezeAndExport", "DownloadArtifact", "Worksheet", "MarkCertified", "CreateCorrection", "VoidRun", "MyDemographics", "SaveMyDemographics", "WorkerDemographics", "SaveWorkerDemographics" };
 		private static readonly HashSet<string> SelfActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MyDemographics", "SaveMyDemographics" };
+		// JSON that lands inside a <script> block: component names and pay-code lists are user text, so < > & are unicode-escaped.
+		private static readonly JsonSerializerSettings ScriptJson = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
 
 		private bool _workforceEnabled;
 		private bool _payDataEnabled;
@@ -394,7 +396,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			EmployeeCompensationProfile profile;
 			if (string.IsNullOrWhiteSpace(id)) profile = new EmployeeCompensationProfile { DepartmentId = DepartmentId, Scope = string.IsNullOrWhiteSpace(employmentId) ? scope : (int)CompensationScopes.Employee, WorkforceEmploymentId = employmentId, EffectiveOn = DateTime.UtcNow.Date, StandardHoursPerDay = 8, StandardHoursPerWeek = 40 };
 			else { profile = await _compensation.GetProfileAsync(id, DepartmentId); if (profile == null) return NotFound(); }
-			var view = Page(new WorkforceCompensationProfileView { Profile = profile, PayComponentsJson = JsonConvert.SerializeObject(profile.PayComponents.Select(c => new { c.EmployeePayComponentId, c.Category, c.Name, c.Basis, Amount = c.Amount, c.EligiblePayCodesCsv, c.PaidForEachOvertimeHour, c.EffectiveOn, c.ExpiresOn, c.SourceAgreement })), CostComponentsJson = JsonConvert.SerializeObject(profile.CostComponents.Select(c => new { c.EmployeeCostComponentId, c.Category, c.Name, c.Basis, RateAmount = c.RateAmount, c.Cap, c.EligiblePayCodesCsv, c.EffectiveOn, c.ExpiresOn, c.Source })) });
+			var view = Page(new WorkforceCompensationProfileView { Profile = profile, PayComponentsJson = JsonConvert.SerializeObject(profile.PayComponents.Select(c => new { c.EmployeePayComponentId, c.Category, c.Name, c.Basis, Amount = c.Amount, c.EligiblePayCodesCsv, c.PaidForEachOvertimeHour, c.EffectiveOn, c.ExpiresOn, c.SourceAgreement }), ScriptJson), CostComponentsJson = JsonConvert.SerializeObject(profile.CostComponents.Select(c => new { c.EmployeeCostComponentId, c.Category, c.Name, c.Basis, RateAmount = c.RateAmount, c.Cap, c.EligiblePayCodesCsv, c.EffectiveOn, c.ExpiresOn, c.Source }), ScriptJson) });
 			view.Roles = await RoleItemsAsync();
 			if (!string.IsNullOrWhiteSpace(profile.WorkforceEmploymentId))
 			{
@@ -519,7 +521,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var view = Page(new WorkforceResourceCostsView { Profiles = await _costing.GetResourceProfilesAsync(DepartmentId), Units = await UnitItemsAsync() });
 			if (edit == "new") view.Editing = new ResourceCostProfile { DepartmentId = DepartmentId, EffectiveOn = DateTime.UtcNow.Date };
 			else if (!string.IsNullOrWhiteSpace(edit)) view.Editing = await _costing.GetResourceProfileAsync(edit, DepartmentId);
-			view.ComponentsJson = JsonConvert.SerializeObject((view.Editing?.Components ?? new List<ResourceCostComponent>()).Select(c => new { c.ResourceCostComponentId, c.Category, c.Basis, c.Rate, c.ConsumptionQuantity, c.ConsumptionUnit, c.UnitPrice, c.Source, c.SourceWindowStart, c.SourceWindowEnd, c.SourceMeterStart, c.SourceMeterEnd, c.IsApproved, c.EffectiveOn, c.ExpiresOn }));
+			view.ComponentsJson = JsonConvert.SerializeObject((view.Editing?.Components ?? new List<ResourceCostComponent>()).Select(c => new { c.ResourceCostComponentId, c.Category, c.Basis, c.Rate, c.ConsumptionQuantity, c.ConsumptionUnit, c.UnitPrice, c.Source, c.SourceWindowStart, c.SourceWindowEnd, c.SourceMeterStart, c.SourceMeterEnd, c.IsApproved, c.EffectiveOn, c.ExpiresOn }), ScriptJson);
 			return View(view);
 		}
 

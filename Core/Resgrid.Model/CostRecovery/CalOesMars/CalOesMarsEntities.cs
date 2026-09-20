@@ -10,8 +10,8 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 	// are local mirrors of an external system of record — Resgrid prepares, validates, estimates and reconciles; Cal OES
 	// MARS accepts, invoices and pays. No portal credential, MFA token or browser session material is stored anywhere here.
 	// Nothing in these tables is under Advanced Data Protection (decision 44): every value is either printed on a claim
-	// the paying entity reads or is the department's own public agency information. The reserved IsProtected /
-	// ProtectedCatalogVersion columns are never set.
+	// the paying entity reads or is the department's own public agency information (the marker columns were dropped
+	// before release on 2026-09-20).
 
 	/// <summary>The department's MARS agency record (one per department).</summary>
 	public class CalOesMarsAgencyProfile : IEntity
@@ -53,8 +53,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public string TableName => "CalOesMarsAgencyProfiles";
 		[NotMapped] public string IdName => "CalOesMarsAgencyProfileId";
@@ -101,8 +99,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public string SubjectName { get; set; }
 		public bool IsCurrent(DateTime asOf) => (!EffectiveOn.HasValue || EffectiveOn.Value.Date <= asOf.Date) && (!ExpiresOn.HasValue || ExpiresOn.Value.Date >= asOf.Date);
@@ -149,8 +145,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public List<CalOesMarsRateLine> Lines { get; set; } = new List<CalOesMarsRateLine>();
 		[NotMapped] public List<CalOesMarsAdministrativeRateInput> AdministrativeInputs { get; set; } = new List<CalOesMarsAdministrativeRateInput>();
@@ -201,8 +195,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public string TableName => "CalOesMarsRateLines";
 		[NotMapped] public string IdName => "CalOesMarsRateLineId";
@@ -245,8 +237,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public decimal Amount => decimal.TryParse(ActualAmount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var value) ? value : 0m;
 
@@ -287,8 +277,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		public bool CoversDate(DateTime asOf) => (!StartOn.HasValue || StartOn.Value.Date <= asOf.Date) && (!EndOn.HasValue || EndOn.Value.Date >= asOf.Date);
 
@@ -351,8 +339,6 @@ namespace Resgrid.Model.CostRecovery.CalOesMars
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public List<CalOesMarsReimbursementLine> Lines { get; set; } = new List<CalOesMarsReimbursementLine>();
 		[NotMapped] public string DeploymentName { get; set; }

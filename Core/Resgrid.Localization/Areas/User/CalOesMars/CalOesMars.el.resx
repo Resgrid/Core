@@ -554,4 +554,13 @@
   <data name="calmars_work_item_not_submittable" xml:space="preserve"><value>Μόνο F-42 και αιτήματα δαπανών υποβάλλονται στο MARS.</value></data>
   <data name="calmars_work_item_settled" xml:space="preserve"><value>Η εγγραφή είναι πληρωμένη ή κλειστή· οι γραμμές της είναι οριστικές.</value></data>
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Η εγγραφή δεν είναι του αναμενόμενου τύπου.</value></data>
+  <data name="BuildSalarySurvey" xml:space="preserve"><value>Δημιουργία από δεδομένα αμοιβών</value></data>
+  <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Αντικατάσταση κανονικών και υπερωριακών αμοιβών κάθε γραμμής ταξινόμησης με τους μέσους όρους;</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} γραμμή(ές) ταξινόμησης από {1} εργαζόμενο(ους)· {2} μη αντιστοιχισμένη(ες)· {3} ταξινόμηση(εις) ενός εργαζομένου προς έλεγχο.</value></data>
+  <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Φάση E: ο μέσος όρος των τρεχουσών εγκεκριμένων ατομικών ωριαίων αμοιβών ανά ταξινόμηση MARS (συν στοιχεία που πληρώνονται ανά ώρα υπερωρίας) συμπληρώνει τις κανονικές και υπερωριακές αμοιβές. Μόνο σύνολα — ποτέ μέσο εύρους, ποτέ άτομο. Βοήθημα ελέγχου· ο εξουσιοδοτημένος εκπρόσωπος υπογράφει στο MARS.</value></data>
+  <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Κανένα εγκεκριμένο προφίλ αμοιβής δεν φέρει ταξινόμηση MARS για αυτό το προφίλ αρχής.</value></data>
+  <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Μόνο προφίλ Salary Survey ή Attachment A δέχεται προσχέδιο από δεδομένα αμοιβών.</value></data>
+  <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Το προφίλ αμοιβών δεν είναι πλέον επεξεργάσιμο.</value></data>
+  <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Τα δεδομένα αμοιβών δεν είναι διαθέσιμα σε αυτό το τμήμα.</value></data>
+  <data name="workforce_disabled" xml:space="preserve"><value>Τα δεδομένα αμοιβών δεν είναι ενεργοποιημένα για αυτό το τμήμα.</value></data>
 </root>

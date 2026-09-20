@@ -142,12 +142,12 @@ namespace Resgrid.Tests.Services
 			stored.Select(l => l.InvoiceLineItemId).Should().Contain(new[] { "line-a", "line-b" }, "existing lines keep their row keys so provenance links and audit history follow the row");
 			stored.Should().HaveCount(3);
 			stored.Select(l => l.Description).Should().BeEquivalentTo(new[] { "Standby crew (day 2)", "Transport for J. Doe", "Mileage" });
-			stored.Should().OnlyContain(l => !l.IsProtected && l.ProtectedCatalogVersion == 0, "nothing on an invoice is enveloped");
+			stored.Should().OnlyContain(l => !string.IsNullOrEmpty(l.Description) && !ProtectedDataEnvelope.HasEnvelopePrefix(l.Description), "nothing on an invoice is enveloped");
 			await FluentActions.Awaiting(() => service.SaveInvoiceLineItemsAsync("inv-1", DeptId, new List<InvoiceLineItem> { new InvoiceLineItem { Description = " ", Quantity = 1, UnitRate = 1 } }, "clerk", null, null)).Should().ThrowAsync<ArgumentException>("every line needs a description");
 
 			// The department's registrations print on every invoice: saved and read back verbatim, never through the read seam.
 			var identity = await service.SaveDepartmentBillingIdentityAsync(new DepartmentBillingIdentity { DepartmentId = DeptId, TaxRegistrationNumber = "12-3456789", SamUei = "ABC123DEF456", PayLinkExpiryDays = 30 }, "clerk", null, null);
-			identity.IsProtected.Should().BeFalse();
+			identity.TaxRegistrationNumber.Should().Be("12-3456789", "stored whole; the entity no longer carries an ADP marker");
 			(await service.GetDepartmentBillingIdentityAsync(DeptId)).TaxRegistrationNumber.Should().Be("12-3456789");
 			(await service.GetInvoiceByIdAsync("inv-1", DeptId)).LineItems.Select(l => l.Description).Should().Contain("Transport for J. Doe");
 			protectedRead.VerifyNoOtherCalls();
@@ -218,7 +218,7 @@ namespace Resgrid.Tests.Services
 			attachmentPayload["AttachmentType"].Value<int>().Should().Be((int)DeploymentAttachmentTypes.SignedServiceRequest);
 			attachmentPayload["AttachmentName"].Value<string>().Should().Be("Signed request");
 			storedAttachments.Single().Name.Should().Be("Signed request");
-			storedAttachments.Single().IsProtected.Should().BeFalse();
+			ProtectedDataEnvelope.HasEnvelopePrefix(storedAttachments.Single().FileName).Should().BeFalse();
 
 			// Time reports: created / voided publish, the void reason is appended to the note as typed, entries keep their ids.
 			var storedReports = new List<DeploymentTimeReport>();
@@ -250,7 +250,7 @@ namespace Resgrid.Tests.Services
 			batch.Validation.IsValid.Should().BeTrue();
 			storedEntries.Select(e => e.DeploymentTimeEntryId).Should().Contain(firstEntryId, "an existing entry is updated in place, never re-inserted under a new key");
 			storedEntries.Select(e => e.Notes).Should().BeEquivalentTo(new[] { "Relieved by J. Doe", "Relief crew" }, "the customer signs the DTR; its notes are stored as typed");
-			storedReports.Single().IsProtected.Should().BeFalse("nothing on a DTR is enveloped");
+			ProtectedDataEnvelope.HasEnvelopePrefix(storedReports.Single().Notes).Should().BeFalse("nothing on a DTR is enveloped");
 			enveloped.Should().OnlyContain(k => k.StartsWith("deployment:"), "the deployment wrapper's internal notes are the only seam left in Phase C");
 
 			storedReports.Single().Notes = "Crew note";

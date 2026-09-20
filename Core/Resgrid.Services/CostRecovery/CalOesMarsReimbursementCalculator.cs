@@ -43,8 +43,10 @@ namespace Resgrid.Services.CostRecovery
 						result.Exceptions.Add(Exception(CalOesMarsExceptionCodes.NoSalaryRate, $"No Salary Survey / Attachment A line for classification '{person.ClassificationCode ?? "(none)"}' ({person.Name})."));
 						continue;
 					}
-					var (straight, ot) = Hours(person, portalToPortal && rate.PortalToPortalEligible, overtime, rate.OvertimeEligible);
-					if (straight == 0 && ot == 0 && !portalToPortal)
+					// A portal-to-portal agreement only pays committed hours on rate lines eligible for it; every other line falls back to the DTR hours.
+					var effectivePortalToPortal = portalToPortal && rate.PortalToPortalEligible;
+					var (straight, ot) = Hours(person, effectivePortalToPortal, overtime, rate.OvertimeEligible);
+					if (straight == 0 && ot == 0 && !effectivePortalToPortal)
 						result.Exceptions.Add(Exception(CalOesMarsExceptionCodes.NoActualHours, $"{person.Name}: no daily time report hours; nothing to reimburse under an actual-hours agreement."));
 					var straightRate = rate.StraightRate ?? 0m;
 					var overtimeRate = rate.OvertimeRate ?? (straightRate * 1.5m);

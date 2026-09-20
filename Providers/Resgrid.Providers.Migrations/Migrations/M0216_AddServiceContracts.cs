@@ -36,9 +36,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_ServiceContracts_Department").OnTable("ServiceContracts").OnColumn("DepartmentId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("Status").Ascending();
 				Create.Index("IX_ServiceContracts_Contact").OnTable("ServiceContracts").OnColumn("ContactId").Ascending();
 			}
@@ -75,9 +73,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_DepartmentComplianceDocuments_Department").OnTable("DepartmentComplianceDocuments").OnColumn("DepartmentId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("ExpiresOn").Ascending();
 			}
 		}

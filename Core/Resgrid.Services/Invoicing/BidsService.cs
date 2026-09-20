@@ -46,12 +46,13 @@ namespace Resgrid.Services.Invoicing
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly Lazy<IProtectedReadService> _protectedRead;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public BidsService(IBidRepository bids, IBidLineItemRepository lines, IBidNumberSequenceRepository sequence, IServiceContractRepository contracts,
 			ICustomerBillingProfileRepository profiles, IDepartmentBillingIdentityRepository identities, IRateScheduleService rateSchedules, IDeploymentService deployments,
 			IContactsService contactsService, IDepartmentsService departmentsService, ICallsService callsService, ICalendarService calendarService, IEmailService emailService,
 			IPdfProvider pdfProvider, IDomainEventOutboxService outbox, IEventAggregator eventAggregator, IUnitOfWork unitOfWork,
-			Lazy<IProtectedReadService> protectedRead = null)
+			Lazy<IProtectedReadService> protectedRead = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_bids = bids;
 			_lines = lines;
@@ -71,6 +72,7 @@ namespace Resgrid.Services.Invoicing
 			_eventAggregator = eventAggregator;
 			_unitOfWork = unitOfWork;
 			_protectedRead = protectedRead;
+			_searchProjections = searchProjections;
 		}
 
 		#region Reads
@@ -151,6 +153,7 @@ namespace Resgrid.Services.Invoicing
 				AddedByUserId = userId
 			};
 			var saved = await _bids.SaveOrUpdateAsync(bid, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.BidCreated, ipAddress, userAgent, null, saved);
 			await PublishAsync(saved, WorkflowTriggerEventType.BidCreated, null, cancellationToken);
 			return await GetBidByIdAsync(saved.BidId, departmentId);
@@ -191,6 +194,7 @@ namespace Resgrid.Services.Invoicing
 			existing.EditedByUserId = userId;
 
 			var saved = await _bids.SaveOrUpdateAsync(existing, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(existing, cancellationToken);
 			var recalculated = await RecalculateEstimatesAsync(saved.BidId, saved.DepartmentId, cancellationToken);
 			Audit(existing.DepartmentId, userId, AuditLogTypes.BidUpdated, ipAddress, userAgent, before, recalculated);
 			return recalculated;
@@ -279,6 +283,7 @@ namespace Resgrid.Services.Invoicing
 			bid.EstimatedTotal = shadow.Total;
 			var lineItems = bid.LineItems;
 			var saved = await _bids.SaveOrUpdateAsync(bid, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 			saved.LineItems = lineItems;
 			return saved;
 		}
@@ -314,6 +319,7 @@ namespace Resgrid.Services.Invoicing
 			bid.EditedOn = DateTime.UtcNow;
 			bid.EditedByUserId = userId;
 			var saved = await _bids.SaveOrUpdateAsync(bid, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 			Audit(departmentId, userId, auditType, ipAddress, userAgent, before, saved);
 			if (trigger.HasValue) await PublishAsync(saved, trigger.Value, (int)from, cancellationToken);
 			return await GetBidByIdAsync(bidId, departmentId);
@@ -364,6 +370,7 @@ namespace Resgrid.Services.Invoicing
 			bid.EditedOn = bid.SentOn;
 			bid.EditedByUserId = userId;
 			var saved = await _bids.SaveOrUpdateAsync(bid, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.BidSent, ipAddress, userAgent, before, saved);
 			await PublishAsync(saved, WorkflowTriggerEventType.BidSent, (int)BidStatuses.Submitted, cancellationToken);
 			return await GetBidByIdAsync(bidId, departmentId);
@@ -391,6 +398,7 @@ namespace Resgrid.Services.Invoicing
 			bid.EditedOn = DateTime.UtcNow;
 			bid.EditedByUserId = userId;
 			await _bids.SaveOrUpdateAsync(bid, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.BidDeleted, ipAddress, userAgent, before, bid);
 			return true;
 		}
@@ -655,6 +663,7 @@ namespace Resgrid.Services.Invoicing
 				bid.EditedByUserId = userId;
 				var lineItems = bid.LineItems;
 				var savedBid = await _bids.SaveOrUpdateAsync(bid, cancellationToken);
+				if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 				savedBid.LineItems = lineItems;
 				Audit(departmentId, userId, AuditLogTypes.BidConverted, ipAddress, userAgent, before, savedBid);
 				result.Bid = await GetBidByIdAsync(bid.BidId, departmentId);

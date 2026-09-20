@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Die Person wurde nicht gefunden.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>Eine Person ist erforderlich.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>Das Meldejahr ist ungültig.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Interne Kosten</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Geschätzter Deckungsbeitrag aus internen Kosteneingaben – kein buchhalterischer Gewinn; fehlende Eingaben stehen im Lauf.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>Noch kein Kostenlauf für diesen Datensatz.</value></data>
 </root>

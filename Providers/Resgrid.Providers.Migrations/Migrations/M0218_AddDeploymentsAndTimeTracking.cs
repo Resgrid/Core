@@ -143,9 +143,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_DeploymentTimeReports_Deployment").OnTable("DeploymentTimeReports").OnColumn("DeploymentId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("ReportDate").Ascending();
 				Create.Index("IX_DeploymentTimeReports_Department").OnTable("DeploymentTimeReports").OnColumn("DepartmentId").Ascending().OnColumn("Status").Ascending();
 				Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_DeploymentTimeReports_Number' AND object_id = OBJECT_ID('DeploymentTimeReports')) CREATE UNIQUE INDEX [UX_DeploymentTimeReports_Number] ON [DeploymentTimeReports] ([DepartmentId], [ReportNumber]);");
@@ -202,9 +200,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_DeploymentExpenses_Deployment").OnTable("DeploymentExpenses").OnColumn("DeploymentId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("ExpenseDate").Ascending();
 				Create.ForeignKey("FK_DeploymentExpenses_Deployment").FromTable("DeploymentExpenses").ForeignColumn("DeploymentId").ToTable("Deployments").PrimaryColumn("DeploymentId");
 			}
@@ -222,9 +218,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("Data").AsBinary(int.MaxValue).Nullable()
 					.WithColumn("IsDeleted").AsBoolean().NotNullable().WithDefaultValue(false)
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
-					.WithColumn("AddedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("AddedByUserId").AsString(128).Nullable();
 				Create.Index("IX_DeploymentAttachments_Deployment").OnTable("DeploymentAttachments").OnColumn("DeploymentId").Ascending().OnColumn("IsDeleted").Ascending();
 				Create.ForeignKey("FK_DeploymentAttachments_Deployment").FromTable("DeploymentAttachments").ForeignColumn("DeploymentId").ToTable("Deployments").PrimaryColumn("DeploymentId");
 			}

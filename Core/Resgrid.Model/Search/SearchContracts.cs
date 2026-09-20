@@ -22,8 +22,16 @@ namespace Resgrid.Model.Search
 		public const string Note = "Note";
 		public const string Record = "Record";
 		public const string Action = "Action";
+		// Workforce & Business Operations plan (decision 41): allowlisted identifier / title / status rows only. Rate schedules,
+		// DTRs, expenses, compliance documents, certification records, Cal OES MARS and every Phase E table are never projected.
+		public const string Invoice = "Invoice";
+		public const string RateCard = "RateCard";
+		public const string Bid = "Bid";
+		public const string ServiceContract = "ServiceContract";
+		public const string Deployment = "Deployment";
+		public const string CertificationType = "CertificationType";
 
-		public static readonly IReadOnlyList<string> Indexed = new[] { Call, Unit, Personnel, Contact, Message, Document, Note };
+		public static readonly IReadOnlyList<string> Indexed = new[] { Call, Unit, Personnel, Contact, Message, Document, Note, Invoice, RateCard, Bid, ServiceContract, Deployment, CertificationType };
 	}
 
 	/// <summary>Index state values stored on SearchIndexState.State (same numbering as the RMS records index).</summary>

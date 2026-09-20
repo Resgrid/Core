@@ -55,6 +55,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<CalOesMarsWorkItem>> GetByExternalIdAsync(int departmentId, string marsRecordId);
 		/// <summary>Open items (every state but Closed) for the department queue.</summary>
 		Task<IEnumerable<CalOesMarsWorkItem>> GetActionQueueAsync(int departmentId, int? recordType = null);
+		/// <summary>Every non-deleted item (closed ones included) that references the agreement snapshot — the immutability / in-use check.</summary>
+		Task<IEnumerable<CalOesMarsWorkItem>> GetByAgreementSnapshotAsync(int departmentId, string agreementSnapshotId);
 		/// <summary>Items whose external state is not settled (submitted, returned, approved without an invoice, invoices not paid).</summary>
 		Task<IEnumerable<CalOesMarsWorkItem>> GetUnreconciledAsync(int departmentId);
 		/// <summary>Departments with any open item (the worker's sweep scope).</summary>

@@ -26,9 +26,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rateschedules_department ON rateschedules (departmentid, isdeleted);");
 			}
 			if (!Schema.Table("ratescheduleentries").Exists())
@@ -54,9 +52,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_ratescheduleentries_schedule ON ratescheduleentries (ratescheduleid, isdeleted, sortorder);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_ratescheduleentries_group ON ratescheduleentries (ratescheduleid, groupkey);");
 				Create.ForeignKey("fk_ratescheduleentries_schedule").FromTable("ratescheduleentries").ForeignColumn("ratescheduleid").ToTable("rateschedules").PrimaryColumn("ratescheduleid");
@@ -97,9 +93,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_ratepremiums_schedule ON ratepremiums (ratescheduleid, isdeleted);");
 				Create.ForeignKey("fk_ratepremiums_schedule").FromTable("ratepremiums").ForeignColumn("ratescheduleid").ToTable("rateschedules").PrimaryColumn("ratescheduleid");
 			}

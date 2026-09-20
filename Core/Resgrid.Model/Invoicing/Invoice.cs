@@ -63,8 +63,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int ProtectedCatalogVersion { get; set; }
 
 		[NotMapped]
 		public List<InvoiceLineItem> LineItems { get; set; }

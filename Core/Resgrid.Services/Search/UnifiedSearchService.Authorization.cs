@@ -150,6 +150,33 @@ namespace Resgrid.Services.Search
 						return note != null && note.DepartmentId == departmentId &&
 							(!note.IsAdminOnly || principal.IsDepartmentAdmin) &&
 							(!note.ExpiresOn.HasValue || note.ExpiresOn > DateTime.UtcNow);
+					// Workforce & Business Operations families: the row must still exist in the department and the caller must hold the page's view claim.
+					case SearchEntityTypes.Invoice:
+						if (_invoicing?.Value == null || !principal.HasResourceClaim("Invoicing", "View") && !principal.IsDepartmentAdmin) return false;
+						var invoice = await _invoicing.Value.GetInvoiceByIdAsync(hit.EntityId, departmentId);
+						return invoice != null && invoice.DepartmentId == departmentId && !invoice.IsDeleted;
+					case SearchEntityTypes.RateCard:
+						if (_invoicing?.Value == null || !principal.HasResourceClaim("Invoicing", "View") && !principal.IsDepartmentAdmin) return false;
+						var rateCard = await _invoicing.Value.GetRateCardByIdAsync(hit.EntityId, departmentId, true);
+						return rateCard != null && rateCard.DepartmentId == departmentId && !rateCard.IsDeleted;
+					case SearchEntityTypes.Bid:
+						if (_bids?.Value == null || !principal.HasResourceClaim("Bids", "View") && !principal.IsDepartmentAdmin) return false;
+						var bid = await _bids.Value.GetBidByIdAsync(hit.EntityId, departmentId);
+						return bid != null && bid.DepartmentId == departmentId && !bid.IsDeleted;
+					case SearchEntityTypes.ServiceContract:
+						if (_contracts?.Value == null || !principal.HasResourceClaim("ServiceContracts", "View") && !principal.IsDepartmentAdmin) return false;
+						var contract = await _contracts.Value.GetContractByIdAsync(hit.EntityId, departmentId);
+						return contract != null && contract.DepartmentId == departmentId && !contract.IsDeleted;
+					case SearchEntityTypes.Deployment:
+						if (_deploymentsService?.Value == null) return false;
+						var deployment = await _deploymentsService.Value.GetDeploymentByIdAsync(hit.EntityId, departmentId);
+						if (deployment == null || deployment.DepartmentId != departmentId || deployment.IsDeleted) return false;
+						// Rostered members reach their own deployments without the claim, exactly as the deployment page does.
+						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Deployments", "View") || deployment.Personnel?.Any(p => p.UserId == userId && !p.RemovedOn.HasValue) == true;
+					case SearchEntityTypes.CertificationType:
+						if (_certifications?.Value == null || !int.TryParse(hit.EntityId, out var typeId) || !principal.HasResourceClaim("Certifications", "View") && !principal.IsDepartmentAdmin) return false;
+						var certificationType = await _certifications.Value.GetCertificationTypeByIdAsync(typeId);
+						return certificationType != null && certificationType.DepartmentId == departmentId;
 					default:
 						return false;
 				}

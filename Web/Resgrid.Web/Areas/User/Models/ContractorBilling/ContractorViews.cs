@@ -242,6 +242,8 @@ namespace Resgrid.Web.Areas.User.Models.ContractorBilling
 		public string ScheduleName { get; set; }
 		public string Currency { get; set; } = "USD";
 		public Deployment ConvertedDeployment { get; set; }
+		/// <summary>Phase E internal cost card (ViewInternalCosts + Workforce.InternalCosting); null when hidden.</summary>
+		public Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView CostCard { get; set; }
 	}
 
 	#endregion

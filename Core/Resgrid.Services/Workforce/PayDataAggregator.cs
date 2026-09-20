@@ -152,8 +152,8 @@ namespace Resgrid.Services.Workforce
 			var sheet = new StringBuilder();
 			sheet.Append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><sheetData>");
 			var r = 1;
-			sheet.Append(XlsxRow(r++, columns.Select(c => c.Header).ToList()));
-			foreach (var row in rows) sheet.Append(XlsxRow(r++, row));
+			sheet.Append(XlsxRow(r++, columns.Select(c => c.Header).ToList(), null));
+			foreach (var row in rows) sheet.Append(XlsxRow(r++, row, columns));
 			sheet.Append("</sheetData></worksheet>");
 			using var stream = new MemoryStream();
 			using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, true))
@@ -167,14 +167,17 @@ namespace Resgrid.Services.Workforce
 			return stream.ToArray();
 		}
 
-		private static string XlsxRow(int index, IReadOnlyList<string> cells)
+		/// <summary>Cell type follows the schema, not the text: only integer / decimal columns become numeric cells, so zero-padded ZIP, NAICS and code values keep their leading zeros and a rate such as 0.75 stays a number. The header row (no schema) is all text.</summary>
+		private static string XlsxRow(int index, IReadOnlyList<string> cells, IReadOnlyList<CaPayDataColumn> columns)
 		{
 			var sb = new StringBuilder("<row r=\"" + index + "\">");
 			for (var c = 0; c < cells.Count; c++)
 			{
 				var value = cells[c] ?? string.Empty;
 				var reference = ColumnName(c) + index;
-				if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out _) && value.Trim().Length > 0 && value == value.Trim() && !value.StartsWith("0") || value == "0")
+				var type = columns != null && c < columns.Count ? columns[c].Type : null;
+				var numeric = (type == "integer" || type == "decimal") && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out _) && value == value.Trim() && value.Length > 0;
+				if (numeric)
 					sb.Append("<c r=\"").Append(reference).Append("\"><v>").Append(value).Append("</v></c>");
 				else
 					sb.Append("<c r=\"").Append(reference).Append("\" t=\"inlineStr\"><is><t>").Append(Xml(value)).Append("</t></is></c>");

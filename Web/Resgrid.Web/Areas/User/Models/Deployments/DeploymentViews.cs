@@ -92,6 +92,10 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 		public bool IsRostered { get; set; }
 		/// <summary>Contractor billing (C-M2): the Billing tab is offered when the department holds the entitlement and the deployment is billable.</summary>
 		public bool ContractorBilling { get; set; }
+		/// <summary>Phase E internal cost tab (ViewInternalCosts + Workforce.InternalCosting); null when hidden.</summary>
+		public Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView CostCard { get; set; }
+		public List<Resgrid.Model.Workforce.FieldCostRun> CostRuns { get; set; } = new List<Resgrid.Model.Workforce.FieldCostRun>();
+		public Resgrid.Model.Workforce.FieldCostComparison CostComparison { get; set; }
 		public ContractorChargeSet Charges { get; set; }
 		public ContractComplianceResult Compliance { get; set; }
 		public List<Invoice> Invoices { get; set; } = new List<Invoice>();

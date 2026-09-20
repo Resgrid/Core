@@ -54,6 +54,7 @@
                         <p class="text-muted small">@localizer["RecordMarsInvoiceHelp"]</p>
                         <form method="post" asp-action="RecordInvoice">
                             @Html.AntiForgeryToken()
+                            <div class="form-group"><label>@localizer["Deployment"]</label><select name="DeploymentId" class="form-control"><option value="">—</option>@foreach (var pair in Model.DeploymentNames.OrderBy(x => x.Value)) { <option value="@pair.Key">@pair.Value</option> }</select></div>
                             <div class="form-group"><label>@localizer["MarsInvoiceId"] *</label><input type="text" name="MarsInvoiceId" class="form-control" maxlength="100" required /></div>
                             <div class="row"><div class="col-xs-6 form-group"><label>@localizer["InvoiceDate"]</label><input type="date" name="InvoiceDate" class="form-control" /></div><div class="col-xs-6 form-group"><label>@localizer["Invoiced"] *</label><input type="number" step="0.01" min="0" name="InvoicedTotal" class="form-control" required /></div></div>
                             <div class="form-group"><label>@localizer["PayingEntity"]</label><input type="text" name="PayingEntity" class="form-control" /></div>

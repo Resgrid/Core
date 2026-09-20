@@ -46,9 +46,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().Nullable();
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 				Create.Index("IX_Bids_Department").OnTable("Bids").OnColumn("DepartmentId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("Status").Ascending();
 				Create.Index("IX_Bids_Contact").OnTable("Bids").OnColumn("ContactId").Ascending();
 				Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_Bids_Number' AND object_id = OBJECT_ID('Bids')) CREATE UNIQUE INDEX [UX_Bids_Number] ON [Bids] ([DepartmentId], [BidNumber]);");

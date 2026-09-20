@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Ο εργαζόμενος δεν βρέθηκε.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>Απαιτείται εργαζόμενος.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>Το έτος αναφοράς δεν είναι έγκυρο.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Εσωτερικό κόστος</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Εκτιμώμενο περιθώριο συνεισφοράς από εσωτερικά κόστη — όχι λογιστικό κέρδος· οι ελλείπουσες είσοδοι αναγράφονται στην εκτέλεση.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>Δεν υπάρχει ακόμη υπολογισμός κόστους για αυτή την εγγραφή.</value></data>
 </root>

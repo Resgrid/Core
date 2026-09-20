@@ -43,6 +43,7 @@ namespace Resgrid.Services.Invoicing
 		private readonly Lazy<IInventoryIssuanceService> _inventoryIssuance;
 		private readonly Lazy<IProtectedWriteService> _protectedWrite;
 		private readonly Lazy<IProtectedReadService> _protectedRead;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		/// <summary>The caller's Protected Data Grant (request-bound in the web hosts, workload elsewhere); a grant holder reads decrypted values.</summary>
 		private readonly IProtectedGrantContext _grant;
 
@@ -52,7 +53,7 @@ namespace Resgrid.Services.Invoicing
 			IPersonnelRolesService personnelRolesService, ICertificationService certificationService, IContactsService contactsService,
 			ICallsService callsService, IRecordDeploymentsService recordDeployments, IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
 			IPdfProvider pdfProvider, IUnitOfWork unitOfWork,
-			Lazy<IInventoryIssuanceService> inventoryIssuance = null, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null)
+			Lazy<IInventoryIssuanceService> inventoryIssuance = null, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_grant = grant;
 			_deployments = deployments;
@@ -75,6 +76,7 @@ namespace Resgrid.Services.Invoicing
 			_inventoryIssuance = inventoryIssuance;
 			_protectedWrite = protectedWrite;
 			_protectedRead = protectedRead;
+			_searchProjections = searchProjections;
 		}
 
 		#region Reads
@@ -260,6 +262,7 @@ namespace Resgrid.Services.Invoicing
 			if (status == DeploymentStatuses.Active && !deployment.StartOn.HasValue) deployment.StartOn = DateTime.UtcNow;
 			if ((status == DeploymentStatuses.Completed || status == DeploymentStatuses.Cancelled) && !deployment.EndOn.HasValue) deployment.EndOn = DateTime.UtcNow;
 			var saved = await _deployments.SaveOrUpdateAsync(deployment, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectDeploymentAsync(deployment, cancellationToken);
 			audit.After = Snapshot(saved);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 
@@ -289,6 +292,7 @@ namespace Resgrid.Services.Invoicing
 			deployment.EditedOn = DateTime.UtcNow;
 			deployment.EditedByUserId = userId;
 			await _deployments.SaveOrUpdateAsync(deployment, cancellationToken);
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectDeploymentAsync(deployment, cancellationToken);
 			audit.After = Snapshot(deployment);
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return true;

@@ -332,7 +332,7 @@ namespace Resgrid.Services.Workforce
 					{
 						var usage = new ResourceUsageQuantity { SubjectLabel = line.Description, UsageDate = asOf, Days = days * quantity, OperatingHours = hoursPerDay * days * quantity, Deployments = quantity, SourceType = "BidLineItem", SourceId = line.BidLineItemId };
 						var profile = profiles.FirstOrDefault(p => p.SubjectType == (int)ResourceSubjectTypes.External && !string.IsNullOrWhiteSpace(line.RateScheduleEntryId) && string.Equals(p.ExternalResourceKey, line.RateScheduleEntryId, StringComparison.OrdinalIgnoreCase));
-						builder.AddResource(FieldCostCalculator.CalculateResource(new ResourceCostInput { Usage = usage, Profile = profile, IsFallback = profile != null, AsOf = asOf }), usage, "BidLineItem", line.BidLineItemId, line.Description, true);
+						builder.AddResource(FieldCostCalculator.CalculateResource(new ResourceCostInput { Usage = usage, Profile = profile, IsFallback = false, AsOf = asOf }), usage, "BidLineItem", line.BidLineItemId, line.Description, true);
 						break;
 					}
 					default:

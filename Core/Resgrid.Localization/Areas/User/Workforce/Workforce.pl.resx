@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Nie znaleziono pracownika.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>Wymagany jest pracownik.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>Rok sprawozdawczy jest nieprawidłowy.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Koszt wewnętrzny</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Szacowana marża pokrycia z kosztów wewnętrznych — nie zysk księgowy; brakujące dane są wymienione w przebiegu.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>Brak przebiegu kosztów dla tego rekordu.</value></data>
 </root>

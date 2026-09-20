@@ -5,8 +5,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 	/// <summary>
 	/// Workforce &amp; Business Operations plan, Phase B (B1): customer billing profiles (a Contact becomes billable),
 	/// simple per-call rate cards, and the department's own billing identity that prints on every invoice.
-	/// Registry M0209, the next physical number under the no-gaps rule. Every table carries the ADP row marker
-	/// (IsProtected / ProtectedCatalogVersion) from creation; the Phase B catalog (26) is registered by M0212.
+	/// Registry M0209, the next physical number under the no-gaps rule. No table carries an ADP row marker: nothing here is under Advanced Data Protection (plan decision 44) — customers read invoices and pay pages without a login
+	/// (the marker columns were dropped before release on 2026-09-20). The customer Contact row stays under ADP.
 	/// Guarded for safe retry.
 	/// </summary>
 	[Migration(209)]
@@ -37,9 +37,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 
 				Create.Index("IX_CustomerBillingProfiles_Department").OnTable("CustomerBillingProfiles")
 					.OnColumn("DepartmentId").Ascending().OnColumn("IsDeleted").Ascending();
@@ -61,9 +59,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 
 				Create.Index("IX_RateCards_Department").OnTable("RateCards")
 					.OnColumn("DepartmentId").Ascending().OnColumn("IsDeleted").Ascending();
@@ -92,9 +88,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable()
 					.WithColumn("EditedOn").AsDateTime2().Nullable()
-					.WithColumn("EditedByUserId").AsString(128).Nullable()
-					.WithColumn("IsProtected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("ProtectedCatalogVersion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("EditedByUserId").AsString(128).Nullable();
 
 				Create.Index("IX_RateCardItems_RateCard").OnTable("RateCardItems")
 					.OnColumn("RateCardId").Ascending().OnColumn("IsDeleted").Ascending().OnColumn("SortOrder").Ascending();

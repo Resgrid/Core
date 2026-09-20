@@ -186,8 +186,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public List<RateScheduleEntry> Entries { get; set; } = new List<RateScheduleEntry>();
 		[NotMapped] public List<RatePremium> Premiums { get; set; } = new List<RatePremium>();
@@ -230,8 +228,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public List<RateScheduleEntryBand> Bands { get; set; } = new List<RateScheduleEntryBand>();
 		[NotMapped] public List<RequiredCertification> RequiredCertifications => RequiredCertification.Parse(RequiredCertificationsJson);
@@ -291,8 +287,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 				public decimal AdderFor(RateBandTypes band) => band switch
 		{
@@ -344,8 +338,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public List<ServiceContractDocumentRequirement> Requirements { get; set; } = new List<ServiceContractDocumentRequirement>();
 		public bool IsLive(DateTime onUtc) => Status == (int)ServiceContractStatuses.Active && !IsDeleted && StartOn <= onUtc && (!EndOn.HasValue || EndOn.Value >= onUtc);
@@ -405,8 +397,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		public bool IsCurrent(DateTime onUtc) => !IsDeleted && (!EffectiveOn.HasValue || EffectiveOn.Value.Date <= onUtc.Date) && (!ExpiresOn.HasValue || ExpiresOn.Value.Date >= onUtc.Date);
 
@@ -458,8 +448,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public List<BidLineItem> LineItems { get; set; } = new List<BidLineItem>();
 		[NotMapped] public bool IsEditable => Status is (int)BidStatuses.Draft or (int)BidStatuses.Submitted;

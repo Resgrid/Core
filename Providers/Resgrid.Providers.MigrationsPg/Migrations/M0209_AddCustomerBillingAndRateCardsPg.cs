@@ -34,9 +34,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_customerbillingprofiles_department ON customerbillingprofiles (departmentid, isdeleted);");
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_customerbillingprofiles_contact_live ON customerbillingprofiles (contactid) WHERE isdeleted = FALSE;");
@@ -55,9 +53,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_ratecards_department ON ratecards (departmentid, isdeleted);");
 			}
@@ -85,9 +81,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_ratecarditems_ratecard ON ratecarditems (ratecardid, isdeleted, sortorder);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_ratecarditems_department ON ratecarditems (departmentid);");

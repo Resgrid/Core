@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>لم يتم العثور على العامل.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>العامل مطلوب.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>سنة الإبلاغ غير صالحة.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>التكلفة الداخلية</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>هامش المساهمة المقدّر من مدخلات التكلفة الداخلية — ليس ربحًا محاسبيًا؛ المدخلات المفقودة مدرجة في العملية.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>لا توجد عملية حساب تكلفة لهذا السجل بعد.</value></data>
 </root>

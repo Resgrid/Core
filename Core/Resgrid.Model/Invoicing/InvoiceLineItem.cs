@@ -29,8 +29,6 @@ namespace Resgrid.Model.Invoicing
 		/// <summary>Phase C provenance (M0219): the approved daily time report this line was generated from.</summary>
 		public string DeploymentTimeReportId { get; set; }
 		public int SortOrder { get; set; }
-		public bool IsProtected { get; set; }
-		public int ProtectedCatalogVersion { get; set; }
 
 		[NotMapped]
 		public string TableName => "InvoiceLineItems";

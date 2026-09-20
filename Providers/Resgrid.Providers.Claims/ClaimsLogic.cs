@@ -1818,11 +1818,11 @@ namespace Resgrid.Providers.Claims
 						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.View)
 					};
+				// The report wizard reads the workforce roster (workers, establishments, contractors); editing it is permission 75.
 				case PermissionTypes.ManagePayDataReporting:
 					return new[]
 					{
 						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View),
-						new RecordClaimGrant(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.Update),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.View),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.PayDataReporting, ResgridClaimTypes.Actions.Update)
 					};

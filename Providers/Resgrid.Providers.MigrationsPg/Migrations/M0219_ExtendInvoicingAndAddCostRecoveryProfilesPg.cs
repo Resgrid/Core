@@ -16,12 +16,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 				Alter.Table("invoices").AddColumn("deploymentid").AsString(36).Nullable();
 			if (!Schema.Table("invoicelineitems").Column("deploymenttimereportid").Exists())
 				Alter.Table("invoicelineitems").AddColumn("deploymenttimereportid").AsString(36).Nullable();
-			// ADP catalog 28 marker for the department billing identity (tax registrations, SAM/CAGE, workers' comp account).
-			if (!Schema.Table("departmentbillingidentities").Column("isprotected").Exists())
-				Alter.Table("departmentbillingidentities").AddColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false);
-			if (!Schema.Table("departmentbillingidentities").Column("protectedcatalogversion").Exists())
-				Alter.Table("departmentbillingidentities").AddColumn("protectedcatalogversion").AsInt32().Nullable();
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoices_deployment ON invoices (deploymentid) WHERE deploymentid IS NOT NULL;");
+			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_invoices_deployment ON invoices (deploymentid) WHERE deploymentid IS NOT NULL;");
 
 			if (!Schema.Table("caloesmarsagencyprofiles").Exists())
 			{
@@ -52,9 +47,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_caloesmarsagencyprofiles_department ON caloesmarsagencyprofiles (departmentid) WHERE isdeleted = FALSE;");
 			}
 			if (!Schema.Table("caloesmarsresourceprofiles").Exists())
@@ -87,9 +80,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsresourceprofiles_department ON caloesmarsresourceprofiles (departmentid, isdeleted);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsresourceprofiles_unit ON caloesmarsresourceprofiles (unitid);");
 			}
@@ -120,9 +111,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsrateprofiles_department ON caloesmarsrateprofiles (departmentid, submissionyear, isdeleted);");
 			}
 			if (!Schema.Table("caloesmarsratelines").Exists())
@@ -154,9 +143,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsratelines_profile ON caloesmarsratelines (caloesmarsrateprofileid, sortorder);");
 				Create.ForeignKey("fk_caloesmarsratelines_profile").FromTable("caloesmarsratelines").ForeignColumn("caloesmarsrateprofileid").ToTable("caloesmarsrateprofiles").PrimaryColumn("caloesmarsrateprofileid");
 			}
@@ -186,9 +173,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsadministrativerateinputs_profile ON caloesmarsadministrativerateinputs (caloesmarsrateprofileid);");
 				Create.ForeignKey("fk_caloesmarsadministrativerateinputs_profile").FromTable("caloesmarsadministrativerateinputs").ForeignColumn("caloesmarsrateprofileid").ToTable("caloesmarsrateprofiles").PrimaryColumn("caloesmarsrateprofileid");
 			}
@@ -215,9 +200,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsagreementsnapshots_department ON caloesmarsagreementsnapshots (departmentid, isdeleted, starton);");
 			}
 			if (!Schema.Table("caloesmarsworkitems").Exists())
@@ -260,9 +243,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsString(128).Nullable()
 					.WithColumn("editedon").AsDateTime2().Nullable()
-					.WithColumn("editedbyuserid").AsString(128).Nullable()
-					.WithColumn("isprotected").AsBoolean().NotNullable().WithDefaultValue(false)
-					.WithColumn("protectedcatalogversion").AsInt32().Nullable();
+					.WithColumn("editedbyuserid").AsString(128).Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsworkitems_department ON caloesmarsworkitems (departmentid, isdeleted, localstate);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsworkitems_deployment ON caloesmarsworkitems (deploymentid);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_caloesmarsworkitems_external ON caloesmarsworkitems (marsrecordid);");
@@ -315,8 +296,6 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Execute.Sql("DROP TABLE IF EXISTS caloesmarsrateprofiles;");
 			Execute.Sql("DROP TABLE IF EXISTS caloesmarsresourceprofiles;");
 			Execute.Sql("DROP TABLE IF EXISTS caloesmarsagencyprofiles;");
-			Execute.Sql("ALTER TABLE departmentbillingidentities DROP COLUMN IF EXISTS protectedcatalogversion;");
-			Execute.Sql("ALTER TABLE departmentbillingidentities DROP COLUMN IF EXISTS isprotected;");
 			Execute.Sql("ALTER TABLE invoicelineitems DROP COLUMN IF EXISTS deploymenttimereportid;");
 			Execute.Sql("ALTER TABLE invoices DROP COLUMN IF EXISTS deploymentid;");
 			Execute.Sql("ALTER TABLE invoices DROP COLUMN IF EXISTS servicecontractid;");

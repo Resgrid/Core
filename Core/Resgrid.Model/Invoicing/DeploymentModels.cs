@@ -269,8 +269,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped]
 		public List<DeploymentTimeEntry> Entries { get; set; } = new List<DeploymentTimeEntry>();
@@ -349,8 +347,6 @@ namespace Resgrid.Model.Invoicing
 		public string AddedByUserId { get; set; }
 		public DateTime? EditedOn { get; set; }
 		public string EditedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public string TableName => "DeploymentExpenses";
 		[NotMapped] public string IdName => "DeploymentExpenseId";
@@ -378,8 +374,6 @@ namespace Resgrid.Model.Invoicing
 		public bool IsDeleted { get; set; }
 		public DateTime AddedOn { get; set; }
 		public string AddedByUserId { get; set; }
-		public bool IsProtected { get; set; }
-		public int? ProtectedCatalogVersion { get; set; }
 
 		[NotMapped] public string TableName => "DeploymentAttachments";
 		[NotMapped] public string IdName => "DeploymentAttachmentId";

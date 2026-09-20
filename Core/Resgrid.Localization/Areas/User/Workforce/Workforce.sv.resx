@@ -710,4 +710,7 @@
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Arbetstagaren hittades inte.</value></data>
   <data name="workforce_worker_required" xml:space="preserve"><value>En arbetstagare krävs.</value></data>
   <data name="workforce_year_invalid" xml:space="preserve"><value>Rapportåret är ogiltigt.</value></data>
+  <data name="InternalCost" xml:space="preserve"><value>Intern kostnad</value></data>
+  <data name="MarginDisclaimer" xml:space="preserve"><value>Uppskattat täckningsbidrag från interna kostnadsindata — inte bokföringsmässig vinst; saknade indata listas på körningen.</value></data>
+  <data name="NoRunForContext" xml:space="preserve"><value>Ingen kostnadskörning för denna post ännu.</value></data>
 </root>

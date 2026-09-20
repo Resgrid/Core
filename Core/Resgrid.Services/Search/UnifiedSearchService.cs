@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
@@ -25,6 +26,11 @@ namespace Resgrid.Services.Search
 		private const int CandidateWindow = 200;
 
 		private readonly IGlobalSearchService _global;
+		private readonly Lazy<IInvoicingService> _invoicing;
+		private readonly Lazy<IBidsService> _bids;
+		private readonly Lazy<IServiceContractService> _contracts;
+		private readonly Lazy<IDeploymentService> _deploymentsService;
+		private readonly Lazy<ICertificationService> _certifications;
 		private readonly ISystemActionsService _actions;
 		private readonly IFeatureToggleService _featureToggles;
 		private readonly IAuthorizationService _authorization;
@@ -41,8 +47,15 @@ namespace Resgrid.Services.Search
 			IPersonnelRolesService roles, ICallsService calls, IUnitsService units, IMessageService messages,
 			IDocumentsService documents, INotesService notes, IContactsService contacts,
 			IDepartmentDataProtectionService dataProtection, IDepartmentSettingsService departmentSettings,
-			ISearchProjectionsRepository projections)
+			ISearchProjectionsRepository projections,
+			Lazy<IInvoicingService> invoicing = null, Lazy<IBidsService> bids = null, Lazy<IServiceContractService> contracts = null,
+			Lazy<IDeploymentService> deployments = null, Lazy<ICertificationService> certifications = null)
 		{
+			_invoicing = invoicing;
+			_bids = bids;
+			_contracts = contracts;
+			_deploymentsService = deployments;
+			_certifications = certifications;
 			_global = global;
 			_actions = actions;
 			_featureToggles = featureToggles;
@@ -253,6 +266,13 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.Message, "Messages", SystemActionModules.Messaging);
 			Add(SearchEntityTypes.Document, "Documents", SystemActionModules.Documents);
 			Add(SearchEntityTypes.Note, "Notes", SystemActionModules.Notes);
+			// Workforce & Business Operations families (decision 41): the same claims as their pages; the paid ones behind the Business Ops module switch.
+			Add(SearchEntityTypes.Invoice, "Invoicing", SystemActionModules.BusinessOperations);
+			Add(SearchEntityTypes.RateCard, "Invoicing", SystemActionModules.BusinessOperations);
+			Add(SearchEntityTypes.Bid, "Bids", SystemActionModules.BusinessOperations);
+			Add(SearchEntityTypes.ServiceContract, "ServiceContracts", SystemActionModules.BusinessOperations);
+			Add(SearchEntityTypes.Deployment, "Deployments");
+			Add(SearchEntityTypes.CertificationType, "Certifications");
 			return allowed;
 		}
 

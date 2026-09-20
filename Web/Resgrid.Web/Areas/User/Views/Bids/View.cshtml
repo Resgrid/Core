@@ -60,6 +60,10 @@
             </div>
         </div>
         <div class="col-md-4">
+            @if (Model.CostCard != null)
+            {
+                @await Html.PartialAsync("_FieldCostCard", Model.CostCard)
+            }
             @if (Model.CanManageBids)
             {
                 <div class="ibox float-e-margins">

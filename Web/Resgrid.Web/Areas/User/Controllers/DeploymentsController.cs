@@ -50,8 +50,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public DeploymentsController(IDeploymentService deployments, ITimeTrackingService timeTracking, IFeatureToggleService flags, IDepartmentsService departments, IUnitsService units,
 			IContactsService contacts, ICallsService calls, IUserProfileService profiles, IRecordDeploymentsService recordDeployments,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> strings,
-			IContractorBillingEngine engine, IServiceContractService contracts, IInvoicingService invoicing, IBusinessOperationsAccessService access)
+			IContractorBillingEngine engine, IServiceContractService contracts, IInvoicingService invoicing, IBusinessOperationsAccessService access, Lazy<IFieldCostingService> costing = null)
 		{
+			_costing = costing;
 			_engine = engine;
 			_contracts = contracts;
 			_invoicing = invoicing;
@@ -67,6 +68,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_recordDeployments = recordDeployments;
 			_strings = strings;
 		}
+
+		private readonly Lazy<IFieldCostingService> _costing;
 
 		#region Plumbing
 
@@ -354,6 +357,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Contractor billing (C-M2): the Billing tab previews the charge run, the contract compliance checklist and the invoices already generated.
 			view.ContractorBilling = CanManage && deployment.FinanceMode == (int)DeploymentFinanceModes.Billable && await _access.CanUseContractorBillingAsync(DepartmentId);
+			// Phase E: the actual contribution margin tab — aggregate categories only; lines live on the Workforce cost run page.
+			if (_costing?.Value != null && (IsAdmin || ClaimsAuthorizationHelper.CanViewInternalCosts()) && await _access.CanUseWorkforceAsync(DepartmentId))
+			{
+				view.CostRuns = await _costing.Value.GetRunsForDeploymentAsync(deployment.DeploymentId, DepartmentId);
+				var defaultRevenue = deployment.FinanceMode == (int)DeploymentFinanceModes.CostRecovery ? Resgrid.Model.Workforce.RevenueSources.CalOesMarsExpected : !string.IsNullOrWhiteSpace(deployment.BidId) ? Resgrid.Model.Workforce.RevenueSources.BidEstimate : Resgrid.Model.Workforce.RevenueSources.CustomerInvoice;
+				view.CostCard = new Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView { DeploymentId = deployment.DeploymentId, Latest = view.CostRuns.OrderByDescending(r => r.AddedOn).FirstOrDefault(), CanRun = true, DefaultRevenueSource = defaultRevenue };
+				if (view.Tab == "costs") view.CostComparison = await _costing.Value.CompareEstimateToActualAsync(deployment.DeploymentId, DepartmentId);
+			}
 			if (view.ContractorBilling && view.Tab == "billing")
 			{
 				try

@@ -50,6 +50,7 @@ namespace Resgrid.Tests.Services
 		private List<DeploymentTimeReport> _reports;
 		private List<DeploymentExpense> _expenses;
 		private Mock<IDeploymentService> _deployments;
+		private Mock<ICompensationCostService> _compensation;
 		private CalOesMarsService _service;
 
 		[SetUp]
@@ -83,6 +84,7 @@ namespace Resgrid.Tests.Services
 			items.Setup(r => r.GetByDeploymentAsync(It.IsAny<string>(), DeptId)).ReturnsAsync((string id, int _) => _items.Where(x => x.DeploymentId == id && !x.IsDeleted).ToList());
 			items.Setup(r => r.GetByExternalIdAsync(DeptId, It.IsAny<string>())).ReturnsAsync((int _, string id) => _items.Where(x => !x.IsDeleted && (x.MarsRecordId == id || x.MarsInvoiceId == id)).ToList());
 			items.Setup(r => r.GetActionQueueAsync(DeptId, It.IsAny<int?>())).ReturnsAsync((int _, int? type) => _items.Where(x => !x.IsDeleted && x.LocalState != (int)CalOesMarsLocalStates.Closed && (!type.HasValue || x.RecordType == type)).ToList());
+			items.Setup(r => r.GetByAgreementSnapshotAsync(DeptId, It.IsAny<string>())).ReturnsAsync((int _, string id) => _items.Where(x => !x.IsDeleted && x.AgreementSnapshotId == id).ToList());
 			items.Setup(r => r.GetDepartmentsWithOpenItemsAsync()).ReturnsAsync(() => _items.Where(x => !x.IsDeleted && x.LocalState != (int)CalOesMarsLocalStates.Closed).Select(x => x.DepartmentId).Distinct().ToList());
 			var lines = Repo<ICalOesMarsReimbursementLineRepository, CalOesMarsReimbursementLine>(_lines, l => l.CalOesMarsReimbursementLineId, (l, id) => l.CalOesMarsReimbursementLineId = id);
 			lines.Setup(r => r.GetByWorkItemAsync(It.IsAny<string>())).ReturnsAsync((string id) => _lines.Where(x => x.CalOesMarsWorkItemId == id).ToList());
@@ -123,6 +125,7 @@ namespace Resgrid.Tests.Services
 				new DeploymentExpense { DeploymentExpenseId = "ex-2", DeploymentId = "dep-1", DepartmentId = DeptId, ExpenseDate = Dispatch.Date, ExpenseType = (int)DeploymentExpenseTypes.Accommodation, City = "Napa", Amount = 140 }
 			};
 			_deployments = new Mock<IDeploymentService>();
+			_compensation = new Mock<ICompensationCostService>();
 			_deployments.Setup(d => d.GetDeploymentByIdAsync("dep-1", DeptId)).ReturnsAsync(() => _deployment);
 			_deployments.Setup(d => d.GetExternalContextAsync("dep-1", DeptId, It.IsAny<string>())).ReturnsAsync(() => _context);
 			_deployments.Setup(d => d.GetAttachmentsAsync("dep-1", DeptId)).ReturnsAsync(() => _attachments.ToList());
@@ -150,7 +153,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new CalOesMarsService(agencies.Object, resources.Object, rateProfiles.Object, rateLines.Object, inputs.Object, agreements.Object, items.Object, lines.Object,
 				_deployments.Object, timeTracking.Object, entries.Object, units.Object, profiles.Object, departments.Object, events.Object, null,
-				new CalOesMarsReimbursementCalculator(), new ManualCalOesMarsGateway(), new Lazy<ICommunicationService>(() => communication.Object));
+				new CalOesMarsReimbursementCalculator(), new ManualCalOesMarsGateway(), new Lazy<ICommunicationService>(() => communication.Object), null, new Lazy<ICompensationCostService>(() => _compensation.Object));
 		}
 
 		private static Mock<TRepo> Repo<TRepo, T>(List<T> store, Func<T, string> id, Action<T, string> setId) where TRepo : class, IRepository<T> where T : class, IEntity
@@ -301,6 +304,23 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Closed_work_items_still_protect_their_agreement_snapshot()
+		{
+			await SeedReadyDepartmentAsync();
+			var item = await _service.BuildF42DraftAsync("dep-1", DeptId, "fill-e12", User, null, null);
+			var agreement = await _service.GetAgreementAsync(item.AgreementSnapshotId, DeptId);
+			agreement.Should().NotBeNull();
+			// The claim was submitted, paid and closed; it left the action queue but its terms are still the ones on record.
+			_items.Single(w => w.CalOesMarsWorkItemId == item.CalOesMarsWorkItemId).LocalState = (int)CalOesMarsLocalStates.Closed;
+
+			await FluentActions.Awaiting(() => _service.DeleteAgreementAsync(agreement.CalOesMarsAgreementSnapshotId, DeptId, User, null, null)).Should().ThrowAsync<InvalidOperationException>().WithMessage("calmars_agreement_in_use");
+			var edit = new CalOesMarsAgreementSnapshot { CalOesMarsAgreementSnapshotId = agreement.CalOesMarsAgreementSnapshotId, DepartmentId = DeptId, DocumentKind = agreement.DocumentKind, CompensationMethod = agreement.CompensationMethod, OvertimeMethod = (int)CalOesMarsOvertimeMethods.AfterTwelveHoursPerDay, StartOn = agreement.StartOn };
+			var saved = await _service.SaveAgreementAsync(edit, User, null, null);
+			saved.CalOesMarsAgreementSnapshotId.Should().NotBe(item.AgreementSnapshotId, "an edit to a referenced snapshot becomes a new version");
+			(await _service.GetAgreementAsync(item.AgreementSnapshotId, DeptId)).OvertimeMethod.Should().Be((int)CalOesMarsOvertimeMethods.AfterEightHoursPerDay, "the closed claim's terms are unchanged");
+		}
+
+		[Test]
 		public async Task Redispatch_closes_the_first_interval_and_opens_a_superseding_f42()
 		{
 			await SeedReadyDepartmentAsync();
@@ -399,6 +419,35 @@ namespace Resgrid.Tests.Services
 			(await _service.CloseWorkItemAsync(invoice.CalOesMarsWorkItemId, DeptId, User, null, null)).LocalState.Should().Be((int)CalOesMarsLocalStates.Closed);
 			// Decision 36: no Phase B service is even a dependency of this service — a MARS invoice never becomes a customer invoice.
 			typeof(CalOesMarsService).GetConstructors().Single().GetParameters().Select(p => p.ParameterType).Should().NotContain(new[] { typeof(IInvoicingService), typeof(IInvoicePaymentsService) });
+		}
+
+		[Test]
+		public async Task Salary_survey_draft_writes_classification_means_from_phase_e_and_never_an_individual()
+		{
+			_compensation.Setup(c => c.GetClassificationRateAggregateAsync(DeptId, It.IsAny<DateTime>(), It.IsAny<string>()))
+				.ReturnsAsync(new List<(string, int, decimal, decimal)> { ("Captain", 3, 61.3333m, 2m), ("Firefighter", 1, 40m, 0m), ("Dog Handler", 2, 30m, 0m) });
+			var survey = await _service.SaveRateProfileAsync(new CalOesMarsRateProfile { DepartmentId = DeptId, SubmissionYear = 2026, SubmissionType = (int)CalOesMarsSubmissionTypes.SalarySurvey, EffectiveOn = new DateTime(2026, 1, 1) }, User, null, null);
+			await _service.SaveRateLinesAsync(survey.CalOesMarsRateProfileId, DeptId, new List<CalOesMarsRateLine> { new CalOesMarsRateLine { LineKind = (int)CalOesMarsRateLineKinds.SalarySurvey, ClassificationCode = "Captain", StraightRate = 50, OvertimeRate = 75, IncludesWorkersComp = true, OvertimeEligible = true } }, User, null, null);
+
+			var draft = await _service.BuildSalarySurveyDraftAsync(survey.CalOesMarsRateProfileId, DeptId, new DateTime(2026, 6, 1), User, null, null);
+			draft.IsReady.Should().BeTrue();
+			draft.LinesWritten.Should().Be(2);
+			draft.EmployeesIncluded.Should().Be(4);
+			draft.UnknownClassifications.Should().Equal("Dog Handler");
+			draft.Classifications.Single(c => c.ClassificationCode == "Captain").StraightRate.Should().Be(61.33m);
+			draft.Classifications.Single(c => c.ClassificationCode == "Captain").OvertimeRate.Should().Be(94m, "1.5 × 61.3333 + the $2 per-overtime-hour adder");
+			draft.Classifications.Single(c => c.ClassificationCode == "Firefighter").SingleEmployee.Should().BeTrue();
+
+			var profile = await _service.GetRateProfileAsync(survey.CalOesMarsRateProfileId, DeptId);
+			var captain = profile.Lines.Single(l => l.ClassificationCode == "Captain");
+			captain.StraightRate.Should().Be(61.33m); captain.IncludesWorkersComp.Should().BeTrue("existing line flags survive; only the rates are replaced");
+			captain.SourceInputVersions.Should().Contain("workforce-aggregate").And.Contain("\"Employees\":3");
+			profile.Lines.Single(l => l.ClassificationCode == "Firefighter").OvertimeRate.Should().Be(60m);
+			profile.Lines.Should().NotContain(l => l.ClassificationCode == "Dog Handler");
+			_audits.Should().Contain(a => a.Type == AuditLogTypes.CalOesMarsRateDraftBuilt && a.After.Contains("\"LinesWritten\":2") && !a.After.Contains("61.33"), "the audit carries counts, never rates");
+
+			var admin = await _service.SaveRateProfileAsync(new CalOesMarsRateProfile { DepartmentId = DeptId, SubmissionYear = 2026, SubmissionType = (int)CalOesMarsSubmissionTypes.AdministrativeRate, EffectiveOn = new DateTime(2026, 1, 1) }, User, null, null);
+			(await _service.BuildSalarySurveyDraftAsync(admin.CalOesMarsRateProfileId, DeptId, new DateTime(2026, 6, 1), User, null, null)).Blockers.Should().Equal("profile_type");
 		}
 
 		[Test]

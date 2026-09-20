@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.Deployments.DeploymentDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceStrings
 @{
     var d = Model.Deployment;
     ViewBag.Title = "Resgrid | " + d.Name;
@@ -125,6 +126,10 @@
                 @if (Model.ContractorBilling)
                 {
                     <li class="@(Model.Tab == "billing" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="billing"><i class="fa fa-usd"></i> @contractorStrings["Billing"]</a></li>
+                }
+                @if (Model.CostCard != null)
+                {
+                    <li class="@(Model.Tab == "costs" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="costs"><i class="fa fa-calculator"></i> @workforceStrings["InternalCost"]</a></li>
                 }
             </ul>
 
@@ -364,6 +369,45 @@
                                 @foreach (var invoice in Model.Invoices) { <li><a asp-controller="Invoicing" asp-action="View" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a> · @invoice.Total.ToString("N2") @invoice.Currency</li> }
                             </ul>
                         }
+                    </div>
+                </div>
+            }
+            else if (Model.Tab == "costs" && Model.CostCard != null)
+            {
+                @* Phase E: actual loaded cost and contribution margin — aggregate categories only (plan decision 33). *@
+                <div class="row">
+                    <div class="col-md-5">
+                        @await Html.PartialAsync("_FieldCostCard", Model.CostCard)
+                    </div>
+                    <div class="col-md-7">
+                        @if (Model.CostComparison?.Estimate != null && Model.CostComparison.Actual != null)
+                        {
+                            <h4>@workforceStrings["EstimateVsActual"]</h4>
+                            <table class="table table-condensed">
+                                <thead><tr><th></th><th class="text-right">@workforceStrings["Estimate"]</th><th class="text-right">@workforceStrings["Actual"]</th><th class="text-right">@workforceStrings["Variance"]</th></tr></thead>
+                                <tr><td>@workforceStrings["Personnel"]</td><td class="text-right">@Model.CostComparison.Estimate.PersonnelTotal.ToString("N2")</td><td class="text-right">@Model.CostComparison.Actual.PersonnelTotal.ToString("N2")</td><td class="text-right">@Model.CostComparison.PersonnelVariance.ToString("N2")</td></tr>
+                                <tr><td>@workforceStrings["Resources"]</td><td class="text-right">@Model.CostComparison.Estimate.ResourceTotal.ToString("N2")</td><td class="text-right">@Model.CostComparison.Actual.ResourceTotal.ToString("N2")</td><td class="text-right">@Model.CostComparison.ResourceVariance.ToString("N2")</td></tr>
+                                <tr><td>@workforceStrings["Expenses"]</td><td class="text-right">@Model.CostComparison.Estimate.ExpenseTotal.ToString("N2")</td><td class="text-right">@Model.CostComparison.Actual.ExpenseTotal.ToString("N2")</td><td class="text-right">@Model.CostComparison.ExpenseVariance.ToString("N2")</td></tr>
+                                <tr class="active"><td><strong>@workforceStrings["Total"]</strong></td><td class="text-right">@Model.CostComparison.Estimate.TotalLoadedCost.ToString("N2")</td><td class="text-right">@Model.CostComparison.Actual.TotalLoadedCost.ToString("N2")</td><td class="text-right"><strong>@Model.CostComparison.TotalVariance.ToString("N2")</strong></td></tr>
+                            </table>
+                        }
+                        <h4>@workforceStrings["CostRuns"]</h4>
+                        <table class="table table-striped table-condensed">
+                            <thead><tr><th>@workforceStrings["Created"]</th><th>@workforceStrings["RunType"]</th><th>@workforceStrings["Status"]</th><th class="text-right">@workforceStrings["TotalLoadedCost"]</th><th class="text-right">@workforceStrings["Revenue"]</th><th class="text-right">@workforceStrings["Margin"]</th><th></th></tr></thead>
+                            <tbody>
+                            @foreach (var run in Model.CostRuns.OrderByDescending(r => r.AddedOn))
+                            {
+                                <tr>
+                                    <td>@run.AddedOn.ToString("yyyy-MM-dd")</td><td>@workforceStrings["RunType" + (Resgrid.Model.Workforce.FieldCostRunTypes)run.RunType]</td>
+                                    <td>@workforceStrings["RunStatus" + (Resgrid.Model.Workforce.FieldCostRunStatuses)run.Status]</td>
+                                    <td class="text-right">@run.TotalLoadedCost.ToString("N2") @run.Currency</td><td class="text-right">@(run.RevenueAmount?.ToString("N2") ?? "—")</td><td class="text-right">@(run.ContributionMargin?.ToString("N2") ?? "—")</td>
+                                    <td class="text-right"><a asp-controller="Workforce" asp-action="CostRun" asp-route-id="@run.FieldCostRunId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i></a></td>
+                                </tr>
+                            }
+                            @if (Model.CostRuns.Count == 0) { <tr><td colspan="7" class="text-muted">@workforceStrings["NoRuns"]</td></tr> }
+                            </tbody>
+                        </table>
+                        <a asp-controller="Workforce" asp-action="Usage" asp-route-deploymentId="@d.DeploymentId" class="btn btn-xs btn-default"><i class="fa fa-truck"></i> @workforceStrings["ResourceUsage"]</a>
                     </div>
                 </div>
             }

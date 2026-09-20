@@ -21,6 +21,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// the entity's own authorization rule before it is returned.
 	/// </summary>
 	[Area("User")]
+	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public class SearchController : SecureBaseController
 	{
 		private readonly IUnifiedSearchService _unifiedSearch;

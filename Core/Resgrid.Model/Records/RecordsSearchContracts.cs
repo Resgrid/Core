@@ -41,6 +41,9 @@ namespace Resgrid.Model
 
 	public class RecordsSearchRequest
 	{
+		public string Generation { get; set; }
+		/// <summary>Allows callers to withdraw narrative matching immediately, before the index rebuild.</summary>
+		public bool IncludeNarrative { get; set; } = true;
 		public string Text { get; set; }
 
 		/// <summary>Null means unrestricted; otherwise the viewer's visible group ids plus the always-visible cases.</summary>
@@ -57,6 +60,8 @@ namespace Resgrid.Model
 
 	public class RecordsSearchHit
 	{
+		public int DepartmentId { get; set; }
+		public string Generation { get; set; }
 		public string SourceType { get; set; }
 		public string SourceId { get; set; }
 		public string RecordNumber { get; set; }

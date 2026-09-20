@@ -355,6 +355,8 @@ namespace Resgrid.Tests.Services
 				"CustomerBillingProfiles", "Invoices", "InvoicePayments",
 				// Certifications, catalog v27 (Workforce & Business Operations plan, Phase D): read through the generic Records resolvers with CertificationProtectedFields accessors (CertificationService.Protection.cs).
 				"UnitCertifications", "PersonnelCertificationCredits",
+				// Deployment core, catalog v28 (Workforce & Business Operations plan, Phase C): read through the generic Records resolvers with DeploymentProtectedFields accessors (DeploymentService.Protection.cs).
+				"DeploymentTimeReports", "DeploymentExpenses", "DeploymentAttachments",
 				// RMS-5 prevention and investigations plus the RMS-4 quality review, catalog v13: read through the generic Records resolvers.
 				"RmsOccupancies", "RmsOccupancyHazards", "RmsInspections", "RmsViolations", "RmsPermits", "RmsPlanReviews",
 				"RmsInvestigationCases", "RmsInvestigationNotes", "RmsInvestigationEvidence", "RmsInvestigationCustody", "RmsInvestigationReferrals",

@@ -21,6 +21,14 @@ namespace Resgrid.Model.Repositories
 	{
 		Task<DepartmentCertificationSettings> GetAsync(int departmentId);
 		Task<DepartmentCertificationSettings> SaveAsync(DepartmentCertificationSettings settings, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Atomically records <paramref name="localDate"/> as the department's last claimed sweep date; false when that date
+		/// (or a later one) is already recorded, so exactly one caller runs a department's sweep for a local day.
+		/// Inserts the default settings row for a department that has never saved one.
+		/// </summary>
+		Task<bool> TryClaimSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default);
+		/// <summary>Gives a claim back after a failed sweep so the next tick of the same local day retries it.</summary>
+		Task ReleaseSweepClaimAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Continuing-education credit entries (M0214).</summary>

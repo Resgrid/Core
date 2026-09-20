@@ -261,6 +261,24 @@ ChecklistReminderSettingsUpdated,
 		UnitCertificationAdded,
 		UnitCertificationUpdated,
 		UnitCertificationRemoved,
-		UnitCertificationStatusChanged
+		UnitCertificationStatusChanged,
+
+		// Workforce & Business Operations plan Phase C (deployment core). Append-only; the contractor-billing and
+		// Cal OES MARS milestones append their own entries after these.
+		DeploymentCreated,
+		DeploymentUpdated,
+		DeploymentStatusChanged,
+		DeploymentRosterChanged,
+		DeploymentEquipmentChanged,
+		DeploymentAttachmentAdded,
+		DeploymentAttachmentRemoved,
+		TimeReportCreated,
+		TimeReportUpdated,
+		TimeReportSubmitted,
+		TimeReportApproved,
+		TimeReportVoided,
+		DeploymentExpenseAdded,
+		DeploymentExpenseUpdated,
+		DeploymentExpenseRemoved
 	}
 }

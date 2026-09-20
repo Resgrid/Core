@@ -513,6 +513,23 @@ namespace Resgrid.Services
 					scriptObject["invoice"] = invoice;
 					break;
 				}
+				case WorkflowTriggerEventType.DeploymentCreated:
+				case WorkflowTriggerEventType.DeploymentStatusChanged:
+				case WorkflowTriggerEventType.DeploymentRosterChanged:
+				case WorkflowTriggerEventType.DeploymentExpenseAdded:
+				case WorkflowTriggerEventType.TimeReportSubmitted:
+				case WorkflowTriggerEventType.TimeReportApproved:
+				{
+					var deploymentEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var deploymentPayload = deploymentEvent?.Payload ?? new JObject(); var deployment = new ScriptObject();
+					foreach (var pair in Resgrid.Model.Invoicing.DeploymentWorkflowPayload.Variables) deployment[pair.Variable] = ToScriptValue(deploymentPayload[pair.Property]);
+					var deploymentId = deploymentPayload["DeploymentId"]?.Type == JTokenType.String ? deploymentPayload["DeploymentId"].Value<string>() : null;
+					deployment["url"] = string.IsNullOrWhiteSpace(deploymentId)
+						? string.Empty
+						: $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Deployments/View/{deploymentId}";
+					scriptObject["deployment"] = deployment;
+					break;
+				}
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

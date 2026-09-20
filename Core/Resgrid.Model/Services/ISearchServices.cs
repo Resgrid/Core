@@ -82,6 +82,8 @@ namespace Resgrid.Model.Services
 
 	public class GlobalSearchQuery
 	{
+		/// <summary>Current department policy generation, supplied by the authorized orchestrator.</summary>
+		public string Generation { get; set; }
 		public string Text { get; set; }
 		public List<string> EntityTypes { get; set; }
 		public string ViewerUserId { get; set; }
@@ -93,6 +95,9 @@ namespace Resgrid.Model.Services
 
 	public class GlobalSearchHit
 	{
+		public int DepartmentId { get; set; }
+		public string Generation { get; set; }
+		public long RowVersion { get; set; }
 		public string ProjectionId { get; set; }
 		public string EntityType { get; set; }
 		public string EntityId { get; set; }

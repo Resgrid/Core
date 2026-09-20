@@ -172,7 +172,23 @@ ViewChecklistResults = 113,
 		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 43): view others' certification records and the expiry dashboard; own records are always visible. Defaults to department administrators.</summary>
 		ViewCertifications = 43,
 		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 44): certification types, role requirements and department certification settings. Defaults to department administrators.</summary>
-		ManageCertificationSetup = 44
+		ManageCertificationSetup = 44,
+
+		// -- Workforce & Business Operations Phase C (registry 116-119 + 79) ---------------------------------
+		// 118-119 are wired (catalog, claims, policies, Security page) by the deployment core milestone; 116, 117
+		// and 79 are declared so the values stay locked and gain their chain with the contractor-billing and
+		// Cal OES MARS milestones.
+
+		/// <summary>Phase C contractor billing (registry 116): create/edit/send/accept bids. Defaults to department administrators. Chain wired by the contractor milestone.</summary>
+		ManageBids = 116,
+		/// <summary>Phase C contractor billing (registry 117): service contracts, document requirements and compliance documents. Defaults to department administrators. Chain wired by the contractor milestone.</summary>
+		ManageContracts = 117,
+		/// <summary>Phase C deployment core (registry 118): create/edit deployments, roster, equipment, expenses, attachments and status transitions; view every deployment. Defaults to department administrators. Rostered members always see their own deployments and file time entries without it.</summary>
+		ManageDeployments = 118,
+		/// <summary>Phase C deployment core (registry 119): approve and void submitted daily time reports (TimeReports_Approve). Defaults to department administrators.</summary>
+		ApproveTimeReports = 119,
+		/// <summary>Phase C Cal OES MARS (registry 79): agency/rate/agreement management, protected portal handoff, external status observation and MARS invoice reconciliation. Defaults to department administrators. Chain wired by the MARS milestone.</summary>
+		ManageMutualAidReimbursement = 79
 	}
 
 }

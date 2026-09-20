@@ -731,6 +731,16 @@ namespace Resgrid.Services
 					personnel ? PermissionTypes.ViewProtectedPersonnelData : PermissionTypes.EditProtectedCallData,
 					Resgrid.Model.Certifications.CertificationProtectedFields.CatalogVersion));
 			}
+
+			// Workforce & Business Operations plan, Phase C (catalog 28, registered with M0218): the deployment core's
+			// customer signer name on daily time reports, expense descriptions and attachment names/bytes (receipts,
+			// signed requests, DTR PDFs, manifests), under the Contacts family. Identifiers, statuses, times, hours,
+			// amounts and the roster stay metadata. The Cal OES MARS identity/rate/agreement fields and compliance
+			// document blobs join this version with their milestones.
+			foreach (var (table, column, binary) in Resgrid.Model.Invoicing.DeploymentProtectedFields.All())
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ContactsFamily, table, column,
+					binary ? ProtectedFieldStorageKind.Binary : ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Pii,
+					PermissionTypes.ViewProtectedContactData, PermissionTypes.ViewProtectedContactData, Resgrid.Model.Invoicing.DeploymentProtectedFields.CatalogVersion));
 			return list;
 		}
 	}

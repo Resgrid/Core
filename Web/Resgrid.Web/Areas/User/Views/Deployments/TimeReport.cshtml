@@ -1,0 +1,207 @@
+@model Resgrid.Web.Areas.User.Models.Deployments.TimeReportEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    var r = Model.Report;
+    var d = Model.Deployment;
+    ViewBag.Title = "Resgrid | " + string.Format(localizer["TimeReportTitle"].Value, r.ReportNumber);
+    ViewData["Title"] = string.Format(localizer["TimeReportTitle"].Value, r.ReportNumber);
+    ViewData["Subtitle"] = $"{d.Name} · {r.ReportDate:yyyy-MM-dd}";
+    string LocalTime(DateTime utc) { try { return string.IsNullOrWhiteSpace(Model.TimeZone) ? utc.ToString("HH:mm") : Resgrid.Framework.DateTimeHelpers.GetLocalDateTime(utc, Model.TimeZone).ToString("HH:mm"); } catch { return utc.ToString("HH:mm"); } }
+    string LocalStamp(DateTime? utc) => utc.HasValue ? (Model.Department == null ? utc.Value.ToString("yyyy-MM-dd HH:mm") : Resgrid.Model.Helpers.TimeConverterHelper.TimeConverter(utc.Value, Model.Department).ToString("yyyy-MM-dd HH:mm")) : "—";
+    string SubjectName(string id) => id != null && Model.SubjectNames.TryGetValue(id, out var n) ? n : id;
+    var entries = r.Entries.OrderBy(e => e.SortOrder).ThenBy(e => e.StartTime).ToList();
+    var status = (Resgrid.Model.Invoicing.DeploymentTimeReportStatuses)r.Status;
+    var canSubmit = Model.CanEdit && status == Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Draft;
+    var canApprove = Model.CanApprove && status == Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Submitted;
+    var canVoid = Model.CanApprove && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Void && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Billed;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
+    @foreach (var issue in Model.Validation.Errors)
+    {
+        <div class="alert alert-danger"><i class="fa fa-times-circle"></i> @localizer["Issue" + issue.Code] @(string.IsNullOrWhiteSpace(issue.SubjectId) ? "" : "— " + SubjectName(issue.SubjectId))</div>
+    }
+    @foreach (var issue in Model.Validation.Warnings)
+    {
+        <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["Issue" + issue.Code] @(string.IsNullOrWhiteSpace(issue.SubjectId) ? "" : "— " + SubjectName(issue.SubjectId)) @(string.IsNullOrWhiteSpace(issue.Detail) ? "" : $"({issue.Detail})")</div>
+    }
+
+    <form method="post" asp-action="SaveTimeReport" asp-route-id="@r.DeploymentTimeReportId" id="dtrForm">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-md-8">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>@localizer["TimeReport"] #@r.ReportNumber @await Html.PartialAsync("_ReportStatusBadge", r.Status)</h5>
+                        <div class="ibox-tools">
+                            <a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="time" class="btn btn-default btn-xs"><i class="fa fa-arrow-left"></i> @localizer["BackToDeployment"]</a>
+                            <a asp-action="TimeReportPdf" asp-route-id="@r.DeploymentTimeReportId" class="btn btn-default btn-xs" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-4"><label>@localizer["IncidentNumber"]</label><input type="text" name="incidentNumber" class="form-control input-sm" value="@r.IncidentNumber" maxlength="100" disabled="@(!Model.CanEdit)" /></div>
+                            <div class="col-sm-4"><label>@localizer["ResourceOrderNumber"]</label><input type="text" name="resourceOrderNumber" class="form-control input-sm" value="@r.ResourceOrderNumber" maxlength="100" disabled="@(!Model.CanEdit)" /></div>
+                            <div class="col-sm-4"><label>@localizer["RequestNumber"]</label><input type="text" name="requestNumber" class="form-control input-sm" value="@r.RequestNumber" maxlength="100" disabled="@(!Model.CanEdit)" /></div>
+                        </div>
+                        <div class="row m-t-sm">
+                            <div class="col-sm-4"><label>@localizer["CostCode"]</label><input type="text" name="costCode" class="form-control input-sm" value="@r.CostCode" maxlength="100" disabled="@(!Model.CanEdit)" /></div>
+                            <div class="col-sm-4"><label>@localizer["PointOfHire"]</label><input type="text" name="pointOfHire" class="form-control input-sm" value="@r.PointOfHire" maxlength="250" disabled="@(!Model.CanEdit)" /></div>
+                            <div class="col-sm-4">
+                                <label>&nbsp;</label>
+                                <div class="checkbox"><label><input type="checkbox" name="noClear8" value="true" checked="@r.NoClear8" disabled="@(!Model.CanEdit)" /> @localizer["NoClear8"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" name="unsafeConditionsStandDown" value="true" checked="@r.UnsafeConditionsStandDown" disabled="@(!Model.CanEdit)" /> @localizer["UnsafeStandDown"]</label></div>
+                            </div>
+                        </div>
+
+                        <h4 class="m-t-md">@localizer["TimeEntries"] <small>@localizer["TimesLocal"] (@Model.TimeZone)</small></h4>
+                        <table class="table table-condensed" id="entries">
+                            <thead><tr><th>@localizer["Subject"]</th><th>@localizer["EntryType"]</th><th>@localizer["Start"]</th><th>@localizer["End"]</th><th>@localizer["PaidBreak"]</th><th>@localizer["UnpaidBreak"]</th><th>@localizer["Km"]</th><th>@localizer["Notes"]</th><th></th></tr></thead>
+                            <tbody>
+                                @for (var i = 0; i < entries.Count; i++)
+                                {
+                                    var e = entries[i];
+                                    <tr>
+                                        <td><select name="entries[@i].SubjectId" class="form-control input-sm" disabled="@(!Model.CanEdit)">@foreach (var s in Model.Subjects) { <option value="@s.Id" selected="@(s.Id == e.SubjectId)">@s.Name</option> }@if (Model.Subjects.All(s => s.Id != e.SubjectId)) { <option value="@e.SubjectId" selected>@SubjectName(e.SubjectId)</option> }</select></td>
+                                        <td><select name="entries[@i].EntryType" class="form-control input-sm" disabled="@(!Model.CanEdit)">@foreach (Resgrid.Model.Invoicing.DeploymentTimeEntryTypes t in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes))) { <option value="@((int)t)" selected="@((int)t == e.EntryType)">@localizer["Entry" + t]</option> }</select></td>
+                                        <td><input type="time" name="entries[@i].Start" class="form-control input-sm" value="@LocalTime(e.StartTime)" disabled="@(!Model.CanEdit)" /></td>
+                                        <td><input type="time" name="entries[@i].End" class="form-control input-sm" value="@LocalTime(e.EndTime)" disabled="@(!Model.CanEdit)" /></td>
+                                        <td><input type="number" name="entries[@i].PaidBreakMinutes" class="form-control input-sm" value="@e.PaidBreakMinutes" min="0" disabled="@(!Model.CanEdit)" /></td>
+                                        <td><input type="number" name="entries[@i].UnpaidBreakMinutes" class="form-control input-sm" value="@e.UnpaidBreakMinutes" min="0" disabled="@(!Model.CanEdit)" /></td>
+                                        <td><input type="number" step="0.1" name="entries[@i].MileageKm" class="form-control input-sm" value="@e.MileageKm" min="0" disabled="@(!Model.CanEdit)" /></td>
+                                        <td><input type="text" name="entries[@i].Notes" class="form-control input-sm" value="@e.Notes" maxlength="500" disabled="@(!Model.CanEdit)" /><input type="hidden" name="entries[@i].CertificationCode" value="@e.CertificationCode" /></td>
+                                        <td>@if (Model.CanEdit) { <button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button> } <small class="text-muted">@e.Hours.ToString("0.00")h</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.CanEdit)
+                        {
+                            <button type="button" class="btn btn-sm btn-default" id="addRow"><i class="fa fa-plus"></i> @localizer["AddEntry"]</button>
+                        }
+                        <div class="m-t-md">
+                            <label>@localizer["Notes"]</label>
+                            <textarea name="notes" class="form-control" rows="2" disabled="@(!Model.CanEdit)">@r.Notes</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Actions"]</h5></div>
+                    <div class="ibox-content">
+                        @if (Model.CanEdit)
+                        {
+                            <button type="submit" name="action" value="save" class="btn btn-primary btn-block"><i class="fa fa-save"></i> @localizer["Save"]</button>
+                            @if (canSubmit)
+                            {
+                                <button type="submit" name="action" value="submit" class="btn btn-success btn-block" onclick="return confirm('@localizer["SubmitConfirm"]');"><i class="fa fa-check"></i> @localizer["SaveAndSubmit"]</button>
+                            }
+                        }
+                        <dl class="dl-horizontal m-t-md">
+                            <dt>@localizer["Submitted"]</dt><dd>@LocalStamp(r.SubmittedOn)</dd>
+                            <dt>@localizer["Approved"]</dt><dd>@LocalStamp(r.ApprovedOn)</dd>
+                            @if (!string.IsNullOrWhiteSpace(r.InvoiceId)) { <dt>@localizer["Invoice"]</dt><dd><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@r.InvoiceId">@localizer["OpenInvoice"]</a></dd> }
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Signatures"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["ContractorSignature"]</dt><dd>@(r.ContractorSignedOn.HasValue ? $"{Model.ContractorSignerName} · {LocalStamp(r.ContractorSignedOn)}" : "—")</dd>
+                        <dt>@localizer["CustomerSignature"]</dt><dd>@(r.CustomerSignedOn.HasValue ? $"{Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.CustomerSignerName)} · {LocalStamp(r.CustomerSignedOn)}" : "—")</dd>
+                    </dl>
+                    @if ((Model.CanManage || Model.IsRostered) && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Void && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Billed)
+                    {
+                        <form method="post" asp-action="SignTimeReport" asp-route-id="@r.DeploymentTimeReportId" class="form-inline">
+                            @Html.AntiForgeryToken()
+                            <label class="checkbox-inline"><input type="checkbox" name="contractorSigned" value="true" checked="@(!r.ContractorSignedOn.HasValue)" /> @localizer["SignAsContractor"]</label>
+                            <input type="text" name="customerSignerName" class="form-control input-sm" placeholder="@localizer["CustomerSignerName"]" maxlength="200" />
+                            <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-pencil-square-o"></i> @localizer["Sign"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Expenses"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Expenses.Count == 0) { <p class="text-muted">@localizer["NoExpenses"]</p> }
+                    else
+                    {
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["Type"]</th><th>@localizer["Description"]</th><th class="text-right">@localizer["Amount"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var e in Model.Expenses)
+                                {
+                                    <tr><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(e.Description)</td><td class="text-right">@e.Amount.ToString("N2") @e.Currency</td><td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    @if ((Model.CanManage || Model.IsRostered) && r.IsEditable)
+                    {
+                        @await Html.PartialAsync("_ExpenseForm", (d.DeploymentId, r.DeploymentTimeReportId, d.Currency))
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (canApprove || canVoid || Model.CanManage || Model.IsRostered)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Review"]</h5></div>
+                    <div class="ibox-content">
+                        @if (canApprove)
+                        {
+                            <form method="post" asp-action="ApproveTimeReport" asp-route-id="@r.DeploymentTimeReportId">@Html.AntiForgeryToken()<button class="btn btn-success btn-block" onclick="return confirm('@localizer["ApproveConfirm"]');"><i class="fa fa-thumbs-up"></i> @localizer["Approve"]</button></form>
+                        }
+                        @if (canVoid)
+                        {
+                            <form method="post" asp-action="VoidTimeReport" asp-route-id="@r.DeploymentTimeReportId" class="m-t-sm">@Html.AntiForgeryToken()<input type="text" name="reason" class="form-control input-sm m-b-xs" placeholder="@localizer["VoidReason"]" maxlength="250" /><button class="btn btn-danger btn-block" onclick="return confirm('@localizer["VoidConfirm"]');"><i class="fa fa-ban"></i> @localizer["Void"]</button></form>
+                        }
+                        <form method="post" asp-action="FileTimeReportPdf" asp-route-id="@r.DeploymentTimeReportId" class="m-t-sm">@Html.AntiForgeryToken()<button class="btn btn-default btn-block"><i class="fa fa-file-pdf-o"></i> @localizer["FilePdf"]</button></form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var table = document.getElementById('entries'); if (!table) return;
+            var body = table.querySelector('tbody');
+            function reindex() {
+                var rows = body.querySelectorAll('tr');
+                for (var i = 0; i < rows.length; i++) rows[i].querySelectorAll('[name]').forEach(function (el) { el.name = el.name.replace(/entries\[\d+\]/, 'entries[' + i + ']'); });
+            }
+            body.addEventListener('click', function (ev) { var b = ev.target.closest('.remove-row'); if (!b) return; b.closest('tr').remove(); reindex(); });
+            var add = document.getElementById('addRow');
+            if (add) add.addEventListener('click', function () {
+                var rows = body.querySelectorAll('tr'); var clone;
+                if (rows.length) { clone = rows[rows.length - 1].cloneNode(true); clone.querySelectorAll('input[type=text],input[type=number]').forEach(function (i) { i.value = ''; }); }
+                else {
+                    clone = document.createElement('tr');
+                    clone.innerHTML = '<td><select name="entries[0].SubjectId" class="form-control input-sm">@Html.Raw(string.Join("", Model.Subjects.Select(s => $"<option value=\"{s.Id}\">{System.Net.WebUtility.HtmlEncode(s.Name)}</option>")))</select></td>' +
+                        '<td><select name="entries[0].EntryType" class="form-control input-sm">@Html.Raw(string.Join("", Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes)).Cast<Resgrid.Model.Invoicing.DeploymentTimeEntryTypes>().Select(t => $"<option value=\"{(int)t}\">{System.Net.WebUtility.HtmlEncode(localizer["Entry" + t].Value)}</option>")))</select></td>' +
+                        '<td><input type="time" name="entries[0].Start" class="form-control input-sm" value="08:00" /></td><td><input type="time" name="entries[0].End" class="form-control input-sm" value="16:00" /></td>' +
+                        '<td><input type="number" name="entries[0].PaidBreakMinutes" class="form-control input-sm" value="0" min="0" /></td><td><input type="number" name="entries[0].UnpaidBreakMinutes" class="form-control input-sm" value="0" min="0" /></td>' +
+                        '<td><input type="number" step="0.1" name="entries[0].MileageKm" class="form-control input-sm" min="0" /></td><td><input type="text" name="entries[0].Notes" class="form-control input-sm" maxlength="500" /></td>' +
+                        '<td><button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button></td>';
+                }
+                body.appendChild(clone); reindex();
+            });
+        })();
+    </script>
+}

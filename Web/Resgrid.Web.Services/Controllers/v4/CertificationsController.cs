@@ -30,6 +30,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Authorize]
 	public class CertificationsController : V4AuthenticatedApiControllerbase
 	{
+		/// <summary>Same ceiling as the MVC upload path (CertificationsController.MaxFileBytes).</summary>
+		private const int MaxFileBytes = 10 * 1024 * 1024;
+
 		private readonly ICertificationService _certifications;
 		private readonly IProtectedReadService _protectedRead;
 		private readonly IDepartmentsService _departments;
@@ -52,6 +55,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(failed);
 			Response.Headers["X-Resgrid-Reason"] = reason;
 			return BadRequest(failed);
+		}
+
+		/// <summary>
+		/// Decodes a base64 upload under the MVC size ceiling: the encoded length is checked before the decode so an
+		/// oversized payload is refused without the allocation. Throws certifications_file_too_large / FormatException,
+		/// both of which the actions already map.
+		/// </summary>
+		private static byte[] DecodeFile(string base64)
+		{
+			var encoded = base64.Trim();
+			if (encoded.Length > ((MaxFileBytes + 2) / 3) * 4)
+				throw new InvalidOperationException("certifications_file_too_large");
+			var bytes = Convert.FromBase64String(encoded);
+			if (bytes.Length > MaxFileBytes)
+				throw new InvalidOperationException("certifications_file_too_large");
+			return bytes;
 		}
 
 		#region Types
@@ -194,7 +213,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				record.ExpiresOn = input.ExpiresOn; record.RecievedOn = input.ReceivedOn;
 				if (!string.IsNullOrWhiteSpace(input.FileData))
 				{
-					record.Data = Convert.FromBase64String(input.FileData);
+					record.Data = DecodeFile(input.FileData);
 					record.Filename = input.FileName;
 					record.Filetype = input.FileType;
 				}
@@ -303,7 +322,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var credit = new PersonnelCertificationCredit { PersonnelCertificationId = input.CertificationId, DepartmentId = DepartmentId, CreditDate = input.CreditDate ?? DateTime.UtcNow.Date, Hours = input.Hours, Category = input.Category, Description = input.Description, FileName = input.FileName, FileType = input.FileType };
-				if (!string.IsNullOrWhiteSpace(input.FileData)) credit.Data = Convert.FromBase64String(input.FileData);
+				if (!string.IsNullOrWhiteSpace(input.FileData)) credit.Data = DecodeFile(input.FileData);
 				await _certifications.AddCertificationCreditAsync(credit, UserId, cancellationToken);
 				return await GetCertificationCredits(input.CertificationId);
 			}
@@ -370,7 +389,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var row = new UnitCertification { UnitCertificationId = input.Id, UnitId = input.UnitId, DepartmentId = DepartmentId, DepartmentCertificationTypeId = input.TypeId, Number = input.Number, IssuedBy = input.IssuedBy, IssuedOn = input.IssuedOn, ExpiresOn = input.ExpiresOn, Notes = input.Notes, FileName = input.FileName, FileType = input.FileType };
-				if (!string.IsNullOrWhiteSpace(input.FileData)) row.Data = Convert.FromBase64String(input.FileData);
+				if (!string.IsNullOrWhiteSpace(input.FileData)) row.Data = DecodeFile(input.FileData);
 				var saved = await _certifications.SaveUnitCertificationAsync(row, UserId, cancellationToken);
 				var reloaded = await _certifications.GetUnitCertificationByIdAsync(saved.UnitCertificationId) ?? saved;
 				var types = (await _certifications.GetAllCertificationTypesByDepartmentAsync(DepartmentId)).ToDictionary(t => t.DepartmentCertificationTypeId);

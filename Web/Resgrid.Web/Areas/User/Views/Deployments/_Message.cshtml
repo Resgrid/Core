@@ -1,0 +1,10 @@
+@model Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@if (Model.SaveSuccess)
+{
+    <div class="alert alert-success">@localizer["Saved"]</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-danger">@Model.Message</div>
+}

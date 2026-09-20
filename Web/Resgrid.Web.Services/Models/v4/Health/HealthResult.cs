@@ -57,8 +57,8 @@ namespace Resgrid.Web.Services.Models.v4.Health
 		/// <summary>A local reader is open for the global index (after a pull or a write).</summary>
 		public bool SearchOnline { get; set; }
 
-		/// <summary>Documents in this process's copy of the global and records indexes.</summary>
-		public int SearchIndexDocCount { get; set; }
+		/// <summary>Suppressed: shared-index counts disclose other departments' data volumes.</summary>
+		public int? SearchIndexDocCount { get; set; }
 
 		/// <summary>
 		/// Department-connected Stripe payment collection is enabled in this process (PaymentConnectConfig.Enabled and

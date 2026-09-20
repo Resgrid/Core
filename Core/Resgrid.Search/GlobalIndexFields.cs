@@ -42,6 +42,7 @@ namespace Resgrid.Search
 		public const string Url = "Url";
 		public const string MetadataJson = "MetadataJson";
 		public const string Generation = "Generation";
+		public const string RowVersion = "RowVersion";
 
 		public const int PrefixMinGram = 1;
 		public const int PrefixMaxGram = 20;

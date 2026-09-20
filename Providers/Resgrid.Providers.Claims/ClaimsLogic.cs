@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All))
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1771,6 +1771,14 @@ namespace Resgrid.Providers.Claims
 						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View)
 					};
+				case PermissionTypes.ManageDeployments:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Deployments, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Deployments, ResgridClaimTypes.Actions.View)
+					};
+				case PermissionTypes.ApproveTimeReports:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.TimeReports, ResgridClaimTypes.Actions.Approve) };
 				case PermissionTypes.ManageChecklists:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update) };
 				case PermissionTypes.ViewChecklistResults:

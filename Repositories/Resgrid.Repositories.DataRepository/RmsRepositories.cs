@@ -106,6 +106,16 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 
 		protected static bool IsPostgres => DataConfig.DatabaseType == DatabaseTypes.Postgres;
 
+		/// <summary>PostgreSQL 23505 or SQL Server 2601/2627: the one insert failure an insert-then-update race is allowed to absorb.</summary>
+		protected internal static bool IsUniqueViolation(Exception ex)
+		{
+			if (ex is Npgsql.PostgresException postgres)
+				return postgres.SqlState == "23505";
+			if (ex is Microsoft.Data.SqlClient.SqlException sql)
+				return sql.Number == 2601 || sql.Number == 2627;
+			return false;
+		}
+
 		// Records store UTC clock values in PostgreSQL timestamp columns without a time zone.
 		// DateTime2 preserves precision on both providers, but Npgsql requires an Unspecified kind.
 		protected static DateTime DatabaseTimestamp(DateTime value)

@@ -90,6 +90,45 @@ namespace Resgrid.Repositories.DataRepository
 					parameters, cancellationToken);
 			return await GetAsync(settings.DepartmentId);
 		}
+
+		public async Task<bool> TryClaimSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default)
+		{
+			var date = DatabaseTimestamp(localDate.Date);
+			// One conditional UPDATE is the claim: it only moves the marker forward, so two workers on the same local day
+			// cannot both win, and a repeated hour after a daylight-saving change finds the day already taken.
+			var claimed = await ExecuteAsync(
+				$"UPDATE {Tbl("DepartmentCertificationSettings")} SET {Col("LastSweepLocalDate")} = {P}Date WHERE {Col("DepartmentId")} = {P}DepartmentId AND ({Col("LastSweepLocalDate")} IS NULL OR {Col("LastSweepLocalDate")} < {P}Date)",
+				new { DepartmentId = departmentId, Date = date }, cancellationToken);
+			if (claimed > 0)
+				return true;
+			if (await GetAsync(departmentId) != null)
+				return false;
+
+			// No settings row yet (the department never opened the settings page): the claim inserts the defaults.
+			var defaults = new DepartmentCertificationSettings { DepartmentId = departmentId };
+			try
+			{
+				await ExecuteAsync(
+					$"INSERT INTO {Tbl("DepartmentCertificationSettings")} ({Cols("DepartmentId", "EnforcementMode", "RoleRemovalGraceDays", "NotifyLeadDaysCsv", "NotifyCertificationHolder", "TreatPendingVerificationAsValid", "SendAdminDigest", "UpdatedOn", "UpdatedByUserId", "LastSweepLocalDate")}) " +
+					$"VALUES ({P}DepartmentId, {P}EnforcementMode, {P}RoleRemovalGraceDays, {P}NotifyLeadDaysCsv, {P}NotifyCertificationHolder, {P}TreatPendingVerificationAsValid, {P}SendAdminDigest, {P}UpdatedOn, {P}UpdatedByUserId, {P}Date)",
+					new
+					{
+						defaults.DepartmentId, defaults.EnforcementMode, defaults.RoleRemovalGraceDays, defaults.NotifyLeadDaysCsv, defaults.NotifyCertificationHolder, defaults.TreatPendingVerificationAsValid,
+						defaults.SendAdminDigest, UpdatedOn = DatabaseTimestamp(DateTime.UtcNow), UpdatedByUserId = (string)null, Date = date
+					}, cancellationToken);
+				return true;
+			}
+			catch (Exception ex) when (IsUniqueViolation(ex))
+			{
+				// Another worker inserted the row (and its claim) first.
+				return false;
+			}
+		}
+
+		public Task ReleaseSweepClaimAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default) =>
+			ExecuteAsync(
+				$"UPDATE {Tbl("DepartmentCertificationSettings")} SET {Col("LastSweepLocalDate")} = NULL WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LastSweepLocalDate")} = {P}Date",
+				new { DepartmentId = departmentId, Date = DatabaseTimestamp(localDate.Date) }, cancellationToken);
 	}
 
 	/// <summary>Continuing-education credits (M0214).</summary>

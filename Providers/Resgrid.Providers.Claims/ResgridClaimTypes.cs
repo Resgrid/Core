@@ -63,6 +63,8 @@ namespace Resgrid.Providers.Claims
 			public const string WorkOrder = "WorkOrder";
 			public const string Invoicing = "Invoicing";
 			public const string Certifications = "Certifications";
+			public const string Deployments = "Deployments";
+			public const string TimeReports = "TimeReports";
 			public const string Checklist = "Checklist";
 			public const string ChecklistResults = "ChecklistResults";
 			// Resources

@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-8">
-                        <div class="checkbox"><label><input type="checkbox" name="TreatPendingVerificationAsValid" value="true" checked="@s.TreatPendingVerificationAsValid" /> @localizer["TreatPendingVerificationAsValid"]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="TreatPendingVerificationAsValid" value="true" checked="@s.TreatPendingVerificationAsValid" /><input type="hidden" name="TreatPendingVerificationAsValid" value="false" /> @localizer["TreatPendingVerificationAsValid"]</label></div>
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
@@ -50,8 +50,8 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-8">
-                        <div class="checkbox"><label><input type="checkbox" name="NotifyCertificationHolder" value="true" checked="@s.NotifyCertificationHolder" /> @localizer["NotifyCertificationHolder"]</label></div>
-                        <div class="checkbox"><label><input type="checkbox" name="SendAdminDigest" value="true" checked="@s.SendAdminDigest" /> @localizer["SendAdminDigest"]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="NotifyCertificationHolder" value="true" checked="@s.NotifyCertificationHolder" /><input type="hidden" name="NotifyCertificationHolder" value="false" /> @localizer["NotifyCertificationHolder"]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="SendAdminDigest" value="true" checked="@s.SendAdminDigest" /><input type="hidden" name="SendAdminDigest" value="false" /> @localizer["SendAdminDigest"]</label></div>
                         <span class="help-block m-b-none">@localizer["NotificationsHint"] <a asp-controller="Notifications" asp-action="Index" asp-route-area="User">@localizer["NotificationSettings"]</a></span>
                     </div>
                 </div>

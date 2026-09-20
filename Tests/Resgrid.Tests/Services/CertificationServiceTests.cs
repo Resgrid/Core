@@ -111,6 +111,18 @@ namespace Resgrid.Tests.Services
 			var settings = new Mock<IDepartmentCertificationSettingsRepository>();
 			settings.Setup(r => r.GetAsync(Dept)).ReturnsAsync(() => _settings);
 			settings.Setup(r => r.SaveAsync(It.IsAny<DepartmentCertificationSettings>(), It.IsAny<CancellationToken>())).ReturnsAsync((DepartmentCertificationSettings s, CancellationToken _) => _settings = s);
+			// The claim semantics of the repository's conditional UPDATE: the marker only moves forward, one winner per local day.
+			settings.Setup(r => r.TryClaimSweepAsync(Dept, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync((int _, DateTime day, CancellationToken __) =>
+			{
+				_settings ??= new DepartmentCertificationSettings { DepartmentId = Dept };
+				if (_settings.LastSweepLocalDate.HasValue && _settings.LastSweepLocalDate.Value >= day.Date) return false;
+				_settings.LastSweepLocalDate = day.Date; return true;
+			});
+			settings.Setup(r => r.ReleaseSweepClaimAsync(Dept, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).Returns((int _, DateTime day, CancellationToken __) =>
+			{
+				if (_settings?.LastSweepLocalDate == day.Date) _settings.LastSweepLocalDate = null;
+				return Task.CompletedTask;
+			});
 
 			var credits = new Mock<IPersonnelCertificationCreditsRepository>();
 			credits.Setup(r => r.GetByCertificationIdAsync(It.IsAny<int>())).ReturnsAsync((int id) => _credits.Where(c => c.PersonnelCertificationId == id).ToList());
@@ -248,6 +260,24 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Editing_an_expired_record_with_a_future_expiry_reactivates_it_the_way_renew_does()
+		{
+			// A type that requires sign-off goes back through PendingVerification; a plain type returns to Active.
+			var expiredSkills = AddRecord(3, Today.AddDays(-2), status: PersonnelCertificationStatuses.Expired);
+			var edited = await _service.SaveCertificationAsync(new PersonnelCertification { PersonnelCertificationId = expiredSkills.PersonnelCertificationId, DepartmentId = Dept, UserId = "u1", Name = "Skills", DepartmentCertificationTypeId = 3, ExpiresOn = Today.AddYears(1) });
+			edited.Status.Should().Be((int)PersonnelCertificationStatuses.PendingVerification, "the plain edit form must not bypass the verifier");
+			edited.StatusReason.Should().BeNull();
+
+			var expiredPlain = AddRecord(1, Today.AddDays(-2), status: PersonnelCertificationStatuses.Expired);
+			var reactivated = await _service.SaveCertificationAsync(new PersonnelCertification { PersonnelCertificationId = expiredPlain.PersonnelCertificationId, DepartmentId = Dept, UserId = "u1", Name = "Card", DepartmentCertificationTypeId = 1, ExpiresOn = Today.AddYears(1) });
+			reactivated.Status.Should().Be((int)PersonnelCertificationStatuses.Active);
+
+			var stillExpired = AddRecord(1, Today.AddDays(-2), status: PersonnelCertificationStatuses.Expired);
+			var unchanged = await _service.SaveCertificationAsync(new PersonnelCertification { PersonnelCertificationId = stillExpired.PersonnelCertificationId, DepartmentId = Dept, UserId = "u1", Name = "Card", DepartmentCertificationTypeId = 1, ExpiresOn = Today.AddDays(-2) });
+			unchanged.Status.Should().Be((int)PersonnelCertificationStatuses.Expired, "an expiry still in the past keeps the record expired");
+		}
+
+		[Test]
 		public async Task Credits_attach_to_person_records_only_and_roll_up()
 		{
 			var record = AddRecord(1, Today.AddYears(1));
@@ -366,8 +396,22 @@ namespace Resgrid.Tests.Services
 
 			_published.Clear(); _notified.Clear();
 			var again = await _service.RunExpirySweepAsync(Dept, Today);
-			again.Expired.Should().Be(0); again.UnitsExpired.Should().Be(0); again.ExpiringNotified.Should().Be(1, "the same local day repeats the lead-day match; a new day will not");
+			again.Expired.Should().Be(0); again.UnitsExpired.Should().Be(0); again.ExpiringNotified.Should().Be(1, "the same local day repeats the lead-day match; the worker's day claim is what prevents a second run");
 			(await _service.RunExpirySweepAsync(Dept, Today.AddDays(1))).ExpiringNotified.Should().Be(1, "only the record due in 8 days reaches its 7-day lead tomorrow");
+		}
+
+		[Test]
+		public async Task The_sweep_day_claim_is_granted_once_per_local_day_and_a_release_lets_the_same_day_retry()
+		{
+			_settings = null;
+			(await _service.TryClaimSweepDayAsync(Dept, Today.AddHours(6))).Should().BeTrue("a department without a settings row gets one on its first claim");
+			_settings.LastSweepLocalDate.Should().Be(Today);
+			(await _service.TryClaimSweepDayAsync(Dept, Today.AddHours(7))).Should().BeFalse("a repeated or drifted tick on the same local day is skipped");
+			(await _service.TryClaimSweepDayAsync(Dept, Today.AddDays(-1))).Should().BeFalse("the marker never moves backwards");
+
+			await _service.ReleaseSweepDayAsync(Dept, Today);
+			(await _service.TryClaimSweepDayAsync(Dept, Today)).Should().BeTrue("a failed sweep hands the day back so the next tick retries it");
+			(await _service.TryClaimSweepDayAsync(Dept, Today.AddDays(1))).Should().BeTrue("the next local day is a new claim");
 		}
 
 		[Test]

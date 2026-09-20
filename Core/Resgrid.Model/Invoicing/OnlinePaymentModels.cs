@@ -203,7 +203,8 @@ namespace Resgrid.Model.Invoicing
 	/// <summary>
 	/// A received provider webhook event (plan B2.2): the idempotency ledger and the forensic copy of the body.
 	/// The body contains no card data by construction (hosted Checkout); rows are purged after
-	/// PaymentConnectConfig.EventRetentionDays.
+	/// PaymentConnectConfig.EventRetentionDays. Its own table: the legacy SaaS-billing <see cref="PaymentProviderEvent"/>
+	/// already owns PaymentProviderEvents with a different shape.
 	/// </summary>
 	public class PaymentConnectEvent : IEntity
 	{
@@ -227,7 +228,7 @@ namespace Resgrid.Model.Invoicing
 		public string PayloadJson { get; set; }
 
 		[NotMapped]
-		public string TableName => "PaymentProviderEvents";
+		public string TableName => "PaymentConnectEvents";
 
 		[NotMapped]
 		public string IdName => "PaymentConnectEventId";

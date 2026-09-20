@@ -1,0 +1,30 @@
+@model (string DeploymentId, string TimeReportId, string Currency)
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+<form method="post" asp-controller="Deployments" asp-action="SaveExpense" asp-route-area="User" enctype="multipart/form-data" class="form-horizontal">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="DeploymentId" value="@Model.DeploymentId" />
+    <input type="hidden" name="DeploymentTimeReportId" value="@Model.TimeReportId" />
+    <div class="form-group">
+        <label class="col-sm-2 control-label">@localizer["ExpenseDate"]</label><div class="col-sm-2"><input type="date" name="ExpenseDate" class="form-control input-sm" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required /></div>
+        <label class="col-sm-1 control-label">@localizer["Type"]</label><div class="col-sm-3">
+            <select name="ExpenseType" class="form-control input-sm">
+                @foreach (Resgrid.Model.Invoicing.DeploymentExpenseTypes type in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentExpenseTypes))) { <option value="@((int)type)">@localizer["Expense" + type]</option> }
+            </select>
+        </div>
+        <label class="col-sm-1 control-label">@localizer["Amount"]</label><div class="col-sm-2"><input type="number" step="0.01" min="0" name="Amount" class="form-control input-sm" required /></div>
+        <div class="col-sm-1"><input type="text" name="Currency" class="form-control input-sm" maxlength="3" value="@Model.Currency" placeholder="USD" /></div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">@localizer["Description"]</label><div class="col-sm-5"><input type="text" name="Description" class="form-control input-sm" maxlength="500" /></div>
+        <label class="col-sm-1 control-label">@localizer["City"]</label><div class="col-sm-2"><input type="text" name="City" class="form-control input-sm" maxlength="100" /></div>
+        <div class="col-sm-2"><input type="text" name="MealCode" class="form-control input-sm" maxlength="10" placeholder="@localizer["MealCode"]" /></div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">@localizer["Receipt"]</label><div class="col-sm-5"><input type="file" name="receipt" class="form-control input-sm" /></div>
+        <div class="col-sm-5">
+            <label class="checkbox-inline"><input type="checkbox" name="PreApproved" value="true" /> @localizer["PreApproved"]</label>
+            <label class="checkbox-inline"><input type="checkbox" name="Billable" value="true" checked /> @localizer["Billable"]</label>
+            <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> @localizer["AddExpense"]</button>
+        </div>
+    </div>
+</form>

@@ -246,6 +246,16 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentCertificationSettingsRepository>().As<IDepartmentCertificationSettingsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelCertificationCreditsRepository>().As<IPersonnelCertificationCreditsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitCertificationRepository>().As<IUnitCertificationRepository>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan Phase C (M0218): the free deployment core (deployments, roster, time reports, expenses, attachments).
+			builder.RegisterType<DeploymentRepository>().As<IDeploymentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentUnitRepository>().As<IDeploymentUnitRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentPersonnelRepository>().As<IDeploymentPersonnelRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentEquipmentRepository>().As<IDeploymentEquipmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentTimeReportRepository>().As<IDeploymentTimeReportRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentTimeEntryRepository>().As<IDeploymentTimeEntryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentExpenseRepository>().As<IDeploymentExpenseRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DeploymentAttachmentRepository>().As<IDeploymentAttachmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TimeReportNumberSequenceRepository>().As<ITimeReportNumberSequenceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentBillingIdentityRepository>().As<IDepartmentBillingIdentityRepository>().InstancePerLifetimeScope();
 
 			// Indoor Maps Repositories

@@ -13,6 +13,6 @@
             <p class="lead">@Model.DepartmentName@(Model.InvoiceNumber > 0 ? " — #" + Model.InvoiceNumber : "")</p>
         }
         <p>@localizer["PayReturnText"]</p>
-        <p><a href="/pay/@token" class="btn btn-default">@localizer["BackToInvoice"]</a></p>
+        <p><a href="@Url.Action("Index", "Pay", new { token })" class="btn btn-default">@localizer["BackToInvoice"]</a></p>
     </div>
 </div>

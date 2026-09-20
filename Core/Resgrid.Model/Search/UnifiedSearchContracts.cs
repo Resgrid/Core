@@ -18,7 +18,7 @@ namespace Resgrid.Model.Search
 		/// <summary>Claim check against the caller's principal: (resource, action) → held.</summary>
 		public Func<string, string, bool> HasClaim { get; set; } = (r, a) => false;
 
-		/// <summary>Department module toggles (Messaging, Mapping, ...) as the web layer sees them; null = all enabled.</summary>
+		/// <summary>Department module toggles (Messaging, Mapping, ...); missing or failed checks deny module access.</summary>
 		public Func<string, bool> IsModuleEnabled { get; set; }
 
 		public bool HasResourceClaim(string resource, string action)
@@ -29,10 +29,10 @@ namespace Resgrid.Model.Search
 
 		public bool ModuleEnabled(string module)
 		{
-			if (string.IsNullOrWhiteSpace(module) || IsModuleEnabled == null)
+			if (string.IsNullOrWhiteSpace(module))
 				return true;
-			try { return IsModuleEnabled(module); }
-			catch { return true; }
+			try { return IsModuleEnabled != null && IsModuleEnabled(module); }
+			catch { return false; }
 		}
 	}
 
@@ -75,7 +75,7 @@ namespace Resgrid.Model.Search
 
 		public List<SystemActionHit> Actions { get; set; } = new List<SystemActionHit>();
 
-		/// <summary>Authorized total, or null when a hit was dropped by per-entity authorization and the total cannot be proven.</summary>
+		/// <summary>Authorized total, or null when any candidate was dropped or was outside the authorization window.</summary>
 		public int? Total { get; set; }
 
 		public bool Truncated { get; set; }

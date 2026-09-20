@@ -68,6 +68,19 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Policy_generation_filters_stale_narrative_matches_and_counts()
+		{
+			var existing = await _search.SearchAsync(1, new RecordsSearchRequest { Text = "hydrant" });
+			existing.Hits.Should().ContainSingle(h => h.DepartmentId == 1);
+			var stale = await _search.SearchAsync(1, new RecordsSearchRequest { Text = "hydrant", Generation = "changed-policy" });
+			stale.Hits.Should().BeEmpty();
+			stale.Total.Should().Be(0);
+			var withdrawn = await _search.SearchAsync(1, new RecordsSearchRequest { Text = "hydrant", IncludeNarrative = false });
+			withdrawn.Hits.Should().BeEmpty("an unchanged generation cannot bypass the current narrative policy");
+			withdrawn.Total.Should().Be(0);
+		}
+
+		[Test]
 		public async Task Group_scope_resolves_inside_the_query_with_the_always_visible_cases()
 		{
 			(await _search.SearchAsync(1, new RecordsSearchRequest { VisibleGroupIds = new List<int> { 11 }, ViewerUserId = "nobody" })).Hits.Select(h => h.SourceId).Should().Equal("rec-1");

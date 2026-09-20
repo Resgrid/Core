@@ -401,6 +401,19 @@ namespace Resgrid.Model
 							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) ? "datetime" : "string", false));
 					list.Add(new TemplateVariableDescriptor("invoice.url", "Authenticated invoice link", "string", false));
 					break;
+				case WorkflowTriggerEventType.DeploymentCreated:
+				case WorkflowTriggerEventType.DeploymentStatusChanged:
+				case WorkflowTriggerEventType.DeploymentRosterChanged:
+				case WorkflowTriggerEventType.DeploymentExpenseAdded:
+				case WorkflowTriggerEventType.TimeReportSubmitted:
+				case WorkflowTriggerEventType.TimeReportApproved:
+					foreach (var pair in Invoicing.DeploymentWorkflowPayload.Variables)
+						list.Add(new TemplateVariableDescriptor("deployment." + pair.Variable, "Deployment " + pair.Variable.Replace('_', ' ') + (pair.Variable == "subject_name" ? "; REDACTED on a protected row" : ""),
+							pair.Variable is "status" or "old_status" or "finance_mode" or "call_id" or "subject_type" or "report_number" or "expense_type" ? "int"
+							: pair.Variable == "expense_amount" ? "decimal"
+							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) || pair.Variable == "report_date" ? "datetime" : "string", false));
+					list.Add(new TemplateVariableDescriptor("deployment.url", "Authenticated deployment link", "string", false));
+					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

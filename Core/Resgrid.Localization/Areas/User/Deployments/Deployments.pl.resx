@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Deployments" xml:space="preserve"><value>Dyslokacje</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Finanse dyslokacji</value></data>
+  <data name="MyDeployments" xml:space="preserve"><value>Moje dyslokacje</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Finansowe otoczki dyslokacji: obsady, dzienne raporty czasu, wydatki i pliki dla dyslokacji rozliczanych, w trybie zwrotu kosztów i operacyjnych.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Dyslokacja grupuje jednostki, personel i sprzęt wysłane do zdarzenia wraz z dziennymi raportami czasu i wydatkami. Powiąż ją ze zgłoszeniem lub ze zleceniem pomocy wzajemnej z Records.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>Brak dyslokacji.</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>Pokaż wszystkie</value></data>
+  <data name="ShowOpen" xml:space="preserve"><value>Pokaż tylko otwarte</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Nowa dyslokacja</value></data>
+  <data name="EditDeployment" xml:space="preserve"><value>Edytuj dyslokację</value></data>
+  <data name="EditIntro" xml:space="preserve"><value>Identyfikatory nadawane przez agencję klienta oraz dane jurysdykcji potrzebne silnikowi rozliczeń.</value></data>
+  <data name="CreateFromExternalOrder" xml:space="preserve"><value>Utwórz ze zlecenia zewnętrznego</value></data>
+  <data name="Open" xml:space="preserve"><value>Otwórz</value></data>
+  <data name="Name" xml:space="preserve"><value>Nazwa</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="FinanceMode" xml:space="preserve"><value>Tryb finansowy</value></data>
+  <data name="FinanceModeHelp" xml:space="preserve"><value>„Tylko operacyjna” zachowuje czas i wydatki jako zapis; „zwrot kosztów” zasila wniosek o refundację; „rozliczana” zasila fakturę dla klienta.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Nr zdarzenia</value></data>
+  <data name="ResourceOrderNumber" xml:space="preserve"><value>Nr zlecenia zasobów</value></data>
+  <data name="RequestNumber" xml:space="preserve"><value>Nr żądania</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>Nr zlecenia usługi</value></data>
+  <data name="CostCode" xml:space="preserve"><value>Kod kosztu</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>Miejsce zatrudnienia</value></data>
+  <data name="Contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Window" xml:space="preserve"><value>Okno czasowe</value></data>
+  <data name="Days" xml:space="preserve"><value>dni</value></data>
+  <data name="MaxDays" xml:space="preserve"><value>Maks. dni</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notatki</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Powiązana ze zleceniem zewnętrznym w Records</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Dyslokacja</value></data>
+  <data name="AgencyIdentifiers" xml:space="preserve"><value>Identyfikatory agencji</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Jurysdykcja</value></data>
+  <data name="HomeCountry" xml:space="preserve"><value>Kraj macierzysty</value></data>
+  <data name="HomeSubdivision" xml:space="preserve"><value>Stan / województwo macierzyste</value></data>
+  <data name="HostCountry" xml:space="preserve"><value>Kraj przyjmujący</value></data>
+  <data name="HostSubdivision" xml:space="preserve"><value>Stan / województwo przyjmujące</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Strefa czasowa</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Lokalna strefa czasowa zdarzenia dla raportów czasu; puste oznacza strefę jednostki organizacyjnej.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Waluta</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>Poza województwem / stanem</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>Podróż samolotem</value></data>
+  <data name="CallId" xml:space="preserve"><value>ID zgłoszenia</value></data>
+  <data name="CallIdHelp" xml:space="preserve"><value>Opcjonalnie: zgłoszenie, na które rozliczana jest ta dyslokacja. Jedna dyslokacja na zgłoszenie.</value></data>
+  <data name="Save" xml:space="preserve"><value>Zapisz</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Anuluj</value></data>
+  <data name="Saved" xml:space="preserve"><value>Zapisano.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Nie udało się zapisać zmiany.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Opakuj otwarte zlecenie pomocy wzajemnej z Records w dyslokację, aby śledzić i rozliczać czas, wydatki i obsadę. Samo zlecenie pozostaje w Records.</value></data>
+  <data name="OpenExternalOrders" xml:space="preserve"><value>Otwarte zlecenia zewnętrzne</value></data>
+  <data name="RecordsRequired" xml:space="preserve"><value>System Records nie jest włączony dla tej jednostki organizacyjnej, więc nie ma zleceń zewnętrznych do wyboru.</value></data>
+  <data name="NoOpenExternalOrders" xml:space="preserve"><value>Brak otwartych zleceń zewnętrznych bez dyslokacji.</value></data>
+  <data name="ExternalOrder" xml:space="preserve"><value>Zlecenie zewnętrzne</value></data>
+  <data name="NameFromOrder" xml:space="preserve"><value>Domyślnie nazwa zdarzenia</value></data>
+  <data name="PrefillRoster" xml:space="preserve"><value>Wypełnij obsadę z zaakceptowanych przydziałów</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>Utwórz także zgłoszenie</value></data>
+  <data name="CallType" xml:space="preserve"><value>Typ zgłoszenia</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>Priorytet zgłoszenia</value></data>
+  <data name="CreateDeployment" xml:space="preserve"><value>Utwórz dyslokację</value></data>
+  <data name="OrdersAlreadyLinked" xml:space="preserve"><value>{0} otwarte zlecenie/zlecenia mają już dyslokację.</value></data>
+  <data name="FillCount" xml:space="preserve"><value>{0} przydział(ów)</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edytuj</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Eksportuj czas do CSV</value></data>
+  <data name="Call" xml:space="preserve"><value>Zgłoszenie</value></data>
+  <data name="Summary" xml:space="preserve"><value>Podsumowanie</value></data>
+  <data name="Units" xml:space="preserve"><value>Jednostki</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Personel</value></data>
+  <data name="TimeReports" xml:space="preserve"><value>Raporty czasu</value></data>
+  <data name="PersonnelHours" xml:space="preserve"><value>Godziny personelu</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Wydatki</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Zmień status</value></data>
+  <data name="StatusConfirm" xml:space="preserve"><value>Zmienić status dyslokacji?</value></data>
+  <data name="Roster" xml:space="preserve"><value>Obsada</value></data>
+  <data name="Files" xml:space="preserve"><value>Pliki</value></data>
+  <data name="Unit" xml:space="preserve"><value>Jednostka</value></data>
+  <data name="CallSign" xml:space="preserve"><value>Znak wywoławczy</value></data>
+  <data name="Crew" xml:space="preserve"><value>Załoga</value></data>
+  <data name="RemoveConfirm" xml:space="preserve"><value>Usunąć ten wiersz?</value></data>
+  <data name="SelectUnit" xml:space="preserve"><value>Wybierz jednostkę</value></data>
+  <data name="AddUnit" xml:space="preserve"><value>Dodaj jednostkę</value></data>
+  <data name="Equipment" xml:space="preserve"><value>Sprzęt</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>Brak jednostek w obsadzie.</value></data>
+  <data name="NoEquipment" xml:space="preserve"><value>Brak sprzętu w obsadzie.</value></data>
+  <data name="Item" xml:space="preserve"><value>Pozycja</value></data>
+  <data name="Issued" xml:space="preserve"><value>Wydano</value></data>
+  <data name="Return" xml:space="preserve"><value>Zwrot</value></data>
+  <data name="EquipmentName" xml:space="preserve"><value>Nazwa sprzętu</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>Bez jednostki</value></data>
+  <data name="AddEquipment" xml:space="preserve"><value>Dodaj sprzęt</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>Brak personelu w obsadzie.</value></data>
+  <data name="Seat" xml:space="preserve"><value>Stanowisko</value></data>
+  <data name="Certification" xml:space="preserve"><value>Certyfikat</value></data>
+  <data name="Member" xml:space="preserve"><value>Członek</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Wybierz członka</value></data>
+  <data name="SeatHelp" xml:space="preserve"><value>Stanowiska oznaczone * wymagają roli personelu danego stanowiska; sprawdzane są wymagania certyfikacyjne roli, a wygasające certyfikaty są oznaczane.</value></data>
+  <data name="ForceSeat" xml:space="preserve"><value>Przydziel nawet gdy wymaganie nie jest spełnione</value></data>
+  <data name="AddPersonnel" xml:space="preserve"><value>Dodaj członka</value></data>
+  <data name="SeatBlocked" xml:space="preserve"><value>Członek nie spełnia wymagań stanowiska. Zaznacz „Przydziel nawet gdy wymaganie nie jest spełnione”, aby wymusić.</value></data>
+  <data name="NewTimeReport" xml:space="preserve"><value>Nowy raport czasu</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Jeden raport dziennie; wpisy są wypełniane z obsady.</value></data>
+  <data name="NoTimeReports" xml:space="preserve"><value>Brak raportów czasu.</value></data>
+  <data name="ReportDate" xml:space="preserve"><value>Data raportu</value></data>
+  <data name="Submitted" xml:space="preserve"><value>Przesłano</value></data>
+  <data name="Approved" xml:space="preserve"><value>Zatwierdzono</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Faktura</value></data>
+  <data name="NoExpenses" xml:space="preserve"><value>Brak wydatków.</value></data>
+  <data name="ExpenseDate" xml:space="preserve"><value>Data</value></data>
+  <data name="Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="Description" xml:space="preserve"><value>Opis</value></data>
+  <data name="City" xml:space="preserve"><value>Miasto</value></data>
+  <data name="Amount" xml:space="preserve"><value>Kwota</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Paragon</value></data>
+  <data name="TimeReport" xml:space="preserve"><value>Raport czasu</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Wstępnie zatwierdzony</value></data>
+  <data name="NotBillable" xml:space="preserve"><value>Nierozliczany</value></data>
+  <data name="Total" xml:space="preserve"><value>Razem</value></data>
+  <data name="AddExpense" xml:space="preserve"><value>Dodaj wydatek</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>Brak plików.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Nazwa pliku</value></data>
+  <data name="Size" xml:space="preserve"><value>Rozmiar</value></data>
+  <data name="Added" xml:space="preserve"><value>Dodano</value></data>
+  <data name="Upload" xml:space="preserve"><value>Prześlij</value></data>
+  <data name="PreviewManifest" xml:space="preserve"><value>Podgląd manifestu</value></data>
+  <data name="GenerateManifest" xml:space="preserve"><value>Zapisz PDF manifestu</value></data>
+  <data name="Billable" xml:space="preserve"><value>Rozliczany</value></data>
+  <data name="MealCode" xml:space="preserve"><value>Kod posiłku</value></data>
+  <data name="TimeReportTitle" xml:space="preserve"><value>Dzienny raport czasu nr {0}</value></data>
+  <data name="BackToDeployment" xml:space="preserve"><value>Powrót do dyslokacji</value></data>
+  <data name="NoClear8" xml:space="preserve"><value>Brak 8 godzin odpoczynku (nadgodziny przechodzą na następną zmianę)</value></data>
+  <data name="UnsafeStandDown" xml:space="preserve"><value>Wstrzymanie z powodu niebezpiecznych warunków</value></data>
+  <data name="TimeEntries" xml:space="preserve"><value>Wpisy czasu</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>czasy w lokalnej strefie zdarzenia</value></data>
+  <data name="Subject" xml:space="preserve"><value>Podmiot</value></data>
+  <data name="EntryType" xml:space="preserve"><value>Typ wpisu</value></data>
+  <data name="Start" xml:space="preserve"><value>Początek</value></data>
+  <data name="End" xml:space="preserve"><value>Koniec</value></data>
+  <data name="PaidBreak" xml:space="preserve"><value>Płatna przerwa (min)</value></data>
+  <data name="UnpaidBreak" xml:space="preserve"><value>Bezpłatna przerwa (min)</value></data>
+  <data name="Km" xml:space="preserve"><value>Km</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>Dodaj wpis</value></data>
+  <data name="Actions" xml:space="preserve"><value>Akcje</value></data>
+  <data name="SaveAndSubmit" xml:space="preserve"><value>Zapisz i prześlij</value></data>
+  <data name="SubmitConfirm" xml:space="preserve"><value>Przesłać ten raport do zatwierdzenia? Po zatwierdzeniu wpisy zostaną zablokowane.</value></data>
+  <data name="OpenInvoice" xml:space="preserve"><value>Otwórz fakturę</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Podpisy</value></data>
+  <data name="ContractorSignature" xml:space="preserve"><value>Wykonawca</value></data>
+  <data name="CustomerSignature" xml:space="preserve"><value>Klient</value></data>
+  <data name="SignAsContractor" xml:space="preserve"><value>Podpisz jako wykonawca</value></data>
+  <data name="CustomerSignerName" xml:space="preserve"><value>Imię i nazwisko osoby podpisującej po stronie klienta</value></data>
+  <data name="Sign" xml:space="preserve"><value>Podpisz</value></data>
+  <data name="Review" xml:space="preserve"><value>Weryfikacja</value></data>
+  <data name="Approve" xml:space="preserve"><value>Zatwierdź</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>Zatwierdzić ten raport czasu?</value></data>
+  <data name="VoidReason" xml:space="preserve"><value>Powód</value></data>
+  <data name="Void" xml:space="preserve"><value>Unieważnij</value></data>
+  <data name="VoidConfirm" xml:space="preserve"><value>Unieważnić ten raport czasu? Pozostanie w rejestrze, ale zostanie wyłączony z rozliczeń.</value></data>
+  <data name="FilePdf" xml:space="preserve"><value>Zapisz PDF w dyslokacji</value></data>
+  <data name="StatusPlanned" xml:space="preserve"><value>Zaplanowana</value></data>
+  <data name="StatusStandby" xml:space="preserve"><value>W gotowości</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktywna</value></data>
+  <data name="StatusDemobilizing" xml:space="preserve"><value>Demobilizacja</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Zakończona</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Anulowana</value></data>
+  <data name="ReportStatusDraft" xml:space="preserve"><value>Szkic</value></data>
+  <data name="ReportStatusSubmitted" xml:space="preserve"><value>Przesłany</value></data>
+  <data name="ReportStatusApproved" xml:space="preserve"><value>Zatwierdzony</value></data>
+  <data name="ReportStatusBilled" xml:space="preserve"><value>Rozliczony</value></data>
+  <data name="ReportStatusVoid" xml:space="preserve"><value>Unieważniony</value></data>
+  <data name="FinanceOperationalOnly" xml:space="preserve"><value>Tylko operacyjna</value></data>
+  <data name="FinanceCostRecovery" xml:space="preserve"><value>Zwrot kosztów</value></data>
+  <data name="FinanceBillable" xml:space="preserve"><value>Rozliczana</value></data>
+  <data name="ExpensePerDiemMeal" xml:space="preserve"><value>Dieta / posiłek</value></data>
+  <data name="ExpenseAccommodation" xml:space="preserve"><value>Zakwaterowanie</value></data>
+  <data name="ExpensePrivateAccommodation" xml:space="preserve"><value>Zakwaterowanie prywatne</value></data>
+  <data name="ExpenseFerry" xml:space="preserve"><value>Prom</value></data>
+  <data name="ExpenseFuel" xml:space="preserve"><value>Paliwo</value></data>
+  <data name="ExpenseSupplyRestock" xml:space="preserve"><value>Uzupełnienie zapasów</value></data>
+  <data name="ExpenseOther" xml:space="preserve"><value>Inne</value></data>
+  <data name="AttachmentReceipt" xml:space="preserve"><value>Paragon</value></data>
+  <data name="AttachmentSignedServiceRequest" xml:space="preserve"><value>Podpisane zlecenie usługi</value></data>
+  <data name="AttachmentTimeReportPdf" xml:space="preserve"><value>PDF raportu czasu</value></data>
+  <data name="AttachmentManifest" xml:space="preserve"><value>Manifest</value></data>
+  <data name="AttachmentCertification" xml:space="preserve"><value>Certyfikat</value></data>
+  <data name="AttachmentOther" xml:space="preserve"><value>Inne</value></data>
+  <data name="AttachmentExternalOrder" xml:space="preserve"><value>Zlecenie zewnętrzne</value></data>
+  <data name="AttachmentSignedF42" xml:space="preserve"><value>Podpisany F-42</value></data>
+  <data name="AttachmentPaperF42" xml:space="preserve"><value>Papierowy F-42</value></data>
+  <data name="AttachmentIcs213Approval" xml:space="preserve"><value>Zatwierdzenie ICS 213</value></data>
+  <data name="AttachmentCrewRotationApproval" xml:space="preserve"><value>Zatwierdzenie rotacji załogi</value></data>
+  <data name="AttachmentLossDamage" xml:space="preserve"><value>Strata / uszkodzenie</value></data>
+  <data name="AttachmentMarsExpenseEvidence" xml:space="preserve"><value>Dowód wydatku MARS</value></data>
+  <data name="AttachmentMarsInvoice" xml:space="preserve"><value>Faktura MARS</value></data>
+  <data name="EntryDeployment" xml:space="preserve"><value>Dyslokacja</value></data>
+  <data name="EntryStandby" xml:space="preserve"><value>Gotowość</value></data>
+  <data name="EntryTravel" xml:space="preserve"><value>Podróż</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>Już przydzielony do innej otwartej dyslokacji w tym oknie</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>Członek nie posiada roli personelu wymaganej na stanowisku</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>Brakuje lub wygasł certyfikat wymagany na stanowisku</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>Wymagany certyfikat wygasa w oknie dyslokacji</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>Już w tej obsadzie</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>Wydanie z magazynu nie powiodło się; wiersz sprzętu zachowano bez wydania</value></data>
+  <data name="Issueentries_overlap" xml:space="preserve"><value>Dwa przedziały czasu nakładają się dla tego samego podmiotu</value></data>
+  <data name="Issueend_before_start" xml:space="preserve"><value>Wpis kończy się przed rozpoczęciem</value></data>
+  <data name="Issuesubject_not_on_roster" xml:space="preserve"><value>Wpis odnosi się do podmiotu spoza obsady</value></data>
+  <data name="Issueno_entries" xml:space="preserve"><value>Raport nie ma wpisów czasu</value></data>
+  <data name="Issuebreak_rule" xml:space="preserve"><value>Przedział dłuższy niż 5 godzin nie ma zarejestrowanej przerwy</value></data>
+  <data name="Issuelong_travel" xml:space="preserve"><value>Czas podróży powyżej 12 godzin wymaga zatwierdzenia</value></data>
+  <data name="Issueoutside_report_date" xml:space="preserve"><value>Wpis wykracza poza datę raportu</value></data>
+  <data name="deployments_name_required" xml:space="preserve"><value>Nazwa jest wymagana.</value></data>
+  <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Wybierz tryb finansowy.</value></data>
+  <data name="deployments_window_invalid" xml:space="preserve"><value>Koniec nie może być wcześniejszy niż początek.</value></data>
+  <data name="deployments_discount_invalid" xml:space="preserve"><value>Rabat musi mieścić się między 0 a 100 procent.</value></data>
+  <data name="deployments_contact_not_found" xml:space="preserve"><value>Nie znaleziono kontaktu.</value></data>
+  <data name="deployments_call_not_found" xml:space="preserve"><value>Nie znaleziono zgłoszenia.</value></data>
+  <data name="deployments_call_already_linked" xml:space="preserve"><value>To zgłoszenie ma już dyslokację.</value></data>
+  <data name="deployments_not_found" xml:space="preserve"><value>Nie znaleziono dyslokacji.</value></data>
+  <data name="deployments_status_transition_invalid" xml:space="preserve"><value>Ta zmiana statusu nie jest dozwolona z bieżącego statusu.</value></data>
+  <data name="deployments_delete_open" xml:space="preserve"><value>Aktywnej dyslokacji nie można usunąć; najpierw ją zakończ lub anuluj.</value></data>
+  <data name="deployments_external_order_required" xml:space="preserve"><value>Wybierz zlecenie zewnętrzne.</value></data>
+  <data name="deployments_external_order_already_linked" xml:space="preserve"><value>To zlecenie zewnętrzne ma już dyslokację.</value></data>
+  <data name="deployments_external_order_not_found" xml:space="preserve"><value>Nie znaleziono zlecenia zewnętrznego.</value></data>
+  <data name="deployments_unit_not_found" xml:space="preserve"><value>Nie znaleziono jednostki.</value></data>
+  <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Ta jednostka jest już w obsadzie.</value></data>
+  <data name="deployments_closed" xml:space="preserve"><value>Dyslokacja jest zakończona lub anulowana, a jej obsada jest zablokowana.</value></data>
+  <data name="deployments_user_required" xml:space="preserve"><value>Wybierz członka.</value></data>
+  <data name="deployments_user_not_found" xml:space="preserve"><value>Nie znaleziono członka.</value></data>
+  <data name="deployments_user_not_in_department" xml:space="preserve"><value>Członek nie należy do tej jednostki organizacyjnej.</value></data>
+  <data name="deployments_user_already_rostered" xml:space="preserve"><value>Ten członek jest już w obsadzie.</value></data>
+  <data name="deployments_seat_not_found" xml:space="preserve"><value>Nie znaleziono stanowiska w tej jednostce.</value></data>
+  <data name="deployments_equipment_required" xml:space="preserve"><value>Wpisz nazwę sprzętu lub wybierz pozycję z magazynu.</value></data>
+  <data name="deployments_attachment_empty" xml:space="preserve"><value>Wybierz plik do przesłania.</value></data>
+  <data name="deployments_attachment_too_large" xml:space="preserve"><value>Plik jest większy niż 30 MB.</value></data>
+  <data name="deployments_pdf_failed" xml:space="preserve"><value>Nie udało się wygenerować PDF.</value></data>
+  <data name="deployments_protected_write_refused" xml:space="preserve"><value>Nie udało się zapisać danych chronionych; sprawdź stan ochrony danych jednostki organizacyjnej.</value></data>
+  <data name="deployments_file_type" xml:space="preserve"><value>Ten typ pliku nie jest dozwolony.</value></data>
+  <data name="timereports_date_exists" xml:space="preserve"><value>Raport czasu dla tej daty już istnieje.</value></data>
+  <data name="timereports_not_found" xml:space="preserve"><value>Nie znaleziono raportu czasu.</value></data>
+  <data name="timereports_locked" xml:space="preserve"><value>Raport czasu jest zatwierdzony, rozliczony lub unieważniony i nie można go już edytować.</value></data>
+  <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Ta zmiana statusu nie jest dozwolona dla tego raportu czasu.</value></data>
+  <data name="timereports_time_invalid" xml:space="preserve"><value>Wpisz godziny początku i końca w formacie HH:mm.</value></data>
+  <data name="timereports_validation" xml:space="preserve"><value>Popraw poniższe błędy przed przesłaniem.</value></data>
+  <data name="expenses_amount_invalid" xml:space="preserve"><value>Kwota nie może być ujemna.</value></data>
+  <data name="expenses_type_invalid" xml:space="preserve"><value>Wybierz typ wydatku.</value></data>
+  <data name="expenses_not_found" xml:space="preserve"><value>Nie znaleziono wydatku.</value></data>
+  <data name="expenses_receipt_invalid" xml:space="preserve"><value>Nie udało się odczytać paragonu.</value></data>
+  <data name="ManageDeployments" xml:space="preserve"><value>Zarządzaj dyslokacjami</value></data>
+  <data name="ManageDeploymentsNote" xml:space="preserve"><value>Tworzenie i edycja dyslokacji, obsad, sprzętu, wydatków, plików i zmian statusu oraz wgląd we wszystkie dyslokacje. Członkowie w obsadzie zawsze widzą swoje dyslokacje i rejestrują czas bez tego uprawnienia.</value></data>
+  <data name="ApproveTimeReports" xml:space="preserve"><value>Zatwierdzaj raporty czasu</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Zatwierdzanie i unieważnianie przesłanych dziennych raportów czasu. Zatwierdzone raporty zasilają rozliczenia.</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Utworzono dyslokację</value></data>
+  <data name="DeploymentStatusChanged" xml:space="preserve"><value>Zmieniono status dyslokacji</value></data>
+  <data name="DeploymentRosterChanged" xml:space="preserve"><value>Zmieniono obsadę dyslokacji</value></data>
+  <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Dodano wydatek dyslokacji</value></data>
+  <data name="TimeReportSubmitted" xml:space="preserve"><value>Przesłano raport czasu</value></data>
+  <data name="TimeReportApproved" xml:space="preserve"><value>Zatwierdzono raport czasu</value></data>
+</root>

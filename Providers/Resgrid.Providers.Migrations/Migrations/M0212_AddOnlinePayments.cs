@@ -91,9 +91,9 @@ namespace Resgrid.Providers.Migrations.Migrations
 				Execute.Sql("CREATE UNIQUE INDEX [UX_InvoicePaymentRequests_Open] ON [InvoicePaymentRequests] ([InvoiceId]) WHERE [Status] IN (0, 1, 2);");
 			}
 
-			if (!Schema.Table("PaymentProviderEvents").Exists())
+			if (!Schema.Table("PaymentConnectEvents").Exists())
 			{
-				Create.Table("PaymentProviderEvents")
+				Create.Table("PaymentConnectEvents")
 					.WithColumn("PaymentConnectEventId").AsString(36).NotNullable().PrimaryKey()
 					.WithColumn("Provider").AsInt32().NotNullable()
 					.WithColumn("ExternalEventId").AsString(200).NotNullable()
@@ -107,20 +107,26 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("Error").AsString(1000).Nullable()
 					.WithColumn("PayloadJson").AsString(int.MaxValue).Nullable();
 
-				Create.Index("UX_PaymentProviderEvents_Event").OnTable("PaymentProviderEvents")
+				Create.Index("UX_PaymentConnectEvents_Event").OnTable("PaymentConnectEvents")
 					.OnColumn("Provider").Ascending().OnColumn("ExternalEventId").Ascending().WithOptions().Unique();
-				Create.Index("IX_PaymentProviderEvents_Account").OnTable("PaymentProviderEvents")
+				Create.Index("IX_PaymentConnectEvents_Account").OnTable("PaymentConnectEvents")
 					.OnColumn("Provider").Ascending().OnColumn("ExternalAccountId").Ascending().OnColumn("ReceivedOn").Ascending();
-				Create.Index("IX_PaymentProviderEvents_Received").OnTable("PaymentProviderEvents")
+				Create.Index("IX_PaymentConnectEvents_Received").OnTable("PaymentConnectEvents")
 					.OnColumn("ReceivedOn").Ascending();
-				Create.Index("IX_PaymentProviderEvents_Outcome").OnTable("PaymentProviderEvents")
+				Create.Index("IX_PaymentConnectEvents_Outcome").OnTable("PaymentConnectEvents")
 					.OnColumn("Outcome").Ascending().OnColumn("ReceivedOn").Ascending();
-				Create.Index("IX_PaymentProviderEvents_Department").OnTable("PaymentProviderEvents")
+				Create.Index("IX_PaymentConnectEvents_Department").OnTable("PaymentConnectEvents")
 					.OnColumn("DepartmentId").Ascending();
 			}
 
 			// Idempotency of online payments is enforced by the database, not only by the pre-insert lookup: M0210's
 			// non-unique gateway index is replaced by a filtered unique one (manual payments carry no transaction id).
+			// Preflight: a duplicate (Provider, GatewayTransactionId) pair would make the unique index fail after the old
+			// index was already dropped, so the migration stops here, names the problem and leaves M0210's index in place.
+			Execute.Sql(
+				"IF OBJECT_ID('[InvoicePayments]', 'U') IS NOT NULL AND EXISTS (SELECT 1 FROM [InvoicePayments] WHERE [GatewayTransactionId] IS NOT NULL AND [Provider] IS NOT NULL " +
+				"GROUP BY [Provider], [GatewayTransactionId] HAVING COUNT(*) > 1) " +
+				"THROW 51212, 'M0212: InvoicePayments holds duplicate (Provider, GatewayTransactionId) pairs; resolve them before UX_InvoicePayments_Gateway can be created.', 1;");
 			Execute.Sql("IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_InvoicePayments_Gateway' AND object_id = OBJECT_ID('[InvoicePayments]')) DROP INDEX [IX_InvoicePayments_Gateway] ON [InvoicePayments];");
 			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_InvoicePayments_Gateway' AND object_id = OBJECT_ID('[InvoicePayments]')) " +
 				"CREATE UNIQUE INDEX [UX_InvoicePayments_Gateway] ON [InvoicePayments] ([Provider], [GatewayTransactionId]) WHERE [GatewayTransactionId] IS NOT NULL AND [Provider] IS NOT NULL;");
@@ -154,7 +160,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 			Execute.Sql("IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_InvoicePayments_Gateway' AND object_id = OBJECT_ID('[InvoicePayments]')) DROP INDEX [UX_InvoicePayments_Gateway] ON [InvoicePayments];");
 			Execute.Sql("IF OBJECT_ID('[InvoicePayments]', 'U') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_InvoicePayments_Gateway' AND object_id = OBJECT_ID('[InvoicePayments]')) " +
 				"CREATE INDEX [IX_InvoicePayments_Gateway] ON [InvoicePayments] ([Provider], [GatewayTransactionId]);");
-			Execute.Sql("IF OBJECT_ID('[PaymentProviderEvents]', 'U') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM [PaymentProviderEvents]) DROP TABLE [PaymentProviderEvents];");
+			Execute.Sql("IF OBJECT_ID('[PaymentConnectEvents]', 'U') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM [PaymentConnectEvents]) DROP TABLE [PaymentConnectEvents];");
 			Execute.Sql("IF OBJECT_ID('[InvoicePaymentRequests]', 'U') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM [InvoicePaymentRequests]) DROP TABLE [InvoicePaymentRequests];");
 			Execute.Sql("IF OBJECT_ID('[DepartmentPaymentConnections]', 'U') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM [DepartmentPaymentConnections]) DROP TABLE [DepartmentPaymentConnections];");
 		}

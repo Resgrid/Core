@@ -27,6 +27,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public class SearchController : V4AuthenticatedApiControllerbase
 	{
 		private const int MaxTake = 100;
@@ -38,10 +39,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ISearchIndexStatesRepository _states;
 		private readonly IDepartmentSettingsService _departmentSettings;
 		private readonly IFeatureToggleService _featureToggles;
+		private readonly IRecordsAuthorizationService _authorization;
 
 		public SearchController(IUnifiedSearchService unifiedSearch, IGlobalSearchService globalSearch, IRecordsSearchService recordsSearch,
 			ISearchIndexMaintenanceService maintenance, ISearchIndexStatesRepository states, IDepartmentSettingsService departmentSettings,
-			IFeatureToggleService featureToggles)
+			IFeatureToggleService featureToggles, IRecordsAuthorizationService authorization)
 		{
 			_unifiedSearch = unifiedSearch;
 			_globalSearch = globalSearch;
@@ -50,6 +52,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_states = states;
 			_departmentSettings = departmentSettings;
 			_featureToggles = featureToggles;
+			_authorization = authorization;
 		}
 
 		/// <summary>
@@ -122,7 +125,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await _featureToggles.IsEnabledAsync(FeatureFlagKeys.SearchUnified, DepartmentId))
 				return NotFound();
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || !await _authorization.IsDepartmentAdminAsync(UserId, DepartmentId))
 				return Forbid();
 
 			var state = await _maintenance.RequestRebuildAsync(DepartmentId, cancellationToken);
@@ -150,12 +153,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<ActionResult<SearchHealthResult>> Health()
 		{
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || !await _authorization.IsDepartmentAdminAsync(UserId, DepartmentId))
 				return Forbid();
 
 			var global = await _globalSearch.GetHealthAsync();
 			var records = await _recordsSearch.GetHealthAsync();
 			var state = await _states.GetAsync(SearchIndexNames.Global, DepartmentId);
+			if (state != null && state.DepartmentId != DepartmentId)
+				state = null;
 
 			var result = new SearchHealthResult
 			{
@@ -163,12 +168,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					Enabled = global.Enabled,
 					GlobalOnline = global.Online,
-					GlobalDocumentCount = global.DocumentCount,
+					// Shared-index totals and revisions describe other departments as well; never expose them here.
+					GlobalDocumentCount = null,
 					RecordsOnline = records.Online,
-					RecordsDocumentCount = records.DocumentCount,
+					RecordsDocumentCount = null,
 					StoreEnabled = global.StoreEnabled,
-					LastSyncedRevision = global.LastSyncedRevision,
-					LastSyncedOnUtc = global.LastSyncedOnUtc,
+					LastSyncedRevision = null,
+					LastSyncedOnUtc = null,
 					DepartmentIndexState = state == null ? "None" : ((SearchIndexBuildState)state.State).ToString(),
 					DepartmentDocumentCount = state?.DocumentCount ?? 0,
 					DepartmentLastRebuiltOn = state?.LastRebuiltOn
@@ -192,7 +198,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var user = HttpContext?.User;
 			DepartmentModuleSettings modules = null;
-			try { modules = await _departmentSettings.GetDepartmentModuleSettingsAsync(DepartmentId); }
+			try { modules = await _departmentSettings.GetDepartmentModuleSettingsAsync(DepartmentId, true); }
 			catch (Exception ex) { Logging.LogException(ex); }
 
 			return new SearchPrincipal
@@ -203,7 +209,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				HasClaim = (resource, action) => user != null && user.HasClaim(resource, action),
 				IsModuleEnabled = module =>
 				{
-					if (modules == null) return true;
+					if (modules == null) return false;
 					switch (module)
 					{
 						case SystemActionModules.Messaging: return !modules.MessagingDisabled;

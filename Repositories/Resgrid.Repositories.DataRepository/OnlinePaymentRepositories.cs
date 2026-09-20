@@ -66,7 +66,8 @@ namespace Resgrid.Repositories.DataRepository
 	/// <summary>Hosted payment requests (plan B2.2).</summary>
 	public class InvoicePaymentRequestRepository : RmsRepositoryBase<InvoicePaymentRequest>, IInvoicePaymentRequestRepository
 	{
-		private const string OpenStatuses = "(0, 1, 2)";
+		/// <summary>The non-terminal request states; mirrors the UX_InvoicePaymentRequests_Open filter in M0212.</summary>
+		private static readonly string OpenStatuses = $"({(int)PaymentRequestStatuses.Created}, {(int)PaymentRequestStatuses.Opened}, {(int)PaymentRequestStatuses.Processing})";
 
 		public InvoicePaymentRequestRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
@@ -152,33 +153,33 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<PaymentConnectEvent> GetByExternalEventIdAsync(int provider, string externalEventId)
 		{
 			return QueryFirstOrDefaultAsync<PaymentConnectEvent>(
-				$"SELECT * FROM {Tbl("PaymentProviderEvents")} WHERE {Col("Provider")} = {P}Provider AND {Col("ExternalEventId")} = {P}EventId",
+				$"SELECT * FROM {Tbl("PaymentConnectEvents")} WHERE {Col("Provider")} = {P}Provider AND {Col("ExternalEventId")} = {P}EventId",
 				new { Provider = provider, EventId = externalEventId });
 		}
 
 		public Task<DateTime?> GetNewestReceivedOnAsync()
 		{
-			return ScalarAsync<DateTime?>($"SELECT MAX({Col("ReceivedOn")}) FROM {Tbl("PaymentProviderEvents")}", new { });
+			return ScalarAsync<DateTime?>($"SELECT MAX({Col("ReceivedOn")}) FROM {Tbl("PaymentConnectEvents")}", new { });
 		}
 
 		public Task<DateTime?> GetNewestAppliedOnAsync()
 		{
 			return ScalarAsync<DateTime?>(
-				$"SELECT MAX({Col("ProcessedOn")}) FROM {Tbl("PaymentProviderEvents")} WHERE {Col("Outcome")} = {P}Applied",
+				$"SELECT MAX({Col("ProcessedOn")}) FROM {Tbl("PaymentConnectEvents")} WHERE {Col("Outcome")} = {P}Applied",
 				new { Applied = (int)PaymentEventOutcomes.Applied });
 		}
 
 		public Task<int> CountByOutcomeSinceAsync(int outcome, DateTime sinceUtc)
 		{
 			return ScalarAsync<int>(
-				$"SELECT COUNT(1) FROM {Tbl("PaymentProviderEvents")} WHERE {Col("Outcome")} = {P}Outcome AND {Col("ReceivedOn")} >= {P}Since",
+				$"SELECT COUNT(1) FROM {Tbl("PaymentConnectEvents")} WHERE {Col("Outcome")} = {P}Outcome AND {Col("ReceivedOn")} >= {P}Since",
 				new { Outcome = outcome, Since = DatabaseTimestamp(sinceUtc) });
 		}
 
 		public Task<int> PurgeReceivedBeforeAsync(DateTime receivedBeforeUtc, CancellationToken cancellationToken = default)
 		{
 			return ExecuteAsync(
-				$"DELETE FROM {Tbl("PaymentProviderEvents")} WHERE {Col("ReceivedOn")} < {P}Before",
+				$"DELETE FROM {Tbl("PaymentConnectEvents")} WHERE {Col("ReceivedOn")} < {P}Before",
 				new { Before = DatabaseTimestamp(receivedBeforeUtc) }, cancellationToken);
 		}
 	}

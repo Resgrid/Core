@@ -22,9 +22,9 @@ namespace Resgrid.Services
 
 		public Task<bool> CanUseInvoicingAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.CustomerInvoicing);
 
-		// Phase C / Phase E flag keys are declared when those phases are authored; until then the capability is off.
-		public Task<bool> CanUseContractorBillingAsync(int departmentId) => CanUseAsync(departmentId, "Invoicing.ContractorBilling");
-		public Task<bool> CanUseCostRecoveryAsync(int departmentId) => CanUseAsync(departmentId, "CostRecovery.CalOesMars");
+		public Task<bool> CanUseContractorBillingAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.ContractorBilling);
+		public Task<bool> CanUseCostRecoveryAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.CalOesMars);
+		// The Phase E flag key is declared when that phase is authored; until then the capability is off.
 		public Task<bool> CanUseWorkforceAsync(int departmentId) => CanUseAsync(departmentId, "Workforce.InternalCosting");
 
 		private async Task<bool> CanUseAsync(int departmentId, string capabilityFlag)

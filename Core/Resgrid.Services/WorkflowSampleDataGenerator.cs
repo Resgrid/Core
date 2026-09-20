@@ -93,6 +93,20 @@ namespace Resgrid.Services
 					foreach (var variable in Resgrid.Model.Invoicing.InvoiceWorkflowPayload.Variables) if (!sampleInvoice.ContainsKey(variable.Variable)) sampleInvoice[variable.Variable] = null;
 					if (eventType is WorkflowTriggerEventType.InvoicePaymentRecorded or WorkflowTriggerEventType.InvoicePaid or WorkflowTriggerEventType.InvoicePaymentRefunded or WorkflowTriggerEventType.InvoicePaymentDisputed) { sampleInvoice["payment_amount"] = 1215.00m; sampleInvoice["payment_method"] = "Online"; sampleInvoice["payment_id"] = "0b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e"; sampleInvoice["amount_paid"] = 1215.00m; sampleInvoice["balance"] = 0m; sampleInvoice["status"] = 3; }
 					break;
+				case WorkflowTriggerEventType.DeploymentCreated:
+				case WorkflowTriggerEventType.DeploymentStatusChanged:
+				case WorkflowTriggerEventType.DeploymentRosterChanged:
+				case WorkflowTriggerEventType.DeploymentExpenseAdded:
+				case WorkflowTriggerEventType.TimeReportSubmitted:
+				case WorkflowTriggerEventType.TimeReportApproved:
+					obj["deployment"] = new ScriptObject { ["id"] = "5d1e2f3a-4b5c-4d6e-8f7a-9b0c1d2e3f4a", ["name"] = "Ridge Fire strike team", ["status"] = 2, ["finance_mode"] = 2, ["call_id"] = 1042, ["incident_number"] = "CA-BTU-012345", ["resource_order_number"] = "O-1234", ["request_number"] = "E-12", ["cost_code"] = "CC-8891", ["start_on"] = "2026-09-18T14:00:00Z", ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Deployments/View/5d1e2f3a-4b5c-4d6e-8f7a-9b0c1d2e3f4a" };
+					var sampleDeployment = (ScriptObject)obj["deployment"];
+					foreach (var variable in Resgrid.Model.Invoicing.DeploymentWorkflowPayload.Variables) if (!sampleDeployment.ContainsKey(variable.Variable)) sampleDeployment[variable.Variable] = null;
+					if (eventType == WorkflowTriggerEventType.DeploymentStatusChanged) sampleDeployment["old_status"] = 1;
+					if (eventType == WorkflowTriggerEventType.DeploymentRosterChanged) { sampleDeployment["subject_type"] = 0; sampleDeployment["subject_id"] = "8e7d6c5b-4a39-4281-9f0e-1d2c3b4a5968"; sampleDeployment["subject_name"] = "J. Alvarez"; sampleDeployment["roster_action"] = "Added"; }
+					if (eventType == WorkflowTriggerEventType.DeploymentExpenseAdded) { sampleDeployment["expense_type"] = 1; sampleDeployment["expense_amount"] = 189.50m; sampleDeployment["expense_currency"] = "USD"; }
+					if (eventType is WorkflowTriggerEventType.TimeReportSubmitted or WorkflowTriggerEventType.TimeReportApproved) { sampleDeployment["report_number"] = 57; sampleDeployment["report_date"] = "2026-09-18T00:00:00Z"; sampleDeployment["report_id"] = "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"; }
+					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

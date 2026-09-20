@@ -19,16 +19,6 @@ namespace Resgrid.Repositories.DataRepository
 		public SearchProjectionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
-		/// <summary>PostgreSQL 23505 or SQL Server 2601/2627: the only failures the insert-then-update race is allowed to absorb.</summary>
-		internal static bool IsUniqueViolation(Exception ex)
-		{
-			if (ex is Npgsql.PostgresException postgres)
-				return postgres.SqlState == "23505";
-			if (ex is Microsoft.Data.SqlClient.SqlException sql)
-				return sql.Number == 2601 || sql.Number == 2627;
-			return false;
-		}
-
 		public Task<SearchProjection> GetAsync(int departmentId, string entityType, string entityId)
 		{
 			return QueryFirstOrDefaultAsync<SearchProjection>(
@@ -201,7 +191,7 @@ namespace Resgrid.Repositories.DataRepository
 					new { IndexName = indexName, Owner = owner, Until = until, Now = now }, cancellationToken);
 				return true;
 			}
-			catch (Exception ex) when (SearchProjectionsRepository.IsUniqueViolation(ex))
+			catch (Exception ex) when (IsUniqueViolation(ex))
 			{
 				// Lost the insert race; the other writer holds it. Any other database failure propagates so the
 				// publish is reported as failed rather than as "lease held elsewhere".

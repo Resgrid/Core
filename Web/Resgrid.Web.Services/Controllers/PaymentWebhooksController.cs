@@ -41,7 +41,13 @@ namespace Resgrid.Web.Services.Controllers
 			using (var reader = new StreamReader(HttpContext.Request.Body, Encoding.UTF8))
 				body = await reader.ReadToEndAsync(cancellationToken);
 
-			var receipt = await _payments.ReceiveWebhookAsync((int)PaymentProviders.Stripe, Request.Headers["Stripe-Signature"].ToString(), body,
+			// An unsigned or empty POST cannot be a Stripe delivery; it is refused here rather than parsed, recorded as a
+			// rejected event and stored (which every signed-but-invalid delivery still is).
+			var signature = Request.Headers["Stripe-Signature"].ToString();
+			if (string.IsNullOrWhiteSpace(signature) || string.IsNullOrWhiteSpace(body))
+				return BadRequest();
+
+			var receipt = await _payments.ReceiveWebhookAsync((int)PaymentProviders.Stripe, signature, body,
 				HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
 
 			if (receipt.Accepted)

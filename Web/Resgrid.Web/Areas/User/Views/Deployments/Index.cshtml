@@ -1,0 +1,64 @@
+@model Resgrid.Web.Areas.User.Models.Deployments.DeploymentIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Deployments"];
+    ViewData["Title"] = localizer["Deployments"].Value;
+    ViewData["Subtitle"] = localizer["IndexIntro"].Value;
+    var pages = Math.Max(1, (int)Math.Ceiling(Model.Total / (double)Model.PageSize));
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@(Model.MineOnly ? localizer["MyDeployments"] : localizer["Deployments"])</h5>
+            <div class="ibox-tools">
+                <a asp-action="Index" asp-route-all="@(Model.OpenOnly ? "true" : "false")" class="btn btn-default btn-xs">@(Model.OpenOnly ? localizer["ShowAll"] : localizer["ShowOpen"])</a>
+                @if (Model.CanManage)
+                {
+                    <a asp-action="FromExternalOrder" class="btn btn-default btn-xs"><i class="fa fa-exchange"></i> @localizer["CreateFromExternalOrder"]</a>
+                    <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewDeployment"]</a>
+                }
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpIndex"]</div>
+            @if (Model.Deployments.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoDeployments"]</p>
+            }
+            else
+            {
+                <table class="table table-striped table-hover">
+                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Status"]</th><th>@localizer["FinanceMode"]</th><th>@localizer["IncidentNumber"]</th><th>@localizer["ResourceOrderNumber"]</th><th>@localizer["Contact"]</th><th>@localizer["Window"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var d in Model.Deployments)
+                        {
+                            <tr>
+                                <td><a asp-action="View" asp-route-id="@d.DeploymentId">@d.Name</a> @if (!string.IsNullOrWhiteSpace(d.RmsExternalOrderId)) { <span class="label label-default" title="@localizer["ExternalOrderLinked"]"><i class="fa fa-link"></i></span> }</td>
+                                <td>@await Html.PartialAsync("_StatusBadge", d.Status)</td>
+                                <td>@localizer["Finance" + (Resgrid.Model.Invoicing.DeploymentFinanceModes)d.FinanceMode]</td>
+                                <td>@d.IncidentNumber</td>
+                                <td>@d.ResourceOrderNumber</td>
+                                <td>@(string.IsNullOrWhiteSpace(d.ContactId) ? "" : Model.ContactNames.TryGetValue(d.ContactId, out var contact) ? contact : "")</td>
+                                <td>@(d.StartOn.HasValue ? d.StartOn.Value.ToString("yyyy-MM-dd") : "—") → @(d.EndOn.HasValue ? d.EndOn.Value.ToString("yyyy-MM-dd") : "—")</td>
+                                <td class="text-right"><a asp-action="View" asp-route-id="@d.DeploymentId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (!Model.MineOnly && pages > 1)
+                {
+                    <ul class="pagination">
+                        @for (var p = 1; p <= pages; p++)
+                        {
+                            <li class="@(p == Model.Page ? "active" : null)"><a asp-action="Index" asp-route-all="@(!Model.OpenOnly)" asp-route-page="@p">@p</a></li>
+                        }
+                    </ul>
+                }
+            }
+        </div>
+    </div>
+</div>

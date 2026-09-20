@@ -20,14 +20,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly IHealthService _healthService;
 		private readonly IGlobalSearchService _globalSearch;
-		private readonly IRecordsSearchService _recordsSearch;
 		private readonly IInvoicePaymentsService _invoicePayments;
 
-		public HealthController(IHealthService healthService, IGlobalSearchService globalSearch, IRecordsSearchService recordsSearch, IInvoicePaymentsService invoicePayments)
+		public HealthController(IHealthService healthService, IGlobalSearchService globalSearch, IInvoicePaymentsService invoicePayments)
 		{
 			_healthService = healthService;
 			_globalSearch = globalSearch;
-			_recordsSearch = recordsSearch;
 			_invoicePayments = invoicePayments;
 		}
 		#endregion Members and Constructors
@@ -57,9 +55,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (Config.SearchConfig.Enabled)
 					{
 						var global = await _globalSearch.GetHealthAsync();
-						var records = await _recordsSearch.GetHealthAsync();
 						result.Data.SearchOnline = global.Online;
-						result.Data.SearchIndexDocCount = global.DocumentCount + records.DocumentCount;
+						// This endpoint is anonymous; index counts describe every department in the cluster.
+						result.Data.SearchIndexDocCount = null;
 					}
 				}
 				catch (System.Exception ex)

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Deployments" xml:space="preserve"><value>Deployments</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Deployment Finance</value></data>
+  <data name="MyDeployments" xml:space="preserve"><value>My Deployments</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Deployment finance wrappers: rosters, daily time reports, expenses and files for billable, cost-recovery and operational deployments.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>A deployment groups the units, personnel and equipment sent to an incident with their daily time reports and expenses. Link it to a call or to a Records mutual-aid order.</value></data>
+  <data name="NoDeployments" xml:space="preserve"><value>No deployments yet.</value></data>
+  <data name="ShowAll" xml:space="preserve"><value>Show all</value></data>
+  <data name="ShowOpen" xml:space="preserve"><value>Show open only</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>New Deployment</value></data>
+  <data name="EditDeployment" xml:space="preserve"><value>Edit Deployment</value></data>
+  <data name="EditIntro" xml:space="preserve"><value>Identifiers the customer agency assigns and the jurisdiction facts the billing engine needs.</value></data>
+  <data name="CreateFromExternalOrder" xml:space="preserve"><value>Create from external order</value></data>
+  <data name="Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="FinanceMode" xml:space="preserve"><value>Finance mode</value></data>
+  <data name="FinanceModeHelp" xml:space="preserve"><value>Operational only keeps time and expenses for the record; cost recovery feeds a reimbursement claim; billable feeds a customer invoice.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Incident #</value></data>
+  <data name="ResourceOrderNumber" xml:space="preserve"><value>Resource order #</value></data>
+  <data name="RequestNumber" xml:space="preserve"><value>Request #</value></data>
+  <data name="ServiceRequestNumber" xml:space="preserve"><value>Service request #</value></data>
+  <data name="CostCode" xml:space="preserve"><value>Cost code</value></data>
+  <data name="PointOfHire" xml:space="preserve"><value>Point of hire</value></data>
+  <data name="Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Window" xml:space="preserve"><value>Window</value></data>
+  <data name="Days" xml:space="preserve"><value>days</value></data>
+  <data name="MaxDays" xml:space="preserve"><value>Max days</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Linked to a Records external order</value></data>
+  <data name="Deployment" xml:space="preserve"><value>Deployment</value></data>
+  <data name="AgencyIdentifiers" xml:space="preserve"><value>Agency identifiers</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Jurisdiction</value></data>
+  <data name="HomeCountry" xml:space="preserve"><value>Home country</value></data>
+  <data name="HomeSubdivision" xml:space="preserve"><value>Home state / province</value></data>
+  <data name="HostCountry" xml:space="preserve"><value>Host country</value></data>
+  <data name="HostSubdivision" xml:space="preserve"><value>Host state / province</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Time zone</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Incident-local time zone for time reports; blank uses the department's.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Currency</value></data>
+  <data name="OutOfProvince" xml:space="preserve"><value>Out of province / state</value></data>
+  <data name="TravelViaAir" xml:space="preserve"><value>Travel via air</value></data>
+  <data name="CallId" xml:space="preserve"><value>Call ID</value></data>
+  <data name="CallIdHelp" xml:space="preserve"><value>Optional: the call this deployment is billed against. One deployment per call.</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Saved" xml:space="preserve"><value>Saved.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>The change could not be saved.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Wrap an open Records mutual-aid order in a deployment so time, expenses and the roster can be tracked and billed. The order itself stays in Records.</value></data>
+  <data name="OpenExternalOrders" xml:space="preserve"><value>Open external orders</value></data>
+  <data name="RecordsRequired" xml:space="preserve"><value>The Records system is not enabled for this department, so there are no external orders to pick from.</value></data>
+  <data name="NoOpenExternalOrders" xml:space="preserve"><value>No open external orders without a deployment.</value></data>
+  <data name="ExternalOrder" xml:space="preserve"><value>External order</value></data>
+  <data name="NameFromOrder" xml:space="preserve"><value>Defaults to the incident name</value></data>
+  <data name="PrefillRoster" xml:space="preserve"><value>Prefill the roster from accepted fills</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>Also create a call</value></data>
+  <data name="CallType" xml:space="preserve"><value>Call type</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>Call priority</value></data>
+  <data name="CreateDeployment" xml:space="preserve"><value>Create deployment</value></data>
+  <data name="OrdersAlreadyLinked" xml:space="preserve"><value>{0} open order(s) already have a deployment.</value></data>
+  <data name="FillCount" xml:space="preserve"><value>{0} fill(s)</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Export time CSV</value></data>
+  <data name="Call" xml:space="preserve"><value>Call</value></data>
+  <data name="Summary" xml:space="preserve"><value>Summary</value></data>
+  <data name="Units" xml:space="preserve"><value>Units</value></data>
+  <data name="Personnel" xml:space="preserve"><value>Personnel</value></data>
+  <data name="TimeReports" xml:space="preserve"><value>Time reports</value></data>
+  <data name="PersonnelHours" xml:space="preserve"><value>Personnel hours</value></data>
+  <data name="Expenses" xml:space="preserve"><value>Expenses</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Change status</value></data>
+  <data name="StatusConfirm" xml:space="preserve"><value>Change the deployment status?</value></data>
+  <data name="Roster" xml:space="preserve"><value>Roster</value></data>
+  <data name="Files" xml:space="preserve"><value>Files</value></data>
+  <data name="Unit" xml:space="preserve"><value>Unit</value></data>
+  <data name="CallSign" xml:space="preserve"><value>Call sign</value></data>
+  <data name="Crew" xml:space="preserve"><value>Crew</value></data>
+  <data name="RemoveConfirm" xml:space="preserve"><value>Remove this row?</value></data>
+  <data name="SelectUnit" xml:space="preserve"><value>Select a unit</value></data>
+  <data name="AddUnit" xml:space="preserve"><value>Add unit</value></data>
+  <data name="Equipment" xml:space="preserve"><value>Equipment</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>No units rostered.</value></data>
+  <data name="NoEquipment" xml:space="preserve"><value>No equipment rostered.</value></data>
+  <data name="Item" xml:space="preserve"><value>Item</value></data>
+  <data name="Issued" xml:space="preserve"><value>Issued</value></data>
+  <data name="Return" xml:space="preserve"><value>Return</value></data>
+  <data name="EquipmentName" xml:space="preserve"><value>Equipment name</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>No unit</value></data>
+  <data name="AddEquipment" xml:space="preserve"><value>Add equipment</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>No personnel rostered.</value></data>
+  <data name="Seat" xml:space="preserve"><value>Seat</value></data>
+  <data name="Certification" xml:space="preserve"><value>Certification</value></data>
+  <data name="Member" xml:space="preserve"><value>Member</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Select a member</value></data>
+  <data name="SeatHelp" xml:space="preserve"><value>Seats marked * require the seat's personnel role; the role's certification requirements are checked and expiring certifications are flagged.</value></data>
+  <data name="ForceSeat" xml:space="preserve"><value>Seat even when a requirement fails</value></data>
+  <data name="AddPersonnel" xml:space="preserve"><value>Add member</value></data>
+  <data name="SeatBlocked" xml:space="preserve"><value>The member does not meet the seat's requirements. Tick "Seat even when a requirement fails" to override.</value></data>
+  <data name="NewTimeReport" xml:space="preserve"><value>New time report</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>One report per day; entries are prefilled from the roster.</value></data>
+  <data name="NoTimeReports" xml:space="preserve"><value>No time reports yet.</value></data>
+  <data name="ReportDate" xml:space="preserve"><value>Report date</value></data>
+  <data name="Submitted" xml:space="preserve"><value>Submitted</value></data>
+  <data name="Approved" xml:space="preserve"><value>Approved</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Invoice</value></data>
+  <data name="NoExpenses" xml:space="preserve"><value>No expenses yet.</value></data>
+  <data name="ExpenseDate" xml:space="preserve"><value>Date</value></data>
+  <data name="Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Description" xml:space="preserve"><value>Description</value></data>
+  <data name="City" xml:space="preserve"><value>City</value></data>
+  <data name="Amount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Receipt</value></data>
+  <data name="TimeReport" xml:space="preserve"><value>Time report</value></data>
+  <data name="PreApproved" xml:space="preserve"><value>Pre-approved</value></data>
+  <data name="NotBillable" xml:space="preserve"><value>Not billable</value></data>
+  <data name="Total" xml:space="preserve"><value>Total</value></data>
+  <data name="AddExpense" xml:space="preserve"><value>Add expense</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>No files yet.</value></data>
+  <data name="FileName" xml:space="preserve"><value>File name</value></data>
+  <data name="Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Added" xml:space="preserve"><value>Added</value></data>
+  <data name="Upload" xml:space="preserve"><value>Upload</value></data>
+  <data name="PreviewManifest" xml:space="preserve"><value>Preview manifest</value></data>
+  <data name="GenerateManifest" xml:space="preserve"><value>File manifest PDF</value></data>
+  <data name="Billable" xml:space="preserve"><value>Billable</value></data>
+  <data name="MealCode" xml:space="preserve"><value>Meal code</value></data>
+  <data name="TimeReportTitle" xml:space="preserve"><value>Daily Time Report #{0}</value></data>
+  <data name="BackToDeployment" xml:space="preserve"><value>Back to deployment</value></data>
+  <data name="NoClear8" xml:space="preserve"><value>No clear 8 (OT carries into the next shift)</value></data>
+  <data name="UnsafeStandDown" xml:space="preserve"><value>Unsafe conditions stand-down</value></data>
+  <data name="TimeEntries" xml:space="preserve"><value>Time entries</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>times are incident-local</value></data>
+  <data name="Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="EntryType" xml:space="preserve"><value>Entry type</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="End" xml:space="preserve"><value>End</value></data>
+  <data name="PaidBreak" xml:space="preserve"><value>Paid break (min)</value></data>
+  <data name="UnpaidBreak" xml:space="preserve"><value>Unpaid break (min)</value></data>
+  <data name="Km" xml:space="preserve"><value>Km</value></data>
+  <data name="AddEntry" xml:space="preserve"><value>Add entry</value></data>
+  <data name="Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="SaveAndSubmit" xml:space="preserve"><value>Save and submit</value></data>
+  <data name="SubmitConfirm" xml:space="preserve"><value>Submit this report for approval? Entries lock once it is approved.</value></data>
+  <data name="OpenInvoice" xml:space="preserve"><value>Open invoice</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Signatures</value></data>
+  <data name="ContractorSignature" xml:space="preserve"><value>Contractor</value></data>
+  <data name="CustomerSignature" xml:space="preserve"><value>Customer</value></data>
+  <data name="SignAsContractor" xml:space="preserve"><value>Sign as contractor</value></data>
+  <data name="CustomerSignerName" xml:space="preserve"><value>Customer signer name</value></data>
+  <data name="Sign" xml:space="preserve"><value>Sign</value></data>
+  <data name="Review" xml:space="preserve"><value>Review</value></data>
+  <data name="Approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>Approve this time report?</value></data>
+  <data name="VoidReason" xml:space="preserve"><value>Reason</value></data>
+  <data name="Void" xml:space="preserve"><value>Void</value></data>
+  <data name="VoidConfirm" xml:space="preserve"><value>Void this time report? It is kept for the record but drops out of billing.</value></data>
+  <data name="FilePdf" xml:space="preserve"><value>File PDF on deployment</value></data>
+  <data name="StatusPlanned" xml:space="preserve"><value>Planned</value></data>
+  <data name="StatusStandby" xml:space="preserve"><value>Standby</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Active</value></data>
+  <data name="StatusDemobilizing" xml:space="preserve"><value>Demobilizing</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="StatusCancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="ReportStatusDraft" xml:space="preserve"><value>Draft</value></data>
+  <data name="ReportStatusSubmitted" xml:space="preserve"><value>Submitted</value></data>
+  <data name="ReportStatusApproved" xml:space="preserve"><value>Approved</value></data>
+  <data name="ReportStatusBilled" xml:space="preserve"><value>Billed</value></data>
+  <data name="ReportStatusVoid" xml:space="preserve"><value>Void</value></data>
+  <data name="FinanceOperationalOnly" xml:space="preserve"><value>Operational only</value></data>
+  <data name="FinanceCostRecovery" xml:space="preserve"><value>Cost recovery</value></data>
+  <data name="FinanceBillable" xml:space="preserve"><value>Billable</value></data>
+  <data name="ExpensePerDiemMeal" xml:space="preserve"><value>Per diem / meal</value></data>
+  <data name="ExpenseAccommodation" xml:space="preserve"><value>Accommodation</value></data>
+  <data name="ExpensePrivateAccommodation" xml:space="preserve"><value>Private accommodation</value></data>
+  <data name="ExpenseFerry" xml:space="preserve"><value>Ferry</value></data>
+  <data name="ExpenseFuel" xml:space="preserve"><value>Fuel</value></data>
+  <data name="ExpenseSupplyRestock" xml:space="preserve"><value>Supply restock</value></data>
+  <data name="ExpenseOther" xml:space="preserve"><value>Other</value></data>
+  <data name="AttachmentReceipt" xml:space="preserve"><value>Receipt</value></data>
+  <data name="AttachmentSignedServiceRequest" xml:space="preserve"><value>Signed service request</value></data>
+  <data name="AttachmentTimeReportPdf" xml:space="preserve"><value>Time report PDF</value></data>
+  <data name="AttachmentManifest" xml:space="preserve"><value>Manifest</value></data>
+  <data name="AttachmentCertification" xml:space="preserve"><value>Certification</value></data>
+  <data name="AttachmentOther" xml:space="preserve"><value>Other</value></data>
+  <data name="AttachmentExternalOrder" xml:space="preserve"><value>External order</value></data>
+  <data name="AttachmentSignedF42" xml:space="preserve"><value>Signed F-42</value></data>
+  <data name="AttachmentPaperF42" xml:space="preserve"><value>Paper F-42</value></data>
+  <data name="AttachmentIcs213Approval" xml:space="preserve"><value>ICS 213 approval</value></data>
+  <data name="AttachmentCrewRotationApproval" xml:space="preserve"><value>Crew rotation approval</value></data>
+  <data name="AttachmentLossDamage" xml:space="preserve"><value>Loss / damage</value></data>
+  <data name="AttachmentMarsExpenseEvidence" xml:space="preserve"><value>MARS expense evidence</value></data>
+  <data name="AttachmentMarsInvoice" xml:space="preserve"><value>MARS invoice</value></data>
+  <data name="EntryDeployment" xml:space="preserve"><value>Deployment</value></data>
+  <data name="EntryStandby" xml:space="preserve"><value>Standby</value></data>
+  <data name="EntryTravel" xml:space="preserve"><value>Travel</value></data>
+  <data name="Warningschedule_conflict" xml:space="preserve"><value>Already seated on another open deployment in this window</value></data>
+  <data name="Warningrole_not_held" xml:space="preserve"><value>The member does not hold the seat's personnel role</value></data>
+  <data name="Warningcertification_missing" xml:space="preserve"><value>A certification the seat requires is missing or expired</value></data>
+  <data name="Warningcertification_expiring" xml:space="preserve"><value>A required certification expires during the deployment window</value></data>
+  <data name="Warningalready_rostered" xml:space="preserve"><value>Already on this roster</value></data>
+  <data name="Warninginventory_issue_failed" xml:space="preserve"><value>The inventory issue failed; the equipment row was kept without an issuance</value></data>
+  <data name="Issueentries_overlap" xml:space="preserve"><value>Two time spans overlap for the same subject</value></data>
+  <data name="Issueend_before_start" xml:space="preserve"><value>An entry ends before it starts</value></data>
+  <data name="Issuesubject_not_on_roster" xml:space="preserve"><value>An entry refers to a subject that is not on the roster</value></data>
+  <data name="Issueno_entries" xml:space="preserve"><value>The report has no time entries</value></data>
+  <data name="Issuebreak_rule" xml:space="preserve"><value>A span longer than 5 hours has no break recorded</value></data>
+  <data name="Issuelong_travel" xml:space="preserve"><value>Travel time above 12 hours needs approval</value></data>
+  <data name="Issueoutside_report_date" xml:space="preserve"><value>An entry falls outside the report date</value></data>
+  <data name="deployments_name_required" xml:space="preserve"><value>A name is required.</value></data>
+  <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Choose a finance mode.</value></data>
+  <data name="deployments_window_invalid" xml:space="preserve"><value>The end must not be before the start.</value></data>
+  <data name="deployments_discount_invalid" xml:space="preserve"><value>The discount must be between 0 and 100 percent.</value></data>
+  <data name="deployments_contact_not_found" xml:space="preserve"><value>The contact was not found.</value></data>
+  <data name="deployments_call_not_found" xml:space="preserve"><value>The call was not found.</value></data>
+  <data name="deployments_call_already_linked" xml:space="preserve"><value>That call already has a deployment.</value></data>
+  <data name="deployments_not_found" xml:space="preserve"><value>The deployment was not found.</value></data>
+  <data name="deployments_status_transition_invalid" xml:space="preserve"><value>That status change is not allowed from the current status.</value></data>
+  <data name="deployments_delete_open" xml:space="preserve"><value>An active deployment cannot be deleted; complete or cancel it first.</value></data>
+  <data name="deployments_external_order_required" xml:space="preserve"><value>Choose an external order.</value></data>
+  <data name="deployments_external_order_already_linked" xml:space="preserve"><value>That external order already has a deployment.</value></data>
+  <data name="deployments_external_order_not_found" xml:space="preserve"><value>The external order was not found.</value></data>
+  <data name="deployments_unit_not_found" xml:space="preserve"><value>The unit was not found.</value></data>
+  <data name="deployments_unit_already_rostered" xml:space="preserve"><value>That unit is already on the roster.</value></data>
+  <data name="deployments_closed" xml:space="preserve"><value>The deployment is completed or cancelled and its roster is locked.</value></data>
+  <data name="deployments_user_required" xml:space="preserve"><value>Choose a member.</value></data>
+  <data name="deployments_user_not_found" xml:space="preserve"><value>The member was not found.</value></data>
+  <data name="deployments_user_not_in_department" xml:space="preserve"><value>The member is not in this department.</value></data>
+  <data name="deployments_user_already_rostered" xml:space="preserve"><value>That member is already on the roster.</value></data>
+  <data name="deployments_seat_not_found" xml:space="preserve"><value>The seat was not found on that unit.</value></data>
+  <data name="deployments_equipment_required" xml:space="preserve"><value>Enter an equipment name or pick an inventory item.</value></data>
+  <data name="deployments_attachment_empty" xml:space="preserve"><value>Choose a file to upload.</value></data>
+  <data name="deployments_attachment_too_large" xml:space="preserve"><value>The file is larger than 30 MB.</value></data>
+  <data name="deployments_pdf_failed" xml:space="preserve"><value>The PDF could not be generated.</value></data>
+  <data name="deployments_protected_write_refused" xml:space="preserve"><value>Protected data could not be written; check the department's data protection status.</value></data>
+  <data name="deployments_file_type" xml:space="preserve"><value>That file type is not allowed.</value></data>
+  <data name="timereports_date_exists" xml:space="preserve"><value>A time report already exists for that date.</value></data>
+  <data name="timereports_not_found" xml:space="preserve"><value>The time report was not found.</value></data>
+  <data name="timereports_locked" xml:space="preserve"><value>The time report is approved, billed or void and can no longer be edited.</value></data>
+  <data name="timereports_status_transition_invalid" xml:space="preserve"><value>That status change is not allowed for this time report.</value></data>
+  <data name="timereports_time_invalid" xml:space="preserve"><value>Enter start and end times as HH:mm.</value></data>
+  <data name="timereports_validation" xml:space="preserve"><value>Fix the errors below before submitting.</value></data>
+  <data name="expenses_amount_invalid" xml:space="preserve"><value>The amount must not be negative.</value></data>
+  <data name="expenses_type_invalid" xml:space="preserve"><value>Choose an expense type.</value></data>
+  <data name="expenses_not_found" xml:space="preserve"><value>The expense was not found.</value></data>
+  <data name="expenses_receipt_invalid" xml:space="preserve"><value>The receipt could not be read.</value></data>
+  <data name="ManageDeployments" xml:space="preserve"><value>Manage deployments</value></data>
+  <data name="ManageDeploymentsNote" xml:space="preserve"><value>Create and edit deployments, rosters, equipment, expenses, files and status changes, and see every deployment. Rostered members always see their own deployments and file time without this.</value></data>
+  <data name="ApproveTimeReports" xml:space="preserve"><value>Approve time reports</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Approve and void submitted daily time reports. Approved reports feed billing.</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Deployment created</value></data>
+  <data name="DeploymentStatusChanged" xml:space="preserve"><value>Deployment status changed</value></data>
+  <data name="DeploymentRosterChanged" xml:space="preserve"><value>Deployment roster changed</value></data>
+  <data name="DeploymentExpenseAdded" xml:space="preserve"><value>Deployment expense added</value></data>
+  <data name="TimeReportSubmitted" xml:space="preserve"><value>Time report submitted</value></data>
+  <data name="TimeReportApproved" xml:space="preserve"><value>Time report approved</value></data>
+</root>

@@ -78,7 +78,7 @@
                                 @foreach (var t in templates)
                                 {
                                     var exists = Model.ExistingCodes.Contains(t.Code);
-                                    <tr data-search="@(t.Code + " " + t.Name + " " + t.Category + " " + t.AppliesTo + " " + t.IssuingAuthority + " " + string.Join(" ", t.Keywords)).ToLowerInvariant()" class="@(exists ? "text-muted" : null)">
+                                    <tr data-search="@((t.Code + " " + t.Name + " " + t.Category + " " + t.AppliesTo + " " + t.IssuingAuthority + " " + string.Join(" ", t.Keywords)).ToLowerInvariant())" class="@(exists ? "text-muted" : null)">
                                         <td>@if (!exists) { <input type="checkbox" name="templateIds" value="@t.Id" /> } else { <i class="fa fa-check text-navy" title="@localizer["AlreadyAdded"]"></i> }</td>
                                         <td><code>@t.Code</code></td>
                                         <td>@t.Name</td>

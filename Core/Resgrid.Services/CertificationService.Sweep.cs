@@ -15,10 +15,17 @@ namespace Resgrid.Services
 	/// The nightly sweep (Workforce &amp; Business Operations plan, Phase D5; worker 34). Runs once per department per
 	/// department-local day: expire pass, expiring pass on the configured lead days, the same two passes over unit
 	/// records, the enforcement pass (Enforce removes after grace, WarnOnly only notifies, Off evaluates nothing) and
-	/// the admin digest. Exact-day matching keeps every pass idempotent for a given local date.
+	/// the admin digest. The worker claims the local day (TryClaimSweepDayAsync) before it runs, which is what keeps the
+	/// expiring passes idempotent: the expire pass is idempotent on its own, the notifications are not.
 	/// </summary>
 	public partial class CertificationService
 	{
+		public Task<bool> TryClaimSweepDayAsync(int departmentId, DateTime localToday, CancellationToken cancellationToken = default)
+			=> _settings.TryClaimSweepAsync(departmentId, localToday.Date, cancellationToken);
+
+		public Task ReleaseSweepDayAsync(int departmentId, DateTime localToday, CancellationToken cancellationToken = default)
+			=> _settings.ReleaseSweepClaimAsync(departmentId, localToday.Date, cancellationToken);
+
 		public async Task<List<int>> GetDepartmentsForSweepAsync()
 		{
 			var ids = new HashSet<int>();

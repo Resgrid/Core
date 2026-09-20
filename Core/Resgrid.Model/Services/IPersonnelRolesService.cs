@@ -43,6 +43,14 @@ namespace Resgrid.Model.Services
 		Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null);
 
 		/// <summary>
+		/// Saves the role and replaces its membership with <paramref name="userIds"/> in one transaction: the certification
+		/// gate (plan D4) runs against the members the role gains before anything is deleted, and a failure anywhere leaves
+		/// the previous membership in place. Throws InvalidOperationException("certifications_role_requirements_unmet") when
+		/// a gained member is blocked under Enforce.
+		/// </summary>
+		Task<PersonnelRole> ReplaceRoleMembersAsync(PersonnelRole role, IEnumerable<string> userIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null);
+
+		/// <summary>
 		/// Gets the role by department and name asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

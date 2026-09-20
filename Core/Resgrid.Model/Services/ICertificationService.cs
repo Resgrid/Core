@@ -104,6 +104,14 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Departments the sweep has anything to do for: typed personnel records, unit records or role requirements.</summary>
 		Task<List<int>> GetDepartmentsForSweepAsync();
+		/// <summary>
+		/// Claims <paramref name="localToday"/> as the department's sweep day; false when that day was already claimed. The
+		/// worker claims before it runs, so the expiring notifications for a local day are sent once even when the hourly
+		/// tick repeats, drifts past the configured hour or overlaps.
+		/// </summary>
+		Task<bool> TryClaimSweepDayAsync(int departmentId, DateTime localToday, CancellationToken cancellationToken = default);
+		/// <summary>Returns a claim after a failed sweep so the next tick of the same local day retries it.</summary>
+		Task ReleaseSweepDayAsync(int departmentId, DateTime localToday, CancellationToken cancellationToken = default);
 		/// <summary>Runs the expire, expiring, unit, enforcement and digest passes for one department for its local date.</summary>
 		Task<CertificationSweepResult> RunExpirySweepAsync(int departmentId, DateTime localToday, CancellationToken cancellationToken = default);
 	}

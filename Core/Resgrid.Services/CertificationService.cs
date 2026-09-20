@@ -167,15 +167,22 @@ namespace Resgrid.Services
 			}
 			if (existing != null)
 			{
-				// Routing metadata the edit form does not carry survives the save.
+				// Routing metadata the edit form does not carry survives the save (Expired included: only a future expiry
+				// below returns a lapsed record to service).
 				certification.IsDeleted = existing.IsDeleted;
-				if (certification.Status == 0 && existing.Status != 0 && existing.Status != (int)PersonnelCertificationStatuses.Expired)
+				if (certification.Status == 0 && existing.Status != 0)
 					certification.Status = existing.Status;
-				if (existing.Status == (int)PersonnelCertificationStatuses.Expired && certification.ExpiresOn.HasValue && certification.ExpiresOn.Value.Date >= DateTime.UtcNow.Date)
-					certification.Status = (int)PersonnelCertificationStatuses.Active;
 				certification.StatusChangedOn ??= existing.StatusChangedOn;
 				certification.StatusChangedByUserId ??= existing.StatusChangedByUserId;
 				certification.StatusReason ??= existing.StatusReason;
+				// A future expiry on an expired row returns it to service the same way RenewCertificationAsync does: a type
+				// that requires sign-off goes back through PendingVerification, never straight to Active.
+				if (existing.Status == (int)PersonnelCertificationStatuses.Expired && certification.ExpiresOn.HasValue && certification.ExpiresOn.Value.Date >= DateTime.UtcNow.Date)
+				{
+					certification.Status = type?.RequiresVerification == true ? (int)PersonnelCertificationStatuses.PendingVerification : (int)PersonnelCertificationStatuses.Active;
+					certification.StatusChangedOn = DateTime.UtcNow;
+					certification.StatusReason = null;
+				}
 				certification.VerifiedByUserId ??= existing.VerifiedByUserId;
 				certification.VerifiedOn ??= existing.VerifiedOn;
 				certification.IsProtected = existing.IsProtected;
@@ -785,9 +792,14 @@ namespace Resgrid.Services
 			var horizon = leadDays.Count > 0 ? leadDays.Max() : 60;
 
 			var people = (await GetCertificationsForDepartmentAsync(departmentId)).Where(r => r.IsTyped && byType.ContainsKey(r.DepartmentCertificationTypeId.Value)).ToList();
+			// One cached department name list instead of a profile read per member; a member missing from it (a fresh
+			// account, a stale list) still resolves through the profile.
+			var departmentNames = (await _departments.Value.GetAllPersonnelNamesForDepartmentAsync(departmentId) ?? new List<PersonName>())
+				.Where(n => !string.IsNullOrWhiteSpace(n.UserId)).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First().Name?.Trim(), StringComparer.OrdinalIgnoreCase);
 			var names = new Dictionary<string, string>();
 			foreach (var userId in people.Select(p => p.UserId).Distinct())
-				names[userId] = await DisplayNameAsync(userId);
+				names[userId] = departmentNames.TryGetValue(userId, out var known) && !string.IsNullOrWhiteSpace(known) ? known : await DisplayNameAsync(userId);
 			foreach (var group in people.GroupBy(r => new { r.UserId, TypeId = r.DepartmentCertificationTypeId.Value }))
 			{
 				var type = byType[group.Key.TypeId];

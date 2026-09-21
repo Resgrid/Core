@@ -21,8 +21,15 @@ namespace Resgrid.Web.Helpers
         public DepartmentTime(Department department)
         {
             _department = department ?? new Department();
-            var id = DateTimeHelpers.ConvertTimeZoneString(string.IsNullOrWhiteSpace(_department.TimeZone) ? "Pacific Standard Time" : _department.TimeZone);
-            _zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(id) ?? DateTimeZoneProviders.Tzdb[TZConvert.WindowsToIana(id)];
+            _zone = Resolve(_department.TimeZone);
+        }
+        /// <summary>Blank keeps the legacy Pacific default; an identifier neither TZDB nor the Windows map knows falls back to UTC rather than failing every page.</summary>
+        public static DateTimeZone Resolve(string timeZone)
+        {
+            var id = DateTimeHelpers.ConvertTimeZoneString(string.IsNullOrWhiteSpace(timeZone) ? "Pacific Standard Time" : timeZone);
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(id);
+            if (zone == null && TZConvert.TryWindowsToIana(id, out var iana)) zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(iana);
+            return zone ?? DateTimeZone.Utc;
         }
         public static DepartmentTime From(ViewDataDictionary data) => data[nameof(DepartmentTime)] as DepartmentTime
             ?? throw new InvalidOperationException("Department time context was not initialized.");

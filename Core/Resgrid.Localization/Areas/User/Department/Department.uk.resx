@@ -606,7 +606,7 @@
     <value>Дозволені платформи</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Назви платформ, розділені комами, дозволені для цього підрозділу, або * для всіх. Дійсні назви: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
+    <value>Назви платформ, розділені комами, дозволені для цього підрозділу, або * для всіх. Дійсні назви: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, Signal, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Дозволити диспетчеризацію через асистент</value>

@@ -16,6 +16,13 @@ namespace Resgrid.Web.Areas.User.Models.Certifications
 		public bool SaveSuccess { get; set; }
 	}
 
+	public class CertificationPersonView : CertificationPageView
+	{
+		public string UserId { get; set; }
+		public string Name { get; set; }
+		public List<PersonnelCertification> Records { get; set; } = new List<PersonnelCertification>();
+	}
+
 	public class CertificationDashboardView : CertificationPageView
 	{
 		public CertificationExpiryDashboard Dashboard { get; set; } = new CertificationExpiryDashboard();

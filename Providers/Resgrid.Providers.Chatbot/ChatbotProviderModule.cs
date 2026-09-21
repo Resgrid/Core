@@ -13,6 +13,7 @@ namespace Resgrid.Providers.Chatbot
 			builder.RegisterType<Services.ExternalChatbotMessageProcessor>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<LineBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<ViberBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<SignalBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<TeamsBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<GoogleChatBotAdapter>().As<IChatbotPlatformAdapter>().InstancePerLifetimeScope();
 			// SMS Adapters (Phase 1)

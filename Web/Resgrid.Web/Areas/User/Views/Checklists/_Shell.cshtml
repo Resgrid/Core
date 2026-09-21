@@ -2,7 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
 @*
     Page heading shared by every checklist screen, laid out the same way as the rest of the
-    application: title and breadcrumb on the left, primary actions on the right.
+    application: full-width header with title, breadcrumb and primary actions.
 
     ViewData["Title"]    heading and last breadcrumb crumb (defaults to the module name)
     ViewData["Subtitle"] optional one line description under the breadcrumb
@@ -17,7 +17,7 @@
     var isRoot = string.Equals(title, localizer["Checklists"].Value, StringComparison.Ordinal);
 }
 <div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
-    <div class="@(ViewData["HeaderActions"] == null ? "col-sm-12" : "col-sm-4")">
+    <div class="col-sm-12">
         <h2>@title</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>

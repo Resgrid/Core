@@ -19,7 +19,7 @@
 
         }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = Model.CanWrite && Model.CanManage ? headerActions : null;
 }
 
 @await Html.PartialAsync("_Shell")

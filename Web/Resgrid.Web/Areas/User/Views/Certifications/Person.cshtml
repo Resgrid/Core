@@ -1,0 +1,47 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationPersonView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Certifications"];
+    ViewData["Tab"] = "Dashboard";
+    ViewData["Title"] = Model.Name;
+    ViewData["Subtitle"] = localizer["Certifications"].Value;
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" asp-route-userId="@Model.UserId"><i class="fa fa-plus"></i> @localizer["AddRecord"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox"><div class="ibox-content">
+        @if (Model.Records.Count == 0)
+        {
+            <p class="text-muted">@localizer["NoRecordsYet"]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead><tr><th>@commonLocalizer["Name"]</th><th>@localizer["TypeName"]</th><th>@localizer["ExpiresOn"]</th><th>@localizer["Status"]</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var record in Model.Records)
+                        {
+                            <tr>
+                                <td><a asp-controller="Certifications" asp-action="Record" asp-route-id="@record.PersonnelCertificationId">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(record.Name)</a></td>
+                                <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(record.Type)</td>
+                                <td>@record.ExpiresOn?.ToString("yyyy-MM-dd")</td>
+                                <td>@await Html.PartialAsync("_StatusBadge", record.Status)</td>
+                                <td><a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@record.PersonnelCertificationId">@localizer["Edit"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div></div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

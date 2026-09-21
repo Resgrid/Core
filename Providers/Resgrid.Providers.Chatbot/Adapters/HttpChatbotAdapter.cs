@@ -23,6 +23,7 @@ namespace Resgrid.Providers.Chatbot.Adapters
 			ChatbotPlatform.Telegram => !string.IsNullOrWhiteSpace(Config.ChatbotConfig.TelegramWebhookSecretToken),
 			ChatbotPlatform.WhatsApp => Uri.TryCreate(Config.ChatbotConfig.WhatsAppWebhookUrl, UriKind.Absolute, out var url) && url.Scheme == "https",
 			ChatbotPlatform.Line => !string.IsNullOrWhiteSpace(Config.ChatbotConfig.LineChannelSecret),
+			ChatbotPlatform.Signal => SignalBotAdapter.IsValidSecret(Config.ChatbotConfig.SignalWebhookSecret),
 			_ => true
 		});
 		public virtual bool CanInitiateProactively => IsConfigured;

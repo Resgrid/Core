@@ -1,4 +1,5 @@
-﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
+﻿@inject Resgrid.Model.Services.IBusinessOperationsAccessService businessOperationsAccess
+@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @{
@@ -236,6 +237,8 @@
     </div>
 </div>
 
+@if (!await businessOperationsAccess.IsEnabledAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
+{
 <div class="row">
     <div class="col-xs-12">
         <div class="wrapper wrapper-content">
@@ -279,6 +282,7 @@
         </div>
     </div>
 </div>
+}
 
 <div class="row">
     <div class="col-xs-12">

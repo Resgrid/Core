@@ -14,7 +14,7 @@
         @if (Model.CanManageContracts) { <a asp-action="Edit" asp-route-id="@c.ServiceContractId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
         @if (Model.CanManageBids) { <a asp-controller="Bids" asp-action="New" asp-route-contactId="@c.ContactId" asp-route-contractId="@c.ServiceContractId" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewBid"]</a> }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = Model.CanManageContracts || Model.CanManageBids ? headerActions : null;
 }
 
 @await Html.PartialAsync("_ContractorShell")

@@ -41,11 +41,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _groups;
 		private readonly IUserProfileService _profiles;
 		private readonly IProtectedReadService _protectedRead;
+		private readonly Resgrid.Model.Services.IAuthorizationService _authorization;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> _strings;
 
 		public CertificationsController(ICertificationService certifications, IPersonnelRolesService roles, IUnitsService units, IDepartmentsService departments,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IProtectedReadService protectedRead,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> strings)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> strings, Resgrid.Model.Services.IAuthorizationService authorization)
 		{
 			_certifications = certifications;
 			_roles = roles;
@@ -55,6 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_profiles = profiles;
 			_protectedRead = protectedRead;
 			_strings = strings;
+			_authorization = authorization;
 		}
 
 		#region Plumbing
@@ -524,6 +526,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion
 
 		#region Personnel record page
+
+		[HttpGet]
+		public async Task<IActionResult> Person(string userId)
+		{
+			var subject = string.IsNullOrWhiteSpace(userId) ? UserId : userId;
+			// Same rule as the record page: the shared Profile forms' subject authorization (self-service, department
+			// and group admins), or the certification-view permission over any member of this department — the
+			// dashboard links every person row here.
+			Dictionary<string, string> names = null;
+			var allowed = await _authorization.CanUserEditProfileAsync(UserId, DepartmentId, subject);
+			if (!allowed && CanView)
+			{
+				names = await PersonnelNamesAsync();
+				allowed = names.ContainsKey(subject);
+			}
+			if (!allowed)
+				return Unauthorized();
+
+			var records = (await _certifications.GetCertificationsByUserIdAsync(subject) ?? new List<PersonnelCertification>())
+				.Where(r => !r.IsDeleted && r.DepartmentId == DepartmentId).ToList();
+			await _protectedRead.ResolveCertificationsForReadAsync(DepartmentId, records,
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+			foreach (var record in records) record.Data = null;
+			names ??= await PersonnelNamesAsync();
+			return View(Page(new CertificationPersonView
+			{
+				UserId = subject,
+				Name = names.TryGetValue(subject, out var name) ? name : subject,
+				Records = records
+			}));
+		}
 
 		private async Task<PersonnelCertification> AuthorizedRecordAsync(int id, bool write)
 		{

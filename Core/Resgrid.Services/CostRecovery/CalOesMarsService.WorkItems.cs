@@ -604,7 +604,7 @@ namespace Resgrid.Services.CostRecovery
 			var item = await GetWorkItemAsync(workItemId, departmentId) ?? throw new InvalidOperationException("calmars_work_item_not_found");
 			var manifest = await BuildManifestAsync(item, departmentId, null);
 			var sb = new StringBuilder();
-			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Prepared for MARS</title><style>body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#222;margin:24px}h1{font-size:18px}h2{font-size:14px;margin-top:18px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:4px 6px;text-align:left;vertical-align:top}.muted{color:#777}.right{text-align:right}</style></head><body>");
+			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | Prepared for MARS</title><style>body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#222;margin:24px}h1{font-size:18px}h2{font-size:14px;margin-top:18px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:4px 6px;text-align:left;vertical-align:top}.muted{color:#777}.right{text-align:right}</style></head><body>");
 			sb.Append("<h1>Prepared for Cal OES MARS — ").Append(WebUtility.HtmlEncode(((CalOesMarsRecordTypes)item.RecordType).ToString())).Append("</h1>");
 			sb.Append("<p class=\"muted\">Authority profile ").Append(WebUtility.HtmlEncode(item.AuthorityProfileCode ?? "—")).Append(" · rate profile ").Append(WebUtility.HtmlEncode(item.RateProfileVersion ?? "—")).Append(" · checksum ").Append(WebUtility.HtmlEncode(manifest.Checksum)).Append(" · not an accepted MARS import file</p>");
 			sb.Append("<table><thead><tr><th>Box</th><th>Value</th><th>Source</th></tr></thead><tbody>");

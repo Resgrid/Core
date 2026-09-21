@@ -55,7 +55,7 @@ namespace Resgrid.Tests.Web.User
 				departmentSsoService: null, secLocalizer: null, deleteService: null,
 				externalIdentityLinkService: null, userSessionService: null, systemAuditsService: null,
 				departmentGroupsService: null, departmentSettingsService: null, passwordRecoveryService: null,
-				eventAggregator: null, protectedReadService: null)
+				eventAggregator: null, protectedReadService: null, businessOperationsAccess: Mock.Of<IBusinessOperationsAccessService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = http }
 			};

@@ -168,7 +168,7 @@ namespace Resgrid.Tests.Services
 				string html = null; var pdf = new Mock<IPdfProvider>(); pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>())).Returns((string value) => { html = value; return Encoding.ASCII.GetBytes("%PDF-1.4 synthetic"); });
 				var service = new ChecklistScheduledReportService(tasks.Object, _authorization.Object, _access.Object, users.Object, profiles.Object, pdf.Object);
 				var notification = await service.BuildAsync(task); notification.Subject.Should().Contain("conformité"); html.Should().NotContain("CANARY").And.NotContain("author").And.NotContain("synthetic@example.invalid");
-				var email = new Mock<IEmailService>(); var logic = new ReportDeliveryLogic(tasks.Object, email.Object, pdf.Object, service);
+				var email = new Mock<IEmailService>(); var logic = new ReportDeliveryLogic(tasks.Object, email.Object, pdf.Object, service, Mock.Of<IBusinessOperationsAccessService>());
 				var item = new ReportDeliveryQueueItem { ScheduledTask = task, Department = new Department { DepartmentId = 77 }, Email = "stale@example.invalid" };
 				(await logic.Process(item)).Item1.Should().BeTrue(); email.Verify(e => e.SendReportDeliveryAsync(It.Is<EmailNotification>(n => n.To == "synthetic@example.invalid"), 77, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
 				tasks.Verify(t => t.CreateScheduleTaskLogAsync(task, It.IsAny<CancellationToken>()), Times.Once);

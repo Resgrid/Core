@@ -63,11 +63,18 @@ namespace Resgrid.Services
 		}
 		private async Task<T> RevealAsync<T>(ChecklistActor actor, T row) where T : WorkOrderRow
 		{
-			if (row == null || row.DepartmentId != actor.DepartmentId) throw new WorkOrderException(404, "Unavailable");
-			var plain = !string.IsNullOrEmpty(row.Content) && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content);
-			var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, new[] { (row, Key(row)) }, WorkOrderTables.Fields<T>(), actor.GrantToken, actor.UserId);
-			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && plain) throw new WorkOrderException(403, "ProtectedDataRequired");
+			await RevealAllAsync(actor, new[] { row });
 			return row;
+		}
+		// One broker round trip per batch; the outcome is all-or-nothing exactly like the single-row path.
+		private async Task<IReadOnlyList<T>> RevealAllAsync<T>(ChecklistActor actor, IReadOnlyList<T> rows) where T : WorkOrderRow
+		{
+			if (rows.Any(row => row == null || row.DepartmentId != actor.DepartmentId)) throw new WorkOrderException(404, "Unavailable");
+			if (rows.Count == 0) return rows;
+			var plain = rows.Any(row => !string.IsNullOrEmpty(row.Content) && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content));
+			var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, rows.Select(row => (row, Key(row))).ToList(), WorkOrderTables.Fields<T>(), actor.GrantToken, actor.UserId);
+			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && plain) throw new WorkOrderException(403, "ProtectedDataRequired");
+			return rows;
 		}
 		private async Task SaveAsync<T>(ChecklistActor actor, T row, bool insert = false) where T : WorkOrderRow
 		{
@@ -341,7 +348,7 @@ namespace Resgrid.Services
 		private async Task<List<T>> ChildrenAsync<T>(ChecklistActor actor, string id) where T : WorkOrderRow
 		{
 			var result = new List<T>();
-			for (var skip = 0; ; skip += 500) { var page = await _store.ChildrenAsync<T>(actor.DepartmentId, id, skip); foreach (var row in page) result.Add(await RevealAsync(actor, row)); if (page.Count < 500) return result; if (skip >= 9500) throw new WorkOrderException(400, "HistoryLimit"); }
+			for (var skip = 0; ; skip += 500) { var page = await _store.ChildrenAsync<T>(actor.DepartmentId, id, skip); result.AddRange(await RevealAllAsync(actor, page)); if (page.Count < 500) return result; if (skip >= 9500) throw new WorkOrderException(400, "HistoryLimit"); }
 		}
 		public async Task<WorkOrderDetail> GetAsync(ChecklistActor actor, string id)
 		{

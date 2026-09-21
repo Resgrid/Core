@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Model;
@@ -97,6 +98,30 @@ namespace Resgrid.Tests.Web
             input.Value.Should().Be("2026-07-15T10:00:00", "validation redisplays the submitted clock value");
             var birthday = new RecordValueInput { FieldKey = "birthday", Value = "1990-07-15" };
             time.RecordInput(birthday, schema).Value.Should().Be("1990-07-15");
+        }
+
+        [TestCase("Pacific Standard Time", "America/Los_Angeles")]
+        [TestCase("Saskatchewan", "America/Regina")]
+        [TestCase("Asia/Kolkata", "Asia/Kolkata")]
+        [TestCase("", "America/Los_Angeles")]
+        [TestCase(null, "America/Los_Angeles")]
+        [TestCase("Not/A_Zone", "UTC")]
+        [TestCase("<script>", "UTC")]
+        public void Stored_zones_resolve_and_unknown_identifiers_fall_back_to_UTC_instead_of_throwing(string zone, string expected)
+        {
+            var time = new DepartmentTime(new Department { TimeZone = zone });
+            time.ZoneId.Should().Be(expected);
+            time.Local(new DateTime(2026, 7, 15, 12, 0, 0, DateTimeKind.Utc)).Kind.Should().Be(DateTimeKind.Unspecified);
+            new DepartmentTime(null).ZoneId.Should().Be("America/Los_Angeles");
+        }
+
+        [Test]
+        public void Recurrence_zone_choices_keep_the_system_zones_when_the_stored_identifier_is_unknown()
+        {
+            var zones = Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderSettingChoices.TimeZones("Not/A_Zone").ToList();
+            zones.Should().NotBeEmpty();
+            zones.Select(z => z.Id).Should().OnlyHaveUniqueItems();
+            Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderSettingChoices.TimeZones(null).Should().HaveCount(zones.Count);
         }
 
         [TestCase("America/Los_Angeles")]

@@ -19,13 +19,19 @@ namespace Resgrid.Providers.Chatbot.Services
 		public Task<JObject> PostAsync(string url, object payload, string authorization = null, string tokenHeader = null, string token = null)
 			=> SendAsync(url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"), authorization, tokenHeader, token);
 
+		public Task<JToken> PostJsonAsync(string url, object payload, string authorization)
+			=> RequestAsync(HttpMethod.Post, url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"), authorization, null, null);
+
 		public Task<JObject> GetAsync(string url, string authorization)
-			=> RequestAsync(HttpMethod.Get, url, null, authorization, null, null);
+			=> RequireObjectAsync(RequestAsync(HttpMethod.Get, url, null, authorization, null, null));
 
 		public Task<JObject> SendAsync(string url, HttpContent content, string authorization = null, string tokenHeader = null, string token = null)
-			=> RequestAsync(HttpMethod.Post, url, content, authorization, tokenHeader, token);
+			=> RequireObjectAsync(RequestAsync(HttpMethod.Post, url, content, authorization, tokenHeader, token));
 
-		private async Task<JObject> RequestAsync(HttpMethod method, string url, HttpContent content, string authorization, string tokenHeader, string token)
+		private static async Task<JObject> RequireObjectAsync(Task<JToken> request)
+			=> await request as JObject ?? throw new InvalidOperationException("Messaging provider returned an invalid response.");
+
+		private async Task<JToken> RequestAsync(HttpMethod method, string url, HttpContent content, string authorization, string tokenHeader, string token)
 		{
 			using var request = new HttpRequestMessage(method, url) { Content = content };
 			if (authorization != null) request.Headers.TryAddWithoutValidation("Authorization", authorization);
@@ -36,7 +42,7 @@ namespace Resgrid.Providers.Chatbot.Services
 				if (!response.IsSuccessStatusCode)
 					throw new InvalidOperationException($"Messaging provider rejected the request (HTTP {(int)response.StatusCode}).");
 				var body = await response.Content.ReadAsStringAsync();
-				return string.IsNullOrWhiteSpace(body) ? new JObject() : JObject.Parse(body);
+				return string.IsNullOrWhiteSpace(body) ? new JObject() : JToken.Parse(body);
 			}
 			catch (HttpRequestException) { throw new InvalidOperationException("Messaging provider connection failed."); }
 			catch (TaskCanceledException) { throw new InvalidOperationException("Messaging provider request timed out."); }

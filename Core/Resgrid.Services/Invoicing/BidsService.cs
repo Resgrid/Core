@@ -471,7 +471,7 @@ namespace Resgrid.Services.Invoicing
 			var bid = model.Bid;
 			var currency = model.Currency ?? "USD";
 			var sb = new StringBuilder();
-			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>").Append(E($"Bid #{bid.BidNumber}")).Append("</title>");
+			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | ").Append(E($"Bid #{bid.BidNumber}")).Append("</title>");
 			sb.Append("<style>body{font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#222;margin:32px}h1{font-size:22px;margin:0 0 4px}h2{font-size:14px;margin:18px 0 6px}table{border-collapse:collapse;width:100%}th,td{padding:6px 8px;text-align:left;vertical-align:top}th{border-bottom:2px solid #444;font-size:11px;text-transform:uppercase}td.num,th.num{text-align:right;white-space:nowrap}tr.line td{border-bottom:1px solid #ddd}table.totals{width:auto;margin-left:auto;margin-top:12px}table.totals td{padding:4px 8px}table.totals tr.grand td{border-top:2px solid #444;font-weight:bold;font-size:14px}.meta td{padding:2px 8px 2px 0}.muted{color:#666}.status{display:inline-block;padding:2px 8px;border:1px solid #444;border-radius:3px;font-size:11px;text-transform:uppercase}.footer{margin-top:28px;font-size:11px;color:#555;white-space:pre-wrap}</style></head><body>");
 			sb.Append("<h1>").Append(E(model.DepartmentName)).Append("</h1>");
 			sb.Append("<h2>Bid #").Append(bid.BidNumber).Append(" <span class=\"status\">").Append(E(((BidStatuses)bid.Status).ToString())).Append("</span></h2>");

@@ -53,6 +53,12 @@ namespace Resgrid.Config
 		public static string LineChannelAccessToken = "";
 		public static string LineChannelSecret = "";
 		public static string ViberBotToken = "";
+		// Optional self-hosted signal-cli-rest-api gateway; see Docker/Signal/README.md.
+		// HTTPS origin, or HTTP on loopback only. Never expose the unauthenticated bridge API.
+		public static string SignalBridgeUrl = "";
+		public static string SignalAccountNumber = "";
+		public static string SignalBridgeApiToken = "";
+		public static string SignalWebhookSecret = "";
 		public static string TeamsAppId = "";
 		public static string TeamsAppPassword = "";
 		public static string TeamsTenantId = "";

@@ -12,7 +12,7 @@
     var canView = page.CanManage || page.CanViewCompensation || page.CanViewInternalCosts || page.CanViewPayData;
 }
 <div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
-    <div class="@(ViewData["HeaderActions"] == null ? "col-sm-12" : "col-sm-4")">
+    <div class="col-sm-12">
         <h2>@title</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>

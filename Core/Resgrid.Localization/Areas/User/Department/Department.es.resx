@@ -541,7 +541,7 @@
     <value>Plataformas permitidas</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Nombres de plataformas separados por comas permitidos para este departamento, o * para todas. Nombres válidos: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
+    <value>Nombres de plataformas separados por comas permitidos para este departamento, o * para todas. Nombres válidos: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, Signal, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Permitir despacho mediante el asistente</value>

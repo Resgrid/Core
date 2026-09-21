@@ -29,9 +29,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentDataProtectionService _protection;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> _strings;
 		private readonly Lazy<IWorkShiftsService> _workshifts;
-		private readonly Lazy<IDepartmentsService> _departments;
-		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, Lazy<IWorkShiftsService> workshifts = null, Lazy<IDepartmentsService> departments = null)
-		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; _workshifts = workshifts; _departments = departments; }
+		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, Lazy<IWorkShiftsService> workshifts = null)
+		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; _workshifts = workshifts; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		private Task<bool> _checklistsEnabled;
 		private Task<bool> ChecklistsEnabledAsync() => _checklistsEnabled ??= _access.CanUseChecklistsAsync(DepartmentId);

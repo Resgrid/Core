@@ -117,11 +117,11 @@ namespace Resgrid.Chatbot.Models
 				},
 				ChatbotPlatform.Signal => new ChatbotPlatformCapabilities
 				{
-					MaxMessageLength = 2000,
+					MaxMessageLength = 1500,
 					SupportsMarkdown = false,
 					SupportsButtons = false,
 					SupportsEmbeds = false,
-					SupportsImages = true,
+					SupportsImages = false,
 					SupportsSelectMenus = false,
 					SupportsModals = false,
 					SupportsQuickReplies = false,

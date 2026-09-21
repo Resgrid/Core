@@ -1,0 +1,35 @@
+services:
+  signal-api:
+    image: ${SIGNAL_BRIDGE_IMAGE:?Set a tested signal-cli-rest-api image tag or digest}
+    restart: unless-stopped
+    environment:
+      MODE: json-rpc
+      RECEIVE_WEBHOOK_URL: http://signal-gateway:8081/receive
+      JSON_RPC_IGNORE_ATTACHMENTS: "true"
+      JSON_RPC_IGNORE_STORIES: "true"
+      JSON_RPC_IGNORE_AVATARS: "true"
+      JSON_RPC_IGNORE_STICKERS: "true"
+      LOG_LEVEL: warn
+    volumes:
+      - signal-data:/home/.local/share/signal-cli
+    networks: [signal]
+
+  signal-gateway:
+    image: ${SIGNAL_GATEWAY_IMAGE:?Set a tested nginx alpine image tag or digest}
+    restart: unless-stopped
+    environment:
+      SIGNAL_API_TOKEN: ${SIGNAL_API_TOKEN:?Set the outbound gateway token}
+      SIGNAL_WEBHOOK_SECRET: ${SIGNAL_WEBHOOK_SECRET:?Set the inbound webhook secret}
+      RESGRID_API_HOST: ${RESGRID_API_HOST:?Set the Resgrid HTTPS API hostname}
+      NGINX_ENVSUBST_FILTER: "^(SIGNAL_API_TOKEN|SIGNAL_WEBHOOK_SECRET|RESGRID_API_HOST)$"
+    ports:
+      - "127.0.0.1:8088:8080"
+    volumes:
+      - ./gateway.conf.template:/etc/nginx/templates/default.conf.template:ro
+    networks: [signal]
+    depends_on: [signal-api]
+
+networks:
+  signal:
+volumes:
+  signal-data:

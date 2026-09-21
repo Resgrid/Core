@@ -218,7 +218,7 @@ namespace Resgrid.Services.Records
 
 		internal static string CompiledHtml(List<(RmsOperationalRecord Record, RecordDocument Document, string Html)> entries, string title, Department department, DateTime now, string userId)
 		{
-			var html = new StringBuilder("<!doctype html><html><head><meta charset=\"utf-8\"><title>").Append(E(title)).Append("</title><style>body{font:12px Arial,sans-serif;color:#142235}h1{font-size:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd;padding:4px 6px;text-align:left;font-size:11px}th{background:#eef1f5}.packet-record{page-break-before:always}.packet-foot{font-size:10px;color:#556;margin-top:12px}</style></head><body>");
+			var html = new StringBuilder("<!doctype html><html><head><meta charset=\"utf-8\"><title>Resgrid | ").Append(E(title)).Append("</title><style>body{font:12px Arial,sans-serif;color:#142235}h1{font-size:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd;padding:4px 6px;text-align:left;font-size:11px}th{background:#eef1f5}.packet-record{page-break-before:always}.packet-foot{font-size:10px;color:#556;margin-top:12px}</style></head><body>");
 			html.Append("<h1>").Append(E(title)).Append("</h1><p>").Append(E(department?.Name ?? string.Empty)).Append(" · compiled ").Append(E(now.ToString("u"))).Append(" · ").Append(entries.Count).Append(" record(s)</p>");
 			html.Append("<h2>Manifest</h2><table><thead><tr><th>#</th><th>Record</th><th>Definition</th><th>Revision</th><th>Finalized</th><th>Checksum</th></tr></thead><tbody>");
 			for (var i = 0; i < entries.Count; i++)

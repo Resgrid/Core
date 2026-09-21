@@ -1,0 +1,5 @@
+# Temporary localhost-only access for an operator to link the dedicated Signal account.
+services:
+  signal-api:
+    ports:
+      - "127.0.0.1:8089:8080"

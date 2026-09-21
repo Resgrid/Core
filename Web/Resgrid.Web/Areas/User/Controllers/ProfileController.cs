@@ -299,11 +299,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult>  EditScheduledReport(int scheduleId)
 		{
-			var model = new EditScheduledReportView();
-			model.ReportTypes = await ChecklistReportTypesAsync(model.ReportType);
-
 			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (schedule == null || schedule.DepartmentId != DepartmentId || schedule.UserId != UserId || schedule.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
+			// A retired legacy certification schedule has no option in the selector; opening the form would post
+			// the first remaining report type over it. It can only be deactivated or deleted.
+			if (schedule.Data == ((int)ReportTypes.Certifications).ToString() && await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
+
+			var model = new EditScheduledReportView();
+			model.ReportType = (ReportTypes)int.Parse(schedule.Data);
+			model.ReportTypes = await ChecklistReportTypesAsync(model.ReportType);
 			if (schedule.ScheduleType == (int)ScheduleTypes.SpecifcDateTime)
 			{
 				model.SpecificDatetime = true;
@@ -322,7 +327,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Thursday = schedule.Thursday;
 			model.Friday = schedule.Friday;
 			model.Saturday = schedule.Saturday;
-			model.ReportType = (ReportTypes)int.Parse(schedule.Data);
 
 			return View(model);
 		}

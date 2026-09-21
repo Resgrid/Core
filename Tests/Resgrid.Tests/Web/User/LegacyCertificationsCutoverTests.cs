@@ -13,6 +13,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Services;
 using Resgrid.Web.Areas.User.Controllers;
 using Resgrid.Web.Areas.User.Models.Certifications;
@@ -168,6 +169,25 @@ namespace Resgrid.Tests.Web.User
             tasks.Verify(x => x.GetScheduledTaskByIdAsync(1), Times.Once); tasks.VerifyNoOtherCalls();
         }
         [Test]
+        public async Task Existing_legacy_schedule_cannot_be_opened_for_edit()
+        {
+            var tasks = new Mock<IScheduledTasksService>(MockBehavior.Strict);
+            tasks.Setup(x => x.GetScheduledTaskByIdAsync(1)).ReturnsAsync(new ScheduledTask { DepartmentId = DepartmentId, UserId = UserId, TaskType = (int)TaskTypes.ReportDelivery, Data = "2" });
+            (await Controller<ProfileController>(tasks.Object).EditScheduledReport(1)).Should().BeOfType<NotFoundResult>();
+            tasks.Verify(x => x.GetScheduledTaskByIdAsync(1), Times.Once); tasks.VerifyNoOtherCalls();
+        }
+        [Test]
+        public async Task Edit_form_selects_the_stored_report_type()
+        {
+            var tasks = new Mock<IScheduledTasksService>(MockBehavior.Strict);
+            tasks.Setup(x => x.GetScheduledTaskByIdAsync(1)).ReturnsAsync(new ScheduledTask { DepartmentId = DepartmentId, UserId = UserId, TaskType = (int)TaskTypes.ReportDelivery, Data = ((int)ReportTypes.CertificationCompliance).ToString(), ScheduleType = (int)ScheduleTypes.Weekly, Time = "08:00" });
+            var result = (await Controller<ProfileController>(tasks.Object).EditScheduledReport(1)).Should().BeOfType<ViewResult>().Subject;
+            var model = (EditScheduledReportView)result.Model;
+            model.ReportType.Should().Be(ReportTypes.CertificationCompliance);
+            model.ReportTypes.Single(x => x.Selected).Value.Should().Be(((int)ReportTypes.CertificationCompliance).ToString());
+            model.ReportTypes.Any(x => x.Value == ((int)ReportTypes.Certifications).ToString()).Should().BeFalse();
+        }
+        [Test]
         public async Task Queued_legacy_delivery_is_logged_as_skipped_without_generating_or_sending()
         {
             var task = new ScheduledTask { DepartmentId = DepartmentId, Data = "2" };
@@ -207,6 +227,25 @@ namespace Resgrid.Tests.Web.User
         {
             _authorization.Setup(x => x.CanUserEditProfileAsync(UserId, DepartmentId, "other")).ReturnsAsync(false);
             (await Controller<CertificationsController>().Person("other")).Should().BeOfType<RedirectResult>().Which.Url.Should().Be("/Public/Unauthorized");
+        }
+        [Test]
+        public async Task New_member_page_admits_certification_viewers_for_department_members_only()
+        {
+            _http.User.AddIdentity(new ClaimsIdentity(new[] { new Claim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View) }));
+            _authorization.Setup(x => x.CanUserEditProfileAsync(UserId, DepartmentId, "other")).ReturnsAsync(false);
+            _authorization.Setup(x => x.CanUserEditProfileAsync(UserId, DepartmentId, "stranger")).ReturnsAsync(false);
+            var certifications = new Mock<ICertificationService>(MockBehavior.Strict);
+            certifications.Setup(x => x.GetCertificationsByUserIdAsync("other")).ReturnsAsync(new List<PersonnelCertification>());
+            var protectedRead = new Mock<IProtectedReadService>(MockBehavior.Strict);
+            protectedRead.Setup(x => x.ResolveCertificationsForReadAsync(DepartmentId, It.IsAny<IReadOnlyList<PersonnelCertification>>(), "", UserId, false, CancellationToken.None)).ReturnsAsync(new ProtectedReadResult());
+            var departments = new Mock<IDepartmentsService>(MockBehavior.Strict);
+            departments.Setup(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName> { new PersonName { UserId = "other", FirstName = "Other" } });
+            var controller = Controller<CertificationsController>(certifications.Object, protectedRead.Object, departments.Object);
+            var result = (await controller.Person("other")).Should().BeOfType<ViewResult>().Subject;
+            ((CertificationPersonView)result.Model).UserId.Should().Be("other");
+            departments.Verify(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId), Times.Once);
+            (await controller.Person("stranger")).Should().BeOfType<RedirectResult>().Which.Url.Should().Be("/Public/Unauthorized");
+            certifications.Verify(x => x.GetCertificationsByUserIdAsync("stranger"), Times.Never);
         }
     }
 }

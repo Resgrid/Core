@@ -531,8 +531,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Person(string userId)
 		{
 			var subject = string.IsNullOrWhiteSpace(userId) ? UserId : userId;
-			// Keep the shared Profile forms' subject authorization, including for self-service.
-			if (!await _authorization.CanUserEditProfileAsync(UserId, DepartmentId, subject))
+			// Same rule as the record page: the shared Profile forms' subject authorization (self-service, department
+			// and group admins), or the certification-view permission over any member of this department — the
+			// dashboard links every person row here.
+			Dictionary<string, string> names = null;
+			var allowed = await _authorization.CanUserEditProfileAsync(UserId, DepartmentId, subject);
+			if (!allowed && CanView)
+			{
+				names = await PersonnelNamesAsync();
+				allowed = names.ContainsKey(subject);
+			}
+			if (!allowed)
 				return Unauthorized();
 
 			var records = (await _certifications.GetCertificationsByUserIdAsync(subject) ?? new List<PersonnelCertification>())
@@ -540,7 +549,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _protectedRead.ResolveCertificationsForReadAsync(DepartmentId, records,
 				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 			foreach (var record in records) record.Data = null;
-			var names = await PersonnelNamesAsync();
+			names ??= await PersonnelNamesAsync();
 			return View(Page(new CertificationPersonView
 			{
 				UserId = subject,

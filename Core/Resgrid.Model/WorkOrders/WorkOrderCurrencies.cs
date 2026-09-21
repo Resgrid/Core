@@ -35,7 +35,13 @@ namespace Resgrid.Model.WorkOrders
                     options[code] = string.IsNullOrWhiteSpace(region.CurrencyEnglishName) ? code : region.CurrencyEnglishName;
                 }
             }
-            catch (Exception) { options.Clear(); } // A broken culture catalog must not poison the type initializer.
+            catch (Exception ex)
+            {
+                // A broken culture catalog must not poison the type initializer, but a silent fallback to the
+                // baseline would hide why a department's saved currency stopped validating.
+                Framework.Logging.LogError(ex, "Currency catalog discovery failed; only the baseline currencies are available.");
+                options.Clear();
+            }
             foreach (var pair in Baseline) options.TryAdd(pair.Key, pair.Value);
             return options;
         }

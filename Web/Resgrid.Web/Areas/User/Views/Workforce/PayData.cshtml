@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["PayDataReporting"];
     ViewData["Title"] = localizer["PayDataReporting"].Value;
     ViewData["Subtitle"] = localizer["PayDataIntro"].Value;
@@ -14,7 +15,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="alert alert-warning"><i class="fa fa-info-circle"></i> @localizer["PayDataDisclaimer"]</div>
     <div class="row">
@@ -65,7 +66,7 @@
                                 <td>@run.ReportingYear</td><td>@localizer["ReportType" + (PayDataReportTypes)run.ReportType]</td>
                                 <td>@run.SnapshotStart.ToString("MM-dd") – @run.SnapshotEnd.ToString("MM-dd")</td>
                                 <td><span class="label @(run.Status == (int)PayDataReportRunStatuses.CertifiedExternally ? "label-primary" : run.IsFrozen ? "label-info" : run.Status == (int)PayDataReportRunStatuses.Void ? "label-default" : "label-warning")">@localizer["Status" + (PayDataReportRunStatuses)run.Status]</span></td>
-                                <td>@run.EmployeeCount</td><td>@run.RowCount</td><td>@run.ExceptionCount / @run.WarningCount</td><td>@run.AddedOn.ToString("yyyy-MM-dd")</td>
+                                <td>@run.EmployeeCount</td><td>@run.RowCount</td><td>@run.ExceptionCount / @run.WarningCount</td><td>@departmentTime.Date(run.AddedOn)</td>
                                 <td class="text-right"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i></a></td>
                             </tr>
                         }
@@ -80,3 +81,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

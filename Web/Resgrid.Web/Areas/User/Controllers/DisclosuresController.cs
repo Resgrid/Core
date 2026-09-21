@@ -30,6 +30,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.RecordDisclosure_Update)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class DisclosuresController : SecureBaseController
 	{
 		private readonly IRecordsDisclosureService _disclosures;
@@ -400,10 +401,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!local.HasValue || local.Value == DateTime.MinValue)
 				return null;
-			if (department == null || string.IsNullOrWhiteSpace(department.TimeZone))
-				return DateTime.SpecifyKind(local.Value, DateTimeKind.Utc);
-
-			return DateTimeHelpers.ConvertToUtc(local.Value, department.TimeZone, true);
+			return new Resgrid.Web.Helpers.DepartmentTime(department).ToUtc(local.Value);
 		}
 
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()

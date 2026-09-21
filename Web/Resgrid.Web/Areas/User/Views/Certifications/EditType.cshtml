@@ -10,7 +10,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@title</h5></div>
@@ -95,4 +95,8 @@
             $('input[name=NeverExpires]').on('change', function () { $('#DefaultValidityMonths').prop('disabled', this.checked); }).trigger('change');
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

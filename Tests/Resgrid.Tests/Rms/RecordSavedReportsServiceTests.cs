@@ -43,6 +43,26 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Report_timestamp_columns_use_department_time_while_calendar_fields_and_storage_keep_their_meaning()
+		{
+			_h.Departments.Setup(d => d.GetDepartmentByIdAsync(Dept, false)).ReturnsAsync(new Department { TimeZone = "Pacific Standard Time", Use24HourTime = true });
+			await _h.CreateAndPublishAsync("shift-log", "Shift log", Schema(Section("shift", "Shift", Field("at", RmsFieldType.DateTime), Field("day", RmsFieldType.Date))));
+			var at = new DateTime(2026, 7, 15, 2, 30, 0, DateTimeKind.Utc);
+			var draft = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput
+			{
+				DefinitionKey = "shift-log", StartedOn = at,
+				Values = new() { Value("shift", "at", at.ToString("O")), Value("shift", "day", "2026-07-15") }
+			});
+			var report = await _h.Reports.SaveAsync(Dept, Admin, Report("Department time", new RecordReportSpec
+			{
+				IncludeDrafts = true, Columns = new() { "record.started_on", "at", "day" }
+			}));
+			var result = await _h.Reports.RunAsync(Dept, Author, report.RmsSavedReportDefinitionId);
+			result.Rows.Single().Should().Equal("07/14/2026 19:30:00", "07/14/2026 19:30:00", "2026-07-15");
+			(await _h.Records.GetAsync(Dept, draft.Record.RmsOperationalRecordId)).Record.StartedOn.Should().Be(at);
+		}
+
+		[Test]
 		public async Task Validation_checks_columns_filters_group_by_and_aggregates_against_the_schema_flags()
 		{
 			await _h.CreateAndPublishAsync("shift-log", "Shift log", ShiftLog());

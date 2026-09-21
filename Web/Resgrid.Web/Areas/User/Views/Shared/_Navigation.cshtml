@@ -18,18 +18,38 @@
 	// Records.System flag: Records takes the Logs sidebar position and the Logs link is absent. The
 	// existing LogsDisabled module setting still controls whether that position is visible at all.
 	var recordsEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsSystem, ClaimsAuthorizationHelper.GetDepartmentId());
+	// Keep legacy modules flat; only new feature areas get collapsible groups.
+	var showCertifications = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications();
+	var showInvoicing = ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, ClaimsAuthorizationHelper.GetDepartmentId());
+	var showDeployments = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, ClaimsAuthorizationHelper.GetDepartmentId());
+	var showContractorBilling = (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids() || ClaimsAuthorizationHelper.CanViewContracts()) && SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseContractorBillingAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var showCostRecovery = SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseCostRecoveryAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var showWorkOrders = await readinessAccess.CanUseMaintenanceAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var showChecklists = await readinessAccess.CanUseChecklistsAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var workforceEnabled = SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseWorkforceAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var payDataEnabled = SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUsePayDataReportingAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var workforceManager = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewWorkforce() || ClaimsAuthorizationHelper.CanViewInternalCosts() || ClaimsAuthorizationHelper.CanViewPayDataReporting();
+	var showWorkforce = (workforceEnabled || payDataEnabled) && workforceManager;
+	var showMyDemographics = payDataEnabled && !showWorkforce;
+	var onWorkforceBusinessPage = Html.IsController("Certifications", "Workforce", "Invoicing", "Deployments", "Bids", "Contracts", "CalOesMars");
+	var onReadinessPage = Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting",
+		"Checklists", "ChecklistsScheduling", "ChecklistReports", "ChecklistReporting", "ChecklistReminders");
 }
-<nav class="navbar-default navbar-static-side" role="navigation">
+<nav class="navbar-default navbar-static-side module-navigation" role="navigation">
 	<div class="nav-header">
 		<div class="dropdown profile-element">
 			<span>
 				<img class="img-circle" style="width: 48px; height: 48px; text-align: center;" src="@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl/api/v4/Avatars/Get?id=@ClaimsAuthorizationHelper.GetUserId()" onerror="this.src = '@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl/images/defaultProfile.png'" />
 			</span>
-			<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+			<a data-toggle="dropdown" class="dropdown-toggle" href="#" title="@ClaimsAuthorizationHelper.GetFullName()">
 				<span class="clear">
 					<span class="block m-t-xs">
 						<strong class="font-bold"></strong>
-					</span> <span class="text-muted text-xs block">@ClaimsAuthorizationHelper.GetFullName() <b class="caret"></b></span>
+					</span>
+					<span class="text-muted text-xs sidebar-profile-label">
+						<span class="sidebar-profile-name">@ClaimsAuthorizationHelper.GetFullName()</span>
+						<b class="caret" aria-hidden="true"></b>
+					</span>
 				</span>
 			</a>
 			<ul class="dropdown-menu animated fadeInRight m-t-xs" style="z-index: 10000;">
@@ -68,74 +88,11 @@
 			<li class="@Html.IsSelected(controller: "Units")">
 				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@commonLocalizer["UnitsModule"]</span></a>
 			</li>
-			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications())
-			{
-				@* Workforce & Business Operations plan, Phase D: free feature; the dashboard needs ViewCertifications (admins by default). *@
-				<li class="@Html.IsSelected(controller: "Certifications")">
-					<a asp-controller="Certifications" asp-action="Index" asp-route-area="User"><i class="fa fa-certificate"></i> <span class="nav-label">@certificationLocalizer["Certifications"]</span></a>
-				</li>
-			}
 			@if (ClaimsAuthorizationHelper.CanViewContacts())
 			{
 				<li class="@Html.IsSelected(controller: "Contacts")">
 					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@commonLocalizer["ContactsModule"]</span></a>
 				</li>
-			}
-			@if (ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, ClaimsAuthorizationHelper.GetDepartmentId()))
-			{
-				@* Workforce & Business Operations plan, Phase B: visible whenever the flag and module are on; a lapsed add-on leaves the pages read-only. *@
-				<li class="@Html.IsSelected(controller: "Invoicing")">
-					<a asp-controller="Invoicing" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> <span class="nav-label">@invoicingLocalizer["Invoicing"]</span></a>
-				</li>
-			}
-			@if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, ClaimsAuthorizationHelper.GetDepartmentId()))
-			{
-				@* Workforce & Business Operations plan, Phase C (deployment core, free): labelled "Deployment Finance" so it is not confused with Records → Deployments (risk 40). Members see only the deployments they are rostered on. *@
-				<li class="@Html.IsSelected(controller: "Deployments")">
-					<a asp-controller="Deployments" asp-action="Index" asp-route-area="User"><i class="fa fa-truck"></i> <span class="nav-label">@deploymentLocalizer["DeploymentFinance"]</span></a>
-				</li>
-			}
-			@if ((ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids() || ClaimsAuthorizationHelper.CanViewContracts()) && SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseContractorBillingAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
-			{
-				@* Workforce & Business Operations plan, Phase C-M2 (contractor path): bids and contracts need the Invoicing.ContractorBilling entitlement (Business Ops add-on). *@
-				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids())
-				{
-					<li class="@Html.IsSelected(controller: "Bids")">
-						<a asp-controller="Bids" asp-action="Index" asp-route-area="User"><i class="fa fa-handshake-o"></i> <span class="nav-label">@contractorLocalizer["Bids"]</span></a>
-					</li>
-				}
-				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewContracts())
-				{
-					<li class="@Html.IsSelected(controller: "Contracts")">
-						<a asp-controller="Contracts" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text"></i> <span class="nav-label">@contractorLocalizer["Contracts"]</span></a>
-					</li>
-				}
-			}
-			@if (SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseCostRecoveryAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
-			{
-				@* Workforce & Business Operations plan, Phase C-M3: Cal OES MARS needs the CostRecovery.CalOesMars entitlement; managers see the department queue, rostered members their own drafts. *@
-				<li class="@Html.IsSelected(controller: "CalOesMars")">
-					<a asp-controller="CalOesMars" asp-action="@((ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewMutualAidReimbursement()) ? "Index" : "Queue")" asp-route-area="User"><i class="fa fa-balance-scale"></i> <span class="nav-label">@calOesLocalizer["CalOesMars"]</span></a>
-				</li>
-			}
-			@if (SettingsHelper.IsBusinessOperationsEnabled())
-			{
-				var workforceEnabled = await businessOperationsAccess.CanUseWorkforceAsync(ClaimsAuthorizationHelper.GetDepartmentId());
-				var payDataEnabled = await businessOperationsAccess.CanUsePayDataReportingAsync(ClaimsAuthorizationHelper.GetDepartmentId());
-				var workforceManager = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewWorkforce() || ClaimsAuthorizationHelper.CanViewInternalCosts() || ClaimsAuthorizationHelper.CanViewPayDataReporting();
-				@* Workforce & Business Operations plan, Phase E: managers reach the workforce workspace; every member reaches their own demographic response while pay data reporting is on. *@
-				if ((workforceEnabled || payDataEnabled) && workforceManager)
-				{
-					<li class="@Html.IsSelected(controller: "Workforce")">
-						<a asp-controller="Workforce" asp-action="Index" asp-route-area="User"><i class="fa fa-users"></i> <span class="nav-label">@workforceLocalizer["Workforce"]</span></a>
-					</li>
-				}
-				else if (payDataEnabled)
-				{
-					<li class="@Html.IsSelected(controller: "Workforce")">
-						<a asp-controller="Workforce" asp-action="MyDemographics" asp-route-area="User"><i class="fa fa-user-secret"></i> <span class="nav-label">@workforceLocalizer["MyDemographics"]</span></a>
-					</li>
-				}
 			}
 			@if (SettingsHelper.IsMappingEnabled())
 			{
@@ -177,13 +134,13 @@
 					&& string.Equals((string)ViewContext.RouteData.Values["action"], "Dashboard", StringComparison.OrdinalIgnoreCase);
 				var onRecordsQueue = Html.IsController("Records") && !onRecordsDashboard;
 
-				<li class="@(onRecordsPage ? "active mm-active" : null)">
-					<a href="#" aria-expanded="@(onRecordsPage ? "true" : "false")">
+				<li class="sidebar-module-group @(onRecordsPage ? "active mm-active" : null)">
+					<a href="#" aria-label="@commonLocalizer["RecordsModule"]" aria-controls="records-menu" aria-expanded="@(onRecordsPage ? "true" : "false")">
 						<i class="fa fa-file"></i>
 						<span class="nav-label" data-i18n="nav.records">@commonLocalizer["RecordsModule"]</span>
 						<span class="fa arrow"></span>
 					</a>
-					<ul class="nav nav-second-level">
+					<ul class="nav nav-second-level" id="records-menu">
 						<li class="@(onRecordsDashboard ? "active" : null)">
 							<a asp-controller="Records" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-dashboard"></i> @recordsLocalizer["RecordsDashboard"]</a>
 						</li>
@@ -263,20 +220,100 @@
 					<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@commonLocalizer["TrainingsModule"]</span></a>
 				</li>
 			}
-			@if (await readinessAccess.CanUseMaintenanceAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
-			{
-				<li class="@Html.IsSelected(controller: "WorkOrders")"><a asp-controller="WorkOrders" asp-action="Index" asp-route-area="User"><i class="fa fa-wrench"></i> <span class="nav-label">@workOrderLocalizer["WorkOrders"]</span></a></li>
-			}
-			@if (await readinessAccess.CanUseChecklistsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
-			{
-				<li class="@Html.IsSelected(controller: "Checklists")">
-					<a asp-controller="Checklists" asp-action="Index" asp-route-area="User"><i class="fa fa-check-square-o"></i> <span class="nav-label">@checklistLocalizer["Checklists"]</span></a>
-				</li>
-			}
 			@if (SettingsHelper.IsInventoryEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Inventory")">
 					<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">@commonLocalizer["InventoryModule"]</span></a>
+				</li>
+			}
+			@if (showWorkOrders || showChecklists)
+			{
+				<li class="sidebar-module-group @(onReadinessPage ? "active mm-active" : null)">
+					<a href="#" aria-label="@commonLocalizer["NavigationReadiness"]" aria-controls="readiness-menu" aria-expanded="@(onReadinessPage ? "true" : "false")">
+						<i class="fa fa-check-square-o" aria-hidden="true"></i>
+						<span class="nav-label">@commonLocalizer["NavigationReadiness"]</span>
+						<span class="fa arrow" aria-hidden="true"></span>
+					</a>
+					<ul class="nav nav-second-level" id="readiness-menu">
+						@if (showWorkOrders)
+						{
+							<li class="@(Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting") ? "active" : null)"><a asp-controller="WorkOrders" asp-action="Index" asp-route-area="User"><i class="fa fa-wrench"></i> <span class="nav-label">@workOrderLocalizer["WorkOrders"]</span></a></li>
+						}
+						@if (showChecklists)
+						{
+							<li class="@(Html.IsController("Checklists", "ChecklistsScheduling", "ChecklistReports", "ChecklistReporting", "ChecklistReminders") ? "active" : null)">
+								<a asp-controller="Checklists" asp-action="Index" asp-route-area="User"><i class="fa fa-check-square-o"></i> <span class="nav-label">@checklistLocalizer["Checklists"]</span></a>
+							</li>
+						}
+					</ul>
+				</li>
+			}
+			@if (showCertifications || showWorkforce || showMyDemographics || showInvoicing || showDeployments || showContractorBilling || showCostRecovery)
+			{
+				<li class="sidebar-module-group @(onWorkforceBusinessPage ? "active mm-active" : null)">
+					<a href="#" aria-label="@commonLocalizer["NavigationWorkforceBusiness"]" aria-controls="workforce-business-menu" aria-expanded="@(onWorkforceBusinessPage ? "true" : "false")">
+						<i class="fa fa-briefcase" aria-hidden="true"></i>
+						<span class="nav-label">@commonLocalizer["NavigationWorkforceBusiness"]</span>
+						<span class="fa arrow" aria-hidden="true"></span>
+					</a>
+					<ul class="nav nav-second-level" id="workforce-business-menu">
+						@if (showWorkforce)
+						{
+							<li class="@Html.IsSelected(controller: "Workforce")">
+								<a asp-controller="Workforce" asp-action="Index" asp-route-area="User"><i class="fa fa-users"></i> <span class="nav-label">@workforceLocalizer["Workforce"]</span></a>
+							</li>
+						}
+						else if (showMyDemographics)
+						{
+							<li class="@Html.IsSelected(controller: "Workforce")">
+								<a asp-controller="Workforce" asp-action="MyDemographics" asp-route-area="User"><i class="fa fa-user-secret"></i> <span class="nav-label">@workforceLocalizer["MyDemographics"]</span></a>
+							</li>
+						}
+						@if (showCertifications)
+						{
+							@* Workforce & Business Operations plan, Phase D: free feature; the dashboard needs ViewCertifications (admins by default). *@
+							<li class="@Html.IsSelected(controller: "Certifications")">
+								<a asp-controller="Certifications" asp-action="Index" asp-route-area="User"><i class="fa fa-certificate"></i> <span class="nav-label">@certificationLocalizer["Certifications"]</span></a>
+							</li>
+						}
+						@if (showInvoicing)
+						{
+							@* Workforce & Business Operations plan, Phase B: visible whenever the flag and module are on; a lapsed add-on leaves the pages read-only. *@
+							<li class="@Html.IsSelected(controller: "Invoicing")">
+								<a asp-controller="Invoicing" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> <span class="nav-label">@invoicingLocalizer["Invoicing"]</span></a>
+							</li>
+						}
+						@if (showDeployments)
+						{
+							@* Workforce & Business Operations plan, Phase C (deployment core, free): labelled "Deployment Finance" so it is not confused with Records → Deployments (risk 40). Members see only the deployments they are rostered on. *@
+							<li class="@Html.IsSelected(controller: "Deployments")">
+								<a asp-controller="Deployments" asp-action="Index" asp-route-area="User"><i class="fa fa-truck"></i> <span class="nav-label">@deploymentLocalizer["DeploymentFinance"]</span></a>
+							</li>
+						}
+						@if (showContractorBilling)
+						{
+							@* Workforce & Business Operations plan, Phase C-M2 (contractor path): bids and contracts need the Invoicing.ContractorBilling entitlement (Business Ops add-on). *@
+							@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids())
+							{
+								<li class="@Html.IsSelected(controller: "Bids")">
+									<a asp-controller="Bids" asp-action="Index" asp-route-area="User"><i class="fa fa-handshake-o"></i> <span class="nav-label">@contractorLocalizer["Bids"]</span></a>
+								</li>
+							}
+							@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewContracts())
+							{
+								<li class="@Html.IsSelected(controller: "Contracts")">
+									<a asp-controller="Contracts" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text"></i> <span class="nav-label">@contractorLocalizer["Contracts"]</span></a>
+								</li>
+							}
+						}
+						@if (showCostRecovery)
+						{
+							@* Workforce & Business Operations plan, Phase C-M3: Cal OES MARS needs the CostRecovery.CalOesMars entitlement; managers see the department queue, rostered members their own drafts. *@
+							<li class="@Html.IsSelected(controller: "CalOesMars")">
+								<a asp-controller="CalOesMars" asp-action="@((ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewMutualAidReimbursement()) ? "Index" : "Queue")" asp-route-area="User"><i class="fa fa-balance-scale"></i> <span class="nav-label">@calOesLocalizer["CalOesMars"]</span></a>
+							</li>
+						}
+					</ul>
 				</li>
 			}
 		</ul>

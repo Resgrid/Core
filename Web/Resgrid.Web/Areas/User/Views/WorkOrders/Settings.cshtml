@@ -2,49 +2,50 @@
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @{
-    ViewBag.Title = "Resgrid | " + localizer["OperationsPolicy"];
+    ViewBag.Title = "Resgrid | " + localizer["WorkOrderSettings"];
     var p = Model.Input;
-    ViewData["Tab"] = "Policy";
-    ViewData["Title"] = localizer["OperationsPolicy"].Value;
-    ViewData["Subtitle"] = localizer["PolicyHelp"].Value;
+    ViewData["Tab"] = "Settings";
+    ViewData["Title"] = localizer["WorkOrderSettings"].Value;
+    ViewData["Subtitle"] = localizer["WorkOrderSettingsHelp"].Value;
     ViewData["CanWrite"] = Model.CanWrite;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
-        <div class="ibox-title"><h5>@localizer["OperationsPolicy"]</h5></div>
+        <div class="ibox-title"><h5>@localizer["WorkOrderSettings"]</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
-            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["PolicyHelp"]</div>
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["WorkOrderSettingsHelp"]</div>
 
             <div class="work-order-protected">
-                <form method="post" asp-action="SavePolicy" class="work-order-form work-order-command" data-destination="Policy">
+                <form method="post" asp-action="SaveSettings" class="work-order-form work-order-command" data-destination="Settings">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="Revision" value="@p.Revision" />
                     <fieldset disabled="@(!Model.CanWrite)">
+
+                        <div class="form-group">
+                            <label for="department-currency">@localizer["Currency"]</label>
+                            <select id="department-currency" name="Currency" class="form-control" required>
+                                @foreach (var currency in WorkOrderCurrencies.Options)
+                                {
+                                    <option value="@currency.Key" selected="@(currency.Key == p.Currency)">@currency.Key — @currency.Value</option>
+                                }
+                            </select>
+                            <p class="help-block">@localizer["DepartmentCurrencySettingsHelp"]</p>
+                        </div>
 
                         <div class="panel panel-default">
                             <div class="panel-heading">@localizer["SpendingApprovals"]</div>
                             <div class="panel-body">
                                 <div class="checkbox"><label><input type="checkbox" name="ApprovalsEnabled" value="true" checked="@p.ApprovalsEnabled" /> @localizer["RequireSpendingApproval"]</label></div>
-                                <div class="table-responsive">
-                                    <table class="table rgw-table">
-                                        <thead><tr><th>@localizer["Currency"]</th><th>@localizer["SpendingThreshold"]</th></tr></thead>
-                                        <tbody>
-                                            @for (var i = 0; i < Math.Max(4, p.SpendingRules.Count + 1); i++)
-                                            {
-                                                var r = p.SpendingRules.ElementAtOrDefault(i);
-                                                <tr>
-                                                    <td><input name="SpendingRules[@i].Currency" value="@r?.Currency" class="form-control" maxlength="3" pattern="[A-Z]{3}" aria-label="@localizer["Currency"]" /></td>
-                                                    <td><input name="SpendingRules[@i].Threshold" value="@((r?.Threshold ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))" class="form-control" type="number" min="0" max="100000000" step="0.01" aria-label="@localizer["SpendingThreshold"]" /></td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
+                                <div class="form-group">
+                                    <label for="spending-threshold">@localizer["SpendingThreshold"]</label>
+                                    <input id="spending-threshold" name="SpendingThreshold" value="@((p.SpendingThreshold ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))" class="form-control" type="number" min="0" max="100000000" step="0.01" required />
+                                    <p class="help-block">@localizer["DepartmentThresholdHelp"]</p>
                                 </div>
                             </div>
                         </div>
@@ -56,7 +57,12 @@
                                 <div class="rgw-grid">
                                     <div class="form-group">
                                         <label for="policy-timezone">@localizer["TimeZone"]</label>
-                                        <input id="policy-timezone" name="Calendar.TimeZoneId" value="@p.Calendar.TimeZoneId" class="form-control" maxlength="100" required />
+                                        <select id="policy-timezone" name="Calendar.TimeZoneId" class="form-control" required>
+                                            @foreach (var zone in Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderSettingChoices.TimeZones(p.Calendar.TimeZoneId))
+                                            {
+                                                <option value="@zone.Id" selected="@(zone.Id == p.Calendar.TimeZoneId)">@zone.DisplayName</option>
+                                            }
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="policy-start">@localizer["ServiceStart"]</label>
@@ -124,5 +130,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_Scripts") }

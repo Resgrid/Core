@@ -7,18 +7,23 @@
     ViewData["Subtitle"] = localizer["RoleRequirementsIntro"].Value;
     var typeMap = Model.Types.ToDictionary(t => t.DepartmentCertificationTypeId);
     var rows = Model.Requirements;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-controller="Personnel" asp-action="Roles" asp-route-area="User" class="btn btn-default">@localizer["BackToRoles"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
     <div class="row">
         <div class="col-md-7">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["RequiredCertifications"]</h5>
-                    <div class="ibox-tools"><a asp-controller="Personnel" asp-action="Roles" asp-route-area="User" class="btn btn-default btn-xs">@localizer["BackToRoles"]</a></div>
+
                 </div>
                 <div class="ibox-content">
                     @if (Model.EnforcementMode == 0)
@@ -134,4 +139,8 @@
             $('#reqTable').on('click', '.remove-row', function () { $(this).closest('tr').remove(); reindex(); });
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

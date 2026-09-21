@@ -22,6 +22,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_View)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordSavedReportsController : SecureBaseController
 	{
 		private readonly IRecordSavedReportsService _reports;

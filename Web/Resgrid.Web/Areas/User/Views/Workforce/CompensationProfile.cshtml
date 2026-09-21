@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["CompensationProfile"];
     ViewData["Title"] = localizer["CompensationProfile"].Value;
     ViewData["Subtitle"] = Model.WorkerName;
@@ -15,7 +16,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <form method="post" asp-action="SaveCompensationProfile" id="profileForm">
         @Html.AntiForgeryToken()
@@ -68,7 +69,7 @@
                         <div class="ibox-content">
                             @if (p.IsApproved)
                             {
-                                <p><span class="label label-primary">@localizer["Approved"]</span> @p.ApprovedOn?.ToString("yyyy-MM-dd")</p>
+                                <p><span class="label label-primary">@localizer["Approved"]</span> @departmentTime.Date(p.ApprovedOn)</p>
                             }
                             else
                             {
@@ -166,4 +167,8 @@
         });
     })();
 </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

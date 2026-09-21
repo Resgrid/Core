@@ -33,12 +33,16 @@ namespace Resgrid.Model.WorkOrders
     }
     public sealed class WorkOrderPolicy : WorkOrderRow
     {
+        // A validated currency code is routing metadata; amounts remain in protected Content.
+        public string CurrencyCode { get; set; }
         // Equipment service clocks contain only validated time zones, dates and durations.
         public string CalendarJson { get; set; }
     }
     public sealed class WorkOrderPolicyInput
     {
         public int Revision { get; set; }
+        public string Currency { get; set; }
+        public decimal? SpendingThreshold { get; set; }
         public bool ApprovalsEnabled { get; set; }
         public List<WorkOrderSpendingRule> SpendingRules { get; set; } = new();
         public WorkOrderBusinessCalendar Calendar { get; set; } = new();
@@ -49,12 +53,12 @@ namespace Resgrid.Model.WorkOrders
     {
         public int RowNumber { get; set; }
         public string ParseError { get; set; }
-        public int? WorkOrderId { get; set; }
+        public string WorkOrderId { get; set; }
         public WorkOrderInput Import { get; set; }
         public WorkOrderAssignment Assignment { get; set; }
     }
     public sealed class WorkOrderBulkInput { public string RequestId { get; set; } public string PreviewHash { get; set; } public List<WorkOrderBulkRow> Rows { get; set; } = new(); }
-    public sealed class WorkOrderBulkRowResult { public int RowNumber { get; set; } public int? WorkOrderId { get; set; } public string Title { get; set; } public string ErrorCode { get; set; } public bool Applied { get; set; } }
+    public sealed class WorkOrderBulkRowResult { public int RowNumber { get; set; } public string WorkOrderId { get; set; } public string Title { get; set; } public string ErrorCode { get; set; } public bool Applied { get; set; } }
     public sealed class WorkOrderBulkResult { public string PreviewHash { get; set; } public List<WorkOrderBulkRowResult> Rows { get; set; } = new(); }
     public sealed class WorkOrderVendorCharge : WorkOrderRow { public string RequestId { get; set; } public DateTime? VoidedOn { get; set; } }
     public sealed class WorkOrderVendorChargeContent
@@ -69,10 +73,10 @@ namespace Resgrid.Model.WorkOrders
         public string RequestHash { get; set; }
     }
     public sealed class WorkOrderVendorChargeInput { public int Revision { get; set; } public string RequestId { get; set; } public WorkOrderVendorChargeContent Content { get; set; } = new(); }
-    public sealed class WorkOrderVendorChargeView { public int Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderVendorChargeContent Content { get; set; } }
+    public sealed class WorkOrderVendorChargeView { public string Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderVendorChargeContent Content { get; set; } }
     public sealed class WorkOrderPartMovement : WorkOrderRow
     {
-        public int PartId { get; set; }
+        public string PartId { get; set; }
         public string RequestId { get; set; }
         public int Kind { get; set; }
         public decimal Quantity { get; set; }
@@ -95,14 +99,14 @@ namespace Resgrid.Model.Services
         Task SavePolicyAsync(ChecklistActor actor, WorkOrderPolicyInput input);
         Task<WorkOrderBulkResult> PreviewBulkAsync(ChecklistActor actor, WorkOrderBulkInput input);
         Task<WorkOrderBulkResult> ApplyBulkAsync(ChecklistActor actor, WorkOrderBulkInput input);
-        Task RequestApprovalAsync(ChecklistActor actor, int id, WorkOrderApprovalInput input);
-        Task DecideApprovalAsync(ChecklistActor actor, int id, WorkOrderApprovalInput input);
-        Task AddVendorChargeAsync(ChecklistActor actor, int id, WorkOrderVendorChargeInput input);
-        Task VoidVendorChargeAsync(ChecklistActor actor, int id, int chargeId, int revision, string reason);
-        Task<List<WorkOrderVendorChargeView>> VendorChargesAsync(ChecklistActor actor, int id, int afterId = 0);
-        Task ReservePartAsync(ChecklistActor actor, int id, WorkOrderPartInput input);
-        Task MovePartAsync(ChecklistActor actor, int id, int partId, WorkOrderPartMovementInput input);
-        Task CancelPartMovementAsync(ChecklistActor actor, int id, int movementId, int revision, string reason);
-        Task<List<WorkOrderPartMovement>> PartMovementsAsync(ChecklistActor actor, int id, int afterId = 0);
+        Task RequestApprovalAsync(ChecklistActor actor, string id, WorkOrderApprovalInput input);
+        Task DecideApprovalAsync(ChecklistActor actor, string id, WorkOrderApprovalInput input);
+        Task AddVendorChargeAsync(ChecklistActor actor, string id, WorkOrderVendorChargeInput input);
+        Task VoidVendorChargeAsync(ChecklistActor actor, string id, string chargeId, int revision, string reason);
+        Task<List<WorkOrderVendorChargeView>> VendorChargesAsync(ChecklistActor actor, string id, string afterId = null);
+        Task ReservePartAsync(ChecklistActor actor, string id, WorkOrderPartInput input);
+        Task MovePartAsync(ChecklistActor actor, string id, string partId, WorkOrderPartMovementInput input);
+        Task CancelPartMovementAsync(ChecklistActor actor, string id, string movementId, int revision, string reason);
+        Task<List<WorkOrderPartMovement>> PartMovementsAsync(ChecklistActor actor, string id, string afterId = null);
     }
 }

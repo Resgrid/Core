@@ -141,10 +141,14 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Saving_rejects_a_blank_name_and_an_inverted_window()
+		public async Task Saving_rejects_a_blank_name_an_inverted_window_and_an_unknown_time_zone()
 		{
 			(await FluentActions.Awaiting(() => _service.SaveDeploymentAsync(new Deployment { DepartmentId = DeptId, Name = " " }, Manager, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("deployments_name_required");
 			(await FluentActions.Awaiting(() => _service.SaveDeploymentAsync(new Deployment { DepartmentId = DeptId, Name = "x", StartOn = DateTime.UtcNow, EndOn = DateTime.UtcNow.AddDays(-1) }, Manager, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("deployments_window_invalid");
+			// The window, time reports and the contractor calendar all convert through the zone; a typo would silently shift every one of them.
+			(await FluentActions.Awaiting(() => _service.SaveDeploymentAsync(new Deployment { DepartmentId = DeptId, Name = "x", LocalTimeZoneId = "Pacific Standard Tmie" }, Manager, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("deployments_timezone_invalid");
+			var zoned = await _service.SaveDeploymentAsync(new Deployment { DepartmentId = DeptId, Name = "x", LocalTimeZoneId = "Pacific Standard Time" }, Manager, null, null);
+			zoned.LocalTimeZoneId.Should().Be("Pacific Standard Time");
 		}
 
 		[Test]
@@ -435,6 +439,12 @@ namespace Resgrid.Tests.Services
 			await _service.SaveDeploymentAsync(saved, Manager, null, null);
 
 			projected.Should().Equal(new[] { "Ridge Fire", "Ridge Fire Complex" }, "a created and an edited deployment reach search without waiting for a rebuild");
+
+			// The roster is the projection's participant set: search scopes deployments to it for members without the claim,
+			// so a newly rostered member must find the deployment without waiting for a rebuild.
+			projected.Clear();
+			await _service.AddPersonnelAsync(saved.DeploymentId, DeptId, new DeploymentPersonnelInput { UserId = "alice" }, Manager, null, null);
+			projected.Should().Equal(new[] { "Ridge Fire Complex" }, "a roster addition reprojects the deployment");
 		}
 
 		[Test]

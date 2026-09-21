@@ -7,9 +7,9 @@ namespace Resgrid.Providers.Migrations.Migrations
         private static string N(string value) => value;
         public override void Up()
         {
-            Create.Table(N("WorkOrderRecurrences")).WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+            Create.Table(N("WorkOrderRecurrences")).WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
@@ -17,7 +17,7 @@ namespace Resgrid.Providers.Migrations.Migrations
                 .WithColumn(N("CreatedBy")).AsString(128).NotNullable()
                 .WithColumn(N("IsProtected")).AsBoolean().NotNullable().WithDefaultValue(false)
                 .WithColumn(N("RequestId")).AsString(36).NotNullable()
-                .WithColumn(N("CurrentVersionId")).AsInt32().NotNullable().WithDefaultValue(0)
+                .WithColumn(N("CurrentVersionId")).AsString(36).Nullable()
                 .WithColumn(N("TargetUnitId")).AsInt32().Nullable()
                 .WithColumn(N("TargetGroupId")).AsInt32().Nullable()
                 .WithColumn(N("InventoryAssetId")).AsString(36).Nullable()
@@ -39,7 +39,7 @@ namespace Resgrid.Providers.Migrations.Migrations
                 .WithColumn(N("BlackoutUntil")).AsDateTime2().Nullable()
                 .WithColumn(N("NextDueOn")).AsDateTime2().Nullable()
                 .WithColumn(N("Cycle")).AsInt64().NotNullable().WithDefaultValue(0)
-                .WithColumn(N("PendingWorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("PendingWorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("ReadingDue")).AsBoolean().NotNullable().WithDefaultValue(false)
                 .WithColumn(N("ReadingDueOn")).AsDateTime2().Nullable()
                 .WithColumn(N("MeterUnit")).AsInt32().NotNullable().WithDefaultValue(0)
@@ -57,32 +57,32 @@ namespace Resgrid.Providers.Migrations.Migrations
             Index("WorkOrderRecurrences", "Tenant", true, "DepartmentId", "Id");
             Index("WorkOrderRecurrences", "Order", false, "DepartmentId", "WorkOrderId", "Id");
             Foreign("WorkOrderRecurrences", "Order", "WorkOrderId", "WorkOrders");
-            Create.Table(N("WorkOrderRecurrenceVersions")).WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+            Create.Table(N("WorkOrderRecurrenceVersions")).WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
                 .WithColumn(N("UpdatedOn")).AsDateTime2().NotNullable()
                 .WithColumn(N("CreatedBy")).AsString(128).NotNullable()
                 .WithColumn(N("IsProtected")).AsBoolean().NotNullable().WithDefaultValue(false)
-                .WithColumn(N("RecurrenceId")).AsInt32().NotNullable().WithDefaultValue(0);
+                .WithColumn(N("RecurrenceId")).AsString(36).NotNullable();
             Create.ForeignKey(N("FK_WorkOrderRecurrenceVersions_Department")).FromTable(N("WorkOrderRecurrenceVersions")).ForeignColumn(N("DepartmentId")).ToTable(N("Departments")).PrimaryColumn(N("DepartmentId"));
             Index("WorkOrderRecurrenceVersions", "Tenant", true, "DepartmentId", "Id");
             Index("WorkOrderRecurrenceVersions", "Order", false, "DepartmentId", "WorkOrderId", "Id");
             Foreign("WorkOrderRecurrenceVersions", "Order", "WorkOrderId", "WorkOrders");
             Foreign("WorkOrderRecurrenceVersions", "Recurrence", "RecurrenceId", "WorkOrderRecurrences");
             Index("WorkOrderRecurrenceVersions", "Schedule", false, "DepartmentId", "RecurrenceId", "Id");
-            Create.Table(N("WorkOrderMeterReadings")).WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+            Create.Table(N("WorkOrderMeterReadings")).WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
                 .WithColumn(N("UpdatedOn")).AsDateTime2().NotNullable()
                 .WithColumn(N("CreatedBy")).AsString(128).NotNullable()
                 .WithColumn(N("IsProtected")).AsBoolean().NotNullable().WithDefaultValue(false)
-                .WithColumn(N("RecurrenceId")).AsInt32().NotNullable().WithDefaultValue(0)
+                .WithColumn(N("RecurrenceId")).AsString(36).NotNullable()
                 .WithColumn(N("RequestId")).AsString(36).Nullable()
                 .WithColumn(N("MeterEpoch")).AsInt32().NotNullable().WithDefaultValue(0)
                 .WithColumn(N("ObservedOn")).AsDateTime2().NotNullable();
@@ -92,16 +92,16 @@ namespace Resgrid.Providers.Migrations.Migrations
             Foreign("WorkOrderMeterReadings", "Order", "WorkOrderId", "WorkOrders");
             Foreign("WorkOrderMeterReadings", "Recurrence", "RecurrenceId", "WorkOrderRecurrences");
             Index("WorkOrderMeterReadings", "Schedule", false, "DepartmentId", "RecurrenceId", "Id");
-            Create.Table(N("WorkOrderRecurrenceChanges")).WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+            Create.Table(N("WorkOrderRecurrenceChanges")).WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
                 .WithColumn(N("UpdatedOn")).AsDateTime2().NotNullable()
                 .WithColumn(N("CreatedBy")).AsString(128).NotNullable()
                 .WithColumn(N("IsProtected")).AsBoolean().NotNullable().WithDefaultValue(false)
-                .WithColumn(N("RecurrenceId")).AsInt32().NotNullable().WithDefaultValue(0)
+                .WithColumn(N("RecurrenceId")).AsString(36).NotNullable()
                 .WithColumn(N("ChangeType")).AsInt32().NotNullable().WithDefaultValue(0)
                 .WithColumn(N("OriginalDueOn")).AsDateTime2().Nullable()
                 .WithColumn(N("RevisedDueOn")).AsDateTime2().Nullable();
@@ -114,7 +114,8 @@ namespace Resgrid.Providers.Migrations.Migrations
             Index("WorkOrderRecurrences", "Request", true, "DepartmentId", "RequestId");
             Index("WorkOrderRecurrences", "Due", false, "DepartmentId", "IsActive", "NextDueOn");
             Index("WorkOrderMeterReadings", "Request", true, "DepartmentId", "RequestId");
-            foreach (var column in new[] { "RecurrenceVersionId", "EscalationRoleId" }) Alter.Table(N("WorkOrders")).AddColumn(N(column)).AsInt32().Nullable();
+            Alter.Table(N("WorkOrders")).AddColumn(N("RecurrenceVersionId")).AsString(36).Nullable();
+            Alter.Table(N("WorkOrders")).AddColumn(N("EscalationRoleId")).AsInt32().Nullable();
             Alter.Table(N("WorkOrders")).AddColumn(N("RecurrenceCycle")).AsInt64().Nullable();
             Alter.Table(N("WorkOrders")).AddColumn(N("EscalateAfterMinutes")).AsInt32().NotNullable().WithDefaultValue(0);
             foreach (var column in new[] { "OriginalDueOn", "EscalatedOn" }) Alter.Table(N("WorkOrders")).AddColumn(N(column)).AsDateTime2().Nullable();

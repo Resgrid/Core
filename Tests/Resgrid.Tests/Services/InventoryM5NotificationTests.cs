@@ -6,9 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Inventories;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -26,6 +28,11 @@ namespace Resgrid.Tests.Services
 		private Mock<IUserProfileService> _profiles;
 		private Mock<IDepartmentSettingsService> _settings;
 		private Mock<ICommunicationService> _communication;
+		private Mock<IInventoryStore> _store;
+		private Mock<IDepartmentDataProtectionService> _protection;
+		private Dictionary<string, InventoryAlert> _alertRows;
+		private InventoryItem _item;
+		private InventoryLocation _location;
 		private List<DepartmentMember> _members;
 		private Queue<InventoryAlertDelivery> _deliveries;
 		private List<Notice> _notices;
@@ -37,6 +44,12 @@ namespace Resgrid.Tests.Services
 		public void SetUp()
 		{
 			_alerts = new(); _departments = new(); _profiles = new(); _settings = new(); _communication = new();
+			_store = new(); _protection = new(); _alertRows = new();
+			_item = new InventoryItem { DepartmentId = DepartmentId, Content = JsonConvert.SerializeObject(new InventoryItemContent { Name = "Trauma dressing", Code = "MED-014", Description = Canary }) };
+			_location = new InventoryLocation { DepartmentId = DepartmentId, Content = JsonConvert.SerializeObject(new InventoryLabel { Name = "Station 2", Note = Canary }) };
+			_store.Setup(x => x.GetAsync<InventoryAlert>(DepartmentId, It.IsAny<string>())).ReturnsAsync((int _, string id) => _alertRows.GetValueOrDefault(id));
+			_store.Setup(x => x.GetAsync<InventoryItem>(DepartmentId, _item.Id)).ReturnsAsync(() => _item);
+			_store.Setup(x => x.GetAsync<InventoryLocation>(DepartmentId, _location.Id)).ReturnsAsync(() => _location);
 			_members = new() { new DepartmentMember { DepartmentId = DepartmentId, UserId = UserId, IsAdmin = false, IsActive = true } };
 			_deliveries = new(); _notices = new();
 			_department = new Department { DepartmentId = DepartmentId, Name = Canary };
@@ -52,7 +65,7 @@ namespace Resgrid.Tests.Services
 				{
 					_notices.Add(new Notice { UserId = user, DepartmentId = departmentId, Message = message, Number = number, Department = department, Title = title, Profile = profile }); return true;
 				});
-			_service = new InventoryAlertNotifications(_alerts.Object, _departments.Object, _profiles.Object, _settings.Object, _communication.Object, new AlertClock(_now));
+			_service = new InventoryAlertNotifications(_alerts.Object, _departments.Object, _profiles.Object, _settings.Object, _communication.Object, _store.Object, _protection.Object, new AlertClock(_now));
 		}
 
 		[Test]
@@ -75,25 +88,27 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Alerts_load_fresh_routing_then_recheck_current_access_immediately_before_generic_localized_handoff()
+		public async Task Alerts_load_fresh_routing_then_recheck_access_and_protection_before_localized_handoff()
 		{
 			var delivery = Enqueue(); _profile.Language = "fr"; var order = new List<string>();
 			_profiles.Setup(x => x.GetProfileByUserIdAsync(UserId, true)).Callback(() => order.Add("profile")).ReturnsAsync(_profile);
 			_departments.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, true)).Callback(() => order.Add("department")).ReturnsAsync(_department);
 			_settings.Setup(x => x.GetTextToCallNumberForDepartmentAsync(DepartmentId)).Callback(() => order.Add("number")).ReturnsAsync("+15555550456");
 			_alerts.Setup(x => x.CanReceiveAlertAsync(DepartmentId, UserId, delivery.AlertId)).Callback(() => order.Add("authorize")).ReturnsAsync(true);
+			_protection.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).Callback(() => order.Add("protection")).ReturnsAsync(false);
 			_communication.Setup(x => x.SendNotificationAsync(UserId, DepartmentId, It.IsAny<string>(), "+15555550456", _department, It.IsAny<string>(), _profile, false))
 				.Callback((string _, int _, string message, string number, Department department, string title, UserProfile profile, bool _) =>
 				{
 					order.Add("send"); _notices.Add(new Notice { UserId = UserId, DepartmentId = DepartmentId, Message = message, Number = number, Department = department, Title = title, Profile = profile });
 				}).ReturnsAsync(true);
 			(await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None)).Should().Be(1);
-			order.Should().Equal("profile", "department", "number", "authorize", "send");
+			order.Should().Equal("profile", "department", "number", "authorize", "protection", "send");
 			_profiles.Verify(x => x.GetProfileByUserIdAsync(UserId, false), Times.Never);
 			var notice = _notices.Single();
 			notice.Title.Should().Be(InventoryReportDocuments.Text("M5AlertNotificationTitle", CultureInfo.GetCultureInfo("fr")));
-			notice.Message.Should().StartWith(InventoryReportDocuments.Text("M5AlertNotificationMessage", CultureInfo.GetCultureInfo("fr")))
-				.And.EndWith("/User/Inventory/Operations?tab=Alerts").And.NotContain(Canary).And.NotContain(UserId).And.NotContain(delivery.AlertId).And.NotContain(delivery.ClaimToken).And.NotContain("grant");
+			notice.Message.Should().StartWith(InventoryReportDocuments.Text("M5AlertType0", CultureInfo.GetCultureInfo("fr")) + ": Trauma dressing (MED-014)")
+				.And.Contain("Station 2").And.EndWith(InventoryReportDocuments.Text("M5AlertNotificationMessage", CultureInfo.GetCultureInfo("fr")))
+				.And.NotContain("http").And.NotContain("/User/").And.NotContain(Canary).And.NotContain(UserId).And.NotContain(delivery.AlertId).And.NotContain(delivery.ClaimToken).And.NotContain("grant");
 			notice.Title.Should().NotContain(Canary); notice.Department.Should().BeSameAs(_department); notice.Profile.Should().BeSameAs(_profile);
 			_alerts.Verify(x => x.FinishAlertAsync(DepartmentId, delivery.Id, delivery.ClaimToken, true), Times.Once);
 		}
@@ -222,10 +237,71 @@ namespace Resgrid.Tests.Services
 			_alerts.Verify(x => x.ClaimAlertAsync(DepartmentId, UserId), Times.Exactly(100));
 		}
 
+		[TestCase(InventoryAlertType.LowStock, "Low stock")]
+		[TestCase(InventoryAlertType.ExpiringSoon, "Expiring soon")]
+		[TestCase(InventoryAlertType.Expired, "Expired")]
+		[TestCase(InventoryAlertType.OverdueReturn, "Overdue return")]
+		public async Task Alerts_identify_the_item_and_location_without_links(InventoryAlertType type, string label)
+		{
+			var delivery = Enqueue(); _alertRows[delivery.AlertId].AlertType = (int)type;
+			await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None);
+			_notices.Single().Message.Should().Be(label + ": Trauma dressing (MED-014); Location: Station 2. Inventory needs attention. Sign in to review current alerts.");
+		}
+
+		[TestCase("department")]
+		[TestCase("row")]
+		[TestCase("envelope")]
+		[TestCase("redacted")]
+		[TestCase("malformed")]
+		public async Task Alerts_fall_back_to_item_and_location_ids_when_content_cannot_be_disclosed(string reason)
+		{
+			Enqueue();
+			if (reason == "department") _protection.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).ReturnsAsync(true);
+			if (reason == "row") { _item.IsProtected = true; _location.IsProtected = true; }
+			if (reason is "envelope" or "redacted" or "malformed")
+				_item.Content = _location.Content = reason == "envelope" ? "rgdp:1:1:" + Canary : reason == "redacted" ? "REDACTED" : "invalid-json-" + Canary;
+			await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None);
+			_notices.Single().Message.Should().Contain(_item.Id).And.Contain(_location.Id)
+				.And.NotContain("Trauma dressing").And.NotContain("MED-014").And.NotContain("Station 2").And.NotContain(Canary).And.NotContain("rgdp:");
+		}
+
+		[TestCase("Trauma dressing https://example.test/details", "MED-014", "Trauma dressing (MED-014)")]
+		[TestCase(null, "MED-014", "MED-014")]
+		[TestCase("Trauma dressing", null, "Trauma dressing")]
+		[TestCase("https://example.test/details", "www.example.test/item", null)]
+		public async Task Alerts_handle_missing_labels_and_remove_links_from_item_and_location_labels(string name, string code, string expected)
+		{
+			Enqueue();
+			_item.Content = JsonConvert.SerializeObject(new InventoryItemContent { Name = name, Code = code });
+			_location.Content = JsonConvert.SerializeObject(new InventoryLabel { Name = "Station 2 http://example.test/location" });
+			await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None);
+			_notices.Single().Message.Should().StartWith("Low stock: " + (expected ?? _item.Id) + "; Location: Station 2.")
+				.And.NotContain("http").And.NotContain("www.").And.NotContain("example.test");
+		}
+
+		[Test]
+		public async Task Department_wide_alerts_identify_the_item_without_a_location()
+		{
+			var delivery = Enqueue(); _alertRows[delivery.AlertId].LocationId = null;
+			await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None);
+			_notices.Single().Message.Should().StartWith("Low stock: Trauma dressing (MED-014). ").And.NotContain("Location:");
+		}
+
+		[TestCase("alert")]
+		[TestCase("item")]
+		public async Task Alerts_do_not_send_when_the_current_item_or_alert_is_missing(string missing)
+		{
+			var delivery = Enqueue();
+			if (missing == "alert") _alertRows.Clear(); else _item = null;
+			(await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None)).Should().Be(0);
+			NoSend(); _alerts.Verify(x => x.FinishAlertAsync(DepartmentId, delivery.Id, delivery.ClaimToken, false), Times.Once);
+		}
+
 		private InventoryAlertDelivery Enqueue()
 		{
 			var delivery = new InventoryAlertDelivery { Id = Guid.NewGuid().ToString("D"), DepartmentId = DepartmentId, UserId = UserId,
 				AlertId = Guid.NewGuid().ToString("D"), ClaimToken = Guid.NewGuid().ToString("D"), LeaseUntil = _now.UtcDateTime.AddMinutes(5), Content = Canary };
+			_alertRows[delivery.AlertId] = new InventoryAlert { Id = delivery.AlertId, DepartmentId = DepartmentId, ItemId = _item.Id, LocationId = _location.Id, AlertType = (int)InventoryAlertType.LowStock };
 			_deliveries.Enqueue(delivery); return delivery;
 		}
 		private void NoSend() => _communication.Verify(x => x.SendNotificationAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Never);

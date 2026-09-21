@@ -21,7 +21,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
                 .AddColumn(N("VoidedOn")).AsDateTime2().Nullable();
             Index("WorkOrderVendorCharges", "Request", true, "DepartmentId", "RequestId");
             Base("WorkOrderPartMovements");
-            Alter.Table(N("WorkOrderPartMovements")).AddColumn(N("PartId")).AsInt32().NotNullable()
+            Alter.Table(N("WorkOrderPartMovements")).AddColumn(N("PartId")).AsString(36).NotNullable()
                 .AddColumn(N("RequestId")).AsString(36).NotNullable()
                 .AddColumn(N("Kind")).AsInt32().NotNullable()
                 .AddColumn(N("Quantity")).AsDecimal(24,6).NotNullable()
@@ -49,16 +49,16 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
             Index("WorkOrders", "RepairSla", false, "DepartmentId", "RepairDueOn", "RepairBreachedOn");
             if (Schema.Table(N("InventoryTransactions")).Exists())
             {
-                Alter.Table(N("InventoryTransactions")).AddColumn(N("WorkOrderPartMovementId")).AsInt32().Nullable();
+                Alter.Table(N("InventoryTransactions")).AddColumn(N("WorkOrderPartMovementId")).AsString(36).Nullable();
                 Foreign("InventoryTransactions", "WorkOrderMovement", "WorkOrderPartMovementId", "WorkOrderPartMovements");
                 Index("InventoryTransactions", "WorkOrderMovement", false, "DepartmentId", "WorkOrderPartMovementId");
             }
         }
         private void Base(string table)
         {
-            Create.Table(N(table)).WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+            Create.Table(N(table)).WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()

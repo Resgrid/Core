@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Förfallodatum uppskjutet</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Underhållsrapporter</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Servicehistorik</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Skapad från (UTC, inklusive)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Skapad före (UTC, exklusive)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Beräknad vid (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Skapad från (inklusive)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Skapad före (exklusive)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Beräknad vid</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Totalt antal arbetsorder</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Öppna arbetsorder</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Försenade arbetsorder</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Revisionsnummer</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Rapporten är för stor. Begränsa datumintervallet eller målfiltren.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Välj ett giltigt datumintervall; översiktsrapporter stöder upp till 366 dagar.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Aktuellt tillstånd för arbetsorder skapade inom valt UTC-intervall. Öppna omfattar slutfört arbete som väntar på stängning. Genomsnittlig reparationstid räknas från första start till senaste slutförande, inklusive uppehåll och återöppningar; ogiltiga tider utesluts. Kostnader avrundas per post och delas upp efter valuta; makulerade eller ej utlämnade delar utesluts. Okända kostnader och äldre arbetsvalutor förblir okända; inga växelkurser antas.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Aktuellt tillstånd för arbetsorder skapade inom valt intervall. Öppna omfattar slutfört arbete som väntar på stängning. Genomsnittlig reparationstid räknas från första start till senaste slutförande, inklusive uppehåll och återöppningar; ogiltiga tider utesluts. Kostnader avrundas per post och delas upp efter valuta; makulerade eller ej utlämnade delar utesluts. Okända kostnader och äldre arbetsvalutor förblir okända; inga växelkurser antas.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>Fullständig servicehistorik om inga datum väljs. Varje CSV-rad motsvarar en order och en valuta. Kända kostnader utesluter makulerade eller ej utlämnade delar; saknade priser och äldre arbetsvalutor anges som okända.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Arbetsorderns tillstånd vid larmtillfället, med oföränderliga revisionsreferenser i manifestet. Äldre öppet underhåll ingår; slutfört arbete använder tillbakablicksperioden. Historiska tillstånd som inte kan återskapas markeras som otillgängliga.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Arbetsfria datum (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Svarsmål (arbetsminuter)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Reparationsmål (arbetsminuter)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Sista svarstid (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Sista reparationstid (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Svar registrerat (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Sista svarstid</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Sista reparationstid</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Svar registrerat</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Leverantörskostnader</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Lägg till leverantörskostnad</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Makulera kostnad</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Arbetsorderns servicemål missat</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Arbetsorderns leverantörskostnad ändrad</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Reglerna för arbetsorder ändrade</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Sista svarstid (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Sista reparationstid (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Sista svarstid</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Sista reparationstid</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Skapa reparationer, följ vem som utför dem och se vad underhållet kostat.</value></data>
   <data name="Close" xml:space="preserve"><value>Stäng</value></data>
   <data name="Continue" xml:space="preserve"><value>Fortsätt</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Vem den skapade arbetsordern går till, och vem den eskaleras till om ingen tar den.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Styr förseningsmarkeringen och servicenivåklockan.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>Stegen teknikern arbetar igenom. Vissa statusbyten kräver att alla är klara.</value></data>
+  <data name="Users" xml:space="preserve"><value>Användare</value></data>
+  <data name="Roles" xml:space="preserve"><value>Roller</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Välj en eller flera användare och/eller roller. Håll ned Ctrl (Windows) eller Command (Mac) för att välja flera poster. Alla valda användare och medlemmar i valda roller kan acceptera arbetsordern.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Inställningar för arbetsorder</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Ställ in valuta, utgiftsgodkännanden, arbetstider, helgdagar och servicemål en gång för avdelningen.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Valutan hanteras i inställningarna för arbetsorder. Befintliga order behåller sin registrerade valuta.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Gäller nya arbetsorder och deras leverantörsavgifter. Befintliga kostnader och godkännandegränser behåller sin ursprungliga valuta. Om en underhållsmall använder en annan valuta lämnas den uppskattade kostnaden tom på nya order för granskning.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Ange godkännandegränsen i avdelningens valuta som valts ovan. Gränser för befintliga order i andra valutor behålls.</value></data>
 </root>

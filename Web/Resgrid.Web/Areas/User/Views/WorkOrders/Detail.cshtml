@@ -19,6 +19,7 @@
     };
 }
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var d = Model.Detail;
     var o = d.Order;
     var c = d.Input.Content;
@@ -32,62 +33,65 @@
     string UserName(string userId) => Model.Choices.Users.FirstOrDefault(x => x.Id == userId)?.Name ?? userId;
     string RoleName(int? roleId) => Model.Choices.Roles.FirstOrDefault(x => x.Id == roleId?.ToString())?.Name ?? roleId?.ToString();
 
-    var assignedTo = Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name
-        ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name
-        ?? localizer["None"].Value;
+    var assignees = o.AssignedToUserIds.Select(UserName).Concat(o.AssignedToRoleIds.Select(id => RoleName(id))).ToList();
+    var assignedTo = assignees.Count == 0 ? localizer["None"].Value : string.Join(", ", assignees);
     var canComment = d.CanWrite
         && o.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate)
         && (d.CanContribute || d.ReportedBy == User.Identity.Name || d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId());
     var canUpload = d.CanContribute
         || (d.CanWrite && o.Status == WorkOrderStatus.Requested && d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId());
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <div class="work-order-protected">
+            <a class="btn btn-default" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["WorkOrders"]</a>
+            @if (d.CanAccept)
+            {
+                <form class="work-order-form work-order-command" asp-action="Accept" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@o.Id" />
+                    <input type="hidden" name="revision" value="@o.Revision" />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> @localizer["AcceptAssignment"]</button>
+                </form>
+            }
+            @if (d.Transitions.Length > 0)
+            {
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-order-transition"><i class="fa fa-exchange"></i> @localizer["ChangeStatus"]</button>
+            }
+            @if (d.CanManage && o.Status is WorkOrderStatus.Accepted or WorkOrderStatus.Assigned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold)
+            {
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#work-order-assign"><i class="fa fa-user"></i> @localizer["Assign"]</button>
+            }
+            @if (d.CanEdit)
+            {
+                <a class="btn btn-default" asp-action="Edit" asp-route-id="@o.Id"><i class="fa fa-pencil"></i> @localizer["EditWorkOrder"]</a>
+            }
+            <a class="btn btn-default" asp-action="Operations" asp-route-id="@o.Id"><i class="fa fa-cogs"></i> @localizer["Operations"]</a>
+            <form class="work-order-form work-order-export" asp-action="Export" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@o.Id" />
+                <button type="submit" class="btn btn-info"><i class="fa fa-download"></i> @localizer["Export"]</button>
+            </form>
+
+        </div>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@o.Number — @o.Title</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="work-order-protected">
-                <div class="rgw-toolbar">
-                    <a class="btn btn-default btn-sm" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["WorkOrders"]</a>
-                    <div class="rgw-toolbar-spacer"></div>
-                    @if (d.CanAccept)
-                    {
-                        <form class="work-order-form work-order-command" asp-action="Accept" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@o.Id" />
-                            <input type="hidden" name="revision" value="@o.Revision" />
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> @localizer["AcceptAssignment"]</button>
-                        </form>
-                    }
-                    @if (d.Transitions.Length > 0)
-                    {
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-order-transition"><i class="fa fa-exchange"></i> @localizer["ChangeStatus"]</button>
-                    }
-                    @if (d.CanManage && o.Status is WorkOrderStatus.Accepted or WorkOrderStatus.Assigned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold)
-                    {
-                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#work-order-assign"><i class="fa fa-user"></i> @localizer["Assign"]</button>
-                    }
-                    @if (d.CanEdit)
-                    {
-                        <a class="btn btn-default" asp-action="Edit" asp-route-id="@o.Id"><i class="fa fa-pencil"></i> @localizer["EditWorkOrder"]</a>
-                    }
-                    <a class="btn btn-default" asp-action="Operations" asp-route-id="@o.Id"><i class="fa fa-cogs"></i> @localizer["Operations"]</a>
-                    <form class="work-order-form work-order-export" asp-action="Export" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@o.Id" />
-                        <button type="submit" class="btn btn-default"><i class="fa fa-download"></i> @localizer["Export"]</button>
-                    </form>
-                </div>
 
                 <p class="text-muted">
                     <span class="label @StatusPill(o.Status)">@localizer["Status" + o.Status]</span>
                     <span class="label @PriorityPill(o.Priority)">@localizer["Priority" + o.Priority]</span>
-                    @localizer["DueOn"]: @o.DueOn?.ToString("u")
+                    @localizer["DueOn"]: @departmentTime.Format(o.DueOn)
                 </p>
 
                 @if (!d.CanWrite)
@@ -146,7 +150,7 @@
                             @if (d.ClosedOn.HasValue)
                             {
                                 <p class="text-muted">@localizer["VerificationEvidence"]: @c.VerificationEvidence</p>
-                                <p class="text-muted">@localizer["VerifiedBy"]: @UserName(d.VerifiedBy) &middot; @d.ClosedOn?.ToString("u")</p>
+                                <p class="text-muted">@localizer["VerifiedBy"]: @UserName(d.VerifiedBy) &middot; @departmentTime.Format(d.ClosedOn)</p>
                             }
                         </div>
                     </div>
@@ -312,7 +316,7 @@
                             @foreach (var a in d.Activities)
                             {
                                 <tr>
-                                    <td>@a.CreatedOn.ToString("u")</td>
+                                    <td>@departmentTime.Format(a.CreatedOn)</td>
                                     <td>
                                         <span class="label">@localizer["Activity" + a.Type]</span>
                                         @if (a.NewStatus.HasValue)
@@ -332,7 +336,7 @@
                                         }
                                         @if (a.RevisedDueOn.HasValue)
                                         {
-                                            <small class="text-muted rgw-sub">@localizer["OriginalDue"]: @a.OriginalDueOn?.ToString("u") → @localizer["RevisedDue"]: @a.RevisedDueOn.Value.ToString("u")</small>
+                                            <small class="text-muted rgw-sub">@localizer["OriginalDue"]: @departmentTime.Format(a.OriginalDueOn) → @localizer["RevisedDue"]: @departmentTime.Format(a.RevisedDueOn)</small>
                                         }
                                         @if (a.Snapshot != null)
                                         {
@@ -379,7 +383,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="transition-duplicate">@localizer["DuplicateOf"]</label>
-                                                <input class="form-control" id="transition-duplicate" type="number" name="DuplicateOfId" min="1" />
+                                                <input class="form-control" id="transition-duplicate" type="text" name="DuplicateOfId" maxlength="36" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
                                             </div>
                                             <div class="form-group rgw-wide">
                                                 <label for="transition-reason">@localizer["Reason"]</label>
@@ -523,7 +527,7 @@
                                             }
                                             <div class="form-group">
                                                 <label for="labor-date">@localizer["WorkDate"]</label>
-                                                <input class="form-control" id="labor-date" name="WorkDate" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required />
+                                                <input class="form-control" id="labor-date" name="WorkDate" type="date" value="@departmentTime.Today.ToString("yyyy-MM-dd")" required />
                                             </div>
                                             <div class="form-group">
                                                 <label for="labor-hours">@localizer["Hours"]</label>
@@ -726,5 +730,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_Scripts") }

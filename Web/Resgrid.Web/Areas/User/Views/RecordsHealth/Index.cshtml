@@ -3,6 +3,7 @@
 @model RecordsHealthView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["RecordsHealth"];
 	var t = Model.Telemetry;
 	var p = Model.Prevention;
@@ -23,7 +24,7 @@
 		<label>@L["TelemetryWindow"]</label>
 		<select class="form-control" name="windowHours">@foreach (var h in new[] { 1, 6, 24, 72, 168, 720 }) { <option value="@h" selected="@(h == Model.WindowHours)">@h h</option> }</select>
 		<button class="btn btn-default">@L["Filter"]</button>
-		<span class="text-muted m-l-sm">@L["GeneratedOn"] @RmsEnumDisplay.Utc(t.GeneratedOn)</span>
+		<span class="text-muted m-l-sm">@L["GeneratedOn"] @departmentTime.Format(t.GeneratedOn)</span>
 	</form>
 	@foreach (var a in t.Alerts) { <div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> @a</div> }
 	@foreach (var w in t.Warnings) { <div class="alert alert-warning">@w</div> }
@@ -32,7 +33,7 @@
 		<div class="col-md-4">
 			<div class="ibox"><div class="ibox-title"><h5>@L["ActivateHeader"]</h5></div><div class="ibox-content">
 				<dl class="dl-horizontal">
-					<dt>@L["RecordsModuleActive"]</dt><dd>@(t.RecordsActive ? L["Yes"].Value : L["No"].Value) @RmsEnumDisplay.Utc(t.ActivatedOn)</dd>
+					<dt>@L["RecordsModuleActive"]</dt><dd>@(t.RecordsActive ? L["Yes"].Value : L["No"].Value) @departmentTime.Format(t.ActivatedOn)</dd>
 					<dt>@L["LegacyWriteAttempts"]</dt><dd class="@(t.LegacyWriteAttempts > 0 ? "text-danger" : "")">@t.LegacyWriteAttempts</dd>
 					<dt>@L["AuthorizationDenials"]</dt><dd>@t.AuthorizationDenials</dd>
 					<dt>@L["SearchIndexStatus"]</dt><dd>@(t.SearchEnabled ? L["SearchOnline"].Value : L["SearchDisabled"].Value)</dd>

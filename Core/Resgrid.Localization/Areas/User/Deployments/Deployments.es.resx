@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>País anfitrión</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Estado / provincia anfitrión</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Zona horaria</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Zona horaria local del incidente para los partes de horas; en blanco usa la del departamento.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Zona horaria para la contabilidad del despliegue. Las fechas y horas de estas páginas usan la zona horaria del departamento.</value></data>
   <data name="Currency" xml:space="preserve"><value>Moneda</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Fuera de la provincia / estado</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Viaje en avión</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Sin descanso de 8 h (las horas extra pasan al siguiente turno)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Parada por condiciones inseguras</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Entradas de tiempo</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>horas en hora local del incidente</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>horas en la zona horaria del departamento</value></data>
   <data name="Subject" xml:space="preserve"><value>Sujeto</value></data>
   <data name="EntryType" xml:space="preserve"><value>Tipo de entrada</value></data>
   <data name="Start" xml:space="preserve"><value>Inicio</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Elija un modo financiero.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>El fin no puede ser anterior al inicio.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>El descuento debe estar entre 0 y 100 por ciento.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>No se reconoce la zona horaria. Introduce un identificador de zona horaria de Windows como "Pacific Standard Time" o déjalo en blanco para usar la del departamento.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>No se encontró el contacto.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>No se encontró la llamada.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Esa llamada ya tiene un despliegue.</value></data>

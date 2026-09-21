@@ -100,6 +100,7 @@ namespace Resgrid.Tests.Services
 			builder.Services.AddControllersWithViews(o => o.Filters.Add(new PageBodyFilter())).AddApplicationPart(typeof(ChecklistsController).Assembly);
 			builder.Services.AddSingleton(checklists.Object); builder.Services.AddSingleton(_access.Object);
 			builder.Services.AddSingleton(Mock.Of<IChecklistTemplateService>()); builder.Services.AddSingleton(Mock.Of<IProtectedGrantContext>()); builder.Services.AddSingleton(Mock.Of<IDepartmentDataProtectionService>());
+			builder.Services.AddSingleton(Mock.Of<IDepartmentsService>(d => d.GetDepartmentByIdAsync(77, false) == Task.FromResult(new Resgrid.Model.Department { DepartmentId = 77, TimeZone = "Pacific Standard Time", Use24HourTime = true })));
 			await using var app = builder.Build(); var previous = ClaimsAuthorizationHelper._httpContextAccessor;
 			ClaimsAuthorizationHelper._httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 			app.UseRouting(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllerRoute("areas", "{area:exists}/{controller}/{action=Index}/{id?}");

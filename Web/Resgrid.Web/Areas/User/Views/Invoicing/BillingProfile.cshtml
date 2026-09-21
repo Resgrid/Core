@@ -12,11 +12,16 @@
     var write = Model.CanWrite && Model.CanManage;
     var components = Model.TaxComponents.Take(3).ToList();
     while (components.Count < 3) { components.Add(new TaxComponent()); }
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-default"><i class="fa fa-address-book"></i> @localizer["OpenContact"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (Model.SaveSuccess)
     {
         <div class="alert alert-success">@localizer["Saved"]</div>
@@ -30,9 +35,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["BillingProfile"] &mdash; @contactName</h5>
-                    <div class="ibox-tools">
-                        <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-xs btn-default"><i class="fa fa-address-book"></i> @localizer["OpenContact"]</a>
-                    </div>
+
                 </div>
                 <div class="ibox-content">
                     @if (isNew)
@@ -216,4 +219,8 @@
             refresh();
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

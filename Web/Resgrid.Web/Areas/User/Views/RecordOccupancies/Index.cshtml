@@ -3,6 +3,7 @@
 @model RecordOccupanciesIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Occupancies"];
 	var now = DateTime.UtcNow;
 }
@@ -60,7 +61,7 @@
 								<td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(o.AddressText)@(string.IsNullOrWhiteSpace(o.City) ? "" : ", " + o.City)</td>
 								<td>@(RmsEnumDisplay.Label<RmsOccupancyStatus>(o.Status))</td>
 								<td>@RmsEnumDisplay.Day(o.NextReviewDue)</td>
-								<td>@RmsEnumDisplay.Day(o.LastInspectedOn)</td>
+								<td>@departmentTime.Date(o.LastInspectedOn)</td>
 								<td><a class="btn btn-xs btn-default" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsOccupancyId">@L["ViewRecordHeader"]</a></td>
 							</tr>
 						}

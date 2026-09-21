@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Unità mobilitate</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Attrezzatura assegnata al momento dell’intervento</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>L’invio programmato contiene un avviso PDF e un collegamento sicuro al rapporto. Apri il rapporto per verificare l’accesso attuale e sbloccare i dati protetti; i risultati dei controlli e i dati personali non vengono inviati per e-mail.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Seleziona un periodo UTC cronologico di massimo 93 giorni.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Seleziona un periodo cronologico di massimo 93 giorni.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Questo rapporto è troppo grande. Seleziona un periodo più breve.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>L’intervento non è disponibile o l’accesso è negato.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>La provenienza storica dell’attrezzatura è incompleta o incoerente.</value></data>

@@ -2,6 +2,7 @@
 @using Newtonsoft.Json.Linq
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var row = Model.Detail.Schedule;
     var settings = Model.Detail.Settings;
     ViewBag.Title = "Resgrid | " + localizer["PreventiveMaintenance"];
@@ -11,38 +12,42 @@
     ViewData["ParentAction"] = "Recurrences";
     ViewData["CanWrite"] = Model.CanWrite;
     var canRecord = Model.CanWrite && (row.MeterUnit != 0 || row.Condition != 0);
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <div class="work-order-protected">
+            <a class="btn btn-default" asp-action="Recurrences"><i class="fa fa-arrow-left"></i> @localizer["PreventiveMaintenance"]</a>
+            @if (canRecord)
+            {
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recurrence-reading"><i class="fa fa-tachometer"></i> @localizer["RecordReading"]</button>
+            }
+            @if (Model.CanWrite)
+            {
+                <a class="btn btn-default" asp-action="EditRecurrence" asp-route-id="@row.Id"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+            }
+            @if (row.PendingWorkOrderId != null)
+            {
+                <a class="btn btn-default" asp-action="Detail" asp-route-id="@row.PendingWorkOrderId"><i class="fa fa-wrench"></i> @localizer["WorkOrders"]</a>
+            }
+
+        </div>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@settings.Template.Content.Title</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="work-order-protected">
-                <div class="rgw-toolbar">
-                    <a class="btn btn-default btn-sm" asp-action="Recurrences"><i class="fa fa-arrow-left"></i> @localizer["PreventiveMaintenance"]</a>
-                    <div class="rgw-toolbar-spacer"></div>
-                    @if (canRecord)
-                    {
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recurrence-reading"><i class="fa fa-tachometer"></i> @localizer["RecordReading"]</button>
-                    }
-                    @if (Model.CanWrite)
-                    {
-                        <a class="btn btn-default" asp-action="EditRecurrence" asp-route-id="@row.Id"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
-                    }
-                    @if (row.PendingWorkOrderId.HasValue)
-                    {
-                        <a class="btn btn-default" asp-action="Detail" asp-route-id="@row.PendingWorkOrderId"><i class="fa fa-wrench"></i> @localizer["WorkOrders"]</a>
-                    }
-                </div>
 
                 <p class="text-muted">
                     <span class="label @(row.IsActive ? "label-success" : "label-warning")">@localizer[row.IsActive ? "Active" : "Paused"]</span>
-                    @localizer["NextDue"]: @row.NextDueOn?.ToString("u")
+                    @localizer["NextDue"]: @departmentTime.Format(row.NextDueOn)
                 </p>
                 @if (!string.IsNullOrEmpty(settings.Template.Content.Description))
                 {
@@ -77,7 +82,7 @@
                                 {
                                     var content = JObject.Parse(reading.Content ?? "{}");
                                     <tr>
-                                        <td>@reading.ObservedOn.ToString("u")</td>
+                                        <td>@departmentTime.Format(reading.ObservedOn)</td>
                                         <td class="text-right">@content["MeterValue"]</td>
                                         <td class="text-right">@content["ConditionValue"]</td>
                                         <td>@content["Source"]</td>
@@ -104,10 +109,10 @@
                                 {
                                     var content = JObject.Parse(change.Content ?? "{}");
                                     <tr>
-                                        <td>@change.CreatedOn.ToString("u")</td>
+                                        <td>@departmentTime.Format(change.CreatedOn)</td>
                                         <td><span class="label">@localizer["MaintenanceChange" + change.ChangeType]</span></td>
                                         <td>@content["Note"]</td>
-                                        <td>@change.OriginalDueOn?.ToString("u") → @change.RevisedDueOn?.ToString("u")</td>
+                                        <td>@departmentTime.Format(change.OriginalDueOn) → @departmentTime.Format(change.RevisedDueOn)</td>
                                     </tr>
                                 }
                             </tbody>
@@ -147,8 +152,8 @@
                                         <input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")" />
                                         <div class="rgw-grid">
                                             <div class="form-group">
-                                                <label for="reading-observed">@localizer["ObservedOn"] (UTC)</label>
-                                                <input id="reading-observed" name="ObservedOn" type="datetime-local" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm")" required />
+                                                <label for="reading-observed">@localizer["ObservedOn"]</label>
+                                                <input id="reading-observed" name="ObservedOn" type="datetime-local" step="0.001" class="form-control" value="@departmentTime.Input(DateTime.UtcNow)" required />
                                             </div>
                                             @if (row.MeterUnit != 0)
                                             {
@@ -194,5 +199,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_Scripts") }

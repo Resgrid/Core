@@ -13,23 +13,27 @@
     var bandTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.RateBandTypes)).Cast<Resgrid.Model.Invoicing.RateBandTypes>().ToList();
     var bases = Enum.GetValues(typeof(Resgrid.Model.Invoicing.BillingBases)).Cast<Resgrid.Model.Invoicing.BillingBases>().ToList();
     string Money(decimal v) => v.ToString("0.00##", System.Globalization.CultureInfo.InvariantCulture);
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (!Model.IsNew && canEdit)
+        {
+            <a asp-action="Export" asp-route-id="@s.RateScheduleId" class="btn btn-info"><i class="fa fa-download"></i> @localizer["ExportJson"]</a>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> @localizer["Clone"]</button>
+
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <div class="row">
         <div class="col-md-7">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["Schedule"]</h5>
-                    @if (!Model.IsNew && canEdit)
-                    {
-                        <div class="ibox-tools">
-                            <a asp-action="Export" asp-route-id="@s.RateScheduleId" class="btn btn-default btn-xs"><i class="fa fa-download"></i> @localizer["ExportJson"]</a>
-                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> @localizer["Clone"]</button>
-                        </div>
-                    }
+
                 </div>
                 <div class="ibox-content">
                     <form method="post" asp-action="Save" class="form-horizontal">
@@ -290,4 +294,8 @@
             })();
         </script>
     }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

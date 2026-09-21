@@ -3,6 +3,7 @@
 @model RecordOccupancyDetailsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	var o = Model.Occupancy;
 	var name = Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(o.Name);
 	ViewBag.Title = "Resgrid | " + L["Occupancies"] + " | " + o.OccupancyNumber;
@@ -48,8 +49,8 @@
 					<dt>@L["Stories"]</dt><dd>@o.Stories · @L["YearBuilt"] @o.YearBuilt · @o.SquareFeet ft² · @L["OccupantLoad"] @o.OccupantLoad</dd>
 					<dt>@L["OccupancyHours"]</dt><dd>@Text(o.OccupancyHours)</dd>
 					<dt>@L["OccupantsNeedingAssistance"]</dt><dd>@(o.HasOccupantsNeedingAssistance ? L["Yes"].Value : L["No"].Value) @Text(o.OccupantsNeedingAssistanceNotes)</dd>
-					<dt>@L["ReviewDue"]</dt><dd>@RmsEnumDisplay.Day(o.NextReviewDue) · @L["LastReviewedOn"] @RmsEnumDisplay.Day(o.LastReviewedOn)</dd>
-					<dt>@L["LastInspectedOn"]</dt><dd>@RmsEnumDisplay.Day(o.LastInspectedOn)</dd>
+					<dt>@L["ReviewDue"]</dt><dd>@RmsEnumDisplay.Day(o.NextReviewDue) · @L["LastReviewedOn"] @departmentTime.Date(o.LastReviewedOn)</dd>
+					<dt>@L["LastInspectedOn"]</dt><dd>@departmentTime.Date(o.LastInspectedOn)</dd>
 				</dl>
 				@if (Model.CanAdminister && o.Status != (int)RmsOccupancyStatus.Merged)
 				{
@@ -168,7 +169,7 @@
 							<tbody>
 							@foreach (var i in Model.Inspections.OrderByDescending(i => i.ScheduledOn))
 							{
-								<tr><td><a asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsInspectionId">@i.InspectionNumber</a></td><td><span class="label label-@RmsEnumDisplay.StateClass((RmsInspectionState)i.State)">@(RmsEnumDisplay.Label<RmsInspectionState>(i.State))</span></td><td>@RmsEnumDisplay.Day(i.ScheduledOn)</td><td>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</td></tr>
+								<tr><td><a asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsInspectionId">@i.InspectionNumber</a></td><td><span class="label label-@RmsEnumDisplay.StateClass((RmsInspectionState)i.State)">@(RmsEnumDisplay.Label<RmsInspectionState>(i.State))</span></td><td>@departmentTime.Date(i.ScheduledOn)</td><td>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</td></tr>
 							}
 							</tbody>
 						</table>
@@ -178,7 +179,7 @@
 						<form method="post" class="form-inline" asp-controller="RecordInspections" asp-action="Schedule" asp-route-area="User">
 							@Html.AntiForgeryToken()<input type="hidden" name="occupancyId" value="@o.RmsOccupancyId" />
 							<select class="form-control" name="programId" asp-items="Model.Programs"></select>
-							<input type="date" class="form-control" name="scheduledOn" value="@DateTime.UtcNow.Date.AddDays(7).ToString("yyyy-MM-dd")" />
+							<input type="date" class="form-control" name="scheduledOn" value="@departmentTime.Today.AddDays(7).ToString("yyyy-MM-dd")" />
 							<button class="btn btn-sm btn-primary"><i class="fa fa-calendar"></i> @L["ScheduleInspection"]</button>
 						</form>
 					}
@@ -203,12 +204,12 @@
 				<div class="ibox"><div class="ibox-title"><h5>@L["Provenance"]</h5></div><div class="ibox-content">
 					@foreach (var c in Model.Aggregate.Crosswalks)
 					{
-						<p><small>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(c.SourceKind)) @c.SourceId · @(RmsEnumDisplay.Label<RmsOccupancyCrosswalkState>(c.State)) · @RmsEnumDisplay.Utc(c.DecidedOn)</small></p>
+						<p><small>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(c.SourceKind)) @c.SourceId · @(RmsEnumDisplay.Label<RmsOccupancyCrosswalkState>(c.State)) · @departmentTime.Format(c.DecidedOn)</small></p>
 					}
 					@if (Model.Aggregate.Provenance.Count > 0)
 					{
 						<table class="table table-condensed"><thead><tr><th>@L["FieldKey"]</th><th>@L["Source"]</th><th>@L["CapturedOn"]</th></tr></thead><tbody>
-						@foreach (var p in Model.Aggregate.Provenance.OrderBy(p => p.FieldKey)) { <tr><td>@p.FieldKey</td><td>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(p.SourceKind)) @p.SourceId</td><td>@RmsEnumDisplay.Utc(p.CapturedOn)</td></tr> }
+						@foreach (var p in Model.Aggregate.Provenance.OrderBy(p => p.FieldKey)) { <tr><td>@p.FieldKey</td><td>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(p.SourceKind)) @p.SourceId</td><td>@departmentTime.Format(p.CapturedOn)</td></tr> }
 						</tbody></table>
 					}
 				</div></div>

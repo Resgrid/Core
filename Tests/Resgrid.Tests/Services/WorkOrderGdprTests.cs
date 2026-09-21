@@ -46,17 +46,17 @@ namespace Resgrid.Tests.Services
         {
             var store = new Mock<IWorkOrderRepository>();
             store.Setup(s => s.ListAsync(DeptId, It.IsAny<WorkOrderReadScope>(), It.IsAny<WorkOrderFilter>())).ReturnsAsync(new List<WorkOrder> {
-                new WorkOrder { Id = 1, DepartmentId = DeptId, CreatedBy = UserId, Content = "SYNTHETIC-PHI-CANARY", NumberYear = 2026, NumberSequence = 1 }
+                new WorkOrder { Id = "00000000-0000-0000-0000-000000000001", DepartmentId = DeptId, CreatedBy = UserId, Content = "SYNTHETIC-PHI-CANARY", NumberYear = 2026, NumberSequence = 1 }
             });
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderActivity>()));
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderLabor>()));
-            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderVendorCharge> {new() {Id=8,DepartmentId=DeptId,WorkOrderId=1,CreatedBy=UserId,Content="VENDOR-CANARY"}}));
-            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPartMovement> {new() {Id=9,DepartmentId=DeptId,WorkOrderId=1,CreatedBy=UserId,Content="MOVEMENT-CANARY"}}));
-            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderOperationReceipt> {new() {Id=10,DepartmentId=DeptId,WorkOrderId=1,CreatedBy=UserId,Content="BULK-CANARY"}}));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderVendorCharge> {new() {Id="00000000-0000-0000-0000-000000000008",DepartmentId=DeptId,WorkOrderId="00000000-0000-0000-0000-000000000001",CreatedBy=UserId,Content="VENDOR-CANARY"}}));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPartMovement> {new() {Id="00000000-0000-0000-0000-000000000009",DepartmentId=DeptId,WorkOrderId="00000000-0000-0000-0000-000000000001",CreatedBy=UserId,Content="MOVEMENT-CANARY"}}));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderOperationReceipt> {new() {Id="00000000-0000-0000-0000-000000000010",DepartmentId=DeptId,WorkOrderId="00000000-0000-0000-0000-000000000001",CreatedBy=UserId,Content="BULK-CANARY"}}));
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPart>()));
-            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderReportSnapshot> { new() { DepartmentId = DeptId, WorkOrderId = 1, Revision = 2, Id = 3 } }));
-            store.Setup(s => s.ChildrenAsync<WorkOrderFile>(DeptId, 1, 0)).ReturnsAsync(new List<WorkOrderFile> {
-                new WorkOrderFile { Id=2, DepartmentId=DeptId, WorkOrderId=1, CreatedBy=UserId, Content="PII-FILENAME-CANARY", Data=new byte[]{1,2,3} }
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderReportSnapshot> { new() { DepartmentId = DeptId, WorkOrderId = "00000000-0000-0000-0000-000000000001", Revision = 2, Id = "00000000-0000-0000-0000-000000000003" } }));
+            store.Setup(s => s.ChildrenAsync<WorkOrderFile>(DeptId, "00000000-0000-0000-0000-000000000001", 0)).ReturnsAsync(new List<WorkOrderFile> {
+                new WorkOrderFile { Id="00000000-0000-0000-0000-000000000002", DepartmentId=DeptId, WorkOrderId="00000000-0000-0000-0000-000000000001", CreatedBy=UserId, Content="PII-FILENAME-CANARY", Data=new byte[]{1,2,3} }
             });
             var policy = new Mock<IDepartmentDataProtectionService>();
             if (policyFailure) policy.Setup(p=>p.IsProtectionEnforcedAsync(DeptId)).ThrowsAsync(new InvalidOperationException());
@@ -65,14 +65,14 @@ namespace Resgrid.Tests.Services
             reminders.SetReturnsDefault(Task.FromResult(new List<Resgrid.Model.Checklists.ChecklistReminder>()));
             var maintenance = Mock.Get(EmptyMaintenance());
             maintenance.Setup(s=>s.QueryMaintenanceAsync<WorkOrderSafetyHold>(DeptId,null,null,0,false)).ReturnsAsync(new List<WorkOrderSafetyHold> {
-                new() { Id=3, DepartmentId=DeptId, CreatedBy="other", ReleasedBy=UserId, Content="HOLD-CANARY" },
-                new() { Id=4, DepartmentId=DeptId, CreatedBy="other", Content="UNRELATED-HOLD" }
+                new() { Id="00000000-0000-0000-0000-000000000003", DepartmentId=DeptId, CreatedBy="other", ReleasedBy=UserId, Content="HOLD-CANARY" },
+                new() { Id="00000000-0000-0000-0000-000000000004", DepartmentId=DeptId, CreatedBy="other", Content="UNRELATED-HOLD" }
             });
             maintenance.Setup(s=>s.QueryMaintenanceAsync<WorkOrderRecurrence>(DeptId,null,null,0,false)).ReturnsAsync(new List<WorkOrderRecurrence> {
-                new() { Id=5, DepartmentId=DeptId, CreatedBy="other", AssignedToUserId=UserId, Content="TEMPLATE-CANARY" }
+                new() { Id="00000000-0000-0000-0000-000000000005", DepartmentId=DeptId, CreatedBy="other", AssignedToUserId=UserId, Content="TEMPLATE-CANARY" }
             });
             maintenance.Setup(s=>s.QueryMaintenanceAsync<WorkOrderMeterReading>(DeptId,null,null,0,false)).ReturnsAsync(new List<WorkOrderMeterReading> {
-                new() { Id=6, DepartmentId=DeptId, CreatedBy=UserId, RecurrenceId=5, Content="READING-CANARY" }
+                new() { Id="00000000-0000-0000-0000-000000000006", DepartmentId=DeptId, CreatedBy=UserId, RecurrenceId="00000000-0000-0000-0000-000000000005", Content="READING-CANARY" }
             });
             _service = new GdprDataExportService(_repository.Object, _userProfileService.Object, _memberSensitiveDataService.Object, _emergencyContactService.Object,
                 _usersService.Object, _departmentsService.Object, _departmentGroupsService.Object, _personnelRolesService.Object, _actionLogsService.Object,

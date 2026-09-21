@@ -12,7 +12,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["HelpCompensation"]</div>
     @if (!string.IsNullOrWhiteSpace(Model.EmploymentId))
@@ -53,3 +53,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -16,7 +16,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
     @if (Model.IsProtected)
     {
@@ -96,4 +96,8 @@
     {
         <partial name="_AdpRevealScripts" model="adpReveal" />
     }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

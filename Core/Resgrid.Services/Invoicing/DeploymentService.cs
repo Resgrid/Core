@@ -203,6 +203,8 @@ namespace Resgrid.Services.Invoicing
 			if (!Enum.IsDefined(typeof(DeploymentFinanceModes), deployment.FinanceMode)) throw new InvalidOperationException("deployments_finance_mode_invalid");
 			if (deployment.StartOn.HasValue && deployment.EndOn.HasValue && deployment.EndOn < deployment.StartOn) throw new InvalidOperationException("deployments_window_invalid");
 			if (deployment.DiscountPercent.HasValue && (deployment.DiscountPercent < 0 || deployment.DiscountPercent > 100)) throw new InvalidOperationException("deployments_discount_invalid");
+			// The window, time reports and the contractor calendar all convert through this zone; an unknown id would silently shift every one of them.
+			if (!DateTimeHelpers.IsKnownTimeZone(deployment.LocalTimeZoneId)) throw new InvalidOperationException("deployments_timezone_invalid");
 
 			if (!string.IsNullOrWhiteSpace(deployment.ContactId))
 			{
@@ -499,6 +501,9 @@ namespace Resgrid.Services.Invoicing
 			result.Personnel = await _personnel.SaveOrUpdateAsync(row, cancellationToken);
 			result.Personnel.DisplayName = profile.FullName.AsFirstNameLastName;
 			foreach (var warning in result.Warnings) warning.Blocking = false;
+			// The roster is the projection's participant set (search scopes deployments to it for members without the claim);
+			// removal keeps the row, so only an addition changes it.
+			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectDeploymentAsync(deployment, cancellationToken);
 
 			Audit(departmentId, userId, AuditLogTypes.DeploymentRosterChanged, ipAddress, userAgent, null, result.Personnel);
 			await PublishAsync(deployment, WorkflowTriggerEventType.DeploymentRosterChanged, subject: (DeploymentTimeSubjectTypes.Personnel, result.Personnel.DeploymentPersonnelId, result.Personnel.DisplayName, "Added"), subjectUserId: input.UserId, cancellationToken: cancellationToken);

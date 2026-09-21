@@ -1195,6 +1195,17 @@ namespace Resgrid.Chatbot.Localization
 				"Немає активних викликів для {0}.",
 				"لا توجد بلاغات نشطة لـ {0}."),
 
+			["Calls_NoPermission"] = L(
+				"You don't have permission to view calls for your department.",
+				"No tienes permiso para ver las llamadas de tu departamento.",
+				"Du har inte behörighet att se larm för din avdelning.",
+				"Sie haben keine Berechtigung, die Einsätze Ihrer Abteilung anzuzeigen.",
+				"Vous n'avez pas la permission de voir les appels de votre département.",
+				"Non hai il permesso di visualizzare le chiamate del tuo dipartimento.",
+				"Nie masz uprawnień do wyświetlania zgłoszeń swojego działu.",
+				"У вас немає дозволу переглядати виклики вашого підрозділу.",
+				"ليس لديك إذن لعرض بلاغات قسمك."),
+
 			["Calls_Header"] = L(
 				"Active Calls for {0}:",
 				"Llamadas activas para {0}:",
@@ -1230,6 +1241,17 @@ namespace Resgrid.Chatbot.Localization
 				"Nie znaleziono jednostek dla Twojego działu.",
 				"Підрозділів для вашого відділу не знайдено.",
 				"لم يتم العثور على وحدات لقسمك."),
+
+			["Units_NoPermission"] = L(
+				"You don't have permission to view units for your department.",
+				"No tienes permiso para ver las unidades de tu departamento.",
+				"Du har inte behörighet att se enheter för din avdelning.",
+				"Sie haben keine Berechtigung, die Einheiten Ihrer Abteilung anzuzeigen.",
+				"Vous n'avez pas la permission de voir les unités de votre département.",
+				"Non hai il permesso di visualizzare le unità del tuo dipartimento.",
+				"Nie masz uprawnień do wyświetlania jednostek swojego działu.",
+				"У вас немає дозволу переглядати підрозділи вашого відділу.",
+				"ليس لديك إذن لعرض وحدات قسمك."),
 
 			["Units_Header"] = L(
 				"Unit Statuses for {0}:",

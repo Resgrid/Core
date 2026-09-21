@@ -3,6 +3,7 @@
 @model RecordHydrantDetailsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	var h = Model.Hydrant;
 	ViewBag.Title = "Resgrid | " + L["Hydrants"] + " | " + h.HydrantNumber;
 	var returnUrl = Url.Action("Details", "RecordHydrants", new { area = "User", id = h.RmsHydrantId });
@@ -39,10 +40,10 @@
 					<dt>@L["MainSize"]</dt><dd>@h.MainSizeInches</dd>
 					<dt>@L["FlowClass"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(h.FlowClass)) · @h.FlowGpm gpm</dd>
 					<dt>@L["StaticPressure"]</dt><dd>@h.StaticPressurePsi psi · @L["ResidualPressure"] @h.ResidualPressurePsi psi</dd>
-					<dt>@L["LastTestedOn"]</dt><dd>@RmsEnumDisplay.Day(h.LastTestedOn)</dd>
-					<dt>@L["LastMaintainedOn"]</dt><dd>@RmsEnumDisplay.Day(h.LastMaintainedOn)</dd>
+					<dt>@L["LastTestedOn"]</dt><dd>@departmentTime.Date(h.LastTestedOn)</dd>
+					<dt>@L["LastMaintainedOn"]</dt><dd>@departmentTime.Date(h.LastMaintainedOn)</dd>
 					<dt>@L["Source"]</dt><dd>@h.Source</dd>
-					@if (!h.InService) { <dt>@L["OutOfServiceReason"]</dt><dd>@h.OutOfServiceReason (@RmsEnumDisplay.Utc(h.OutOfServiceSince))</dd> }
+					@if (!h.InService) { <dt>@L["OutOfServiceReason"]</dt><dd>@h.OutOfServiceReason (@departmentTime.Format(h.OutOfServiceSince))</dd> }
 				</dl>
 				@if (!string.IsNullOrWhiteSpace(h.Notes)) { <p style="white-space:pre-wrap">@h.Notes</p> }
 				@if (Model.CanAdminister)
@@ -70,7 +71,7 @@
 						<tbody>
 						@foreach (var t in Model.Aggregate.FlowTests.OrderByDescending(t => t.TestedOn))
 						{
-							<tr><td>@RmsEnumDisplay.Day(t.TestedOn)</td><td>@t.StaticPressurePsi</td><td>@t.ResidualPressurePsi</td><td>@t.PitotPressurePsi</td><td>@t.OutletDiameterInches (c=@t.Coefficient)</td><td>@t.FlowGpm</td><td>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(t.FlowClass))</td></tr>
+							<tr><td>@departmentTime.Date(t.TestedOn)</td><td>@t.StaticPressurePsi</td><td>@t.ResidualPressurePsi</td><td>@t.PitotPressurePsi</td><td>@t.OutletDiameterInches (c=@t.Coefficient)</td><td>@t.FlowGpm</td><td>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(t.FlowClass))</td></tr>
 						}
 						</tbody>
 					</table>
@@ -80,7 +81,7 @@
 					<form method="post" asp-controller="RecordHydrants" asp-action="FlowTest" asp-route-area="User">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" />
 						<div class="row">
-							<div class="col-sm-3"><input type="date" class="form-control" name="testedOn" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" /></div>
+							<div class="col-sm-3"><input type="date" class="form-control" name="testedOn" value="@departmentTime.Today.ToString("yyyy-MM-dd")" /></div>
 							<div class="col-sm-2"><input class="form-control" type="number" name="test.StaticPressurePsi" placeholder="@L["StaticPressure"]" required /></div>
 							<div class="col-sm-2"><input class="form-control" type="number" name="test.ResidualPressurePsi" placeholder="@L["ResidualPressure"]" required /></div>
 							<div class="col-sm-2"><input class="form-control" type="number" name="test.PitotPressurePsi" placeholder="@L["PitotPressure"]" required /></div>
@@ -101,7 +102,7 @@
 						<tbody>
 						@foreach (var m in Model.Aggregate.Maintenance.OrderByDescending(m => m.PerformedOn))
 						{
-							<tr><td>@RmsEnumDisplay.Day(m.PerformedOn)</td><td>@(RmsEnumDisplay.Label<RmsHydrantMaintenanceKind>(m.Kind))</td><td>@m.Notes</td><td>@(m.ReturnedToService ? L["Yes"].Value : "")</td></tr>
+							<tr><td>@departmentTime.Date(m.PerformedOn)</td><td>@(RmsEnumDisplay.Label<RmsHydrantMaintenanceKind>(m.Kind))</td><td>@m.Notes</td><td>@(m.ReturnedToService ? L["Yes"].Value : "")</td></tr>
 						}
 						</tbody>
 					</table>
@@ -110,7 +111,7 @@
 				{
 					<form method="post" class="form-inline" asp-controller="RecordHydrants" asp-action="Maintenance" asp-route-area="User">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" />
-						<input type="date" class="form-control" name="performedOn" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+						<input type="date" class="form-control" name="performedOn" value="@departmentTime.Today.ToString("yyyy-MM-dd")" />
 						<select class="form-control" name="row.Kind" asp-items="Model.MaintenanceKinds"></select>
 						<input class="form-control" name="row.Notes" maxlength="1000" placeholder="@L["ItemNote"]" />
 						<label class="checkbox-inline"><input type="checkbox" name="row.ReturnedToService" value="true" /> @L["ReturnedToService"]</label>

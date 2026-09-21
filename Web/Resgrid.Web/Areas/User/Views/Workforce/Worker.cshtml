@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["Worker"];
     ViewData["Title"] = Model.Worker.DisplayName;
     ViewData["Subtitle"] = localizer["WorkerIntro"].Value;
@@ -15,7 +16,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-4">
@@ -79,7 +80,7 @@
                                     @foreach (var a in e.Assignments)
                                     {
                                         <tr>
-                                            <td>@a.EffectiveOn.ToString("yyyy-MM-dd")</td><td>@(a.ExpiresOn?.ToString("yyyy-MM-dd") ?? "…")</td><td>@a.JobTitle</td>
+                                            <td>@a.EffectiveOn.ToString("yyyy-MM-dd")</td><td>@(departmentTime.Date(a.ExpiresOn) ?? "…")</td><td>@a.JobTitle</td>
                                             <td>@a.JobCategoryCode @(Model.JobCategories.FirstOrDefault(j => j.Code == a.JobCategoryCode)?.Label)</td>
                                             <td>@(Model.Establishments.FirstOrDefault(x => x.Value == a.WorkforceEstablishmentId)?.Text)</td>
                                             <td>@localizer["WorkMode" + (WorkModes)a.WorkMode]</td>
@@ -162,3 +163,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

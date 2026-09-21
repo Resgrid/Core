@@ -26,6 +26,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// Deployments_Update (admins by default) plus the Invoicing.ContractorBilling entitlement.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class DeploymentWizardController : SecureBaseController
 	{
 		// Bid, contract, schedule and roster names are user text rendered inside a <script> block; EscapeHtml keeps "</script>" out of the page.
@@ -188,16 +189,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (request == null) return BadRequest();
 			request.BidId = input.BidId;
 			// The wizard's window is typed in the department's local time (datetime-local); the deployment stores UTC, like Deployments/Edit.
-			var timeZone = (await _departments.GetDepartmentByIdAsync(DepartmentId))?.TimeZone;
-			if (!string.IsNullOrWhiteSpace(timeZone))
-			{
-				try
-				{
-					if (request.StartOn.HasValue) request.StartOn = DateTimeHelpers.ConvertToUtc(request.StartOn.Value, timeZone, lenient: true);
-					if (request.EndOn.HasValue) request.EndOn = DateTimeHelpers.ConvertToUtc(request.EndOn.Value, timeZone, lenient: true);
-				}
-				catch (Exception ex) { Logging.LogException(ex, "Deployment wizard: window time zone conversion failed; values kept as entered."); }
-			}
+			var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+			request.StartOn = time.ToUtc(request.StartOn);
+			request.EndOn = time.ToUtc(request.EndOn);
 			try
 			{
 				var result = await _bids.ConvertBidToDeploymentAsync(request, DepartmentId, UserId, Ip, Agent, cancellationToken);

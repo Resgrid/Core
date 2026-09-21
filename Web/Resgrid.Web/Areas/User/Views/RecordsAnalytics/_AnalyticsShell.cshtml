@@ -3,6 +3,7 @@
 @model RecordsAnalyticsBaseView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	// Action, icon, caption, and which of the filters that action accepts, so switching tabs carries the filter
 	// state across instead of silently resetting it to the defaults.
 	var tabs = new[]
@@ -50,7 +51,7 @@
 				<label class="m-l-sm">@L["AnalyticsTravelTarget"]</label> <input type="number" class="form-control input-sm" style="width:80px" name="travelTargetSeconds" min="0" max="7200" value="@Model.TravelTargetSeconds" />
 			}
 			<button class="btn btn-sm btn-primary m-l-sm">@L["Filter"]</button>
-			@if (result != null) { <span class="text-muted m-l-sm">@L["GeneratedOn"] @RmsEnumDisplay.Utc(result.GeneratedOn) · @L["AnalyticsRecordsRead"]: @result.RecordsRead</span> }
+			@if (result != null) { <span class="text-muted m-l-sm">@L["GeneratedOn"] @departmentTime.Format(result.GeneratedOn) · @L["AnalyticsRecordsRead"]: @result.RecordsRead</span> }
 		</form>
 		<p class="text-muted m-t-sm m-b-none">@L["AnalyticsIntro"]</p>
 	</div></div>

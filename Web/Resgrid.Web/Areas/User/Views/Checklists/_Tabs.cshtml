@@ -4,8 +4,8 @@
     The module's tab strip. ViewData["Tab"] names the tab that owns the current screen, so a
     sub page (a definition, a run, a schedule) still shows where in the module it sits.
 
-    These are plain links: unlike inventory, checklist navigation is GET, so the theme's own
-    nav-tabs markup works without any help.
+    These are plain GET links in the page heading. Their permissions are unchanged when
+    moving between definition, run and scheduling screens.
 *@
 @{
     var current = (string)ViewData["Tab"] ?? "Index";
@@ -22,7 +22,7 @@
         tabs.Add(("Reminders", "fa-bell-o", localizer["ReminderSettings"].Value));
     }
 }
-<ul class="nav nav-tabs">
+<ul class="nav nav-pills rgw-module-tabs">
     @foreach (var tab in tabs)
     {
         <li class="nav-item @(current == tab.Action ? "active" : null)">

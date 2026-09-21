@@ -71,6 +71,7 @@ namespace Resgrid.Services
             await RequireRecurrenceAsync(actor, row); await RevealAsync(actor, row);
             var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, row.CurrentVersionId));
             var settings = Decode<WorkOrderRecurrenceInput>(version.Content); settings.Id = row.Id; settings.Revision = row.Revision; settings.IsActive = row.IsActive; settings.MeterBaseline = row.MeterBaseline; settings.AnchorLocal = row.AnchorLocal;
+            NormalizeRecurrenceAssignees(settings);
             var view = new WorkOrderRecurrenceView { HistoryPage = historyPage, Schedule = row, Settings = settings };
             if (history)
             {
@@ -80,7 +81,7 @@ namespace Resgrid.Services
             view.HasMoreHistory = view.Changes.Count == 500 || view.Readings.Count == 500;
             return view;
         }
-        public async Task<WorkOrderRecurrenceView> RecurrenceAsync(ChecklistActor actor, int id, int historyPage = 0)
+        public async Task<WorkOrderRecurrenceView> RecurrenceAsync(ChecklistActor actor, string id, int historyPage = 0)
         {
             RequireMaintenanceStore(); if (historyPage < 0 || historyPage > 10000) throw new WorkOrderException(400, "RecurrenceInvalid");
             return await RecurrenceViewAsync(actor, await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, id), true, historyPage);
@@ -102,10 +103,11 @@ namespace Resgrid.Services
                 if (rows.Count < 500) return result;
             }
         }
-        public async Task<int> SaveRecurrenceAsync(ChecklistActor actor, WorkOrderRecurrenceInput input)
+        public async Task<string> SaveRecurrenceAsync(ChecklistActor actor, WorkOrderRecurrenceInput input)
         {
             RequireMaintenanceStore();
             if (input?.Template == null) throw new WorkOrderException(400, "RecurrenceInvalid");
+            NormalizeRecurrenceAssignees(input);
             input.Template.Content ??= new WorkOrderContent();
             input.Template.Content.Resolution = input.Template.Content.Cause = input.Template.Content.VerificationEvidence = null;
             foreach (var step in input.Template.Content.Steps ?? new()) step.Completed = false;
@@ -121,55 +123,80 @@ namespace Resgrid.Services
                 || input.ConditionThreshold < -1000000000m || input.ConditionThreshold > 1000000000m
                 || input.Condition != 0 && (!input.ConditionThreshold.HasValue || string.IsNullOrWhiteSpace(input.ConditionUnit))
                 || input.EscalateAfterMinutes < 0 || input.EscalateAfterMinutes > 525600) throw new WorkOrderException(400, "RecurrenceInvalid");
-            MaintenanceZone(input.TimeZoneId); Text(input.ConditionUnit, 100); Text(input.Reason, 4000, input.Id != 0);
+            MaintenanceZone(input.TimeZoneId); Text(input.ConditionUnit, 100); Text(input.Reason, 4000, input.Id != null);
             return await TransactionAsync(actor, async events =>
             {
                 await _authorization.ValidateTargetAsync(actor, input.Template);
                 if (!await _authorization.CanManageAsync(actor, input.Template.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
-                if (input.Id == 0)
+                if (input.Id == null)
                 {
                     var existing = (await _maintenance.QueryMaintenanceAsync<WorkOrderRecurrence>(actor.DepartmentId, "RequestId", input.Template.RequestId)).SingleOrDefault();
                     if (existing != null)
                     {
                         await RequireRecurrenceAsync(actor, existing);
                         var pinned = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, existing.CurrentVersionId));
-                        if (existing.CreatedBy != actor.UserId || pinned.Content != JsonConvert.SerializeObject(input)) throw new WorkOrderException(409, "Conflict");
+                        var previous = Decode<WorkOrderRecurrenceInput>(pinned.Content);
+                        input.Template.Content.Currency = previous.Template.Content.Currency;
+                        NormalizeRecurrenceAssignees(previous);
+                        if (existing.CreatedBy != actor.UserId || JsonConvert.SerializeObject(previous) != JsonConvert.SerializeObject(input)) throw new WorkOrderException(409, "Conflict");
                         return existing.Id;
                     }
                 }
-                var row = input.Id == 0 ? New<WorkOrderRecurrence>(actor) : await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, input.Id);
+                var row = input.Id == null ? New<WorkOrderRecurrence>(actor) : await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, input.Id);
                 if (row == null) throw new WorkOrderException(404, "Unavailable");
+                if (input.Id == null) input.Template.Content.Currency = await DepartmentCurrencyAsync(actor.DepartmentId);
                 row.RequestId ??= input.Template.RequestId;
                 var calendarChanged = row.Calendar != (int)input.Calendar || row.Interval != input.Interval || row.TimeZoneId != input.TimeZoneId || row.AnchorLocal != input.AnchorLocal;
-                if (input.Id != 0)
+                if (input.Id != null)
                 {
                     await RequireRecurrenceAsync(actor, row); await RevealAsync(actor, row); Revision(row, input.Revision);
+                    var previousVersion = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, row.CurrentVersionId));
+                    input.Template.Content.Currency = Decode<WorkOrderRecurrenceInput>(previousVersion.Content).Template.Content.Currency;
                     if (row.TargetUnitId != input.Template.TargetUnitId || row.InventoryAssetId != input.Template.InventoryAssetId) throw new WorkOrderException(409, "TargetUnavailable");
-                    if (row.PendingWorkOrderId.HasValue && (row.TargetUnitId != input.Template.TargetUnitId || row.InventoryAssetId != input.Template.InventoryAssetId || row.MeterUnit != (int)input.MeterUnit || row.MeterBaseline != input.MeterBaseline)) throw new WorkOrderException(409, "RecurrencePending");
+                    if (row.PendingWorkOrderId != null && (row.TargetUnitId != input.Template.TargetUnitId || row.InventoryAssetId != input.Template.InventoryAssetId || row.MeterUnit != (int)input.MeterUnit || row.MeterBaseline != input.MeterBaseline)) throw new WorkOrderException(409, "RecurrencePending");
                     row.Revision++;
                 }
                 var assignment = new WorkOrder { DepartmentId = actor.DepartmentId, TargetGroupId = input.Template.TargetGroupId };
-                if (input.AssignedToUserId != null || input.AssignedToRoleId.HasValue) await _authorization.ValidateAssignmentAsync(actor, assignment, input.AssignedToUserId, input.AssignedToRoleId);
+                await ValidateRecurrenceAssigneesAsync(actor, assignment, input.AssignedToUserIds, input.AssignedToRoleIds);
                 if (input.EscalationRoleId.HasValue) await _authorization.ValidateAssignmentAsync(actor, assignment, null, input.EscalationRoleId);
                 row.TargetUnitId = input.Template.TargetUnitId; row.TargetGroupId = input.Template.TargetGroupId; row.InventoryAssetId = input.Template.InventoryAssetId;
                 row.AssignedToUserId = input.AssignedToUserId; row.AssignedToRoleId = input.AssignedToRoleId; row.Priority = (int)input.Template.Priority;
+                row.AssignedToUserIds = input.AssignedToUserIds; row.AssignedToRoleIds = input.AssignedToRoleIds;
                 row.IsActive = input.IsActive; row.Calendar = (int)input.Calendar; row.Interval = input.Interval; row.TimeZoneId = input.TimeZoneId;
                 row.AnchorLocal = DateTime.SpecifyKind(input.AnchorLocal, DateTimeKind.Unspecified); row.EndOn = input.EndOn?.Date; row.LeadDays = input.LeadDays; row.CompletionBased = input.CompletionBased;
                 row.ServiceWeekdays = input.ServiceWeekdays; row.ServiceStartMinute = input.ServiceStartMinute; row.ServiceEndMinute = input.ServiceEndMinute;
                 row.BlackoutFrom = input.BlackoutFrom?.Date; row.BlackoutUntil = input.BlackoutUntil?.Date;
-                if (input.Id != 0 && (row.MeterUnit != (int)input.MeterUnit || row.MeterBaseline != input.MeterBaseline)) throw new WorkOrderException(409, "UseMeterReset");
+                if (input.Id != null && (row.MeterUnit != (int)input.MeterUnit || row.MeterBaseline != input.MeterBaseline)) throw new WorkOrderException(409, "UseMeterReset");
                 row.MeterUnit = (int)input.MeterUnit; row.MeterInterval = input.MeterInterval; row.MeterBaseline = input.MeterBaseline; row.LastMeterValue ??= input.MeterBaseline;
                 row.Condition = (int)input.Condition; row.ConditionThreshold = input.ConditionThreshold;
                 row.EscalateAfterMinutes = input.EscalateAfterMinutes; row.EscalationRoleId = input.EscalationRoleId;
-                if (input.Id == 0 || calendarChanged) row.NextDueOn = NextMaintenanceDue(row, input.Id == 0 ? null : Now);
+                if (input.Id == null || calendarChanged) row.NextDueOn = NextMaintenanceDue(row, input.Id == null ? null : Now);
                 // Meter provenance changes only through a separately audited reset command.
                 row.Content = JsonConvert.SerializeObject(new { Name = input.Template.Content.Title });
-                if (input.Id == 0) await SaveAsync(actor, row, true);
+                if (input.Id == null) await SaveAsync(actor, row, true);
                 var version = New<WorkOrderRecurrenceVersion>(actor); version.RecurrenceId = row.Id; version.Content = JsonConvert.SerializeObject(input); await SaveAsync(actor, version, true);
                 row.CurrentVersionId = version.Id; await SaveAsync(actor, row);
                 await RecurrenceChangeAsync(actor, row, MaintenanceChangeType.Configured, input.Reason, null, null);
                 await RecurrenceEventAsync(row, WorkflowTriggerEventType.WorkOrderRecurrenceChanged, events); return row.Id;
             });
+        }
+        private static void NormalizeRecurrenceAssignees(WorkOrderRecurrenceInput input)
+        {
+            // Null collections are older API requests or stored versions. Empty collections clear assignments.
+            input.AssignedToUserIds ??= WorkOrderAssignees.Users(null, input.AssignedToUserId);
+            input.AssignedToRoleIds ??= WorkOrderAssignees.Roles(null, input.AssignedToRoleId);
+            if (input.AssignedToUserIds.Count + input.AssignedToRoleIds.Count > 500
+                || input.AssignedToUserIds.Any(id => string.IsNullOrWhiteSpace(id) || id.Length > 128)
+                || input.AssignedToRoleIds.Any(id => id <= 0)) throw new WorkOrderException(400, "AssignmentRequired");
+            input.AssignedToUserIds = input.AssignedToUserIds.Distinct(StringComparer.Ordinal).OrderBy(id => id, StringComparer.Ordinal).ToList();
+            input.AssignedToRoleIds = input.AssignedToRoleIds.Distinct().OrderBy(id => id).ToList();
+            input.AssignedToUserId = input.AssignedToUserIds.Count == 1 && input.AssignedToRoleIds.Count == 0 ? input.AssignedToUserIds[0] : null;
+            input.AssignedToRoleId = input.AssignedToRoleIds.Count == 1 && input.AssignedToUserIds.Count == 0 ? input.AssignedToRoleIds[0] : null;
+        }
+        private async Task ValidateRecurrenceAssigneesAsync(ChecklistActor actor, WorkOrder order, IEnumerable<string> users, IEnumerable<int> roles)
+        {
+            foreach (var user in users) await _authorization.ValidateAssignmentAsync(actor, order, user, null);
+            foreach (var role in roles) await _authorization.ValidateAssignmentAsync(actor, order, null, role);
         }
         private async Task RecurrenceChangeAsync(ChecklistActor actor, WorkOrderRecurrence row, MaintenanceChangeType type, string note, DateTime? original, DateTime? revised)
         {
@@ -181,7 +208,7 @@ namespace Resgrid.Services
             var entry = await _outbox.EnqueueAsync(row.DepartmentId, "WorkOrders", new DomainEventEnvelope { EventName = trigger.ToString(), AggregateType = "WorkOrderRecurrence", AggregateId = "recurrence:" + row.Id, AggregateVersion = row.Revision, Trigger = trigger, OccurredOn = Now,
                 Payload = new { RecurrenceId = row.Id, row.Revision, row.TargetUnitId, row.TargetGroupId, row.InventoryAssetId, DueOn = row.NextDueOn } }); events.Add(entry.DomainEventOutboxId);
         }
-        public async Task RecordReadingAsync(ChecklistActor actor, int id, WorkOrderReadingInput input)
+        public async Task RecordReadingAsync(ChecklistActor actor, string id, WorkOrderReadingInput input)
         {
             RequireMaintenanceStore();
             if (input == null || !Guid.TryParseExact(input.RequestId, "D", out _) || input.ObservedOn.Year < 2000 || input.ObservedOn > Now.AddMinutes(5)
@@ -201,7 +228,7 @@ namespace Resgrid.Services
                 }
                 Revision(row, input.Revision);
                 if (row.LastReadingOn.HasValue && input.ObservedOn <= row.LastReadingOn || input.MeterValue.HasValue && row.MeterUnit == 0 || input.ConditionValue.HasValue && row.Condition == 0
-                    || input.ResetMeter && (!input.MeterValue.HasValue || row.PendingWorkOrderId.HasValue) || !input.ResetMeter && input.MeterValue < row.LastMeterValue) throw new WorkOrderException(409, "ReadingInvalid");
+                    || input.ResetMeter && (!input.MeterValue.HasValue || row.PendingWorkOrderId != null) || !input.ResetMeter && input.MeterValue < row.LastMeterValue) throw new WorkOrderException(409, "ReadingInvalid");
                 if (input.ResetMeter) { row.MeterEpoch++; row.MeterBaseline = input.MeterValue; row.ReadingDue = false; row.ReadingDueOn = null; }
                 var reading = New<WorkOrderMeterReading>(actor); reading.RecurrenceId = id; reading.RequestId = input.RequestId; reading.MeterEpoch = row.MeterEpoch; reading.ObservedOn = input.ObservedOn;
                 reading.Content = JsonConvert.SerializeObject(input); await SaveAsync(actor, reading, true);
@@ -218,7 +245,7 @@ namespace Resgrid.Services
                 if (!before && row.ReadingDue) await RecurrenceEventAsync(row, WorkflowTriggerEventType.WorkOrderThresholdReached, events); return true;
             });
         }
-        public async Task DeferAsync(ChecklistActor actor, int orderId, WorkOrderDeferralInput input)
+        public async Task DeferAsync(ChecklistActor actor, string orderId, WorkOrderDeferralInput input)
         {
             RequireMaintenanceStore();
             if (input == null || input.DueOn <= Now || input.DueOn > Now.AddDays(366)) throw new WorkOrderException(400, "RecurrenceInvalid");
@@ -229,9 +256,9 @@ namespace Resgrid.Services
                 if (Terminal(order) || order.Status == 5 || !await _authorization.CanManageAsync(actor, order.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
                 order.OriginalDueOn ??= order.DueOn; var original = order.DueOn; order.DueOn = input.DueOn; order.EscalatedOn = null;
                 await ChangedAsync(actor, order, WorkOrderActivityType.Deferred, events, input.Reason, trigger: WorkflowTriggerEventType.WorkOrderDeferred, previousDue: original);
-                if (int.TryParse(order.WorkOrderRecurrenceId, out var scheduleId))
+                if (Guid.TryParseExact(order.WorkOrderRecurrenceId, "D", out _))
                 {
-                    var recurrence = await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, scheduleId);
+                    var recurrence = await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, order.WorkOrderRecurrenceId);
                     await RecurrenceChangeAsync(actor, recurrence, MaintenanceChangeType.Deferred, input.Reason, original, input.DueOn);
                 }
                 return true;
@@ -239,18 +266,18 @@ namespace Resgrid.Services
         }
         private async Task RecurrenceReopenedAsync(ChecklistActor actor, WorkOrder order, string reason, List<long> events)
         {
-            if (!int.TryParse(order.WorkOrderRecurrenceId, out var id) || _maintenance == null) return;
+            if (!Guid.TryParseExact(order.WorkOrderRecurrenceId, "D", out _) || _maintenance == null) return;
             Text(reason, 4000, true);
-            var row = await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, id);
-            if (row == null || row.PendingWorkOrderId.HasValue && row.PendingWorkOrderId != order.Id || row.Cycle != order.RecurrenceCycle) throw new WorkOrderException(409, "RecurrencePending");
+            var row = await _store.GetAsync<WorkOrderRecurrence>(actor.DepartmentId, order.WorkOrderRecurrenceId);
+            if (row == null || row.PendingWorkOrderId != null && row.PendingWorkOrderId != order.Id || row.Cycle != order.RecurrenceCycle) throw new WorkOrderException(409, "RecurrencePending");
             row.IsActive = false; row.PendingWorkOrderId = order.Id; row.UpdatedOn = Now; row.Revision++; await _store.WriteAsync(row);
             await RecurrenceChangeAsync(actor, row, MaintenanceChangeType.Configured, reason, order.OriginalDueOn, row.NextDueOn);
             await RecurrenceEventAsync(row, WorkflowTriggerEventType.WorkOrderRecurrenceChanged, events);
         }
         private async Task RecurrenceCompletedAsync(WorkOrder order)
         {
-            if (!Terminal(order) || !int.TryParse(order.WorkOrderRecurrenceId, out var id) || _maintenance == null) return;
-            var row = await _store.GetAsync<WorkOrderRecurrence>(order.DepartmentId, id);
+            if (!Terminal(order) || !Guid.TryParseExact(order.WorkOrderRecurrenceId, "D", out _) || _maintenance == null) return;
+            var row = await _store.GetAsync<WorkOrderRecurrence>(order.DepartmentId, order.WorkOrderRecurrenceId);
             if (row?.PendingWorkOrderId != order.Id) return;
             if (order.Status != (int)WorkOrderStatus.Closed)
             {
@@ -283,7 +310,7 @@ namespace Resgrid.Services
                         await WorkerTransactionAsync(departmentId, async events =>
                         {
                             var row = await _store.GetAsync<WorkOrderRecurrence>(departmentId, candidate.Id);
-                            if (row?.IsActive != true || row.PendingWorkOrderId.HasValue || !row.ReadingDue && (!row.NextDueOn.HasValue || ServiceDue(row, row.NextDueOn.Value).AddDays(-row.LeadDays) > Now)) return;
+                            if (row?.IsActive != true || row.PendingWorkOrderId != null || !row.ReadingDue && (!row.NextDueOn.HasValue || ServiceDue(row, row.NextDueOn.Value).AddDays(-row.LeadDays) > Now)) return;
                             if (row.EndOn.HasValue && TimeZoneInfo.ConvertTimeFromUtc(Now, MaintenanceZone(row.TimeZoneId)).Date > row.EndOn.Value.Date) return;
                             var version = await _store.GetAsync<WorkOrderRecurrenceVersion>(departmentId, row.CurrentVersionId);
                             if (version?.RecurrenceId != row.Id) throw new WorkOrderException(409, "RecurrenceInvalid");
@@ -299,12 +326,14 @@ namespace Resgrid.Services
                             if (order == null)
                             {
                                 order = New<WorkOrder>(owner); order.RequestId = request; order.NumberYear = Now.Year; order.NumberSequence = await _store.NextNumberAsync(departmentId, order.NumberYear);
+                                order.CurrencyCode = await DepartmentCurrencyAsync(departmentId);
                                 order.SourceType = 2; order.Type = (int)WorkOrderType.Preventive; order.Priority = row.Priority; order.TargetUnitId = row.TargetUnitId; order.TargetGroupId = row.TargetGroupId; order.InventoryAssetId = row.InventoryAssetId;
-                                order.WorkOrderRecurrenceId = row.Id.ToString(System.Globalization.CultureInfo.InvariantCulture); order.RecurrenceVersionId = row.CurrentVersionId; order.RecurrenceCycle = row.Cycle + 1;
+                                order.WorkOrderRecurrenceId = row.Id; order.RecurrenceVersionId = row.CurrentVersionId; order.RecurrenceCycle = row.Cycle + 1;
                                 order.DueOn = due; order.OriginalDueOn = original; order.EscalateAfterMinutes = row.EscalateAfterMinutes; order.EscalationRoleId = row.EscalationRoleId;
                                 order.AssignedToUserId = row.AssignedToUserId; order.AssignedToRoleId = row.AssignedToRoleId;
-                                order.Status = order.AssignedToUserId != null || order.AssignedToRoleId.HasValue ? (int)WorkOrderStatus.Assigned : (int)WorkOrderStatus.Accepted;
-                                if (order.Status == 2) { await _authorization.ValidateAssignmentAsync(owner, order, order.AssignedToUserId, order.AssignedToRoleId); order.AssignedOn = Now; }
+                                order.AssignedToUserIds = row.AssignedToUserIds; order.AssignedToRoleIds = row.AssignedToRoleIds;
+                                order.Status = order.AssignedToUserIds.Count != 0 || order.AssignedToRoleIds.Count != 0 ? (int)WorkOrderStatus.Assigned : (int)WorkOrderStatus.Accepted;
+                                if (order.Status == 2) { await ValidateRecurrenceAssigneesAsync(owner, order, order.AssignedToUserIds, order.AssignedToRoleIds); order.AssignedOn = Now; }
                                 await PinSlaAsync(order); if (order.Status == (int)WorkOrderStatus.Accepted) order.ResponseOn = Now;
                                 await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order);
                                 var generated = New<WorkOrderRecurrenceChange>(owner, order.Id); generated.RecurrenceId = row.Id; generated.ChangeType = (int)MaintenanceChangeType.Generated; generated.OriginalDueOn = original; generated.RevisedDueOn = due; await _store.AllocateAsync(generated);

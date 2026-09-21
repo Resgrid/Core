@@ -53,7 +53,7 @@ namespace Resgrid.Tests.Services
             await Move(WorkOrderPartMovementKind.Consume,1.5m); await Move(WorkOrderPartMovementKind.ReturnUnused,2.5m); await Move(WorkOrderPartMovementKind.ReleaseReservation,2);
             order=await pair.Orders.GetAsync(principal,order.Order.Id); part=order.Parts.Single(); part.ReservedQuantity.Should().Be(0); part.IssuedQuantity.Should().Be(0); part.ConsumedQuantity.Should().Be(1.5m); part.ReturnedQuantity.Should().Be(2.5m); part.Content.ConsumedCost.Should().Be(6.375m);
             var stocks=await Store(uow).ListAsync<InventoryStock>(77); stocks.Single(s=>s.LocationId==source.Id).Quantity.Should().Be(8.5m); stocks.Single(s=>s.LocationId==destination.Id).Quantity.Should().Be(0);
-            var ledger=await Store(uow).ListAsync<InventoryTransaction>(77); ledger.Where(t=>t.WorkOrderPartMovementId.HasValue).Should().HaveCount(3);
+            var ledger=await Store(uow).ListAsync<InventoryTransaction>(77); ledger.Where(t=>t.WorkOrderPartMovementId != null).Should().HaveCount(3);
             (await pair.Orders.PartMovementsAsync(principal,order.Order.Id)).Should().HaveCount(5);
             await pair.Orders.TransitionAsync(principal,order.Order.Id,new() {Revision=order.Order.Revision,Status=WorkOrderStatus.Cancelled,Reason="Settled"});
         }

@@ -11,7 +11,7 @@ namespace Resgrid.Services
 {
 	public sealed partial class WorkOrdersService
 	{
-		public async Task AddFileAsync(ChecklistActor actor, int id, int revision, string filename, string contentType, byte[] data)
+		public async Task AddFileAsync(ChecklistActor actor, string id, int revision, string filename, string contentType, byte[] data)
 		{
 			await RequireWriteAsync(actor); await FileWriteOrderAsync(actor, id, revision);
 			Text(filename, 200, true);
@@ -42,17 +42,17 @@ namespace Resgrid.Services
 				await SaveAsync(actor, file); await ChangedAsync(actor, row, WorkOrderActivityType.FileAdded, events); return true;
 			});
 		}
-		private async Task<WorkOrder> FileWriteOrderAsync(ChecklistActor actor, int id, int revision)
+		private async Task<WorkOrder> FileWriteOrderAsync(ChecklistActor actor, string id, int revision)
 		{
 			var row = await ReadOrderAsync(actor, id); Revision(row, revision);
 			if (Terminal(row) || row.Status == 5 || row.CreatedBy != actor.UserId && !await _authorization.CanContributeAsync(actor, row)) throw new WorkOrderException(403, "PermissionRequired");
 			return row;
 		}
-		public async Task<WorkOrderFile> GetFileAsync(ChecklistActor actor, int id)
+		public async Task<WorkOrderFile> GetFileAsync(ChecklistActor actor, string id)
 		{
 			await _authorization.RequireMemberAsync(actor); var metadata = await _store.GetAsync<WorkOrderFile>(actor.DepartmentId, id, false);
 			if (metadata?.WorkOrderId == null || metadata.WithdrawnOn.HasValue) throw new WorkOrderException(404, "Unavailable");
-			await ReadOrderAsync(actor, metadata.WorkOrderId.Value);
+			await ReadOrderAsync(actor, metadata.WorkOrderId);
 			var file = await RevealAsync(actor, await _store.GetAsync<WorkOrderFile>(actor.DepartmentId, id));
 			if (file.ScanState != (int)RmsAttachmentScanState.Clean || file.WithdrawnOn.HasValue) throw new WorkOrderException(404, "Unavailable");
 			var enveloped = ProtectedReadService.IsBinaryEnveloped(file.Data);
@@ -60,7 +60,7 @@ namespace Resgrid.Services
 			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && !enveloped || file.Data == null) throw new WorkOrderException(403, "ProtectedDataRequired");
 			if (Convert.ToHexString(SHA256.HashData(file.Data)) != file.Sha256) throw new WorkOrderException(409, "IntegrityFailed"); return file;
 		}
-		public async Task WithdrawFileAsync(ChecklistActor actor, int id, int fileId, int revision, string reason)
+		public async Task WithdrawFileAsync(ChecklistActor actor, string id, string fileId, int revision, string reason)
 		{
 			Text(reason, 4000, true);
 			await TransactionAsync(actor, async events =>

@@ -28,6 +28,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// they are seated on and files time and expenses there. Approval and void need TimeReports_Approve.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(32 * 1024 * 1024)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class DeploymentsController : SecureBaseController
 	{
 		private static readonly string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt", "xls", "xlsx", "csv", "heic" };
@@ -264,21 +265,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "View", new { id }); }
 		}
 
-		// The window is entered and shown in the deployment's local time zone (its LocalTimeZoneId, else the department's), like Calendar; storage is UTC.
-		private static string WindowTimeZone(string deploymentTimeZone, string departmentTimeZone) => string.IsNullOrWhiteSpace(deploymentTimeZone) ? departmentTimeZone : deploymentTimeZone;
+		// UI windows use the department time zone; deployment accounting retains its own zone. Storage is UTC.
+		private static string WindowTimeZone(string deploymentTimeZone, string departmentTimeZone) => string.IsNullOrWhiteSpace(departmentTimeZone) ? "Pacific Standard Time" : departmentTimeZone;
 
 		private static DateTime? ToLocal(DateTime? utc, string timeZone)
 		{
 			if (!utc.HasValue) return null;
-			try { return DateTimeHelpers.GetLocalDateTime(utc.Value, timeZone); }
+			try { return new DepartmentTime(new Department { TimeZone = timeZone }).Local(utc.Value); }
 			catch (Exception) { return utc; }
 		}
 
+		// A zone that cannot be resolved is a validation error (deployments_timezone_invalid, re-rendering the submitted form);
+		// storing the local clock value as UTC would shift the window by the zone offset without anyone noticing.
 		private static DateTime? ToUtc(DateTime? local, string timeZone)
 		{
 			if (!local.HasValue) return null;
-			try { return DateTimeHelpers.ConvertToUtc(local.Value, timeZone, lenient: true); }
-			catch (Exception) { return DateTime.SpecifyKind(local.Value, DateTimeKind.Utc); }
+			try { return new DepartmentTime(new Department { TimeZone = timeZone }).ToUtc(local.Value); }
+			catch (Exception) { throw new InvalidOperationException("deployments_timezone_invalid"); }
 		}
 
 		private static DeploymentInput ToInput(Deployment d, string departmentTimeZone) => new DeploymentInput
@@ -593,7 +596,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var view = Page(new TimeReportEditView { Report = report, Deployment = deployment, IsRostered = deployment.Personnel.Any(p => p.UserId == UserId) });
 			view.Department = await _departments.GetDepartmentByIdAsync(DepartmentId);
-			view.TimeZone = string.IsNullOrWhiteSpace(deployment.LocalTimeZoneId) ? view.Department?.TimeZone : deployment.LocalTimeZoneId;
+			view.TimeZone = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
 			foreach (var p in deployment.Personnel) { view.SubjectNames[p.DeploymentPersonnelId] = p.DisplayName ?? p.UserId; if (p.IsActive) view.Subjects.Add((p.DeploymentPersonnelId, (int)DeploymentTimeSubjectTypes.Personnel, p.DisplayName ?? p.UserId)); }
 			foreach (var u in deployment.Units) { view.SubjectNames[u.DeploymentUnitId] = u.UnitName ?? u.UnitId.ToString(); if (u.IsActive) view.Subjects.Add((u.DeploymentUnitId, (int)DeploymentTimeSubjectTypes.Unit, u.UnitName ?? u.UnitId.ToString())); }
 			foreach (var e in deployment.Equipment) { var n = e.FreeTextName ?? e.InventoryAssetId ?? e.InventoryItemId; view.SubjectNames[e.DeploymentEquipmentId] = n; if (e.IsActive) view.Subjects.Add((e.DeploymentEquipmentId, (int)DeploymentTimeSubjectTypes.Equipment, n)); }
@@ -609,7 +612,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (report == null) return NotFound();
 			var deployment = await AccessibleAsync(report.DeploymentId);
 			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
-			var timeZone = string.IsNullOrWhiteSpace(deployment.LocalTimeZoneId) ? (await _departments.GetDepartmentByIdAsync(DepartmentId))?.TimeZone : deployment.LocalTimeZoneId;
+			var timeZone = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
 			try
 			{
 				report.IncidentNumber = incidentNumber; report.ResourceOrderNumber = resourceOrderNumber; report.RequestNumber = requestNumber; report.CostCode = costCode; report.PointOfHire = pointOfHire;
@@ -622,7 +625,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				foreach (var row in rows)
 				{
 					if (!TryParseLocal(report.ReportDate, row.Start, timeZone, out var start) || !TryParseLocal(report.ReportDate, row.End, timeZone, out var end)) return Refused(400, "timereports_time_invalid", "TimeReport", new { id });
-					if (end <= start) end = end.AddDays(1);
+					if (end <= start && !row.End.Contains('T')) end = end.AddDays(1);
 					var entry = new DeploymentTimeEntry
 					{
 						DeploymentTimeEntryId = string.IsNullOrWhiteSpace(row.Id) ? null : row.Id,
@@ -660,11 +663,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			utc = default;
 			// "HH:mm" on the report date, or a full local "yyyy-MM-ddTHH:mm".
 			DateTime local;
-			if (DateTime.TryParseExact(time, new[] { "yyyy-MM-ddTHH:mm", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd HH:mm" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out var full)) local = full;
+			if (DateTime.TryParseExact(time, new[] { "yyyy-MM-ddTHH:mm", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:ss.FFFFFFF", "yyyy-MM-dd HH:mm" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out var full)) local = full;
 			else if (TimeSpan.TryParseExact(time, new[] { "hh\\:mm", "h\\:mm" }, CultureInfo.InvariantCulture, out var span)) local = reportDate.Date.Add(span);
 			else return false;
-			try { utc = string.IsNullOrWhiteSpace(timeZone) ? DateTime.SpecifyKind(local, DateTimeKind.Utc) : DateTimeHelpers.ConvertToUtc(local, timeZone, true); }
-			catch { utc = DateTime.SpecifyKind(local, DateTimeKind.Utc); }
+			// Same rule as ToUtc: a zone that cannot be resolved fails the entry (timereports_time_invalid) rather than saving a guessed UTC.
+			try { utc = new DepartmentTime(new Department { TimeZone = timeZone }).ToUtc(local); }
+			catch { return false; }
 			return true;
 		}
 
@@ -734,7 +738,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _timeTracking.SaveExpenseAsync(new DeploymentExpense
 				{
 					DeploymentExpenseId = string.IsNullOrWhiteSpace(input.DeploymentExpenseId) ? null : input.DeploymentExpenseId, DeploymentId = input.DeploymentId, DeploymentTimeReportId = string.IsNullOrWhiteSpace(input.DeploymentTimeReportId) ? null : input.DeploymentTimeReportId,
-					DepartmentId = DepartmentId, ExpenseDate = input.ExpenseDate ?? DateTime.UtcNow.Date, ExpenseType = input.ExpenseType, MealCode = input.MealCode, City = input.City, Description = input.Description, Amount = input.Amount,
+					DepartmentId = DepartmentId, ExpenseDate = input.ExpenseDate ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, ExpenseType = input.ExpenseType, MealCode = input.MealCode, City = input.City, Description = input.Description, Amount = input.Amount,
 					Currency = input.Currency, PreApproved = input.PreApproved, Billable = input.Billable
 				}, upload.Data, upload.FileName, upload.FileType, UserId, Ip, Agent, cancellationToken);
 				return Saved(back.Item1, back.Item2);

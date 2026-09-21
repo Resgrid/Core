@@ -17,7 +17,7 @@ namespace Resgrid.Web.Services.Controllers.v4
         {
             if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable");
             var page = await _reports.GetWorkOrderHistoryAsync(Actor, query);
-            return Reply(page, page.Items.Count, page.NextAfterId.HasValue);
+            return Reply(page, page.Items.Count, page.NextAfterId != null);
         }
         [HttpPost("ExportWorkOrderHistory")]
         public async Task<IActionResult> ExportWorkOrderHistory([FromBody] WorkOrderReportQuery query)

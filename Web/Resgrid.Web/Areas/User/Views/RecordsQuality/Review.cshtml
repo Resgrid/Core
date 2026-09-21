@@ -3,6 +3,7 @@
 @model RecordsQualityReviewView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	var r = Model.Review;
 	ViewBag.Title = "Resgrid | " + L["ScoreReview"] + " | " + r.RecordNumber;
 	var scored = r.ScoredOn.HasValue;
@@ -25,8 +26,8 @@
 		<dl class="dl-horizontal">
 			<dt>@L["RecordNumber"]</dt><dd><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@r.RecordId">@r.RecordNumber</a> · @r.DefinitionKey · @L["Revision"] @r.RevisionId</dd>
 			<dt>@L["Author"]</dt><dd>@r.AuthorUserId</dd>
-			<dt>@L["SampledOn"]</dt><dd>@RmsEnumDisplay.Utc(r.SampledOn)</dd>
-			@if (scored) { <dt>@L["ScoredOn"]</dt><dd>@RmsEnumDisplay.Utc(r.ScoredOn) · @r.ReviewerUserId · <strong>@r.Score%</strong></dd> }
+			<dt>@L["SampledOn"]</dt><dd>@departmentTime.Format(r.SampledOn)</dd>
+			@if (scored) { <dt>@L["ScoredOn"]</dt><dd>@departmentTime.Format(r.ScoredOn) · @r.ReviewerUserId · <strong>@r.Score%</strong></dd> }
 		</dl>
 		<p class="text-muted">@L["ScoreHelp"]</p>
 		<form method="post" asp-controller="RecordsQuality" asp-action="Score" asp-route-area="User">

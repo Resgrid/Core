@@ -11,11 +11,10 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@Model.Name</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
 
             <div class="rgw-toolbar">
                 <a asp-action="Templates" asp-controller="Checklists" asp-area="User" class="btn btn-default btn-sm"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
@@ -67,4 +66,5 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

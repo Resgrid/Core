@@ -30,7 +30,7 @@
 						</td>
 						<td>@a.Description</td>
 						<td>@(RmsEnumDisplay.Label<RmsAttachmentScanState>(a.ScanState))@(a.Classification == (int)RmsEvidenceClassification.Restricted ? " · " + L["RestrictedSection"] : "")</td>
-						<td>@RmsEnumDisplay.Utc(a.UploadedOn)</td>
+						<td>@DepartmentTime.From(ViewData).Format(a.UploadedOn)</td>
 						<td>
 							@if (Model.CanWrite)
 							{

@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Χώρα υποδοχής</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Πολιτεία / επαρχία υποδοχής</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Ζώνη ώρας</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Τοπική ζώνη ώρας του συμβάντος για τις αναφορές χρόνου· κενό χρησιμοποιεί αυτήν του τμήματος.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Ζώνη ώρας για τη λογιστική της ανάπτυξης. Οι ημερομηνίες και οι ώρες σε αυτές τις σελίδες χρησιμοποιούν τη ζώνη ώρας του τμήματος.</value></data>
   <data name="Currency" xml:space="preserve"><value>Νόμισμα</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Εκτός επαρχίας / πολιτείας</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Μετακίνηση αεροπορικώς</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Χωρίς 8ωρη ανάπαυση (οι υπερωρίες μεταφέρονται στην επόμενη βάρδια)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Διακοπή λόγω μη ασφαλών συνθηκών</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Καταχωρίσεις χρόνου</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>οι ώρες είναι σε τοπική ώρα συμβάντος</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>ώρες στη ζώνη ώρας του τμήματος</value></data>
   <data name="Subject" xml:space="preserve"><value>Υποκείμενο</value></data>
   <data name="EntryType" xml:space="preserve"><value>Τύπος καταχώρισης</value></data>
   <data name="Start" xml:space="preserve"><value>Έναρξη</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Επιλέξτε οικονομική λειτουργία.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>Η λήξη δεν μπορεί να προηγείται της έναρξης.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>Η έκπτωση πρέπει να είναι μεταξύ 0 και 100 τοις εκατό.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Η ζώνη ώρας δεν αναγνωρίζεται. Εισαγάγετε ένα αναγνωριστικό ζώνης ώρας των Windows, όπως "Pacific Standard Time", ή αφήστε το κενό για να χρησιμοποιηθεί αυτή του τμήματος.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Η επαφή δεν βρέθηκε.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>Η κλήση δεν βρέθηκε.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Αυτή η κλήση έχει ήδη αποστολή.</value></data>

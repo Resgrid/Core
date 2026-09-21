@@ -17,6 +17,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// (404 when off, like the v4 controllers), TempData messages and one exception-to-page mapping. Authorization is
 	/// enforced by the services; the controllers only pre-hide buttons.
 	/// </summary>
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public abstract class RecordsPreventionMvcControllerBase : SecureBaseController
 	{
 		protected readonly IRecordsCutoverService Cutover;
@@ -78,10 +79,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return map;
 		}
 
-		protected static DateTime? ParseUtc(string value)
+		protected DateTime? ParseUtc(string value)
 		{
 			if (string.IsNullOrWhiteSpace(value)) return null;
-			return DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal, out var d) ? d : (DateTime?)null;
+			return Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Parse(value);
 		}
 	}
 }

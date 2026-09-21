@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsQueueView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["ActionQueue"];
     ViewData["Title"] = localizer["ActionQueue"].Value;
     ViewData["Subtitle"] = localizer["QueueIntro"].Value;
@@ -13,7 +14,7 @@
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">
@@ -43,7 +44,7 @@
                                             <td>@(item.RequestNumber ?? w.MarsInvoiceId ?? "—")</td>
                                             <td>@await Html.PartialAsync("_WorkItemStateBadge", w.LocalState)</td>
                                             <td>@if (item.ErrorCount > 0) { <span class="label label-danger">@item.ErrorCount</span> } @if (item.WarningCount > 0) { <span class="label label-warning">@item.WarningCount</span> } @if (item.ErrorCount == 0 && item.WarningCount == 0 && w.LocalState >= (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.ReadyForPortal) { <i class="fa fa-check text-navy"></i> }</td>
-                                            <td>@(w.ObservedExternalStatus ?? "—") <small class="text-muted">@(w.ObservedOn?.ToString("yyyy-MM-dd"))</small></td>
+                                            <td>@(w.ObservedExternalStatus ?? "—") <small class="text-muted">@(departmentTime.Date(w.ObservedOn))</small></td>
                                             <td class="text-right">@(Model.IsManager && w.ExpectedTotal.HasValue ? w.ExpectedTotal.Value.ToString("N2") : "—")</td>
                                             <td>@item.AgeDays d</td>
                                             <td class="text-right"><a asp-action="@(w.RecordType == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes.GeneratedInvoice ? "Invoice" : "WorkItem")" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
@@ -82,3 +83,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

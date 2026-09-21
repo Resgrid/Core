@@ -16,9 +16,17 @@ namespace Resgrid.Web.Areas.User.Controllers
     public sealed partial class WorkOrdersController
     {
         [HttpGet]
-        public async Task<IActionResult> Operations(int id, int vendorAfterId = 0, int movementAfterId = 0) => View("Operations", new WorkOrderOperationsView { Detail = await _orders.GetAsync(Actor, id), Choices = await _orders.ChoicesAsync(Actor), VendorCharges = await OperationsService.VendorChargesAsync(Actor, id, vendorAfterId), Movements = await OperationsService.PartMovementsAsync(Actor, id, movementAfterId) });
+        public async Task<IActionResult> Operations(string id, string vendorAfterId = null, string movementAfterId = null) => View("Operations", new WorkOrderOperationsView { Detail = await _orders.GetAsync(Actor, id), Choices = await _orders.ChoicesAsync(Actor), VendorCharges = await OperationsService.VendorChargesAsync(Actor, id, vendorAfterId), Movements = await OperationsService.PartMovementsAsync(Actor, id, movementAfterId) });
         [HttpGet]
-        public async Task<IActionResult> Policy() => View("Policy", new WorkOrderPolicyView { Input = await OperationsService.PolicyAsync(Actor), CanWrite = await _access.CanUseMaintenanceAsync(DepartmentId) });
+        public Task<IActionResult> Policy() => Settings();
+        [HttpGet]
+        public async Task<IActionResult> Settings() => View("Settings", new WorkOrderPolicyView { Input = await OperationsService.PolicyAsync(Actor), CanWrite = await _access.CanUseMaintenanceAsync(DepartmentId) });
+        [HttpPost, ValidateAntiForgeryToken]
+        public Task<IActionResult> SaveSettings(WorkOrderPolicyInput input, string holidays, string businessStart, string businessEnd, List<int> weekdays)
+        {
+            if (!WorkOrderCurrencies.IsSupported(input?.Currency)) throw new WorkOrderException(400, "OperationsPolicyInvalid");
+            return SavePolicy(input, holidays, businessStart, businessEnd, weekdays);
+        }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SavePolicy(WorkOrderPolicyInput input, string holidays, string businessStart, string businessEnd, List<int> weekdays)
         {
@@ -30,7 +38,7 @@ namespace Resgrid.Web.Areas.User.Controllers
             input.SpendingRules = input.SpendingRules.Where(r => !string.IsNullOrWhiteSpace(r.Currency)).ToList();
             input.Calendar.Targets = input.Calendar.Targets.Where(t => t.ResponseMinutes != 0 || t.RepairMinutes != 0).ToList();
             input.Calendar.Holidays = (holidays ?? "").Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-            await OperationsService.SavePolicyAsync(Actor, input); return Json(new { id = 0 });
+            await OperationsService.SavePolicyAsync(Actor, input); return Json(new { id = (string)null });
         }
         [HttpGet]
         public async Task<IActionResult> Bulk(int page = 0)
@@ -58,18 +66,18 @@ namespace Resgrid.Web.Areas.User.Controllers
             return View("Bulk", new WorkOrderBulkView { Input = input, Result = await OperationsService.ApplyBulkAsync(Actor, input), Applied = true });
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> RequestApproval(int id, WorkOrderApprovalInput input) { await OperationsService.RequestApprovalAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> RequestApproval(string id, WorkOrderApprovalInput input) { await OperationsService.RequestApprovalAsync(Actor, id, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> DecideApproval(int id, WorkOrderApprovalInput input) { await OperationsService.DecideApprovalAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> DecideApproval(string id, WorkOrderApprovalInput input) { await OperationsService.DecideApprovalAsync(Actor, id, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddVendorCharge(int id, WorkOrderVendorChargeInput input) { await OperationsService.AddVendorChargeAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> AddVendorCharge(string id, WorkOrderVendorChargeInput input) { await OperationsService.AddVendorChargeAsync(Actor, id, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> VoidVendorCharge(int id, int chargeId, int revision, string reason) { await OperationsService.VoidVendorChargeAsync(Actor, id, chargeId, revision, reason); return Json(new { id }); }
+        public async Task<IActionResult> VoidVendorCharge(string id, string chargeId, int revision, string reason) { await OperationsService.VoidVendorChargeAsync(Actor, id, chargeId, revision, reason); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReservePart(int id, WorkOrderPartInput input) { await OperationsService.ReservePartAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> ReservePart(string id, WorkOrderPartInput input) { await OperationsService.ReservePartAsync(Actor, id, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> MovePart(int id, int partId, WorkOrderPartMovementInput input) { await OperationsService.MovePartAsync(Actor, id, partId, input); return Json(new { id }); }
+        public async Task<IActionResult> MovePart(string id, string partId, WorkOrderPartMovementInput input) { await OperationsService.MovePartAsync(Actor, id, partId, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> CancelPartMovement(int id, int movementId, int revision, string reason) { await OperationsService.CancelPartMovementAsync(Actor, id, movementId, revision, reason); return Json(new { id }); }
+        public async Task<IActionResult> CancelPartMovement(string id, string movementId, int revision, string reason) { await OperationsService.CancelPartMovementAsync(Actor, id, movementId, revision, reason); return Json(new { id }); }
     }
 }

@@ -37,8 +37,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				input.Name = definition.PublishedForm.Name;
 				var department = _departments == null ? null : await _departments.Value.GetDepartmentByIdAsync(DepartmentId);
-				input.TimeZoneId = department?.TimeZone ?? "UTC";
-				try { input.StartDate = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, input.TimeZoneId).Date; } catch (TimeZoneNotFoundException) { input.TimeZoneId = "UTC"; }
+				input.TimeZoneId = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
+				input.StartDate = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today;
 			}
 			var model = new ChecklistScheduleEditView { Input = input, Targets = await _checklists.TargetsAsync(Actor, definition.PublishedForm.TargetType), Assignments = await _checklists.AssignmentChoicesAsync(Actor) };
 			if (_workshifts != null) model.Workshifts = (await _workshifts.Value.GetAllWorkshiftsByDepartmentAsync(DepartmentId)).Where(s => !s.DeletedOn.HasValue).Select(s => new ChecklistWorkshiftChoice { Id = s.WorkshiftId, Name = s.Name }).ToList();

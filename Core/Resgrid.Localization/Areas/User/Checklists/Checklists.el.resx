@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Μονάδες που κινητοποιήθηκαν</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Εξοπλισμός που είχε χορηγηθεί κατά το συμβάν</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>Η προγραμματισμένη αποστολή περιέχει ειδοποίηση PDF και ασφαλή σύνδεσμο αναφοράς. Ανοίξτε την αναφορά για επαλήθευση της τρέχουσας πρόσβασης και ξεκλείδωμα προστατευμένων δεδομένων· αποτελέσματα ελέγχων και προσωπικά δεδομένα δεν αποστέλλονται με ηλεκτρονικό ταχυδρομείο.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Επιλέξτε χρονολογική περίοδο UTC έως 93 ημερών.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Επιλέξτε χρονολογική περίοδο έως 93 ημερών.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Η αναφορά είναι πολύ μεγάλη. Επιλέξτε μικρότερη περίοδο.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Το συμβάν δεν είναι διαθέσιμο ή δεν επιτρέπεται η πρόσβαση.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Η προέλευση του παλαιότερου εξοπλισμού είναι ελλιπής ή ασυνεπής.</value></data>

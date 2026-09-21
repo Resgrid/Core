@@ -10,9 +10,9 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 		{
 			foreach (var name in new[] { "WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles" })
 			{
-				var table = Create.Table(N(name)).WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+				var table = Create.Table(N(name)).WithColumn(N("Id")).AsString(36).PrimaryKey()
 					.WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-					.WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+					.WithColumn(N("WorkOrderId")).AsString(36).Nullable()
 					.WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
 					.WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
 					.WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
@@ -32,7 +32,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 							.WithColumn(N("DueOn")).AsDateTime2().Nullable().WithColumn(N("TriagedOn")).AsDateTime2().Nullable().WithColumn(N("AssignedOn")).AsDateTime2().Nullable()
 							.WithColumn(N("AssignmentAcceptedOn")).AsDateTime2().Nullable().WithColumn(N("AssignmentAcceptedBy")).AsString(128).Nullable()
 							.WithColumn(N("StartedOn")).AsDateTime2().Nullable().WithColumn(N("CompletedOn")).AsDateTime2().Nullable().WithColumn(N("CompletedBy")).AsString(128).Nullable()
-							.WithColumn(N("ClosedOn")).AsDateTime2().Nullable().WithColumn(N("VerifiedBy")).AsString(128).Nullable().WithColumn(N("DuplicateOfId")).AsInt32().Nullable()
+							.WithColumn(N("ClosedOn")).AsDateTime2().Nullable().WithColumn(N("VerifiedBy")).AsString(128).Nullable().WithColumn(N("DuplicateOfId")).AsString(36).Nullable()
 							.WithColumn(N("SetUnitOutOfService")).AsBoolean().NotNullable().WithDefaultValue(false).WithColumn(N("RestoreUnitStateOnClose")).AsBoolean().NotNullable().WithDefaultValue(false)
 							.WithColumn(N("PreviousUnitStateType")).AsInt32().Nullable().WithColumn(N("WorkOrderRecurrenceId")).AsString(36).Nullable()
 							.WithColumn(N("IsDeleted")).AsBoolean().NotNullable().WithDefaultValue(false); break;
@@ -42,7 +42,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					case "WorkOrderFiles": table.WithColumn(N("ContentType")).AsString(100).NotNullable().WithColumn(N("Size")).AsInt32().NotNullable().WithColumn(N("Sha256")).AsString(64).NotNullable()
 						.WithColumn(N("Data")).AsBinary(int.MaxValue).Nullable().WithColumn(N("ScanState")).AsInt32().NotNullable().WithColumn(N("WithdrawnOn")).AsDateTime2().Nullable(); break;
 				}
-				if (name != "WorkOrders") Alter.Column(N("WorkOrderId")).OnTable(N(name)).AsInt32().NotNullable();
+				if (name != "WorkOrders") Alter.Column(N("WorkOrderId")).OnTable(N(name)).AsString(36).NotNullable();
 				Index(name, "TenantId", true, "DepartmentId", "Id");
 				Index(name, "ParentDate", false, "DepartmentId", "WorkOrderId", "CreatedOn");
 				if (name != "WorkOrders") Create.ForeignKey(N("FK_" + name + "_Order")).FromTable(N(name)).ForeignColumns(N("DepartmentId"), N("WorkOrderId")).ToTable(N("WorkOrders")).PrimaryColumns(N("DepartmentId"), N("Id"));
@@ -63,7 +63,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 				.WithColumn(N("DepartmentId")).AsInt32().NotNullable().PrimaryKey()
 				.WithColumn(N("EventId")).AsString(36).NotNullable().PrimaryKey()
 				.WithColumn(N("UserId")).AsString(128).NotNullable().PrimaryKey()
-				.WithColumn(N("WorkOrderId")).AsInt32().NotNullable()
+				.WithColumn(N("WorkOrderId")).AsString(36).NotNullable()
 				.WithColumn(N("State")).AsInt32().NotNullable()
 				.WithColumn(N("LeaseOwner")).AsString(36).Nullable()
 				.WithColumn(N("LeaseExpiresOn")).AsDateTime2().Nullable()

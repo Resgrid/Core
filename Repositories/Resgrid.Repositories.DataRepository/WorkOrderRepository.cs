@@ -37,25 +37,35 @@ namespace Resgrid.Repositories.DataRepository
 		}
 		public Task LockDepartmentAsync(int departmentId) => LockRecordsDepartmentAsync(departmentId, default);
 		private void Transaction() { if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Work-order writes require a transaction."); }
-		public Task<T> GetAsync<T>(int departmentId, int id, bool includeData = true) where T : WorkOrderRow => QueryFirstOrDefaultAsync<T>($"SELECT {Cols(Columns<T>(includeData))} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id", new { DepartmentId = departmentId, Id = id }, default);
+		public Task<T> GetAsync<T>(int departmentId, string id, bool includeData = true) where T : WorkOrderRow => QueryFirstOrDefaultAsync<T>($"SELECT {Cols(Columns<T>(includeData))} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id", new { DepartmentId = departmentId, Id = id }, default);
 		public Task<WorkOrder> RequestAsync(int departmentId, string requestId) => QueryFirstOrDefaultAsync<WorkOrder>($"SELECT {Cols(Columns<WorkOrder>())} FROM {Tbl("WorkOrders")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("RequestId")}={P}RequestId", new { DepartmentId = departmentId, RequestId = requestId }, default);
 		public async Task<List<WorkOrder>> ListAsync(int departmentId, WorkOrderReadScope scope, WorkOrderFilter filter)
 		{
 			if (scope == null || string.IsNullOrWhiteSpace(scope.UserId) || filter.Page < 0 || filter.Page > 10000) throw new ArgumentException("Invalid work-order scope.");
 			var parameters = new DynamicParameters(new { DepartmentId = departmentId, UserId = scope.UserId, AllowedGroup = scope.GroupId, Status = (int?)filter.Status, Priority = (int?)filter.Priority, UnitId = filter.UnitId, GroupId = filter.GroupId, AssetId = filter.AssetId, ChecklistCompletionId = filter.ChecklistCompletionId, Skip = filter.Page * 50, Take = 51 });
 			parameters.Add("Roles", InListValue(scope.RoleIds == null || scope.RoleIds.Length == 0 ? new[] { -1 } : scope.RoleIds));
-			var own = $"({Col("CreatedBy")}={P}UserId OR {Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")} OR {Col("TargetGroupId")}={P}AllowedGroup)";
+			var own = $"({Col("CreatedBy")}={P}UserId OR {AssignmentScope()} OR {Col("TargetGroupId")}={P}AllowedGroup)";
 			var conditions = new List<string> { $"{Col("DepartmentId")}={P}DepartmentId", $"{Col("IsDeleted")}={(IsPostgres ? "false" : "0")}" };
 			if (!scope.All) conditions.Add(own);
-			if (filter.AssignedToMe) conditions.Add($"({Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")})");
+			if (filter.AssignedToMe) conditions.Add(AssignmentScope());
 			foreach (var item in new[] { (filter.Status.HasValue, "Status", "Status"), (filter.Priority.HasValue, "Priority", "Priority"), (filter.UnitId.HasValue, "TargetUnitId", "UnitId"), (filter.GroupId.HasValue, "TargetGroupId", "GroupId"), (filter.AssetId != null, "InventoryAssetId", "AssetId"), (filter.ChecklistCompletionId != null, "SourceChecklistCompletionId", "ChecklistCompletionId") })
 				if (item.Item1) conditions.Add(Col(item.Item2) + "=" + P + item.Item3);
-			return (await QueryAsync<WorkOrder>($"SELECT {Cols(Columns<WorkOrder>())} FROM {Tbl("WorkOrders")} WHERE {string.Join(" AND ", conditions)} ORDER BY {Col("Id")} DESC {Paging()}", parameters, default)).ToList();
+			return (await QueryAsync<WorkOrder>($"SELECT {Cols(Columns<WorkOrder>())} FROM {Tbl("WorkOrders")} WHERE {string.Join(" AND ", conditions)} ORDER BY {Col("NumberYear")} DESC,{Col("NumberSequence")} DESC {Paging()}", parameters, default)).ToList();
 		}
-		public async Task<List<T>> ChildrenAsync<T>(int departmentId, int orderId, int skip = 0) where T : WorkOrderRow
+		private string AssignmentScope()
+		{
+			var users = IsPostgres
+				? $"EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE({Col("AssignedToUserIdsJson")}, '[]')::jsonb) AS au(value) WHERE au.value={P}UserId)"
+				: $"EXISTS (SELECT 1 FROM OPENJSON({Col("AssignedToUserIdsJson")}) WHERE [value]={P}UserId)";
+			var roles = IsPostgres
+				? $"EXISTS (SELECT 1 FROM jsonb_array_elements_text(COALESCE({Col("AssignedToRoleIdsJson")}, '[]')::jsonb) AS ar(value) WHERE ar.value::integer=ANY({P}Roles))"
+				: $"EXISTS (SELECT 1 FROM OPENJSON({Col("AssignedToRoleIdsJson")}) WHERE TRY_CONVERT(int,[value]) IN {P}Roles)";
+			return $"({Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")} OR {users} OR {roles})";
+		}
+		public async Task<List<T>> ChildrenAsync<T>(int departmentId, string orderId, int skip = 0) where T : WorkOrderRow
 		{
 			if (skip < 0 || typeof(T) == typeof(WorkOrder)) throw new ArgumentException("Invalid child page.");
-			return (await QueryAsync<T>($"SELECT {Cols(Columns<T>(false))} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("WorkOrderId")}={P}OrderId ORDER BY {Col("Id")} {Paging()}", new { DepartmentId = departmentId, OrderId = orderId, Skip = skip, Take = 500 }, default)).ToList();
+			return (await QueryAsync<T>($"SELECT {Cols(Columns<T>(false))} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("WorkOrderId")}={P}OrderId ORDER BY {Cols(EvidenceOrder<T>())} {Paging()}", new { DepartmentId = departmentId, OrderId = orderId, Skip = skip, Take = 500 }, default)).ToList();
 		}
 		public Task<int> NextNumberAsync(int departmentId, int year)
 		{
@@ -65,10 +75,11 @@ namespace Resgrid.Repositories.DataRepository
 		public async Task AllocateAsync<T>(T row) where T : WorkOrderRow
 		{
 			Transaction();
-			if (row.Id != 0 || row.Content != null || row is WorkOrderFile file && file.Data != null) throw new InvalidOperationException("Allocate identities without sensitive content.");
-			var columns = Columns<T>().Where(c => c != "Id").ToArray();
-			var sql = $"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) {(IsPostgres ? "" : "OUTPUT INSERTED.[Id]")} VALUES ({string.Join(",", columns.Select(c => P + c))}) {(IsPostgres ? "RETURNING id" : "")}";
-			row.Id = await ScalarAsync<int>(sql, row, default);
+			if (row.Id != null || row.Content != null || row is WorkOrderFile file && file.Data != null) throw new InvalidOperationException("Allocate identities without sensitive content.");
+			row.Id = Guid.NewGuid().ToString("D");
+			var columns = Columns<T>();
+			var sql = $"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})";
+			await ExecuteAsync(sql, row, default);
 		}
 		public async Task WriteAsync<T>(T row) where T : WorkOrderRow
 		{

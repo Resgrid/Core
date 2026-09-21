@@ -3,6 +3,7 @@
 @model RecordHydrantsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Hydrants"];
 }
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -54,7 +55,7 @@
 									<td>@h.FlowGpm</td>
 									<td>@h.MainSizeInches</td>
 									<td>@(h.InService ? L["Yes"].Value : L["No"].Value)</td>
-									<td>@RmsEnumDisplay.Day(h.LastTestedOn)</td>
+									<td>@departmentTime.Date(h.LastTestedOn)</td>
 									<td><a class="btn btn-xs btn-default" asp-controller="RecordHydrants" asp-action="Details" asp-route-area="User" asp-route-id="@h.RmsHydrantId">@L["ViewRecordHeader"]</a></td>
 								</tr>
 							}

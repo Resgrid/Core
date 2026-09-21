@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsRateEditView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var p = Model.Profile;
     var typeName = localizer["SubmissionType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes)p.SubmissionType].Value;
     ViewBag.Title = "Resgrid | " + typeName;
@@ -23,7 +24,7 @@
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     @if (!editable) { <div class="alert alert-warning"><i class="fa fa-lock"></i> @localizer["RateLocked"]</div> }
     <div class="row">
@@ -54,8 +55,8 @@
                         <div class="hr-line-dashed"></div>
                         <dl class="dl-horizontal">
                             <dt>@localizer["AuthorityProfile"]</dt><dd>@p.AuthorityProfileCode</dd>
-                            <dt>@localizer["SignedOn"]</dt><dd>@(p.SignedOn?.ToString("yyyy-MM-dd") ?? "—") @p.SignedByName</dd>
-                            <dt>@localizer["ObservedStatus"]</dt><dd>@(p.ObservedExternalStatus ?? "—") @(p.ObservedOn?.ToString("yyyy-MM-dd"))</dd>
+                            <dt>@localizer["SignedOn"]</dt><dd>@(departmentTime.Date(p.SignedOn) ?? "—") @p.SignedByName</dd>
+                            <dt>@localizer["ObservedStatus"]</dt><dd>@(p.ObservedExternalStatus ?? "—") @(departmentTime.Date(p.ObservedOn))</dd>
                             <dt>@localizer["Version"]</dt><dd>@p.RowVersion</dd>
                         </dl>
                         @foreach (var next in Model.NextStatuses)
@@ -126,7 +127,7 @@
                                 <i class="fa fa-users"></i> @localizer["SalarySurveyFromWorkforceHelp"]
                                 <form method="post" asp-action="BuildSalarySurvey" asp-route-id="@p.CalOesMarsRateProfileId" class="form-inline m-t-xs" onsubmit="return confirm('@localizer["ConfirmSalarySurveyDraft"]');">
                                     @Html.AntiForgeryToken()
-                                    <input type="date" name="asOf" class="form-control input-sm" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+                                    <input type="date" name="asOf" class="form-control input-sm" value="@departmentTime.Today.ToString("yyyy-MM-dd")" />
                                     <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-calculator"></i> @localizer["BuildSalarySurvey"]</button>
                                 </form>
                             </div>
@@ -249,4 +250,8 @@
             });
         })();
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Invoicing
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["Aging"];
     ViewData["Tab"] = "Aging";
     ViewData["Title"] = localizer["AgingReport"].Value;
@@ -11,11 +12,11 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
-        <div class="ibox-title"><h5>@localizer["AgingReport"]</h5><div class="ibox-tools"><small>@localizer["AsOf"] @report.AsOfUtc.ToString("yyyy-MM-dd HH:mm") UTC</small></div></div>
+        <div class="ibox-title"><h5>@localizer["AgingReport"]</h5><div class="ibox-tools"><small>@localizer["AsOf"] @departmentTime.Format(report.AsOfUtc)</small></div></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -66,3 +67,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

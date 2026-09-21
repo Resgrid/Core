@@ -71,7 +71,7 @@ namespace Resgrid.Tests.Services
             pair.Access.Setup(a=>a.CanUseMaintenanceAsync(77)).ReturnsAsync(false);
             await pair.Orders.ReleaseHoldAsync(reviewer,holds[1].Hold.Id,release);
             (await pair.Inventory.GetAsync<InventoryAsset>(actor,asset.Id)).Status.Should().Be((int)(retire ? InventoryAssetStatus.Retired : InventoryAssetStatus.InService));
-            (await pair.Orders.HoldsAsync(reviewer,holds[1].Hold.WorkOrderId.Value)).Single().Hold.StateRestored.Should().Be(!retire);
+            (await pair.Orders.HoldsAsync(reviewer,holds[1].Hold.WorkOrderId)).Single().Hold.StateRestored.Should().Be(!retire);
         }
         [Test]
         public async Task Cancelling_an_unposted_controlled_part_retains_evidence_and_cannot_move_stock()

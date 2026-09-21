@@ -8,6 +8,7 @@
     }
 }
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var invoice = Model.Invoice;
     ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " #" + invoice.InvoiceNumber;
     ViewData["Tab"] = "Index";
@@ -19,17 +20,53 @@
     var write = Model.CanWrite && Model.CanManage;
     var lines = (invoice.LineItems ?? new List<InvoiceLineItem>()).OrderBy(x => x.SortOrder).ToList();
     var payments = (invoice.Payments ?? new List<InvoicePayment>()).OrderBy(x => x.PaidOn).ToList();
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (isDraft && write)
+        {
+            <a asp-controller="Invoicing" asp-action="Edit" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["EditDraft"]</a>
+        }
+        <a asp-controller="Invoicing" asp-action="Pdf" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-info"><i class="fa fa-file-pdf-o"></i> @localizer["DownloadPdf"]</a>
+        @if (Model.ContractorPacket)
+        {
+            <a asp-controller="Invoicing" asp-action="Packet" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-info"><i class="fa fa-file-archive-o"></i> @localizer["DownloadPacket"]</a>
+            <a asp-controller="Deployments" asp-action="View" asp-route-area="User" asp-route-id="@invoice.DeploymentId" asp-route-tab="billing" class="btn btn-default"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a>
+        }
+        @if ((isDraft || isOpen) && write)
+        {
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendModal"><i class="fa fa-envelope-o"></i> @(isDraft ? localizer["SendInvoice"] : localizer["ResendInvoice"])</button>
+        }
+        @if (isDraft && write)
+        {
+            <form method="post" asp-controller="Invoicing" asp-action="MarkSent" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default" onclick="return confirm('@localizer["MarkSentConfirm"]');"><i class="fa fa-check"></i> @localizer["MarkSentWithoutEmail"]</button>
+            </form>
+        }
+        @if (isOpen && write)
+        {
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#paymentModal"><i class="fa fa-money"></i> @localizer["RecordPayment"]</button>
+        }
+        @if (canVoid && write)
+        {
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#voidModal"><i class="fa fa-ban"></i> @localizer["VoidInvoice"]</button>
+        }
+
+        <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="btn btn-default">@localizer["BackToInvoices"]</a>
+        <a asp-controller="Invoicing" asp-action="BillingProfile" asp-route-area="User" asp-route-contactId="@invoice.ContactId" class="btn btn-default">@localizer["BillingProfile"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (!string.IsNullOrWhiteSpace(Model.Message))
     {
         <div class="alert alert-info">@Model.Message</div>
     }
     <div class="row">
-        <div class="col-lg-8">
+        <div class="@(Model.OnlinePayments == null ? "col-lg-12" : "col-lg-8")">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["Invoice"] #@invoice.InvoiceNumber &mdash; @(Model.ContactName(invoice.ContactId) ?? "—")</h5>
@@ -41,15 +78,15 @@
                             <dl class="dl-horizontal m-b-none">
                                 <dt>@localizer["Customer"]</dt><dd>@(Model.ContactName(invoice.ContactId) ?? "—")</dd>
                                 <dt>@localizer["BillingEmail"]</dt><dd><span>@(Model.Profile?.BillingEmail ?? "—")</span></dd>
-                                <dt>@localizer["IssuedOn"]</dt><dd>@(invoice.IssuedOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
+                                <dt>@localizer["IssuedOn"]</dt><dd>@(departmentTime.Date(invoice.IssuedOn) ?? "—")</dd>
                                 <dt>@localizer["DueOn"]</dt><dd>@(invoice.DueOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
                                 @if (invoice.SentOn.HasValue)
                                 {
-                                    <dt>@localizer["SentOn"]</dt><dd>@invoice.SentOn.Value.ToString("yyyy-MM-dd HH:mm") @if (!string.IsNullOrWhiteSpace(invoice.SentToEmail)) { <text>(</text><span>@invoice.SentToEmail</span><text>)</text> }</dd>
+                                    <dt>@localizer["SentOn"]</dt><dd>@departmentTime.Format(invoice.SentOn) @if (!string.IsNullOrWhiteSpace(invoice.SentToEmail)) { <text>(</text><span>@invoice.SentToEmail</span><text>)</text> }</dd>
                                 }
                                 @if (invoice.VoidedOn.HasValue)
                                 {
-                                    <dt>@localizer["VoidedOn"]</dt><dd>@invoice.VoidedOn.Value.ToString("yyyy-MM-dd") @invoice.VoidReason</dd>
+                                    <dt>@localizer["VoidedOn"]</dt><dd>@departmentTime.Date(invoice.VoidedOn) @invoice.VoidReason</dd>
                                 }
                             </dl>
                         </div>
@@ -104,7 +141,7 @@
                                 @foreach (var payment in payments)
                                 {
                                     <tr>
-                                        <td>@payment.PaidOn.ToString("yyyy-MM-dd")</td>
+                                        <td>@departmentTime.Date(payment.PaidOn)</td>
                                         <td>@localizer["Method" + (InvoicePaymentMethods)payment.Method] @payment.PaymentMethodSummary</td>
                                         <td><span>@payment.Reference</span></td>
                                         <td>@localizer["PaymentStatus" + (InvoicePaymentStatuses)payment.Status]@(payment.RefundedAmount > 0 ? " (-" + payment.RefundedAmount.ToString("N2") + ")" : "")</td>
@@ -128,43 +165,6 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>@localizer["Actions"]</h5></div>
-                <div class="ibox-content">
-                    @if (isDraft && write)
-                    {
-                        <a asp-controller="Invoicing" asp-action="Edit" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default btn-block"><i class="fa fa-pencil"></i> @localizer["EditDraft"]</a>
-                    }
-                    <a asp-controller="Invoicing" asp-action="Pdf" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default btn-block"><i class="fa fa-file-pdf-o"></i> @localizer["DownloadPdf"]</a>
-                    @if (Model.ContractorPacket)
-                    {
-                        <a asp-controller="Invoicing" asp-action="Packet" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-default btn-block"><i class="fa fa-file-archive-o"></i> @localizer["DownloadPacket"]</a>
-                        <a asp-controller="Deployments" asp-action="View" asp-route-area="User" asp-route-id="@invoice.DeploymentId" asp-route-tab="billing" class="btn btn-default btn-block"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a>
-                    }
-                    @if ((isDraft || isOpen) && write)
-                    {
-                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#sendModal"><i class="fa fa-envelope-o"></i> @(isDraft ? localizer["SendInvoice"] : localizer["ResendInvoice"])</button>
-                    }
-                    @if (isDraft && write)
-                    {
-                        <form method="post" asp-controller="Invoicing" asp-action="MarkSent" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="m-t-xs">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-white btn-block" onclick="return confirm('@localizer["MarkSentConfirm"]');"><i class="fa fa-check"></i> @localizer["MarkSentWithoutEmail"]</button>
-                        </form>
-                    }
-                    @if (isOpen && write)
-                    {
-                        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#paymentModal"><i class="fa fa-money"></i> @localizer["RecordPayment"]</button>
-                    }
-                    @if (canVoid && write)
-                    {
-                        <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#voidModal"><i class="fa fa-ban"></i> @localizer["VoidInvoice"]</button>
-                    }
-                    <div class="hr-line-dashed"></div>
-                    <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="btn btn-white btn-block">@localizer["BackToInvoices"]</a>
-                    <a asp-controller="Invoicing" asp-action="BillingProfile" asp-route-area="User" asp-route-contactId="@invoice.ContactId" class="btn btn-white btn-block">@localizer["BillingProfile"]</a>
-                </div>
-            </div>
 
             @if (Model.OnlinePayments != null)
             {
@@ -182,7 +182,7 @@
                             <p class="help-block">@localizer["PayLinkHint"]</p>
                             @if (Model.OpenRequest != null)
                             {
-                                <p class="m-b-xs">@localizer["OpenRequest"]: <span class="label label-info">@localizer["RequestStatus" + (InvoicePaymentStatusesHelper.RequestStatus(Model.OpenRequest.Status))]</span> <small class="text-muted">@localizer["ExpiresOn"] @Model.OpenRequest.ExpiresOn.ToString("yyyy-MM-dd HH:mm") UTC</small></p>
+                                <p class="m-b-xs">@localizer["OpenRequest"]: <span class="label label-info">@localizer["RequestStatus" + (InvoicePaymentStatusesHelper.RequestStatus(Model.OpenRequest.Status))]</span> <small class="text-muted">@localizer["ExpiresOn"] @departmentTime.Format(Model.OpenRequest.ExpiresOn)</small></p>
                             }
                             @if (isOpen && write)
                             {
@@ -209,7 +209,7 @@
                                     @foreach (var request in Model.PaymentRequests.Take(10))
                                     {
                                         <tr>
-                                            <td>@request.AddedOn.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>@departmentTime.Format(request.AddedOn)</td>
                                             <td>@localizer["RequestStatus" + InvoicePaymentStatusesHelper.RequestStatus(request.Status)]</td>
                                             <td class="text-right">@request.Amount.ToString("N2") @request.Currency</td>
                                         </tr>
@@ -271,7 +271,7 @@
                         </div>
                         <div class="col-sm-6 form-group">
                             <label for="PaidOn">@localizer["PaidOn"]</label>
-                            <input type="date" class="form-control" id="PaidOn" name="PaidOn" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+                            <input type="date" class="form-control" id="PaidOn" name="PaidOn" value="@departmentTime.Today.ToString("yyyy-MM-dd")" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -341,4 +341,8 @@
             });
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["CostRun"];
     ViewData["Title"] = localizer["Context" + (FieldCostContextTypes)Model.Run.ContextType].Value + ": " + Model.ContextLabel;
     ViewData["Subtitle"] = localizer["RunType" + (FieldCostRunTypes)Model.Run.RunType].Value + " · " + localizer["RunStatus" + (FieldCostRunStatuses)Model.Run.Status].Value;
@@ -14,7 +15,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-4">
@@ -33,7 +34,7 @@
                         <tr><td>@localizer["BreakEven"]</td><td class="text-right">@s.BreakEvenRevenue.ToString("N2")</td></tr>
                         <tr><td>@localizer["MissingInputs"]</td><td class="text-right">@s.MissingInputCount</td></tr>
                         <tr><td>@localizer["ThroughDate"]</td><td class="text-right">@(s.ThroughDate?.ToString("yyyy-MM-dd") ?? "—")</td></tr>
-                        <tr><td>@localizer["Frozen"]</td><td class="text-right">@(s.FrozenOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td></tr>
+                        <tr><td>@localizer["Frozen"]</td><td class="text-right">@(departmentTime.Format(s.FrozenOn) ?? "—")</td></tr>
                     </table>
                     @if (!r.IsFrozen)
                     {
@@ -112,3 +113,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

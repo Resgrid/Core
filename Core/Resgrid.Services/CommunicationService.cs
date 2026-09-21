@@ -879,6 +879,10 @@ namespace Resgrid.Services
 			var emailSanitized = call != null
 				? !ReferenceEquals(emailCall, call)
 				: await _protectedProjectionService.IsChannelSanitizedAsync(departmentId, ProtectedDataEgressChannel.Email);
+			// A trouble alert can carry personnel and locations even without a call, so the chat
+			// channel decision is made unconditionally; like the three above it is resolved once for
+			// the whole fan-out rather than per recipient.
+			var chatSanitized = await _protectedProjectionService.IsChannelSanitizedAsync(departmentId, ProtectedDataEgressChannel.ChatPlatform);
 
 			var emailEvent = troubleAlertEvent;
 			if (emailSanitized)
@@ -902,9 +906,6 @@ namespace Resgrid.Services
 				{
 					try
 					{
-						// A trouble alert can carry personnel and locations even without a call.
-						var chatSanitized = await _protectedProjectionService.IsChannelSanitizedAsync(
-							departmentId, ProtectedDataEgressChannel.ChatPlatform);
 						await _chatbotOutboundService.SendToUserAsync(recipient.UserId, departmentId,
 							new ChatbotOutboundMessage
 							{

@@ -40,11 +40,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetWorkOrders")]
 		public async Task<IActionResult> GetWorkOrders([FromQuery] WorkOrderFilter filter) { var page = await _orders.ListAsync(Actor, filter); return Reply(page, page.Items.Count, page.HasMore); }
 		[HttpGet("GetWorkOrder")]
-		public async Task<IActionResult> GetWorkOrder(int id) => Reply(await _orders.GetAsync(Actor, id));
+		public async Task<IActionResult> GetWorkOrder(string id) => Reply(await _orders.GetAsync(Actor, id));
 		[HttpGet("GetWorkOrderChoices")]
 		public async Task<IActionResult> GetWorkOrderChoices() => Reply(await _orders.ChoicesAsync(Actor));
 		[HttpGet("GetWorkOrderActivity")]
-		public async Task<IActionResult> GetWorkOrderActivity(int id, int afterId = 0) { if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); var page = await _reports.GetWorkOrderActivityAsync(Actor, id, afterId); return Reply(page.Items, page.Items.Count, page.NextAfterId.HasValue); }
+		public async Task<IActionResult> GetWorkOrderActivity(string id, string afterId = null) { if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); var page = await _reports.GetWorkOrderActivityAsync(Actor, id, afterId); return Reply(page.Items, page.Items.Count, page.NextAfterId != null); }
 		[HttpGet("GetWorkOrderHistoryForAsset")]
 		public Task<IActionResult> GetWorkOrderHistoryForAsset(string assetId, int page = 0) { if (string.IsNullOrWhiteSpace(assetId)) throw new WorkOrderException(400, "InvalidInput"); return GetWorkOrders(new WorkOrderFilter { AssetId = assetId, Page = page }); }
 		[HttpPost("NewWorkOrder")]
@@ -66,13 +66,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("RemoveWorkOrderPart")]
 		public async Task<IActionResult> RemoveWorkOrderPart([FromBody] WorkOrderCommandInput input) { Required(input); await _orders.VoidPartAsync(Actor, input.Id, input.ChildId, input.Revision, input.Note); return Reply(await _orders.GetAsync(Actor, input.Id)); }
 		[HttpPost("UploadWorkOrderFile"), RequestSizeLimit(11 * 1024 * 1024)]
-		public async Task<IActionResult> UploadWorkOrderFile([FromForm] int id, [FromForm] int revision, IFormFile file)
+		public async Task<IActionResult> UploadWorkOrderFile([FromForm] string id, [FromForm] int revision, IFormFile file)
 		{
 			if (file == null || file.Length > 10 * 1024 * 1024) throw new WorkOrderException(400, "InvalidFile");
 			using var buffer = new MemoryStream(); await file.CopyToAsync(buffer); await _orders.AddFileAsync(Actor, id, revision, file.FileName, file.ContentType, buffer.ToArray()); return Reply(await _orders.GetAsync(Actor, id));
 		}
 		[HttpGet("GetWorkOrderFile")]
-		public async Task<IActionResult> GetWorkOrderFile(int id) { var file = await _orders.GetFileAsync(Actor, id); Response.Headers["X-Content-Type-Options"] = "nosniff"; return File(file.Data, file.ContentType, file.Content); }
+		public async Task<IActionResult> GetWorkOrderFile(string id) { var file = await _orders.GetFileAsync(Actor, id); Response.Headers["X-Content-Type-Options"] = "nosniff"; return File(file.Data, file.ContentType, file.Content); }
 		[HttpPost("RemoveWorkOrderFile")]
 		public async Task<IActionResult> RemoveWorkOrderFile([FromBody] WorkOrderCommandInput input) { Required(input); await _orders.WithdrawFileAsync(Actor, input.Id, input.ChildId, input.Revision, input.Note); return Reply(await _orders.GetAsync(Actor, input.Id)); }
 	}

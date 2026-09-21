@@ -8,11 +8,16 @@
     ViewData["RootController"] = "Bids";
     ViewData["RootTitle"] = localizer["Bids"].Value;
     var lineTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.BidLineTypes)).Cast<Resgrid.Model.Invoicing.BidLineTypes>().ToList();
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="View" asp-route-id="@b.BidId" class="btn btn-default"><i class="fa fa-eye"></i> @localizer["ViewBid"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <form method="post" asp-action="Save" class="form-horizontal" id="bidForm">
         @Html.AntiForgeryToken()
@@ -21,7 +26,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="ibox float-e-margins">
-                    <div class="ibox-title"><h5>@localizer["Bid"] @await Html.PartialAsync("_BidStatusBadge", b.Status)</h5><div class="ibox-tools"><a asp-action="View" asp-route-id="@b.BidId" class="btn btn-default btn-xs"><i class="fa fa-eye"></i> @localizer["ViewBid"]</a></div></div>
+                    <div class="ibox-title"><h5>@localizer["Bid"] @await Html.PartialAsync("_BidStatusBadge", b.Status)</h5></div>
                     <div class="ibox-content">
                         <div class="form-group"><label class="col-sm-3 control-label">@localizer["Customer"]</label><div class="col-sm-9"><p class="form-control-static">@Model.ContactName</p></div></div>
                         <div class="form-group"><label class="col-sm-3 control-label">@localizer["Title"] *</label><div class="col-sm-9"><input type="text" name="Title" class="form-control" maxlength="250" required value="@b.Title" /></div></div>
@@ -137,4 +142,8 @@
             recalc();
         })();
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

@@ -29,6 +29,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </para>
 	/// </summary>
 	[Area("User")]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class IncidentAnalysisController : SecureBaseController
 	{
 		private readonly IIncidentAnalysisService _analysis;
@@ -442,10 +443,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!local.HasValue || local.Value == DateTime.MinValue)
 				return null;
-			if (department == null || string.IsNullOrWhiteSpace(department.TimeZone))
-				return DateTime.SpecifyKind(local.Value, DateTimeKind.Utc);
-
-			return DateTimeHelpers.ConvertToUtc(local.Value, department.TimeZone, true);
+			return new Resgrid.Web.Helpers.DepartmentTime(department).ToUtc(local.Value);
 		}
 
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()

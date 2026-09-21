@@ -14,6 +14,7 @@
     };
 }
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var submission = Model.Submission;
     var canBind = submission.DestinationIdentity == null && submission.SentOn == null && submission.Attempts == 0
         && submission.ExternalId == null && !submission.RequiresReconciliation && !submission.CreatePendingReceipt;
@@ -96,7 +97,7 @@
                             @foreach (var exchange in Model.Exchanges.OrderBy(e => e.OccurredOn).ThenBy(e => e.RmsSubmissionExchangeId))
                             {
                                 <tr>
-                                    <td>@exchange.OccurredOn.ToString("u")</td>
+                                    <td>@departmentTime.Format(exchange.OccurredOn)</td>
                                     <td>
                                         @exchange.Operation / @exchange.Stage
                                         <small class="text-muted rgw-sub">@exchange.ExchangeId</small>

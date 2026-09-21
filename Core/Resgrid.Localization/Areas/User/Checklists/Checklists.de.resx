@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Alarmierte Einheiten</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Zum Einsatzzeitpunkt ausgegebene Ausrüstung</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>Der geplante Versand enthält einen PDF-Hinweis und einen sicheren Berichtslink. Öffnen Sie den Bericht, um Ihre aktuelle Berechtigung zu prüfen und geschützte Daten freizugeben. Prüfergebnisse und personenbezogene Daten werden nicht per E-Mail versendet.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wählen Sie einen chronologischen UTC-Zeitraum von höchstens 93 Tagen.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wählen Sie einen chronologischen Zeitraum von höchstens 93 Tagen.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Dieser Bericht ist zu groß. Wählen Sie einen kürzeren Zeitraum.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Der Einsatz ist nicht verfügbar oder der Zugriff wurde verweigert.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Die Herkunftsnachweise der früheren Ausrüstung sind unvollständig oder widersprüchlich.</value></data>

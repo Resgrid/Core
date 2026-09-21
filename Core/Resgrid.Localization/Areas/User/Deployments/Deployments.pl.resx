@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Kraj przyjmujący</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Stan / województwo przyjmujące</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Strefa czasowa</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Lokalna strefa czasowa zdarzenia dla raportów czasu; puste oznacza strefę jednostki organizacyjnej.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Strefa czasowa do rozliczania działań. Daty i godziny na tych stronach są wyświetlane w strefie czasowej jednostki.</value></data>
   <data name="Currency" xml:space="preserve"><value>Waluta</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Poza województwem / stanem</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Podróż samolotem</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Brak 8 godzin odpoczynku (nadgodziny przechodzą na następną zmianę)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Wstrzymanie z powodu niebezpiecznych warunków</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Wpisy czasu</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>czasy w lokalnej strefie zdarzenia</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>godziny w strefie czasowej jednostki</value></data>
   <data name="Subject" xml:space="preserve"><value>Podmiot</value></data>
   <data name="EntryType" xml:space="preserve"><value>Typ wpisu</value></data>
   <data name="Start" xml:space="preserve"><value>Początek</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Wybierz tryb finansowy.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>Koniec nie może być wcześniejszy niż początek.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>Rabat musi mieścić się między 0 a 100 procent.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Strefa czasowa nie została rozpoznana. Wpisz identyfikator strefy czasowej Windows, np. "Pacific Standard Time", albo pozostaw puste, aby użyć strefy jednostki organizacyjnej.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Nie znaleziono kontaktu.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>Nie znaleziono zgłoszenia.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>To zgłoszenie ma już dyslokację.</value></data>

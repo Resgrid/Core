@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["MyDemographics"];
     ViewData["Title"] = Model.IsOwn ? localizer["MyDemographics"].Value : localizer["DemographicRecord"].Value + " — " + Model.WorkerName;
     ViewData["Subtitle"] = Model.IsOwn ? localizer["MyDemographicsIntro"].Value : localizer["DemographicRecordIntro"].Value;
@@ -17,7 +18,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-7">
@@ -27,7 +28,7 @@
                     <div class="alert alert-info"><i class="fa fa-lock"></i> @(Model.IsOwn ? localizer["SelfIdentificationNotice"] : localizer["DemographicRecordNotice"])</div>
                     @if (hasResponse)
                     {
-                        <p class="small text-muted">@localizer["CurrentResponse"]: @localizer["CollectionSource" + (DemographicCollectionSources)r.CollectionSource] · @localizer["Version"] @r.Version · @r.CollectedOn?.ToString("yyyy-MM-dd")</p>
+                        <p class="small text-muted">@localizer["CurrentResponse"]: @localizer["CollectionSource" + (DemographicCollectionSources)r.CollectionSource] · @localizer["Version"] @r.Version · @departmentTime.Date(r.CollectedOn)</p>
                     }
                     <form method="post" asp-action="@(Model.IsOwn ? "SaveMyDemographics" : "SaveWorkerDemographics")" class="form-horizontal">
                         @Html.AntiForgeryToken()
@@ -83,3 +84,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

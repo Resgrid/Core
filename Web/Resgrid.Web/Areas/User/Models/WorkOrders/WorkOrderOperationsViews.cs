@@ -11,7 +11,7 @@ namespace Resgrid.Web.Areas.User.Models.WorkOrders
         public List<WorkOrderVendorChargeView> VendorCharges { get; set; } = new();
         public List<WorkOrderPartMovement> Movements { get; set; } = new();
     }
-    public sealed class WorkOrderBulkSelection { public bool Selected { get; set; } public int Id { get; set; } public int Revision { get; set; } }
+    public sealed class WorkOrderBulkSelection { public bool Selected { get; set; } public string Id { get; set; } public int Revision { get; set; } }
     public sealed class WorkOrderBulkForm
     {
         public string RequestId { get; set; } = Guid.NewGuid().ToString("D");

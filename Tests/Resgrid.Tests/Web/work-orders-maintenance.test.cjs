@@ -19,7 +19,7 @@ const launch = require('./browser-launch.cjs');
             window.resgridAdpReveal = { bindForm() {}, applyGrantHeader(h) { h.set('X-Test-Grant', 'synthetic-grant'); } };
             window.fetch = async (url, options) => {
                 const data = Object.fromEntries(options.body); requests.push({data, cache:options.cache, credentials:options.credentials, grant:options.headers?.get('X-Test-Grant')});
-                if (url.endsWith('/save')) return {ok:true,json:async()=>({id:42})};
+                if (url.endsWith('/save')) return {ok:true,json:async()=>({id:"00000000-0000-0000-0000-000000000042"})};
                 if (data.kind === 'asset') return new Promise(resolve => { window.completeChoices = () => resolve({ok:true,json:async()=>({items:[{id:'late',name:'Private late result'}],hasMore:false})}); });
                 return {ok:true,json:async()=>({items:[{id:'item-'+data.page,name:'<img src=x onerror="window.xss=true">'}],hasMore:data.page==='0'})};
             };

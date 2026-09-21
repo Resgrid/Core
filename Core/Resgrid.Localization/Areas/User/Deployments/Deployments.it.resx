@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Paese ospitante</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Stato / provincia ospitante</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Fuso orario</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Fuso orario locale dell'incidente per i rapporti delle ore; vuoto usa quello del dipartimento.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Fuso orario per la contabilità del dispiegamento. Le date e gli orari di queste pagine usano il fuso orario del dipartimento.</value></data>
   <data name="Currency" xml:space="preserve"><value>Valuta</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Fuori provincia / stato</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Viaggio in aereo</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Nessun riposo di 8 ore (lo straordinario passa al turno successivo)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Sospensione per condizioni non sicure</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Voci di tempo</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>orari in ora locale dell'incidente</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>orari nel fuso orario del dipartimento</value></data>
   <data name="Subject" xml:space="preserve"><value>Soggetto</value></data>
   <data name="EntryType" xml:space="preserve"><value>Tipo di voce</value></data>
   <data name="Start" xml:space="preserve"><value>Inizio</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Scegli una modalità finanziaria.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>La fine non può precedere l'inizio.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>Lo sconto deve essere compreso tra 0 e 100 per cento.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Il fuso orario non è riconosciuto. Inserisci un identificatore di fuso orario Windows come "Pacific Standard Time" oppure lascia vuoto per usare quello del dipartimento.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Contatto non trovato.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>Chiamata non trovata.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Quella chiamata ha già un impiego.</value></data>

@@ -10,35 +10,36 @@
     };
 }
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + Model.Definition.Form.Name;
     var definition = Model.Definition.Definition;
     ViewData["Tab"] = "Index";
     ViewData["Title"] = Model.Definition.Form.Name;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+        @if (Model.CanStart)
+        {
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checklist-start"><i class="fa fa-play"></i> @localizer["StartRun"]</button>
+        }
+        @if (Model.CanManage)
+        {
+            <a class="btn btn-default" asp-action="Edit" asp-route-id="@definition.Id"><i class="fa fa-pencil"></i> @localizer["EditDraft"]</a>
+            <a class="btn btn-default" asp-action="Schedules" asp-route-id="@definition.Id"><i class="fa fa-calendar"></i> @localizer["Schedules"]</a>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#checklist-lifecycle"><i class="fa fa-cog"></i> @localizer["PublishDraft"]</button>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@Model.Definition.Form.Name</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
-            @await Html.PartialAsync("_Protection")
 
-            <div class="rgw-toolbar">
-                <a class="btn btn-default btn-sm" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
-                <div class="rgw-toolbar-spacer"></div>
-                @if (Model.CanStart)
-                {
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checklist-start"><i class="fa fa-play"></i> @localizer["StartRun"]</button>
-                }
-                @if (Model.CanManage)
-                {
-                    <a class="btn btn-default" asp-action="Edit" asp-route-id="@definition.Id"><i class="fa fa-pencil"></i> @localizer["EditDraft"]</a>
-                    <a class="btn btn-default" asp-action="Schedules" asp-route-id="@definition.Id"><i class="fa fa-calendar"></i> @localizer["Schedules"]</a>
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#checklist-lifecycle"><i class="fa fa-cog"></i> @localizer["PublishDraft"]</button>
-                }
-            </div>
+            @await Html.PartialAsync("_Protection")
 
             <p class="text-muted">
                 <span class="label @(definition.Retired ? "label-danger" : "label-success")">@(definition.Retired ? localizer["Retired"] : localizer["Active"])</span>
@@ -65,7 +66,7 @@
                     <table class="table table-striped rgw-table">
                         <thead>
                             <tr>
-                                <th>@localizer["Started"] (UTC)</th>
+                                <th>@localizer["Started"]</th>
                                 <th>@localizer["Target"]</th>
                                 <th>@localizer["State"]</th>
                                 <th class="text-right">@localizer["Score"]</th>
@@ -78,7 +79,7 @@
                                 var run = entry.Completion;
                                 var state = (ChecklistRunState)run.State;
                                 <tr>
-                                    <td><a asp-action="Run" asp-route-id="@run.Id">@run.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</a></td>
+                                    <td><a asp-action="Run" asp-route-id="@run.Id">@departmentTime.Format(run.CreatedOn)</a></td>
                                     <td>@entry.TargetName</td>
                                     <td><span class="label @RunPill(state)">@localizer[state.ToString()]</span></td>
                                     <td class="text-right">@(run.Score.HasValue ? run.Score + "%" : "—")</td>
@@ -201,5 +202,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

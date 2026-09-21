@@ -104,6 +104,7 @@
 .rgw-wizard .rgw-steps li.current .rgw-step-number { border-color: #1ab394; color: #1ab394; }
 
 .rgw-wizard .rgw-step[hidden] { display: none !important; }
+.rgw-wizard-actions [hidden] { display: none !important; }
 .rgw-wizard .rgw-invalid > .form-control { border-color: #ed5565; }
 .rgw-wizard .rgw-step-error { color: #ed5565; margin: 0 0 15px 0; }
 

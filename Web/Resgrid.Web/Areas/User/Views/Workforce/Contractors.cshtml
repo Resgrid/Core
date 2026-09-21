@@ -9,20 +9,25 @@
     ViewData["WorkforceTab"] = "contractors";
     ViewData["WorkforcePage"] = Model;
     var x = Model.Editing;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (Model.CanManage)
+        {
+            <a asp-action="Contractors" asp-route-edit="new" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["AddContractor"]</a>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-@(x == null ? 12 : 7)">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["LaborContractors"]</h5>
-                    @if (Model.CanManage)
-                    {
-                        <div class="ibox-tools"><a asp-action="Contractors" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddContractor"]</a></div>
-                    }
+
                 </div>
                 <div class="ibox-content">
                     <table class="table table-striped table-condensed">
@@ -83,3 +88,7 @@
         }
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

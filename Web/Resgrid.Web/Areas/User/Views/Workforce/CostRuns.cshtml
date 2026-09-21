@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["CostRuns"];
     ViewData["Title"] = localizer["CostRuns"].Value;
     ViewData["Subtitle"] = localizer["CostRunsIntro"].Value;
@@ -12,7 +13,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-8">
@@ -26,7 +27,7 @@
                         {
                             var label = r.ContextType == (int)FieldCostContextTypes.Deployment ? (Model.ContextLabels.TryGetValue("D:" + r.DeploymentId, out var d) ? d : r.DeploymentId) : r.ContextType == (int)FieldCostContextTypes.Bid ? (Model.ContextLabels.TryGetValue("B:" + r.BidId, out var b) ? b : r.BidId) : "Call #" + r.CallId;
                             <tr>
-                                <td>@r.AddedOn.ToString("yyyy-MM-dd")</td>
+                                <td>@departmentTime.Date(r.AddedOn)</td>
                                 <td>@localizer["Context" + (FieldCostContextTypes)r.ContextType]: @label</td>
                                 <td>@localizer["RunType" + (FieldCostRunTypes)r.RunType]</td>
                                 <td><span class="label @(r.Status == (int)FieldCostRunStatuses.Frozen ? "label-primary" : r.Status == (int)FieldCostRunStatuses.NeedsReview ? "label-warning" : "label-default")">@localizer["RunStatus" + (FieldCostRunStatuses)r.Status]</span></td>
@@ -79,3 +80,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

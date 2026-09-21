@@ -744,4 +744,6 @@
   <data name="ChatAccountsBack" xml:space="preserve"><value>Zurück zum Profil</value></data>
   <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Ihr Verknüpfungscode ist bereit.</value></data>
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Verwenden Sie in Discord /resgrid und geben Sie LINK gefolgt vom Code in der Option message ein. Nutzen Sie /resgrid auch für weitere Befehle.</value></data>
+  <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Personal &amp; Betriebsverwaltung</value></data>
+  <data name="NavigationReadiness" xml:space="preserve"><value>Einsatzbereitschaft</value></data>
 </root>

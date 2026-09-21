@@ -37,14 +37,19 @@ namespace Resgrid.Services
 			var html = Compliance(report, missedOnly);
 			return html.Substring(html.IndexOf("<body>", StringComparison.Ordinal) + 6).Replace("</body></html>", "");
 		}
-		private static string Entries(IEnumerable<ChecklistReportEntry> entries)
+		private static string Entries(IEnumerable<ChecklistReportEntry> entries, Func<DateTime?, string> format = null)
 		{
+			format ??= utc => utc?.ToString("u");
 			var body = new StringBuilder("<table>" + Head("Name", "Target", "ScheduledFor", "WindowEnds", "CompletedChecks", "MissedChecks", "Result", "Score"));
-			foreach (var entry in entries) body.Append("<tr>").Append(Cell(entry.Name)).Append(Cell(entry.Target.Name)).Append(Cell(entry.StartUtc.ToString("u"))).Append(Cell(entry.DueUtc?.ToString("u"))).Append(Cell(Text(entry.Completed ? "Yes" : "No"))).Append(Cell(Text(entry.Missed ? "Yes" : "No"))).Append(Cell(entry.Passed.HasValue ? Text(entry.Passed.Value ? "Passed" : "Failed") : "—")).Append(Cell(entry.Score)).Append("</tr>");
+			foreach (var entry in entries) body.Append("<tr>").Append(Cell(entry.Name)).Append(Cell(entry.Target.Name)).Append(Cell(format(entry.StartUtc))).Append(Cell(format(entry.DueUtc))).Append(Cell(Text(entry.Completed ? "Yes" : "No"))).Append(Cell(Text(entry.Missed ? "Yes" : "No"))).Append(Cell(entry.Passed.HasValue ? Text(entry.Passed.Value ? "Passed" : "Failed") : "—")).Append(Cell(entry.Score)).Append("</tr>");
 			return body.Append("</table>").ToString();
 		}
 		private static string Unavailable(IEnumerable<string> sources) => "<ul>" + string.Concat(sources.Select(s => "<li>" + H(Text(s)) + "</li>")) + "</ul>";
-		public static string Packet(ReadinessEvidenceManifestV1 packet) => Page("ReadinessPacketReport", "<p>" + H(Text("CallId")) + ": " + H(packet.CallId) + "</p><p>" + H(packet.CoverageStartUtc.ToString("u")) + " — " + H(packet.CoverageEndUtc.ToString("u")) + "</p><p>" + H(Text("PacketMethod")) + "</p><h2>" + H(Text("DispatchedUnits")) + "</h2><ul>" + string.Concat(packet.Units.Select(u => "<li>" + H(u.Name) + " (#" + H(u.UnitId) + "; " + H(u.DispatchedUtc.ToString("u")) + ")</li>")) + "</ul><h2>" + H(Text("IssuedEquipment")) + "</h2><ul>" + string.Concat(packet.Assets.Select(a => "<li>" + H(a.Name) + " (" + H(a.AssetId) + ")</li>")) + "</ul>" + Entries(packet.Checklists) + WorkOrderReportDocuments.PacketSection(packet.WorkOrders) + Unavailable(packet.UnavailableSources));
+		public static string Packet(ReadinessEvidenceManifestV1 packet, Func<DateTime?, string> format = null)
+        {
+            format ??= utc => utc?.ToString("u");
+            return Page("ReadinessPacketReport", "<p>" + H(Text("CallId")) + ": " + H(packet.CallId) + "</p><p>" + H(format(packet.CoverageStartUtc)) + " — " + H(format(packet.CoverageEndUtc)) + "</p><p>" + H(Text("PacketMethod")) + "</p><h2>" + H(Text("DispatchedUnits")) + "</h2><ul>" + string.Concat(packet.Units.Select(u => "<li>" + H(u.Name) + " (#" + H(u.UnitId) + "; " + H(format(u.DispatchedUtc)) + ")</li>")) + "</ul><h2>" + H(Text("IssuedEquipment")) + "</h2><ul>" + string.Concat(packet.Assets.Select(a => "<li>" + H(a.Name) + " (" + H(a.AssetId) + ")</li>")) + "</ul>" + Entries(packet.Checklists, format) + WorkOrderReportDocuments.PacketSection(packet.WorkOrders, format) + Unavailable(packet.UnavailableSources));
+		}
 		public static string Sha256(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
 		public static void EnsureStillAuthorized(ReadinessEvidenceManifestV1 captured, ReadinessEvidenceManifestV1 current)
 		{
@@ -55,10 +60,10 @@ namespace Resgrid.Services
 				|| captured.Assets.Any(a => !current.Assets.Any(c => c.AssetId == a.AssetId && c.SourceId == a.SourceId)))
 				throw new ChecklistException(403, "The request could not be completed.");
 		}
-		public static ReadinessEvidencePackage Package(ReadinessEvidenceManifestV1 manifest, IPdfProvider pdf)
+		public static ReadinessEvidencePackage Package(ReadinessEvidenceManifestV1 manifest, IPdfProvider pdf, Func<DateTime?, string> format = null)
 		{
 			var json = JsonConvert.SerializeObject(manifest, Formatting.None, new JsonSerializerSettings { DateTimeZoneHandling = DateTimeZoneHandling.Utc, Culture = CultureInfo.InvariantCulture });
-			var bytes = pdf.ConvertHtmlToPdf(Packet(manifest));
+			var bytes = pdf.ConvertHtmlToPdf(Packet(manifest, format));
 			if (bytes == null || bytes.Length < 5 || Encoding.ASCII.GetString(bytes, 0, 5) != "%PDF-") throw new InvalidOperationException("Checklist PDF generation failed.");
 			if (bytes.Length > 16 * 1024 * 1024) throw new ChecklistException(400, "ReportTooLarge");
 			return new ReadinessEvidencePackage { ManifestJson = json, ManifestSha256 = Sha256(Encoding.UTF8.GetBytes(json)), Pdf = bytes, PdfSha256 = Sha256(bytes) };

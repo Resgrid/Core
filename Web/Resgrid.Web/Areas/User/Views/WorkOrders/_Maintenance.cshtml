@@ -6,6 +6,7 @@
     hold and deferring the due date. Both ask for a reason, so both open in a dialog.
 *@
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var d = Model.Detail;
     var id = d.Order.Id;
     var isOpen = d.Order.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate);
@@ -26,7 +27,7 @@
         }
         @if (d.OriginalDueOn.HasValue)
         {
-            <span>@localizer["OriginalDue"]: @d.OriginalDueOn.Value.ToString("u")</span>
+            <span>@localizer["OriginalDue"]: @departmentTime.Format(d.OriginalDueOn)</span>
         }
     </p>
 }
@@ -189,7 +190,7 @@ else
                         <input type="hidden" name="Revision" value="@d.Order.Revision" />
                         <div class="rgw-grid">
                             <div class="form-group">
-                                <label for="defer-due">@localizer["RevisedDue"] (UTC)</label>
+                                <label for="defer-due">@localizer["RevisedDue"]</label>
                                 <input id="defer-due" type="datetime-local" name="DueOn" class="form-control" required />
                             </div>
                             <div class="form-group rgw-wide">

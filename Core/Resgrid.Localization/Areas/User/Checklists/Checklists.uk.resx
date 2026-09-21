@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Направлені підрозділи</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Спорядження, видане на момент події</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>Запланована доставка містить PDF-повідомлення та захищене посилання на звіт. Відкрийте звіт, щоб перевірити поточні права доступу й розблокувати захищені дані; результати перевірок і персональні дані не надсилаються електронною поштою.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Виберіть хронологічний період UTC тривалістю не більше 93 днів.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Виберіть хронологічний період тривалістю не більше 93 днів.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Цей звіт завеликий. Виберіть коротший період.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Подія недоступна або в доступі відмовлено.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Історичні дані про походження спорядження неповні або суперечливі.</value></data>

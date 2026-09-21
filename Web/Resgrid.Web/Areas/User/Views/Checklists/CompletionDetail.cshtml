@@ -11,6 +11,7 @@
     };
 }
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + Model.Form.Name;
     var run = Model.Completion;
     var state = (ChecklistRunState)run.State;
@@ -20,30 +21,30 @@
     ViewData["ParentAction"] = "Detail";
     ViewData["ParentId"] = run.ParentId;
     ViewData["Subtitle"] = Model.Target.Name;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-action="Detail" asp-route-id="@run.ParentId"><i class="fa fa-arrow-left"></i> @localizer["History"]</a>
+        @if (Model.Form.Sections.SelectMany(s => s.Items).Any(i => i.CreateWorkOrderOnFail))
+        {
+            <a class="btn btn-default" asp-controller="WorkOrders" asp-action="Index" asp-route-checklistCompletionId="@run.Id"><i class="fa fa-wrench"></i> @localizer["RelatedWorkOrders"]</a>
+        }
+        <form class="checklist-form" asp-action="Export" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@run.Id" />
+            <button class="btn btn-info" type="submit"><i class="fa fa-download"></i> @localizer["Export"]</button>
+        </form>
+        <button class="btn btn-info" type="button" onclick="window.print()"><i class="fa fa-print"></i> @localizer["Print"]</button>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@Model.Form.Name</h5></div>
         <div class="ibox-content">
             @await Html.PartialAsync("_Protection")
-
-            <div class="rgw-toolbar">
-                <a class="btn btn-default btn-sm" asp-action="Detail" asp-route-id="@run.ParentId"><i class="fa fa-arrow-left"></i> @localizer["History"]</a>
-                <div class="rgw-toolbar-spacer"></div>
-                @if (Model.Form.Sections.SelectMany(s => s.Items).Any(i => i.CreateWorkOrderOnFail))
-                {
-                    <a class="btn btn-default" asp-controller="WorkOrders" asp-action="Index" asp-route-checklistCompletionId="@run.Id"><i class="fa fa-wrench"></i> @localizer["RelatedWorkOrders"]</a>
-                }
-                <form class="checklist-form" asp-action="Export" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@run.Id" />
-                    <button class="btn btn-default" type="submit"><i class="fa fa-download"></i> @localizer["Export"]</button>
-                </form>
-                <button class="btn btn-default" type="button" onclick="window.print()"><i class="fa fa-print"></i> @localizer["Print"]</button>
-            </div>
 
             <p class="text-muted">
                 <span class="label @RunPill(state)">@localizer[state.ToString()]</span>
@@ -65,11 +66,11 @@
             <dl class="dl-horizontal">
                 <dt>@localizer["Score"]</dt><dd>@(run.Score.HasValue ? run.Score + "%" : localizer["NoScore"].Value)</dd>
                 <dt>@localizer["Author"]</dt><dd>@run.CreatedBy</dd>
-                <dt>@localizer["Submitted"] (UTC)</dt><dd>@run.SubmittedOn?.ToString("u")</dd>
+                <dt>@localizer["Submitted"]</dt><dd>@departmentTime.Format(run.SubmittedOn)</dd>
                 <dt>@localizer["Version"]</dt><dd>@Model.VersionNumber</dd>
                 @if (run.WitnessedOn.HasValue)
                 {
-                    <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId &middot; @run.WitnessedOn.Value.ToString("u")</dd>
+                    <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId &middot; @departmentTime.Format(run.WitnessedOn)</dd>
                     <dt>@localizer["Attestation"]</dt><dd>@Model.WitnessAttestation</dd>
                 }
             </dl>
@@ -175,5 +176,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

@@ -1,13 +1,14 @@
 @model Resgrid.Web.Areas.User.Models.Certifications.CertificationDashboardView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["Certifications"];
     ViewData["Tab"] = "Dashboard";
     ViewData["Title"] = localizer["Certifications"].Value;
     ViewData["Subtitle"] = localizer["DashboardIntro"].Value;
     var unit = Model.Scope == "unit";
     var types = Model.VisibleTypes;
-    var today = DateTime.UtcNow.Date;
+    var today = departmentTime.Today;
     string CellClass(Resgrid.Model.CertificationDashboardCell c)
     {
         if (unit)
@@ -24,27 +25,30 @@
         if (c.DaysUntilExpiry.HasValue && c.DaysUntilExpiry <= Model.Horizon) return "warning";
         return "success";
     }
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-controller="Certifications" asp-action="DashboardCsv" asp-route-area="User" asp-route-scope="@Model.Scope" asp-route-category="@Model.Category" asp-route-groupId="@Model.GroupId" asp-route-roleId="@Model.RoleId" class="btn btn-info"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
     <div class="row">
         <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-danger">@Model.Dashboard.ExpiredCount</h1><small>@localizer["Expired"]</small></div></div></div>
         <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-warning">@Model.Dashboard.ExpiringCount</h1><small>@string.Format(localizer["ExpiringWithin"].Value, Model.Horizon)</small></div></div></div>
-        <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins">@Model.Dashboard.SuspendedCount</h1><small>@localizer["SuspendedOrRevoked"]</small></div></div></div>
+        <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-warning">@Model.Dashboard.SuspendedCount</h1><small>@localizer["SuspendedOrRevoked"]</small></div></div></div>
         <div class="col-sm-3"><div class="ibox"><div class="ibox-content text-center"><h1 class="no-margins text-info">@Model.Dashboard.PendingVerificationCount</h1><small>@localizer["StatusPendingVerification"]</small></div></div></div>
     </div>
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["Dashboard"]</h5>
-            <div class="ibox-tools">
-                <a asp-controller="Certifications" asp-action="DashboardCsv" asp-route-area="User" asp-route-scope="@Model.Scope" asp-route-category="@Model.Category" asp-route-groupId="@Model.GroupId" asp-route-roleId="@Model.RoleId" class="btn btn-default btn-xs"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
-            </div>
+
         </div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             <form method="get" class="form-inline m-b-md" asp-controller="Certifications" asp-action="Index" asp-route-area="User">
                 <div class="form-group m-r-sm">
                     <label class="m-r-xs">@localizer["Scope"]</label>
@@ -165,3 +169,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

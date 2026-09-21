@@ -744,4 +744,6 @@
   <data name="ChatAccountsBack" xml:space="preserve"><value>Назад до профілю</value></data>
   <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Ваш код прив’язування готовий.</value></data>
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>У Discord використайте /resgrid і введіть LINK та код у полі message. Для наступних команд також використовуйте /resgrid.</value></data>
+  <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Персонал і бізнес-операції</value></data>
+  <data name="NavigationReadiness" xml:space="preserve"><value>Готовність</value></data>
 </root>

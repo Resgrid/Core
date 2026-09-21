@@ -3,6 +3,7 @@
 @model RecordCrrIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["CrrActivities"];
 }
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -30,8 +31,8 @@
 		<div class="col-md-8">
 			<div class="ibox"><div class="ibox-content">
 				<form method="get" class="form-inline" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">
-					<input type="date" class="form-control" name="start" value="@Model.Start.ToString("yyyy-MM-dd")" />
-					<input type="date" class="form-control" name="end" value="@Model.End.ToString("yyyy-MM-dd")" />
+					<input type="date" class="form-control" name="start" value="@departmentTime.Date(Model.Start)" />
+					<input type="date" class="form-control" name="end" value="@departmentTime.Date(Model.End)" />
 					<button class="btn btn-default">@L["Filter"]</button>
 				</form>
 				@if (Model.Activities.Count == 0) { <p class="m-t-sm">@L["NoCrr"]</p> }
@@ -43,7 +44,7 @@
 						@foreach (var a in Model.Activities)
 						{
 							<tr>
-								<td>@RmsEnumDisplay.Day(a.OccurredOn)</td>
+								<td>@departmentTime.Date(a.OccurredOn)</td>
 								<td>@(RmsEnumDisplay.Label<RmsCrrActivityKind>(a.Kind))</td>
 								<td>@a.Title</td>
 								<td>@a.LocationText</td>

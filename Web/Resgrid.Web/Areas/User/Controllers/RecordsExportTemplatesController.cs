@@ -21,6 +21,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_Export)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordsExportTemplatesController : SecureBaseController
 	{
 		private readonly IRecordsExportService _exports;

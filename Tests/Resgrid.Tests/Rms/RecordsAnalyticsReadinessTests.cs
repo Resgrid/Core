@@ -71,8 +71,8 @@ namespace Resgrid.Tests.Rms
 			_workOrders.Setup(w => w.GetWorkOrderStatsAsync(It.IsAny<ChecklistActor>(), It.IsAny<WorkOrderReportQuery>())).ReturnsAsync((ChecklistActor a, WorkOrderReportQuery q) => Stats(q));
 			_workOrders.Setup(w => w.GetWorkOrderHistoryAsync(It.IsAny<ChecklistActor>(), It.IsAny<WorkOrderReportQuery>())).ReturnsAsync((ChecklistActor a, WorkOrderReportQuery q) =>
 			{
-				var rows = _orders.Where(o => o.Order.Id > q.AfterId).OrderBy(o => o.Order.Id).ToList();
-				return new WorkOrderHistoryPage { Items = rows.Take(50).ToList(), NextAfterId = rows.Count > 50 ? rows[49].Order.Id : (int?)null };
+				var rows = _orders.Where(o => string.CompareOrdinal(o.Order.Id, q.AfterId) > 0).OrderBy(o => o.Order.Id).ToList();
+				return new WorkOrderHistoryPage { Items = rows.Take(50).ToList(), NextAfterId = rows.Count > 50 ? rows[49].Order.Id : null };
 			});
 			_inventory.Setup(i => i.ListAsync<InventoryAsset>(It.IsAny<InventoryActor>(), It.IsAny<int>())).ReturnsAsync((InventoryActor a, int page) => Page(_assets, page));
 			_inventory.Setup(i => i.ListAsync<InventoryLocation>(It.IsAny<InventoryActor>(), It.IsAny<int>())).ReturnsAsync((InventoryActor a, int page) => Page(_locations, page));
@@ -104,7 +104,7 @@ namespace Resgrid.Tests.Rms
 			=> new ChecklistComplianceGroup { Target = new ChecklistTarget { Type = type, Id = id, Name = name, GroupId = groupId }, Expected = expected, Completed = completed, OnTime = onTime, Missed = missed, Skipped = skipped };
 
 		private void Order(int id, int? unitId, WorkOrderStatus status, WorkOrderPriority priority = WorkOrderPriority.Normal, DateTime? due = null)
-			=> _orders.Add(new WorkOrderReportEntry { Order = new WorkOrderSummary { Id = id, UnitId = unitId, Status = status, Priority = priority, DueOn = due, CreatedOn = T0 } });
+			=> _orders.Add(new WorkOrderReportEntry { Order = new WorkOrderSummary { Id = new Guid(id, 0, 0, new byte[8]).ToString("D"), UnitId = unitId, Status = status, Priority = priority, DueOn = due, CreatedOn = T0 } });
 
 		private void Record(string id, int? callId, int unitId)
 		{
@@ -121,6 +121,7 @@ namespace Resgrid.Tests.Rms
 				Group(ChecklistTargetType.Group, "10", "Station 10", 4, 4, 4, 0), Group(ChecklistTargetType.Personnel, "u-a", "Ann Author", 3, 2, 2, 1), Group(ChecklistTargetType.InventoryAsset, "asset-1", "SCBA 12", 2, 2, 2, 0)
 			});
 			_summary.Trend.Add(new ChecklistMissedTrend { DayUtc = T0, Expected = 5, Missed = 1 });
+            _summary.Entries.AddRange(Enumerable.Range(0, 5).Select(i => new ChecklistReportEntry { DueUtc = T0, Expected = true, Missed = i == 0 }));
 			_summary.UnavailableSources.Add("contractor-deployments");
 			Order(1, 1, WorkOrderStatus.InProgress, WorkOrderPriority.High, DateTime.UtcNow.AddDays(-2)); Order(2, 1, WorkOrderStatus.Closed); Order(3, 2, WorkOrderStatus.OnHold, WorkOrderPriority.Emergency); Order(4, null, WorkOrderStatus.Requested); Order(5, 3, WorkOrderStatus.Completed);
 			_locations.Add(new InventoryLocation { Id = "loc-e1", DepartmentId = Dept, UnitId = 1 }); _locations.Add(new InventoryLocation { Id = "loc-bay", DepartmentId = Dept, ParentLocationId = "loc-e1" }); _locations.Add(new InventoryLocation { Id = "loc-store", DepartmentId = Dept, GroupId = 10 });

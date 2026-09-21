@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsReconciliationView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["Reconciliation"];
     ViewData["Title"] = localizer["Reconciliation"].Value;
     ViewData["Subtitle"] = localizer["ReconciliationIntro"].Value;
@@ -12,7 +13,7 @@
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">
@@ -35,7 +36,7 @@
                                         <td class="text-right">@((i.ExpectedTotal ?? 0).ToString("N2"))</td>
                                         <td class="text-right">@(i.ApprovedTotal?.ToString("N2") ?? "—")</td>
                                         <td class="text-right">@(i.PaidTotal?.ToString("N2") ?? "—")</td>
-                                        <td>@(i.ObservedOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                        <td>@(departmentTime.Date(i.ObservedOn) ?? "—")</td>
                                         <td class="text-right"><a asp-action="Invoice" asp-route-id="@i.CalOesMarsWorkItemId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
                                     </tr>
                                 }
@@ -70,3 +71,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

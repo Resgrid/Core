@@ -14,7 +14,7 @@ namespace Resgrid.Services
 {
     public sealed partial class WorkOrdersService
     {
-        public async Task CancelPartWitnessAsync(ChecklistActor actor, int orderId, int partId, int revision, string reason)
+        public async Task CancelPartWitnessAsync(ChecklistActor actor, string orderId, string partId, int revision, string reason)
         {
             Text(reason, 4000, true);
             await TransactionAsync(actor, async events =>
@@ -32,14 +32,14 @@ namespace Resgrid.Services
                 await ChangedAsync(actor, order, WorkOrderActivityType.PartVoided, events, reason, trigger: WorkflowTriggerEventType.WorkOrderPartChanged); return true;
             });
         }
-        private async Task RequireNoPendingPartsAsync(ChecklistActor actor, int id)
+        private async Task RequireNoPendingPartsAsync(ChecklistActor actor, string id)
         {
             if ((await ChildrenAsync<WorkOrderPart>(actor, id)).Any(p => p.Staged && (p.ReservedQuantity > 0 || p.IssuedQuantity > 0))) throw new WorkOrderException(409, "PartBalanceOutstanding");
             foreach (var part in await ChildrenAsync<WorkOrderPart>(actor, id))
                 if (part.InventoryOperationId != null && !part.VoidedOn.HasValue && (part.InventoryTransactionId == null || Decode<WorkOrderPartContent>(part.Content).VoidReason != null && part.InventoryReversalId == null))
                     throw new WorkOrderException(409, "InventoryWitnessPending");
         }
-        public async Task AddPartAsync(ChecklistActor actor, int id, WorkOrderPartInput input)
+        public async Task AddPartAsync(ChecklistActor actor, string id, WorkOrderPartInput input)
         {
             if (input?.Content == null || input.Content.Quantity <= 0 || input.Content.Quantity > 100000 || decimal.Round(input.Content.Quantity, 6) != input.Content.Quantity) throw new WorkOrderException(400, "InvalidInput");
             Text(input.Content.Description, 2000, true); Money(input.Content.UnitCost); input.Content.VoidReason = null;
@@ -68,7 +68,7 @@ namespace Resgrid.Services
                 if (linked)
                 {
                     var command = new InventoryCommand { RequestId = input.RequestId, Lines = new() { new InventoryPosting { ItemId = input.InventoryItemId, AssetId = input.InventoryAssetId, LotId = input.InventoryLotId, FromLocationId = input.InventoryLocationId,
-                        Quantity = input.Content.Quantity, Type = InventoryTransactionType.Consume, ReferenceType = InventoryReferenceType.WorkOrder, ReferenceId = id.ToString(CultureInfo.InvariantCulture), WorkOrderPartId = part.Id } } };
+                        Quantity = input.Content.Quantity, Type = InventoryTransactionType.Consume, ReferenceType = InventoryReferenceType.WorkOrder, ReferenceId = id, WorkOrderPartId = part.Id } } };
                     var result = await _inventoryMaintenance.Value.PostPartAsync(InventoryActor(actor), part.Id, command);
                     events.AddRange(result.OutboxIds); part.InventoryOperationId = result.OperationId; part.Revision++;
                     await RevealAsync(actor, part); await SaveAsync(actor, part);
@@ -77,7 +77,7 @@ namespace Resgrid.Services
                 await ChangedAsync(actor, row, WorkOrderActivityType.PartAdded, events, trigger: WorkflowTriggerEventType.WorkOrderPartChanged); return true;
             });
         }
-        public async Task VoidPartAsync(ChecklistActor actor, int id, int partId, int revision, string reason)
+        public async Task VoidPartAsync(ChecklistActor actor, string id, string partId, int revision, string reason)
         {
             Text(reason, 4000, true);
             await TransactionAsync(actor, async events =>
@@ -95,7 +95,7 @@ namespace Resgrid.Services
                     await SaveAsync(actor, part);
                     var command = new InventoryCommand { RequestId = MaintenanceIdentity("part-reversal:" + actor.DepartmentId + ":" + part.Id + ":" + part.Revision), Lines = new() { new InventoryPosting {
                         ItemId = original.ItemId, AssetId = original.AssetId, LotId = original.LotId, ToLocationId = original.FromLocationId, Quantity = original.Quantity, Type = InventoryTransactionType.Adjust,
-                        ReferenceType = InventoryReferenceType.WorkOrder, ReferenceId = id.ToString(CultureInfo.InvariantCulture), WorkOrderPartId = partId, ReversesTransactionId = original.Id, Note = reason } } };
+                        ReferenceType = InventoryReferenceType.WorkOrder, ReferenceId = id, WorkOrderPartId = partId, ReversesTransactionId = original.Id, Note = reason } } };
                     var result = await _inventoryMaintenance.Value.PostPartAsync(InventoryActor(actor), partId, command); events.AddRange(result.OutboxIds);
                     if (!result.AwaitingWitness) { await CompleteInventoryPartAsync(InventoryActor(actor), partId, result.TransactionIds.Single(), true, events); return true; }
                     part.InventoryOperationId = result.OperationId; await RevealAsync(actor, part); await SaveAsync(actor, part);
@@ -104,20 +104,20 @@ namespace Resgrid.Services
                 await ChangedAsync(actor, row, WorkOrderActivityType.PartVoided, events, reason, trigger: WorkflowTriggerEventType.WorkOrderPartChanged); return true;
             });
         }
-        public async Task CompleteInventoryPartAsync(InventoryActor actor, int partId, string transactionId, bool reversal, List<long> events)
+        public async Task CompleteInventoryPartAsync(InventoryActor actor, string partId, string transactionId, bool reversal, List<long> events)
         {
             if (_uow.Transaction == null || _inventoryCatalog == null) throw new InvalidOperationException("The inventory posting transaction owns completion.");
             var principal = new ChecklistActor { DepartmentId = actor.DepartmentId, UserId = actor.UserId, GrantToken = actor.GrantToken };
             await RequireWriteAsync(principal);
             var part = await _store.GetAsync<WorkOrderPart>(actor.DepartmentId, partId);
             if (part?.WorkOrderId == null) throw new WorkOrderException(404, "Unavailable");
-            var row = await ReadOrderAsync(principal, part.WorkOrderId.Value);
+            var row = await ReadOrderAsync(principal, part.WorkOrderId);
             if (row.Status >= 5 || !await _authorization.CanContributeAsync(principal, row)) throw new WorkOrderException(403, "PermissionRequired");
             await RevealAsync(principal, part);
             var ledger = await _inventoryCatalog.Value.GetAsync<InventoryTransaction>(actor, transactionId);
-            if (ledger.WorkOrderPartId != partId || ledger.ReferenceType != (int)InventoryReferenceType.WorkOrder || ledger.ReferenceId != row.Id.ToString(CultureInfo.InvariantCulture) || ledger.ItemId != part.InventoryItemId) throw new WorkOrderException(409, "InventoryPartInvalid");
-            if (part.Staged && ledger.WorkOrderPartMovementId.HasValue) { await CompletePartMovementAsync(principal, row, part, ledger, events); return; }
-            if (part.Staged || ledger.WorkOrderPartMovementId.HasValue) throw new WorkOrderException(409, "InventoryPartInvalid");
+            if (ledger.WorkOrderPartId != partId || ledger.ReferenceType != (int)InventoryReferenceType.WorkOrder || ledger.ReferenceId != row.Id || ledger.ItemId != part.InventoryItemId) throw new WorkOrderException(409, "InventoryPartInvalid");
+            if (part.Staged && ledger.WorkOrderPartMovementId != null) { await CompletePartMovementAsync(principal, row, part, ledger, events); return; }
+            if (part.Staged || ledger.WorkOrderPartMovementId != null) throw new WorkOrderException(409, "InventoryPartInvalid");
             var content = Decode<WorkOrderPartContent>(part.Content);
             if (ledger.Quantity != content.Quantity || reversal && ledger.ReversesTransactionId != part.InventoryTransactionId || !reversal && ledger.ReversesTransactionId != null) throw new WorkOrderException(409, "InventoryPartInvalid");
             if (reversal) { if (part.InventoryReversalId != null) throw new WorkOrderException(409, "Conflict"); part.InventoryReversalId = ledger.Id; part.VoidedOn = Now; }

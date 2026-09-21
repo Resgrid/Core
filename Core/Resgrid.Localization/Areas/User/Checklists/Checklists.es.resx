@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Unidades movilizadas</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Equipo entregado en el momento del incidente</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>El envío programado contiene un aviso PDF y un enlace seguro al informe. Abra el informe para verificar su acceso actual y desbloquear datos protegidos; no se envían por correo resultados de verificaciones ni datos personales.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Seleccione un período UTC cronológico de hasta 93 días.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Seleccione un período cronológico de hasta 93 días.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Este informe es demasiado grande. Seleccione un período más corto.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>El incidente no está disponible o se ha denegado el acceso.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>La procedencia histórica del equipo está incompleta o es incoherente.</value></data>

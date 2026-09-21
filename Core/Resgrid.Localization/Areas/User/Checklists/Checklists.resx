@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Dispatched units</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Equipment issued at call time</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>Scheduled delivery contains a PDF notice and a secure report link. Open the report to verify your current access and unlock protected data; checklist results and personal data are not emailed.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Select a chronological UTC period of at most 93 days.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Select a chronological period of at most 93 days.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>This report is too large. Select a shorter period.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>The call is unavailable or access is denied.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Historical equipment provenance is incomplete or inconsistent.</value></data>

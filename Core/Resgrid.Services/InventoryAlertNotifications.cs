@@ -4,12 +4,17 @@ using System.Linq;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Localization;
+using Resgrid.Model;
+using Resgrid.Model.Inventories;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
-	/// <summary>Hands off generic notices using routing metadata, without reading Inventory content or obtaining a grant.</summary>
+	/// <summary>Identifies inventory needing attention, using only public identifiers when content is protected.</summary>
 	public sealed class InventoryAlertNotifications
 	{
 		private readonly IInventoryAlertService _alerts;
@@ -17,12 +22,15 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _profiles;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly ICommunicationService _communication;
+		private readonly IInventoryStore _store;
+		private readonly IDepartmentDataProtectionService _protection;
 		private readonly TimeProvider _clock;
 		private static readonly ResourceManager Strings = new ResourceManager("Resgrid.Localization.Areas.User.Inventory.Inventory", typeof(SupportedLocales).Assembly);
 
 		public InventoryAlertNotifications(IInventoryAlertService alerts, IDepartmentsService departments, IUserProfileService profiles,
-			IDepartmentSettingsService settings, ICommunicationService communication, TimeProvider clock = null)
-		{ _alerts = alerts; _departments = departments; _profiles = profiles; _settings = settings; _communication = communication; _clock = clock ?? TimeProvider.System; }
+			IDepartmentSettingsService settings, ICommunicationService communication, IInventoryStore store,
+			IDepartmentDataProtectionService protection, TimeProvider clock = null)
+		{ _alerts = alerts; _departments = departments; _profiles = profiles; _settings = settings; _communication = communication; _store = store; _protection = protection; _clock = clock ?? TimeProvider.System; }
 
 		public async Task<int> ProcessDepartmentAsync(int departmentId, CancellationToken ct)
 		{
@@ -51,15 +59,19 @@ namespace Resgrid.Services
 						var number = await _settings.GetTextToCallNumberForDepartmentAsync(departmentId);
 						var culture = Culture(profile?.Language);
 						var title = Strings.GetString("M5AlertNotificationTitle", culture) ?? "Inventory alerts";
-						var message = (Strings.GetString("M5AlertNotificationMessage", culture) ?? "Inventory needs attention. Sign in to review current alerts.")
-							+ " " + (Config.SystemBehaviorConfig.ResgridBaseUrl ?? "").TrimEnd('/') + "/User/Inventory/Operations?tab=Alerts";
+						var alert = await _store.GetAsync<InventoryAlert>(departmentId, delivery.AlertId);
+						var item = alert?.DepartmentId == departmentId ? await _store.GetAsync<InventoryItem>(departmentId, alert.ItemId) : null;
+						var location = alert?.DepartmentId == departmentId && alert.LocationId != null ? await _store.GetAsync<InventoryLocation>(departmentId, alert.LocationId) : null;
 						ct.ThrowIfCancellationRequested();
-						// Slow routing/profile lookups precede the final current-state and permission gate.
-						var allowed = department?.DepartmentId == departmentId && await _alerts.CanReceiveAlertAsync(departmentId, user, delivery.AlertId);
+						// Lookups precede the final current-state, permission and protection gates.
+						var allowed = department?.DepartmentId == departmentId && item?.DepartmentId == departmentId
+							&& await _alerts.CanReceiveAlertAsync(departmentId, user, delivery.AlertId);
+						var protectedContent = !allowed || await _protection.IsProtectionEnforcedAsync(departmentId);
 						ct.ThrowIfCancellationRequested();
 						if (allowed && (!delivery.LeaseUntil.HasValue || delivery.LeaseUntil.Value <= _clock.GetUtcNow().UtcDateTime.AddSeconds(30)))
 							throw new InvalidOperationException("Inventory alert notification lease is expiring.");
-						var sent = allowed && await _communication.SendNotificationAsync(user, departmentId, message, number, department, title, profile);
+						var sent = allowed && await _communication.SendNotificationAsync(user, departmentId,
+							Message(alert, item, location?.DepartmentId == departmentId ? location : null, culture, protectedContent), number, department, title, profile);
 						// Persist an accepted handoff even if cancellation arrived during the provider call.
 						await _alerts.FinishAlertAsync(departmentId, delivery.Id, delivery.ClaimToken, sent);
 						if (sent) handedOff++;
@@ -79,6 +91,34 @@ namespace Resgrid.Services
 			if (failed) throw new InvalidOperationException("Inventory alert notifications require a retry.");
 			return handedOff;
 		}
+
+		private static string Message(InventoryAlert alert, InventoryItem item, InventoryLocation location, CultureInfo culture, bool protectedContent)
+		{
+			var content = NotificationContent<InventoryItemContent>(item, protectedContent);
+			var name = WithoutUrls(content?.Name);
+			var code = WithoutUrls(content?.Code);
+			var identifier = string.IsNullOrWhiteSpace(name) ? code : string.IsNullOrWhiteSpace(code) ? name : $"{name} ({code})";
+			if (string.IsNullOrWhiteSpace(identifier)) identifier = item.Id;
+			var message = (Strings.GetString("M5AlertType" + alert.AlertType, culture) ?? Strings.GetString("M5AlertNotificationTitle", culture))
+				+ ": " + identifier;
+			if (alert.LocationId != null)
+			{
+				var locationName = WithoutUrls(NotificationContent<InventoryLabel>(location, protectedContent)?.Name);
+				message += "; " + Strings.GetString("Location", culture) + ": " + (string.IsNullOrWhiteSpace(locationName) ? alert.LocationId : locationName);
+			}
+			return message + ". " + (Strings.GetString("M5AlertNotificationMessage", culture) ?? "Inventory needs attention. Sign in to review current alerts.");
+		}
+
+		private static T NotificationContent<T>(InventoryRow row, bool protectedContent) where T : class
+		{
+			// Never obtain a grant or decrypt content in this unattended sender, including during protection transitions.
+			if (protectedContent || row == null || row.IsProtected || string.IsNullOrWhiteSpace(row.Content)
+				|| ProtectedDataEnvelope.HasEnvelopePrefix(row.Content) || row.Content == ProtectedDataEnvelope.RedactionValue) return null;
+			try { return JsonConvert.DeserializeObject<T>(row.Content); }
+			catch (JsonException) { return null; }
+		}
+
+		private static string WithoutUrls(string text) => SmsContentHelper.StripDisallowedUrls(text, Array.Empty<string>())?.Trim();
 
 		private static CultureInfo Culture(string language)
 		{

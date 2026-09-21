@@ -22,7 +22,7 @@ namespace Resgrid.Tests.Services
         {
             await SeedReportMonth();
             var reports = new Mock<IWorkOrderReportingService>();
-            var section = new ReadinessWorkOrderSection { HistoryUnavailable = true, RestrictedScope = true, Items = { new() { WorkOrderId = 19, Revision = 3, SnapshotId = 99, UnitId = 1, Title = "Synthetic immutable maintenance", SourceActivityId = 27 } } };
+            var section = new ReadinessWorkOrderSection { HistoryUnavailable = true, RestrictedScope = true, Items = { new() { WorkOrderId = "00000000-0000-0000-0000-000000000019", Revision = 3, SnapshotId = "00000000-0000-0000-0000-000000000099", UnitId = 1, Title = "Synthetic immutable maintenance", SourceActivityId = "00000000-0000-0000-0000-000000000027" } } };
             reports.Setup(r => r.ReadinessEvidenceAsync(It.IsAny<ChecklistActor>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int[]>(), It.IsAny<string[]>())).ReturnsAsync(section);
             PacketService(null, workOrders: reports.Object); _access.Setup(a => a.CanUseChecklistsAsync(77)).ReturnsAsync(false);
             var packet = await _service.GetReadinessPacketForCallAsync(_actor, 101);

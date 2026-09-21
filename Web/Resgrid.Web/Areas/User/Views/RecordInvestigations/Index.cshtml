@@ -3,6 +3,7 @@
 @model RecordInvestigationsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Investigations"];
 }
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -42,8 +43,8 @@
 						<td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Title)</td>
 						<td><span class="label label-@RmsEnumDisplay.StateClass((RmsInvestigationCaseState)c.State)">@(RmsEnumDisplay.Label<RmsInvestigationCaseState>(c.State))</span></td>
 						<td>@(RmsEnumDisplay.Label<RmsFireCauseClassification>(c.CauseClassification))</td>
-						<td>@RmsEnumDisplay.Day(c.OpenedOn)</td>
-						<td>@RmsEnumDisplay.Day(c.ClosedOn)</td>
+						<td>@departmentTime.Date(c.OpenedOn)</td>
+						<td>@departmentTime.Date(c.ClosedOn)</td>
 						<td><a class="btn btn-xs btn-default" asp-controller="RecordInvestigations" asp-action="Details" asp-route-area="User" asp-route-id="@c.RmsInvestigationCaseId">@L["ViewRecordHeader"]</a></td>
 					</tr>
 				}

@@ -7,6 +7,7 @@
     workspace screens. The field names the capture posts are unchanged.
 *@
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var selection = Model.Selection;
     var context = selection.Context;
     var source = selection.Sources.FirstOrDefault(s => s.Kind == selection.SourceKind);
@@ -127,11 +128,11 @@
                         <div class="rgw-grid">
                             <div class="form-group">
                                 <label asp-for="Input.StartUtc">@localizer["EvidenceCoverageStart"]</label>
-                                <input asp-for="Input.StartUtc" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" type="datetime-local" step="1" class="form-control" required />
+                                <input asp-for="Input.StartUtc" value="@departmentTime.Input(Model.Input.StartUtc)" type="datetime-local" step="0.001" class="form-control" required />
                             </div>
                             <div class="form-group">
                                 <label asp-for="Input.EndUtc">@localizer["EvidenceCoverageEnd"]</label>
-                                <input asp-for="Input.EndUtc" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" type="datetime-local" step="1" class="form-control" required />
+                                <input asp-for="Input.EndUtc" value="@departmentTime.Input(Model.Input.EndUtc)" type="datetime-local" step="0.001" class="form-control" required />
                             </div>
                         </div>
                     }
@@ -140,7 +141,7 @@
                         <div class="rgw-grid">
                             <div class="form-group">
                                 <label asp-for="Input.EndUtc">@localizer["EvidenceValidityTime"]</label>
-                                <input asp-for="Input.EndUtc" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" type="datetime-local" step="1" class="form-control" required />
+                                <input asp-for="Input.EndUtc" value="@departmentTime.Input(Model.Input.EndUtc)" type="datetime-local" step="0.001" class="form-control" required />
                             </div>
                         </div>
                     }
@@ -164,11 +165,11 @@
                                             @(selection.SourceKind == RmsEvidenceKind.ModuleProjection ? localizer["Projection" + choice.Id].Value : choice.Label)
                                             @if (choice.Sequence.HasValue)
                                             {
-                                                <span class="text-muted"> &middot; #@choice.Sequence &middot; @choice.OccurredOn?.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                                                <span class="text-muted"> &middot; #@choice.Sequence &middot; @departmentTime.Format(choice.OccurredOn)</span>
                                             }
                                             @if (choice.EditedOn.HasValue)
                                             {
-                                                <span class="text-muted"> &middot; @localizer["EvidenceEdited"] @choice.EditedOn.Value.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                                                <span class="text-muted"> &middot; @localizer["EvidenceEdited"] @departmentTime.Format(choice.EditedOn)</span>
                                             }
                                             @if (choice.Body != null)
                                             {

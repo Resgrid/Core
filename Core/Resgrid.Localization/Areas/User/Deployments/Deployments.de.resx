@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Gastland</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Gast-Bundesland / -Provinz</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Zeitzone</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Zeitzone am Ereignisort für Zeitberichte; leer verwendet die der Organisation.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Zeitzone für die Einsatzabrechnung. Datum und Uhrzeit auf diesen Seiten verwenden die Zeitzone der Abteilung.</value></data>
   <data name="Currency" xml:space="preserve"><value>Währung</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Außerhalb der Provinz / des Bundeslandes</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Anreise per Flugzeug</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Keine 8 Stunden Ruhe (Überstunden laufen in die nächste Schicht)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Abbruch wegen unsicherer Bedingungen</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Zeiteinträge</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>Zeiten in Ereignis-Ortszeit</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>Zeiten in der Zeitzone der Abteilung</value></data>
   <data name="Subject" xml:space="preserve"><value>Betreff</value></data>
   <data name="EntryType" xml:space="preserve"><value>Eintragsart</value></data>
   <data name="Start" xml:space="preserve"><value>Beginn</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Wählen Sie eine Finanzierungsart.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>Das Ende darf nicht vor dem Beginn liegen.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>Der Rabatt muss zwischen 0 und 100 Prozent liegen.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Die Zeitzone wurde nicht erkannt. Geben Sie eine Windows-Zeitzonen-ID wie "Pacific Standard Time" ein oder lassen Sie das Feld leer, um die der Organisation zu verwenden.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Der Kontakt wurde nicht gefunden.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>Der Alarm wurde nicht gefunden.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Dieser Alarm hat bereits einen Einsatz.</value></data>

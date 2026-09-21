@@ -11,12 +11,12 @@ namespace Resgrid.Services
 {
     public sealed partial class InventoryModernizationService
     {
-        public async Task<WorkOrderPartQuote> QuotePartAsync(InventoryActor actor, int orderId, WorkOrderPartInput input)
+        public async Task<WorkOrderPartQuote> QuotePartAsync(InventoryActor actor, string orderId, WorkOrderPartInput input)
         {
             if (_uow.Transaction == null || _maintenanceOrders == null || _workOrders == null) throw new InvalidOperationException("Reservations require their source transaction.");
             await _store.LockDepartmentAsync(actor.DepartmentId);
             if (!await _store.HasLegacyMigrationAsync(actor.DepartmentId) || !await _auth.IsEnabledAsync(actor.DepartmentId)) throw new InventoryException(409, "InventoryDisabled");
-            var command = new InventoryCommand { RequestId = input.RequestId, Lines = new() { new InventoryPosting { ItemId = input.InventoryItemId, AssetId = input.InventoryAssetId, LotId = input.InventoryLotId, FromLocationId = input.InventoryLocationId, Quantity = input.Content.Quantity, Type = InventoryTransactionType.Consume, ReferenceType = InventoryReferenceType.WorkOrder, ReferenceId = orderId.ToString(CultureInfo.InvariantCulture) } } };
+            var command = new InventoryCommand { RequestId = input.RequestId, Lines = new() { new InventoryPosting { ItemId = input.InventoryItemId, AssetId = input.InventoryAssetId, LotId = input.InventoryLotId, FromLocationId = input.InventoryLocationId, Quantity = input.Content.Quantity, Type = InventoryTransactionType.Consume, ReferenceType = InventoryReferenceType.WorkOrder, ReferenceId = orderId } } };
             await RequireCommandAccessAsync(actor, command, joined: true); await ValidateCommandAsync(actor, command, joined: true);
             var line = command.Lines[0]; var item = await GetAsync<InventoryItem>(actor, line.ItemId);
             var cost = await CostForPostingAsync(actor, item, line);
@@ -39,7 +39,7 @@ namespace Resgrid.Services
             if (_maintenanceOrders == null || line.FromLocationId == null) return 0;
             var allocations = await _maintenanceOrders.AllocatedPartsAsync(departmentId, line.ItemId, line.FromLocationId, line.LotId, line.AssetId);
             var total = allocations.Sum(p => (p.ReservedLocationId == line.FromLocationId ? p.ReservedQuantity : 0) + (p.IssuedLocationId == line.FromLocationId ? p.IssuedQuantity : 0));
-            if (line.WorkOrderPartMovementId.HasValue)
+            if (line.WorkOrderPartMovementId != null)
             {
                 await ValidatePartMovementAsync(departmentId, line);
                 total -= line.Quantity; // Only the validated source movement may use its own allocation.
@@ -48,9 +48,9 @@ namespace Resgrid.Services
         }
         private async Task ValidatePartMovementAsync(int departmentId, InventoryPosting line)
         {
-            if (!line.WorkOrderPartId.HasValue || !line.WorkOrderPartMovementId.HasValue || line.ReversesTransactionId != null) throw new InventoryException(409, "WorkOrderPostingRequired");
-            var part = await _workOrders.GetAsync<WorkOrderPart>(departmentId, line.WorkOrderPartId.Value);
-            var movement = await _workOrders.GetAsync<WorkOrderPartMovement>(departmentId, line.WorkOrderPartMovementId.Value);
+            if (line.WorkOrderPartId == null || line.WorkOrderPartMovementId == null || line.ReversesTransactionId != null) throw new InventoryException(409, "WorkOrderPostingRequired");
+            var part = await _workOrders.GetAsync<WorkOrderPart>(departmentId, line.WorkOrderPartId);
+            var movement = await _workOrders.GetAsync<WorkOrderPartMovement>(departmentId, line.WorkOrderPartMovementId);
             if (part == null || !part.Staged || part.VoidedOn.HasValue || movement?.PartId != part.Id || movement.WorkOrderId != part.WorkOrderId || movement.Cancelled || movement.InventoryTransactionId != null
                 || movement.Quantity != line.Quantity || movement.FromLocationId != line.FromLocationId || movement.ToLocationId != line.ToLocationId || line.AssetId != part.ReservedAssetId || line.LotId != part.ReservedLotId) throw new InventoryException(409, "ReferenceUnavailable");
             var kind = (WorkOrderPartMovementKind)movement.Kind;

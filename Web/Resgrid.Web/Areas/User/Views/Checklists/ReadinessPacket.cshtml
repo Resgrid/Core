@@ -9,11 +9,11 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["ReadinessPacketReport"]</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["PacketMethod"]</div>
@@ -41,7 +41,7 @@
 
             @if (Model != null)
             {
-                <iframe title="@localizer["ReadinessPacketReport"]" sandbox="" referrerpolicy="no-referrer" style="width:100%;height:700px;border:0" srcdoc="@Resgrid.Services.ChecklistReportDocuments.Packet(Model)"></iframe>
+                <iframe title="@localizer["ReadinessPacketReport"]" sandbox="" referrerpolicy="no-referrer" style="width:100%;height:700px;border:0" srcdoc="@Resgrid.Services.ChecklistReportDocuments.Packet(Model, DepartmentTime.From(ViewData).Format)"></iframe>
             }
             else
             {
@@ -60,5 +60,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

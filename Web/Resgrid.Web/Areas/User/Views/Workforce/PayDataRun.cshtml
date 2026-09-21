@@ -3,6 +3,7 @@
 @using Resgrid.Model.Workforce
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["PayDataRun"];
     ViewData["Title"] = localizer["PayDataRun"].Value + " " + Model.Run.ReportingYear + " — " + localizer["ReportType" + (PayDataReportTypes)Model.Run.ReportType].Value;
     ViewData["Subtitle"] = localizer["Status" + (PayDataReportRunStatuses)Model.Run.Status].Value + " · " + Model.Run.SchemaProfileCode;
@@ -16,7 +17,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-12">
@@ -123,7 +124,7 @@
                                     }
                                     else
                                     {
-                                        <p>@localizer["ValidatedOn"]: <strong>@Model.Validation.ValidatedOn.ToString("yyyy-MM-dd HH:mm")</strong> — @(Model.Validation.CanFreeze ? localizer["ReadyToFreeze"] : localizer["NotReadyToFreeze"])</p>
+                                        <p>@localizer["ValidatedOn"]: <strong>@departmentTime.Format(Model.Validation.ValidatedOn)</strong> — @(Model.Validation.CanFreeze ? localizer["ReadyToFreeze"] : localizer["NotReadyToFreeze"])</p>
                                         <h4>@localizer["Errors"] (@Model.Validation.Errors.Count)</h4>
                                         <ul>@foreach (var e in Model.Validation.Errors) { <li class="text-danger">@localizer[e.Code.StartsWith("required_") ? "Validation_required" : "Validation_" + e.Code] <span class="text-muted small">@e.Scope @e.Detail</span></li> }</ul>
                                         <h4>@localizer["Warnings"] (@Model.Validation.Warnings.Count)</h4>
@@ -148,7 +149,7 @@
                                 <tbody>
                                 @foreach (var a in Model.Artifacts)
                                 {
-                                    <tr><td>@a.FileName</td><td>@((PayDataExportFormats)a.Format)</td><td>@a.Size</td><td class="small"><code>@a.Checksum</code></td><td>@a.CreatedOn.ToString("yyyy-MM-dd")</td><td>@(a.PurgedOn.HasValue ? localizer["Purged"].Value : a.ExpiresOn.ToString("yyyy-MM-dd"))</td><td>@a.DownloadCount</td>
+                                    <tr><td>@a.FileName</td><td>@((PayDataExportFormats)a.Format)</td><td>@a.Size</td><td class="small"><code>@a.Checksum</code></td><td>@departmentTime.Date(a.CreatedOn)</td><td>@(a.PurgedOn.HasValue ? localizer["Purged"].Value : departmentTime.Date(a.ExpiresOn))</td><td>@a.DownloadCount</td>
                                         <td class="text-right">@if (a.IsAvailable && Model.CanExportPayData) { <a asp-action="DownloadArtifact" asp-route-id="@a.PayDataExportArtifactId" asp-route-runId="@run.PayDataReportRunId" class="btn btn-xs btn-primary"><i class="fa fa-download"></i></a> }</td></tr>
                                 }
                                 @if (Model.Artifacts.Count == 0)
@@ -173,7 +174,7 @@
                             }
                             @if (run.Status == (int)PayDataReportRunStatuses.CertifiedExternally)
                             {
-                                <p class="m-t-md"><span class="label label-primary">@localizer["StatusCertifiedExternally"]</span> @run.CertifiedOn?.ToString("yyyy-MM-dd") &middot; @localizer["CertificationReference"]: @run.CertificationReference &middot; @localizer["Checksum"]: <code>@run.CertifiedArtifactChecksum</code></p>
+                                <p class="m-t-md"><span class="label label-primary">@localizer["StatusCertifiedExternally"]</span> @departmentTime.Date(run.CertifiedOn) &middot; @localizer["CertificationReference"]: @run.CertificationReference &middot; @localizer["Checksum"]: <code>@run.CertifiedArtifactChecksum</code></p>
                             }
                         }
                     </div>
@@ -182,3 +183,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

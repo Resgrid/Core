@@ -9,13 +9,13 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
         public override void Up()
         {
             Create.Table(N("WorkOrderReportSnapshots"))
-                .WithColumn(N("Id")).AsInt64().PrimaryKey().Identity()
+                .WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().NotNullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).NotNullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable()
                 .WithColumn(N("RecordedOn")).AsDateTime().NotNullable()
-                .WithColumn(N("SourceActivityId")).AsInt32().Nullable()
-                .WithColumn(N("RecurrenceVersionId")).AsInt32().Nullable()
+                .WithColumn(N("SourceActivityId")).AsString(36).Nullable()
+                .WithColumn(N("RecurrenceVersionId")).AsString(36).Nullable()
                 .WithColumn(N("SourceType")).AsInt32().NotNullable()
                 .WithColumn(N("Status")).AsInt32().NotNullable()
                 .WithColumn(N("Priority")).AsInt32().NotNullable()
@@ -30,7 +30,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
             Foreign("Activity", "SourceActivityId", "WorkOrderActivities");
             Foreign("Template", "RecurrenceVersionId", "WorkOrderRecurrenceVersions");
             Index("WorkOrderReportSnapshots", "Revision", true, "DepartmentId", "WorkOrderId", "Revision");
-            Index("WorkOrderReportSnapshots", "AsOf", false, "DepartmentId", "WorkOrderId", "RecordedOn", "Id");
+            Index("WorkOrderReportSnapshots", "AsOf", false, "DepartmentId", "WorkOrderId", "RecordedOn", "Revision");
             Index("WorkOrders", "ReportCreated", false, "DepartmentId", "CreatedOn", "Id");
             // PostgreSQL checks this self-reference for every deleted parent; a missing child index
             // turns an authorized large-department purge into repeated full scans.

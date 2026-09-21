@@ -46,12 +46,16 @@ namespace Resgrid.Model.WorkOrders
     public sealed class WorkOrderRecurrence : WorkOrderRow
     {
         public string RequestId { get; set; }
-        public int CurrentVersionId { get; set; }
+        public string CurrentVersionId { get; set; }
         public int? TargetUnitId { get; set; }
         public int? TargetGroupId { get; set; }
         public string InventoryAssetId { get; set; }
         public string AssignedToUserId { get; set; }
         public int? AssignedToRoleId { get; set; }
+        public string AssignedToUserIdsJson { get; set; }
+        public string AssignedToRoleIdsJson { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped] public List<string> AssignedToUserIds { get => WorkOrderAssignees.Users(AssignedToUserIdsJson, AssignedToUserId); set => AssignedToUserIdsJson = value == null ? null : Newtonsoft.Json.JsonConvert.SerializeObject(value); }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped] public List<int> AssignedToRoleIds { get => WorkOrderAssignees.Roles(AssignedToRoleIdsJson, AssignedToRoleId); set => AssignedToRoleIdsJson = value == null ? null : Newtonsoft.Json.JsonConvert.SerializeObject(value); }
         public int Priority { get; set; }
         public bool IsActive { get; set; }
         public int Calendar { get; set; }
@@ -68,7 +72,7 @@ namespace Resgrid.Model.WorkOrders
         public DateTime? BlackoutUntil { get; set; }
         public DateTime? NextDueOn { get; set; }
         public long Cycle { get; set; }
-        public int? PendingWorkOrderId { get; set; }
+        public string PendingWorkOrderId { get; set; }
         public bool ReadingDue { get; set; }
         public DateTime? ReadingDueOn { get; set; }
         public int MeterUnit { get; set; }
@@ -84,23 +88,25 @@ namespace Resgrid.Model.WorkOrders
         public int? EscalationRoleId { get; set; }
     }
     /// <summary>Immutable protected instructions/configuration; generated orders retain this identity.</summary>
-    public sealed class WorkOrderRecurrenceVersion : WorkOrderRow { public int RecurrenceId { get; set; } }
+    public sealed class WorkOrderRecurrenceVersion : WorkOrderRow { public string RecurrenceId { get; set; } }
     public sealed class WorkOrderMeterReading : WorkOrderRow
     {
-        public int RecurrenceId { get; set; }
+        public string RecurrenceId { get; set; }
         public string RequestId { get; set; }
         public int MeterEpoch { get; set; }
         public DateTime ObservedOn { get; set; }
     }
-    public sealed class WorkOrderRecurrenceChange : WorkOrderRow { public int RecurrenceId { get; set; } public int ChangeType { get; set; } public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } }
+    public sealed class WorkOrderRecurrenceChange : WorkOrderRow { public string RecurrenceId { get; set; } public int ChangeType { get; set; } public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } }
     public sealed class WorkOrderRecurrenceInput
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int Revision { get; set; }
         public bool IsActive { get; set; } = true;
         public WorkOrderInput Template { get; set; } = new();
         public string AssignedToUserId { get; set; }
         public int? AssignedToRoleId { get; set; }
+        public List<string> AssignedToUserIds { get; set; }
+        public List<int> AssignedToRoleIds { get; set; }
         public MaintenanceCalendar Calendar { get; set; } = MaintenanceCalendar.Monthly;
         public int Interval { get; set; } = 1;
         public string TimeZoneId { get; set; } = "UTC";
@@ -136,27 +142,27 @@ namespace Resgrid.Model.Services
     public interface IWorkOrderMaintenanceService
     {
         Task<InventoryPage<WorkOrderChoice>> InventoryChoicesAsync(ChecklistActor actor, string kind, string itemId = null, int page = 0);
-        Task<List<WorkOrderHoldView>> HoldsAsync(ChecklistActor actor, int orderId);
-        Task CancelPartWitnessAsync(ChecklistActor actor, int orderId, int partId, int revision, string reason);
-        Task AddHoldAsync(ChecklistActor actor, int orderId, WorkOrderHoldInput input);
-        Task ReleaseHoldAsync(ChecklistActor actor, int holdId, WorkOrderReleaseInput input);
+        Task<List<WorkOrderHoldView>> HoldsAsync(ChecklistActor actor, string orderId);
+        Task CancelPartWitnessAsync(ChecklistActor actor, string orderId, string partId, int revision, string reason);
+        Task AddHoldAsync(ChecklistActor actor, string orderId, WorkOrderHoldInput input);
+        Task ReleaseHoldAsync(ChecklistActor actor, string holdId, WorkOrderReleaseInput input);
         Task<List<WorkOrderRecurrenceView>> RecurrencesAsync(ChecklistActor actor, int page = 0);
-        Task<WorkOrderRecurrenceView> RecurrenceAsync(ChecklistActor actor, int id, int historyPage = 0);
-        Task<int> SaveRecurrenceAsync(ChecklistActor actor, WorkOrderRecurrenceInput input);
-        Task RecordReadingAsync(ChecklistActor actor, int id, WorkOrderReadingInput input);
-        Task DeferAsync(ChecklistActor actor, int orderId, WorkOrderDeferralInput input);
+        Task<WorkOrderRecurrenceView> RecurrenceAsync(ChecklistActor actor, string id, int historyPage = 0);
+        Task<string> SaveRecurrenceAsync(ChecklistActor actor, WorkOrderRecurrenceInput input);
+        Task RecordReadingAsync(ChecklistActor actor, string id, WorkOrderReadingInput input);
+        Task DeferAsync(ChecklistActor actor, string orderId, WorkOrderDeferralInput input);
         Task<WorkOrderMaintenanceSweep> GenerateMaintenanceAsync(int departmentId);
         Task<WorkOrderMaintenanceSweep> EscalateMaintenanceAsync(int departmentId);
         Task ValidateFailureOptionsAsync(ChecklistActor actor, ChecklistForm form);
         Task RecordFailureIntentAsync(ChecklistActor actor, ChecklistCompletion completion, ChecklistDefinitionVersion version, ChecklistItem item);
-        Task CompleteInventoryPartAsync(InventoryActor actor, int partId, string transactionId, bool reversal, List<long> events);
+        Task CompleteInventoryPartAsync(InventoryActor actor, string partId, string transactionId, bool reversal, List<long> events);
     }
     /// <summary>Inventory owns its permissions, controlled witnesses, ledger and asset state. Caller owns the shared transaction.</summary>
     public interface IInventoryWorkOrderAdapter
     {
-        Task<WorkOrderPartQuote> QuotePartAsync(InventoryActor actor, int orderId, WorkOrderPartInput input);
-        Task<InventoryResult> PostPartAsync(InventoryActor actor, int partId, InventoryCommand command);
-        Task CancelPendingPartAsync(InventoryActor actor, int partId, string operationId);
-        Task<WorkOrderAssetState> ApplyHoldAsync(InventoryActor actor, int orderId, string assetId, int? restoreState = null, int? expectedRevision = null, bool safetyRelease = false);
+        Task<WorkOrderPartQuote> QuotePartAsync(InventoryActor actor, string orderId, WorkOrderPartInput input);
+        Task<InventoryResult> PostPartAsync(InventoryActor actor, string partId, InventoryCommand command);
+        Task CancelPendingPartAsync(InventoryActor actor, string partId, string operationId);
+        Task<WorkOrderAssetState> ApplyHoldAsync(InventoryActor actor, string orderId, string assetId, int? restoreState = null, int? expectedRevision = null, bool safetyRelease = false);
     }
 }

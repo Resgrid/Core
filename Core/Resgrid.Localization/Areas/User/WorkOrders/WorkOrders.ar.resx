@@ -264,7 +264,7 @@
   <data name="ServiceHistory" xml:space="preserve"><value>سجل الخدمة</value></data>
   <data name="ReportFrom" xml:space="preserve"><value>أُنشئ من (UTC، شامل)</value></data>
   <data name="ReportUntil" xml:space="preserve"><value>أُنشئ قبل (UTC، غير شامل)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>وقت الحساب (UTC)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>وقت الحساب</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>إجمالي أوامر العمل</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>أوامر العمل المفتوحة</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>أوامر العمل المتأخرة</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>المراجعة</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>هذا التقرير كبير جدًا. قلّل النطاق الزمني أو حدّد الأهداف بدقة أكبر.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>اختر نطاقًا زمنيًا صالحًا؛ تدعم تقارير لوحة المعلومات مدة تصل إلى ٣٦٦ يومًا.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>الحالة الحالية لأوامر العمل المنشأة ضمن النطاق المحدد بالتوقيت UTC. تشمل الأوامر المفتوحة الأعمال المكتملة التي تنتظر الإغلاق. متوسط زمن الإصلاح هو المدة من أول بدء إلى آخر إكمال، بما فيها فترات التعليق وإعادة الفتح؛ تُستبعد الأوقات غير الصالحة. تُقرّب التكاليف لكل سجل وتُفصل حسب العملة، وتُستبعد القطع الملغاة أو غير المصروفة. تبقى التكاليف وعملات العمل القديمة غير المعروفة كذلك؛ لا تُفترض أسعار صرف.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>الحالة الحالية لأوامر العمل المنشأة ضمن النطاق المحدد بالتوقيت. تشمل الأوامر المفتوحة الأعمال المكتملة التي تنتظر الإغلاق. متوسط زمن الإصلاح هو المدة من أول بدء إلى آخر إكمال، بما فيها فترات التعليق وإعادة الفتح؛ تُستبعد الأوقات غير الصالحة. تُقرّب التكاليف لكل سجل وتُفصل حسب العملة، وتُستبعد القطع الملغاة أو غير المصروفة. تبقى التكاليف وعملات العمل القديمة غير المعروفة كذلك؛ لا تُفترض أسعار صرف.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>سجل الخدمة الكامل ما لم تُحدّد تواريخ. يمثّل كل صف في CSV أمر عمل وعملة واحدة. تستبعد التكاليف المعروفة القطع الملغاة أو غير المصروفة؛ تُعرض الأسعار المفقودة وعملات العمل القديمة على أنها غير معروفة.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>حالة أمر العمل وقت البلاغ، مع مراجع مراجعات غير قابلة للتغيير في البيان. تُدرج أعمال الصيانة المفتوحة الأقدم؛ وتخضع الأعمال المكتملة لفترة الاسترجاع. تُعلّم الحالة التاريخية التي يتعذّر استعادتها بأنها غير متاحة.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>تواريخ العطلات (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>الوقت المستهدف للاستجابة (دقائق العمل)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>الوقت المستهدف للإصلاح (دقائق العمل)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>الموعد النهائي للاستجابة (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>الموعد النهائي للإصلاح (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>وقت الاستجابة (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>الموعد النهائي للاستجابة</value></data>
+<data name="RepairDue" xml:space="preserve"><value>الموعد النهائي للإصلاح</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>وقت الاستجابة</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>رسوم الموردين</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>إضافة رسوم مورد</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>إلغاء الرسوم</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>تجاوز هدف خدمة أمر العمل</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>تغيرت رسوم مورد أمر العمل</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>تغيرت سياسة عمليات أوامر العمل</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>الموعد النهائي للاستجابة (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>الموعد النهائي للإصلاح (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>الموعد النهائي للاستجابة</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>الموعد النهائي للإصلاح</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>أنشئ أوامر الإصلاح وتابع من ينفّذها واطّلع على تكلفة الصيانة.</value></data>
   <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
   <data name="Continue" xml:space="preserve"><value>متابعة</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>إلى من يذهب أمر العمل المُنشأ، وإلى من يُصعَّد إن لم يتولّه أحد.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>يحدّد وسم التأخر وعدّاد مستوى الخدمة.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>الخطوات التي ينفّذها الفني. بعض تغييرات الحالة تتطلب إتمامها جميعًا.</value></data>
+  <data name="Users" xml:space="preserve"><value>المستخدمون</value></data>
+  <data name="Roles" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>حدد مستخدمًا واحدًا أو أكثر و/أو أدوارًا. اضغط باستمرار على Ctrl (Windows) أو Command (Mac) لتحديد عدة عناصر. يمكن لأي مستخدم محدد أو عضو في دور محدد قبول أمر العمل.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>إعدادات أوامر العمل</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>اضبط العملة والموافقات على الإنفاق وساعات العمل والعطلات وأهداف الخدمة مرة واحدة للقسم.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>تُدار العملة في إعدادات أوامر العمل. تحتفظ الأوامر الحالية بعملتها المسجلة.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>ينطبق على أوامر العمل الجديدة ورسوم مورديها. تحتفظ التكاليف وحدود الموافقة الحالية بعملتها الأصلية. إذا استخدم قالب الصيانة عملة أخرى، تُترك التكلفة المقدرة في الأوامر الجديدة فارغة للمراجعة.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>أدخل حد الموافقة بعملة القسم المحددة أعلاه. تُحفظ حدود الأوامر الحالية بالعملات الأخرى.</value></data>
 </root>

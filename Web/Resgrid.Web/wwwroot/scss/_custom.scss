@@ -77,3 +77,102 @@ nav.navbar-static-side .sidebar-collapse {
     max-height: 100dvh;
   }
 }
+/* Give longer profile names room while keeping the dropdown caret on the same line. */
+nav.module-navigation .nav-header {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+.module-navigation .sidebar-profile-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.module-navigation .sidebar-profile-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.module-navigation .sidebar-profile-label > .caret {
+  flex: 0 0 auto;
+  margin-left: 0;
+}
+
+/* Keep module icons and labels on one line, including when hover makes the label bold. */
+.module-navigation #side-menu li > a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Grouped module navigation: aligned icons, room for translated labels, and clear children. */
+.module-navigation #side-menu > .sidebar-module-group > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  font-size: 13px;
+}
+.module-navigation #side-menu > .sidebar-module-group > a > i {
+  flex: 0 0 16px;
+  margin: 0;
+  text-align: center;
+}
+.module-navigation #side-menu > .sidebar-module-group > a > .nav-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.module-navigation #side-menu > .sidebar-module-group > a > .arrow {
+  flex: 0 0 auto;
+}
+.module-navigation #side-menu > .sidebar-module-group > a[aria-expanded="false"] > .arrow::before {
+  content: "\f104";
+}
+.module-navigation #side-menu > .sidebar-module-group > a[aria-expanded="true"] > .arrow::before {
+  content: "\f107";
+}
+.module-navigation #side-menu .nav-second-level > li > a {
+  padding: 9px 12px 9px 28px;
+}
+.module-navigation #side-menu .nav-second-level > li > a > i {
+  width: 16px;
+  text-align: center;
+}
+/* Keep submenus in the sidebar's scroll area instead of clipped flyouts. */
+body.mini-navbar .module-navigation #side-menu .nav-second-level {
+  position: static;
+  min-width: 0;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+}
+body.mini-navbar .module-navigation #side-menu .nav-second-level.mm-collapse:not(.mm-show) {
+  display: none;
+}
+body.mini-navbar .module-navigation #side-menu .nav-second-level.mm-show {
+  display: block;
+}
+body.mini-navbar .module-navigation #side-menu .nav-second-level .nav-label {
+  display: inline;
+}
+/* Give the mobile menu room for labels even though the theme calls it mini-navbar. */
+body.body-small.mini-navbar .module-navigation {
+  width: 220px;
+}
+body.body-small.mini-navbar .module-navigation #side-menu > li > a > span {
+  display: inline;
+}
+@media (min-width: 769px) {
+  body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:hover,
+  body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:focus-within {
+    width: 220px;
+  }
+  body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:hover #side-menu > li > a > span,
+  body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:focus-within #side-menu > li > a > span {
+    display: inline;
+  }
+  body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:not(:hover):not(:focus-within) #side-menu .nav-second-level {
+    display: none;
+  }
+}

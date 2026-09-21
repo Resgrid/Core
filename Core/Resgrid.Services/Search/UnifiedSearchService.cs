@@ -159,6 +159,7 @@ namespace Resgrid.Services.Search
 							Text = text,
 							EntityTypes = types,
 							ViewerUserId = principal.UserId,
+							ViewerScopedEntityTypes = ViewerScopedTypes(principal),
 							IncludeAdminOnly = principal.IsDepartmentAdmin,
 							Prefix = request.Prefix,
 							Skip = 0,
@@ -279,6 +280,17 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.CertificationType, "Certifications");
 			return allowed;
 		}
+
+		/// <summary>
+		/// Families the index must scope to the caller's own rows (owner or participant) on top of Message: deployments for a
+		/// member without Deployments/View, whose rule is roster membership. Asking the index for the caller's deployments only
+		/// keeps the unrostered ones — most of the department's, for a field member — out of the candidate window, so a
+		/// rostered deployment past the window is still found and an authorized total stays provable.
+		/// </summary>
+		private static List<string> ViewerScopedTypes(SearchPrincipal principal) =>
+			principal.IsDepartmentAdmin || principal.HasResourceClaim("Deployments", "View")
+				? null
+				: new List<string> { SearchEntityTypes.Deployment };
 
 		private static UnifiedSearchHit Map(SearchProjection hit, float score)
 		{

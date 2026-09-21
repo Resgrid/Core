@@ -24,6 +24,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_View)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordDeploymentsController : SecureBaseController
 	{
 		private readonly IRecordDeploymentsService _deployments;
@@ -87,6 +88,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await artifact.CopyToAsync(stream, cancellationToken);
 					input.ArtifactData = stream.ToArray(); input.ArtifactFileName = Path.GetFileName(artifact.FileName); input.ArtifactContentType = artifact.ContentType;
 				}
+				foreach (var fill in input.Fills) fill.NeededOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(fill.NeededOn);
 				var created = await _deployments.CreateFromExternalOrderAsync(DepartmentId, UserId, input, cancellationToken);
 				TempData["RecordsMessage"] = _localizer["DeploymentCreated"].Value;
 				return RedirectToAction("Details", new { id = created.Order.RmsExternalOrderId });
@@ -117,6 +119,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			try
 			{
+				newFill.NeededOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(newFill.NeededOn);
 				await _deployments.AddFillAsync(DepartmentId, UserId, id, newFill, cancellationToken);
 				TempData["RecordsMessage"] = _localizer["DeploymentFillAdded"].Value;
 			}
@@ -132,7 +135,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			try
 			{
-				await _deployments.TransitionFillAsync(DepartmentId, UserId, fillId, new RecordDeploymentFillTransitionInput { Status = (RmsDeploymentFillStatus)status, OccurredOn = occurredOn?.ToUniversalTime(), Reason = reason, Notes = notes }, cancellationToken);
+				await _deployments.TransitionFillAsync(DepartmentId, UserId, fillId, new RecordDeploymentFillTransitionInput { Status = (RmsDeploymentFillStatus)status, OccurredOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(occurredOn), Reason = reason, Notes = notes }, cancellationToken);
 				TempData["RecordsMessage"] = _localizer["DeploymentFillUpdated"].Value;
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }

@@ -681,6 +681,14 @@ namespace Resgrid.Services.CostRecovery
 			target.OvertimeMethod = agreement.OvertimeMethod;
 			target.StartOn = agreement.StartOn;
 			target.EndOn = agreement.EndOn;
+			// A referenced revision owns the dates from its start and the prior snapshot closes the day before it (below). With no
+			// submitted start the revision is effective today; left open-ended it would also cover the dates the prior snapshot
+			// keeps and, sharing its null start, outrank it on RowVersion. Ordinary open-ended agreements keep their null start.
+			if (referenced && !target.StartOn.HasValue)
+			{
+				target.StartOn = now.Date;
+				if (target.EndOn.HasValue && target.EndOn.Value.Date < target.StartOn.Value) throw new InvalidOperationException("calmars_dates_invalid");
+			}
 			target.AttachmentId = agreement.AttachmentId;
 			target.AttachmentChecksum = Trim(agreement.AttachmentChecksum);
 			target.SourceArtifact = Trim(agreement.SourceArtifact);

@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Due date deferred</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Maintenance reports</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Service history</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Created from (UTC, inclusive)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Created before (UTC, exclusive)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Calculated at (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Created from (inclusive)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Created before (exclusive)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Calculated at</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Total work orders</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Open work orders</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Overdue work orders</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Revision</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>This report is too large. Narrow the date range or target filters.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Choose a valid date range; dashboard reports support up to 366 days.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Current state of work orders created in the selected UTC range. Open includes completed work awaiting closure. MTTR is elapsed time from first start to latest completion, including holds and reopens; invalid times are excluded. Costs are rounded per entry, separated by currency, and exclude voided or unissued parts. Unknown costs and legacy labor currency remain unknown; no exchange rates are assumed.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Current state of work orders created in the selected range. Open includes completed work awaiting closure. MTTR is elapsed time from first start to latest completion, including holds and reopens; invalid times are excluded. Costs are rounded per entry, separated by currency, and exclude voided or unissued parts. Unknown costs and legacy labor currency remain unknown; no exchange rates are assumed.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>All-time service history unless dates are selected. Each CSV row represents one order and currency. Known costs exclude voided or unissued parts; missing prices and legacy labor currency are reported as unknown.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Work-order state at the call time, with immutable revision references in the manifest. Older open maintenance is included; completed work uses the lookback window. Unrecoverable historical state is marked unavailable.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Nonworking dates (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Response target (working minutes)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Repair target (working minutes)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Response deadline (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Repair deadline (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Responded at (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Response deadline</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Repair deadline</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Responded at</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Vendor charges</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Add vendor charge</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Void charge</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Work order service target missed</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Work order vendor charge changed</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Work order operations policy changed</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Response deadline (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Repair deadline (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Response deadline</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Repair deadline</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Raise repairs, track who is doing them, and see what maintenance has cost.</value></data>
   <data name="Close" xml:space="preserve"><value>Close</value></data>
   <data name="Continue" xml:space="preserve"><value>Continue</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Who the generated work order goes to, and who it escalates to if nobody picks it up.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Drives the overdue flag and the service level clock.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>The checks the technician works down. Some transitions require them all to be done.</value></data>
+  <data name="Users" xml:space="preserve"><value>Users</value></data>
+  <data name="Roles" xml:space="preserve"><value>Roles</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Select one or more users and/or roles. Hold Ctrl (Windows) or Command (Mac) to select multiple entries. Any selected user or member of a selected role can accept the work order.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Work Order Settings</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Configure currency, spending approvals, business hours, holidays and service targets once for the department.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Currency is managed in Work Order Settings. Existing orders keep their recorded currency.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Applies to new work orders and vendor charges on those orders. Existing costs and approval thresholds keep their original currency. If a maintenance template uses another currency, its estimated cost is left blank on new orders for review.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Enter the approval threshold in the department currency selected above. Thresholds for existing orders in other currencies are retained.</value></data>
 </root>

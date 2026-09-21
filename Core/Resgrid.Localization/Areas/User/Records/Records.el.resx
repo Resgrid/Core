@@ -2005,9 +2005,9 @@
   <data name="HoldRecordIdHelp" xml:space="preserve"><value>Αφήστε κενό για να δεσμεύσετε ό,τι ταιριάζει σε ορισμό και εύρος ημερομηνιών.</value></data>
   <data name="HoldDefinition" xml:space="preserve"><value>Εύρος ορισμού</value></data>
   <data name="HoldNerisScope" xml:space="preserve"><value>Συμβάν και ανάλυση NERIS</value></data>
-  <data name="HoldScopeHelp" xml:space="preserve"><value>Για εύρος ορισμού, αφήστε και τις δύο ημερομηνίες κενές για να διατηρηθούν όλες. Ώρες σε UTC.</value></data>
-  <data name="HoldPeriodStart" xml:space="preserve"><value>Έναρξη περιόδου (UTC)</value></data>
-  <data name="HoldPeriodEnd" xml:space="preserve"><value>Λήξη περιόδου (UTC)</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>Για εύρος ορισμού, αφήστε και τις δύο ημερομηνίες κενές για να διατηρηθούν όλες. Ώρες σε τοπική ώρα του τμήματος.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Έναρξη περιόδου</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Λήξη περιόδου</value></data>
   <data name="HoldReason" xml:space="preserve"><value>Βάση της δέσμευσης</value></data>
   <data name="HoldReasonLitigation" xml:space="preserve"><value>Δικαστική διαφορά</value></data>
   <data name="HoldReasonInvestigation" xml:space="preserve"><value>Έρευνα</value></data>
@@ -2038,9 +2038,9 @@
   <data name="EvidenceChooseChannel" xml:space="preserve"><value>Επιλέξτε κανάλι</value></data>
   <data name="EvidenceRestricted" xml:space="preserve"><value>απαιτείται περιορισμένη πρόσβαση</value></data>
   <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Δεν καταγράφονται τεκμήρια για μη διαθέσιμη πηγή.</value></data>
-  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Έναρξη κάλυψης (UTC)</value></data>
-  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Λήξη κάλυψης (UTC)</value></data>
-  <data name="EvidenceValidityTime" xml:space="preserve"><value>Ώρα συμβάντος για την ισχύ (UTC)</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Έναρξη κάλυψης</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Λήξη κάλυψης</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Ώρα συμβάντος για την ισχύ</value></data>
   <data name="EvidencePersonnel" xml:space="preserve"><value>Προσωπικό</value></data>
   <data name="EvidenceMessages" xml:space="preserve"><value>Μηνύματα</value></data>
   <data name="EvidenceNoChoices" xml:space="preserve"><value>Δεν υπάρχουν προσβάσιμα στοιχεία σε αυτή τη σελίδα.</value></data>
@@ -2056,7 +2056,7 @@
   <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Δεν καταγράφηκε αναγνωριστικό</value></data>
   <data name="SubmissionLatestIssue" xml:space="preserve"><value>Τελευταίο ζήτημα</value></data>
   <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Ιστορικό παράδοσης και απόκρισης</value></data>
-  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Ώρες σε UTC. Οι προηγούμενες αποκρίσεις παραμένουν διαθέσιμες μετά από απόρριψη, επανάληψη και διόρθωση.</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Ώρες σε τοπική ώρα του τμήματος. Οι προηγούμενες αποκρίσεις παραμένουν διαθέσιμες μετά από απόρριψη, επανάληψη και διόρθωση.</value></data>
   <data name="SubmissionNoExchanges" xml:space="preserve"><value>Δεν καταγράφηκε ιστορικό ανταλλαγής για αυτή την παλαιά υποβολή.</value></data>
   <data name="SubmissionOperation" xml:space="preserve"><value>Λειτουργία και στάδιο</value></data>
   <data name="SubmissionResponse" xml:space="preserve"><value>Απόκριση προορισμού</value></data>

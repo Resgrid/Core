@@ -25,6 +25,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// Bids_Create/Update/Delete (admins by default) edit. Bids are customer-facing and not under Advanced Data Protection.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class BidsController : SecureBaseController
 	{
 		// Line descriptions, entry and premium names are user text rendered inside a <script> block; EscapeHtml keeps "</script>" out of the page.

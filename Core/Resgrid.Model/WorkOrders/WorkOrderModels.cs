@@ -9,17 +9,17 @@ namespace Resgrid.Model.WorkOrders
 	public enum WorkOrderPriority { Low = 0, Normal = 1, High = 2, Emergency = 3 }
 	public enum WorkOrderType { Corrective = 0, Preventive = 1, Inspection = 2, Facility = 3, Other = 4 }
 	public enum WorkOrderActivityType { Created = 0, Updated = 1, StatusChanged = 2, Assigned = 3, AssignmentAccepted = 4, Comment = 5, LaborAdded = 6, PartAdded = 7, PartVoided = 8, FileAdded = 9, FileWithdrawn = 10, SafetyHold = 11, SafetyReleased = 12, Deferred = 13, Escalated = 14 }
-	/// <summary>Free text, monetary details and file names live only in cataloged Content. Numeric identities are allocated with empty content before sealing.</summary>
+	/// <summary>Free text, monetary details and file names live only in cataloged Content. GUID identities are allocated with empty content before sealing.</summary>
 	public abstract class WorkOrderRow : IEntity
 	{
-		[NotMapped, Newtonsoft.Json.JsonIgnore] public object IdValue { get => Id; set => Id = Convert.ToInt32(value); }
+		[NotMapped, Newtonsoft.Json.JsonIgnore] public object IdValue { get => Id; set => Id = (string)value; }
 		[NotMapped, Newtonsoft.Json.JsonIgnore] public string TableName => WorkOrderTables.All[GetType()];
 		[NotMapped, Newtonsoft.Json.JsonIgnore] public string IdName => "Id";
-		[NotMapped, Newtonsoft.Json.JsonIgnore] public int IdType => 0;
+		[NotMapped, Newtonsoft.Json.JsonIgnore] public int IdType => 1;
 		[NotMapped, Newtonsoft.Json.JsonIgnore] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "TableName", "IdName", "IdType", "IgnoredProperties" };
-		public int Id { get; set; }
+		public string Id { get; set; }
 		public int DepartmentId { get; set; }
-		public int? WorkOrderId { get; set; }
+		public string WorkOrderId { get; set; }
 		public string Content { get; set; }
 		public int Revision { get; set; } = 1;
 		public DateTime CreatedOn { get; set; }
@@ -29,6 +29,8 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrder : WorkOrderRow
 	{
+		// Pins department currency at creation, including worker-generated orders with deferred content.
+		public string CurrencyCode { get; set; }
 		public DateTime? ResponseDueOn { get; set; }
 		public DateTime? RepairDueOn { get; set; }
 		public DateTime? ResponseOn { get; set; }
@@ -50,6 +52,10 @@ namespace Resgrid.Model.WorkOrders
 		public string InventoryAssetId { get; set; }
 		public string AssignedToUserId { get; set; }
 		public int? AssignedToRoleId { get; set; }
+		public string AssignedToUserIdsJson { get; set; }
+		public string AssignedToRoleIdsJson { get; set; }
+		[NotMapped] public List<string> AssignedToUserIds { get => WorkOrderAssignees.Users(AssignedToUserIdsJson, AssignedToUserId); set => AssignedToUserIdsJson = value == null ? null : Newtonsoft.Json.JsonConvert.SerializeObject(value); }
+		[NotMapped] public List<int> AssignedToRoleIds { get => WorkOrderAssignees.Roles(AssignedToRoleIdsJson, AssignedToRoleId); set => AssignedToRoleIdsJson = value == null ? null : Newtonsoft.Json.JsonConvert.SerializeObject(value); }
 		public DateTime? DueOn { get; set; }
 		public DateTime? TriagedOn { get; set; }
 		public DateTime? AssignedOn { get; set; }
@@ -60,12 +66,12 @@ namespace Resgrid.Model.WorkOrders
 		public string CompletedBy { get; set; }
 		public DateTime? ClosedOn { get; set; }
 		public string VerifiedBy { get; set; }
-		public int? DuplicateOfId { get; set; }
+		public string DuplicateOfId { get; set; }
 		public bool SetUnitOutOfService { get; set; }
 		public bool RestoreUnitStateOnClose { get; set; }
 		public int? PreviousUnitStateType { get; set; }
 		public string WorkOrderRecurrenceId { get; set; }
-		public int? RecurrenceVersionId { get; set; }
+		public string RecurrenceVersionId { get; set; }
 		public long? RecurrenceCycle { get; set; }
 		public DateTime? OriginalDueOn { get; set; }
 		public DateTime? EscalatedOn { get; set; }

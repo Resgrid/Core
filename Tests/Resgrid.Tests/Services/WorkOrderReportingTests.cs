@@ -20,7 +20,7 @@ namespace Resgrid.Tests.Services
         {
             var row = new WorkOrder { DepartmentId = 77, CreatedBy = "manager", RequestId = Guid.NewGuid().ToString("D"), NumberYear = created.Year, CreatedOn = created, UpdatedOn = created,
                 Status = status, Priority = priority, TargetUnitId = unit, InventoryAssetId = asset };
-            await _store.AllocateAsync(row); row.NumberSequence = row.Id;
+            await _store.AllocateAsync(row); row.NumberSequence = await _store.NextNumberAsync(row.DepartmentId, row.NumberYear);
             row.Content = JsonConvert.SerializeObject(new { Fields = new WorkOrderContent { Title = "Synthetic repair " + row.Id, Currency = "USD" } });
             await _store.WriteAsync(row); return row;
         }
@@ -67,8 +67,8 @@ namespace Resgrid.Tests.Services
             await ReportSeed(DateTime.UtcNow.AddDays(-1), asset: Guid.NewGuid().ToString("D"));
             var deleted = await ReportSeed(DateTime.UtcNow.AddDays(-1), asset: asset); deleted.IsDeleted = true; await _store.WriteAsync(deleted);
             var page = await _service.GetWorkOrderHistoryAsync(_actor, new WorkOrderReportQuery { AssetId = asset });
-            page.Items.Should().HaveCount(50); page.NextAfterId.Should().HaveValue();
-            var next = await _service.GetWorkOrderHistoryAsync(_actor, new WorkOrderReportQuery { AssetId = asset, AfterId = page.NextAfterId.Value });
+            page.Items.Should().HaveCount(50); page.NextAfterId.Should().NotBeNullOrEmpty();
+            var next = await _service.GetWorkOrderHistoryAsync(_actor, new WorkOrderReportQuery { AssetId = asset, AfterId = page.NextAfterId });
             next.Items.Should().HaveCount(5); next.NextAfterId.Should().BeNull(); page.Items.Concat(next.Items).Select(e => e.Order.Id).Should().OnlyHaveUniqueItems();
             (await _service.GetWorkOrderHistoryAsync(new ChecklistActor { DepartmentId = 77, UserId = "outsider" }, new WorkOrderReportQuery())).Items.Should().BeEmpty();
             (await _service.GetWorkOrderHistoryAsync(new ChecklistActor { DepartmentId = 88, UserId = "manager" }, new WorkOrderReportQuery())).Items.Should().BeEmpty();
@@ -94,7 +94,7 @@ namespace Resgrid.Tests.Services
             await _service.UpdateAsync(_actor, detail.Order.Id, edit);
             var packet = await _service.ReadinessEvidenceAsync(_actor, at.AddDays(-30), at, new[] { 10 }, Array.Empty<string>());
             packet.Items.Should().ContainSingle(); packet.Items[0].Title.Should().Be(input.Content.Title); packet.Items[0].Revision.Should().Be(1); packet.Items[0].UnitId.Should().Be(10);
-            packet.Items[0].SourceActivityId.Should().HaveValue(); packet.Items[0].SnapshotId.Should().HaveValue(); packet.HistoryUnavailable.Should().BeFalse();
+            packet.Items[0].SourceActivityId.Should().NotBeNullOrEmpty(); packet.Items[0].SnapshotId.Should().NotBeNullOrEmpty(); packet.HistoryUnavailable.Should().BeFalse();
             var other = await _service.ReadinessEvidenceAsync(_actor, at.AddDays(-30), at, new[] { 20 }, Array.Empty<string>()); other.Items.Should().BeEmpty();
             var manifest = new ReadinessEvidenceManifestV1 { DepartmentId = 77, CallId = 5, WorkOrders = packet.Items };
             var current = new ReadinessEvidenceManifestV1 { DepartmentId = 77, CallId = 5 };
@@ -151,7 +151,7 @@ namespace Resgrid.Tests.Services
                 await _store.AllocateAsync(activity); activity.Content = "{\"Note\":\"Synthetic event\"}"; await _store.WriteAsync(activity);
             }
             var first = await _service.GetWorkOrderActivityAsync(_actor, detail.Order.Id); first.Items.Should().HaveCount(50);
-            var next = await _service.GetWorkOrderActivityAsync(_actor, detail.Order.Id, first.NextAfterId.Value); next.Items.Should().HaveCount(6); next.NextAfterId.Should().BeNull();
+            var next = await _service.GetWorkOrderActivityAsync(_actor, detail.Order.Id, first.NextAfterId); next.Items.Should().HaveCount(6); next.NextAfterId.Should().BeNull();
             var hold = new WorkOrderSafetyHold { DepartmentId = 77, WorkOrderId = detail.Order.Id, UnitId = 10, CreatedOn = at.AddTicks(-1), ReleasedOn = at.AddDays(1), CreatedBy = "manager" };
             await _store.AllocateAsync(hold); hold.Content = "{\"Reason\":\"Synthetic sensitive hold\"}"; await _store.WriteAsync(hold);
             var section = await _service.ReadinessEvidenceAsync(_actor, at.AddDays(-30), at, new[] { 10 }, Array.Empty<string>());
@@ -175,23 +175,30 @@ namespace Resgrid.Tests.Services
             private List<WorkOrderReportSnapshot> _snapshotsBefore;
             private void BeginReporting() => _snapshotsBefore = Snapshots.Select(Copy).ToList();
             private void RollbackReporting() { if (_snapshotsBefore != null) Snapshots = _snapshotsBefore; }
-            public Task<List<WorkOrder>> ReportOrdersAsync(int departmentId, WorkOrderReadScope scope, WorkOrderReportQuery query, int take, int[] ids = null) => Task.FromResult(All<WorkOrder>().Where(r => r.DepartmentId == departmentId && !r.IsDeleted && scope.Allows(r)
-                && r.Id > query.AfterId && (ids == null || ids.Contains(r.Id)) && (!query.PreventiveDueCohort || r.Type == 1) && (!query.FromUtc.HasValue || (query.PreventiveDueCohort ? r.OriginalDueOn ?? r.DueOn : r.CreatedOn) >= query.FromUtc) && (!query.UntilUtc.HasValue || (query.PreventiveDueCohort ? r.OriginalDueOn ?? r.DueOn : r.CreatedOn) < query.UntilUtc)
+            private static bool After<T>(T row, IEnumerable<T> all, string afterId) where T : WorkOrderRow
+            {
+                if (afterId == null) return true;
+                var cursor = all.SingleOrDefault(r => r.DepartmentId == row.DepartmentId && r.Id == afterId);
+                if (cursor == null) return false;
+                return row.CreatedOn > cursor.CreatedOn || row.CreatedOn == cursor.CreatedOn && (row is WorkOrderActivity && row.Revision > cursor.Revision || (row is not WorkOrderActivity || row.Revision == cursor.Revision) && string.CompareOrdinal(row.Id, cursor.Id) > 0);
+            }
+            public Task<List<WorkOrder>> ReportOrdersAsync(int departmentId, WorkOrderReadScope scope, WorkOrderReportQuery query, int take, string[] ids = null) => Task.FromResult(All<WorkOrder>().Where(r => r.DepartmentId == departmentId && !r.IsDeleted && scope.Allows(r)
+                && After(r, All<WorkOrder>(), query.AfterId) && (ids == null || ids.Contains(r.Id)) && (!query.PreventiveDueCohort || r.Type == 1) && (!query.FromUtc.HasValue || (query.PreventiveDueCohort ? r.OriginalDueOn ?? r.DueOn : r.CreatedOn) >= query.FromUtc) && (!query.UntilUtc.HasValue || (query.PreventiveDueCohort ? r.OriginalDueOn ?? r.DueOn : r.CreatedOn) < query.UntilUtc)
                 && (!query.Status.HasValue || r.Status == (int)query.Status) && (!query.Priority.HasValue || r.Priority == (int)query.Priority)
-                && (!query.UnitId.HasValue || r.TargetUnitId == query.UnitId) && (!query.GroupId.HasValue || r.TargetGroupId == query.GroupId) && (query.AssetId == null || r.InventoryAssetId == query.AssetId)).OrderBy(r => r.Id).Take(take).ToList());
-            public Task<List<T>> ReportChildrenAsync<T>(int departmentId, int[] orderIds, int afterId, int take) where T : WorkOrderRow => Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId && r.Id > afterId && r.WorkOrderId.HasValue && orderIds.Contains(r.WorkOrderId.Value)).OrderBy(r => r.Id).Take(take).ToList());
-            public Task CaptureReportSnapshotAsync(WorkOrder row, DateTime recordedOn, int? activityId)
+                && (!query.UnitId.HasValue || r.TargetUnitId == query.UnitId) && (!query.GroupId.HasValue || r.TargetGroupId == query.GroupId) && (query.AssetId == null || r.InventoryAssetId == query.AssetId)).OrderBy(r => r.CreatedOn).ThenBy(r => r.Id, StringComparer.Ordinal).Take(take).ToList());
+            public Task<List<T>> ReportChildrenAsync<T>(int departmentId, string[] orderIds, string afterId, int take) where T : WorkOrderRow => Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId && After(r, All<T>(), afterId) && r.WorkOrderId != null && orderIds.Contains(r.WorkOrderId)).OrderBy(r => r.CreatedOn).ThenBy(r => r is WorkOrderActivity ? r.Revision : 0).ThenBy(r => r.Id, StringComparer.Ordinal).Take(take).ToList());
+            public Task CaptureReportSnapshotAsync(WorkOrder row, DateTime recordedOn, string activityId)
             {
                 var previous = Snapshots.LastOrDefault(s => s.DepartmentId == row.DepartmentId && s.WorkOrderId == row.Id);
                 if (previous?.Revision >= row.Revision) return Task.CompletedTask;
-                Snapshots.Add(new WorkOrderReportSnapshot { Id = Snapshots.Count + 1, DepartmentId = row.DepartmentId, WorkOrderId = row.Id, Revision = row.Revision, RecordedOn = recordedOn,
-                    SourceActivityId = activityId ?? previous?.SourceActivityId, RecurrenceVersionId = row.RecurrenceVersionId, SourceType = activityId.HasValue ? row.SourceType : previous?.SourceType ?? (row.Content == null ? row.SourceType : 0),
+                Snapshots.Add(new WorkOrderReportSnapshot { DepartmentId = row.DepartmentId, WorkOrderId = row.Id, Revision = row.Revision, RecordedOn = recordedOn,
+                    SourceActivityId = activityId ?? previous?.SourceActivityId, RecurrenceVersionId = row.RecurrenceVersionId, SourceType = activityId != null ? row.SourceType : previous?.SourceType ?? (row.Content == null ? row.SourceType : 0),
                     Status = row.Status, Priority = row.Priority, TargetUnitId = row.TargetUnitId, TargetGroupId = row.TargetGroupId, InventoryAssetId = row.InventoryAssetId, DueOn = row.DueOn, StartedOn = row.StartedOn, CompletedOn = row.CompletedOn, ClosedOn = row.ClosedOn });
                 return Task.CompletedTask;
             }
-            public Task<List<WorkOrderReportSnapshot>> ReportSnapshotsAsync(int departmentId, int[] orderIds, DateTime asOf) => Task.FromResult(Snapshots.Where(s => s.DepartmentId == departmentId && orderIds.Contains(s.WorkOrderId) && s.RecordedOn <= asOf).GroupBy(s => s.WorkOrderId).Select(g => Copy(g.OrderBy(s => s.RecordedOn).ThenBy(s => s.Id).Last())).ToList());
-            public Task<List<WorkOrderReportSnapshot>> ReportSnapshotHistoryAsync(int departmentId, int orderId, long afterId) => Task.FromResult(Snapshots.Where(s => s.DepartmentId == departmentId && s.WorkOrderId == orderId && s.Id > afterId).OrderBy(s => s.Id).Take(500).Select(Copy).ToList());
-            public async Task<List<WorkOrder>> ReportPacketOrdersAsync(int departmentId, WorkOrderReadScope scope, DateTime asOf, int[] unitIds, string[] assetIds, int afterId)
+            public Task<List<WorkOrderReportSnapshot>> ReportSnapshotsAsync(int departmentId, string[] orderIds, DateTime asOf) => Task.FromResult(Snapshots.Where(s => s.DepartmentId == departmentId && orderIds.Contains(s.WorkOrderId) && s.RecordedOn <= asOf).GroupBy(s => s.WorkOrderId).Select(g => Copy(g.OrderBy(s => s.RecordedOn).ThenBy(s => s.Revision).Last())).ToList());
+            public Task<List<WorkOrderReportSnapshot>> ReportSnapshotHistoryAsync(int departmentId, string orderId, string afterId) => Task.FromResult(Snapshots.Where(s => s.DepartmentId == departmentId && s.WorkOrderId == orderId && (afterId == null || s.Revision > Snapshots.Single(c => c.DepartmentId == departmentId && c.Id == afterId).Revision)).OrderBy(s => s.Revision).Take(500).Select(Copy).ToList());
+            public async Task<List<WorkOrder>> ReportPacketOrdersAsync(int departmentId, WorkOrderReadScope scope, DateTime asOf, int[] unitIds, string[] assetIds, string afterId)
             {
                 var rows = await ReportOrdersAsync(departmentId, scope, new WorkOrderReportQuery { UntilUtc = asOf.AddTicks(1), AfterId = afterId }, int.MaxValue);
                 return rows.Where(r => r.TargetUnitId.HasValue && unitIds.Contains(r.TargetUnitId.Value) || r.InventoryAssetId != null && assetIds.Contains(r.InventoryAssetId)

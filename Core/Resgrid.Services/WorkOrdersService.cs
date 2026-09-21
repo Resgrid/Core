@@ -44,7 +44,7 @@ namespace Resgrid.Services
 		private DateTime Now => _clock.GetUtcNow().UtcDateTime;
 		private sealed class StoredContent { public WorkOrderContent Fields { get; set; } public string RequestHash { get; set; } }
 		private static T Decode<T>(string value) => JsonConvert.DeserializeObject<T>(value ?? "{}");
-		private static string Key(WorkOrderRow row) => row.Id.ToString(CultureInfo.InvariantCulture);
+		private static string Key(WorkOrderRow row) => row.Id;
 		private static void Revision(WorkOrderRow row, int revision) { if (row.Revision != revision) throw new WorkOrderException(409, "Conflict"); }
 		private static void Text(string value, int limit, bool required = false) { if (value?.Length > limit || required && string.IsNullOrWhiteSpace(value)) throw new WorkOrderException(400, "InvalidInput"); }
 		private static void Money(decimal? value) { if (value < 0 || value > 100000000m || value.HasValue && decimal.Round(value.Value, 2) != value.Value) throw new WorkOrderException(400, "InvalidInput"); }
@@ -54,10 +54,10 @@ namespace Resgrid.Services
 			await _authorization.RequireMemberAsync(actor);
 			if (!await _access.CanUseMaintenanceAsync(actor.DepartmentId)) throw new WorkOrderException(402, "ReadinessProRequired");
 		}
-		private async Task<WorkOrder> ReadOrderAsync(ChecklistActor actor, int id)
+		private async Task<WorkOrder> ReadOrderAsync(ChecklistActor actor, string id)
 		{
 			await _authorization.RequireMemberAsync(actor);
-			var row = id > 0 ? await _store.GetAsync<WorkOrder>(actor.DepartmentId, id) : null;
+			var row = Guid.TryParseExact(id, "D", out _) ? await _store.GetAsync<WorkOrder>(actor.DepartmentId, id) : null;
 			if (row == null || row.IsDeleted || !(await _authorization.ScopeAsync(actor)).Allows(row)) throw new WorkOrderException(404, "Unavailable");
 			return await RevealOrderAsync(actor, row);
 		}
@@ -77,7 +77,7 @@ namespace Resgrid.Services
 			if (result?.Success != true || result.IsProtected && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content)) throw new WorkOrderException(403, "ProtectedDataRequired");
 			await _store.WriteAsync(row);
 		}
-		private T New<T>(ChecklistActor actor, int? orderId = null) where T : WorkOrderRow, new() => new T { DepartmentId = actor.DepartmentId, WorkOrderId = orderId, CreatedBy = actor.UserId, CreatedOn = Now, UpdatedOn = Now };
+		private T New<T>(ChecklistActor actor, string orderId = null) where T : WorkOrderRow, new() => new T { DepartmentId = actor.DepartmentId, WorkOrderId = orderId, CreatedBy = actor.UserId, CreatedOn = Now, UpdatedOn = Now };
 		private async Task<T> TransactionAsync<T>(ChecklistActor actor, Func<List<long>, Task<T>> command, bool safetyRelease = false)
 		{
 			if (safetyRelease) await _authorization.RequireMemberAsync(actor); else await RequireWriteAsync(actor);
@@ -92,9 +92,9 @@ namespace Resgrid.Services
 			catch { _uow.DiscardChanges(); throw; }
 			await _outbox.DispatchAfterCommitAsync(events); return result;
 		}
-		private async Task<int> ActivityAsync(ChecklistActor actor, WorkOrder row, WorkOrderActivityType type, string note = null, int? oldStatus = null, int? newStatus = null, WorkOrderContent snapshot = null, DateTime? previousDue = null)
+		private async Task<string> ActivityAsync(ChecklistActor actor, WorkOrder row, WorkOrderActivityType type, string note = null, int? oldStatus = null, int? newStatus = null, WorkOrderContent snapshot = null, DateTime? previousDue = null)
 		{
-			var activity = New<WorkOrderActivity>(actor, row.Id); activity.ActivityType = (int)type; activity.OldStatus = oldStatus; activity.NewStatus = newStatus;
+			var activity = New<WorkOrderActivity>(actor, row.Id); activity.Revision = row.Revision; activity.ActivityType = (int)type; activity.OldStatus = oldStatus; activity.NewStatus = newStatus;
 			activity.Content = JsonConvert.SerializeObject(new { Note = note, Snapshot = snapshot, row.ResponseDueOn, row.RepairDueOn, row.ResponseOn, row.SlaPolicyRevision, OriginalDueOn = previousDue, RevisedDueOn = type == WorkOrderActivityType.Deferred ? row.DueOn : null, AssignedToUserId = type == WorkOrderActivityType.Assigned ? row.AssignedToUserId : null, AssignedToRoleId = type == WorkOrderActivityType.Assigned ? row.AssignedToRoleId : null }); await SaveAsync(actor, activity, true);
 			var audit = await _audit.InsertAsync(new AuditLog { DepartmentId = actor.DepartmentId, ObjectDepartmentId = actor.DepartmentId, UserId = actor.UserId, ObjectId = Key(row),
 				LogType = (int)AuditLogTypes.WorkOrderChanged, LoggedOn = Now, Successful = true, Message = "WorkOrderChanged", ServerName = Environment.MachineName }, CancellationToken.None);
@@ -104,7 +104,7 @@ namespace Resgrid.Services
 			await _audit.UpdateAsync(audit, CancellationToken.None);
 			return activity.Id;
 		}
-		private async Task EventAsync(WorkOrder row, WorkflowTriggerEventType? trigger, List<long> events, int? oldStatus = null, int? activityId = null, int? approvalState = null)
+		private async Task EventAsync(WorkOrder row, WorkflowTriggerEventType? trigger, List<long> events, int? oldStatus = null, string activityId = null, int? approvalState = null)
 		{
 			await _store.CaptureReportSnapshotAsync(row, Now, activityId);
 			var entry = await _outbox.EnqueueAsync(row.DepartmentId, "WorkOrders", new DomainEventEnvelope { EventName = trigger?.ToString() ?? "WorkOrderUpdated", AggregateType = "WorkOrder", AggregateId = Key(row), AggregateVersion = row.Revision,
@@ -124,7 +124,6 @@ namespace Resgrid.Services
 			if (input?.Content == null || !Guid.TryParseExact(input.RequestId, "D", out _) || !Enum.IsDefined(input.Type) || !Enum.IsDefined(input.Priority)) throw new WorkOrderException(400, "InvalidInput");
 			var c = input.Content; Text(c.Title, 200, true); Text(c.Description, 20000); Text(c.LocationText, 1000); Text(c.CostCenter, 200);
 			foreach (var v in new[] { c.VendorDetails, c.WarrantyReference, c.ProcedureReference, c.ProcedureVersion, c.PermitReference, c.IsolationReference, c.QualifiedPersonnel, c.Resolution, c.Cause, c.VerificationEvidence }) Text(v, 4000);
-			if (c.Currency == null || c.Currency.Length != 3 || c.Currency.Any(ch => ch < 'A' || ch > 'Z')) throw new WorkOrderException(400, "InvalidInput");
 			Money(c.EstimatedCost); Money(c.ApprovedCost);
 			if (c.Steps == null || c.Steps.Count > 100 || c.Steps.Any(s => s == null || string.IsNullOrWhiteSpace(s.Text) || s.Text.Length > 1000)) throw new WorkOrderException(400, "InvalidInput");
 			if (input.DueOn.HasValue && (input.DueOn.Value.Year < 2000 || input.DueOn.Value.Year > 2200)) throw new WorkOrderException(400, "InvalidInput");
@@ -132,7 +131,8 @@ namespace Resgrid.Services
 		}
 		private static void Apply(WorkOrder row, WorkOrderInput input) { row.Type = (int)input.Type; row.Priority = (int)input.Priority; row.TargetUnitId = input.TargetUnitId; row.TargetGroupId = input.TargetGroupId; row.InventoryAssetId = input.InventoryAssetId; row.DueOn = input.DueOn; }
 		private static string Fingerprint(WorkOrderInput input) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { input.Type, input.Priority, input.TargetUnitId, input.TargetGroupId, input.InventoryAssetId, input.DueOn, input.Content }))));
-		public async Task<WorkOrderDetail> CreateAsync(ChecklistActor actor, WorkOrderInput input)
+		public Task<WorkOrderDetail> CreateAsync(ChecklistActor actor, WorkOrderInput input) => CreateAsync(actor, input, null);
+		private async Task<WorkOrderDetail> CreateAsync(ChecklistActor actor, WorkOrderInput input, string previewCurrency)
 		{
 			if (input?.Content?.Approval != null) throw new WorkOrderException(400, "InvalidInput");
 			Validate(input); await RequireWriteAsync(actor); await _authorization.ValidateTargetAsync(actor, input);
@@ -140,15 +140,20 @@ namespace Resgrid.Services
 			{
 				await _authorization.ValidateTargetAsync(actor, input);
 				if ((input.Content.ApprovedCost.HasValue || !string.IsNullOrEmpty(input.Content.VerificationEvidence) || !string.IsNullOrEmpty(input.Content.Resolution)) && !await _authorization.CanManageAsync(actor, input.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
-				var hash = Fingerprint(input); var existing = await _store.RequestAsync(actor.DepartmentId, input.RequestId);
+				var existing = await _store.RequestAsync(actor.DepartmentId, input.RequestId);
 				if (existing != null)
 				{
 					if (existing.CreatedBy != actor.UserId) throw new WorkOrderException(409, "Conflict");
 					existing = await RevealAsync(actor, existing);
-					if (Decode<StoredContent>(existing.Content).RequestHash != hash) throw new WorkOrderException(409, "Conflict");
+					var saved = Decode<StoredContent>(existing.Content);
+					input.Content.Currency = saved.Fields.Currency;
+					if (saved.RequestHash != Fingerprint(input)) throw new WorkOrderException(409, "Conflict");
 					return existing.Id;
 				}
-				var row = New<WorkOrder>(actor); row.RequestId = input.RequestId; row.NumberYear = Now.Year; row.NumberSequence = await _store.NextNumberAsync(actor.DepartmentId, row.NumberYear); Apply(row, input);
+				input.Content.Currency = await DepartmentCurrencyAsync(actor.DepartmentId);
+				if (previewCurrency != null && previewCurrency != input.Content.Currency) throw new WorkOrderException(409, "BulkPreviewChanged");
+				var hash = Fingerprint(input);
+				var row = New<WorkOrder>(actor); row.CurrencyCode = input.Content.Currency; row.RequestId = input.RequestId; row.NumberYear = Now.Year; row.NumberSequence = await _store.NextNumberAsync(actor.DepartmentId, row.NumberYear); Apply(row, input);
 				row.OriginalDueOn = row.DueOn; row.Content = JsonConvert.SerializeObject(new StoredContent { Fields = input.Content, RequestHash = hash });
 				if (input.Content.ApprovedCost.HasValue && (await ReadPolicyAsync(actor)).ApprovalsEnabled) throw new WorkOrderException(409, "SpendingApprovalRequired");
 				await PinSlaAsync(row);
@@ -158,7 +163,7 @@ namespace Resgrid.Services
 			});
 			return await GetAsync(actor, id);
 		}
-		public async Task UpdateAsync(ChecklistActor actor, int id, WorkOrderInput input)
+		public async Task UpdateAsync(ChecklistActor actor, string id, WorkOrderInput input)
 		{
 			Validate(input);
 			await TransactionAsync(actor, async events =>
@@ -168,16 +173,16 @@ namespace Resgrid.Services
 				await _authorization.ValidateTargetAsync(actor, input);
 				if (manage && !await _authorization.CanManageAsync(actor, input.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
 				var document = Decode<StoredContent>(row.Content);
+                input.Content.Currency = document.Fields.Currency;
                 if (input.DueOn != row.DueOn) throw new WorkOrderException(409, "UseDueDeferral");
                 if ((row.TargetUnitId != input.TargetUnitId || row.InventoryAssetId != input.InventoryAssetId)
-                    && (row.RecurrenceVersionId.HasValue || _maintenance != null && (await ChildrenAsync<WorkOrderSafetyHold>(actor, id)).Any(h => !h.ReleasedOn.HasValue)))
+                    && (row.RecurrenceVersionId != null || _maintenance != null && (await ChildrenAsync<WorkOrderSafetyHold>(actor, id)).Any(h => !h.ReleasedOn.HasValue)))
                     throw new WorkOrderException(409, "TargetUnavailable");
 				if (row.StartedOn.HasValue && (document.Fields.SafetyCritical && !input.Content.SafetyCritical || document.Fields.HazardousWork && !input.Content.HazardousWork)) throw new WorkOrderException(409, "SafetyRequirements");
 				if (!manage && (input.Content.ApprovedCost.HasValue && input.Content.ApprovedCost != document.Fields.ApprovedCost || input.Content.Resolution != document.Fields.Resolution || input.Content.VerificationEvidence != document.Fields.VerificationEvidence)) throw new WorkOrderException(403, "PermissionRequired");
 				if (!manage) input.Content.ApprovedCost = document.Fields.ApprovedCost;
 				input.Content.Approval = document.Fields.Approval;
 				if ((await ReadPolicyAsync(actor)).ApprovalsEnabled && input.Content.ApprovedCost != document.Fields.ApprovedCost) throw new WorkOrderException(409, "SpendingApprovalRequired");
-				if (input.Content.Currency != document.Fields.Currency) { input.Content.Approval = null; input.Content.ApprovedCost = null; }
 				var oldPriority = row.Priority;
 				document.Fields = input.Content; row.Content = JsonConvert.SerializeObject(document); Apply(row, input);
 				if (oldPriority != row.Priority)
@@ -195,14 +200,14 @@ namespace Resgrid.Services
 		{
 			WorkOrderStatus.Requested => new[] { WorkOrderStatus.Accepted, WorkOrderStatus.Rejected, WorkOrderStatus.Duplicate, WorkOrderStatus.Cancelled },
 			WorkOrderStatus.Accepted => new[] { WorkOrderStatus.Cancelled },
-			WorkOrderStatus.Assigned => new[] { WorkOrderStatus.InProgress, WorkOrderStatus.OnHold, WorkOrderStatus.Cancelled },
+			WorkOrderStatus.Assigned => new[] { WorkOrderStatus.InProgress, WorkOrderStatus.OnHold, WorkOrderStatus.Completed, WorkOrderStatus.Cancelled },
 			WorkOrderStatus.InProgress => new[] { WorkOrderStatus.OnHold, WorkOrderStatus.Completed, WorkOrderStatus.Cancelled },
-			WorkOrderStatus.OnHold => new[] { WorkOrderStatus.InProgress, WorkOrderStatus.Cancelled },
+			WorkOrderStatus.OnHold => new[] { WorkOrderStatus.InProgress, WorkOrderStatus.Completed, WorkOrderStatus.Cancelled },
 			WorkOrderStatus.Completed => new[] { WorkOrderStatus.Closed, WorkOrderStatus.InProgress },
 			WorkOrderStatus.Closed or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate or WorkOrderStatus.Cancelled => new[] { WorkOrderStatus.Accepted },
 			_ => Array.Empty<WorkOrderStatus>()
 		};
-		public async Task TransitionAsync(ChecklistActor actor, int id, WorkOrderTransition input)
+		public async Task TransitionAsync(ChecklistActor actor, string id, WorkOrderTransition input)
 		{
 			if (input == null || !Enum.IsDefined(input.Status)) throw new WorkOrderException(400, "InvalidInput");
 			Text(input.Reason, 4000); Text(input.Resolution, 4000); Text(input.Cause, 4000); Text(input.VerificationEvidence, 4000);
@@ -220,16 +225,19 @@ namespace Resgrid.Services
 				if (input.Status is WorkOrderStatus.OnHold or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate || Terminal(row) || old == (int)WorkOrderStatus.Completed && input.Status == WorkOrderStatus.InProgress) Text(input.Reason, 4000, true);
 				if (input.Status == WorkOrderStatus.Duplicate)
 				{
-					if (!input.DuplicateOfId.HasValue || input.DuplicateOfId == id) throw new WorkOrderException(400, "InvalidInput");
-					var canonical = await ReadOrderAsync(actor, input.DuplicateOfId.Value);
+					if (input.DuplicateOfId == null || input.DuplicateOfId == id) throw new WorkOrderException(400, "InvalidInput");
+					var canonical = await ReadOrderAsync(actor, input.DuplicateOfId);
 					if (canonical.Status == (int)WorkOrderStatus.Duplicate) throw new WorkOrderException(409, "InvalidTransition");
 					row.DuplicateOfId = canonical.Id;
 				}
 				if (input.Status == WorkOrderStatus.Accepted) { row.TriagedOn = Now; row.ClosedOn = null; row.CompletedOn = null; row.CompletedBy = null; row.VerifiedBy = null; row.DuplicateOfId = null; foreach (var step in c.Steps) step.Completed = false; row.AssignmentAcceptedOn = null; row.AssignmentAcceptedBy = null; c.Resolution = null; c.Cause = null; c.VerificationEvidence = null; }
-				if (input.Status == WorkOrderStatus.InProgress)
+				if (input.Status is WorkOrderStatus.InProgress or WorkOrderStatus.Completed)
 				{
 					if (!row.AssignmentAcceptedOn.HasValue) throw new WorkOrderException(409, "AcceptAssignmentFirst");
 					if (c.HazardousWork && new[] { c.ProcedureReference, c.ProcedureVersion, c.PermitReference, c.IsolationReference, c.QualifiedPersonnel }.Any(string.IsNullOrWhiteSpace)) throw new WorkOrderException(409, "SafetyRequirements");
+				}
+				if (input.Status == WorkOrderStatus.InProgress)
+				{
 					if (old == (int)WorkOrderStatus.Completed) { foreach (var step in c.Steps) step.Completed = false; c.Resolution = null; c.Cause = null; }
 					row.StartedOn ??= Now; row.CompletedOn = null; row.CompletedBy = null; row.ClosedOn = null; row.VerifiedBy = null; c.VerificationEvidence = null;
 				}
@@ -255,23 +263,24 @@ namespace Resgrid.Services
                 if (responseBreach || repairBreach) await EventAsync(row, WorkflowTriggerEventType.WorkOrderSlaBreached, events); await RecurrenceCompletedAsync(row); return true;
 			});
 		}
-		public async Task AssignAsync(ChecklistActor actor, int id, WorkOrderAssignment input)
+		public async Task AssignAsync(ChecklistActor actor, string id, WorkOrderAssignment input)
 		{
 			if (input == null) throw new WorkOrderException(400, "InvalidInput");
 			await TransactionAsync(actor, events => AssignWithinAsync(actor, id, input, events));
 		}
-		private async Task<bool> AssignWithinAsync(ChecklistActor actor, int id, WorkOrderAssignment input, List<long> events)
+		private async Task<bool> AssignWithinAsync(ChecklistActor actor, string id, WorkOrderAssignment input, List<long> events)
 		{
 				var row = await ReadOrderAsync(actor, id); Revision(row, input.Revision);
 				if (!await _authorization.CanManageAsync(actor, row.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
 				if (row.Status is not (1 or 2 or 3 or 4)) throw new WorkOrderException(409, "InvalidTransition");
 				await _authorization.ValidateAssignmentAsync(actor, row, input.UserId, input.RoleId);
-				if (row.AssignedToUserId == input.UserId && row.AssignedToRoleId == input.RoleId && row.AssignedOn.HasValue) return true;
+				if (row.AssignedToUserIds.SequenceEqual(string.IsNullOrEmpty(input.UserId) ? Array.Empty<string>() : new[] { input.UserId }) && row.AssignedToRoleIds.SequenceEqual(input.RoleId.HasValue ? new[] { input.RoleId.Value } : Array.Empty<int>()) && row.AssignedOn.HasValue) return true;
+				row.AssignedToUserIdsJson = row.AssignedToRoleIdsJson = null;
 				var old = row.Status; row.AssignedToUserId = string.IsNullOrEmpty(input.UserId) ? null : input.UserId; row.AssignedToRoleId = input.RoleId; row.AssignedOn = Now; row.AssignmentAcceptedOn = null; row.AssignmentAcceptedBy = null; row.Status = (int)WorkOrderStatus.Assigned;
 				await ChangedAsync(actor, row, WorkOrderActivityType.Assigned, events, previous: old, trigger: WorkflowTriggerEventType.WorkOrderAssigned);
 				if (old != row.Status) await EventAsync(row, WorkflowTriggerEventType.WorkOrderStatusChanged, events); return true;
 		}
-		public async Task AcceptAssignmentAsync(ChecklistActor actor, int id, int revision)
+		public async Task AcceptAssignmentAsync(ChecklistActor actor, string id, int revision)
 		{
 			await TransactionAsync(actor, async events =>
 			{
@@ -281,18 +290,18 @@ namespace Resgrid.Services
 				row.AssignmentAcceptedOn = Now; row.AssignmentAcceptedBy = actor.UserId; await ChangedAsync(actor, row, WorkOrderActivityType.AssignmentAccepted, events); return true;
 			});
 		}
-		private async Task<WorkOrder> ContributionAsync(ChecklistActor actor, int id, int revision)
+		private async Task<WorkOrder> ContributionAsync(ChecklistActor actor, string id, int revision)
 		{
 			var row = await ReadOrderAsync(actor, id); Revision(row, revision);
 			if (Terminal(row) || row.Status == (int)WorkOrderStatus.Completed || !await _authorization.CanContributeAsync(actor, row)) throw new WorkOrderException(403, "PermissionRequired");
 			return row;
 		}
-		public async Task CommentAsync(ChecklistActor actor, int id, int revision, string note)
+		public async Task CommentAsync(ChecklistActor actor, string id, int revision, string note)
 		{
 			Text(note, 10000, true);
 			await TransactionAsync(actor, async events => { var row = await ReadOrderAsync(actor, id); Revision(row, revision); if (Terminal(row) || row.CreatedBy != actor.UserId && !await _authorization.CanContributeAsync(actor, row)) throw new WorkOrderException(403, "PermissionRequired"); await ChangedAsync(actor, row, WorkOrderActivityType.Comment, events, note); return true; });
 		}
-		public async Task AddLaborAsync(ChecklistActor actor, int id, WorkOrderLaborInput input)
+		public async Task AddLaborAsync(ChecklistActor actor, string id, WorkOrderLaborInput input)
 		{
 			if (input?.Content == null || input.Content.Hours <= 0 || input.Content.Hours > 24 || decimal.Round(input.Content.Hours, 2) != input.Content.Hours || input.WorkDate.Year < 2000 || input.WorkDate > Now.AddDays(1)) throw new WorkOrderException(400, "InvalidInput");
 			Money(input.Content.RatePerHour); Text(input.Content.Note, 4000);
@@ -307,9 +316,14 @@ namespace Resgrid.Services
 				await ChangedAsync(actor, row, WorkOrderActivityType.LaborAdded, events); return true;
 			});
 		}
-		public Task<WorkOrderChoices> ChoicesAsync(ChecklistActor actor) => _authorization.ChoicesAsync(actor);
+		public async Task<WorkOrderChoices> ChoicesAsync(ChecklistActor actor)
+		{
+			var choices = await _authorization.ChoicesAsync(actor);
+			choices.Currency = await DepartmentCurrencyAsync(actor.DepartmentId);
+			return choices;
+		}
 		private static WorkOrderSummary Summary(WorkOrder row, WorkOrderContent c) => new WorkOrderSummary { Id = row.Id, Number = $"WO-{row.NumberYear}-{row.NumberSequence:D6}", Title = c.Title, Status = (WorkOrderStatus)row.Status, Priority = (WorkOrderPriority)row.Priority,
-			Revision = row.Revision, UpdatedOn = row.UpdatedOn, CreatedOn = row.CreatedOn, DueOn = row.DueOn, AssignedToUserId = row.AssignedToUserId, AssignedToRoleId = row.AssignedToRoleId, UnitId = row.TargetUnitId, GroupId = row.TargetGroupId, AssetId = row.InventoryAssetId };
+			Revision = row.Revision, UpdatedOn = row.UpdatedOn, CreatedOn = row.CreatedOn, DueOn = row.DueOn, AssignedToUserId = row.AssignedToUserId, AssignedToRoleId = row.AssignedToRoleId, AssignedToUserIds = row.AssignedToUserIds, AssignedToRoleIds = row.AssignedToRoleIds, UnitId = row.TargetUnitId, GroupId = row.TargetGroupId, AssetId = row.InventoryAssetId };
 		public async Task<WorkOrderPage> ListAsync(ChecklistActor actor, WorkOrderFilter filter)
 		{
 			if (filter == null || filter.Page < 0 || filter.Page > 10000 || filter.Status.HasValue && !Enum.IsDefined(filter.Status.Value) || filter.Priority.HasValue && !Enum.IsDefined(filter.Priority.Value) || filter.AssetId != null && !Guid.TryParseExact(filter.AssetId, "D", out _) || filter.ChecklistCompletionId != null && !Guid.TryParseExact(filter.ChecklistCompletionId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
@@ -324,12 +338,12 @@ namespace Resgrid.Services
             }
 			return page;
 		}
-		private async Task<List<T>> ChildrenAsync<T>(ChecklistActor actor, int id) where T : WorkOrderRow
+		private async Task<List<T>> ChildrenAsync<T>(ChecklistActor actor, string id) where T : WorkOrderRow
 		{
 			var result = new List<T>();
 			for (var skip = 0; ; skip += 500) { var page = await _store.ChildrenAsync<T>(actor.DepartmentId, id, skip); foreach (var row in page) result.Add(await RevealAsync(actor, row)); if (page.Count < 500) return result; if (skip >= 9500) throw new WorkOrderException(400, "HistoryLimit"); }
 		}
-		public async Task<WorkOrderDetail> GetAsync(ChecklistActor actor, int id)
+		public async Task<WorkOrderDetail> GetAsync(ChecklistActor actor, string id)
 		{
 			var row = await ReadOrderAsync(actor, id); var c = Decode<StoredContent>(row.Content).Fields; var manage = await _authorization.CanManageAsync(actor, row.TargetGroupId); var contribute = await _authorization.CanContributeAsync(actor, row);
 			var write = await _access.CanUseMaintenanceAsync(actor.DepartmentId);

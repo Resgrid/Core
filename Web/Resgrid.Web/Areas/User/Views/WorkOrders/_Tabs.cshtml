@@ -18,10 +18,10 @@
     if (canWrite)
     {
         tabs.Add(("Bulk", "fa-list-ol", localizer["BulkOperations"].Value));
-        tabs.Add(("Policy", "fa-sliders", localizer["OperationsPolicy"].Value));
+        tabs.Add(("Settings", "fa-cog", localizer["WorkOrderSettings"].Value));
     }
 }
-<ul class="nav nav-tabs">
+<ul class="nav nav-pills rgw-module-tabs">
     @foreach (var tab in tabs)
     {
         <li class="nav-item @(current == tab.Action ? "active" : null)">

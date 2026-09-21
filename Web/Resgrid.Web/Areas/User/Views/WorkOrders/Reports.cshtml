@@ -2,6 +2,7 @@
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var isHistory = Model.Stats == null;
     var destination = isHistory ? "History" : "Reports";
     var heading = localizer[isHistory ? "ServiceHistory" : "MaintenanceReports"].Value;
@@ -9,15 +10,16 @@
     ViewData["Tab"] = destination;
     ViewData["Title"] = heading;
     ViewData["Subtitle"] = localizer[isHistory ? "HistoryMethod" : "ReportMethod"].Value;
+    ViewData["CanWrite"] = Model.CanWrite;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@heading</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer[isHistory ? "HistoryMethod" : "ReportMethod"]</div>
@@ -29,11 +31,11 @@
                     <div class="rgw-grid">
                         <div class="form-group">
                             <label for="report-from">@localizer["ReportFrom"]</label>
-                            <input class="form-control" id="report-from" type="datetime-local" name="FromUtc" value="@Model.Query.FromUtc?.ToString("yyyy-MM-ddTHH:mm:ss")" step="1" />
+                            <input class="form-control" id="report-from" type="datetime-local" name="FromUtc" value="@departmentTime.Input(Model.Query.FromUtc)" step="0.001" />
                         </div>
                         <div class="form-group">
                             <label for="report-until">@localizer["ReportUntil"]</label>
-                            <input class="form-control" id="report-until" type="datetime-local" name="UntilUtc" value="@Model.Query.UntilUtc?.ToString("yyyy-MM-ddTHH:mm:ss")" step="1" />
+                            <input class="form-control" id="report-until" type="datetime-local" name="UntilUtc" value="@departmentTime.Input(Model.Query.UntilUtc)" step="0.001" />
                         </div>
                         <div class="form-group">
                             <label for="report-status">@localizer["Status"]</label>
@@ -99,7 +101,7 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox"><div class="ibox-title"><h5>@localizer["TotalOrders"]</h5></div>
-                                <div class="ibox-content"><h1 class="no-margins">@stats.Total</h1><small>@localizer["AsOfUtc"]: @stats.AsOfUtc.ToString("u")</small></div></div>
+                                <div class="ibox-content"><h1 class="no-margins">@stats.Total</h1><small>@localizer["AsOfUtc"]: @departmentTime.Format(stats.AsOfUtc)</small></div></div>
                         </div>
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox"><div class="ibox-title"><h5>@localizer["OpenOrders"]</h5></div>
@@ -206,7 +208,7 @@
                                         <td><a asp-action="Detail" asp-route-id="@entry.Order.Id">@entry.Order.Title</a></td>
                                         <td><span class="label">@localizer["Status" + entry.Order.Status]</span></td>
                                         <td><span class="label">@localizer["Priority" + entry.Order.Priority]</span></td>
-                                        <td>@entry.Order.CreatedOn.ToString("u")</td>
+                                        <td>@departmentTime.Format(entry.Order.CreatedOn)</td>
                                         <td class="text-right">@(entry.RepairHours?.ToString("0.##") ?? "—")</td>
                                         <td class="text-right">@(entry.ActiveRepairHours?.ToString("0.##") ?? "—")</td>
                                         <td class="text-right">@(entry.WaitingHours?.ToString("0.##") ?? "—")</td>
@@ -219,7 +221,7 @@
                     </div>
                 }
 
-                @if (Model.History.NextAfterId.HasValue)
+                @if (Model.History.NextAfterId != null)
                 {
                     <div class="rgw-pager">
                         <a class="btn btn-default btn-sm" asp-action="@destination" asp-route-afterId="@Model.History.NextAfterId" asp-route-fromUtc="@Model.Query.FromUtc?.ToString("O")" asp-route-untilUtc="@Model.Query.UntilUtc?.ToString("O")" asp-route-status="@Model.Query.Status" asp-route-priority="@Model.Query.Priority" asp-route-unitId="@Model.Query.UnitId" asp-route-groupId="@Model.Query.GroupId" asp-route-assetId="@Model.Query.AssetId">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
@@ -232,5 +234,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_Scripts") }

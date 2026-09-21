@@ -3,6 +3,7 @@
 @model RecordPermitDetailsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	var p = Model.Permit;
 	ViewBag.Title = "Resgrid | " + L["Permits"] + " | " + p.PermitNumber;
 	var returnUrl = Url.Action("Details", "RecordPermits", new { area = "User", id = p.RmsPermitId });
@@ -40,14 +41,14 @@
 					<dt>@L["Occupancies"]</dt><dd>@if (Model.Aggregate.Occupancy != null) { <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@p.RmsOccupancyId">@Model.Aggregate.Occupancy.OccupancyNumber @Text(Model.Aggregate.Occupancy.Name)</a> }</dd>
 					<dt>@L["Applicant"]</dt><dd>@Text(p.ApplicantName)<br /><small>@Text(p.ApplicantPhone) @Text(p.ApplicantEmail)</small></dd>
 					<dt>@L["DefinitionDescription"]</dt><dd style="white-space:pre-wrap">@Text(p.Description)</dd>
-					<dt>@L["AppliedOn"]</dt><dd>@RmsEnumDisplay.Utc(p.AppliedOn)</dd>
-					<dt>@L["ReviewedOn"]</dt><dd>@RmsEnumDisplay.Utc(p.ReviewedOn) @p.ReviewedByUserId</dd>
-					<dt>@L["IssuedOn"]</dt><dd>@RmsEnumDisplay.Utc(p.IssuedOn) @p.IssuedByUserId</dd>
+					<dt>@L["AppliedOn"]</dt><dd>@departmentTime.Format(p.AppliedOn)</dd>
+					<dt>@L["ReviewedOn"]</dt><dd>@departmentTime.Format(p.ReviewedOn) @p.ReviewedByUserId</dd>
+					<dt>@L["IssuedOn"]</dt><dd>@departmentTime.Format(p.IssuedOn) @p.IssuedByUserId</dd>
 					<dt>@L["EffectiveOn"]</dt><dd>@RmsEnumDisplay.Day(p.EffectiveOn) · @L["ExpiresOn"] @RmsEnumDisplay.Day(p.ExpiresOn)</dd>
 					<dt>@L["Conditions"]</dt><dd style="white-space:pre-wrap">@Text(p.Conditions)</dd>
 					<dt>@L["ReviewNotes"]</dt><dd style="white-space:pre-wrap">@Text(p.ReviewNotes)</dd>
 					<dt>@L["DecisionReason"]</dt><dd>@Text(p.DecisionReason)</dd>
-					<dt>@L["FeeAmount"]</dt><dd>@p.FeeAmount @(p.FeePaidOn.HasValue ? "· " + L["FeePaidOn"] + " " + RmsEnumDisplay.Day(p.FeePaidOn) + " " + p.InvoiceReference : "")</dd>
+					<dt>@L["FeeAmount"]</dt><dd>@p.FeeAmount @(p.FeePaidOn.HasValue ? "· " + L["FeePaidOn"] + " " + departmentTime.Date(p.FeePaidOn) + " " + p.InvoiceReference : "")</dd>
 				</dl>
 			</div></div>
 			<partial name="_PreventionAttachments" model="new PreventionAttachmentsPartialView { ParentKind = RmsPreventionParentKind.Permit, ParentId = p.RmsPermitId, Attachments = Model.Aggregate.Attachments, CanWrite = Model.CanAdminister, ReturnUrl = returnUrl }" />
@@ -62,7 +63,7 @@
 						<tbody>
 						@foreach (var r in Model.Aggregate.PlanReviews.OrderBy(r => r.CycleNumber))
 						{
-							<tr><td>@r.CycleNumber</td><td>@RmsEnumDisplay.Day(r.SubmittedOn)</td><td>@RmsEnumDisplay.Day(r.ReviewedOn) @r.ReviewerUserId</td><td>@(RmsEnumDisplay.Label<RmsPlanReviewOutcome>(r.Outcome))</td><td style="white-space:pre-wrap">@Text(r.Comments)</td></tr>
+							<tr><td>@r.CycleNumber</td><td>@departmentTime.Date(r.SubmittedOn)</td><td>@departmentTime.Date(r.ReviewedOn) @r.ReviewerUserId</td><td>@(RmsEnumDisplay.Label<RmsPlanReviewOutcome>(r.Outcome))</td><td style="white-space:pre-wrap">@Text(r.Comments)</td></tr>
 						}
 						</tbody>
 					</table>

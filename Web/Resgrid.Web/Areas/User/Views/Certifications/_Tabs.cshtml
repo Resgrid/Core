@@ -3,12 +3,12 @@
     var tab = (string)ViewData["Tab"] ?? "Dashboard";
     var canSetup = ViewData["CertCanSetup"] as bool? ?? false;
 }
-<ul class="nav nav-tabs m-b-md">
-    <li class="@(tab == "Dashboard" ? "active" : null)"><a asp-controller="Certifications" asp-action="Index" asp-route-area="User"><i class="fa fa-th"></i> @localizer["Dashboard"]</a></li>
+<ul class="nav nav-pills rgw-module-tabs">
+    <li class="@(tab == "Dashboard" ? "active" : null)"><a asp-controller="Certifications" asp-action="Index" aria-current="@(tab == "Dashboard" ? "page" : null)" asp-route-area="User"><i class="fa fa-th"></i> @localizer["Dashboard"]</a></li>
     @if (canSetup)
     {
-        <li class="@(tab == "Types" ? "active" : null)"><a asp-controller="Certifications" asp-action="Types" asp-route-area="User"><i class="fa fa-list"></i> @localizer["CertificationTypes"]</a></li>
-        <li class="@(tab == "Settings" ? "active" : null)"><a asp-controller="Certifications" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["Settings"]</a></li>
+        <li class="@(tab == "Types" ? "active" : null)"><a asp-controller="Certifications" asp-action="Types" aria-current="@(tab == "Types" ? "page" : null)" asp-route-area="User"><i class="fa fa-list"></i> @localizer["CertificationTypes"]</a></li>
+        <li class="@(tab == "Settings" ? "active" : null)"><a asp-controller="Certifications" asp-action="Settings" aria-current="@(tab == "Settings" ? "page" : null)" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["Settings"]</a></li>
     }
-    <li class="@(tab == "Report" ? "active" : null)"><a asp-controller="Reports" asp-action="CertificationComplianceReport" asp-route-area="User" target="_blank"><i class="fa fa-print"></i> @localizer["ComplianceReport"]</a></li>
+    <li class="@(tab == "Report" ? "active" : null)"><a asp-controller="Reports" asp-action="CertificationComplianceReport" aria-current="@(tab == "Report" ? "page" : null)" asp-route-area="User" target="_blank"><i class="fa fa-print"></i> @localizer["ComplianceReport"]</a></li>
 </ul>

@@ -796,4 +796,6 @@
   <data name="ChatAccountsBack" xml:space="preserve"><value>Back to profile</value></data>
   <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Your linking code is ready.</value></data>
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>For Discord, use /resgrid and enter LINK followed by your code in the message option. Use /resgrid for subsequent commands too.</value></data>
+  <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Workforce &amp; Business Ops</value></data>
+  <data name="NavigationReadiness" xml:space="preserve"><value>Readiness</value></data>
 </root>

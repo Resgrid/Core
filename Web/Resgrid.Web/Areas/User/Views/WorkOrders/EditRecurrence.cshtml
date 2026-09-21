@@ -18,7 +18,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["PreventiveMaintenance"]</h5></div>
         <div class="ibox-content">
@@ -62,9 +62,9 @@
                         <div class="form-group">
                             <label asp-for="Input.TimeZoneId">@localizer["TimeZone"]</label>
                             <select asp-for="Input.TimeZoneId" class="form-control">
-                                @foreach (var zone in TimeZoneInfo.GetSystemTimeZones())
+                                @foreach (var zone in Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderSettingChoices.TimeZones(Model.Input.TimeZoneId))
                                 {
-                                    <option value="@zone.Id">@zone.Id</option>
+                                    <option value="@zone.Id">@zone.DisplayName</option>
                                 }
                             </select>
                         </div>
@@ -134,7 +134,7 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="Input.MeterBaseline">@localizer["MeterBaseline"]</label>
-                            <input asp-for="Input.MeterBaseline" readonly="@(Model.Input.Id != 0)" type="number" min="0" step="0.000001" class="form-control" />
+                            <input asp-for="Input.MeterBaseline" readonly="@(Model.Input.Id != null)" type="number" min="0" step="0.000001" class="form-control" />
                         </div>
                         <div class="form-group">
                             <label asp-for="Input.Condition">@localizer["Condition"]</label>
@@ -159,11 +159,11 @@
                 <div class="rgw-step" data-title="@localizer["AssignmentAndEscalation"]">
                     <h4>@localizer["AssignmentAndEscalation"]</h4>
                     <p class="text-muted">@localizer["StepRecurrenceAssignmentHint"]</p>
+                    <p class="help-block" id="maintenance-assignees-hint">@localizer["MultipleAssigneesHint"]</p>
                     <div class="rgw-grid">
                         <div class="form-group">
-                            <label asp-for="Input.AssignedToUserId">@localizer["User"]</label>
-                            <select asp-for="Input.AssignedToUserId" class="form-control work-order-user">
-                                <option value="">@localizer["None"]</option>
+                            <label asp-for="Input.AssignedToUserIds">@localizer["Users"]</label>
+                            <select asp-for="Input.AssignedToUserIds" multiple size="6" class="form-control" aria-describedby="maintenance-assignees-hint">
                                 @foreach (var x in Model.Choices.Users)
                                 {
                                     <option value="@x.Id">@x.Name</option>
@@ -171,9 +171,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Input.AssignedToRoleId">@localizer["Role"]</label>
-                            <select asp-for="Input.AssignedToRoleId" class="form-control work-order-role">
-                                <option value="">@localizer["None"]</option>
+                            <label asp-for="Input.AssignedToRoleIds">@localizer["Roles"]</label>
+                            <select asp-for="Input.AssignedToRoleIds" multiple size="6" class="form-control" aria-describedby="maintenance-assignees-hint">
                                 @foreach (var x in Model.Choices.Roles)
                                 {
                                     <option value="@x.Id">@x.Name</option>
@@ -196,7 +195,7 @@
                         </div>
                         <div class="form-group rgw-wide">
                             <label asp-for="Input.Reason">@localizer["Reason"]</label>
-                            <textarea asp-for="Input.Reason" class="form-control" rows="3" maxlength="4000" required="@(Model.Input.Id != 0)"></textarea>
+                            <textarea asp-for="Input.Reason" class="form-control" rows="3" maxlength="4000" required="@(Model.Input.Id != null)"></textarea>
                         </div>
                     </div>
                 </div>
@@ -221,6 +220,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts {
     <script id="workspace-settings" type="application/json">@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new { required = localizer["RequiredFieldsMissing"].Value, nothingEntered = localizer["None"].Value, yes = localizer["Done"].Value, no = localizer["Pending"].Value }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }))</script>

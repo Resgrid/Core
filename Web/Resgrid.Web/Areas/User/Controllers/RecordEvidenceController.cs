@@ -17,6 +17,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_View)]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordEvidenceController : SecureBaseController
 	{
 		private readonly IRecordEvidenceSelectionService _selection;
@@ -84,8 +85,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					|| input.SourceKind == RmsEvidenceKind.CertificationSnapshot && input.UserIds?.Count is not > 0
 					|| input.SourceKind == RmsEvidenceKind.ChatPromotion && input.SourceIds?.Count is not > 0
 					|| input.SourceKind == RmsEvidenceKind.ModuleProjection && input.SourceIds?.Count != 1) return BadRequest("Select at least one source item.");
-				if (input.SourceKind == RmsEvidenceKind.TrackingFix && (!input.StartUtc.HasValue || !input.EndUtc.HasValue)) return BadRequest("Enter both UTC tracking times.");
-				if (input.SourceKind == RmsEvidenceKind.CertificationSnapshot && !input.EndUtc.HasValue) return BadRequest("Enter the UTC incident time for certification validity.");
+				if (input.SourceKind == RmsEvidenceKind.TrackingFix && (!input.StartUtc.HasValue || !input.EndUtc.HasValue)) return BadRequest("Enter both tracking times.");
+				if (input.SourceKind == RmsEvidenceKind.CertificationSnapshot && !input.EndUtc.HasValue) return BadRequest("Enter the incident time for certification validity.");
 				await _evidence.CaptureAsync(new RecordEvidenceCaptureRequest { DepartmentId = DepartmentId, CapturedByUserId = UserId,
 					RecordId = input.RecordId, RecordKind = input.RecordKind, Kind = input.SourceKind, ExpectedRowVersion = input.RowVersion,
 					CallId = context.CallId, CaptureReason = input.CaptureReason, OriginClient = RmsOriginClient.Web,
@@ -127,6 +128,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		private Task AuditAsync(string id, string revision, RmsAccessAuditAction action, string purpose) =>
 			_records.RecordAccessAsync(DepartmentId, UserId, id, revision, action, purpose, IpAddressHelper.GetRequestIP(Request, true));
-		private static DateTime? Utc(DateTime? value) => value.HasValue ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc) : null;
+		private DateTime? Utc(DateTime? value) => Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(value);
 	}
 }

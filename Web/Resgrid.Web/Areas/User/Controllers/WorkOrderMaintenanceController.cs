@@ -11,7 +11,7 @@ namespace Resgrid.Web.Areas.User.Controllers
     {
         private void MaintenanceAvailable() { if (_maintenance == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> CancelPartWitness(int id, int partId, int revision, string reason) { MaintenanceAvailable(); await _maintenance.CancelPartWitnessAsync(Actor, id, partId, revision, reason); return Json(new { id }); }
+        public async Task<IActionResult> CancelPartWitness(string id, string partId, int revision, string reason) { MaintenanceAvailable(); await _maintenance.CancelPartWitnessAsync(Actor, id, partId, revision, reason); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> PartChoices(string kind, string itemId, int page = 0) { MaintenanceAvailable(); return Json(await _maintenance.InventoryChoicesAsync(Actor, kind, itemId, page)); }
         [HttpGet]
@@ -25,17 +25,18 @@ namespace Resgrid.Web.Areas.User.Controllers
         {
             MaintenanceAvailable();
             if (!await _access.CanUseMaintenanceAsync(DepartmentId)) throw new WorkOrderException(402, "ReadinessProRequired");
-            return View("EditRecurrence", new WorkOrderRecurrenceEditView { Input = new WorkOrderRecurrenceInput { AnchorLocal = DateTime.UtcNow.Date.AddDays(1).AddHours(9), Template = new WorkOrderInput { RequestId = Guid.NewGuid().ToString("D"), Type = WorkOrderType.Preventive } }, Choices = await _orders.ChoicesAsync(Actor) });
+            var choices = await _orders.ChoicesAsync(Actor);
+            return View("EditRecurrence", new WorkOrderRecurrenceEditView { Input = new WorkOrderRecurrenceInput { AnchorLocal = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.AddDays(1).AddHours(9), TimeZoneId = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId, Template = new WorkOrderInput { RequestId = Guid.NewGuid().ToString("D"), Type = WorkOrderType.Preventive, Content = new WorkOrderContent { Currency = choices.Currency } } }, Choices = choices });
         }
         [HttpGet]
-        public async Task<IActionResult> EditRecurrence(int id)
+        public async Task<IActionResult> EditRecurrence(string id)
         {
             MaintenanceAvailable();
             if (!await _access.CanUseMaintenanceAsync(DepartmentId)) throw new WorkOrderException(402, "ReadinessProRequired");
             return View("EditRecurrence", new WorkOrderRecurrenceEditView { Input = (await _maintenance.RecurrenceAsync(Actor, id)).Settings, Choices = await _orders.ChoicesAsync(Actor) });
         }
         [HttpGet]
-        public async Task<IActionResult> Recurrence(int id, int historyPage = 0)
+        public async Task<IActionResult> Recurrence(string id, int historyPage = 0)
         {
             MaintenanceAvailable(); return View("Recurrence", new WorkOrderRecurrenceDetailView { Detail = await _maintenance.RecurrenceAsync(Actor, id, historyPage), CanWrite = await _access.CanUseMaintenanceAsync(DepartmentId) });
         }
@@ -48,17 +49,17 @@ namespace Resgrid.Web.Areas.User.Controllers
             return Json(new { id = await _maintenance.SaveRecurrenceAsync(Actor, input) });
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reading(int id, WorkOrderReadingInput input) { MaintenanceAvailable(); await _maintenance.RecordReadingAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> Reading(string id, WorkOrderReadingInput input) { MaintenanceAvailable(); input.ObservedOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.ObservedOn); await _maintenance.RecordReadingAsync(Actor, id, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Hold(int id, WorkOrderHoldInput input) { MaintenanceAvailable(); await _maintenance.AddHoldAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> Hold(string id, WorkOrderHoldInput input) { MaintenanceAvailable(); await _maintenance.AddHoldAsync(Actor, id, input); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReleaseHold(int id, int holdId, WorkOrderReleaseInput input)
+        public async Task<IActionResult> ReleaseHold(string id, string holdId, WorkOrderReleaseInput input)
         {
             MaintenanceAvailable();
             if (!(await _maintenance.HoldsAsync(Actor, id)).Any(h => h.Hold.Id == holdId)) throw new WorkOrderException(404, "Unavailable");
             await _maintenance.ReleaseHoldAsync(Actor, holdId, input); return Json(new { id });
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Defer(int id, WorkOrderDeferralInput input) { MaintenanceAvailable(); await _maintenance.DeferAsync(Actor, id, input); return Json(new { id }); }
+        public async Task<IActionResult> Defer(string id, WorkOrderDeferralInput input) { MaintenanceAvailable(); input.DueOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.DueOn); await _maintenance.DeferAsync(Actor, id, input); return Json(new { id }); }
     }
 }

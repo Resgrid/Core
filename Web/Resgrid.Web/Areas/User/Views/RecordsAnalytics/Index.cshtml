@@ -3,6 +3,7 @@
 @model RecordsExecutiveView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["AnalyticsHeader"] + " - " + L["AnalyticsExecutive"];
 	var s = Model.Summary;
 	string KpiLabel(string key)
@@ -26,7 +27,7 @@
 <div class="wrapper wrapper-content" style="padding-top:0">
 	@if (s != null)
 	{
-		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsHeadline"]</h5><span class="text-muted pull-right">@L["AnalyticsPriorPeriod"]: @s.PriorStart.ToString("yyyy-MM-dd") - @s.PriorEnd.AddDays(-1).ToString("yyyy-MM-dd")</span></div><div class="ibox-content">
+		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsHeadline"]</h5><span class="text-muted pull-right">@L["AnalyticsPriorPeriod"]: @departmentTime.Date(s.PriorStart) - @departmentTime.Date(s.PriorEnd.AddDays(-1))</span></div><div class="ibox-content">
 			<div class="row">
 				@foreach (var k in s.Kpis)
 				{

@@ -40,20 +40,25 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
+				// Layer 2 for a list: every active member may list their department's calls, so the
+				// permission is decided once per request against session.DepartmentId. A per-row
+				// CanUserViewCallAsync answers the same membership question with two lookups per call.
+				if (!await _authorizationService.IsUserValidWithinLimitsAsync(session.UserId, session.DepartmentId))
+					return new ChatbotResponse { Text = ChatbotResources.Get("Calls_NoPermission", culture), Processed = false };
+
 				var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
 				var departmentName = department?.Name ?? ChatbotResources.Get("Common_YourDepartment", culture);
 				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(session.DepartmentId);
 
-				if (activeCalls == null || !activeCalls.Any())
+				// The department boundary is the per-row rule (the unread-messages list applies the same one).
+				var callList = (activeCalls ?? Enumerable.Empty<Resgrid.Model.Call>())
+					.Where(call => call != null && call.DepartmentId == session.DepartmentId)
+					.Take(10)
+					.ToList();
+
+				if (callList.Count == 0)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Calls_NoActive", culture, departmentName), Processed = true };
 
-				var callList = new System.Collections.Generic.List<Resgrid.Model.Call>();
-				foreach (var call in activeCalls)
-				{
-					if (call.DepartmentId == session.DepartmentId && await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
-						callList.Add(call);
-					if (callList.Count == 10) break;
-				}
 				var sb = new StringBuilder();
 				sb.AppendLine(ChatbotResources.Get("Calls_Header", culture, departmentName));
 				sb.AppendLine("----------------------");

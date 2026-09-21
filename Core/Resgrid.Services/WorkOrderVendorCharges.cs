@@ -14,26 +14,31 @@ namespace Resgrid.Services
 {
     public sealed partial class WorkOrdersService
     {
-        public async Task<List<WorkOrderVendorChargeView>> VendorChargesAsync(ChecklistActor actor, int id, int afterId = 0)
+        public async Task<List<WorkOrderVendorChargeView>> VendorChargesAsync(ChecklistActor actor, string id, string afterId = null)
         {
             var page = await EvidencePageAsync<WorkOrderVendorCharge, WorkOrderVendorChargeView>(actor, id, afterId, row => new WorkOrderVendorChargeView { Id = row.Id, VoidedOn = row.VoidedOn, Content = Decode<WorkOrderVendorChargeContent>(row.Content) });
             return page.Items;
         }
-        public async Task AddVendorChargeAsync(ChecklistActor actor, int id, WorkOrderVendorChargeInput input)
+        public async Task AddVendorChargeAsync(ChecklistActor actor, string id, WorkOrderVendorChargeInput input)
         {
             if (input?.Content == null || !Guid.TryParseExact(input.RequestId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
             var c = input.Content; Money(c.Amount); Text(c.VendorName, 200, true); Text(c.InvoiceReference, 200, true); Text(c.Description, 4000, true);
             // Newtonsoft binds an offset-bearing value as Local; compare and store the instant, not the wall clock.
             c.ServiceDate = c.ServiceDate.Kind == DateTimeKind.Local ? c.ServiceDate.ToUniversalTime() : DateTime.SpecifyKind(c.ServiceDate, DateTimeKind.Utc);
-            if (!ValidCurrency(c.Currency) || c.Amount <= 0 || c.ServiceDate.Year < 2000 || c.ServiceDate > Now.AddDays(1) || c.VendorId != null && !Guid.TryParseExact(c.VendorId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
-            var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { c.VendorId, c.VendorName, c.InvoiceReference, c.Description, c.Currency, c.Amount, c.ServiceDate }))));
+            if (c.Amount <= 0 || c.ServiceDate.Year < 2000 || c.ServiceDate > Now.AddDays(1) || c.VendorId != null && !Guid.TryParseExact(c.VendorId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
             await TransactionAsync(actor, async events =>
             {
                 RequireMaintenanceStore(); var row = await ReadOrderAsync(actor, id);
                 var existing = (await _maintenance.QueryMaintenanceAsync<WorkOrderVendorCharge>(actor.DepartmentId, "RequestId", input.RequestId)).SingleOrDefault();
+                c.Currency = Decode<StoredContent>(row.Content).Fields.Currency;
                 if (existing != null)
                 {
                     await RevealAsync(actor, existing);
+                    c.Currency = Decode<WorkOrderVendorChargeContent>(existing.Content).Currency;
+                }
+                var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { c.VendorId, c.VendorName, c.InvoiceReference, c.Description, c.Currency, c.Amount, c.ServiceDate }))));
+                if (existing != null)
+                {
                     if (existing.CreatedBy != actor.UserId || existing.WorkOrderId != id || Decode<WorkOrderVendorChargeContent>(existing.Content).RequestHash != hash) throw new WorkOrderException(409, "Conflict");
                     return true;
                 }
@@ -50,7 +55,7 @@ namespace Resgrid.Services
                 await ChangedAsync(actor, row, WorkOrderActivityType.Updated, events, trigger: WorkflowTriggerEventType.WorkOrderVendorChargeChanged); return true;
             });
         }
-        public async Task VoidVendorChargeAsync(ChecklistActor actor, int id, int chargeId, int revision, string reason)
+        public async Task VoidVendorChargeAsync(ChecklistActor actor, string id, string chargeId, int revision, string reason)
         {
             Text(reason, 4000, true);
             await TransactionAsync(actor, async events =>

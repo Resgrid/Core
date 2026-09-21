@@ -6,23 +6,26 @@
     ViewData["Title"] = localizer["CertificationTypes"].Value;
     ViewData["Subtitle"] = localizer["TypesIntro"].Value;
     var templates = Resgrid.Model.Certifications.CertificationTypeTemplateCatalog.All;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-controller="Certifications" asp-action="Types" asp-route-area="User" asp-route-showInactive="@(!Model.ShowInactive)" class="btn btn-default">@(Model.ShowInactive ? localizer["HideInactive"] : localizer["ShowInactive"])</a>
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#templateGallery"><i class="fa fa-magic"></i> @localizer["TemplateGallery"]</button>
+        <a asp-controller="Certifications" asp-action="EditType" asp-route-area="User" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewType"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["CertificationTypes"]</h5>
-            <div class="ibox-tools">
-                <a asp-controller="Certifications" asp-action="Types" asp-route-area="User" asp-route-showInactive="@(!Model.ShowInactive)" class="btn btn-default btn-xs">@(Model.ShowInactive ? localizer["HideInactive"] : localizer["ShowInactive"])</a>
-                <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#templateGallery"><i class="fa fa-magic"></i> @localizer["TemplateGallery"]</button>
-                <a asp-controller="Certifications" asp-action="EditType" asp-route-area="User" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewType"]</a>
-            </div>
+
         </div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpTypes"]</div>
             @if (Model.Types.Count == 0)
             {
@@ -114,4 +117,8 @@
             });
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

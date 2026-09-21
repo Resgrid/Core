@@ -6,6 +6,7 @@
     a written basis, so each opens in a dialog rather than sitting inline under the list.
 *@
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["LegalHoldsHeader"];
     ViewData["Title"] = localizer["LegalHoldsHeader"].Value;
     ViewData["Subtitle"] = localizer["LegalHoldsIntro"].Value;
@@ -68,19 +69,19 @@
                                         <small class="text-muted rgw-sub">@(hold.DefinitionKey ?? localizer["AllDefinitions"].Value)</small>
                                     </td>
                                     <td>
-                                        @(hold.PeriodStart?.ToString("u") ?? localizer["HoldAnyStart"].Value)
+                                        @(departmentTime.Format(hold.PeriodStart) ?? localizer["HoldAnyStart"].Value)
                                         &mdash;
-                                        @(hold.PeriodEnd?.ToString("u") ?? localizer["HoldAnyEnd"].Value)
+                                        @(departmentTime.Format(hold.PeriodEnd) ?? localizer["HoldAnyEnd"].Value)
                                     </td>
                                     <td>
                                         <span class="label @(hold.IsActive ? "label-danger" : "label-success")">@localizer[hold.IsActive ? "HoldActive" : "Released"]</span>
                                         @if (hold.IsActive)
                                         {
-                                            <small class="text-muted rgw-sub">@localizer["HoldPlacedBy"]: @hold.PlacedByUserId &middot; @hold.PlacedOn.ToString("u")</small>
+                                            <small class="text-muted rgw-sub">@localizer["HoldPlacedBy"]: @hold.PlacedByUserId &middot; @departmentTime.Format(hold.PlacedOn)</small>
                                         }
                                         else
                                         {
-                                            <small class="text-muted rgw-sub">@localizer["HoldReleasedBy"]: @hold.ReleasedByUserId &middot; @hold.ReleasedOn?.ToString("u")</small>
+                                            <small class="text-muted rgw-sub">@localizer["HoldReleasedBy"]: @hold.ReleasedByUserId &middot; @departmentTime.Format(hold.ReleasedOn)</small>
                                         }
                                     </td>
                                     <td class="rgw-row-actions">

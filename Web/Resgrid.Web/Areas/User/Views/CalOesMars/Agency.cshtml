@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsAgencyView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["AgencyProfile"];
     ViewData["Title"] = localizer["AgencyProfile"].Value;
     ViewData["Subtitle"] = localizer["AgencyIntro"].Value;
@@ -12,7 +13,7 @@
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">
@@ -50,7 +51,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["Verification"]</h5></div>
                 <div class="ibox-content">
-                    <p>@localizer["VerifiedOn"]: <strong>@(a.VerifiedOn?.ToString("yyyy-MM-dd") ?? "—")</strong></p>
+                    <p>@localizer["VerifiedOn"]: <strong>@(departmentTime.Date(a.VerifiedOn) ?? "—")</strong></p>
                     <p class="text-muted small">@localizer["VerificationHelp"]</p>
                     <p class="text-muted small">@localizer["NoCredentialsStored"]</p>
                 </div>
@@ -58,3 +59,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

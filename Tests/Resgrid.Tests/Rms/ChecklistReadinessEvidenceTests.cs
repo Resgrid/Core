@@ -24,7 +24,7 @@ namespace Resgrid.Tests.Rms
 				CoverageStartUtc = DateTime.UtcNow.AddDays(-30), CoverageEndUtc = DateTime.UtcNow.AddHours(-2),
 				Checklists = new List<ChecklistReportEntry> { new() { OccurrenceId = "source-occurrence", VersionId = "pinned-version", Version = 3, Name = "Original evidence", Target = new ChecklistTarget { Id = "1", Type = ChecklistTargetType.Unit, Name = "Engine 1" } } } };
 			var checklists = new Mock<IChecklistsService>(); checklists.Setup(c => c.GetReadinessPacketForCallAsync(It.IsAny<ChecklistActor>(), 501, 30)).ReturnsAsync(() => source);
-			source.WorkOrders.Add(new Resgrid.Model.WorkOrders.ReadinessWorkOrderEvidence { WorkOrderId = 19, Revision = 3, SnapshotId = 29, Title = "Pinned maintenance", UnitId = 1, ActiveSafetyHoldIds = new() { 8 } });
+			source.WorkOrders.Add(new Resgrid.Model.WorkOrders.ReadinessWorkOrderEvidence { WorkOrderId = "00000000-0000-0000-0000-000000000019", Revision = 3, SnapshotId = "00000000-0000-0000-0000-000000000029", Title = "Pinned maintenance", UnitId = 1, ActiveSafetyHoldIds = new() { "00000000-0000-0000-0000-000000000008" } });
 			var access = new Mock<IReadinessAccessService>(); access.Setup(a => a.CanUseChecklistsAsync(Dept)).ReturnsAsync(false);
 			var grant = Mock.Of<IProtectedGrantContext>(g => g.UserId == "author" && g.GrantToken == "synthetic-grant" && !g.IsWorkloadCaller);
 			var pdf = new Mock<IPdfProvider>(); pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>())).Returns(Encoding.ASCII.GetBytes("%PDF-1.4 synthetic evidence"));

@@ -3,6 +3,7 @@
 @model RecordPermitsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Permits"];
 	string Occ(string id) => string.IsNullOrWhiteSpace(id) ? "" : Model.OccupancyNames.TryGetValue(id, out var n) ? n : id;
 }
@@ -50,7 +51,7 @@
 							<td>@Occ(p.RmsOccupancyId)</td>
 							<td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(p.ApplicantName)</td>
 							<td><span class="label label-@RmsEnumDisplay.StateClass((RmsPermitState)p.State)">@(RmsEnumDisplay.Label<RmsPermitState>(p.State))</span></td>
-							<td>@RmsEnumDisplay.Day(p.AppliedOn)</td>
+							<td>@departmentTime.Date(p.AppliedOn)</td>
 							<td>@RmsEnumDisplay.Day(p.ExpiresOn)</td>
 							<td><a class="btn btn-xs btn-default" asp-controller="RecordPermits" asp-action="Details" asp-route-area="User" asp-route-id="@p.RmsPermitId">@L["ViewRecordHeader"]</a></td>
 						</tr>

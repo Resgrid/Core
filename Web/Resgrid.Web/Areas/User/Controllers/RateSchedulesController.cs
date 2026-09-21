@@ -26,6 +26,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// Invoicing_Update (admins by default) edits.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class RateSchedulesController : SecureBaseController
 	{
 		private static readonly string[] Currencies = { "USD", "CAD", "EUR", "GBP", "AUD", "NZD", "MXN", "CHF", "SEK", "NOK", "DKK", "PLN" };

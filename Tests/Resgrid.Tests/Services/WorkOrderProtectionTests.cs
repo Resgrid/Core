@@ -30,8 +30,8 @@ namespace Resgrid.Tests.Services
             var bytes=Encoding.UTF8.GetBytes("SYNTHETIC-PHI-FILE");
             foreach(var b in bindings)
             {
-                b.PkIsNumeric.Should().BeTrue();
-                var row=Row(("Id",19),("DepartmentId",DeptId),("IsProtected",false),("AssignedToUserId","routing-member"));
+                b.PkIsNumeric.Should().BeFalse();
+                var row=Row(("Id","00000000-0000-0000-0000-000000000019"),("DepartmentId",DeptId),("IsProtected",false),("AssignedToUserId","routing-member"));
                 foreach(var c in b.Columns) row[c.ColumnName]=c.StorageKind==ProtectedFieldStorageKind.Binary ? bytes : "SYNTHETIC-PHI-CANARY";
                 _bulk.Seed(b.TableName,b.PkColumn,row);
             }
@@ -42,7 +42,7 @@ namespace Resgrid.Tests.Services
             {
                 var row=_bulk.Table(b.TableName).Single(); var content=(string)row["Content"];
                 content.Should().StartWith("rgdp:").And.NotContain("CANARY"); envelopes[b.TableName]=content;
-                _crypto.DecryptText(_dek,content,DeptId,b.Columns.First(c=>c.ColumnName=="Content").FieldId,"19").Should().Be("SYNTHETIC-PHI-CANARY");
+                _crypto.DecryptText(_dek,content,DeptId,b.Columns.First(c=>c.ColumnName=="Content").FieldId,"00000000-0000-0000-0000-000000000019").Should().Be("SYNTHETIC-PHI-CANARY");
                 row["AssignedToUserId"].Should().Be("routing-member");
                 if(b.TableName=="WorkOrderFiles") ProtectedReadService.IsBinaryEnveloped((byte[])row["Data"]).Should().BeTrue();
             }
@@ -63,8 +63,8 @@ namespace Resgrid.Tests.Services
             _outbox=new DomainEventOutboxService(_store.OutboxRepo.Object,_bus,new Lazy<IProtectedProjectionService>(()=>_projection),_history.Lazy,new Lazy<IWorkOrderNotificationService>(()=>notifications.Object));
             _policy.Setup(p=>p.IsProtectionEnforcedAsync(42)).ReturnsAsync(true);
             var entry=await _outbox.EnqueueAsync(42,"WorkOrders",new DomainEventEnvelope {
-                AggregateType="WorkOrder",AggregateId="19",Trigger=(WorkflowTriggerEventType)trigger,EventName=((WorkflowTriggerEventType)trigger).ToString(),
-                Payload=new {WorkOrderId=19,Revision=3,Status=2,Priority=3,Title="SYNTHETIC-PHI-CANARY",AssignedToUserId="PII-CANARY",AssignedToRoleId=4,Data=new byte[]{1,2,3}}
+                AggregateType="WorkOrder",AggregateId="00000000-0000-0000-0000-000000000019",Trigger=(WorkflowTriggerEventType)trigger,EventName=((WorkflowTriggerEventType)trigger).ToString(),
+                Payload=new {WorkOrderId="00000000-0000-0000-0000-000000000019",Revision=3,Status=2,Priority=3,Title="SYNTHETIC-PHI-CANARY",AssignedToUserId="PII-CANARY",AssignedToRoleId=4,Data=new byte[]{1,2,3}}
             });
             entry.PayloadJson.Should().StartWith("rgdp:").And.NotContain("CANARY");
             var original=entry.PayloadJson; var delivered=new List<string>();
@@ -75,7 +75,7 @@ namespace Resgrid.Tests.Services
             notifications.Setup(n=>n.DispatchAsync(It.IsAny<DomainEventOutboxEntry>())).Returns(Task.CompletedTask);
             (await _outbox.DispatchAfterCommitAsync(new[]{entry.DomainEventOutboxId})).Should().Be(1);
             delivered.Should().HaveCount(2);
-            foreach(var json in delivered) { json.Should().NotContain("CANARY").And.NotContain("AQID").And.NotContain("rgdp:"); JObject.Parse(json)["WorkOrderId"].Value<int>().Should().Be(19); }
+            foreach(var json in delivered) { json.Should().NotContain("CANARY").And.NotContain("AQID").And.NotContain("rgdp:"); JObject.Parse(json)["WorkOrderId"].Value<string>().Should().Be("00000000-0000-0000-0000-000000000019"); }
             entry.PayloadJson.Should().Be(original);
             _history.Broker.Invocations.Should().OnlyContain(i=>i.Method.Name=="EncryptAsync");
         }

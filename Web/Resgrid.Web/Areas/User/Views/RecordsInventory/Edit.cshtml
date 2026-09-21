@@ -6,6 +6,7 @@
 @model Resgrid.Web.Areas.User.Models.Records.RecordInventoryView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryLocalizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + inventoryLocalizer["RecordUsageTitle"];
     var controller = Model.Kind == RmsRecordKind.IncidentReport ? "IncidentReports" : "Records";
     var protectedForms = new System.Collections.Generic.List<string> { "#record-inventory-reopen", "#record-inventory-consume", "#record-inventory-evidence" };
@@ -47,7 +48,7 @@
             @if (!string.IsNullOrEmpty(usage.ReversesUsageId)) { <small style="display:block">@inventoryLocalizer["RecordUsageReverses"] <a href="#usage-@usage.ReversesUsageId">@usage.ReversesUsageId</a></small> }
             @if (usage.IsReversed) { <small style="display:block">@inventoryLocalizer["RecordUsageReversed"]</small> }
             @if (!string.IsNullOrEmpty(usage.PendingReversalTransactionId)) { <p class="text-warning">@inventoryLocalizer["RecordUsageReconciliationRequired"] <code>@usage.PendingReversalTransactionId</code></p> }
-        </td><td>@usage.CapturedOn.ToString("u")</td><td>
+        </td><td>@departmentTime.Format(usage.CapturedOn)</td><td>
         @if (Model.ModernInventory && !string.IsNullOrEmpty(usage.UsageId) && string.IsNullOrEmpty(usage.ReversesUsageId) && !usage.IsReversed) {
             var formId = "record-inventory-reverse-" + correctionIndex++;
             var retryingCorrection = Model.UsageId == usage.UsageId;

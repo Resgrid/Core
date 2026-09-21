@@ -798,4 +798,5 @@
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Στο Discord, χρησιμοποιήστε /resgrid και εισαγάγετε LINK μαζί με τον κωδικό στην επιλογή message. Χρησιμοποιήστε /resgrid και για τις επόμενες εντολές.</value></data>
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Ανθρώπινο δυναμικό και διοίκηση</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Ετοιμότητα</value></data>
+  <data name="NavigationDashboard" xml:space="preserve"><value>Πίνακας ελέγχου</value></data>
 </root>

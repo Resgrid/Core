@@ -19,6 +19,7 @@ namespace Resgrid.Workers.Framework.Logic
 		private IEmailService _emailService;
 		private IPdfProvider _pdfProvider;
 		private IChecklistScheduledReportService _checklistReports;
+		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 
 		public ReportDeliveryLogic()
 		{
@@ -26,9 +27,10 @@ namespace Resgrid.Workers.Framework.Logic
 			_emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
 			_pdfProvider = Bootstrapper.GetKernel().Resolve<IPdfProvider>();
 			_checklistReports = Bootstrapper.GetKernel().Resolve<IChecklistScheduledReportService>();
+			_businessOperationsAccess = Bootstrapper.GetKernel().Resolve<IBusinessOperationsAccessService>();
 		}
-		public ReportDeliveryLogic(IScheduledTasksService tasks, IEmailService email, IPdfProvider pdf, IChecklistScheduledReportService checklistReports)
-		{ _scheduledTasksService = tasks; _emailService = email; _pdfProvider = pdf; _checklistReports = checklistReports; }
+		public ReportDeliveryLogic(IScheduledTasksService tasks, IEmailService email, IPdfProvider pdf, IChecklistScheduledReportService checklistReports, IBusinessOperationsAccessService businessOperationsAccess)
+		{ _scheduledTasksService = tasks; _emailService = email; _pdfProvider = pdf; _checklistReports = checklistReports; _businessOperationsAccess = businessOperationsAccess; }
 
 		public async Task<Tuple<bool, string>> Process(ReportDeliveryQueueItem item)
 		{
@@ -67,6 +69,14 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
+					if (item.ScheduledTask.Data == ((int)ReportTypes.Certifications).ToString()
+						&& await _businessOperationsAccess.IsEnabledAsync(item.ScheduledTask.DepartmentId))
+					{
+						// Record the skipped occurrence so an existing legacy schedule does not retry or send a retired report.
+						await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
+						return Tuple.Create(true, "");
+					}
+
 					if (ConfigHelper.CanTransmit(item.Department.DepartmentId))
 					{
 						var client = new RestClient(Config.SystemBehaviorConfig.ResgridBaseUrl);

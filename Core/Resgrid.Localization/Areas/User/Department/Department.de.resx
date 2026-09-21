@@ -606,7 +606,7 @@
     <value>Zugelassene Plattformen</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Durch Kommas getrennte Plattformnamen, die diese Abteilung zulässt, oder * für alle. Gültige Namen: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
+    <value>Durch Kommas getrennte Plattformnamen, die diese Abteilung zulässt, oder * für alle. Gültige Namen: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, Signal, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Disposition über den Assistenten zulassen</value>

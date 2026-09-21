@@ -1,3 +1,4 @@
+@inject Resgrid.Model.Services.IBusinessOperationsAccessService businessOperationsAccess
 @using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
@@ -86,6 +87,8 @@
                                     <a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
+                            @if (!await businessOperationsAccess.IsEnabledAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
+                            {
                             <tr>
                                 <td>
                                     <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })">@localizer["CertificationsReportName"]</a>
@@ -97,6 +100,7 @@
                                     <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
+                            }
                             <tr>
                                 <td>
                                     <a href="@Url.Action("CertificationComplianceReport", "Reports", new { Area = "User" })">@certificationLocalizer["ComplianceReport"]</a>

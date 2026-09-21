@@ -142,7 +142,7 @@
 					</a>
 					<ul class="nav nav-second-level" id="records-menu">
 						<li class="@(onRecordsDashboard ? "active" : null)">
-							<a asp-controller="Records" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-dashboard"></i> @recordsLocalizer["RecordsDashboard"]</a>
+							<a asp-controller="Records" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-dashboard"></i> @commonLocalizer["NavigationDashboard"]</a>
 						</li>
 						<li class="@(onRecordsQueue ? "active" : null)">
 							<a asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-list"></i> @commonLocalizer["RecordsAllModule"]</a>
@@ -171,7 +171,7 @@
 						}
 						@if (preventionCrrOn)
 						{
-							<li class="@Html.IsSelected(controller: "RecordCrr")"><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User"><i class="fa fa-bullhorn"></i> @recordsLocalizer["CrrActivities"]</a></li>
+							<li class="@Html.IsSelected(controller: "RecordCrr")"><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User" title="@recordsLocalizer["CrrActivities"]"><i class="fa fa-bullhorn"></i> @recordsLocalizer["AnalyticsCommunityRisk"]</a></li>
 						}
 						@if (investigationsOn)
 						{

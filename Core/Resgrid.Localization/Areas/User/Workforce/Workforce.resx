@@ -310,7 +310,7 @@
   <data name="Member" xml:space="preserve"><value>Member</value></data>
   <data name="Miles" xml:space="preserve"><value>Miles</value></data>
   <data name="MissingInputs" xml:space="preserve"><value>Missing inputs</value></data>
-  <data name="MyDemographics" xml:space="preserve"><value>My demographic response</value></data>
+  <data name="MyDemographics" xml:space="preserve"><value>My demographics</value></data>
   <data name="MyDemographicsIntro" xml:space="preserve"><value>Answer or update your voluntary self-identification for California pay data reporting.</value></data>
   <data name="Naics" xml:space="preserve"><value>NAICS</value></data>
   <data name="Name" xml:space="preserve"><value>Name</value></data>

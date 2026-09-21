@@ -24,6 +24,24 @@ namespace Resgrid.Services
 
 		public Task<bool> CanUseInvoicingAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.CustomerInvoicing);
 
+		public async Task<bool> IsEnabledAsync(int departmentId)
+		{
+			if (departmentId <= 0)
+				return false;
+			try
+			{
+				if ((await _flags.EvaluateFreshAsync(FeatureFlagKeys.BusinessOperations, departmentId))?.IsEnabled != true)
+					return false;
+				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId, bypassCache: true);
+				return settings != null && !settings.BusinessOperationsDisabled;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+				return false;
+			}
+		}
+
 		public Task<bool> CanUseContractorBillingAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.ContractorBilling);
 		public Task<bool> CanUseCostRecoveryAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.CalOesMars);
 		public Task<bool> CanUseWorkforceAsync(int departmentId) => CanUseAsync(departmentId, FeatureFlagKeys.WorkforceInternalCosting);

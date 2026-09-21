@@ -5,6 +5,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Resgrid.Model.Checklists;
+using Resgrid.Model.Services;
 using Resgrid.Model.WorkOrders;
 using Resgrid.Services;
 
@@ -12,6 +13,28 @@ namespace Resgrid.Tests.Services
 {
     public partial class WorkOrderP2M1Tests
     {
+        [Test]
+        public void Currency_catalog_always_carries_the_records_minimum_and_validates_ordinally()
+        {
+            WorkOrderCurrencies.Options.Should().NotBeEmpty();
+            foreach (var code in Resgrid.Model.RmsCurrencies.Supported) WorkOrderCurrencies.Options.Should().ContainKey(code);
+            WorkOrderCurrencies.Options.Keys.Should().BeInAscendingOrder(StringComparer.Ordinal);
+            WorkOrderCurrencies.Options.Keys.Should().OnlyContain(code => code.Length == 3 && code != "XXX" && code.All(c => c >= 'A' && c <= 'Z'), "ICU's ¤¤ / XXX placeholders are not currencies");
+            WorkOrderCurrencies.IsSupported("USD").Should().BeTrue(); WorkOrderCurrencies.IsSupported("usd").Should().BeFalse();
+            WorkOrderCurrencies.IsSupported("XXX").Should().BeFalse(); WorkOrderCurrencies.IsSupported(null).Should().BeFalse();
+        }
+        [Test]
+        public async Task Detail_reveals_each_child_table_in_one_protected_read_per_page()
+        {
+            var id = await Assigned();
+            for (var i = 0; i < 3; i++) { var current = await _service.GetAsync(_actor, id); await _service.CommentAsync(_actor, id, current.Order.Revision, "note " + i); }
+            _read.Invocations.Clear();
+            var detail = await _service.GetAsync(_actor, id);
+            detail.Activities.Count.Should().BeGreaterThan(3);
+            var activityReads = _read.Invocations.Where(i => i.Method.Name == nameof(IProtectedReadService.ResolveRecordsEntitiesForReadAsync) && i.Method.GetGenericArguments()[0] == typeof(WorkOrderActivity)).ToList();
+            activityReads.Should().HaveCount(1, "the whole activity page is resolved in one broker call");
+            ((System.Collections.ICollection)activityReads[0].Arguments[1]).Count.Should().Be(detail.Activities.Count);
+        }
         [Test]
         public async Task Department_currency_controls_orders_retries_edits_and_vendor_charges()
         {

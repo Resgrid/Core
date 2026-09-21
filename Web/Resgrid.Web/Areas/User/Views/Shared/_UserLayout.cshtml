@@ -3,13 +3,21 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    // ViewData["Title"] also supplies module headings; normalize only the browser title.
+    var documentTitle = ViewData["Title"]?.ToString() ?? string.Empty;
+    if (!documentTitle.StartsWith("Resgrid | ", StringComparison.Ordinal))
+    {
+        documentTitle = "Resgrid | " + documentTitle;
+    }
+}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="request-verification-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
-    <title>@ViewData["Title"]</title>
+    <title>@documentTitle</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"

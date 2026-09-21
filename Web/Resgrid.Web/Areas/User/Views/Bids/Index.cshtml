@@ -13,7 +13,7 @@
         @if (Model.CanManageContracts) { <a asp-controller="Contracts" asp-action="Index" class="btn btn-default"><i class="fa fa-file-text"></i> @localizer["Contracts"]</a> }
         @if (Model.CanManageBids) { <a asp-action="New" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewBid"]</a> }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = Model.CanManageContracts || Model.CanManageBids ? headerActions : null;
 }
 
 @await Html.PartialAsync("_ContractorShell")

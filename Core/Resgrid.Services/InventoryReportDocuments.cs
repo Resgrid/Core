@@ -26,7 +26,7 @@ namespace Resgrid.Services
 		public static string Title(InventoryReportKind kind, CultureInfo culture = null) => Text("M5Report" + kind, culture);
 		private static string H(object value) => WebUtility.HtmlEncode(Convert.ToString(value, CultureInfo.InvariantCulture));
 		private static string Page(InventoryReportKind kind, string body, CultureInfo culture) => "<!doctype html><html lang=\"" + H(culture.Name) + "\" dir=\"" + (culture.TextInfo.IsRightToLeft ? "rtl" : "ltr")
-			+ "\"><head><meta charset=\"utf-8\"><title>" + H(Title(kind, culture)) + "</title><style>@page{size:landscape;margin:12mm}body{font-family:Arial,sans-serif;font-size:10px}table{border-collapse:collapse;width:100%;margin-bottom:16px}td,th{border:1px solid #888;padding:4px;text-align:start;overflow-wrap:anywhere}thead{display:table-header-group}tr{page-break-inside:avoid}.signatures td{height:28px}h1{font-size:19px}</style></head><body><h1>" + H(Title(kind, culture)) + "</h1>" + body + "</body></html>";
+			+ "\"><head><meta charset=\"utf-8\"><title>Resgrid | " + H(Title(kind, culture)) + "</title><style>@page{size:landscape;margin:12mm}body{font-family:Arial,sans-serif;font-size:10px}table{border-collapse:collapse;width:100%;margin-bottom:16px}td,th{border:1px solid #888;padding:4px;text-align:start;overflow-wrap:anywhere}thead{display:table-header-group}tr{page-break-inside:avoid}.signatures td{height:28px}h1{font-size:19px}</style></head><body><h1>" + H(Title(kind, culture)) + "</h1>" + body + "</body></html>";
 		public static string Locked(InventoryReportKind kind, CultureInfo culture = null)
 		{
 			culture = ReportCulture(culture);

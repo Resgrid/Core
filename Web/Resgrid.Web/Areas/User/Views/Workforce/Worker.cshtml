@@ -80,7 +80,7 @@
                                     @foreach (var a in e.Assignments)
                                     {
                                         <tr>
-                                            <td>@a.EffectiveOn.ToString("yyyy-MM-dd")</td><td>@(departmentTime.Date(a.ExpiresOn) ?? "…")</td><td>@a.JobTitle</td>
+                                            <td>@a.EffectiveOn.ToString("yyyy-MM-dd")</td><td>@(a.ExpiresOn?.ToString("yyyy-MM-dd") ?? "…")</td><td>@a.JobTitle</td>
                                             <td>@a.JobCategoryCode @(Model.JobCategories.FirstOrDefault(j => j.Code == a.JobCategoryCode)?.Label)</td>
                                             <td>@(Model.Establishments.FirstOrDefault(x => x.Value == a.WorkforceEstablishmentId)?.Text)</td>
                                             <td>@localizer["WorkMode" + (WorkModes)a.WorkMode]</td>

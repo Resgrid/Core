@@ -746,4 +746,5 @@
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Su Discord, usa /resgrid e inserisci LINK seguito dal codice nell’opzione message. Usa /resgrid anche per i comandi successivi.</value></data>
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Personale e gestione</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Prontezza operativa</value></data>
+  <data name="NavigationDashboard" xml:space="preserve"><value>Panoramica</value></data>
 </root>

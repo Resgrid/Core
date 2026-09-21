@@ -20,7 +20,7 @@ namespace Resgrid.Services
 		private static string H(object value) => WebUtility.HtmlEncode(Convert.ToString(value, CultureInfo.CurrentCulture));
 		private static string Cell(object value) => "<td>" + H(value) + "</td>";
 		private static string Head(params string[] keys) => "<tr>" + string.Concat(keys.Select(k => "<th>" + H(Text(k)) + "</th>")) + "</tr>";
-		private static string Page(string title, string body) => "<!doctype html><html lang=\"" + H(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName) + "\" dir=\"" + (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? "rtl" : "ltr") + "\"><head><meta charset=\"utf-8\"><title>" + H(Text(title)) + "</title><style>body{font-family:Arial,sans-serif;font-size:12px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #aaa;padding:6px;text-align:start}tr{page-break-inside:avoid}</style></head><body><h1>" + H(Text(title)) + "</h1>" + body + "</body></html>";
+		private static string Page(string title, string body) => "<!doctype html><html lang=\"" + H(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName) + "\" dir=\"" + (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? "rtl" : "ltr") + "\"><head><meta charset=\"utf-8\"><title>Resgrid | " + H(Text(title)) + "</title><style>body{font-family:Arial,sans-serif;font-size:12px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #aaa;padding:6px;text-align:start}tr{page-break-inside:avoid}</style></head><body><h1>" + H(Text(title)) + "</h1>" + body + "</body></html>";
 		public static string Locked() => Page("ChecklistComplianceReport", "<p>" + H(Text("ScheduledReportProtected")) + "</p>");
 		public static string Compliance(ChecklistComplianceSummary report, bool missedOnly = false)
 		{

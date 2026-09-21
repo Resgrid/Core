@@ -51,6 +51,8 @@ namespace Resgrid.Web.Services.Controllers
 					ChatbotPlatform.Telegram => ChatbotWebhookSignature.EqualsSecret(Header("X-Telegram-Bot-Api-Secret-Token"), ChatbotConfig.TelegramWebhookSecretToken),
 					ChatbotPlatform.Line => ChatbotWebhookSignature.Hmac(body, ChatbotConfig.LineChannelSecret, Header("X-Line-Signature"), base64: true),
 					ChatbotPlatform.Viber => ChatbotWebhookSignature.Hmac(body, ChatbotConfig.ViberBotToken, Header("X-Viber-Content-Signature")),
+					ChatbotPlatform.Signal => SignalBotAdapter.IsValidSecret(ChatbotConfig.SignalWebhookSecret)
+						&& ChatbotWebhookSignature.EqualsSecret(Header("X-Resgrid-Signal-Secret"), ChatbotConfig.SignalWebhookSecret),
 					ChatbotPlatform.MicrosoftTeams or ChatbotPlatform.GoogleChat => true, // JWT also binds parsed routing below.
 					_ => false
 				};
@@ -91,6 +93,24 @@ namespace Resgrid.Web.Services.Controllers
 					case ChatbotPlatform.Viber:
 						if (S(root, "event") == "message" && S(root, "message.type") == "text")
 							await EnqueueAsync(kind, S(root, "message_token"), S(root, "sender.id"), S(root, "message.text"), occurredAt: Epoch(S(root, "timestamp"), true));
+						break;
+					case ChatbotPlatform.Signal:
+						// RECEIVE_WEBHOOK_URL forwards the complete JSON-RPC receive notification.
+						if (S(root, "jsonrpc") != "2.0" || S(root, "method") != "receive") return Ok();
+						var signalEvent = root.SelectToken("params.result") ?? root["params"];
+						if (S(signalEvent, "account") != ChatbotConfig.SignalAccountNumber) return Unauthorized();
+						var envelope = signalEvent?["envelope"];
+						var data = envelope?["dataMessage"];
+						if (data?["message"]?.Type != JTokenType.String || string.IsNullOrWhiteSpace(S(data, "message"))) return Ok();
+						if (data["groupInfo"] is { Type: not JTokenType.Null }
+							|| envelope["syncMessage"] is { Type: not JTokenType.Null }
+							|| envelope["editMessage"] is { Type: not JTokenType.Null }) return Ok();
+						if (!Guid.TryParseExact(S(envelope, "sourceUuid"), "D", out var signalUser) || signalUser == Guid.Empty)
+							return BadRequest();
+						var signalTime = Epoch(S(data, "timestamp"), true);
+						if (signalTime != Epoch(S(envelope, "timestamp"), true)) return BadRequest();
+						await EnqueueAsync(kind, ChatbotConfig.SignalAccountNumber + ":" + S(data, "timestamp"),
+							signalUser.ToString("D"), S(data, "message"), occurredAt: signalTime);
 						break;
 					case ChatbotPlatform.MicrosoftTeams:
 						if (!await _jwt.ValidateTeamsAsync(Header("Authorization"), S(root, "serviceUrl"))) return Unauthorized();

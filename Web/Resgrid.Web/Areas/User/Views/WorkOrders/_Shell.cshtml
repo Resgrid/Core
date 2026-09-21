@@ -1,7 +1,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @*
     Page heading shared by every work order screen, laid out the same way as the rest of the
-    application: title and breadcrumb on the left, page actions on the right and module navigation below.
+    application: full-width header with title, breadcrumb, page actions and module navigation.
 
     ViewData["Title"]      heading and last breadcrumb crumb (defaults to the module name)
     ViewData["Subtitle"]   optional one line description under the breadcrumb
@@ -16,7 +16,7 @@
     var isRoot = string.Equals(title, localizer["WorkOrders"].Value, StringComparison.Ordinal);
 }
 <div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
-    <div class="@(ViewData["HeaderActions"] == null ? "col-sm-12" : "col-sm-4")">
+    <div class="col-sm-12">
         <h2>@title</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>

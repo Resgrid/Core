@@ -201,7 +201,7 @@ video {
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
-    margin: 0 0 0 180px !important;
+    margin: 0 0 0 $sidebar-width;
     min-height: 2002px;
   }
 }

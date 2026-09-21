@@ -606,7 +606,7 @@
     <value>Piattaforme consentite</value>
   </data>
   <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
-    <value>Nomi di piattaforme separati da virgole consentiti per questo dipartimento, oppure * per tutte. Nomi validi: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, WebChat, Line, Viber, GoogleChat.</value>
+    <value>Nomi di piattaforme separati da virgole consentiti per questo dipartimento, oppure * per tutte. Nomi validi: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, MicrosoftTeams, Signal, WebChat, Line, Viber, GoogleChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
     <value>Consenti l'invio di chiamate tramite l'assistente</value>

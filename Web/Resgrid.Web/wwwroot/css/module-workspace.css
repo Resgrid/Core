@@ -1,10 +1,21 @@
 /* Readiness and business operations use the same INSPINIA palette and heading
    hierarchy as Records. Scope these additions so other modules retain their theme. */
-.rgw-page-heading { display: flex; flex-wrap: wrap; align-items: flex-start; }
-.rgw-page-heading > [class*="col-"] { min-width: 0; }
-.rgw-page-heading h2 { overflow-wrap: anywhere; }
-.rgw-page-heading .breadcrumb { padding-bottom: 8px; }
-.rgw-page-heading small { display: block; margin-bottom: 10px; }
+/* Keep the background full width, with actions beside the title when there is
+   room. Match md-skin's specificity so its padding does not expand this header. */
+.page-heading.rgw-page-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) fit-content(55%);
+    row-gap: 10px;
+    clear: both;
+    padding: 14px 10px 12px;
+}
+.rgw-page-heading::before,
+.rgw-page-heading::after { display: none; }
+.rgw-page-heading > [class*="col-"] { min-width: 0; float: none; }
+.rgw-page-heading h2 { margin: 0 0 6px; overflow-wrap: anywhere; }
+.rgw-page-heading .breadcrumb { padding: 0; margin: 0; }
+.rgw-page-heading small { display: block; margin: 4px 0 0; }
+.rgw-heading-actions { grid-column: 2; grid-row: 1; align-self: start; }
 .rgw-header-actions {
     display: flex;
     float: none;
@@ -13,13 +24,14 @@
     justify-content: flex-end;
     align-items: center;
     gap: 8px;
-    margin: 30px 0 15px;
+    margin: 0;
 }
 .rgw-header-actions::before,
 .rgw-header-actions::after { display: none; }
 .rgw-header-actions > .btn,
 .rgw-header-actions > .btn-group { margin-left: 0; }
 .rgw-header-actions form { display: inline-block; margin: 0; }
+.rgw-header-actions .btn { white-space: normal; }
 .rgw-header-actions > .rgw-toolbar,
 .rgw-header-actions > .work-order-protected { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin: 0; }
 .rgw-header-actions .rgw-toolbar-spacer { display: none; }
@@ -27,8 +39,9 @@
 .rgw-header-actions .dropdown-menu > li > a { white-space: normal; }
 
 /* Module navigation belongs to the heading; filters and row actions stay with data. */
-.rgw-module-navigation { flex: 0 0 100%; width: 100%; margin-top: 8px; }
+.rgw-module-navigation { grid-column: 1 / -1; width: 100%; margin: 0; }
 .rgw-module-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 15px; padding: 0; }
+.rgw-page-heading .rgw-module-tabs { margin-bottom: 0; }
 .rgw-module-tabs::before,
 .rgw-module-tabs::after { display: none; }
 .rgw-module-tabs > li,
@@ -48,6 +61,17 @@
 .rgw-module-tabs > li.active > a:hover,
 .rgw-module-tabs > li.active > a:focus { background: #1ab394; border-color: #1ab394; color: #fff; }
 .rgw-module-tabs i { margin-right: 5px; }
+
+/* Override md-skin's sidebar-sized links only inside the module header. */
+.rgw-page-heading .rgw-module-tabs > li > a {
+    padding: 6px 10px;
+    min-height: 34px;
+    color: #245b7c;
+    font-weight: 600;
+}
+.rgw-page-heading .rgw-module-tabs > li.active > a,
+.rgw-page-heading .rgw-module-tabs > li.active > a:hover,
+.rgw-page-heading .rgw-module-tabs > li.active > a:focus { color: #fff; }
 
 /* Secondary actions have a blue tint; primary/success/warning/danger keep the
    existing theme colors. This also covers controls added dynamically by builders. */
@@ -81,12 +105,13 @@
 .rgw-page .rgw-lookup { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); }
 .rgw-page .rgw-filter .rgw-grid { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 340px)); }
 
-@media (max-width: 767px) {
+@media (max-width: 991px) {
+    .page-heading.rgw-page-heading { grid-template-columns: minmax(0, 1fr); }
+    .rgw-heading-actions { grid-column: 1; grid-row: auto; }
     .rgw-page-heading > [class*="col-"] { width: 100%; }
-    .rgw-header-actions { justify-content: flex-start; margin-top: 15px; }
+    .rgw-header-actions { justify-content: flex-start; }
     .rgw-header-actions > .rgw-toolbar,
     .rgw-header-actions > .work-order-protected { justify-content: flex-start; }
-    .rgw-header-actions .btn { white-space: normal; }
     .rgw-header-actions .dropdown-menu { max-width: calc(100vw - 60px); }
     .rgw-header-actions .dropdown-menu-right { left: 0; right: auto; }
     .rgw-module-tabs > li { max-width: 100%; }

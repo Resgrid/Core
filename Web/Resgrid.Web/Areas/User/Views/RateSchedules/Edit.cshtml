@@ -22,7 +22,7 @@
 
         }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = !Model.IsNew && canEdit ? headerActions : null;
 }
 
 @await Html.PartialAsync("_ContractorShell")

@@ -34,11 +34,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDocumentsService _documentsService;
 		private readonly INotesService _notesService;
 		private readonly IContactsService _contactsService;
+		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 
 		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService,
 			IAuthorizationService authorizationService, IEventAggregator eventAggregator, ICertificationService certificationService, IDocumentsService documentsService,
 			INotesService notesService,
-			IContactsService contactsService)
+			IContactsService contactsService, IBusinessOperationsAccessService businessOperationsAccess)
 		{
 			_unitsService = unitsService;
 			_customStateService = customStateService;
@@ -50,6 +51,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_documentsService = documentsService;
 			_notesService = notesService;
 			_contactsService = contactsService;
+			_businessOperationsAccess = businessOperationsAccess;
 		}
 
 		#region Edit Unit Type
@@ -667,6 +669,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteCertificationType(int certificationTypeId, CancellationToken cancellationToken)
 		{
+			if (await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
+
 			if (certificationTypeId <= 0)
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 
@@ -695,6 +700,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCertificationType()
 		{
+			if (await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return RedirectToAction("Types", "Certifications", new { area = "User" });
+
 			if (!await _authorizationService.CanUserAddCertificationTypeAsync(UserId))
 				return Unauthorized();
 
@@ -708,6 +716,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCertificationType(NewCertificationTypeView model, CancellationToken cancellationToken)
 		{
+			if (await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
+
 			if (!await _authorizationService.CanUserAddCertificationTypeAsync(UserId))
 				return Unauthorized();
 

@@ -65,6 +65,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPasswordRecoveryService _passwordRecoveryService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
@@ -75,7 +76,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
 			ISystemAuditsService systemAuditsService, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService,
-			IEventAggregator eventAggregator, IProtectedReadService protectedReadService)
+			IEventAggregator eventAggregator, IProtectedReadService protectedReadService, IBusinessOperationsAccessService businessOperationsAccess)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -100,6 +101,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_passwordRecoveryService = passwordRecoveryService;
 			_eventAggregator = eventAggregator;
 			_protectedReadService = protectedReadService;
+			_businessOperationsAccess = businessOperationsAccess;
 		}
 		#endregion Private Members and Constructors
 
@@ -118,7 +120,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Reporting
 		private static string ChecklistReportName(ReportTypes type) => (int)type >= 6 && (int)type <= 13 ? Resgrid.Services.InventoryReportDocuments.Title((Resgrid.Model.Inventories.InventoryReportKind)((int)type - 6)) : type == ReportTypes.ChecklistCompliance ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistComplianceReport") : type == ReportTypes.ChecklistMissed ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistMissedReport") : type == ReportTypes.CertificationCompliance ? "Certification Compliance" : type.ToString();
-		private static Microsoft.AspNetCore.Mvc.Rendering.SelectList ChecklistReportTypes(ReportTypes selected) => new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enum.GetValues<ReportTypes>().Select(t => new { Value = (int)t, Text = ChecklistReportName(t) }), "Value", "Text", (int)selected);
+		private async Task<SelectList> ChecklistReportTypesAsync(ReportTypes selected)
+		{
+			var businessOperationsEnabled = await _businessOperationsAccess.IsEnabledAsync(DepartmentId);
+			return new SelectList(Enum.GetValues<ReportTypes>()
+				.Where(t => !businessOperationsEnabled || t != ReportTypes.Certifications)
+				.Select(t => new { Value = (int)t, Text = ChecklistReportName(t) }), "Value", "Text", (int)selected);
+		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
@@ -195,7 +203,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  AddNewScheduledReport()
 		{
 			var model = new NewScheduledReportView();
-			model.ReportTypes = ChecklistReportTypes(model.ReportType);
+			model.ReportTypes = await ChecklistReportTypesAsync(model.ReportType);
 
 			return View(model);
 		}
@@ -206,7 +214,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  AddNewScheduledReport(NewScheduledReportView model, CancellationToken cancellationToken)
 		{
 			if (!Enum.IsDefined(model.ReportType)) return BadRequest();
-			model.ReportTypes = ChecklistReportTypes(model.ReportType);
+			if (model.ReportType == ReportTypes.Certifications && await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
+			model.ReportTypes = await ChecklistReportTypesAsync(model.ReportType);
 
 			if (!model.SpecificDatetime)
 			{
@@ -290,7 +300,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  EditScheduledReport(int scheduleId)
 		{
 			var model = new EditScheduledReportView();
-			model.ReportTypes = ChecklistReportTypes(model.ReportType);
+			model.ReportTypes = await ChecklistReportTypesAsync(model.ReportType);
 
 			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (schedule == null || schedule.DepartmentId != DepartmentId || schedule.UserId != UserId || schedule.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
@@ -323,7 +333,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  EditScheduledReport(EditScheduledReportView model, CancellationToken cancellationToken)
 		{
 			if (!Enum.IsDefined(model.ReportType)) return BadRequest();
-			model.ReportTypes = ChecklistReportTypes(model.ReportType);
+			if (model.ReportType == ReportTypes.Certifications && await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
+			model.ReportTypes = await ChecklistReportTypesAsync(model.ReportType);
 
 
 			if (!model.SpecificDatetime)
@@ -410,6 +422,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (task == null || task.DepartmentId != DepartmentId || task.UserId != UserId || task.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
+			if (task.Data == ((int)ReportTypes.Certifications).ToString() && await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
 			await _scheduledTasksService.EnableScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
@@ -820,6 +834,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!await CanReachCertificationsForAsync(userToGet))
 				return Unauthorized();
+
+			if (await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return RedirectToAction("Person", "Certifications", new { area = "User", userId = userToGet });
 
 			var model = new CertificationsView();
 			model.Certifications= await _certificationService.GetCertificationsByUserIdAsync(userToGet);

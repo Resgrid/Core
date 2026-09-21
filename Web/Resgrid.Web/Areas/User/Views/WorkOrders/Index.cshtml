@@ -33,7 +33,7 @@
             <a class="btn btn-success" asp-action="New"><i class="fa fa-plus"></i> @localizer["NewWorkOrder"]</a>
         }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = Model.Orders.CanWrite ? headerActions : null;
 }
 
 @await Html.PartialAsync("_Shell")

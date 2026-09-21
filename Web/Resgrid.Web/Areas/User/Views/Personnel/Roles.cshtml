@@ -74,7 +74,7 @@
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                             {
                                                 <a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Personnel" asp-action="EditRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId">@commonLocalizer["Edit"]</a>
-                                                <a style="text-decoration:none;" class="btn btn-xs btn-default" asp-controller="Certifications" asp-action="RoleRequirements" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId" title="@certificationLocalizer["RequiredCertifications"]"><i class="fa fa-certificate"></i></a>
+                                                <a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Certifications" asp-action="RoleRequirements" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId">@certificationLocalizer["RequiredCertifications"]</a>
                                                 <a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Personnel" asp-action="DeleteRole" asp-route-area="User" asp-route-roleId="@u.PersonnelRoleId" data-confirm="@localizer["RoleDeleteWarning"] @u.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
                                             }
                                         </td>

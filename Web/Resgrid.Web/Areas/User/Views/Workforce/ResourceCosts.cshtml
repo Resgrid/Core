@@ -17,7 +17,7 @@
             <a asp-action="ResourceCosts" asp-route-edit="new" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["AddResourceProfile"]</a>
         }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = canEdit ? headerActions : null;
 }
 
 @await Html.PartialAsync("_WorkforceShell")

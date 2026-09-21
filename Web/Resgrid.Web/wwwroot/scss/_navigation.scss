@@ -381,7 +381,7 @@ body.top-navigation.fixed-nav #wrapper #page-wrapper {
 }
 
 body.fixed-nav.fixed-nav-basic .navbar-fixed-top {
-  left: 220px;
+  left: $sidebar-width;
 }
 
 body.fixed-nav.fixed-nav-basic.mini-navbar .navbar-fixed-top {
@@ -401,7 +401,7 @@ body.fixed-nav.fixed-nav-basic.body-small .navbar-fixed-top {
 }
 
 body.fixed-nav.fixed-nav-basic.fixed-sidebar.mini-navbar.body-small .navbar-fixed-top {
-  left: 220px;
+  left: $sidebar-width;
 }
 
 .fixed-nav .minimalize-styl-2 {
@@ -556,7 +556,7 @@ body.canvas-menu nav.navbar-static-side {
 
 body.canvas-menu.mini-navbar nav.navbar-static-side {
   display: block;
-  width: 180px;
+  width: $sidebar-width;
 }
 
 .top-page-buttons {

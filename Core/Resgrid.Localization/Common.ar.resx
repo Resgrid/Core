@@ -313,4 +313,5 @@
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>في Discord، استخدم /resgrid وأدخل LINK متبوعًا بالرمز في خيار message. استخدم /resgrid أيضًا للأوامر اللاحقة.</value></data>
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>القوى العاملة وعمليات الأعمال</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>الجاهزية</value></data>
+  <data name="NavigationDashboard" xml:space="preserve"><value>لوحة المعلومات</value></data>
 </root>

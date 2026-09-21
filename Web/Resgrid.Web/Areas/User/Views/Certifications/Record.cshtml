@@ -40,7 +40,7 @@
                         <partial name="_AdpRevealBanner" model="adpReveal" />
                     }
                     <dl class="dl-horizontal">
-                        <dt>@localizer["Member"]</dt><dd><a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@r.UserId">@Model.HolderName</a></dd>
+                        <dt>@localizer["Member"]</dt><dd><a asp-controller="Certifications" asp-action="Person" asp-route-area="User" asp-route-userId="@r.UserId">@Model.HolderName</a></dd>
                         <dt>@localizer["TypeName"]</dt><dd>@(t != null ? $"{t.Type} ({t.Code})" : Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Type) ?? "—") @if (t == null) { <span class="label label-default">@localizer["Untyped"]</span> }</dd>
                         <dt>@localizer["Number"]</dt><dd><span data-adp-field="personnelcertifications.number">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</span></dd>
                         <dt>@localizer["IssuedBy"]</dt><dd><span data-adp-field="personnelcertifications.issuedby">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</span></dd>

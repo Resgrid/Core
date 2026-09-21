@@ -1,7 +1,9 @@
-﻿@model Resgrid.Web.Areas.User.Models.EditProfileModel
+﻿@inject Resgrid.Model.Services.IBusinessOperationsAccessService businessOperationsAccess
+@model Resgrid.Web.Areas.User.Models.EditProfileModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> adpLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> localizer
 @{
+    var businessOperationsEnabled = await businessOperationsAccess.IsEnabledAsync(ClaimsAuthorizationHelper.GetDepartmentId());
     ViewData["Title"] = "Resgrid | Edit User Profile";
 }
 @{
@@ -57,7 +59,7 @@
                     <a id="changePassword" class="btn btn-primary top-button" title="@passwordActionLabel" asp-controller="Profile" asp-action="ResetPasswordForUser" asp-route-area="User" asp-route-userId="@Model.UserId">@passwordActionLabel</a>
                 }
                 <a id="staffingScheduleButton" class="btn btn-primary top-button" title="Edit Staffing Schedule" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["StaffingSchedule"]</a>
-                <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["Certifications"]</a>
+                <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="@(businessOperationsEnabled ? "Certifications" : "Profile")" asp-action="@(businessOperationsEnabled ? "Person" : "Certifications")" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["Certifications"]</a>
             </div>
         </div>
     </div>

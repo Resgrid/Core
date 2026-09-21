@@ -781,7 +781,7 @@
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Department Profile</value>
   </data>
-  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Records preservation holds</value></data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Legal holds</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>All records</value></data>
   <data name="ChatAccountsTitle" xml:space="preserve"><value>Messaging accounts</value></data>
   <data name="ChatAccountsGenerate" xml:space="preserve"><value>Generate linking code</value></data>
@@ -798,4 +798,5 @@
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>For Discord, use /resgrid and enter LINK followed by your code in the message option. Use /resgrid for subsequent commands too.</value></data>
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Workforce &amp; Business Ops</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Readiness</value></data>
+  <data name="NavigationDashboard" xml:space="preserve"><value>Dashboard</value></data>
 </root>

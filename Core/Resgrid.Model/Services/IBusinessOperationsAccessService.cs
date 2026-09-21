@@ -6,10 +6,13 @@ namespace Resgrid.Model.Services
 	/// Entitlement checks for the paid Business Operations add-on surfaces (Workforce &amp; Business Operations plan,
 	/// decision 42). Each check is master flag → capability flag → module switch → billing configured → live
 	/// PaymentAddons window, exactly as ReadinessAccessService.CanUseMaintenanceAsync; no entitlement cache.
-	/// Free surfaces (pre-plans, certifications, the deployment core) never call this service.
+	/// Free surfaces never require paid entitlement; IsEnabledAsync only checks the module rollout.
 	/// </summary>
 	public interface IBusinessOperationsAccessService
 	{
+		/// <summary>The master feature flag and department module switch are enabled, independently of paid entitlements.</summary>
+		Task<bool> IsEnabledAsync(int departmentId);
+
 		/// <summary>The department may create and work invoices, rate cards and billing profiles (Phase B).</summary>
 		Task<bool> CanUseInvoicingAsync(int departmentId);
 

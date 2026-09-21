@@ -60,6 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// Department activity and personnel hours read legacy Logs and finalized Records through one feed, so
 		// totals reconcile across the Records cutover (RMS plan section 4.10).
 		private readonly IRecordsReportingService _recordsReporting;
+		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
 			IActionLogsService actionLogsService,
@@ -72,7 +73,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICustomStateService customStateService, IAuthorizationService authorizationService,
 			IUnitsService unitsService, IUnitStatesService unitStatesService,
 			ICalendarService calendarService, IDepartmentMemberSensitiveDataService memberSensitiveDataService,
-			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting)
+			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting,
+			IBusinessOperationsAccessService businessOperationsAccess)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -96,6 +98,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_unitStatesService = unitStatesService;
 			_calendarService = calendarService;
 			_recordsReporting = recordsReporting;
+			_businessOperationsAccess = businessOperationsAccess;
 		}
 
 		#endregion Private Members and Constructors
@@ -237,6 +240,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> CertificationsReport()
 		{
+			if (await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
+				return NotFound();
+
 			return View(await CreateCertificationsReportModel(DepartmentId));
 		}
 
@@ -618,6 +624,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else if (((ReportTypes)type) == ReportTypes.Certifications)
 			{
+				if (await _businessOperationsAccess.IsEnabledAsync(departmentId))
+					return NotFound();
+
 				return View("CertificationsReport", await CreateCertificationsReportModel(departmentId));
 			}
 			else if (((ReportTypes)type) == ReportTypes.ShiftReadiness)

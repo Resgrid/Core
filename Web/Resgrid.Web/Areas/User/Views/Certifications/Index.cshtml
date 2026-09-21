@@ -127,7 +127,7 @@
                                             }
                                             else
                                             {
-                                                <a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@row.Key">@row.First().SubjectName</a>
+                                                <a asp-controller="Certifications" asp-action="Person" asp-route-area="User" asp-route-userId="@row.Key">@row.First().SubjectName</a>
                                             }
                                         </td>
                                         @foreach (var type in types)

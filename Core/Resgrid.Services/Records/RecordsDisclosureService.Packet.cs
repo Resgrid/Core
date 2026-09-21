@@ -266,7 +266,7 @@ namespace Resgrid.Services.Records
 		private static string PacketHtml(RmsDisclosureRequest request, JArray produced, JArray documents, List<RmsRedactionEntry> withheld, DateTime now)
 		{
 			string E(string value) => WebUtility.HtmlEncode(value ?? "");
-			var html = new StringBuilder("<!doctype html><html><head><meta charset=\"utf-8\"><title>Records disclosure</title><style>body{font:11px Arial;color:#142235}h1{font-size:23px}h2{font-size:16px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{width:32%}tr{page-break-inside:avoid}.record{page-break-before:always}</style></head><body><h1>Records disclosure ");
+			var html = new StringBuilder("<!doctype html><html><head><meta charset=\"utf-8\"><title>Resgrid | Records disclosure</title><style>body{font:11px Arial;color:#142235}h1{font-size:23px}h2{font-size:16px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{width:32%}tr{page-break-inside:avoid}.record{page-break-before:always}</style></head><body><h1>Records disclosure ");
 			html.Append(E(request.RequestNumber)).Append("</h1><p>").Append(E(request.JurisdictionProfile)).Append(" · Prepared ").Append(now.ToString("u")).Append("</p><h2>Contents</h2><ol>");
 			foreach (var item in produced) html.Append("<li>").Append(E((string)item["record_number"])).Append(" · revision ").Append((int)item["revision_number"]).Append("</li>");
 			html.Append("</ol><p>Attachments are separate files in the packet. The manifest records each file and checksum.</p>");

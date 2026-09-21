@@ -239,7 +239,7 @@ body.md-skin {
 
   .navbar-static-side {
     box-shadow: $md-shadow-main;
-    width: 180px;
+    width: $sidebar-width;
   }
 
   // Right sidebar

@@ -1,0 +1,49 @@
+# Resolve service names again after container replacement rather than retaining an old IP.
+resolver 127.0.0.11 valid=30s ipv6=off;
+resolver_timeout 5s;
+
+# The published port exposes only authenticated sending, never registration or intake.
+server {
+    listen 8080;
+    server_name _;
+    access_log off;
+    client_max_body_size 256k;
+    location = /v2/send {
+        if ($request_method != POST) { return 405; }
+        if ($http_authorization != "Bearer ${SIGNAL_API_TOKEN}") { return 401; }
+        set $signal_upstream signal-api:8080;
+        proxy_pass http://$signal_upstream/v2/send;
+        proxy_set_header Authorization "";
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 15s;
+        proxy_next_upstream off;
+    }
+    location / { return 404; }
+}
+
+# This port is reachable only on the dedicated Docker network. Do not publish it
+# or attach untrusted containers: it authenticates bridge events to Resgrid.
+server {
+    listen 8081;
+    server_name _;
+    access_log off;
+    client_max_body_size 256k;
+    location = /receive {
+        if ($request_method != POST) { return 405; }
+        set $resgrid_upstream ${RESGRID_API_HOST};
+        proxy_pass https://$resgrid_upstream/api/v4/ChatbotPlatforms/Signal;
+        proxy_pass_request_headers off;
+        proxy_set_header Host ${RESGRID_API_HOST};
+        proxy_set_header Content-Type application/json;
+        proxy_set_header X-Resgrid-Signal-Secret "${SIGNAL_WEBHOOK_SECRET}";
+        proxy_ssl_server_name on;
+        proxy_ssl_name ${RESGRID_API_HOST};
+        proxy_ssl_verify on;
+        proxy_ssl_verify_depth 3;
+        proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 15s;
+        proxy_next_upstream off;
+    }
+    location / { return 404; }
+}

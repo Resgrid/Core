@@ -36,7 +36,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (id == null)
 			{
 				input.Name = definition.PublishedForm.Name;
-				var department = _departments == null ? null : await _departments.Value.GetDepartmentByIdAsync(DepartmentId);
 				input.TimeZoneId = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
 				input.StartDate = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today;
 			}

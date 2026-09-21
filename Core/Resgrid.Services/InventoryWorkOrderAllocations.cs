@@ -51,7 +51,7 @@ namespace Resgrid.Services
             if (line.WorkOrderPartId == null || line.WorkOrderPartMovementId == null || line.ReversesTransactionId != null) throw new InventoryException(409, "WorkOrderPostingRequired");
             var part = await _workOrders.GetAsync<WorkOrderPart>(departmentId, line.WorkOrderPartId);
             var movement = await _workOrders.GetAsync<WorkOrderPartMovement>(departmentId, line.WorkOrderPartMovementId);
-            if (part == null || !part.Staged || part.VoidedOn.HasValue || movement?.PartId != part.Id || movement.WorkOrderId != part.WorkOrderId || movement.Cancelled || movement.InventoryTransactionId != null
+            if (part == null || movement == null || !part.Staged || part.VoidedOn.HasValue || movement.PartId != part.Id || movement.WorkOrderId != part.WorkOrderId || movement.Cancelled || movement.InventoryTransactionId != null
                 || movement.Quantity != line.Quantity || movement.FromLocationId != line.FromLocationId || movement.ToLocationId != line.ToLocationId || line.AssetId != part.ReservedAssetId || line.LotId != part.ReservedLotId) throw new InventoryException(409, "ReferenceUnavailable");
             var kind = (WorkOrderPartMovementKind)movement.Kind;
             if (kind == WorkOrderPartMovementKind.Issue)

@@ -16,7 +16,7 @@
             <a asp-action="Contractors" asp-route-edit="new" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["AddContractor"]</a>
         }
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = Model.CanManage ? headerActions : null;
 }
 
 @await Html.PartialAsync("_WorkforceShell")

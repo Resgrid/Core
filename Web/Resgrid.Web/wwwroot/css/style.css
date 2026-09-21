@@ -428,7 +428,7 @@ margin-top: 0;
 }
 
 body.fixed-nav.fixed-nav-basic .navbar-fixed-top {
-left: 220px;
+left: 250px;
 }
 
 body.fixed-nav.fixed-nav-basic.mini-navbar .navbar-fixed-top {
@@ -448,7 +448,7 @@ left: 0;
 }
 
 body.fixed-nav.fixed-nav-basic.fixed-sidebar.mini-navbar.body-small .navbar-fixed-top {
-left: 220px;
+left: 250px;
 }
 
 .fixed-nav .minimalize-styl-2 {
@@ -513,7 +513,7 @@ margin: 0 0 0 0;
 body.fixed-sidebar .navbar-static-side,
 body.canvas-menu .navbar-static-side {
 position: fixed;
-width: 220px;
+width: 250px;
 z-index: 2001;
 height: 100%;
 }
@@ -527,11 +527,11 @@ margin: 0 0 0 0;
 }
 
 body.body-small.fixed-sidebar.mini-navbar #page-wrapper {
-margin: 0 0 0 220px;
+margin: 0 0 0 250px;
 }
 
 body.body-small.fixed-sidebar.mini-navbar .navbar-static-side {
-width: 220px;
+width: 250px;
 }
 
 .fixed-sidebar.mini-navbar .nav li:focus > .nav-second-level,
@@ -603,7 +603,7 @@ display: none;
 
 body.canvas-menu.mini-navbar nav.navbar-static-side {
 display: block;
-width: 180px;
+width: 250px;
 }
 
 .top-page-buttons {
@@ -3957,7 +3957,7 @@ position: relative !important;
 @media (min-width: 768px) {
 #page-wrapper {
 position: inherit;
-margin: 0 0 0 180px !important;
+margin: 0 0 0 250px;
 min-height: 2002px;
 }
 }
@@ -4013,7 +4013,7 @@ z-index: 1000;
 padding: 10px 20px;
 background: white;
 border-top: 1px solid #e7eaec;
-margin-left: 220px;
+margin-left: 250px;
 }
 
 body.mini-navbar .footer.fixed,
@@ -4027,7 +4027,7 @@ margin: 0 !important;
 }
 
 body.fixed-sidebar.body-small.mini-navbar .footer.fixed {
-margin: 0 0 0 220px;
+margin: 0 0 0 250px;
 }
 
 body.body-small .footer.fixed {
@@ -8515,7 +8515,7 @@ body.rtls {
 }
 
 body.rtls #page-wrapper {
-margin: 0 220px 0 0;
+margin: 0 250px 0 0;
 }
 
 body.rtls .nav-second-level li a {
@@ -8664,7 +8664,7 @@ direction: ltr;
 }
 
 body.rtls .footer.fixed {
-margin-right: 220px;
+margin-right: 250px;
 margin-left: 0;
 }
 
@@ -8705,11 +8705,11 @@ margin: 0 0 0 0;
 }
 
 body.rtls.body-small.fixed-sidebar.mini-navbar #page-wrapper {
-margin: 0 220px 0 0;
+margin: 0 250px 0 0;
 }
 
 body.rtls.body-small.fixed-sidebar.mini-navbar .navbar-static-side {
-width: 220px;
+width: 250px;
 }
 
 .body-small.rtls .navbar-fixed-top {
@@ -8758,7 +8758,7 @@ display: block;
 display: none;
 z-index: 2001;
 position: fixed;
-width: 220px;
+width: 250px;
 }
 
 .rtls.fixed-sidebar.body-small.mini-navbar .navbar-static-side {
@@ -9575,7 +9575,7 @@ height: 56px !important;
 
 .md-skin .navbar-static-side {
 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-width: 180px;
+width: 250px;
 }
 
 .md-skin #right-sidebar {
@@ -9739,7 +9739,7 @@ margin: 0 0 0 0;
 }
 
 .md-skin.body-small.fixed-sidebar.mini-navbar .navbar-static-side {
-width: 220px;
+width: 250px;
 background-color: #ffffff;
 }
 
@@ -9758,14 +9758,14 @@ display: none;
 @media (min-width: 768px) {
 #page-wrapper {
 position: inherit;
-margin: 0 0 0 220px;
+margin: 0 0 0 250px;
 min-height: 1200px;
 }
 
 .navbar-static-side {
 z-index: 2001;
 position: absolute;
-width: 220px;
+width: 250px;
 }
 
 .navbar-top-links .dropdown-messages,
@@ -9822,7 +9822,7 @@ z-index: 1;
 display: none;
 z-index: 2001;
 position: fixed;
-width: 220px;
+width: 250px;
 }
 
 .fixed-sidebar.body-small.mini-navbar .navbar-static-side {
@@ -9956,7 +9956,7 @@ z-index: 2002;
 
 /* The scroll lives on .sidebar-collapse (the module list), never on the <nav> itself.
    An overflow container clips its descendants on both axes, and the profile dropdown is
-   wider than the 220px sidebar, so scrolling the <nav> chopped that menu off at the
+   able to extend beyond the sidebar, so scrolling the <nav> chopped that menu off at the
    sidebar edge and it read as painting behind the page content. The profile block sits
    outside .sidebar-collapse in _Navigation.cshtml so its dropdown escapes the scroll box. */
 nav.navbar-static-side {
@@ -10085,7 +10085,7 @@ body.mini-navbar .module-navigation #side-menu .nav-second-level .nav-label {
 }
 /* Give the mobile menu room for labels even though the theme calls it mini-navbar. */
 body.body-small.mini-navbar .module-navigation {
-  width: 220px;
+  width: 250px;
 }
 body.body-small.mini-navbar .module-navigation #side-menu > li > a > span {
   display: inline;
@@ -10093,7 +10093,7 @@ body.body-small.mini-navbar .module-navigation #side-menu > li > a > span {
 @media (min-width: 769px) {
   body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:hover,
   body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:focus-within {
-    width: 220px;
+    width: 250px;
   }
   body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:hover #side-menu > li > a > span,
   body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .module-navigation:focus-within #side-menu > li > a > span {

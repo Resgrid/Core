@@ -746,4 +746,5 @@
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>W Discord użyj /resgrid i wpisz LINK oraz kod w opcji message. Kolejne polecenia również wysyłaj przez /resgrid.</value></data>
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Kadry i zarządzanie</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Gotowość</value></data>
+  <data name="NavigationDashboard" xml:space="preserve"><value>Pulpit</value></data>
 </root>

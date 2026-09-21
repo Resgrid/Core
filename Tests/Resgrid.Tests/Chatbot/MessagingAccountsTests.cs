@@ -58,6 +58,18 @@ namespace Resgrid.Tests.Chatbot
 		[TearDown]
 		public void TearDown() => ClaimsAuthorizationHelper._httpContextAccessor = _previousAccessor;
 
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task Signal_account_option_reflects_inbound_configuration(bool configured)
+		{
+			var signal = new Mock<IExternalChatbotAdapter>();
+			signal.SetupGet(a => a.IsInboundConfigured).Returns(configured);
+			_registry.Setup(r => r.GetAdapter(ChatbotPlatform.Signal)).Returns(signal.Object);
+			var result = (ViewResult)await _controller.Index();
+			var model = (MessagingAccountsViewModel)result.Model;
+			model.Platforms.Should().ContainSingle(p => p.Name == "Signal" && p.IsConfigured == configured);
+		}
+
 		[Test]
 		public async Task Unlink_IdOutsideCurrentUsersAccounts_DoesNotDelete()
 		{

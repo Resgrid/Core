@@ -132,7 +132,7 @@ namespace Resgrid.Services.Search
 			=> Guarded(SearchEntityTypes.Deployment, deployment?.DepartmentId ?? 0, deployment?.DeploymentId, deployment != null && deployment.IsDeleted, () => BuildDeploymentAsync(deployment), cancellationToken);
 
 		public Task ProjectCertificationTypeAsync(DepartmentCertificationType type, CancellationToken cancellationToken = default)
-			=> Guarded(SearchEntityTypes.CertificationType, type?.DepartmentId ?? 0, type?.DepartmentCertificationTypeId.ToString(), false, () => BuildCertificationTypeAsync(type), cancellationToken);
+			=> Guarded(SearchEntityTypes.CertificationType, type?.DepartmentId ?? 0, type?.DepartmentCertificationTypeId.ToString(), type != null && type.IsDeleted, () => BuildCertificationTypeAsync(type), cancellationToken);
 
 		// ---- builders --------------------------------------------------------------------------------------------
 
@@ -436,7 +436,7 @@ namespace Resgrid.Services.Search
 
 		public async Task<SearchProjection> BuildCertificationTypeAsync(DepartmentCertificationType type)
 		{
-			if (type == null || type.DepartmentId <= 0 || type.DepartmentCertificationTypeId <= 0)
+			if (type == null || type.DepartmentId <= 0 || type.DepartmentCertificationTypeId <= 0 || type.IsDeleted)
 				return null;
 			var ctx = await ContextAsync(type.DepartmentId);
 			var name = Safe(type.Type);

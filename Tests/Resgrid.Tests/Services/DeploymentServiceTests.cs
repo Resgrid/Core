@@ -418,5 +418,36 @@ namespace Resgrid.Tests.Services
 			list.Select(x => x.DeploymentId).Should().BeEquivalentTo(new[] { mine.DeploymentId });
 			other.DeploymentId.Should().NotBe(mine.DeploymentId);
 		}
+
+		[Test]
+		public async Task Every_deployment_save_projects_the_row_for_search()
+		{
+			var projected = new List<string>();
+			var projections = new Mock<ISearchProjectionService>();
+			projections.Setup(p => p.ProjectDeploymentAsync(It.IsAny<Deployment>(), It.IsAny<CancellationToken>()))
+				.Callback((Deployment d, CancellationToken _) => projected.Add(d.Name)).Returns(Task.CompletedTask);
+			_service = new DeploymentService(_deployments.Object, _units.Object, _personnel.Object, _equipment.Object, _attachments.Object, _departments.Object, _unitsService.Object, _profiles.Object,
+				_roles.Object, _certifications.Object, _contacts.Object, _calls.Object, _records.Object, _outbox.Object, _events.Object, _pdf.Object, null,
+				searchProjections: new Lazy<ISearchProjectionService>(() => projections.Object));
+
+			var saved = await NewDeploymentAsync("Ridge Fire");
+			saved.Name = "Ridge Fire Complex";
+			await _service.SaveDeploymentAsync(saved, Manager, null, null);
+
+			projected.Should().Equal(new[] { "Ridge Fire", "Ridge Fire Complex" }, "a created and an edited deployment reach search without waiting for a rebuild");
+		}
+
+		[Test]
+		public async Task Header_rows_by_ids_skip_blank_ids_and_missing_rows()
+		{
+			var mine = await NewDeploymentAsync("Mine");
+			_deployments.Setup(r => r.GetByIdsAsync(DeptId, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int _, IEnumerable<string> ids) => _storedDeployments.Where(x => ids.Contains(x.DeploymentId)).ToList());
+
+			var headers = await _service.GetDeploymentsByIdsAsync(DeptId, new[] { mine.DeploymentId, " ", null, "missing" });
+
+			headers.Select(h => h.DeploymentId).Should().Equal(mine.DeploymentId);
+			(await _service.GetDeploymentsByIdsAsync(DeptId, null)).Should().BeEmpty();
+			_deployments.Verify(r => r.GetByIdsAsync(DeptId, It.IsAny<IEnumerable<string>>()), Times.Once, "blank input never reaches the repository");
+		}
 	}
 }

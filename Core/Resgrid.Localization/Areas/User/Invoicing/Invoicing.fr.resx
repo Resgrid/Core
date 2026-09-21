@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Module Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Un module mensuel pour les services qui facturent des clients et gèrent des contrats. Seul le membre gestionnaire du service peut l'acheter ou le résilier.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Facturation clients, grilles tarifaires, paiements et balance âgée</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Barèmes de sous-traitance, contrats et recouvrement des coûts (à venir)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Données de paie et chiffrage terrain (à venir)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Barèmes de sous-traitance, contrats et recouvrement des coûts</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Données de paie et chiffrage terrain</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Le module est actif pour votre service.</value></data>
   <data name="Monthly" xml:space="preserve"><value>mois</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Votre service ne possède pas encore ce module.</value></data>

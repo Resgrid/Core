@@ -731,4 +731,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Aufbewahrungssperren für Akten</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Alle Akten</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Nachrichtenkonten</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Verknüpfungscode erstellen</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Erstellen Sie einen Code und senden Sie dann LINK gefolgt vom Code in einer privaten Unterhaltung mit dem Resgrid-Bot.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Verknüpfungscode</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Gültig bis (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Verknüpfung aufheben</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Verknüpfte Konten</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Nachrichtenplattformen</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Es sind keine Nachrichtenkonten verknüpft.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Die Nachrichtenkonten konnten nicht aktualisiert werden. Versuchen Sie es erneut.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Zurück zum Profil</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Ihr Verknüpfungscode ist bereit.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Verwenden Sie in Discord /resgrid und geben Sie LINK gefolgt vom Code in der Option message ein. Nutzen Sie /resgrid auch für weitere Befehle.</value></data>
 </root>

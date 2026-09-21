@@ -24,6 +24,10 @@ namespace Resgrid.Model.Services
 		Task<List<Deployment>> GetDeploymentsForContractAsync(string serviceContractId, int departmentId);
 		/// <summary>Deployments the member is or was rostered on (the field user's scope).</summary>
 		Task<List<Deployment>> GetDeploymentsForUserAsync(int departmentId, string userId, bool openOnly);
+		/// <summary>Cost-recovery deployments demobilizing or completed and released on or before the instant (the Cal OES MARS F-42 reminder scope), newest first.</summary>
+		Task<List<Deployment>> GetCostRecoveryDeploymentsReleasedBeforeAsync(int departmentId, DateTime releasedOnOrBeforeUtc);
+		/// <summary>Header rows for the ids (no roster), for a batched existence / ownership check such as search authorization.</summary>
+		Task<List<Deployment>> GetDeploymentsByIdsAsync(int departmentId, IEnumerable<string> deploymentIds);
 		Task<bool> IsRosteredAsync(string deploymentId, int departmentId, string userId);
 
 		Task<Deployment> SaveDeploymentAsync(Deployment deployment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);

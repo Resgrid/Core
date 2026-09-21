@@ -3,10 +3,8 @@ using ProtoBuf;
 namespace Resgrid.Model.Queue
 {
 	/// <summary>
-	/// Carries an inbound chatbot message (e.g. a Twilio SMS) onto the bus so the chatbot
-	/// pipeline runs in the worker process instead of inline on the inbound webhook thread.
-	/// The worker resolves IChatbotIngressService, processes the message, and sends the reply
-	/// back to <see cref="From"/> via the SMS transport.
+	/// Carries an inbound chatbot message onto the bus so the assistant runs in the worker.
+	/// Platform selects the reply transport; From is an opaque native identity, not necessarily a phone number.
 	/// </summary>
 	[ProtoContract]
 	public class ChatbotMessageQueueItem
@@ -14,11 +12,11 @@ namespace Resgrid.Model.Queue
 		[ProtoMember(1)]
 		public int DepartmentId { get; set; }
 
-		/// <summary>Number the message was sent TO (the department text number), digits only.</summary>
+		/// <summary>Destination identity; for SMS, the department text number in digits.</summary>
 		[ProtoMember(2)]
 		public string To { get; set; }
 
-		/// <summary>Sender's number, digits only — where the reply is delivered.</summary>
+		/// <summary>Sender's platform identity; for SMS, the phone number in digits.</summary>
 		[ProtoMember(3)]
 		public string From { get; set; }
 
@@ -40,5 +38,12 @@ namespace Resgrid.Model.Queue
 		/// </summary>
 		[ProtoMember(7)]
 		public int? IncidentCallId { get; set; }
+
+		/// <summary>Routing metadata from an authenticated platform webhook; never a client-supplied URL.</summary>
+		[ProtoMember(8)]
+		public System.Collections.Generic.Dictionary<string, string> PlatformMetadata { get; set; }
+
+		[ProtoMember(9)]
+		public System.DateTime ReceivedAtUtc { get; set; }
 	}
 }

@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Доповнення Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Щомісячне доповнення для підрозділів, які виставляють рахунки клієнтам і керують контрактами. Придбати або скасувати його може лише керівний член підрозділу.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Виставлення рахунків клієнтам, тарифи, платежі та прострочення заборгованості</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Тарифні сітки підрядників, контракти та відшкодування витрат (згодом)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Дані про оплату праці та польові витрати (згодом)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Тарифні сітки підрядників, контракти та відшкодування витрат</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Дані про оплату праці та польові витрати</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Доповнення активне для вашого підрозділу.</value></data>
   <data name="Monthly" xml:space="preserve"><value>місяць</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Ваш підрозділ ще не має цього доповнення.</value></data>

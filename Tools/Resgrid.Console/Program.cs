@@ -144,7 +144,8 @@ namespace Resgrid.Console
 								// Set the connection string
 								.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
 								// Define the assembly containing the migrations
-								.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
+								// Include the SQL Server compatibility maintenance check before schema migrations.
+								.ScanIn(typeof(M0001_InitialMigration).Assembly).For.All())
 							// Enable logging to console in the FluentMigrator way
 							.AddLogging(lb => lb.AddFluentMigratorConsole())
 							// Build the service provider

@@ -42,7 +42,7 @@ namespace Resgrid.Providers.Chatbot.Services
 			{
 				// Department gate: proactive chat delivery must be opted in for this department (§15.2).
 				var config = await _departmentConfigService.GetConfigAsync(departmentId);
-				if (config != null && !config.ProactiveNotificationsEnabled)
+				if (config != null && (!config.IsEnabled || !config.ProactiveNotificationsEnabled))
 					return result;
 
 				var identities = await _identityService.GetUserIdentitiesAsync(userId);
@@ -52,6 +52,10 @@ namespace Resgrid.Providers.Chatbot.Services
 				foreach (var identity in identities)
 				{
 					if (identity == null || !identity.IsActive)
+						continue;
+					// External notifications require an explicit department opt-in. Preserve WebChat's
+					// existing default while preventing absent configuration from enabling third-party sends.
+					if (config == null && identity.Platform != ChatbotPlatform.WebChat)
 						continue;
 
 					// SMS is delivered by the dedicated SMS channel; don't double-handle it here.

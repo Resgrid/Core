@@ -64,6 +64,8 @@ namespace Resgrid.Chatbot.Services
 			var entity = await _identityRepository.GetByPlatformAndUserAsync((int)platform, trimmedPlatformUserId);
 			if (entity != null)
 			{
+				if (entity.UserId != userId)
+					throw new InvalidOperationException("This messaging account is already linked to another user.");
 				entity.UserId = userId;
 				entity.PlatformUserName = platformUserName ?? entity.PlatformUserName;
 				entity.IsActive = true;

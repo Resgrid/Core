@@ -66,5 +66,37 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			catch (Exception ex) { Logging.LogException(ex); throw; }
 		}
+
+		public async Task<bool> TryConsumeAsync(string id, int platform, string platformUserId, DateTime utcNow)
+		{
+			try
+			{
+				var dp = new DynamicParametersExtension();
+				dp.Add("Id", id);
+				dp.Add("Platform", platform);
+				dp.Add("PlatformUserId", platformUserId);
+				dp.Add("UtcNow", utcNow);
+
+				var pn = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"UPDATE {_sqlConfiguration.SchemaName}.chatbotlinkingcodes SET isused = true, usedat = {pn}UtcNow, platform = {pn}Platform, platformuserid = {pn}PlatformUserId WHERE id = {pn}Id AND isused = false AND expiresat > {pn}UtcNow"
+					: $"UPDATE {_sqlConfiguration.SchemaName}.[ChatbotLinkingCodes] SET [IsUsed] = 1, [UsedAt] = {pn}UtcNow, [Platform] = {pn}Platform, [PlatformUserId] = {pn}PlatformUserId WHERE [Id] = {pn}Id AND [IsUsed] = 0 AND [ExpiresAt] > {pn}UtcNow";
+
+				var consumeFunction = new Func<DbConnection, Task<int>>(async connection =>
+					await connection.ExecuteAsync(sql: sql, param: dp, transaction: _unitOfWork?.Transaction));
+
+				if (_unitOfWork?.Connection == null)
+				{
+					using (var connection = _connectionProvider.Create())
+					{
+						await connection.OpenAsync();
+						return await consumeFunction(connection) == 1;
+					}
+				}
+
+				return await consumeFunction(_unitOfWork.CreateOrGetConnection()) == 1;
+			}
+			catch (Exception ex) { Logging.LogException(ex); throw; }
+		}
 	}
 }

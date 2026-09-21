@@ -731,4 +731,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Bevarandespärrar för journaler</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Alla journaler</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Meddelandekonton</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Skapa länkningskod</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Skapa en kod och skicka sedan LINK följt av koden i en privat konversation med Resgrid-boten.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Länkningskod</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Giltig till (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Koppla från</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Länkade konton</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Meddelandeplattformar</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Inga meddelandekonton är länkade.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Det gick inte att uppdatera meddelandekontona. Försök igen.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Tillbaka till profilen</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Din länkningskod är klar.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>I Discord använder du /resgrid och skriver LINK följt av koden i alternativet message. Använd även /resgrid för efterföljande kommandon.</value></data>
 </root>

@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Tillägget Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Ett månadstillägg för avdelningar som fakturerar kunder och hanterar avtal. Endast avdelningens ansvariga medlem kan köpa eller avsluta det.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Kundfakturering, prislistor, betalningar och åldersanalys</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Entreprenörstaxor, avtal och kostnadsåtervinning (kommer senare)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Lönedata och fältkostnader (kommer senare)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Entreprenörstaxor, avtal och kostnadsåtervinning</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Lönedata och fältkostnader</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Tillägget är aktivt för er avdelning.</value></data>
   <data name="Monthly" xml:space="preserve"><value>månad</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Er avdelning har inte detta tillägg ännu.</value></data>

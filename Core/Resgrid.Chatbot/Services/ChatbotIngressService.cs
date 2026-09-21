@@ -89,6 +89,12 @@ namespace Resgrid.Chatbot.Services
 			{
 				// 1. Identify user from the platform-specific identifier (already-linked only).
 				var identity = await ResolveUserIdentityAsync(message);
+				if (identity != null && !identity.IsActive)
+				{
+					return await _templateRenderer.RenderResponseAsync("error",
+						new Services.ErrorModel { Message = "This messaging account is no longer linked. Please link your account again through Resgrid." },
+						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+				}
 
 				// 1b. SMS identities are only trusted while the linked profile's mobile number is
 				// verified AND still matches the sending number. Links created before verification was
@@ -154,13 +160,19 @@ namespace Resgrid.Chatbot.Services
 					identity.UserId, identity.Platform, identity.PlatformUserId, identity.PlatformUserName, identity.LinkingMethod);
 
 				// 2. Get active department for this user (respects IsActive flag for multi-dept users)
-				var department = await ResolveActiveDepartmentAsync(identity.UserId);
+				var department = await ResolveActiveDepartmentAsync(identity.UserId, message.Platform);
 				if (department == null)
 				{
 					return await _templateRenderer.RenderResponseAsync("error",
 						new Services.ErrorModel { Message = "You are not currently a member of any department. Please contact your administrator." },
 						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 				}
+
+				// Native intake binds the policy check to this exact department. A concurrent switch
+				// must not execute against a different department than the checked/cached response scope.
+				var expectedDepartmentId = message.GetMetaString("expectedDepartmentId");
+				if (expectedDepartmentId != null && expectedDepartmentId != department.DepartmentId.ToString(System.Globalization.CultureInfo.InvariantCulture))
+					return new ChatbotResponse { Text = "Your active department changed. Please send the command again.", Processed = false };
 
 				// 3. Central authorization gate (layer 1): the user must be a valid, active member
 				// within the resolved department's limits before any intent is dispatched. Per-handler
@@ -172,11 +184,13 @@ namespace Resgrid.Chatbot.Services
 						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 				}
 
-				// 3b. Check the ACTIVE department's plan supports chatbot features. When it doesn't but the
+				// 3b. SMS and WebChat retain their existing plan eligibility. External messaging channels
+				// do not require a provisioned SMS number. When the active department's plan is unsupported but the
 				// user belongs to other departments that do, don't hard-block: they must still be able to
 				// list departments and SWITCH their active department (restricted mode, enforced after
 				// intent classification below). Only when there is no supported alternative is this a dead end.
-				var isAuthorized = await _limitsService.CanDepartmentProvisionNumberAsync(department.DepartmentId);
+				var isAuthorized = !UsesSmsDepartmentEligibility(message.Platform)
+					|| await _limitsService.CanDepartmentProvisionNumberAsync(department.DepartmentId);
 				List<Model.DepartmentMember> switchableDepartments = null;
 				if (!isAuthorized)
 				{
@@ -835,9 +849,9 @@ namespace Resgrid.Chatbot.Services
 				identity = await _userIdentityService.LinkUserAsync(message.From, ChatbotPlatform.WebChat, message.From, null, "webchat-auto");
 			}
 
-			// Generic lookup for a number already linked to a Resgrid user (any platform). Note: this
-			// does NOT auto-link new numbers — that is handled (with optional confirmation) in the ingress.
-			if (identity == null)
+			// Only SMS senders may resolve an existing SMS phone identity. Numeric user ids from
+			// external platforms are not phone numbers and must never authenticate another platform's user.
+			if (identity == null && IsSmsPlatform(message.Platform))
 			{
 				var cleanPhone = message.From?.Replace("+", "").Trim();
 				if (!string.IsNullOrWhiteSpace(cleanPhone))
@@ -849,6 +863,9 @@ namespace Resgrid.Chatbot.Services
 
 		private static bool IsSmsPlatform(ChatbotPlatform platform)
 			=> platform == ChatbotPlatform.SmsTwilio || platform == ChatbotPlatform.SmsSignalWire;
+
+		private static bool UsesSmsDepartmentEligibility(ChatbotPlatform platform)
+			=> IsSmsPlatform(platform) || platform == ChatbotPlatform.WebChat || platform == ChatbotPlatform.Unknown;
 
 		private static bool IsEmergencyText(string text)
 		{
@@ -948,12 +965,21 @@ namespace Resgrid.Chatbot.Services
 		private static string NormalizePhone(string number)
 			=> number?.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
-		private async Task<Model.Department> ResolveActiveDepartmentAsync(string userId)
+		private async Task<Model.Department> ResolveActiveDepartmentAsync(string userId, ChatbotPlatform platform)
 		{
-			// Shared resolution: the user's active (then default, then first) membership, preferring one whose
-			// plan supports SMS. The TwilioController uses the same resolver for the master-number sender path
-			// so the flag evaluation and the chatbot agree on which department the sender operates in.
-			return await _departmentsService.GetActiveSmsDepartmentForUserAsync(userId);
+			// Preserve SMS/WebChat resolution, including agreement with the master-number webhook.
+			if (UsesSmsDepartmentEligibility(platform))
+				return await _departmentsService.GetActiveSmsDepartmentForUserAsync(userId);
+
+			var memberships = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
+			var membership = memberships?
+				.Where(m => !m.IsDeleted && m.IsDisabled != true)
+				.OrderByDescending(m => m.IsActive)
+				.ThenByDescending(m => m.IsDefault)
+				.ThenBy(m => m.DepartmentId)
+				.FirstOrDefault();
+
+			return membership == null ? null : await _departmentsService.GetDepartmentByIdAsync(membership.DepartmentId);
 		}
 
 		private static bool IsPlatformAllowed(string allowedPlatforms, ChatbotPlatform platform)

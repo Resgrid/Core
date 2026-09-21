@@ -25,7 +25,7 @@
             <table class="table table-condensed m-b-xs">
                 <tr><td>@workforceStrings["Personnel"]</td><td class="text-right">@r.PersonnelTotal.ToString("N2")</td></tr>
                 <tr><td>@workforceStrings["Resources"]</td><td class="text-right">@r.ResourceTotal.ToString("N2")</td></tr>
-                <tr><td>@workforceStrings["Expenses"]</td><td class="text-right">@(r.ExpenseTotal + r.ConsumableTotal + r.OverheadTotal).ToString("N2")</td></tr>
+                <tr><td>@workforceStrings["Expenses"]</td><td class="text-right">@((r.ExpenseTotal + r.ConsumableTotal + r.OverheadTotal).ToString("N2"))</td></tr>
                 <tr class="active"><td><strong>@workforceStrings["TotalLoadedCost"]</strong></td><td class="text-right"><strong>@r.TotalLoadedCost.ToString("N2") @r.Currency</strong></td></tr>
                 <tr><td>@workforceStrings["Revenue"]</td><td class="text-right">@(r.RevenueAmount?.ToString("N2") ?? "—")</td></tr>
                 <tr><td>@workforceStrings["Margin"]</td><td class="text-right @(r.ContributionMargin < 0 ? "text-danger" : "")">@(r.ContributionMargin.HasValue ? r.ContributionMargin.Value.ToString("N2") + " (" + (r.ContributionMarginPercent ?? 0).ToString("N1") + "%)" : "—")</td></tr>

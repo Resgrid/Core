@@ -180,6 +180,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 								 autoDelete: false,
 								 arguments: null);
 
+					await DeclareExternalChatbotRetryQueuesAsync(channel);
+
 					await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.CommunicationTestQueueName),
 								 durable: true,
 								 exclusive: false,
@@ -199,6 +201,23 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
+		}
+
+		internal static string ExternalChatbotRetryQueueName => SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName + ".native.retry");
+		internal static string ExternalChatbotDeadQueueName => SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName + ".native.dead");
+
+		internal static async Task DeclareExternalChatbotRetryQueuesAsync(IChannel channel, CancellationToken cancellationToken = default)
+		{
+			// Sibling queues preserve the deployed primary queue's immutable declaration arguments.
+			await channel.QueueDeclareAsync(ExternalChatbotDeadQueueName, durable: true, exclusive: false,
+				autoDelete: false, arguments: null, cancellationToken: cancellationToken);
+			await channel.QueueDeclareAsync(ExternalChatbotRetryQueueName, durable: true, exclusive: false,
+				autoDelete: false, arguments: new System.Collections.Generic.Dictionary<string, object>
+				{
+					["x-message-ttl"] = 60000,
+					["x-dead-letter-exchange"] = string.Empty,
+					["x-dead-letter-routing-key"] = SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName)
+				}, cancellationToken: cancellationToken);
 		}
 
 		private static async Task DeclareUnitLocationV2QueuesAsync(IChannel channel)

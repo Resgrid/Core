@@ -263,7 +263,7 @@ namespace Resgrid.Tests.Search
 			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(7, true)).ReturnsAsync(new DepartmentModuleSettings { DocumentsDisabled = true });
 			var result = await Search("Documents");
 			result.Hits.Should().BeEmpty();
-			_global.Verify(g => g.SearchAsync(It.IsAny<int>(), It.IsAny<GlobalSearchQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+			_lastQuery.EntityTypes.Should().NotContain(SearchEntityTypes.Document, "a disabled module's family never reaches the index");
 		}
 
 		[Test]

@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Complemento Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Un complemento mensual para departamentos que facturan a clientes y gestionan contratos. Solo el miembro administrador del departamento puede comprarlo o cancelarlo.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Facturación de clientes, tarifas, pagos y antigüedad de cuentas por cobrar</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Tablas de tarifas de contratistas, contratos y recuperación de costes (próximamente)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Datos de nómina y costes de campo (próximamente)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Tablas de tarifas de contratistas, contratos y recuperación de costes</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Datos de nómina y costes de campo</value></data>
   <data name="AddonActive" xml:space="preserve"><value>El complemento está activo para su departamento.</value></data>
   <data name="Monthly" xml:space="preserve"><value>mes</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Su departamento aún no tiene este complemento.</value></data>

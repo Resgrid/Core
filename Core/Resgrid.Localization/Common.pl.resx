@@ -731,4 +731,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Blokady zachowania rejestrów</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Wszystkie rejestry</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Konta komunikatorów</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Wygeneruj kod łączenia</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Wygeneruj kod, a następnie wyślij LINK i ten kod w prywatnej rozmowie z botem Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Kod łączenia</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Wygasa (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Odłącz</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Połączone konta</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Komunikatory</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Nie połączono żadnych kont komunikatorów.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Nie udało się zaktualizować kont komunikatorów. Spróbuj ponownie.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Powrót do profilu</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Kod łączenia jest gotowy.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>W Discord użyj /resgrid i wpisz LINK oraz kod w opcji message. Kolejne polecenia również wysyłaj przez /resgrid.</value></data>
 </root>

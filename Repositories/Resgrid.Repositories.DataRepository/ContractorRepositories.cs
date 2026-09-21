@@ -121,7 +121,7 @@ namespace Resgrid.Repositories.DataRepository
 		public DepartmentComplianceDocumentRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
-		private static readonly string[] Meta = { "DepartmentComplianceDocumentId", "DepartmentId", "DocumentType", "Name", "DocumentNumber", "Issuer", "EffectiveOn", "ExpiresOn", "AlertLeadDays", "FileName", "FileType", "FileSize", "IsDeleted", "AddedOn", "AddedByUserId", "EditedOn", "EditedByUserId", "IsProtected", "ProtectedCatalogVersion" };
+		private static readonly string[] Meta = { "DepartmentComplianceDocumentId", "DepartmentId", "DocumentType", "Name", "DocumentNumber", "Issuer", "EffectiveOn", "ExpiresOn", "AlertLeadDays", "FileName", "FileType", "FileSize", "IsDeleted", "AddedOn", "AddedByUserId", "EditedOn", "EditedByUserId" };
 		private static string False => IsPostgres ? "FALSE" : "0";
 
 		public Task<IEnumerable<DepartmentComplianceDocument>> GetForDepartmentAsync(int departmentId) =>

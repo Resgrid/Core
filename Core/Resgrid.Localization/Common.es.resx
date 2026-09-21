@@ -771,4 +771,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Retenciones de conservación de registros</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Todos los registros</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Cuentas de mensajería</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Generar código de vinculación</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Genera un código y envía LINK seguido del código en una conversación privada con el bot de Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Código de vinculación</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Caduca (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Desvincular</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Cuentas vinculadas</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Plataformas de mensajería</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>No hay cuentas de mensajería vinculadas.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>No se pudieron actualizar las cuentas de mensajería. Inténtalo de nuevo.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Volver al perfil</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Tu código de vinculación está listo.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>En Discord, usa /resgrid e introduce LINK seguido de tu código en la opción message. Usa /resgrid también para los comandos siguientes.</value></data>
 </root>

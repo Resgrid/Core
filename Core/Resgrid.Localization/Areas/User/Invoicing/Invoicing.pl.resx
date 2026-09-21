@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Dodatek Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Miesięczny dodatek dla oddziałów, które fakturują klientów i zarządzają umowami. Tylko członek zarządzający oddziałem może go kupić lub anulować.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Fakturowanie klientów, cenniki, płatności i wiekowanie należności</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Stawki wykonawców, umowy i odzyskiwanie kosztów (wkrótce)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Dane płacowe i koszty operacyjne (wkrótce)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Stawki wykonawców, umowy i odzyskiwanie kosztów</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Dane płacowe i koszty operacyjne</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Dodatek jest aktywny dla Twojego oddziału.</value></data>
   <data name="Monthly" xml:space="preserve"><value>miesiąc</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Twój oddział nie ma jeszcze tego dodatku.</value></data>

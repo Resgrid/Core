@@ -731,4 +731,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Conservations légales des dossiers</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Tous les dossiers</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Comptes de messagerie</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Générer un code de liaison</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Générez un code, puis envoyez LINK suivi du code dans une conversation privée avec le bot Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Code de liaison</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Expiration (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Dissocier</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Comptes liés</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Plateformes de messagerie</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Aucun compte de messagerie lié.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Impossible de mettre à jour les comptes de messagerie. Réessayez.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Retour au profil</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Votre code de liaison est prêt.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Sur Discord, utilisez /resgrid et saisissez LINK suivi du code dans l’option message. Utilisez aussi /resgrid pour les commandes suivantes.</value></data>
 </root>

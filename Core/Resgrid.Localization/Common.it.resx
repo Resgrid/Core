@@ -731,4 +731,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Blocchi di conservazione dei registri</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Tutti i registri</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Account di messaggistica</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Genera codice di collegamento</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Genera un codice, poi invia LINK seguito dal codice in una conversazione privata con il bot Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Codice di collegamento</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Scadenza (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Scollega</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Account collegati</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Piattaforme di messaggistica</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Nessun account di messaggistica collegato.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Impossibile aggiornare gli account di messaggistica. Riprova.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Torna al profilo</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Il codice di collegamento è pronto.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Su Discord, usa /resgrid e inserisci LINK seguito dal codice nell’opzione message. Usa /resgrid anche per i comandi successivi.</value></data>
 </root>

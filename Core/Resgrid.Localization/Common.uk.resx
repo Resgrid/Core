@@ -731,4 +731,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Утримання записів для збереження</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Усі записи</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Облікові записи месенджерів</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Створити код прив’язування</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Створіть код, а потім надішліть LINK і цей код у приватній розмові з ботом Resgrid.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Код прив’язування</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Дійсний до (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Від’єднати</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Прив’язані облікові записи</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Платформи обміну повідомленнями</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>Немає прив’язаних облікових записів месенджерів.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Не вдалося оновити облікові записи месенджерів. Спробуйте ще раз.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Назад до профілю</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Ваш код прив’язування готовий.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>У Discord використайте /resgrid і введіть LINK та код у полі message. Для наступних команд також використовуйте /resgrid.</value></data>
 </root>

@@ -187,6 +187,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (JsonException) { request = null; }
 			if (request == null) return BadRequest();
 			request.BidId = input.BidId;
+			// The wizard's window is typed in the department's local time (datetime-local); the deployment stores UTC, like Deployments/Edit.
+			var timeZone = (await _departments.GetDepartmentByIdAsync(DepartmentId))?.TimeZone;
+			if (!string.IsNullOrWhiteSpace(timeZone))
+			{
+				try
+				{
+					if (request.StartOn.HasValue) request.StartOn = DateTimeHelpers.ConvertToUtc(request.StartOn.Value, timeZone, lenient: true);
+					if (request.EndOn.HasValue) request.EndOn = DateTimeHelpers.ConvertToUtc(request.EndOn.Value, timeZone, lenient: true);
+				}
+				catch (Exception ex) { Logging.LogException(ex, "Deployment wizard: window time zone conversion failed; values kept as entered."); }
+			}
 			try
 			{
 				var result = await _bids.ConvertBidToDeploymentAsync(request, DepartmentId, UserId, Ip, Agent, cancellationToken);

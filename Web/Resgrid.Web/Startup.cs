@@ -601,11 +601,9 @@ namespace Resgrid.Web
 			// broker health through it. The real KMS adapter module is broker-host-only.
 			builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());
 
-			// Chatbot per-department configuration service (its repository, cache and encryption deps
-			// are provided by DataModule / CacheProviderModule / ServicesModule above).
-			builder.RegisterType<Resgrid.Chatbot.Services.ChatbotDepartmentConfigService>()
-				.As<Resgrid.Chatbot.Interfaces.IChatbotDepartmentConfigService>()
-				.InstancePerLifetimeScope();
+			builder.RegisterModule(new Resgrid.Chatbot.ChatbotModule());
+			builder.RegisterModule(new Resgrid.Chatbot.NLU.NLUModule());
+			builder.RegisterModule(new Resgrid.Providers.Chatbot.ChatbotProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

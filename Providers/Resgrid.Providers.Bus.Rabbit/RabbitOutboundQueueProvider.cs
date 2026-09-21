@@ -56,7 +56,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			string serializedObject = ObjectSerialization.Serialize(chatbotMessageQueue);
 
-			return await SendMessage(ServiceBusConfig.ChatbotProcessingQueueName, serializedObject);
+			return await SendMessage(ServiceBusConfig.ChatbotProcessingQueueName, serializedObject,
+				requirePublisherConfirmation: chatbotMessageQueue != null && chatbotMessageQueue.Platform != 1
+					&& chatbotMessageQueue.Platform != 2 && chatbotMessageQueue.Platform != 9);
 		}
 
 		public async Task<bool> EnqueueCommunicationTest(CommunicationTestQueueItem communicationTestQueue)

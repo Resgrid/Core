@@ -36,7 +36,7 @@ namespace Resgrid.Chatbot.Handlers
 				var recipient = await _messageService.GetMessageRecipientByMessageAndUserAsync(messageId, session.UserId);
 
 				var isOwner = recipient != null || (msg != null && string.Equals(msg.SendingUserId, session.UserId, StringComparison.Ordinal));
-				if (msg == null || !isOwner)
+				if (msg == null || msg.DepartmentId != session.DepartmentId || !isOwner)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Msg_NotFound", culture, messageId), Processed = true };
 
 				if (recipient != null && recipient.ReadOn == null)

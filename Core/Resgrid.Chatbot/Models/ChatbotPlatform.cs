@@ -13,6 +13,10 @@ namespace Resgrid.Chatbot.Models
 		WhatsApp = 6,
 		MicrosoftTeams = 7,
 		Signal = 8,
-		WebChat = 9
+		WebChat = 9,
+		Line = 10,
+		Viber = 11,
+		// 12 is retired; do not reuse persisted platform identifiers.
+		GoogleChat = 13
 	}
 }

@@ -170,7 +170,9 @@ namespace Resgrid.Model.Workforce
 		public FieldCostRun Actual { get; set; }
 		public decimal PersonnelVariance => (Actual?.PersonnelTotal ?? 0) - (Estimate?.PersonnelTotal ?? 0);
 		public decimal ResourceVariance => (Actual?.ResourceTotal ?? 0) - (Estimate?.ResourceTotal ?? 0);
+		public decimal ConsumableVariance => (Actual?.ConsumableTotal ?? 0) - (Estimate?.ConsumableTotal ?? 0);
 		public decimal ExpenseVariance => (Actual?.ExpenseTotal ?? 0) - (Estimate?.ExpenseTotal ?? 0);
+		public decimal OverheadVariance => (Actual?.OverheadTotal ?? 0) - (Estimate?.OverheadTotal ?? 0);
 		public decimal TotalVariance => (Actual?.TotalLoadedCost ?? 0) - (Estimate?.TotalLoadedCost ?? 0);
 		public decimal? RevenueVariance => Actual?.RevenueAmount.HasValue == true && Estimate?.RevenueAmount.HasValue == true ? Actual.RevenueAmount - Estimate.RevenueAmount : null;
 	}

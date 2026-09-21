@@ -47,6 +47,7 @@
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
                 @if (Model.IsOwnProfile)
                 {
+                    <a class="btn btn-primary top-button" asp-controller="MessagingAccounts" asp-action="Index" asp-route-area="User">@commonLocalizer["ChatAccountsTitle"]</a>
                     <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@localizer["ReportDelivery"]</a>
                     <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="Sessions" asp-route-area="User">Active Sessions</a>
                 }

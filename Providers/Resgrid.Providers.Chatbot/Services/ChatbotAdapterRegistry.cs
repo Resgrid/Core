@@ -31,21 +31,14 @@ namespace Resgrid.Providers.Chatbot.Services
 
 		/// <summary>
 		/// Whether the bot may send an un-prompted message on this platform. SMS is delivered by the
-		/// dedicated SMS channel (not here). Telegram/Teams/Discord/WhatsApp can't be initiated without a
-		/// prior conversation reference or an approved template, so they return false until that capture
-		/// lands; the caller then falls back to the user's other channels.
+		/// dedicated SMS channel (not here). A native adapter must be registered and configured; its
+		/// sender also checks conversation references/templates where the platform requires them.
 		/// </summary>
 		public bool CanInitiateProactively(ChatbotPlatform platform)
 		{
-			switch (platform)
-			{
-				case ChatbotPlatform.Slack:
-				case ChatbotPlatform.Signal:
-				case ChatbotPlatform.WebChat:
-					return true;
-				default:
-					return false; // WhatsApp, Discord, Telegram, Teams (conditional), SMS (other channel)
-			}
+			var adapter = GetAdapter(platform);
+			return adapter is IExternalChatbotAdapter external ? external.CanInitiateProactively
+				: platform == ChatbotPlatform.WebChat && adapter != null;
 		}
 	}
 }

@@ -184,6 +184,7 @@ namespace Resgrid.Services.Search
 						var projections = (await _projections.GetByIdsAsync(principal.DepartmentId,
 							indexResult.Hits.Where(h => h != null && !string.IsNullOrWhiteSpace(h.ProjectionId)).Select(h => h.ProjectionId))
 							?? Enumerable.Empty<SearchProjection>()).ToDictionary(p => p.SearchProjectionId, StringComparer.Ordinal);
+						await PreloadDeploymentsAsync(indexResult.Hits, access, cancellationToken);
 						foreach (var hit in indexResult.Hits)
 						{
 							cancellationToken.ThrowIfCancellationRequested();
@@ -271,7 +272,10 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.RateCard, "Invoicing", SystemActionModules.BusinessOperations);
 			Add(SearchEntityTypes.Bid, "Bids", SystemActionModules.BusinessOperations);
 			Add(SearchEntityTypes.ServiceContract, "ServiceContracts", SystemActionModules.BusinessOperations);
-			Add(SearchEntityTypes.Deployment, "Deployments");
+			// Deployments have no family claim gate: the deployment page admits a rostered member without Deployments/View, so the
+			// index must too, and AuthorizeAsync keeps the claim-or-admin-or-roster rule per hit (membership was verified in LoadAccessAsync).
+			if (WantsType(requested, SearchEntityTypes.Deployment))
+				allowed.Add(SearchEntityTypes.Deployment);
 			Add(SearchEntityTypes.CertificationType, "Certifications");
 			return allowed;
 		}

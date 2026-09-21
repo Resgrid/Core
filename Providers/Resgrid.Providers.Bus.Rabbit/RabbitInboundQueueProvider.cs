@@ -657,7 +657,17 @@ namespace Resgrid.Providers.Bus.Rabbit
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
-								if (await RetryQueueItem(ea, ex))
+								// External platforms need delayed delivery retries and an inspectable final queue.
+								// Keep legacy SMS/WebChat behavior; this project intentionally has no Chatbot dependency.
+								if (cmqi != null && cmqi.Platform != ChatbotIdentity.PlatformSmsTwilio
+									&& cmqi.Platform != ChatbotIdentity.PlatformSmsSignalWire && cmqi.Platform != 9 /* WebChat */)
+								{
+									if (await RetryOrDeadLetterExternalChatbotAsync(ea, ex))
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
+									else
+										await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
+								}
+								else if (await RetryQueueItem(ea, ex))
 									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
 								else
 									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
@@ -883,6 +893,55 @@ namespace Resgrid.Providers.Bus.Rabbit
 				default:
 					return int.TryParse(value.ToString(), out var converted) ? Math.Max(0, converted) : 0;
 			}
+		}
+
+		private const string ExternalChatbotRetryHeader = "x-chatbot-native-retry-count";
+		private const int ExternalChatbotMaxRetries = 5;
+
+		private async Task<bool> RetryOrDeadLetterExternalChatbotAsync(BasicDeliverEventArgs delivery, Exception exception)
+		{
+			try
+			{
+				var retryCount = ExternalChatbotRetryCount(delivery.BasicProperties?.Headers);
+				var targetQueue = retryCount >= ExternalChatbotMaxRetries
+					? RabbitConnection.ExternalChatbotDeadQueueName : RabbitConnection.ExternalChatbotRetryQueueName;
+				var connection = await RabbitConnection.CreateConnection(_clientName);
+				if (connection == null || !connection.IsOpen) return false;
+
+				using var timeout = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(15));
+				// Confirmation tracking makes an unroutable mandatory publish or broker NACK throw.
+				// Returning success means the broker confirmed the copy before the caller ACKs the original.
+				await using var channel = await connection.CreateChannelAsync(new CreateChannelOptions(true, true), timeout.Token);
+				await RabbitConnection.DeclareExternalChatbotRetryQueuesAsync(channel, timeout.Token);
+				var properties = delivery.BasicProperties == null ? new BasicProperties() : new BasicProperties(delivery.BasicProperties);
+				properties.DeliveryMode = DeliveryModes.Persistent;
+				// The retry queue supplies its own delay; a dead-letter must not expire before inspection.
+				properties.Expiration = null;
+				properties.Headers = delivery.BasicProperties?.Headers == null
+					? new Dictionary<string, object>() : new Dictionary<string, object>(delivery.BasicProperties.Headers);
+				properties.Headers.Remove(Constants.PublishSequenceNumberHeader);
+				properties.Headers[ExternalChatbotRetryHeader] = Math.Min(retryCount + 1, ExternalChatbotMaxRetries);
+				properties.Headers["x-chatbot-native-error"] = exception.GetType().Name;
+
+				await channel.BasicPublishAsync(exchange: string.Empty, routingKey: targetQueue, mandatory: true,
+					basicProperties: properties, body: delivery.Body, cancellationToken: timeout.Token);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		private static int ExternalChatbotRetryCount(IDictionary<string, object> headers)
+		{
+			if (headers == null || !headers.TryGetValue(ExternalChatbotRetryHeader, out var value)) return 0;
+			var text = value is byte[] bytes ? Encoding.UTF8.GetString(bytes)
+				: Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
+			if (!long.TryParse(text, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var count)
+				|| count < 0) return ExternalChatbotMaxRetries;
+			return (int)Math.Min(count, ExternalChatbotMaxRetries);
 		}
 
 		private async Task<bool> RetryQueueItem(BasicDeliverEventArgs ea, Exception mex)

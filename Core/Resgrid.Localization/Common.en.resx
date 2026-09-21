@@ -783,4 +783,17 @@
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Records preservation holds</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>All records</value></data>
+  <data name="ChatAccountsTitle" xml:space="preserve"><value>Messaging accounts</value></data>
+  <data name="ChatAccountsGenerate" xml:space="preserve"><value>Generate linking code</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Generate a code, then send LINK followed by the code in a private conversation with the Resgrid bot.</value></data>
+  <data name="ChatAccountsCode" xml:space="preserve"><value>Linking code</value></data>
+  <data name="ChatAccountsExpires" xml:space="preserve"><value>Expires (UTC)</value></data>
+  <data name="ChatAccountsUnlink" xml:space="preserve"><value>Unlink</value></data>
+  <data name="ChatAccountsLinked" xml:space="preserve"><value>Linked accounts</value></data>
+  <data name="ChatAccountsAvailable" xml:space="preserve"><value>Messaging platforms</value></data>
+  <data name="ChatAccountsNone" xml:space="preserve"><value>No messaging accounts are linked.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>Unable to update messaging accounts. Please try again.</value></data>
+  <data name="ChatAccountsBack" xml:space="preserve"><value>Back to profile</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Your linking code is ready.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>For Discord, use /resgrid and enter LINK followed by your code in the message option. Use /resgrid for subsequent commands too.</value></data>
 </root>

@@ -686,12 +686,21 @@ namespace Resgrid.Services.CostRecovery
 			target.SourceArtifact = Trim(agreement.SourceArtifact);
 			target.SourceChecksum = Trim(agreement.SourceChecksum);
 			if (ReferenceEquals(target, existing)) { target.RowVersion = existing.RowVersion + 1; target.EditedOn = now; target.EditedByUserId = userId; }
-			var saved = await _agreements.SaveOrUpdateAsync(target, cancellationToken);
-			if (referenced)
+			var saved = await TransactionAsync(async () =>
 			{
-				existing.EndOn = existing.EndOn ?? now.Date; existing.EditedOn = now; existing.EditedByUserId = userId;
-				await _agreements.SaveOrUpdateAsync(existing, cancellationToken);
-			}
+				var row = await _agreements.SaveOrUpdateAsync(target, cancellationToken);
+				if (referenced)
+				{
+					// The revision owns every dispatch date from its start, so the prior snapshot closes the day before it and the two
+					// never cover the same date. A revision starting on or before the prior start leaves it an empty range that
+					// CoversDate never matches: superseded outright, still readable by id for the work items that reference it.
+					var boundary = (target.StartOn ?? now).Date.AddDays(-1);
+					existing.EndOn = existing.EndOn.HasValue && existing.EndOn.Value.Date < boundary ? existing.EndOn : boundary;
+					existing.EditedOn = now; existing.EditedByUserId = userId;
+					await _agreements.SaveOrUpdateAsync(existing, cancellationToken);
+				}
+				return row;
+			}, cancellationToken);
 			Audit(agreement.DepartmentId, userId, AuditLogTypes.CalOesMarsAgreementChanged, ipAddress, userAgent, before, saved);
 			return saved;
 		}
@@ -725,8 +734,11 @@ namespace Resgrid.Services.CostRecovery
 		public async Task<CalOesMarsAgreementSnapshot> SelectAgreementAsync(int departmentId, string classificationCode, DateTime dispatchOn)
 		{
 			var candidates = (await _agreements.GetForDepartmentAsync(departmentId))?.Where(a => a.CoversDate(dispatchOn)).ToList() ?? new List<CalOesMarsAgreementSnapshot>();
-			return candidates.Where(a => !string.IsNullOrWhiteSpace(classificationCode) && string.Equals(a.ClassificationCode, classificationCode, StringComparison.OrdinalIgnoreCase)).OrderByDescending(a => a.StartOn ?? DateTime.MinValue).FirstOrDefault()
-				?? candidates.Where(a => string.IsNullOrWhiteSpace(a.ClassificationCode)).OrderByDescending(a => a.StartOn ?? DateTime.MinValue).FirstOrDefault();
+			// Latest start wins; on the same start the newest revision does (an open-ended snapshot and its revision share a null start).
+			static CalOesMarsAgreementSnapshot Newest(IEnumerable<CalOesMarsAgreementSnapshot> rows) =>
+				rows.OrderByDescending(a => a.StartOn ?? DateTime.MinValue).ThenByDescending(a => a.RowVersion).ThenByDescending(a => a.AddedOn).FirstOrDefault();
+			return Newest(candidates.Where(a => !string.IsNullOrWhiteSpace(classificationCode) && string.Equals(a.ClassificationCode, classificationCode, StringComparison.OrdinalIgnoreCase)))
+				?? Newest(candidates.Where(a => string.IsNullOrWhiteSpace(a.ClassificationCode)));
 		}
 
 		#endregion

@@ -235,8 +235,8 @@
   <data name="BusinessOperationsAddon" xml:space="preserve"><value>Πρόσθετο Business Operations</value></data>
   <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Μηνιαίο πρόσθετο για τμήματα που τιμολογούν πελάτες και διαχειρίζονται συμβάσεις. Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να το αγοράσει ή να το ακυρώσει.</value></data>
   <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Τιμολόγηση πελατών, τιμοκατάλογοι, πληρωμές και χρονολόγηση απαιτήσεων</value></data>
-  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Τιμολόγια εργολάβων, συμβάσεις και ανάκτηση κόστους (σύντομα)</value></data>
-  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Δεδομένα μισθοδοσίας και κοστολόγηση πεδίου (σύντομα)</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Τιμολόγια εργολάβων, συμβάσεις και ανάκτηση κόστους</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Δεδομένα μισθοδοσίας και κοστολόγηση πεδίου</value></data>
   <data name="AddonActive" xml:space="preserve"><value>Το πρόσθετο είναι ενεργό για το τμήμα σας.</value></data>
   <data name="Monthly" xml:space="preserve"><value>μήνα</value></data>
   <data name="CheckoutPending" xml:space="preserve"><value>Το τμήμα σας δεν διαθέτει ακόμη αυτό το πρόσθετο.</value></data>

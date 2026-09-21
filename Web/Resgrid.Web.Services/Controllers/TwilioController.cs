@@ -151,6 +151,9 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From) || string.IsNullOrWhiteSpace(request.Body))
 				return BadRequest();
+			// WhatsApp must use its separately authenticated native endpoint and explicit account link.
+			if (request.From.StartsWith("whatsapp:", StringComparison.OrdinalIgnoreCase))
+				return BadRequest("Configure the ChatbotPlatforms/WhatsApp webhook for this sender.");
 
 			var response = new MessagingResponse();
 

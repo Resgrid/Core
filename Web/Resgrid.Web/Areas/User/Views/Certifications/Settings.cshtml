@@ -10,12 +10,12 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["CertificationSettings"]</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             <form method="post" asp-controller="Certifications" asp-action="Settings" asp-route-area="User" class="form-horizontal" id="certSettings">
                 @Html.AntiForgeryToken()
                 <h4>@localizer["Enforcement"]</h4>
@@ -79,4 +79,8 @@
             });
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

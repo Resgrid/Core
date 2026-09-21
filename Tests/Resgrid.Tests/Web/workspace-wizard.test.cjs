@@ -41,6 +41,14 @@ const markup = `
                 <input class="form-control" id="note" name="Note" />
             </div>
             <div class="form-group">
+                <label for="users">Users</label>
+                <select multiple id="users" name="Input.AssignedToUserIds"><option value="a" selected>Alex Smith</option><option value="b" selected>Zoe Taylor</option></select>
+            </div>
+            <div class="form-group">
+                <label for="roles">Roles</label>
+                <select multiple id="roles" name="Input.AssignedToRoleIds"><option value="11" selected>Mechanics</option><option value="12" selected>Shift leads</option></select>
+            </div>
+            <div class="form-group">
                 <label>Days</label>
                 <div>
                     <label class="checkbox-inline"><input type="checkbox" name="days" value="1" data-review-skip="true" checked /> Monday</label>
@@ -100,6 +108,9 @@ window.jQuery = function (root) {
     try {
         const page = await browser.newPage();
         await page.setContent(markup);
+        // The theme's .btn display rule used to override the HTML hidden attribute.
+        await page.addStyleTag({ path: path.join(root, 'Web/Resgrid.Web/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css') });
+        await page.addStyleTag({ path: path.join(root, 'Web/Resgrid.Web/wwwroot/css/workspace.css') });
         await page.addScriptTag({ content: script });
 
         const result = await page.evaluate(() => {
@@ -117,6 +128,7 @@ window.jQuery = function (root) {
 
             check(!steps[0].hidden && steps[1].hidden && steps[2].hidden, 'The wizard did not open on its first step.');
             check(previous.hidden && !next.hidden && submit.hidden, 'The first step offered Back or Save.');
+            check(getComputedStyle(previous).display === 'none' && getComputedStyle(submit).display === 'none', 'Theme styling exposed hidden first-step buttons.');
             check(indicator.children.length === 3, 'The step indicator did not list every step.');
             check(indicator.children[0].className === 'current' && Array.from(indicator.children).map(li => li.textContent).join('|') === '1What|2How much|3Review',
                 'The step indicator did not label the steps in order.');
@@ -141,10 +153,14 @@ window.jQuery = function (root) {
             form.querySelector('#note').value = 'restock';
             next.click();
             check(!steps[2].hidden && next.hidden && !submit.hidden, 'The last step did not swap Continue for Save.');
+            check(getComputedStyle(next).display === 'none' && getComputedStyle(previous).display !== 'none' && getComputedStyle(submit).display !== 'none', 'Final-step buttons were visually incorrect.');
 
             // The review step reads back what was answered, skipping empty and hidden fields.
             const review = Array.from(form.querySelectorAll('.rgw-review-row')).map(row => row.textContent);
-            check(review.length === 3, 'The review step did not list every answered field: ' + review.join(' / '));
+            check(review.length === 5, 'The review step did not list every answered field: ' + review.join(' / '));
+            check(review[3] === 'UsersAlex Smith, Zoe Taylor' && review[4] === 'RolesMechanics, Shift leads', 'Review omitted a selected user or role.');
+            check(new FormData(form).getAll('Input.AssignedToUserIds').join(',') === 'a,b', 'Multiple users were not posted.');
+            check(new FormData(form).getAll('Input.AssignedToRoleIds').join(',') === '11,12', 'Multiple roles were not posted.');
             check(review[0] === 'ItemBandages', 'The review step showed the option value instead of its label: ' + review[0]);
             check(review[1] === 'Amount4' && review[2] === 'Noterestock', 'The review step lost a later answer: ' + review.join(' / '));
             check(!review.some(row => row.includes('abc')), 'The review step exposed a hidden field.');

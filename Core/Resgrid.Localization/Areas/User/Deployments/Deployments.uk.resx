@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Країна приймання</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Штат / область приймання</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Часовий пояс</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Місцевий часовий пояс події для звітів про час; порожнє значення використовує пояс підрозділу.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Часовий пояс для обліку розгортання. Дати й час на цих сторінках використовують часовий пояс підрозділу.</value></data>
   <data name="Currency" xml:space="preserve"><value>Валюта</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>За межами області / штату</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Подорож літаком</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Без 8 годин відпочинку (понаднормові переходять у наступну зміну)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Зупинка через небезпечні умови</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Записи часу</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>час у місцевому часі події</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>час у часовому поясі підрозділу</value></data>
   <data name="Subject" xml:space="preserve"><value>Суб'єкт</value></data>
   <data name="EntryType" xml:space="preserve"><value>Тип запису</value></data>
   <data name="Start" xml:space="preserve"><value>Початок</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Виберіть фінансовий режим.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>Кінець не може бути раніше початку.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>Знижка має бути від 0 до 100 відсотків.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Часовий пояс не розпізнано. Введіть ідентифікатор часового поясу Windows, наприклад "Pacific Standard Time", або залиште порожнім, щоб використати пояс підрозділу.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Контакт не знайдено.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>Виклик не знайдено.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Цей виклик уже має розгортання.</value></data>

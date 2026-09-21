@@ -65,7 +65,9 @@ namespace Resgrid.Tests.Services
                 _type == DatabaseTypes.Postgres ? new M0203_AddWorkOrderIntegrationsPg() : new M0203_AddWorkOrderIntegrations(),
                 _type == DatabaseTypes.Postgres ? new M0204_AddWorkOrderRecurrencesPg() : new M0204_AddWorkOrderRecurrences(),
                 _type == DatabaseTypes.Postgres ? new M0206_AddWorkOrderReportingPg() : new M0206_AddWorkOrderReporting(),
-                _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations()
+                _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations(),
+                _type == DatabaseTypes.Postgres ? new M0225_AddMaintenanceAssigneesPg() : new M0225_AddMaintenanceAssignees(),
+                _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency()
             });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
@@ -107,7 +109,7 @@ namespace Resgrid.Tests.Services
             using var uow = new UnitOfWork(Connections()); var store = Orders(uow);
             await uow.CreateOrGetConnectionAsync(); await store.LockDepartmentAsync(77); var row = await Insert(store);
             var labor = new WorkOrderLabor { DepartmentId = 77, WorkOrderId = row.Id, UserId = "author", CreatedBy = "author", CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow, WorkDate = DateTime.UtcNow };
-            await store.AllocateAsync(labor); labor.Content = "{\"Hours\":2}"; await store.WriteAsync(labor); uow.CommitChanges();
+            await store.AllocateAsync(labor); Guid.TryParseExact(row.Id, "D", out _).Should().BeTrue(); Guid.TryParseExact(labor.Id, "D", out _).Should().BeTrue(); labor.Content = "{\"Hours\":2}"; await store.WriteAsync(labor); uow.CommitChanges();
             (await store.GetAsync<WorkOrder>(88, row.Id)).Should().BeNull();
             (await store.ChildrenAsync<WorkOrderLabor>(88, row.Id)).Should().BeEmpty();
             (await store.ChildrenAsync<WorkOrderLabor>(77, row.Id)).Should().ContainSingle();

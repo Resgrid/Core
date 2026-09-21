@@ -34,11 +34,15 @@ namespace Resgrid.Services.Search
 
 		private readonly ISearchProjectionsRepository _projections;
 		private readonly IDepartmentDataProtectionService _dataProtection;
+		private readonly IDeploymentPersonnelRepository _deploymentPersonnel;
 
-		public SearchProjectionService(ISearchProjectionsRepository projections, IDepartmentDataProtectionService dataProtection)
+		/// <param name="deploymentPersonnel">Roster rows for the deployment projection's participants; optional only for hosts without the Business Operations repositories.</param>
+		public SearchProjectionService(ISearchProjectionsRepository projections, IDepartmentDataProtectionService dataProtection,
+			IDeploymentPersonnelRepository deploymentPersonnel = null)
 		{
 			_projections = projections ?? throw new ArgumentNullException(nameof(projections));
 			_dataProtection = dataProtection ?? throw new ArgumentNullException(nameof(dataProtection));
+			_deploymentPersonnel = deploymentPersonnel;
 		}
 
 		// ---- hooks -----------------------------------------------------------------------------------------------
@@ -431,7 +435,20 @@ namespace Resgrid.Services.Search
 			p.OccurredOn = deployment.StartOn ?? (deployment.AddedOn == default ? DateTime.UtcNow : deployment.AddedOn);
 			p.Url = $"/User/Deployments/View?id={Uri.EscapeDataString(deployment.DeploymentId)}";
 			p.MetadataJson = Json(new Dictionary<string, string> { ["Status"] = status, ["FinanceMode"] = deployment.FinanceMode.ToString(), ["CallId"] = deployment.CallId?.ToString() });
+			// The roster is the deployment's participant set: a member without Deployments/View reaches a deployment they are
+			// rostered on (any personnel row, removed or not — the deployment page's rule), and the index applies that scope for
+			// such a caller so unrostered deployments never enter their candidate window. Read here rather than from
+			// deployment.Personnel, which is only populated on the aggregate read paths.
+			p.ParticipantUserIds = await RosterAsync(deployment.DeploymentId);
 			return p;
+		}
+
+		private async Task<string> RosterAsync(string deploymentId)
+		{
+			if (_deploymentPersonnel == null) return null;
+			var users = (await _deploymentPersonnel.GetByDeploymentAsync(deploymentId) ?? Enumerable.Empty<DeploymentPersonnel>())
+				.Select(r => r?.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.Ordinal).ToList();
+			return users.Count == 0 ? null : string.Join(",", users);
 		}
 
 		public async Task<SearchProjection> BuildCertificationTypeAsync(DepartmentCertificationType type)

@@ -3,6 +3,7 @@
 @model RecordsQualityTrendsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Trends"];
 	var t = Model.Trends;
 }
@@ -20,7 +21,7 @@
 <div class="wrapper wrapper-content">
 	<div class="ibox"><div class="ibox-content">
 		<form method="get" class="form-inline" asp-controller="RecordsQuality" asp-action="Trends" asp-route-area="User">
-			<label>@L["TrendsSince"]</label> <input type="date" class="form-control" name="since" value="@Model.Since.ToString("yyyy-MM-dd")" />
+			<label>@L["TrendsSince"]</label> <input type="date" class="form-control" name="since" value="@departmentTime.Date(Model.Since)" />
 			<button class="btn btn-default">@L["Filter"]</button>
 		</form>
 		<p class="m-t-sm">@L["Sampled"]: <strong>@t.Sampled</strong> · @L["Scored"]: <strong>@t.Scored</strong> · @L["AverageScore"]: <strong>@t.AverageScore.ToString("0.0")%</strong></p>

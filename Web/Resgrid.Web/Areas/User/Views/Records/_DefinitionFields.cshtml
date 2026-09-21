@@ -132,8 +132,10 @@
 				break;
 			case RmsFieldType.DateTime:
 				{
-					var local = DateTime.TryParse(Value, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var utc) ? Local(utc.TimeConverter(Model.Department)) : string.Empty;
-					sb.Append("<input type=\"datetime-local\" class=\"form-control rms-def-datetime\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(local)).Append("\"").Append(disabled).Append(" />");
+					var time = new DepartmentTime(Model.Department);
+                    var posted = Model.PostedValues?.Contains(Model.Input(section.Key, rowKey, field.Key)) == true;
+                    var local = posted ? Value : time.Input(time.Parse(Value));
+					sb.Append("<input type=\"datetime-local\" step=\"0.001\" class=\"form-control rms-def-datetime\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(local)).Append("\"").Append(disabled).Append(" />");
 					sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".OffsetMinutes\" class=\"rms-def-offset\" value=\"\" />");
 					break;
 				}

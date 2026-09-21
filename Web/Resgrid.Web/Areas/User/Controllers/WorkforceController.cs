@@ -27,6 +27,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// reaches their own demographic response. Protected values render REDACTED without a current grant.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class WorkforceController : SecureBaseController
 	{
 		private readonly IWorkforceService _workforce;
@@ -163,7 +164,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Index()
 		{
-			var view = Page(new WorkforceDashboardView { ReportingYear = DateTime.UtcNow.Year - 1 });
+			var view = Page(new WorkforceDashboardView { ReportingYear = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year - 1 });
 			if (_workforceEnabled && CanView)
 			{
 				view.Employer = await _workforce.GetEmployerProfileAsync(DepartmentId);
@@ -316,7 +317,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			view.Contractors = (await _workforce.GetLaborContractorsAsync(DepartmentId)).Select(c => new SelectListItem(c.LegalName, c.WorkforceLaborContractorId)).ToList();
 			view.Affiliates = (await _workforce.GetAffiliatesAsync(DepartmentId)).Select(a => new SelectListItem(a.LegalName, a.WorkforceAffiliatedEntityId)).ToList();
 			view.Roles = await RoleItemsAsync();
-			if (employment == "new") view.EditingEmployment = new WorkforceEmployment { DepartmentId = DepartmentId, WorkforceWorkerId = worker.WorkforceWorkerId, StartOn = DateTime.UtcNow.Date };
+			if (employment == "new") view.EditingEmployment = new WorkforceEmployment { DepartmentId = DepartmentId, WorkforceWorkerId = worker.WorkforceWorkerId, StartOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today };
 			else if (!string.IsNullOrWhiteSpace(employment)) view.EditingEmployment = view.Employments.FirstOrDefault(e => e.WorkforceEmploymentId == employment);
 			if (!string.IsNullOrWhiteSpace(assignment))
 			{
@@ -394,7 +395,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!CanViewCompensation) return Unauthorized();
 			EmployeeCompensationProfile profile;
-			if (string.IsNullOrWhiteSpace(id)) profile = new EmployeeCompensationProfile { DepartmentId = DepartmentId, Scope = string.IsNullOrWhiteSpace(employmentId) ? scope : (int)CompensationScopes.Employee, WorkforceEmploymentId = employmentId, EffectiveOn = DateTime.UtcNow.Date, StandardHoursPerDay = 8, StandardHoursPerWeek = 40 };
+			if (string.IsNullOrWhiteSpace(id)) profile = new EmployeeCompensationProfile { DepartmentId = DepartmentId, Scope = string.IsNullOrWhiteSpace(employmentId) ? scope : (int)CompensationScopes.Employee, WorkforceEmploymentId = employmentId, EffectiveOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, StandardHoursPerDay = 8, StandardHoursPerWeek = 40 };
 			else { profile = await _compensation.GetProfileAsync(id, DepartmentId); if (profile == null) return NotFound(); }
 			var view = Page(new WorkforceCompensationProfileView { Profile = profile, PayComponentsJson = JsonConvert.SerializeObject(profile.PayComponents.Select(c => new { c.EmployeePayComponentId, c.Category, c.Name, c.Basis, Amount = c.Amount, c.EligiblePayCodesCsv, c.PaidForEachOvertimeHour, c.EffectiveOn, c.ExpiresOn, c.SourceAgreement }), ScriptJson), CostComponentsJson = JsonConvert.SerializeObject(profile.CostComponents.Select(c => new { c.EmployeeCostComponentId, c.Category, c.Name, c.Basis, RateAmount = c.RateAmount, c.Cap, c.EligiblePayCodesCsv, c.EffectiveOn, c.ExpiresOn, c.Source }), ScriptJson) });
 			view.Roles = await RoleItemsAsync();
@@ -404,7 +405,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				view.WorkerName = employment == null ? null : await WorkerNameAsync(await _workforce.GetWorkerAsync(employment.WorkforceWorkerId, DepartmentId));
 			}
 			if (!string.IsNullOrWhiteSpace(id) && !WorkforceProtectionSeamHelper.IsUnavailable(profile.BaseAmount))
-				view.Preview = Resgrid.Services.Workforce.FieldCostCalculator.CalculateLabor(new LaborCostInput { Work = new LaborWorkQuantity { Hours = 8, PayCode = (int)PayCodes.Regular }, Profile = profile, AsOf = DateTime.UtcNow.Date, Currency = profile.Currency });
+				view.Preview = Resgrid.Services.Workforce.FieldCostCalculator.CalculateLabor(new LaborCostInput { Work = new LaborWorkQuantity { Hours = 8, PayCode = (int)PayCodes.Regular }, Profile = profile, AsOf = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, Currency = profile.Currency });
 			return View(view);
 		}
 
@@ -444,7 +445,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AnnualFacts(int? year = null, int type = 0, string edit = null)
 		{
 			if (!CanViewCompensation) return Unauthorized();
-			var view = Page(new WorkforceAnnualFactsView { ReportingYear = year ?? DateTime.UtcNow.Year - 1, ReportType = (PayDataReportTypes)type });
+			var view = Page(new WorkforceAnnualFactsView { ReportingYear = year ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year - 1, ReportType = (PayDataReportTypes)type });
 			view.Facts = await _workforce.GetAnnualPayFactsAsync(DepartmentId, view.ReportingYear, view.ReportType);
 			await LabelEmploymentsAsync(view);
 			if (edit == "new") view.Editing = new WorkforceAnnualPayFact { DepartmentId = DepartmentId, ReportingYear = view.ReportingYear, ReportType = type };
@@ -489,13 +490,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> WorkEntries(DateTime? from = null, DateTime? to = null, string edit = null)
 		{
 			if (!CanViewCompensation) return Unauthorized();
-			var view = Page(new WorkforceWorkEntriesView { From = (from ?? DateTime.UtcNow.AddDays(-30)).Date, To = (to ?? DateTime.UtcNow).Date });
+			var view = Page(new WorkforceWorkEntriesView { From = (from ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.AddDays(-30)).Date, To = (to ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today).Date });
 			view.Entries = await _workforce.GetWorkEntriesAsync(DepartmentId, view.From, view.To);
 			var workers = await _workforce.GetWorkersAsync(DepartmentId);
 			view.WorkerNames = workers.ToDictionary(w => w.WorkforceWorkerId, w => w.DisplayName ?? w.WorkforceWorkerId);
 			view.Workers = workers.OrderBy(w => w.DisplayName).Select(w => new SelectListItem(w.DisplayName ?? w.WorkforceWorkerId, w.WorkforceWorkerId)).ToList();
 			view.Establishments = await EstablishmentItemsAsync();
-			if (edit == "new") view.Editing = new WorkforceWorkEntry { DepartmentId = DepartmentId, WorkDate = DateTime.UtcNow.Date, WorkCountry = "US", WorkSubdivision = "CA" };
+			if (edit == "new") view.Editing = new WorkforceWorkEntry { DepartmentId = DepartmentId, WorkDate = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, WorkCountry = "US", WorkSubdivision = "CA" };
 			else if (!string.IsNullOrWhiteSpace(edit)) view.Editing = view.Entries.FirstOrDefault(e => e.WorkforceWorkEntryId == edit);
 			return View(view);
 		}
@@ -519,7 +520,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!CanViewInternalCosts) return Unauthorized();
 			var view = Page(new WorkforceResourceCostsView { Profiles = await _costing.GetResourceProfilesAsync(DepartmentId), Units = await UnitItemsAsync() });
-			if (edit == "new") view.Editing = new ResourceCostProfile { DepartmentId = DepartmentId, EffectiveOn = DateTime.UtcNow.Date };
+			if (edit == "new") view.Editing = new ResourceCostProfile { DepartmentId = DepartmentId, EffectiveOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today };
 			else if (!string.IsNullOrWhiteSpace(edit)) view.Editing = await _costing.GetResourceProfileAsync(edit, DepartmentId);
 			view.ComponentsJson = JsonConvert.SerializeObject((view.Editing?.Components ?? new List<ResourceCostComponent>()).Select(c => new { c.ResourceCostComponentId, c.Category, c.Basis, c.Rate, c.ConsumptionQuantity, c.ConsumptionUnit, c.UnitPrice, c.Source, c.SourceWindowStart, c.SourceWindowEnd, c.SourceMeterStart, c.SourceMeterEnd, c.IsApproved, c.EffectiveOn, c.ExpiresOn }), ScriptJson);
 			return View(view);
@@ -553,7 +554,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			view.UnitNames = view.Units.ToDictionary(u => int.Parse(u.Value), u => u.Text);
 			if (!string.IsNullOrWhiteSpace(deploymentId)) { view.ContextLabel = (await _deployments.GetDeploymentByIdAsync(deploymentId, DepartmentId))?.Name ?? deploymentId; view.Entries = await _costing.GetUsageForDeploymentAsync(deploymentId, DepartmentId); }
 			else { view.ContextLabel = (await _calls.GetCallByIdAsync(callId.Value))?.Name ?? $"#{callId}"; view.Entries = await _costing.GetUsageForCallAsync(callId.Value, DepartmentId); }
-			if (edit == "new") view.Editing = new ResourceUsageEntry { DepartmentId = DepartmentId, DeploymentId = deploymentId, CallId = callId, UsageDate = DateTime.UtcNow.Date, Phase = (int)UsagePhases.Incident };
+			if (edit == "new") view.Editing = new ResourceUsageEntry { DepartmentId = DepartmentId, DeploymentId = deploymentId, CallId = callId, UsageDate = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, Phase = (int)UsagePhases.Incident };
 			else if (!string.IsNullOrWhiteSpace(edit)) view.Editing = view.Entries.FirstOrDefault(e => e.ResourceUsageEntryId == edit);
 			return View(view);
 		}
@@ -654,7 +655,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> PayData(int? year = null)
 		{
 			if (!CanViewPayData) return Unauthorized();
-			var view = Page(new WorkforcePayDataView { ReportingYear = year ?? DateTime.UtcNow.Year - 1 });
+			var view = Page(new WorkforcePayDataView { ReportingYear = year ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year - 1 });
 			view.Runs = await _reporting.GetRunsAsync(DepartmentId, null);
 			view.Readiness = await _reporting.GetReadinessAsync(DepartmentId, view.ReportingYear);
 			view.Completeness = await _demographics.GetCompletenessAsync(DepartmentId, new DateTime(view.ReportingYear, 12, 31));

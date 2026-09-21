@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Värdland</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Värdstat / -provins</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Tidszon</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Händelsens lokala tidszon för tidrapporter; tomt använder avdelningens.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Tidszon för insatsens redovisning. Datum och tider på dessa sidor använder avdelningens tidszon.</value></data>
   <data name="Currency" xml:space="preserve"><value>Valuta</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Utanför provinsen / delstaten</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Resa med flyg</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Ingen 8 timmars vila (övertid förs över till nästa pass)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Avbrott på grund av osäkra förhållanden</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Tidposter</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>tider i händelsens lokala tid</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>tider i avdelningens tidszon</value></data>
   <data name="Subject" xml:space="preserve"><value>Objekt</value></data>
   <data name="EntryType" xml:space="preserve"><value>Posttyp</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Välj ett ekonomiläge.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>Slutet får inte ligga före starten.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>Rabatten måste vara mellan 0 och 100 procent.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Tidszonen känns inte igen. Ange ett Windows-tidszons-id som "Pacific Standard Time" eller lämna tomt för att använda avdelningens.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Kontakten hittades inte.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>Larmet hittades inte.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Det larmet har redan en insats.</value></data>

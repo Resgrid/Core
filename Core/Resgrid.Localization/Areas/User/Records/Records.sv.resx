@@ -2005,9 +2005,9 @@
   <data name="HoldRecordIdHelp" xml:space="preserve"><value>Lämna tomt för att i stället spärra allt som matchar en definition och ett datumintervall.</value></data>
   <data name="HoldDefinition" xml:space="preserve"><value>Definitionsomfattning</value></data>
   <data name="HoldNerisScope" xml:space="preserve"><value>NERIS-händelse och analys</value></data>
-  <data name="HoldScopeHelp" xml:space="preserve"><value>För en definitionsomfattning, lämna båda datumen tomma för att bevara alla. Tider i UTC.</value></data>
-  <data name="HoldPeriodStart" xml:space="preserve"><value>Periodens start (UTC)</value></data>
-  <data name="HoldPeriodEnd" xml:space="preserve"><value>Periodens slut (UTC)</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>För en definitionsomfattning, lämna båda datumen tomma för att bevara alla. Tider i avdelningens lokala tid.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Periodens start</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Periodens slut</value></data>
   <data name="HoldReason" xml:space="preserve"><value>Grund för spärren</value></data>
   <data name="HoldReasonLitigation" xml:space="preserve"><value>Rättstvist</value></data>
   <data name="HoldReasonInvestigation" xml:space="preserve"><value>Utredning</value></data>
@@ -2038,9 +2038,9 @@
   <data name="EvidenceChooseChannel" xml:space="preserve"><value>Välj en kanal</value></data>
   <data name="EvidenceRestricted" xml:space="preserve"><value>kräver begränsad behörighet</value></data>
   <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Inga bevis registreras för en otillgänglig källa.</value></data>
-  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Täckningens start (UTC)</value></data>
-  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Täckningens slut (UTC)</value></data>
-  <data name="EvidenceValidityTime" xml:space="preserve"><value>Händelsetid för giltighet (UTC)</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Täckningens start</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Täckningens slut</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Händelsetid för giltighet</value></data>
   <data name="EvidencePersonnel" xml:space="preserve"><value>Personal</value></data>
   <data name="EvidenceMessages" xml:space="preserve"><value>Meddelanden</value></data>
   <data name="EvidenceNoChoices" xml:space="preserve"><value>Inga åtkomliga poster på den här sidan.</value></data>
@@ -2056,7 +2056,7 @@
   <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Ingen identifierare registrerad</value></data>
   <data name="SubmissionLatestIssue" xml:space="preserve"><value>Senaste problemet</value></data>
   <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Leverans- och svarshistorik</value></data>
-  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Tider i UTC. Tidigare svar finns kvar efter avslag, nytt försök och rättelse.</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Tider i avdelningens lokala tid. Tidigare svar finns kvar efter avslag, nytt försök och rättelse.</value></data>
   <data name="SubmissionNoExchanges" xml:space="preserve"><value>Ingen utbyteshistorik registrerades för den här äldre inlämningen.</value></data>
   <data name="SubmissionOperation" xml:space="preserve"><value>Åtgärd och steg</value></data>
   <data name="SubmissionResponse" xml:space="preserve"><value>Destinationens svar</value></data>

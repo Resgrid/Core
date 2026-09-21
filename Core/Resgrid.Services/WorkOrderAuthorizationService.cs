@@ -19,9 +19,10 @@ namespace Resgrid.Services
 		private readonly IAuthorizationService _resources;
 		private readonly IChecklistAssignmentService _assignments;
 		private readonly IChecklistAssetSource _assets;
+		private readonly IUserProfileService _profiles;
 		public WorkOrderAuthorizationService(IDepartmentsService departments, IDepartmentGroupsService groups, IPersonnelRolesService roles, IPermissionsService permissions,
-			IUnitsService units, IAuthorizationService resources, IChecklistAssignmentService assignments, IChecklistAssetSource assets = null)
-		{ _departments = departments; _groups = groups; _roles = roles; _permissions = permissions; _units = units; _resources = resources; _assignments = assignments; _assets = assets; }
+			IUnitsService units, IAuthorizationService resources, IChecklistAssignmentService assignments, IUserProfileService profiles, IChecklistAssetSource assets = null)
+		{ _departments = departments; _groups = groups; _roles = roles; _permissions = permissions; _units = units; _resources = resources; _assignments = assignments; _profiles = profiles; _assets = assets; }
 		public async Task RequireMemberAsync(ChecklistActor actor) => await MemberAsync(actor);
 		private async Task<DepartmentMember> MemberAsync(ChecklistActor actor)
 		{
@@ -68,8 +69,10 @@ namespace Resgrid.Services
 			var context = await ContextAsync(actor);
 			if (row?.DepartmentId != actor.DepartmentId) return false;
 			if (await AllowedAsync(context, PermissionTypes.ManageWorkOrders, row.TargetGroupId)) return true;
-			if (row.AssignedToUserId != null) return row.AssignedToUserId == actor.UserId;
-			return row.AssignedToRoleId.HasValue && (await _assignments.MembersAsync(actor.DepartmentId, 2, row.AssignedToRoleId.Value.ToString())).Contains(actor.UserId);
+			if (row.AssignedToUserIds.Contains(actor.UserId)) return true;
+			foreach (var role in row.AssignedToRoleIds)
+				if ((await _assignments.MembersAsync(actor.DepartmentId, 2, role.ToString())).Contains(actor.UserId)) return true;
+			return false;
 		}
 		public async Task ValidateTargetAsync(ChecklistActor actor, WorkOrderInput input)
 		{
@@ -118,6 +121,14 @@ namespace Resgrid.Services
 				if (c.Type == 3 && (context.Group?.DepartmentGroupId.ToString() == c.Id || await AllowedAsync(context, PermissionTypes.ManageWorkOrders, int.Parse(c.Id)))) result.Groups.Add(choice);
 				if (c.Type == 4 && await _resources.CanUserViewUnitAsync(actor.UserId, int.Parse(c.Id))) result.Units.Add(choice);
 			}
+			var profiles = await _profiles.GetSelectedUserProfilesAsync(result.Users.Select(u => u.Id).ToList());
+			foreach (var user in result.Users)
+			{
+				var profile = profiles?.FirstOrDefault(p => p.UserId == user.Id);
+				var name = string.Join(" ", new[] { profile?.FirstName, profile?.LastName }.Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Trim()));
+				if (!string.IsNullOrWhiteSpace(name)) user.Name = name;
+			}
+			result.Users = result.Users.OrderBy(u => u.Name, StringComparer.CurrentCultureIgnoreCase).ToList();
 			try
 			{
 				if (_assets != null && await _assets.IsAvailableAsync(actor.DepartmentId)) result.Assets = (await _assets.ListAsync(actor)).Where(a => a.DepartmentId == actor.DepartmentId).Select(a => new WorkOrderChoice { Id = a.Id, Name = a.Name }).ToList();
@@ -128,7 +139,9 @@ namespace Resgrid.Services
 		public async Task<List<string>> RecipientsAsync(int departmentId, WorkOrder row)
 		{
 			if (row?.DepartmentId != departmentId) return new List<string>();
-			var members = row.AssignedToUserId != null ? await _assignments.MembersAsync(departmentId, 1, row.AssignedToUserId) : row.AssignedToRoleId.HasValue ? await _assignments.MembersAsync(departmentId, 2, row.AssignedToRoleId.Value.ToString()) : new HashSet<string>();
+			var members = new HashSet<string>(StringComparer.Ordinal);
+			foreach (var user in row.AssignedToUserIds) members.UnionWith(await _assignments.MembersAsync(departmentId, 1, user));
+			foreach (var role in row.AssignedToRoleIds) members.UnionWith(await _assignments.MembersAsync(departmentId, 2, role.ToString()));
 			return members.OrderBy(id => id, StringComparer.Ordinal).ToList();
 		}
 	}

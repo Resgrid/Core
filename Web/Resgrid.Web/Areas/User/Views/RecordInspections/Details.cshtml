@@ -3,6 +3,7 @@
 @model RecordInspectionDetailsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	var i = Model.Inspection;
 	ViewBag.Title = "Resgrid | " + L["Inspections"] + " | " + i.InspectionNumber;
 	var returnUrl = Url.Action("Details", "RecordInspections", new { area = "User", id = i.RmsInspectionId });
@@ -30,13 +31,13 @@
 				<dl class="dl-horizontal">
 					<dt>@L["Occupancies"]</dt><dd>@if (Model.Aggregate.Occupancy != null) { <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsOccupancyId">@Model.Aggregate.Occupancy.OccupancyNumber @Text(Model.Aggregate.Occupancy.Name)</a><br /><small>@Text(Model.Aggregate.Occupancy.AddressText)</small> } else { @i.RmsOccupancyId }</dd>
 					<dt>@L["InspectionPrograms"]</dt><dd>@Model.Aggregate.Program?.Name</dd>
-					<dt>@L["ScheduledOn"]</dt><dd>@RmsEnumDisplay.Utc(i.ScheduledOn)</dd>
+					<dt>@L["ScheduledOn"]</dt><dd>@departmentTime.Format(i.ScheduledOn)</dd>
 					<dt>@L["Inspector"]</dt><dd>@i.InspectorUserId</dd>
-					<dt>@L["StartedOn"]</dt><dd>@RmsEnumDisplay.Utc(i.StartedOn)</dd>
-					<dt>@L["CompletedOn"]</dt><dd>@RmsEnumDisplay.Utc(i.CompletedOn)</dd>
+					<dt>@L["StartedOn"]</dt><dd>@departmentTime.Format(i.StartedOn)</dd>
+					<dt>@L["CompletedOn"]</dt><dd>@departmentTime.Format(i.CompletedOn)</dd>
 					<dt>@L["InspectionResult"]</dt><dd>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</dd>
-					<dt>@L["SignatureName"]</dt><dd>@Text(i.SignatureName) @RmsEnumDisplay.Utc(i.SignedOn)</dd>
-					<dt>@L["NoticeReference"]</dt><dd>@Text(i.NoticeReference) @RmsEnumDisplay.Utc(i.NoticeIssuedOn)</dd>
+					<dt>@L["SignatureName"]</dt><dd>@Text(i.SignatureName) @departmentTime.Format(i.SignedOn)</dd>
+					<dt>@L["NoticeReference"]</dt><dd>@Text(i.NoticeReference) @departmentTime.Format(i.NoticeIssuedOn)</dd>
 					@if (!string.IsNullOrWhiteSpace(i.ParentInspectionId)) { <dt>@L["ReinspectionOf"]</dt><dd><a asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.ParentInspectionId">@i.ParentInspectionId</a></dd> }
 				</dl>
 				@if (!string.IsNullOrWhiteSpace(i.Notes)) { <p style="white-space:pre-wrap">@Text(i.Notes)</p> }
@@ -53,7 +54,7 @@
 						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Notice" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
 							<div class="input-group"><input class="form-control" name="noticeReference" maxlength="100" placeholder="@L["NoticeReference"]" required /><span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-envelope"></i> @L["IssueNotice"]</button></span></div></form>
 						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Reinspect" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
-							<div class="input-group"><input type="date" class="form-control" name="scheduledOn" value="@DateTime.UtcNow.Date.AddDays(30).ToString("yyyy-MM-dd")" /><span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-calendar"></i> @L["ScheduleReinspection"]</button></span></div></form>
+							<div class="input-group"><input type="date" class="form-control" name="scheduledOn" value="@departmentTime.Today.AddDays(30).ToString("yyyy-MM-dd")" /><span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-calendar"></i> @L["ScheduleReinspection"]</button></span></div></form>
 						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Close" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" /><button class="btn btn-default btn-block"><i class="fa fa-check"></i> @L["CloseInspection"]</button></form>
 					}
 					@if (i.State == (int)RmsInspectionState.Scheduled || i.State == (int)RmsInspectionState.InProgress)
@@ -118,7 +119,7 @@
 								<td>@Text(v.Description)<br /><small class="text-muted">@v.ChecklistItemKey @v.RmsCodeSectionId</small></td>
 								<td>@Text(v.CorrectiveAction)</td>
 								<td>@RmsEnumDisplay.Day(v.DueOn)</td>
-								<td><span class="label label-@RmsEnumDisplay.StateClass((RmsViolationState)v.State)">@(RmsEnumDisplay.Label<RmsViolationState>(v.State))</span><br /><small>@RmsEnumDisplay.Day(v.CorrectedOn) @RmsEnumDisplay.Day(v.VerifiedOn)</small></td>
+								<td><span class="label label-@RmsEnumDisplay.StateClass((RmsViolationState)v.State)">@(RmsEnumDisplay.Label<RmsViolationState>(v.State))</span><br /><small>@departmentTime.Date(v.CorrectedOn) @departmentTime.Date(v.VerifiedOn)</small></td>
 								<td>
 									@if (Model.CanAdminister)
 									{

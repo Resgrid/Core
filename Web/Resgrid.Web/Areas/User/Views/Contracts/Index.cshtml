@@ -7,11 +7,18 @@
     ViewData["RootController"] = "Contracts";
     ViewData["RootTitle"] = localizer["Contracts"].Value;
     var statuses = Enum.GetValues(typeof(Resgrid.Model.Invoicing.ServiceContractStatuses)).Cast<Resgrid.Model.Invoicing.ServiceContractStatuses>().ToList();
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="Compliance" class="btn btn-default"><i class="fa fa-shield"></i> @localizer["ComplianceDocuments"]</a>
+        @if (Model.CanManageRates) { <a asp-controller="RateSchedules" asp-action="Index" class="btn btn-default"><i class="fa fa-table"></i> @localizer["RateSchedules"]</a> }
+        @if (Model.CanManageContracts) { <a asp-action="New" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewContract"]</a> }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     @if (Model.ExpiringDocuments > 0)
     {
@@ -20,11 +27,7 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["Contracts"]</h5>
-            <div class="ibox-tools">
-                <a asp-action="Compliance" class="btn btn-default btn-xs"><i class="fa fa-shield"></i> @localizer["ComplianceDocuments"]</a>
-                @if (Model.CanManageRates) { <a asp-controller="RateSchedules" asp-action="Index" class="btn btn-default btn-xs"><i class="fa fa-table"></i> @localizer["RateSchedules"]</a> }
-                @if (Model.CanManageContracts) { <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewContract"]</a> }
-            </div>
+
         </div>
         <div class="ibox-content">
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpContracts"]</div>
@@ -63,3 +66,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

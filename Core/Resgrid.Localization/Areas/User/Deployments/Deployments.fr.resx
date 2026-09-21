@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Pays hôte</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>État / province hôte</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Fuseau horaire</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Fuseau horaire local de l'incident pour les rapports de temps ; vide utilise celui du service.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Fuseau horaire utilisé pour la comptabilité du déploiement. Les dates et heures de ces pages utilisent le fuseau horaire du service.</value></data>
   <data name="Currency" xml:space="preserve"><value>Devise</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Hors province / État</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Déplacement par avion</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>Pas de repos de 8 h (les heures supplémentaires se reportent sur le quart suivant)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Arrêt pour conditions dangereuses</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Entrées de temps</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>heures en heure locale de l'incident</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>heures dans le fuseau horaire du service</value></data>
   <data name="Subject" xml:space="preserve"><value>Sujet</value></data>
   <data name="EntryType" xml:space="preserve"><value>Type d'entrée</value></data>
   <data name="Start" xml:space="preserve"><value>Début</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Choisissez un mode financier.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>La fin ne peut pas précéder le début.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>La remise doit être comprise entre 0 et 100 pour cent.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>Le fuseau horaire n'est pas reconnu. Saisissez un identifiant de fuseau horaire Windows tel que "Pacific Standard Time", ou laissez vide pour utiliser celui du service.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>Le contact est introuvable.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>L'appel est introuvable.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>Cet appel a déjà un déploiement.</value></data>

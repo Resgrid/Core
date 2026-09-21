@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Model.Checklists;
 using Resgrid.Model.WorkOrders;
@@ -9,19 +10,19 @@ namespace Resgrid.Model.Services
 	public interface IWorkOrdersService
 	{
 		Task<WorkOrderPage> ListAsync(ChecklistActor actor, WorkOrderFilter filter);
-		Task<WorkOrderDetail> GetAsync(ChecklistActor actor, int id);
+		Task<WorkOrderDetail> GetAsync(ChecklistActor actor, string id);
 		Task<WorkOrderDetail> CreateAsync(ChecklistActor actor, WorkOrderInput input);
-		Task UpdateAsync(ChecklistActor actor, int id, WorkOrderInput input);
-		Task TransitionAsync(ChecklistActor actor, int id, WorkOrderTransition input);
-		Task AssignAsync(ChecklistActor actor, int id, WorkOrderAssignment input);
-		Task AcceptAssignmentAsync(ChecklistActor actor, int id, int revision);
-		Task CommentAsync(ChecklistActor actor, int id, int revision, string note);
-		Task AddLaborAsync(ChecklistActor actor, int id, WorkOrderLaborInput input);
-		Task AddPartAsync(ChecklistActor actor, int id, WorkOrderPartInput input);
-		Task VoidPartAsync(ChecklistActor actor, int id, int partId, int revision, string reason);
-		Task AddFileAsync(ChecklistActor actor, int id, int revision, string filename, string contentType, byte[] data);
-		Task<WorkOrderFile> GetFileAsync(ChecklistActor actor, int id);
-		Task WithdrawFileAsync(ChecklistActor actor, int id, int fileId, int revision, string reason);
+		Task UpdateAsync(ChecklistActor actor, string id, WorkOrderInput input);
+		Task TransitionAsync(ChecklistActor actor, string id, WorkOrderTransition input);
+		Task AssignAsync(ChecklistActor actor, string id, WorkOrderAssignment input);
+		Task AcceptAssignmentAsync(ChecklistActor actor, string id, int revision);
+		Task CommentAsync(ChecklistActor actor, string id, int revision, string note);
+		Task AddLaborAsync(ChecklistActor actor, string id, WorkOrderLaborInput input);
+		Task AddPartAsync(ChecklistActor actor, string id, WorkOrderPartInput input);
+		Task VoidPartAsync(ChecklistActor actor, string id, string partId, int revision, string reason);
+		Task AddFileAsync(ChecklistActor actor, string id, int revision, string filename, string contentType, byte[] data);
+		Task<WorkOrderFile> GetFileAsync(ChecklistActor actor, string id);
+		Task WithdrawFileAsync(ChecklistActor actor, string id, string fileId, int revision, string reason);
 		Task<WorkOrderChoices> ChoicesAsync(ChecklistActor actor);
 	}
 	public interface IWorkOrderAuthorizationService
@@ -62,7 +63,7 @@ namespace Resgrid.Model.WorkOrders
 		public bool All { get; set; }
 		public int? GroupId { get; set; }
 		public int[] RoleIds { get; set; } = Array.Empty<int>();
-		public bool Allows(WorkOrder row) => All || row.CreatedBy == UserId || row.AssignedToUserId == UserId || GroupId.HasValue && row.TargetGroupId == GroupId || row.AssignedToRoleId.HasValue && Array.IndexOf(RoleIds ?? Array.Empty<int>(), row.AssignedToRoleId.Value) >= 0;
+		public bool Allows(WorkOrder row) => All || row.CreatedBy == UserId || row.AssignedToUserIds.Contains(UserId) || GroupId.HasValue && row.TargetGroupId == GroupId || row.AssignedToRoleIds.Intersect(RoleIds ?? Array.Empty<int>()).Any();
 	}
 	public sealed class WorkOrderInput
 	{
@@ -81,7 +82,7 @@ namespace Resgrid.Model.WorkOrders
 		public int Revision { get; set; }
 		public WorkOrderStatus Status { get; set; }
 		public string Reason { get; set; }
-		public int? DuplicateOfId { get; set; }
+		public string DuplicateOfId { get; set; }
 		public string Resolution { get; set; }
 		public string Cause { get; set; }
 		public string VerificationEvidence { get; set; }
@@ -93,7 +94,7 @@ namespace Resgrid.Model.WorkOrders
 	public sealed class WorkOrderSummary
 	{
 		public WorkOrderStatus? QuickStatus { get; set; }
-		public int Id { get; set; }
+		public string Id { get; set; }
 		public string Number { get; set; }
 		public string Title { get; set; }
 		public WorkOrderStatus Status { get; set; }
@@ -104,6 +105,8 @@ namespace Resgrid.Model.WorkOrders
 		public DateTime? DueOn { get; set; }
 		public string AssignedToUserId { get; set; }
 		public int? AssignedToRoleId { get; set; }
+		public List<string> AssignedToUserIds { get; set; } = new();
+		public List<int> AssignedToRoleIds { get; set; } = new();
 		public int? UnitId { get; set; }
 		public int? GroupId { get; set; }
 		public string AssetId { get; set; }
@@ -136,13 +139,14 @@ namespace Resgrid.Model.WorkOrders
 		public List<WorkOrderPartView> Parts { get; set; } = new List<WorkOrderPartView>();
 		public List<WorkOrderFileView> Files { get; set; } = new List<WorkOrderFileView>();
 	}
-	public sealed class WorkOrderActivityView { public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } public WorkOrderContent Snapshot { get; set; } public string AssignedToUserId { get; set; } public int? AssignedToRoleId { get; set; } public int Id { get; set; } public WorkOrderActivityType Type { get; set; } public string UserId { get; set; } public DateTime CreatedOn { get; set; } public string Note { get; set; } public int? OldStatus { get; set; } public int? NewStatus { get; set; } }
-	public sealed class WorkOrderLaborView { public int Id { get; set; } public string UserId { get; set; } public DateTime WorkDate { get; set; } public WorkOrderLaborContent Content { get; set; } }
-	public sealed class WorkOrderPartView { public bool Staged { get; set; } public decimal ReservedQuantity { get; set; } public decimal IssuedQuantity { get; set; } public decimal ConsumedQuantity { get; set; } public decimal ReturnedQuantity { get; set; } public string InventoryWitnessRequestId { get; set; } public string InventoryItemId { get; set; } public string InventoryTransactionId { get; set; } public string InventoryOperationId { get; set; } public bool AwaitingWitness { get; set; } public int Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderPartContent Content { get; set; } }
-	public sealed class WorkOrderFileView { public int Id { get; set; } public string Name { get; set; } public string ContentType { get; set; } public int Size { get; set; } public DateTime? WithdrawnOn { get; set; } }
+	public sealed class WorkOrderActivityView { public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } public WorkOrderContent Snapshot { get; set; } public string AssignedToUserId { get; set; } public int? AssignedToRoleId { get; set; } public string Id { get; set; } public WorkOrderActivityType Type { get; set; } public string UserId { get; set; } public DateTime CreatedOn { get; set; } public string Note { get; set; } public int? OldStatus { get; set; } public int? NewStatus { get; set; } }
+	public sealed class WorkOrderLaborView { public string Id { get; set; } public string UserId { get; set; } public DateTime WorkDate { get; set; } public WorkOrderLaborContent Content { get; set; } }
+	public sealed class WorkOrderPartView { public bool Staged { get; set; } public decimal ReservedQuantity { get; set; } public decimal IssuedQuantity { get; set; } public decimal ConsumedQuantity { get; set; } public decimal ReturnedQuantity { get; set; } public string InventoryWitnessRequestId { get; set; } public string InventoryItemId { get; set; } public string InventoryTransactionId { get; set; } public string InventoryOperationId { get; set; } public bool AwaitingWitness { get; set; } public string Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderPartContent Content { get; set; } }
+	public sealed class WorkOrderFileView { public string Id { get; set; } public string Name { get; set; } public string ContentType { get; set; } public int Size { get; set; } public DateTime? WithdrawnOn { get; set; } }
 	public sealed class WorkOrderChoice { public string Id { get; set; } public string Name { get; set; } }
 	public sealed class WorkOrderChoices
 	{
+		public string Currency { get; set; } = "USD";
 		public List<WorkOrderChoice> Users { get; set; } = new List<WorkOrderChoice>();
 		public List<WorkOrderChoice> Roles { get; set; } = new List<WorkOrderChoice>();
 		public List<WorkOrderChoice> Units { get; set; } = new List<WorkOrderChoice>();

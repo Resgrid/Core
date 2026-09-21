@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Fälligkeit verschoben</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Wartungsberichte</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Wartungsverlauf</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Erstellt ab (UTC, einschließlich)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Erstellt vor (UTC, ausschließlich)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Berechnet am (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Erstellt ab (einschließlich)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Erstellt vor (ausschließlich)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Berechnet am</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Arbeitsaufträge insgesamt</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Offene Arbeitsaufträge</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Überfällige Arbeitsaufträge</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Überarbeitungsstand</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Dieser Bericht ist zu groß. Schränken Sie den Zeitraum oder die Zielfilter ein.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Wählen Sie einen gültigen Zeitraum; Übersichtsberichte unterstützen bis zu 366 Tage.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Aktueller Stand der im gewählten UTC-Zeitraum erstellten Arbeitsaufträge. Offen umfasst abgeschlossene Arbeiten ohne endgültigen Abschluss. Die mittlere Reparaturzeit reicht vom ersten Beginn bis zur letzten Fertigstellung, einschließlich Unterbrechungen und Wiedereröffnungen; ungültige Zeiten werden ausgeschlossen. Kosten werden je Eintrag gerundet und nach Währung getrennt; stornierte oder nicht ausgegebene Teile zählen nicht. Unbekannte Kosten und frühere Arbeitswährungen bleiben unbekannt; Wechselkurse werden nicht angenommen.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Aktueller Stand der im gewählten Zeitraum erstellten Arbeitsaufträge. Offen umfasst abgeschlossene Arbeiten ohne endgültigen Abschluss. Die mittlere Reparaturzeit reicht vom ersten Beginn bis zur letzten Fertigstellung, einschließlich Unterbrechungen und Wiedereröffnungen; ungültige Zeiten werden ausgeschlossen. Kosten werden je Eintrag gerundet und nach Währung getrennt; stornierte oder nicht ausgegebene Teile zählen nicht. Unbekannte Kosten und frühere Arbeitswährungen bleiben unbekannt; Wechselkurse werden nicht angenommen.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>Gesamter Wartungsverlauf, sofern kein Zeitraum ausgewählt ist. Jede CSV-Zeile steht für einen Auftrag und eine Währung. Bekannte Kosten schließen stornierte oder nicht ausgegebene Teile aus; fehlende Preise und frühere Arbeitswährungen werden als unbekannt ausgewiesen.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Stand des Arbeitsauftrags zum Einsatzzeitpunkt mit unveränderlichen Versionsreferenzen im Manifest. Ältere offene Wartungen sind enthalten; abgeschlossene Arbeiten berücksichtigen den Rückblickzeitraum. Nicht rekonstruierbare historische Zustände werden als nicht verfügbar gekennzeichnet.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Arbeitsfreie Tage (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Reaktionsziel (Arbeitsminuten)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Reparaturziel (Arbeitsminuten)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Reaktionsfrist (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Reparaturfrist (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Reagiert am (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Reaktionsfrist</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Reparaturfrist</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Reagiert am</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Lieferantenkosten</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Lieferantenkosten hinzufügen</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Kosten stornieren</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Serviceziel des Arbeitsauftrags verfehlt</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Lieferantenkosten des Arbeitsauftrags geändert</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Vorgangsrichtlinie für Arbeitsaufträge geändert</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Reaktionsfrist (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Reparaturfrist (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Reaktionsfrist</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Reparaturfrist</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Reparaturen anlegen, Zuständigkeiten verfolgen und die Wartungskosten sehen.</value></data>
   <data name="Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="Continue" xml:space="preserve"><value>Weiter</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>An wen der erzeugte Arbeitsauftrag geht und an wen eskaliert wird, wenn ihn niemand übernimmt.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Steuert die Überfälligkeitsmarkierung und die Service-Level-Uhr.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>Die Schritte, die der Techniker abarbeitet. Manche Statuswechsel setzen voraus, dass alle erledigt sind.</value></data>
+  <data name="Users" xml:space="preserve"><value>Benutzer</value></data>
+  <data name="Roles" xml:space="preserve"><value>Rollen</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Wählen Sie einen oder mehrere Benutzer und/oder Rollen. Halten Sie Strg (Windows) oder Command (Mac) gedrückt, um mehrere Einträge auszuwählen. Jeder ausgewählte Benutzer oder jedes Mitglied einer ausgewählten Rolle kann den Arbeitsauftrag annehmen.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Arbeitsauftragseinstellungen</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Währung, Ausgabenfreigaben, Geschäftszeiten, Feiertage und Serviceziele einmal für die Abteilung festlegen.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Die Währung wird in den Arbeitsauftragseinstellungen verwaltet. Bestehende Aufträge behalten ihre erfasste Währung.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Gilt für neue Arbeitsaufträge und deren Lieferantenkosten. Bestehende Kosten und Freigabegrenzen behalten ihre ursprüngliche Währung. Verwendet eine Wartungsvorlage eine andere Währung, bleibt der Kostenvoranschlag bei neuen Aufträgen zur Prüfung leer.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Die Freigabegrenze in der oben ausgewählten Abteilungswährung eingeben. Grenzen für bestehende Aufträge in anderen Währungen bleiben erhalten.</value></data>
 </root>

@@ -1,4 +1,5 @@
 using System;
+using Resgrid.Model.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -513,6 +514,8 @@ namespace Resgrid.Services.CostRecovery
 		private async Task<CalOesMarsHandoffManifest> BuildManifestAsync(CalOesMarsWorkItem item, int departmentId, string userId)
 		{
 			var authority = CalOesMarsAuthorityProfile.Get(item.AuthorityProfileCode) ?? CalOesMarsAuthorityProfile.Current;
+            var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false) ?? new Department();
+            string When(DateTime? value) => value?.TimeConverterToString(department);
 			var manifest = new CalOesMarsHandoffManifest
 			{
 				WorkItemId = item.CalOesMarsWorkItemId, RecordType = item.RecordType, AuthorityProfileCode = item.AuthorityProfileCode, RateProfileVersion = item.RateProfileVersion, AgreementSnapshotId = item.AgreementSnapshotId,
@@ -526,13 +529,13 @@ namespace Resgrid.Services.CostRecovery
 						var values = new Dictionary<string, string>
 						{
 							["agency"] = Join(s.MacsDesignator, s.AgencyName), ["incident"] = Join(s.IncidentName, s.IncidentNumber), ["order"] = s.OrderNumber, ["request"] = Join(s.RequestNumber, s.ParentRequestNumber),
-							["resource"] = Join(s.ResourceType ?? s.ResourceKind, s.StrikeTeamOrTaskForce, s.OverheadPosition), ["dispatch"] = s.DispatchedOn?.ToString("yyyy-MM-dd HH:mm"),
-							["return"] = s.ReturnedOn?.ToString("yyyy-MM-dd HH:mm") ?? (s.ReleasedOn.HasValue ? "Released " + s.ReleasedOn.Value.ToString("yyyy-MM-dd HH:mm") : null),
+							["resource"] = Join(s.ResourceType ?? s.ResourceKind, s.StrikeTeamOrTaskForce, s.OverheadPosition), ["dispatch"] = When(s.DispatchedOn),
+							["return"] = When(s.ReturnedOn) ?? (s.ReleasedOn.HasValue ? "Released " + When(s.ReleasedOn) : null),
 							["apparatus"] = string.Join("; ", s.Vehicles.Select(v => $"{v.Kind} {v.Designator} {v.ResourceCode} {v.LicensePlate} {v.CommittedHours}h".Trim())),
 							["personnel"] = string.Join("; ", s.Personnel.Select(p => $"{p.Name} ({p.Rank ?? p.ClassificationCode}) {(p.ActualHours.Count > 0 ? p.ActualHours.Sum(h => h.Hours) + "h actual" : p.CommittedHours + "h committed")}")),
 							["rotation"] = s.Rotations.Count == 0 ? null : string.Join("; ", s.Rotations.Select(r => r.On.ToString("yyyy-MM-dd"))),
-							["comments"] = Join(s.Comments, s.LossDamage, s.SupplyNumbers), ["responding-signature"] = Join(s.RespondingSignerName, s.RespondingSignedOn?.ToString("yyyy-MM-dd")),
-							["incident-signature"] = Join(s.IncidentAuthorizerName, s.IncidentAuthorizedOn?.ToString("yyyy-MM-dd")), ["attachments"] = s.AttachmentIds.Count.ToString()
+							["comments"] = Join(s.Comments, s.LossDamage, s.SupplyNumbers), ["responding-signature"] = Join(s.RespondingSignerName, When(s.RespondingSignedOn)),
+							["incident-signature"] = Join(s.IncidentAuthorizerName, When(s.IncidentAuthorizedOn)), ["attachments"] = s.AttachmentIds.Count.ToString()
 						};
 						foreach (var box in authority.F42Boxes) manifest.Fields.Add(new CalOesMarsHandoffField { Box = box.Id, Label = box.Label, Value = values.TryGetValue(box.Id, out var v) ? v : null, Source = box.Source });
 						if (!string.IsNullOrWhiteSpace(item.DeploymentId))

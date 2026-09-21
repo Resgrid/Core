@@ -6,27 +6,27 @@
     ViewData["Tab"] = "Index";
     ViewData["Title"] = localizer["Schedules"].Value;
     ViewData["Subtitle"] = localizer["ScheduleVersionGuidance"].Value;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-action="Detail" asp-route-id="@Model.DefinitionId"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+        @if (Model.CanEdit)
+        {
+            <a class="btn btn-success" asp-action="EditSchedule" asp-route-definitionId="@Model.DefinitionId"><i class="fa fa-plus"></i> @localizer["NewSchedule"]</a>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["Schedules"]</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["ScheduleVersionGuidance"]</div>
-
-            <div class="rgw-toolbar">
-                <a class="btn btn-default btn-sm" asp-action="Detail" asp-route-id="@Model.DefinitionId"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
-                <div class="rgw-toolbar-spacer"></div>
-                @if (Model.CanEdit)
-                {
-                    <a class="btn btn-primary" asp-action="EditSchedule" asp-route-definitionId="@Model.DefinitionId"><i class="fa fa-plus"></i> @localizer["NewSchedule"]</a>
-                }
-            </div>
 
             @if (Model.Schedules.Count == 0)
             {
@@ -83,5 +83,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

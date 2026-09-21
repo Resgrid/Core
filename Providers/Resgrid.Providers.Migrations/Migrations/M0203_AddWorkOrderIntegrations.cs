@@ -8,9 +8,9 @@ namespace Resgrid.Providers.Migrations.Migrations
         public override void Up()
         {
             Create.Table(N("WorkOrderFailureIntents"))
-                .WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+                .WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
@@ -34,9 +34,9 @@ namespace Resgrid.Providers.Migrations.Migrations
             Index("WorkOrderFailureIntents", "Order", false, "DepartmentId", "WorkOrderId", "Id");
             Foreign("WorkOrderFailureIntents", "Order", "WorkOrderId", "WorkOrders");
             Create.Table(N("WorkOrderSafetyHolds"))
-                .WithColumn(N("Id")).AsInt32().PrimaryKey().Identity()
+                .WithColumn(N("Id")).AsString(36).PrimaryKey()
                 .WithColumn(N("DepartmentId")).AsInt32().NotNullable()
-                .WithColumn(N("WorkOrderId")).AsInt32().Nullable()
+                .WithColumn(N("WorkOrderId")).AsString(36).Nullable()
                 .WithColumn(N("Content")).AsString(int.MaxValue).Nullable()
                 .WithColumn(N("Revision")).AsInt32().NotNullable().WithDefaultValue(1)
                 .WithColumn(N("CreatedOn")).AsDateTime2().NotNullable()
@@ -62,7 +62,7 @@ namespace Resgrid.Providers.Migrations.Migrations
             foreach (var column in new[] { "InventoryOperationId", "InventoryReversalId", "InventoryRequestId" })
                 Alter.Table(N("WorkOrderParts")).AddColumn(N(column)).AsString(36).Nullable();
             Execute.Sql("CREATE UNIQUE INDEX UX_WorkOrderParts_InventoryRequest ON WorkOrderParts(DepartmentId,InventoryRequestId) WHERE InventoryRequestId IS NOT NULL;");
-            Alter.Table(N("InventoryTransactions")).AddColumn(N("WorkOrderPartId")).AsInt32().Nullable();
+            Alter.Table(N("InventoryTransactions")).AddColumn(N("WorkOrderPartId")).AsString(36).Nullable();
             Foreign("InventoryTransactions", "WorkOrderPart", "WorkOrderPartId", "WorkOrderParts");
             Index("InventoryTransactions", "WorkOrderPart", false, "DepartmentId", "WorkOrderPartId");
         }

@@ -12,8 +12,10 @@ namespace Resgrid.Web.Services.Controllers.v4
     {
         private IWorkOrderOperationsService OperationsService => _orders as IWorkOrderOperationsService ?? throw new WorkOrderException(503, "MaintenanceUnavailable");
         [HttpGet("GetWorkOrderPolicy")]
+        [HttpGet("GetWorkOrderSettings")]
         public async Task<IActionResult> GetWorkOrderPolicy() => Reply(await OperationsService.PolicyAsync(Actor));
         [HttpPost("SaveWorkOrderPolicy")]
+        [HttpPost("SaveWorkOrderSettings")]
         public async Task<IActionResult> SaveWorkOrderPolicy([FromBody] WorkOrderPolicyInput input) { await OperationsService.SavePolicyAsync(Actor, Required(input)); return Reply(await OperationsService.PolicyAsync(Actor)); }
         [HttpPost("PreviewWorkOrderBatch")]
         public async Task<IActionResult> PreviewWorkOrderBatch([FromBody] WorkOrderBulkInput input) => Reply(await OperationsService.PreviewBulkAsync(Actor, Required(input)));
@@ -26,7 +28,7 @@ namespace Resgrid.Web.Services.Controllers.v4
         [HttpPost("DecideWorkOrderApproval")]
         public async Task<IActionResult> DecideWorkOrderApproval([FromBody] WorkOrderOperationsInput<WorkOrderApprovalInput> input) { Required(input); await OperationsService.DecideApprovalAsync(Actor, input.Id, Required(input.Input)); return Reply(await _orders.GetAsync(Actor, input.Id)); }
         [HttpGet("GetWorkOrderVendorCharges")]
-        public async Task<IActionResult> GetWorkOrderVendorCharges(int id, int afterId = 0) { var rows = await OperationsService.VendorChargesAsync(Actor, id, afterId); return Reply(rows, rows.Count, rows.Count == 50); }
+        public async Task<IActionResult> GetWorkOrderVendorCharges(string id, string afterId = null) { var rows = await OperationsService.VendorChargesAsync(Actor, id, afterId); return Reply(rows, rows.Count, rows.Count == 50); }
         [HttpPost("AddWorkOrderVendorCharge")]
         public async Task<IActionResult> AddWorkOrderVendorCharge([FromBody] WorkOrderOperationsInput<WorkOrderVendorChargeInput> input) { Required(input); await OperationsService.AddVendorChargeAsync(Actor, input.Id, Required(input.Input)); return Reply(await _orders.GetAsync(Actor, input.Id)); }
         [HttpPost("VoidWorkOrderVendorCharge")]
@@ -36,10 +38,10 @@ namespace Resgrid.Web.Services.Controllers.v4
         [HttpPost("MoveWorkOrderPart")]
         public async Task<IActionResult> MoveWorkOrderPart([FromBody] WorkOrderOperationsInput<WorkOrderPartMovementInput> input) { Required(input); await OperationsService.MovePartAsync(Actor, input.Id, input.ChildId, Required(input.Input)); return Reply(await _orders.GetAsync(Actor, input.Id)); }
         [HttpGet("GetWorkOrderPartMovements")]
-        public async Task<IActionResult> GetWorkOrderPartMovements(int id, int afterId = 0) { var rows = await OperationsService.PartMovementsAsync(Actor, id, afterId); return Reply(rows, rows.Count, rows.Count == 50); }
+        public async Task<IActionResult> GetWorkOrderPartMovements(string id, string afterId = null) { var rows = await OperationsService.PartMovementsAsync(Actor, id, afterId); return Reply(rows, rows.Count, rows.Count == 50); }
         [HttpPost("CancelWorkOrderPartMovement")]
         public async Task<IActionResult> CancelWorkOrderPartMovement([FromBody] WorkOrderCommandInput input) { Required(input); await OperationsService.CancelPartMovementAsync(Actor, input.Id, input.ChildId, input.Revision, input.Note); return Reply(await _orders.GetAsync(Actor, input.Id)); }
     }
-    public sealed class WorkOrderOperationsInput<T> where T : class { public int Id { get; set; } public int ChildId { get; set; } public T Input { get; set; } }
+    public sealed class WorkOrderOperationsInput<T> where T : class { public string Id { get; set; } public string ChildId { get; set; } public T Input { get; set; } }
     public sealed class WorkOrderCsvInput { public string RequestId { get; set; } public string Csv { get; set; } }
 }

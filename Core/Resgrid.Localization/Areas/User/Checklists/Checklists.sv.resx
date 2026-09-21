@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Larmade enheter</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Utrustning utlämnad vid insatstidpunkten</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>Den schemalagda leveransen innehåller ett PDF-meddelande och en säker rapportlänk. Öppna rapporten för att kontrollera din aktuella behörighet och låsa upp skyddade uppgifter; kontrollresultat och personuppgifter skickas inte med e-post.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Välj en kronologisk UTC-period på högst 93 dagar.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Välj en kronologisk period på högst 93 dagar.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Rapporten är för stor. Välj en kortare period.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Insatsen är inte tillgänglig eller åtkomst nekas.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Utrustningens historiska ursprungsuppgifter är ofullständiga eller motsägelsefulla.</value></data>

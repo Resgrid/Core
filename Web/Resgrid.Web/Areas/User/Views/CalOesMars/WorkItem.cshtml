@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsWorkItemView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var w = Model.Item;
     var recordType = (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes)w.RecordType;
     var typeName = localizer["RecordType" + recordType].Value;
@@ -17,22 +18,25 @@
     var recordStatuses = Model.Authority.RecordStatusMap.Keys.ToList();
     // JSON emitted inside <script>: personnel names and attachment names are user text, so < > & are unicode-escaped.
     var scriptJson = new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml };
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="Print" asp-route-id="@w.CalOesMarsWorkItemId" target="_blank" class="btn btn-info"><i class="fa fa-print"></i> @localizer["Printable"]</a>
+        <a asp-action="Packet" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-info"><i class="fa fa-file-archive-o"></i> @localizer["EvidencePacket"]</a>
+        @if (!string.IsNullOrWhiteSpace(w.DeploymentId)) { <a asp-controller="Deployments" asp-action="View" asp-route-id="@w.DeploymentId" class="btn btn-default"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a> }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@typeName @await Html.PartialAsync("_WorkItemStateBadge", w.LocalState)</h5>
-                    <div class="ibox-tools">
-                        <a asp-action="Print" asp-route-id="@w.CalOesMarsWorkItemId" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-print"></i> @localizer["Printable"]</a>
-                        <a asp-action="Packet" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-default btn-xs"><i class="fa fa-file-archive-o"></i> @localizer["EvidencePacket"]</a>
-                        @if (!string.IsNullOrWhiteSpace(w.DeploymentId)) { <a asp-controller="Deployments" asp-action="View" asp-route-id="@w.DeploymentId" class="btn btn-default btn-xs"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a> }
-                    </div>
+
                 </div>
                 <div class="ibox-content">
                     <p class="text-muted small"><i class="fa fa-info-circle"></i> @localizer["PreparedNotSubmitted"] · @localizer["AuthorityProfile"] @w.AuthorityProfileCode · @localizer["Version"] @w.RowVersion @if (!string.IsNullOrWhiteSpace(w.SupersedesWorkItemId)) { <text>· @localizer["Supersedes"] <a asp-action="WorkItem" asp-route-id="@w.SupersedesWorkItemId">@w.SupersedesWorkItemId.Substring(0, 8)</a></text> }</p>
@@ -53,10 +57,10 @@
                             <div class="form-group"><label class="col-sm-3 control-label">@localizer["ResourceType"]</label><div class="col-sm-4"><input type="text" class="form-control f-field" data-field="ResourceType" value="@f.ResourceType" disabled="@(!Model.CanEdit)" /></div><label class="col-sm-2 control-label">@localizer["StrikeTeam"]</label><div class="col-sm-3"><input type="text" class="form-control f-field" data-field="StrikeTeamOrTaskForce" value="@f.StrikeTeamOrTaskForce" disabled="@(!Model.CanEdit)" /></div></div>
                             <div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportingLocation"]</label><div class="col-sm-4"><input type="text" class="form-control f-field" data-field="ReportingLocation" value="@f.ReportingLocation" disabled="@(!Model.CanEdit)" /></div><label class="col-sm-2 control-label">@localizer["OverheadPosition"]</label><div class="col-sm-3"><input type="text" class="form-control f-field" data-field="OverheadPosition" value="@f.OverheadPosition" disabled="@(!Model.CanEdit)" /></div></div>
                             <dl class="dl-horizontal">
-                                <dt>@localizer["BoxDispatch"]</dt><dd>@(f.DispatchedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—") · @localizer["Committed"] @(f.CommittedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</dd>
-                                <dt>@localizer["Released"]</dt><dd>@(f.ReleasedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—") <small class="text-muted">@localizer["ReleaseIsNotReturn"]</small></dd>
+                                <dt>@localizer["BoxDispatch"]</dt><dd>@(departmentTime.Format(f.DispatchedOn) ?? "—") · @localizer["Committed"] @(departmentTime.Format(f.CommittedOn) ?? "—")</dd>
+                                <dt>@localizer["Released"]</dt><dd>@(departmentTime.Format(f.ReleasedOn) ?? "—") <small class="text-muted">@localizer["ReleaseIsNotReturn"]</small></dd>
                             </dl>
-                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["BoxReturn"]</label><div class="col-sm-4"><input type="datetime-local" class="form-control f-field" data-field="ReturnedOn" value="@(f.ReturnedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["BoxReturn"]</label><div class="col-sm-4"><input type="datetime-local" step="0.001" class="form-control f-field" data-field="ReturnedOn" value="@(departmentTime.Input(f.ReturnedOn))" disabled="@(!Model.CanEdit)" /></div></div>
 
                             <h4>@localizer["BoxApparatus"]</h4>
                             <table class="table table-condensed" id="vehicles">
@@ -89,8 +93,8 @@
                                             <td>@p.Name</td>
                                             <td><input type="text" class="form-control input-sm p-rank" value="@p.Rank" disabled="@(!Model.CanEdit)" /></td>
                                             <td><input type="text" class="form-control input-sm p-class" list="class-list" value="@p.ClassificationCode" disabled="@(!Model.CanEdit)" /></td>
-                                            <td><input type="datetime-local" class="form-control input-sm p-committed" value="@(p.CommittedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></td>
-                                            <td><input type="datetime-local" class="form-control input-sm p-released" value="@(p.ReleasedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="datetime-local" step="0.001" class="form-control input-sm p-committed" value="@(departmentTime.Input(p.CommittedOn))" disabled="@(!Model.CanEdit)" /></td>
+                                            <td><input type="datetime-local" step="0.001" class="form-control input-sm p-released" value="@(departmentTime.Input(p.ReleasedOn))" disabled="@(!Model.CanEdit)" /></td>
                                             <td>@p.CommittedHours.ToString("0.##")</td>
                                             <td>@(p.ActualHours.Count == 0 ? "—" : p.ActualHours.Sum(h => h.Hours).ToString("0.##") + " (" + p.ActualHours.Count + " d)")</td>
                                         </tr>
@@ -123,8 +127,8 @@
                             <div class="form-group"><label class="col-sm-3 control-label">@localizer["SupplyNumbers"]</label><div class="col-sm-9"><input type="text" class="form-control f-field" data-field="SupplyNumbers" value="@f.SupplyNumbers" disabled="@(!Model.CanEdit)" /></div></div>
 
                             <h4>@localizer["BoxSignatures"]</h4>
-                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["RespondingSigner"]</label><div class="col-sm-5"><input type="text" class="form-control f-field" data-field="RespondingSignerName" value="@f.RespondingSignerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" class="form-control f-field" data-field="RespondingSignedOn" value="@(f.RespondingSignedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
-                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["IncidentAuthorizer"]</label><div class="col-sm-5"><input type="text" class="form-control f-field" data-field="IncidentAuthorizerName" value="@f.IncidentAuthorizerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" class="form-control f-field" data-field="IncidentAuthorizedOn" value="@(f.IncidentAuthorizedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["RespondingSigner"]</label><div class="col-sm-5"><input type="text" class="form-control f-field" data-field="RespondingSignerName" value="@f.RespondingSignerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" step="0.001" class="form-control f-field" data-field="RespondingSignedOn" value="@(departmentTime.Input(f.RespondingSignedOn))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["IncidentAuthorizer"]</label><div class="col-sm-5"><input type="text" class="form-control f-field" data-field="IncidentAuthorizerName" value="@f.IncidentAuthorizerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" step="0.001" class="form-control f-field" data-field="IncidentAuthorizedOn" value="@(departmentTime.Input(f.IncidentAuthorizedOn))" disabled="@(!Model.CanEdit)" /></div></div>
                             <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" id="docOnly" checked="@f.DocumentationOnly" disabled="@(!Model.CanEdit)" /> @localizer["DocumentationOnly"]</label></div><span class="help-block">@localizer["DocumentationOnlyHelp"]</span></div></div>
 
                             <h4>@localizer["BoxAttachments"]</h4>
@@ -160,8 +164,8 @@
                                     }
                                 </tbody>
                             </table>
-                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["SignerName"]</label><div class="col-sm-5"><input type="text" name="SignerName" class="form-control" value="@e.SignerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" name="SignedOn" class="form-control" value="@(e.SignedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
-                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["ApproverName"]</label><div class="col-sm-5"><input type="text" name="ApproverName" class="form-control" value="@e.ApproverName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" name="ApprovedOn" class="form-control" value="@(e.ApprovedOn?.ToString("yyyy-MM-ddTHH:mm"))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["SignerName"]</label><div class="col-sm-5"><input type="text" name="SignerName" class="form-control" value="@e.SignerName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" step="0.001" name="SignedOn" class="form-control" value="@(departmentTime.Input(e.SignedOn))" disabled="@(!Model.CanEdit)" /></div></div>
+                            <div class="form-group"><label class="col-sm-3 control-label">@localizer["ApproverName"]</label><div class="col-sm-5"><input type="text" name="ApproverName" class="form-control" value="@e.ApproverName" disabled="@(!Model.CanEdit)" /></div><div class="col-sm-4"><input type="datetime-local" step="0.001" name="ApprovedOn" class="form-control" value="@(departmentTime.Input(e.ApprovedOn))" disabled="@(!Model.CanEdit)" /></div></div>
                             <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><div class="checkbox"><label><input type="checkbox" name="TravelOnly" value="true" checked="@e.TravelOnly" disabled="@(!Model.CanEdit)" /> @localizer["TravelOnly"]</label></div></div></div>
                             @if (Model.CanEdit) { <div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div></div> }
                         </form>
@@ -176,7 +180,7 @@
                     @if (v == null) { <p class="text-muted">@localizer["NotValidated"]</p> }
                     else
                     {
-                        <p class="small text-muted">@localizer["ValidatedOn"] @v.ValidatedOn.ToString("yyyy-MM-dd HH:mm")</p>
+                        <p class="small text-muted">@localizer["ValidatedOn"] @departmentTime.Format(v.ValidatedOn)</p>
                         @if (v.IsReadyForPortal) { <p class="text-navy"><i class="fa fa-check"></i> @localizer["ReadyForPortal"]</p> }
                         foreach (var issue in v.Errors) { <p class="text-danger"><i class="fa fa-ban"></i> <strong>@localizer["F42Box_" + issue.Box]</strong> @localizer["Validation_" + issue.Code] <small>@issue.Detail</small></p> }
                         foreach (var issue in v.Warnings) { <p class="text-warning"><i class="fa fa-exclamation-triangle"></i> <strong>@localizer["F42Box_" + issue.Box]</strong> @localizer["Validation_" + issue.Code] <small>@issue.Detail</small></p> }
@@ -239,7 +243,7 @@
                         {
                             <div class="hr-line-dashed"></div>
                             <h5>@localizer["ObservedStatus"]</h5>
-                            <p class="small">@localizer["MarsRecordId"]: <strong>@(w.MarsRecordId ?? "—")</strong> · @(w.ObservedExternalStatus ?? "—") @(w.ObservedOn?.ToString("yyyy-MM-dd"))</p>
+                            <p class="small">@localizer["MarsRecordId"]: <strong>@(w.MarsRecordId ?? "—")</strong> · @(w.ObservedExternalStatus ?? "—") @(departmentTime.Date(w.ObservedOn))</p>
                             <form method="post" asp-action="ObserveStatus" asp-route-id="@w.CalOesMarsWorkItemId">
                                 @Html.AntiForgeryToken()
                                 <div class="form-group"><select name="ExternalStatus" class="form-control input-sm">@foreach (var s in recordStatuses) { <option value="@s">@s</option> }</select></div>
@@ -304,4 +308,8 @@
             })();
         </script>
     }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

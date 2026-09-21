@@ -193,10 +193,22 @@ namespace Resgrid.Search
 					query.Add(types, Occur.MUST);
 			}
 
-			// Messages: only the sender or a recipient may see them. (+Message +(owner OR participant)) OR (NOT Message).
+			// Viewer-scoped families: only the owner or a participant may see them. Messages always (sender or
+			// recipient); the orchestrator adds the families that are membership-scoped for this caller, e.g.
+			// deployments for a member without the claim (rostered user ids are the participants).
+			// (+scopedType +(owner OR participant)) OR (NOT scopedType).
+			var scopedTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { SearchEntityTypes.Message };
+			foreach (var type in request.ViewerScopedEntityTypes ?? Enumerable.Empty<string>())
+				if (!string.IsNullOrWhiteSpace(type)) scopedTypes.Add(type.Trim());
+			BooleanQuery ScopedTypes()
+			{
+				var types = new BooleanQuery();
+				foreach (var type in scopedTypes) types.Add(new TermQuery(new Term(GlobalIndexFields.EntityType, type)), Occur.SHOULD);
+				return types;
+			}
 			var viewer = request.ViewerUserId ?? string.Empty;
-			var messageScope = new BooleanQuery();
-			var messageForViewer = new BooleanQuery { { new TermQuery(new Term(GlobalIndexFields.EntityType, SearchEntityTypes.Message)), Occur.MUST } };
+			var viewerScope = new BooleanQuery();
+			var scopedForViewer = new BooleanQuery { { ScopedTypes(), Occur.MUST } };
 			var viewerMatch = new BooleanQuery();
 			if (viewer.Length > 0)
 			{
@@ -207,14 +219,14 @@ namespace Resgrid.Search
 			{
 				viewerMatch.Add(new TermQuery(new Term(GlobalIndexFields.Key, " none")), Occur.SHOULD);
 			}
-			messageForViewer.Add(viewerMatch, Occur.MUST);
-			messageScope.Add(messageForViewer, Occur.SHOULD);
-			messageScope.Add(new BooleanQuery
+			scopedForViewer.Add(viewerMatch, Occur.MUST);
+			viewerScope.Add(scopedForViewer, Occur.SHOULD);
+			viewerScope.Add(new BooleanQuery
 			{
 				{ new MatchAllDocsQuery(), Occur.MUST },
-				{ new TermQuery(new Term(GlobalIndexFields.EntityType, SearchEntityTypes.Message)), Occur.MUST_NOT }
+				{ ScopedTypes(), Occur.MUST_NOT }
 			}, Occur.SHOULD);
-			query.Add(messageScope, Occur.MUST);
+			query.Add(viewerScope, Occur.MUST);
 
 			if (!request.IncludeAdminOnly)
 				query.Add(new TermQuery(new Term(GlobalIndexFields.IsAdminOnly, "1")), Occur.MUST_NOT);

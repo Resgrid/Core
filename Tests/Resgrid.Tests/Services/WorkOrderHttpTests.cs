@@ -58,7 +58,10 @@ namespace Resgrid.Tests.Services
         public async Task Http_routes_bind_forms_enforce_CSRF_preserve_conflicts_and_localize_protected_failures()
         {
             Maintenance();
-            _auth.Setup(a=>a.ChoicesAsync(It.IsAny<ChecklistActor>())).ReturnsAsync(new WorkOrderChoices());
+            _auth.Setup(a=>a.ChoicesAsync(It.IsAny<ChecklistActor>())).ReturnsAsync(new WorkOrderChoices {
+                Users = new() { new() { Id = "tech-a", Name = "Alex Smith" }, new() { Id = "tech-b", Name = "Zoe Taylor" } },
+                Roles = new() { new() { Id = "11", Name = "Mechanics" }, new() { Id = "12", Name = "Shift leads" } }
+            });
             var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             while(directory != null && !System.IO.File.Exists(Path.Combine(directory.FullName,"Resgrid.sln"))) directory=directory.Parent;
             var builder=WebApplication.CreateBuilder(new WebApplicationOptions { ContentRootPath=Path.Combine(directory.FullName,"Web","Resgrid.Web"),EnvironmentName="Testing" });
@@ -72,7 +75,7 @@ namespace Resgrid.Tests.Services
             builder.Services.AddSingleton<IWorkOrdersService>(_service); builder.Services.AddSingleton<IWorkOrderMaintenanceService>(_service); builder.Services.AddSingleton<IWorkOrderReportingService>(_service); builder.Services.AddSingleton(_auth.Object); builder.Services.AddSingleton(_access.Object);
             var departments=new Mock<IDepartmentsService>();
             departments.Setup(d=>d.GetDepartmentMemberAsync(It.IsAny<string>(),77,true)).ReturnsAsync((string user,int dept,bool fresh)=>new DepartmentMember {DepartmentId=77,UserId=user});
-            departments.Setup(d=>d.GetDepartmentByIdAsync(77,true)).ReturnsAsync(new Department {DepartmentId=77,ManagingUserId="manager"});
+            departments.Setup(d=>d.GetDepartmentByIdAsync(77,It.IsAny<bool>())).ReturnsAsync(new Department {DepartmentId=77,ManagingUserId="manager",TimeZone="Pacific Standard Time",Use24HourTime=true});
             var billing=new Mock<IReadinessProBillingService>();billing.Setup(b=>b.GetAsync(77)).ReturnsAsync(new ReadinessProBillingStatus {Provider="Stripe",Currency="USD",MonthlyAmount=150,CheckoutAvailable=true});
             billing.Setup(b=>b.BeginCheckoutAsync(77)).ReturnsAsync(new ReadinessProCheckout {Provider="Stripe",Url="https://checkout.stripe.com/synthetic"});
             builder.Services.AddSingleton(departments.Object);builder.Services.AddSingleton(billing.Object);
@@ -92,12 +95,21 @@ namespace Resgrid.Tests.Services
                 var response=await client.GetAsync("/User/WorkOrders/New"); var html=await response.Content.ReadAsStringAsync();
                 response.StatusCode.Should().Be(HttpStatusCode.OK,html); WebUtility.HtmlDecode(html).Should().Contain("Nouvel ordre de travail").And.NotContain("New work order");
                 var csrf=WebUtility.HtmlDecode(Regex.Match(html,"name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"").Groups[1].Value);
-                var fields=new Dictionary<string,string> { ["Input.RequestId"]=Guid.NewGuid().ToString(),["Input.Content.Title"]="HTTP synthetic repair",["Input.Content.EstimatedCost"]="1234.56",["Input.Content.Currency"]="EUR",["Input.Priority"]="1",["Input.Type"]="0" };
+                var fields=new Dictionary<string,string> { ["Input.RequestId"]=Guid.NewGuid().ToString(),["Input.Content.Title"]="HTTP synthetic repair",["Input.Content.EstimatedCost"]="1234.56",["Input.Content.Currency"]="EUR",["Input.Priority"]="1",["Input.Type"]="0",["Input.DueOn"]="2026-09-15T11:30:00" };
                 (await client.PostAsync("/User/WorkOrders/Save",new FormUrlEncodedContent(fields))).StatusCode.Should().Be(HttpStatusCode.BadRequest);
                 fields["__RequestVerificationToken"]=csrf;
                 response=await client.PostAsync("/User/WorkOrders/Save",new FormUrlEncodedContent(fields));
-                response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); var id=JObject.Parse(await response.Content.ReadAsStringAsync())["id"].Value<int>();
+                response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); var id=JObject.Parse(await response.Content.ReadAsStringAsync())["id"].Value<string>();
                 (await _service.GetAsync(_actor,id)).Input.Content.EstimatedCost.Should().Be(1234.56m);
+                (await _service.GetAsync(_actor,id)).Input.DueOn.Should().Be(new DateTime(2026,9,15,18,30,0,DateTimeKind.Utc));
+                response = await client.GetAsync("/User/WorkOrders/Detail?id=" + id);
+                html = await response.Content.ReadAsStringAsync();
+                response.StatusCode.Should().Be(HttpStatusCode.OK, html);
+                html.Should().Contain("09/15/2026 11:30:00").And.NotContain("2026-09-15 18:30:00Z");
+                response = await client.GetAsync("/User/WorkOrders/Edit?id=" + id);
+                html = await response.Content.ReadAsStringAsync();
+                response.StatusCode.Should().Be(HttpStatusCode.OK, html);
+                html.Should().Contain("2026-09-15T11:30:00.000").And.Contain("2026-09-15T18:30:00.0000000Z");
                 response=await client.GetAsync("/User/ReadinessProBilling");response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 (await client.PostAsync("/User/ReadinessProBilling/Checkout",new FormUrlEncodedContent(new Dictionary<string,string>()))).StatusCode.Should().Be(HttpStatusCode.BadRequest);
                 response=await client.PostAsync("/User/ReadinessProBilling/Checkout",new FormUrlEncodedContent(new Dictionary<string,string>{["__RequestVerificationToken"]=csrf,["DepartmentId"]="88"}));
@@ -116,33 +128,118 @@ namespace Resgrid.Tests.Services
                 var body=new StringContent(JsonConvert.SerializeObject(new { Id=id,Input=new WorkOrderTransition {Revision=1,Status=WorkOrderStatus.Accepted}}),Encoding.UTF8,"application/json");
                 response=await client.PostAsync("/api/v4/WorkOrders/SetWorkOrderStatus",body); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 response=await client.PostAsync("/api/v4/WorkOrders/SetWorkOrderStatus",body); response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+                foreach (var activeStatus in new[] { WorkOrderStatus.Assigned, WorkOrderStatus.OnHold })
+                {
+                    var completionId = await Assigned();
+                    var completion = await _service.GetAsync(_actor, completionId);
+                    completion.Input.Content.Steps.Add(new WorkOrderTaskStep { Text = "Test repair" });
+                    await _service.UpdateAsync(_actor, completionId, completion.Input);
+                    if (activeStatus == WorkOrderStatus.OnHold) await Transition(completionId, activeStatus, reason: "Awaiting test");
+                    completion = await _service.GetAsync(_actor, completionId);
+                    response = await client.GetAsync("/User/WorkOrders/Detail?id=" + completionId);
+                    html = await response.Content.ReadAsStringAsync();
+                    response.StatusCode.Should().Be(HttpStatusCode.OK, html);
+                    var statusOptions = Regex.Match(html, "<select[^>]*id=\"transition-status\"[^>]*>.*?</select>", RegexOptions.Singleline).Value;
+                    statusOptions.Should().Contain("value=\"5\"");
+                    html.Should().Contain("name=\"ConfirmTasksComplete\"");
+                    var completionFields = new Dictionary<string, string> {
+                        ["id"] = completionId.ToString(), ["Revision"] = completion.Order.Revision.ToString(),
+                        ["Status"] = "5", ["Resolution"] = "Repaired", ["Cause"] = "Wear", ["__RequestVerificationToken"] = csrf
+                    };
+                    response = await client.PostAsync("/User/WorkOrders/Transition", new FormUrlEncodedContent(completionFields));
+                    response.StatusCode.Should().Be(HttpStatusCode.Conflict, await response.Content.ReadAsStringAsync());
+                    completionFields["ConfirmTasksComplete"] = "true";
+                    response = await client.PostAsync("/User/WorkOrders/Transition", new FormUrlEncodedContent(completionFields));
+                    response.StatusCode.Should().Be(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+                    completion = await _service.GetAsync(_actor, completionId);
+                    completion.Order.Status.Should().Be(WorkOrderStatus.Completed);
+                    completion.Input.Content.Steps.Should().OnlyContain(s => s.Completed);
+                    completion.CompletedOn.Should().NotBeNull();
+                    completion.ClosedOn.Should().BeNull();
+                }
                 response=await client.GetAsync("/User/WorkOrders/NewRecurrence"); html=await response.Content.ReadAsStringAsync();
                 response.StatusCode.Should().Be(HttpStatusCode.OK,html); html.Should().Contain("name=\"Input.Template.Content.Title\"");
                 var pmFields=new Dictionary<string,string> { ["Input.Template.RequestId"]=Guid.NewGuid().ToString("D"),["Input.Template.Content.Title"]="Synthetic HTTP PM",["Input.Template.Content.Currency"]="EUR",
                     ["Input.AnchorLocal"]="2026-09-12T12:00",["Input.TimeZoneId"]="UTC",["Input.Calendar"]="3",["serviceStart"]="00:00",["serviceEnd"]="23:59",["Input.IsActive"]="true" };
                 (await client.PostAsync("/User/WorkOrders/SaveRecurrence",new FormUrlEncodedContent(pmFields))).StatusCode.Should().Be(HttpStatusCode.BadRequest);
                 pmFields["__RequestVerificationToken"]=csrf;
-                response=await client.PostAsync("/User/WorkOrders/SaveRecurrence",new FormUrlEncodedContent(pmFields));
-                response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); var pmId=JObject.Parse(await response.Content.ReadAsStringAsync())["id"].Value<int>();
+                var pmPost = pmFields.ToList();
+                pmPost.Add(new("Input.AssignedToUserIds", "tech-a")); pmPost.Add(new("Input.AssignedToUserIds", "tech-b"));
+                pmPost.Add(new("Input.AssignedToRoleIds", "11")); pmPost.Add(new("Input.AssignedToRoleIds", "12"));
+                response=await client.PostAsync("/User/WorkOrders/SaveRecurrence",new FormUrlEncodedContent(pmPost));
+                response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); var pmId=JObject.Parse(await response.Content.ReadAsStringAsync())["id"].Value<string>();
+                var assignedPm = await _service.RecurrenceAsync(_actor, pmId);
+                assignedPm.Settings.AssignedToUserIds.Should().Equal("tech-a", "tech-b");
+                assignedPm.Settings.AssignedToRoleIds.Should().Equal(11, 12);
                 foreach(var pmPage in new[]{"Recurrences","Recurrence?id="+pmId,"EditRecurrence?id="+pmId})
                 { response=await client.GetAsync("/User/WorkOrders/"+pmPage); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); }
+                html = await response.Content.ReadAsStringAsync();
+                foreach (var field in new[] { "Input.AssignedToUserIds", "Input.AssignedToRoleIds" })
+                {
+                    var select = Regex.Match(html, "<select[^>]*name=\"" + Regex.Escape(field) + "\"[^>]*>.*?</select>", RegexOptions.Singleline).Value;
+                    select.Should().Contain("multiple");
+                    Regex.Matches(select, "<option[^>]*selected=\"selected\"[^>]*>").Should().HaveCount(2);
+                }
                 response=await client.GetAsync("/api/v4/WorkOrders/GetWorkOrderRecurrence?id="+pmId); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 (await client.GetAsync("/api/v4/WorkOrders/GetWorkOrderRecurrence?id=9999")).StatusCode.Should().Be(HttpStatusCode.NotFound);
                 var replayBody=new StringContent(JsonConvert.SerializeObject(new {Id=id,Input=new WorkOrderDeferralInput {Revision=2,DueOn=_maintenanceClock.Utc.AddDays(2),Reason="Approved"}}),Encoding.UTF8,"application/json");
                 response=await client.PostAsync("/api/v4/WorkOrders/DeferWorkOrder",replayBody); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
+                var deadlineOrder = await _store.GetAsync<WorkOrder>(77, id);
+                deadlineOrder.ResponseDueOn = new DateTime(2026, 9, 15, 18, 30, 0, DateTimeKind.Utc);
+                deadlineOrder.RepairDueOn = deadlineOrder.ResponseDueOn.Value.AddHours(4);
+                await _store.WriteAsync(deadlineOrder);
+                response = await client.GetAsync("/User/WorkOrders/Operations?id=" + id);
+                html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
+                response.StatusCode.Should().Be(HttpStatusCode.OK, html);
+                html.Should().Contain("09/15/2026 11:30:00").And.Contain("09/15/2026 15:30:00").And.NotContain("(UTC)");
                 foreach (var operationsPage in new[] { "Operations?id="+id, "Policy", "Bulk" })
                 { response=await client.GetAsync("/User/WorkOrders/"+operationsPage); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); }
-                var policyFields=new Dictionary<string,string> { ["Revision"]="0",["SpendingRules[0].Currency"]="EUR",["SpendingRules[0].Threshold"]="100.25",["Calendar.TimeZoneId"]="UTC",["businessStart"]="09:00",["businessEnd"]="17:00",["weekdays"]="2",["Calendar.Targets[0].Priority"]="1",["Calendar.Targets[0].ResponseMinutes"]="60",["Calendar.Targets[0].RepairMinutes"]="480" };
-                (await client.PostAsync("/User/WorkOrders/SavePolicy",new FormUrlEncodedContent(policyFields))).StatusCode.Should().Be(HttpStatusCode.BadRequest);
+                var policyFields=new Dictionary<string,string> { ["Revision"]="0",["Currency"]="EUR",["SpendingThreshold"]="100.25",["Calendar.TimeZoneId"]="UTC",["businessStart"]="09:00",["businessEnd"]="17:00",["weekdays"]="2",["Calendar.Targets[0].Priority"]="1",["Calendar.Targets[0].ResponseMinutes"]="60",["Calendar.Targets[0].RepairMinutes"]="480" };
+                (await client.PostAsync("/User/WorkOrders/SaveSettings",new FormUrlEncodedContent(policyFields))).StatusCode.Should().Be(HttpStatusCode.BadRequest);
                 policyFields["__RequestVerificationToken"]=csrf;
-                response=await client.PostAsync("/User/WorkOrders/SavePolicy",new FormUrlEncodedContent(policyFields)); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
+                response=await client.PostAsync("/User/WorkOrders/SaveSettings",new FormUrlEncodedContent(policyFields)); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 (await _service.PolicyAsync(_actor)).SpendingRules.Single().Threshold.Should().Be(100.25m);
                 response=await client.GetAsync("/User/WorkOrders/Policy"); (await response.Content.ReadAsStringAsync()).Should().Contain("value=\"100.25\"").And.NotContain("value=\"100,25\"");
-                var csvInput=new { RequestId=Guid.NewGuid().ToString("D"),Csv=Resgrid.Services.WorkOrderCsvImport.Header+"\nSynthetic import,,0,1,,,,,USD,25,," };
+                response = await client.GetAsync("/User/WorkOrders/Settings");
+                html = await response.Content.ReadAsStringAsync();
+                response.StatusCode.Should().Be(HttpStatusCode.OK, html);
+                html.Should().Contain("<select id=\"department-currency\" name=\"Currency\"")
+                    .And.Contain("value=\"CAD\"").And.Contain("value=\"EUR\"")
+                    .And.Contain("<select id=\"policy-timezone\"").And.NotContain("SpendingRules[0].Currency");
+                response = await client.GetAsync("/User/WorkOrders/New");
+                html = await response.Content.ReadAsStringAsync();
+                html.Should().NotContain("name=\"Input.Content.Currency\"").And.Contain("EUR");
+                response = await client.GetAsync("/User/WorkOrders/Operations?id=" + id);
+                (await response.Content.ReadAsStringAsync()).Should().NotContain("name=\"Content.Currency\"");
+                response = await client.GetAsync("/api/v4/WorkOrders/GetWorkOrderSettings");
+                response.StatusCode.Should().Be(HttpStatusCode.OK);
+                var csvInput=new { RequestId=Guid.NewGuid().ToString("D"),Csv=Resgrid.Services.WorkOrderCsvImport.Header+"\nSynthetic import,,0,1,,,,,25,," };
                 response=await client.PostAsync("/api/v4/WorkOrders/PreviewWorkOrderImport",new StringContent(JsonConvert.SerializeObject(csvInput),Encoding.UTF8,"application/json")); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 var previewJson=JObject.Parse(await response.Content.ReadAsStringAsync()); var batch=previewJson.SelectToken("Data.Input") ?? previewJson.SelectToken("data.input"); batch.Should().NotBeNull(previewJson.ToString());
                 response=await client.PostAsync("/api/v4/WorkOrders/ApplyWorkOrderBatch",new StringContent(batch.ToString(),Encoding.UTF8,"application/json")); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 _store.All<WorkOrder>().Count(o=>o.RequestId!=null && o.Id!=id).Should().BeGreaterThan(0);
+                // Reports/history must keep the same operations tabs on initial visits and filtered POSTs.
+                foreach (var canWrite in new[] { true, false })
+                {
+                    _access.Setup(a => a.CanUseMaintenanceAsync(77)).ReturnsAsync(canWrite);
+                    foreach (var destination in new[] { "Reports", "History" })
+                    {
+                        foreach (var filtered in new[] { false, true })
+                        {
+                            response = filtered
+                                ? await client.PostAsync("/User/WorkOrders/Reopen", new FormUrlEncodedContent(new Dictionary<string, string> { ["destination"] = destination, ["__RequestVerificationToken"] = csrf }))
+                                : await client.GetAsync("/User/WorkOrders/" + destination);
+                            html = await response.Content.ReadAsStringAsync();
+                            response.StatusCode.Should().Be(HttpStatusCode.OK, html);
+                            foreach (var tab in new[] { "Bulk", "Settings" })
+                            {
+                                var link = "href=\"/User/WorkOrders/" + tab + "\"";
+                                if (canWrite) html.Should().Contain(link, destination + " should retain operations navigation");
+                                else html.Should().NotContain(link, "read-only maintenance access must not expose write tabs");
+                            }
+                        }
+                    }
+                }
                 _access.Setup(a=>a.CanUseMaintenanceAsync(77)).ReturnsAsync(false);
                 foreach (var reportPage in new[] { "/User/WorkOrders/Reports", "/User/WorkOrders/History", "/api/v4/WorkOrders/GetWorkOrderStats", "/api/v4/WorkOrders/GetWorkOrderServiceHistory", "/api/v4/WorkOrders/GetWorkOrderActivity?id=" + id, "/api/v4/WorkOrders/GetWorkOrderHolds?id=" + id })
                 { response = await client.GetAsync(reportPage); response.StatusCode.Should().Be(HttpStatusCode.OK, await response.Content.ReadAsStringAsync()); response.Headers.CacheControl.NoStore.Should().BeTrue(); }

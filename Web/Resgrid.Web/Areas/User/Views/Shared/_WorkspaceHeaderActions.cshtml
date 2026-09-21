@@ -1,0 +1,11 @@
+@using Microsoft.AspNetCore.Html
+@* Pages supply their existing, permission-gated actions as a Razor template. Keeping the
+   template in the page preserves its model, routes, antiforgery tokens and modal targets. *@
+@if (ViewData["HeaderActions"] is Func<dynamic, IHtmlContent> actions)
+{
+    <div class="col-sm-8">
+        <div class="btn-toolbar top-page-buttons rgw-header-actions">
+            @actions(null)
+        </div>
+    </div>
+}

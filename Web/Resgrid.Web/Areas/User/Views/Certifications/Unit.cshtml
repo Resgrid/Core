@@ -1,12 +1,13 @@
 @model Resgrid.Web.Areas.User.Models.Certifications.UnitCertificationsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["UnitCertifications"];
     ViewData["Tab"] = "Dashboard";
     ViewData["Title"] = string.Format(localizer["UnitCertificationsFor"].Value, Model.Unit.Name);
     ViewData["Subtitle"] = localizer["UnitCertificationsIntro"].Value;
     var types = Model.TypeMap;
-    var today = DateTime.UtcNow.Date;
+    var today = departmentTime.Today;
     // ADP reveal (plan 7.2): catalog 27/28 values render REDACTED; the step-up modal and the Reveal action fill the marked spans.
     var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
     {
@@ -15,11 +16,20 @@
         RevealAction = "Reveal",
         RevealData = new Dictionary<string, string> { { "kind", "unit" }, { "id", Model.Unit.UnitId.ToString() } }
     };
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-controller="Units" asp-action="EditUnit" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId" class="btn btn-default">@localizer["BackToUnit"]</a>
+        @if (Model.CanManage && Model.Types.Count > 0)
+        {
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#recordModal" data-id="0"><i class="fa fa-plus"></i> @localizer["AddRecord"]</button>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (Model.Records.Any(x => x.IsProtected))
     {
         <partial name="_AdpRevealBanner" model="adpReveal" />
@@ -28,13 +38,7 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["CertificationsAndInspections"]</h5>
-            <div class="ibox-tools">
-                <a asp-controller="Units" asp-action="EditUnit" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId" class="btn btn-default btn-xs">@localizer["BackToUnit"]</a>
-                @if (Model.CanManage && Model.Types.Count > 0)
-                {
-                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#recordModal" data-id="0"><i class="fa fa-plus"></i> @localizer["AddRecord"]</button>
-                }
-            </div>
+
         </div>
         <div class="ibox-content">
             @if (Model.Types.Count == 0)
@@ -166,4 +170,8 @@
             });
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

@@ -3,6 +3,7 @@
 @model RecordOccupancyCrosswalkView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["PreplanCrosswalk"];
 	var s = Model.Status;
 }
@@ -26,13 +27,13 @@
 				<p>@L["CrosswalkIntroText"]</p>
 				<dl class="dl-horizontal">
 					<dt>@L["DeploymentStatus"]</dt><dd><strong>@(RmsEnumDisplay.Label<RmsOccupancyOwnershipState>((int)s.State))</strong></dd>
-					<dt>@L["InventoriedOn"]</dt><dd>@RmsEnumDisplay.Utc(s.InventoriedOn)</dd>
+					<dt>@L["InventoriedOn"]</dt><dd>@departmentTime.Format(s.InventoriedOn)</dd>
 					<dt>@L["Occupancies"]</dt><dd>@s.Occupancies</dd>
 					<dt>@L["Candidates"]</dt><dd>@s.Candidates</dd>
 					<dt>@L["LinkedCount"]</dt><dd>@s.Linked</dd>
 					<dt>@L["Rejected"]</dt><dd>@s.Rejected</dd>
 					<dt>@L["UnreconciledPreplans"]</dt><dd>@s.UnreconciledPreplans</dd>
-					<dt>@L["SwitchedOn"]</dt><dd>@RmsEnumDisplay.Utc(s.SwitchedOn)</dd>
+					<dt>@L["SwitchedOn"]</dt><dd>@departmentTime.Format(s.SwitchedOn)</dd>
 				</dl>
 				@if (s.State != RmsOccupancyOwnershipState.RecordsOwned)
 				{
@@ -105,7 +106,7 @@
 						<tbody>
 						@foreach (var c in Model.Decided)
 						{
-							<tr><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.SourceDisplayName)</td><td>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkState>(c.State))</td><td>@(c.RmsOccupancyId != null && Model.OccupancyNames.TryGetValue(c.RmsOccupancyId, out var n) ? n : "")</td><td>@RmsEnumDisplay.Utc(c.DecidedOn)</td></tr>
+							<tr><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.SourceDisplayName)</td><td>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkState>(c.State))</td><td>@(c.RmsOccupancyId != null && Model.OccupancyNames.TryGetValue(c.RmsOccupancyId, out var n) ? n : "")</td><td>@departmentTime.Format(c.DecidedOn)</td></tr>
 						}
 						</tbody>
 					</table>

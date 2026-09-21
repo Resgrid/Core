@@ -3,6 +3,7 @@
 @model RecordsQualityIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["QualityReview"];
 }
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -40,7 +41,7 @@
 							{
 								<form method="post" class="form-inline" style="display:inline" asp-controller="RecordsQuality" asp-action="Sample" asp-route-area="User">
 									@Html.AntiForgeryToken()<input type="hidden" name="rubricId" value="@r.RmsQualityRubricId" />
-									<input type="date" class="form-control input-sm" name="since" value="@DateTime.UtcNow.AddDays(-30).ToString("yyyy-MM-dd")" />
+									<input type="date" class="form-control input-sm" name="since" value="@departmentTime.Today.AddDays(-30).ToString("yyyy-MM-dd")" />
 									<button class="btn btn-xs btn-primary"><i class="fa fa-random"></i> @L["RunSample"]</button>
 								</form>
 							}
@@ -59,7 +60,7 @@
 						<tbody>
 						@foreach (var p in Model.Pending)
 						{
-							<tr><td>@p.RecordNumber</td><td>@p.DefinitionKey</td><td>@p.AuthorUserId</td><td>@RmsEnumDisplay.Day(p.SampledOn)</td><td><a class="btn btn-xs btn-primary" asp-controller="RecordsQuality" asp-action="Review" asp-route-area="User" asp-route-id="@p.RmsQualityReviewId">@L["ScoreReview"]</a></td></tr>
+							<tr><td>@p.RecordNumber</td><td>@p.DefinitionKey</td><td>@p.AuthorUserId</td><td>@departmentTime.Date(p.SampledOn)</td><td><a class="btn btn-xs btn-primary" asp-controller="RecordsQuality" asp-action="Review" asp-route-area="User" asp-route-id="@p.RmsQualityReviewId">@L["ScoreReview"]</a></td></tr>
 						}
 						</tbody>
 					</table>

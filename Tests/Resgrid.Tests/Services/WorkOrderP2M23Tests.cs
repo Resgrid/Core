@@ -166,7 +166,7 @@ namespace Resgrid.Tests.Services
             Maintenance(); _store.UnitStates.Add(new UnitState { UnitStateId = 1, UnitId = 10, State = (int)UnitStateTypes.Available, Timestamp = _maintenanceClock.Utc.AddDays(-1) });
             for (var i = 0; i < 2; i++) { var input = Input(true); input.TargetUnitId = 10; var order = await _service.CreateAsync(_actor, input); await _service.AddHoldAsync(_actor, order.Order.Id, new() { Revision = 1, Unit = true, Reason = "Defect " + i }); }
             var holds = _store.All<WorkOrderSafetyHold>().ToList(); holds[0].AppliedStateId.Should().Be(holds[1].AppliedStateId);
-            var heldOrder=await _service.GetAsync(_actor,holds[0].WorkOrderId.Value); heldOrder.Input.TargetUnitId=null;
+            var heldOrder=await _service.GetAsync(_actor,holds[0].WorkOrderId); heldOrder.Input.TargetUnitId=null;
             (await FluentActions.Awaiting(()=>_service.UpdateAsync(_actor,heldOrder.Order.Id,heldOrder.Input)).Should().ThrowAsync<WorkOrderException>()).Which.Code.Should().Be("TargetUnavailable");
             var release = new WorkOrderReleaseInput { Revision = 1, Qualification = "Qualified test technician", Evidence = "Independent verification", RestoreState = true };
             await FluentActions.Awaiting(() => _service.ReleaseHoldAsync(_actor, holds[0].Id, release)).Should().ThrowAsync<WorkOrderException>();

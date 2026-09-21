@@ -28,8 +28,9 @@ namespace Resgrid.Services
                         entry.Order.CreatedOn.ToString("O"), entry.StartedOn?.ToString("O"), entry.CompletedOn?.ToString("O"), entry.RepairHours, entry.ActiveRepairHours, entry.WaitingHours, entry.DowntimeHours, entry.ResponseDueOn?.ToString("O"), entry.RepairDueOn?.ToString("O"), cost.Currency ?? Text("UnknownCurrency"), cost.Labor, cost.Parts, cost.Vendor, cost.Total, cost.UnknownLabor, cost.UnknownParts }.Select(CsvCell)));
             return new UTF8Encoding(true).GetPreamble().Concat(Encoding.UTF8.GetBytes(csv.ToString())).ToArray();
         }
-        public static string PacketSection(IEnumerable<ReadinessWorkOrderEvidence> entries)
+        public static string PacketSection(IEnumerable<ReadinessWorkOrderEvidence> entries, Func<DateTime?, string> format = null)
         {
+            format ??= utc => utc?.ToString("u");
             string H(object value) => WebUtility.HtmlEncode(Convert.ToString(value, CultureInfo.CurrentCulture));
             var html = new StringBuilder("<h2>" + H(Text("WorkOrders")) + "</h2><p>" + H(Text("WorkOrderPacketMethod")) + "</p><table><tr>");
             foreach (var key in new[] { "Number", "Title", "Status", "Priority", "Unit", "Asset", "DueOn", "Revision", "SafetyHolds" }) html.Append("<th>").Append(H(Text(key))).Append("</th>");
@@ -37,7 +38,7 @@ namespace Resgrid.Services
             foreach (var item in entries)
             {
                 html.Append("<tr>");
-                foreach (var value in new object[] { item.WorkOrderId, item.Title, Text("Status" + (WorkOrderStatus)item.Status), Text("Priority" + (WorkOrderPriority)item.Priority), item.UnitId, item.AssetId, item.DueOn?.ToString("u"), item.Revision, string.Join(", ", item.ActiveSafetyHoldIds) }) html.Append("<td>").Append(H(value)).Append("</td>");
+                foreach (var value in new object[] { item.WorkOrderId, item.Title, Text("Status" + (WorkOrderStatus)item.Status), Text("Priority" + (WorkOrderPriority)item.Priority), item.UnitId, item.AssetId, format(item.DueOn), item.Revision, string.Join(", ", item.ActiveSafetyHoldIds) }) html.Append("<td>").Append(H(value)).Append("</td>");
                 html.Append("</tr>");
             }
             return html.Append("</table>").ToString();

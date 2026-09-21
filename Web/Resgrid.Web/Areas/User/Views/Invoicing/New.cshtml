@@ -11,7 +11,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["NewInvoice"]</h5></div>
         <div class="ibox-content">
@@ -88,4 +88,8 @@
             refresh();
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

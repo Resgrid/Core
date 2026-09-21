@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsInvoiceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var r = Model.Reconciliation;
     var i = r.Invoice;
     var s = r.Snapshot;
@@ -12,17 +13,22 @@
     ViewData["MarsCanReconcile"] = Model.CanReconcile;
     var pendingLocal = i.LocalState == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.PendingLocalAgencyApproval;
     var payable = i.LocalState == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsLocalStates.PendingPayingEntityApproval;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="Reconciliation" class="btn btn-default">@localizer["Back"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["MarsInvoice"] @await Html.PartialAsync("_WorkItemStateBadge", i.LocalState)</h5>
-                    <div class="ibox-tools"><a asp-action="Reconciliation" class="btn btn-default btn-xs">@localizer["Back"]</a></div>
+
                 </div>
                 <div class="ibox-content">
                     <p class="text-muted small"><i class="fa fa-info-circle"></i> @localizer["MarsInvoiceNotPhaseB"]</p>
@@ -30,9 +36,9 @@
                         <dt>@localizer["MarsInvoiceId"]</dt><dd>@i.MarsInvoiceId</dd>
                         <dt>@localizer["InvoiceDate"]</dt><dd>@(s.InvoiceDate?.ToString("yyyy-MM-dd") ?? "—")</dd>
                         <dt>@localizer["PayingEntity"]</dt><dd>@(s.PayingEntity ?? "—")</dd>
-                        <dt>@localizer["ObservedStatus"]</dt><dd>@(i.ObservedExternalStatus ?? "—") <small class="text-muted">@(i.ObservedOn?.ToString("yyyy-MM-dd"))</small></dd>
-                        <dt>@localizer["LocalDecision"]</dt><dd>@(s.LocalDecisionTitle ?? "—") @(string.IsNullOrWhiteSpace(s.LocalDecisionComment) ? "" : "— " + s.LocalDecisionComment) <small class="text-muted">@(i.ApprovedOn?.ToString("yyyy-MM-dd") ?? i.RejectedOn?.ToString("yyyy-MM-dd"))</small></dd>
-                        <dt>@localizer["Paid"]</dt><dd>@(i.PaidTotal?.ToString("N2") ?? "—") @(i.PaidOn?.ToString("yyyy-MM-dd")) @i.PaymentReference</dd>
+                        <dt>@localizer["ObservedStatus"]</dt><dd>@(i.ObservedExternalStatus ?? "—") <small class="text-muted">@(departmentTime.Date(i.ObservedOn))</small></dd>
+                        <dt>@localizer["LocalDecision"]</dt><dd>@(s.LocalDecisionTitle ?? "—") @(string.IsNullOrWhiteSpace(s.LocalDecisionComment) ? "" : "— " + s.LocalDecisionComment) <small class="text-muted">@(departmentTime.Date(i.ApprovedOn) ?? departmentTime.Date(i.RejectedOn))</small></dd>
+                        <dt>@localizer["Paid"]</dt><dd>@(i.PaidTotal?.ToString("N2") ?? "—") @(departmentTime.Date(i.PaidOn)) @i.PaymentReference</dd>
                     </dl>
                     <h4>@localizer["ExpectedVsObserved"]</h4>
                     <table class="table table-condensed">
@@ -92,3 +98,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

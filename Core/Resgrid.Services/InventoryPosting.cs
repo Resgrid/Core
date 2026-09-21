@@ -217,7 +217,7 @@ namespace Resgrid.Services
                         await RequireCommandAccessAsync(actor, receipt.PendingCommand, joined: true);
                         await ValidateCommandAsync(actor, receipt.PendingCommand, joined: true);
                         result = await PostLinesAsync(actor, operation, receipt.PendingCommand, events, performer.UserId, actor.UserId, attestation);
-                        await _workOrderMaintenance.Value.CompleteInventoryPartAsync(actor, receipt.PendingCommand.Lines[0].WorkOrderPartId.Value, result.TransactionIds.Single(), receipt.PendingCommand.Lines[0].ReversesTransactionId != null, events);
+                        await _workOrderMaintenance.Value.CompleteInventoryPartAsync(actor, receipt.PendingCommand.Lines[0].WorkOrderPartId, result.TransactionIds.Single(), receipt.PendingCommand.Lines[0].ReversesTransactionId != null, events);
                         break;
                     case "Post":
 				case "Transfer":
@@ -265,7 +265,7 @@ namespace Resgrid.Services
 				{
 					var original = await GetAsync<InventoryTransaction>(actor, line.ReversesTransactionId);
 					if (original.PurchaseOrderItemId != null) throw new InventoryException(409, "PurchaseReceiptImmutable");
-					if (original.WorkOrderPartId.HasValue && original.WorkOrderPartId != line.WorkOrderPartId) throw new InventoryException(409, "WorkOrderPostingRequired");
+					if (original.WorkOrderPartId != null && original.WorkOrderPartId != line.WorkOrderPartId) throw new InventoryException(409, "WorkOrderPostingRequired");
 					if (original.CountItemId != null) throw new InventoryException(409, "CountReceiptImmutable");
 					if (original.ReferenceType == (int)InventoryReferenceType.RmsRecord && (line.ReferenceType != InventoryReferenceType.RmsRecord || line.ReferenceId != original.ReferenceId)) throw new InventoryException(409, "RecordUsageCorrectionRequired");
 					if (original.ReversesTransactionId != null || original.ItemId != item.Id || original.AssetId != line.AssetId || original.LotId != line.LotId || original.Quantity != line.Quantity

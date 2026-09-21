@@ -10,8 +10,8 @@
     var isManager = ViewData["MarsIsManager"] as bool? ?? false;
     var canReconcile = ViewData["MarsCanReconcile"] as bool? ?? false;
 }
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-12">
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="@(ViewData["HeaderActions"] == null ? "col-sm-12" : "col-sm-4")">
         <h2>@title</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
@@ -29,22 +29,23 @@
         {
             <small class="text-muted">@subtitle</small>
         }
-        <div class="m-t-sm">
-            <div class="btn-group">
-                <a asp-controller="CalOesMars" asp-action="Index" class="btn btn-xs @(tab == "readiness" ? "btn-primary" : "btn-default")"><i class="fa fa-dashboard"></i> @calOesStrings["TabReadiness"]</a>
-                <a asp-controller="CalOesMars" asp-action="Queue" class="btn btn-xs @(tab == "queue" ? "btn-primary" : "btn-default")"><i class="fa fa-tasks"></i> @calOesStrings["TabQueue"]</a>
+    </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
+        <div class="col-sm-12 rgw-module-navigation">
+            <ul class="nav nav-pills rgw-module-tabs">
+                <li class="@(tab == "readiness" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Index" aria-current="@(tab == "readiness" ? "page" : null)"><i class="fa fa-dashboard"></i> @calOesStrings["TabReadiness"]</a></li>
+                <li class="@(tab == "queue" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Queue" aria-current="@(tab == "queue" ? "page" : null)"><i class="fa fa-tasks"></i> @calOesStrings["TabQueue"]</a></li>
                 @if (isManager)
                 {
-                    <a asp-controller="CalOesMars" asp-action="Rates" class="btn btn-xs @(tab == "rates" ? "btn-primary" : "btn-default")"><i class="fa fa-table"></i> @calOesStrings["TabRates"]</a>
-                    <a asp-controller="CalOesMars" asp-action="Agreements" class="btn btn-xs @(tab == "agreements" ? "btn-primary" : "btn-default")"><i class="fa fa-file-text-o"></i> @calOesStrings["TabAgreements"]</a>
-                    <a asp-controller="CalOesMars" asp-action="Resources" class="btn btn-xs @(tab == "resources" ? "btn-primary" : "btn-default")"><i class="fa fa-truck"></i> @calOesStrings["TabResources"]</a>
-                    <a asp-controller="CalOesMars" asp-action="Agency" class="btn btn-xs @(tab == "agency" ? "btn-primary" : "btn-default")"><i class="fa fa-building"></i> @calOesStrings["TabAgency"]</a>
+                    <li class="@(tab == "rates" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Rates" aria-current="@(tab == "rates" ? "page" : null)"><i class="fa fa-table"></i> @calOesStrings["TabRates"]</a></li>
+                    <li class="@(tab == "agreements" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Agreements" aria-current="@(tab == "agreements" ? "page" : null)"><i class="fa fa-file-text-o"></i> @calOesStrings["TabAgreements"]</a></li>
+                    <li class="@(tab == "resources" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Resources" aria-current="@(tab == "resources" ? "page" : null)"><i class="fa fa-truck"></i> @calOesStrings["TabResources"]</a></li>
+                    <li class="@(tab == "agency" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Agency" aria-current="@(tab == "agency" ? "page" : null)"><i class="fa fa-building"></i> @calOesStrings["TabAgency"]</a></li>
                 }
                 @if (isManager || canReconcile)
                 {
-                    <a asp-controller="CalOesMars" asp-action="Reconciliation" class="btn btn-xs @(tab == "reconciliation" ? "btn-primary" : "btn-default")"><i class="fa fa-balance-scale"></i> @calOesStrings["TabReconciliation"]</a>
+                    <li class="@(tab == "reconciliation" ? "active" : null)"><a asp-controller="CalOesMars" asp-action="Reconciliation" aria-current="@(tab == "reconciliation" ? "page" : null)"><i class="fa fa-balance-scale"></i> @calOesStrings["TabReconciliation"]</a></li>
                 }
-            </div>
+            </ul>
         </div>
-    </div>
 </div>

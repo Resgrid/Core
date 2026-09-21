@@ -29,6 +29,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// <c>message</c> the page shows through toastr.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class InvoicingController : SecureBaseController
 	{
 		private const int PageSize = 50;
@@ -491,7 +492,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Method = input.Method,
 					Reference = input.Reference,
 					Notes = input.Notes,
-					PaidOn = input.PaidOn ?? DateTime.UtcNow
+					PaidOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.PaidOn) ?? DateTime.UtcNow
 				}, UserId, Ip, UserAgent, cancellationToken);
 				TempData["InvoicingMessage"] = _strings["PaymentRecorded"].Value;
 			}

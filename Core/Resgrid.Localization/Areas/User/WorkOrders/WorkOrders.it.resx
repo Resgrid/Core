@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Scadenza rinviata</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Rapporti di manutenzione</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Storico degli interventi</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Creato dal (UTC, incluso)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Creato prima del (UTC, escluso)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Calcolato il (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Creato dal (incluso)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Creato prima del (escluso)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Calcolato il</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Ordini di lavoro totali</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Ordini di lavoro aperti</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Ordini di lavoro scaduti</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Revisione</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Il rapporto è troppo grande. Restringi l’intervallo di date o i filtri delle risorse.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Scegli un intervallo di date valido; i rapporti del pannello supportano fino a 366 giorni.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Stato attuale degli ordini creati nell’intervallo UTC selezionato. Gli ordini aperti includono i lavori completati in attesa di chiusura. Il tempo medio di riparazione va dal primo avvio all’ultimo completamento, incluse sospensioni e riaperture; gli orari non validi sono esclusi. I costi sono arrotondati per voce e separati per valuta, escludendo ricambi annullati o non consegnati. Costi e valute storiche della manodopera sconosciuti restano tali; non si presumono tassi di cambio.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Stato attuale degli ordini creati nell’intervallo selezionato. Gli ordini aperti includono i lavori completati in attesa di chiusura. Il tempo medio di riparazione va dal primo avvio all’ultimo completamento, incluse sospensioni e riaperture; gli orari non validi sono esclusi. I costi sono arrotondati per voce e separati per valuta, escludendo ricambi annullati o non consegnati. Costi e valute storiche della manodopera sconosciuti restano tali; non si presumono tassi di cambio.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>Storico completo, salvo selezione di date. Ogni riga CSV rappresenta un ordine e una valuta. I costi noti escludono i ricambi annullati o non consegnati; prezzi mancanti e valute storiche della manodopera sono indicati come sconosciuti.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Stato dell’ordine al momento dell’intervento, con riferimenti di revisione immutabili nel manifesto. Sono incluse le manutenzioni precedenti ancora aperte; i lavori completati usano il periodo retrospettivo. Lo stato storico non recuperabile è indicato come non disponibile.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Date non lavorative (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Obiettivo di risposta (minuti lavorativi)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Obiettivo di riparazione (minuti lavorativi)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Scadenza di risposta (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Scadenza di riparazione (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Risposta registrata (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Scadenza di risposta</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Scadenza di riparazione</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Risposta registrata</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Addebiti dei fornitori</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Aggiungi addebito del fornitore</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Annulla addebito</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Obiettivo di servizio dell’ordine non rispettato</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Addebito del fornitore dell’ordine modificato</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Regole operative degli ordini di lavoro modificate</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Scadenza di risposta (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Scadenza di riparazione (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Scadenza di risposta</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Scadenza di riparazione</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Apri riparazioni, controlla chi le esegue e verifica quanto è costata la manutenzione.</value></data>
   <data name="Close" xml:space="preserve"><value>Chiudi</value></data>
   <data name="Continue" xml:space="preserve"><value>Continua</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>A chi va l'ordine generato e a chi viene inoltrato se nessuno lo prende in carico.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Determina l'indicatore di ritardo e il conteggio del livello di servizio.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>I passi che il tecnico esegue. Alcune transizioni richiedono che siano tutti completati.</value></data>
+  <data name="Users" xml:space="preserve"><value>Utenti</value></data>
+  <data name="Roles" xml:space="preserve"><value>Ruoli</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Seleziona uno o più utenti e/o ruoli. Tieni premuto Ctrl (Windows) o Command (Mac) per selezionare più voci. Qualsiasi utente selezionato o membro di un ruolo selezionato può accettare l’ordine di lavoro.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Impostazioni ordini di lavoro</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Configura una sola volta per il reparto valuta, approvazioni di spesa, orari lavorativi, festività e obiettivi di servizio.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>La valuta viene gestita nelle impostazioni degli ordini di lavoro. Gli ordini esistenti mantengono la valuta registrata.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Si applica ai nuovi ordini e ai relativi addebiti dei fornitori. I costi e le soglie esistenti mantengono la valuta originale. Se un modello di manutenzione usa un’altra valuta, il costo stimato nei nuovi ordini resta vuoto per la verifica.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Inserisci la soglia di approvazione nella valuta del reparto selezionata sopra. Le soglie degli ordini esistenti in altre valute vengono mantenute.</value></data>
 </root>

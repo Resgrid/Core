@@ -73,6 +73,9 @@
     // select, the checked state for a checkbox, the raw value for anything else.
     function display(field) {
         if (field.tagName === 'SELECT') {
+            if (field.multiple) {
+                return Array.prototype.map.call(field.selectedOptions, function (option) { return option.text.trim(); }).join(', ');
+            }
             var option = field.options[field.selectedIndex];
             var label = option ? option.text.trim() : '';
             return label === '—' ? '' : label;

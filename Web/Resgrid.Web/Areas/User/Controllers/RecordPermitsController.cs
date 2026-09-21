@@ -112,7 +112,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Transition(string id, int target, string reason, string effectiveOn, string expiresOn, CancellationToken cancellationToken)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
-			try { await _permits.TransitionAsync(DepartmentId, UserId, id, (RmsPermitState)target, reason, ParseUtc(effectiveOn), ParseUtc(expiresOn), cancellationToken); Notify("PermitTransitioned"); }
+			try { await _permits.TransitionAsync(DepartmentId, UserId, id, (RmsPermitState)target, reason, DateTime.TryParse(effectiveOn, out var effective) ? effective.Date : (DateTime?)null, DateTime.TryParse(expiresOn, out var expires) ? expires.Date : (DateTime?)null, cancellationToken); Notify("PermitTransitioned"); }
 			catch (Exception ex) { var f = Fail(ex); if (f != null) return f; }
 			return RedirectToAction(nameof(Details), new { id });
 		}
@@ -208,7 +208,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				var model = Prepare(new RecordCrrIndexView { Start = ParseUtc(start) ?? DateTime.UtcNow.Date.AddDays(-90), End = ParseUtc(end) ?? DateTime.UtcNow.Date.AddDays(1) });
+				var model = Prepare(new RecordCrrIndexView { Start = ParseUtc(start) ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.AddDays(-90)), End = ParseUtc(end) ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.AddDays(1)) });
 				model.Activities = await _crr.ListAsync(DepartmentId, UserId, model.Start, model.End, 500);
 				model.Summary = await _crr.GetSummaryAsync(DepartmentId, UserId, model.Start, model.End);
 				return View(model);
@@ -224,6 +224,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				var model = Prepare(new RecordCrrEditView());
+                model.Activity.OccurredOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today);
 				if (!string.IsNullOrWhiteSpace(id))
 				{
 					var activity = await _crr.GetAsync(DepartmentId, UserId, id);

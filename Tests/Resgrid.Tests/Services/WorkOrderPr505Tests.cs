@@ -93,7 +93,7 @@ namespace Resgrid.Tests.Services
 			permissions.Setup(p => p.GetPermissionByDepartmentTypeAsync(77, It.IsAny<PermissionTypes>())).ReturnsAsync(new Permission { Action = (int)action, Data = "3", LockToGroup = true });
 			var assignments = new Mock<IChecklistAssignmentService>();
 			assignments.Setup(a => a.ChoicesAsync(actor)).ReturnsAsync(new List<ChecklistAssignmentChoice> { new() { Type = 3, Id = "10", Name = "Own group" }, new() { Type = 3, Id = "20", Name = "Other group" } });
-			var service = new WorkOrderAuthorizationService(departments.Object, groups.Object, roles.Object, permissions.Object, Mock.Of<IUnitsService>(), Mock.Of<IAuthorizationService>(), assignments.Object);
+			var service = new WorkOrderAuthorizationService(departments.Object, groups.Object, roles.Object, permissions.Object, Mock.Of<IUnitsService>(), Mock.Of<IAuthorizationService>(), assignments.Object, Mock.Of<IUserProfileService>());
 			var scope = await service.ScopeAsync(actor);
 			departments.Verify(d => d.GetDepartmentMemberAsync(actor.UserId, 77, true), Times.Once);
 			departments.Verify(d => d.GetDepartmentByIdAsync(77, true), Times.Once);

@@ -2,7 +2,7 @@
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @{
-    var isNew = Model.Id == 0;
+    var isNew = Model.Id == null;
     ViewBag.Title = "Resgrid | " + localizer[isNew ? "NewWorkOrder" : "EditWorkOrder"];
     ViewData["Tab"] = "Index";
     ViewData["Title"] = localizer[isNew ? "NewWorkOrder" : "EditWorkOrder"].Value;
@@ -11,7 +11,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer[isNew ? "NewWorkOrder" : "EditWorkOrder"]</h5></div>
         <div class="ibox-content">
@@ -47,6 +47,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts {
     <script id="workspace-settings" type="application/json">@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new { required = localizer["RequiredFieldsMissing"].Value, nothingEntered = localizer["None"].Value, yes = localizer["Done"].Value, no = localizer["Pending"].Value }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }))</script>

@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>Host country</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>Host state / province</value></data>
   <data name="TimeZone" xml:space="preserve"><value>Time zone</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>Incident-local time zone for time reports; blank uses the department's.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>Time zone for deployment accounting. Dates and times on these pages use the department's time zone.</value></data>
   <data name="Currency" xml:space="preserve"><value>Currency</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>Out of province / state</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>Travel via air</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>No clear 8 (OT carries into the next shift)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>Unsafe conditions stand-down</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>Time entries</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>times are incident-local</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>times use the department time zone</value></data>
   <data name="Subject" xml:space="preserve"><value>Subject</value></data>
   <data name="EntryType" xml:space="preserve"><value>Entry type</value></data>
   <data name="Start" xml:space="preserve"><value>Start</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>Choose a finance mode.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>The end must not be before the start.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>The discount must be between 0 and 100 percent.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>The time zone is not recognized. Enter a Windows time zone id such as "Pacific Standard Time", or leave it blank to use the department's.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>The contact was not found.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>The call was not found.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>That call already has a deployment.</value></data>

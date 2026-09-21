@@ -101,7 +101,7 @@ namespace Resgrid.Tests.Rms
 				Store.AttachmentsRepo.Object, Store.RevisionsRepo.Object, Evidence.Object, Store.ScopesRepo.Object, Store.SharesRepo.Object, Store.ProjectionsRepo.Object,
 				Store.AuditsRepo.Object, Outbox, Cutover.Object, Settings.Object, Groups.Object, Profiles.Object, Units.Object, Calls.Object, Adp.Object,
 				Store.UnitOfWork.Object, OutboundQueue.Object, new NullRecordAttachmentScanner(), Authorization.Object, Mock.Of<IRecordsUdfService>(), Protection, Definitions, TypedValues, Roles.Object);
-			Reports = new RecordSavedReportsService(Defs.ReportsRepo.Object, Definitions, Records, Store.RecordsRepo.Object, Defs.ValuesRepo.Object, Defs.GroupsRepo.Object, Authorization.Object, Store.AuditsRepo.Object);
+			Reports = new RecordSavedReportsService(Defs.ReportsRepo.Object, Definitions, Records, Store.RecordsRepo.Object, Defs.ValuesRepo.Object, Defs.GroupsRepo.Object, Authorization.Object, Store.AuditsRepo.Object, Departments.Object);
 			Deployments = new RecordDeploymentsService(Defs.OrdersRepo.Object, Defs.FillsRepo.Object, Defs.ReferencesRepo.Object, Records, Store.RecordsRepo.Object, Definitions, Templates, Authorization.Object, Store.AuditsRepo.Object, Store.UnitOfWork.Object);
 			Connectors = new Resgrid.Services.Records.Connectors.RecordDeploymentConnectorsService(Defs.ConnectorsRepo.Object, Defs.ConnectorRunsRepo.Object, Defs.OrdersRepo.Object, Defs.FillsRepo.Object,
 				Deployments, Authorization.Object, Store.AuditsRepo.Object, new IExternalOrderFeedProvider[] { Feed, new FakeOrderFeedProvider(RmsExternalOrderConnectorProviders.Iroc, "iroc", RmsDeploymentProfiles.UsWildland, new Resgrid.Services.Records.Connectors.IrocOrderFeedProvider().ValidateOrder, Feed) });

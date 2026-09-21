@@ -29,9 +29,9 @@ namespace Resgrid.Services
 			if (line.ReferenceType == InventoryReferenceType.RmsRecord && joined && Guid.TryParseExact(line.ReferenceId, "D", out _)) return;
 			if (line.ReferenceType == InventoryReferenceType.WorkOrder)
 			{
-				if (_workOrders == null || _workOrderAuthorization == null || !int.TryParse(line.ReferenceId, NumberStyles.None, CultureInfo.InvariantCulture, out var id) || id <= 0)
+				if (_workOrders == null || _workOrderAuthorization == null || !Guid.TryParseExact(line.ReferenceId, "D", out _))
 					throw new InventoryException(404, "ReferenceUnavailable");
-				var order = await _workOrders.GetAsync<WorkOrder>(actor.DepartmentId, id, false);
+				var order = await _workOrders.GetAsync<WorkOrder>(actor.DepartmentId, line.ReferenceId, false);
 				var principal = new ChecklistActor { DepartmentId = actor.DepartmentId, UserId = actor.UserId, GrantToken = actor.GrantToken };
 				if (order == null || order.IsDeleted || !await _workOrderAuthorization.Value.CanContributeAsync(principal, order)) throw new InventoryException(404, "ReferenceUnavailable");
 				if (requireOpen && order.Status >= (int)WorkOrderStatus.Completed && line.Type != InventoryTransactionType.Return) throw new InventoryException(409, "ReferenceClosed");

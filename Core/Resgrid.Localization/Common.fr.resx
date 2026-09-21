@@ -744,4 +744,6 @@
   <data name="ChatAccountsBack" xml:space="preserve"><value>Retour au profil</value></data>
   <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Votre code de liaison est prêt.</value></data>
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>Sur Discord, utilisez /resgrid et saisissez LINK suivi du code dans l’option message. Utilisez aussi /resgrid pour les commandes suivantes.</value></data>
+  <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Effectifs et gestion</value></data>
+  <data name="NavigationReadiness" xml:space="preserve"><value>Préparation opérationnelle</value></data>
 </root>

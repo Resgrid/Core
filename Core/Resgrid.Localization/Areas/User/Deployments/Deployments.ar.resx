@@ -41,7 +41,7 @@
   <data name="HostCountry" xml:space="preserve"><value>البلد المضيف</value></data>
   <data name="HostSubdivision" xml:space="preserve"><value>الولاية / المقاطعة المضيفة</value></data>
   <data name="TimeZone" xml:space="preserve"><value>المنطقة الزمنية</value></data>
-  <data name="TimeZoneHelp" xml:space="preserve"><value>المنطقة الزمنية المحلية للحادث لتقارير الوقت؛ الفراغ يستخدم منطقة القسم.</value></data>
+  <data name="TimeZoneHelp" xml:space="preserve"><value>المنطقة الزمنية لمحاسبة الانتشار. تستخدم التواريخ والأوقات في هذه الصفحات المنطقة الزمنية للقسم.</value></data>
   <data name="Currency" xml:space="preserve"><value>العملة</value></data>
   <data name="OutOfProvince" xml:space="preserve"><value>خارج المقاطعة / الولاية</value></data>
   <data name="TravelViaAir" xml:space="preserve"><value>السفر جوًا</value></data>
@@ -134,7 +134,7 @@
   <data name="NoClear8" xml:space="preserve"><value>بدون راحة 8 ساعات (يستمر الوقت الإضافي إلى الوردية التالية)</value></data>
   <data name="UnsafeStandDown" xml:space="preserve"><value>توقف بسبب ظروف غير آمنة</value></data>
   <data name="TimeEntries" xml:space="preserve"><value>إدخالات الوقت</value></data>
-  <data name="TimesLocal" xml:space="preserve"><value>الأوقات بالتوقيت المحلي للحادث</value></data>
+  <data name="TimesLocal" xml:space="preserve"><value>الأوقات حسب المنطقة الزمنية للقسم</value></data>
   <data name="Subject" xml:space="preserve"><value>الموضوع</value></data>
   <data name="EntryType" xml:space="preserve"><value>نوع الإدخال</value></data>
   <data name="Start" xml:space="preserve"><value>البداية</value></data>
@@ -215,6 +215,7 @@
   <data name="deployments_finance_mode_invalid" xml:space="preserve"><value>اختر وضعًا ماليًا.</value></data>
   <data name="deployments_window_invalid" xml:space="preserve"><value>يجب ألا تكون النهاية قبل البداية.</value></data>
   <data name="deployments_discount_invalid" xml:space="preserve"><value>يجب أن يكون الخصم بين 0 و100 بالمئة.</value></data>
+  <data name="deployments_timezone_invalid" xml:space="preserve"><value>لم يتم التعرف على المنطقة الزمنية. أدخل معرّف منطقة زمنية لنظام Windows مثل "Pacific Standard Time"، أو اتركه فارغًا لاستخدام منطقة القسم.</value></data>
   <data name="deployments_contact_not_found" xml:space="preserve"><value>لم يتم العثور على جهة الاتصال.</value></data>
   <data name="deployments_call_not_found" xml:space="preserve"><value>لم يتم العثور على النداء.</value></data>
   <data name="deployments_call_already_linked" xml:space="preserve"><value>هذا النداء لديه انتشار بالفعل.</value></data>

@@ -53,6 +53,8 @@ namespace Resgrid.Tests.Search
 			var result = await _service.SearchAsync(new UnifiedSearchRequest { Text = "ridge" }, Principal());
 
 			_lastQuery.EntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment });
+			_lastQuery.ViewerScopedEntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment },
+				"without the claim the index is asked for the caller's own deployments only, so unrostered ones never fill the candidate window");
 			asked.Should().BeEquivalentTo(new[] { "d1", "d2", "d3" }, "one header read covers the whole window");
 			result.Hits.Select(h => h.EntityId).Should().Equal(new[] { "d1" }, "the member is rostered on d1 only; d3 is deleted");
 			result.Total.Should().BeNull("a dropped candidate suppresses the total");
@@ -71,6 +73,7 @@ namespace Resgrid.Tests.Search
 			var result = await _service.SearchAsync(new UnifiedSearchRequest { Text = "ridge" }, Principal("Deployments:View"));
 
 			result.Hits.Select(h => h.EntityId).Should().Equal(new[] { "d1" }, "d2 belongs to another department");
+			_lastQuery.ViewerScopedEntityTypes.Should().BeNull("a claim holder searches the whole family");
 			_deployments.Verify(d => d.GetDeploymentsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 			_deployments.Verify(d => d.GetDeploymentByIdAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never, "no per-hit aggregate load");
 		}

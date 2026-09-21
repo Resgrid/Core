@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.ContractorBilling.BidDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var b = Model.Bid;
     ViewBag.Title = "Resgrid | " + localizer["BidNumber"] + " " + b.BidNumber;
     ViewData["Title"] = localizer["BidNumber"].Value + " " + b.BidNumber + " — " + b.Title;
@@ -8,21 +9,24 @@
     ViewData["RootTitle"] = localizer["Bids"].Value;
     var status = (Resgrid.Model.Invoicing.BidStatuses)b.Status;
     string Money(decimal v) => v.ToString("N2") + " " + Model.Currency;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="Pdf" asp-route-id="@b.BidId" class="btn btn-info"><i class="fa fa-file-pdf-o"></i> @localizer["Pdf"]</a>
+        <a asp-action="Preview" asp-route-id="@b.BidId" target="_blank" class="btn btn-default"><i class="fa fa-eye"></i> @localizer["Preview"]</a>
+        @if (Model.CanManageBids && b.IsEditable) { <a asp-action="Edit" asp-route-id="@b.BidId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <div class="row">
         <div class="col-md-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["Bid"] @await Html.PartialAsync("_BidStatusBadge", b.Status)</h5>
-                    <div class="ibox-tools">
-                        <a asp-action="Pdf" asp-route-id="@b.BidId" class="btn btn-default btn-xs"><i class="fa fa-file-pdf-o"></i> @localizer["Pdf"]</a>
-                        <a asp-action="Preview" asp-route-id="@b.BidId" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-eye"></i> @localizer["Preview"]</a>
-                        @if (Model.CanManageBids && b.IsEditable) { <a asp-action="Edit" asp-route-id="@b.BidId" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
-                    </div>
+
                 </div>
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
@@ -34,9 +38,9 @@
                         <dt>@localizer["DeliveryLocation"]</dt><dd>@b.DeliveryLocation</dd>
                         <dt>@localizer["Requested"]</dt><dd>@(b.RequestedStartOn?.ToString("yyyy-MM-dd") ?? "—") → @(b.RequestedEndOn?.ToString("yyyy-MM-dd") ?? "—")</dd>
                         <dt>@localizer["ValidUntil"]</dt><dd>@(b.ValidUntil?.ToString("yyyy-MM-dd") ?? "—")</dd>
-                        @if (b.SentOn.HasValue) { <dt>@localizer["SentOn"]</dt><dd>@b.SentOn.Value.ToString("yyyy-MM-dd HH:mm") · @b.SentToEmail</dd> }
-                        @if (b.AcceptedOn.HasValue) { <dt>@localizer["AcceptedOn"]</dt><dd>@b.AcceptedOn.Value.ToString("yyyy-MM-dd HH:mm")</dd> }
-                        @if (b.DeclinedOn.HasValue) { <dt>@localizer["DeclinedOn"]</dt><dd>@b.DeclinedOn.Value.ToString("yyyy-MM-dd HH:mm") @b.DeclineReason</dd> }
+                        @if (b.SentOn.HasValue) { <dt>@localizer["SentOn"]</dt><dd>@departmentTime.Format(b.SentOn) · @b.SentToEmail</dd> }
+                        @if (b.AcceptedOn.HasValue) { <dt>@localizer["AcceptedOn"]</dt><dd>@departmentTime.Format(b.AcceptedOn)</dd> }
+                        @if (b.DeclinedOn.HasValue) { <dt>@localizer["DeclinedOn"]</dt><dd>@departmentTime.Format(b.DeclinedOn) @b.DeclineReason</dd> }
                         @if (!string.IsNullOrWhiteSpace(b.Notes)) { <dt>@localizer["Notes"]</dt><dd>@b.Notes</dd> }
                         @if (b.IsConverted) { <dt>@localizer["Deployment"]</dt><dd><a asp-controller="Deployments" asp-action="View" asp-route-id="@b.ConvertedDeploymentId">@(Model.ConvertedDeployment?.Name ?? b.ConvertedDeploymentId)</a> @if (b.ConvertedCallId.HasValue) { <span class="text-muted">· @localizer["Call"] @b.ConvertedCallId</span> }</dd> }
                     </dl>
@@ -110,3 +114,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

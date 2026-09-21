@@ -1,0 +1,94 @@
+/* Readiness and business operations use the same INSPINIA palette and heading
+   hierarchy as Records. Scope these additions so other modules retain their theme. */
+.rgw-page-heading { display: flex; flex-wrap: wrap; align-items: flex-start; }
+.rgw-page-heading > [class*="col-"] { min-width: 0; }
+.rgw-page-heading h2 { overflow-wrap: anywhere; }
+.rgw-page-heading .breadcrumb { padding-bottom: 8px; }
+.rgw-page-heading small { display: block; margin-bottom: 10px; }
+.rgw-header-actions {
+    display: flex;
+    float: none;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin: 30px 0 15px;
+}
+.rgw-header-actions::before,
+.rgw-header-actions::after { display: none; }
+.rgw-header-actions > .btn,
+.rgw-header-actions > .btn-group { margin-left: 0; }
+.rgw-header-actions form { display: inline-block; margin: 0; }
+.rgw-header-actions > .rgw-toolbar,
+.rgw-header-actions > .work-order-protected { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin: 0; }
+.rgw-header-actions .rgw-toolbar-spacer { display: none; }
+.rgw-header-actions .dropdown-menu-right { left: auto; right: 0; }
+.rgw-header-actions .dropdown-menu > li > a { white-space: normal; }
+
+/* Module navigation belongs to the heading; filters and row actions stay with data. */
+.rgw-module-navigation { flex: 0 0 100%; width: 100%; margin-top: 8px; }
+.rgw-module-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 15px; padding: 0; }
+.rgw-module-tabs::before,
+.rgw-module-tabs::after { display: none; }
+.rgw-module-tabs > li,
+.rgw-module-tabs > li.active { float: none; margin: 0; border: 0; background: transparent; }
+.rgw-module-tabs > li + li { margin-left: 0; }
+.rgw-module-tabs > li > a {
+    border: 1px solid #cbdfe9;
+    border-radius: 3px;
+    background: #edf5fa;
+    color: #245b7c;
+    font-weight: 600;
+    padding: 9px 14px;
+}
+.rgw-module-tabs > li > a:hover,
+.rgw-module-tabs > li > a:focus { background: #d9eaf5; border-color: #1c84c6; color: #18577f; }
+.rgw-module-tabs > li.active > a,
+.rgw-module-tabs > li.active > a:hover,
+.rgw-module-tabs > li.active > a:focus { background: #1ab394; border-color: #1ab394; color: #fff; }
+.rgw-module-tabs i { margin-right: 5px; }
+
+/* Secondary actions have a blue tint; primary/success/warning/danger keep the
+   existing theme colors. This also covers controls added dynamically by builders. */
+.rgw-page .btn-default,
+.rgw-page .btn-white,
+.rgw-page ~ .modal .btn-default,
+.rgw-page ~ .modal .btn-white,
+.rgw-page-heading .btn-default,
+.rgw-page-heading .btn-white { background: #edf5fa; border-color: #cbdfe9; color: #245b7c; }
+.rgw-page .btn-default:hover,
+.rgw-page .btn-default:focus,
+.rgw-page .btn-white:hover,
+.rgw-page .btn-white:focus,
+.rgw-page ~ .modal .btn-default:hover,
+.rgw-page ~ .modal .btn-default:focus,
+.rgw-page ~ .modal .btn-white:hover,
+.rgw-page ~ .modal .btn-white:focus,
+.rgw-page-heading .btn-default:hover,
+.rgw-page-heading .btn-default:focus,
+.rgw-page-heading .btn-white:hover,
+.rgw-page-heading .btn-white:focus { background: #d9eaf5; border-color: #1c84c6; color: #18577f; }
+.rgw-page .btn:focus-visible,
+.rgw-page ~ .modal .btn:focus-visible,
+.rgw-page-heading .btn:focus-visible,
+.rgw-module-tabs > li > a:focus-visible { outline: 2px solid #1c84c6; outline-offset: 2px; }
+.rgw-page .ibox-title { border-top-color: #1ab394; }
+.rgw-page .table > thead > tr > th { background: #f3f7fa; color: #475c6b; }
+.rgw-page .btn-group { display: inline-flex; flex-wrap: wrap; }
+.rgw-page .form-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.rgw-page .rgw-grid,
+.rgw-page .rgw-lookup { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); }
+.rgw-page .rgw-filter .rgw-grid { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 340px)); }
+
+@media (max-width: 767px) {
+    .rgw-page-heading > [class*="col-"] { width: 100%; }
+    .rgw-header-actions { justify-content: flex-start; margin-top: 15px; }
+    .rgw-header-actions > .rgw-toolbar,
+    .rgw-header-actions > .work-order-protected { justify-content: flex-start; }
+    .rgw-header-actions .btn { white-space: normal; }
+    .rgw-header-actions .dropdown-menu { max-width: calc(100vw - 60px); }
+    .rgw-header-actions .dropdown-menu-right { left: 0; right: auto; }
+    .rgw-module-tabs > li { max-width: 100%; }
+    .rgw-page .form-inline .form-control { max-width: 100%; }
+}

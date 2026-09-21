@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Web.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Services.Records;
 using Resgrid.Web.Areas.User.Controllers;
@@ -38,6 +39,7 @@ namespace Resgrid.Tests.Rms
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = http };
 			_controller = new RecordEvidenceController(_selection.Object, _evidence.Object, _records.Object) {
 				ControllerContext = new ControllerContext { HttpContext = http }, TempData = new TempDataDictionary(http, Mock.Of<ITempDataProvider>()) };
+            _controller.ViewData[nameof(DepartmentTime)] = new DepartmentTime(new Department { TimeZone = "Pacific Standard Time" });
 		}
 		[TearDown] public void Cleanup() => Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor = null;
 		private static RecordEvidenceForm Input() => new() { RecordId = "record", RecordKind = RmsRecordKind.Operational,
@@ -71,7 +73,7 @@ namespace Resgrid.Tests.Rms
 			var input = Input(); input.StartUtc = new DateTime(2026, 9, 1, 8, 0, 0); input.EndUtc = input.StartUtc.Value.AddHours(1);
 			(await _controller.Capture(input, default)).Should().BeOfType<RedirectToActionResult>();
 			_evidence.Verify(e => e.CaptureAsync(It.Is<RecordEvidenceCaptureRequest>(r => r.DepartmentId == 9 && r.CapturedByUserId == "officer" && r.CallId == 501
-				&& r.ExpectedRowVersion == 7 && r.SourceIds.Count == 2 && r.CoverageStart.Value.Kind == DateTimeKind.Utc && r.OriginClient == RmsOriginClient.Web), true, It.IsAny<CancellationToken>()), Times.Once);
+				&& r.ExpectedRowVersion == 7 && r.SourceIds.Count == 2 && r.CoverageStart.Value.Kind == DateTimeKind.Utc && r.CoverageStart == new DateTime(2026, 9, 1, 15, 0, 0, DateTimeKind.Utc) && r.CoverageEnd == new DateTime(2026, 9, 1, 16, 0, 0, DateTimeKind.Utc) && r.OriginClient == RmsOriginClient.Web), true, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

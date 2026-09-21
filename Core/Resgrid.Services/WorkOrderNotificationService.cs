@@ -35,13 +35,13 @@ namespace Resgrid.Services
 		}
 		public async Task DispatchAsync(DomainEventOutboxEntry entry)
 		{
-			if (entry?.ProducerSubsystem != "WorkOrders" || entry.TriggerEventType is not (70 or 71 or 72 or 73 or 167 or 168 or 173 or 174) || !Guid.TryParseExact(entry.EventId, "D", out _) || !int.TryParse(entry.AggregateId, out var id)) return;
+			if (entry?.ProducerSubsystem != "WorkOrders" || entry.TriggerEventType is not (70 or 71 or 72 or 73 or 167 or 168 or 173 or 174) || !Guid.TryParseExact(entry.EventId, "D", out _) || !Guid.TryParseExact(entry.AggregateId, "D", out _)) return;
 			if (!await _access.CanUseMaintenanceAsync(entry.DepartmentId)) return;
-			var row = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, id);
+			var row = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, entry.AggregateId);
 			if (row == null) return;
 			foreach (var user in await RecipientsAsync(entry.DepartmentId, row, entry.TriggerEventType is 173 or 174))
 			{
-				var notice = new WorkOrderNotification { DepartmentId = entry.DepartmentId, WorkOrderId = id, EventId = entry.EventId, UserId = user, LeaseOwner = Guid.NewGuid().ToString("D") };
+				var notice = new WorkOrderNotification { DepartmentId = entry.DepartmentId, WorkOrderId = entry.AggregateId, EventId = entry.EventId, UserId = user, LeaseOwner = Guid.NewGuid().ToString("D") };
 				var state = await TransactionAsync(entry.DepartmentId, () => _orders.ClaimNotificationAsync(notice, DateTime.UtcNow));
 				if (state == 2 || state == 3) continue;
 				if (state != 1) throw new InvalidOperationException("Work-order notification is leased by another delivery attempt.");
@@ -50,24 +50,25 @@ namespace Resgrid.Services
 					var profile = await _profiles.GetProfileByUserIdAsync(user);
 					var department = await _departments.GetDepartmentByIdAsync(entry.DepartmentId, true);
 					var number = await _settings.GetTextToCallNumberForDepartmentAsync(entry.DepartmentId);
-					var current = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, id);
+					var current = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, entry.AggregateId);
 					if (department == null || profile == null || current == null || !await _access.CanUseMaintenanceAsync(entry.DepartmentId) || !await IsRecipientAsync(entry.DepartmentId, current, user, entry.TriggerEventType is 173 or 174))
 					{ await FinishAsync(notice, 3); continue; }
 					CultureInfo culture;
 					try { culture = CultureInfo.GetCultureInfo(profile.Language ?? "en"); if (!SupportedLocales.GetSupportedCultures().Contains(culture.TwoLetterISOLanguageName)) culture = CultureInfo.GetCultureInfo("en"); }
 					catch (CultureNotFoundException) { culture = CultureInfo.GetCultureInfo("en"); }
-					// Never decrypt, copy a title, embed an actor/grant or treat handoff as a delivery receipt.
+					// The public work-order number identifies the item without decrypting protected content.
+					var workOrderNumber = FormattableString.Invariant($"WO-{current.NumberYear}-{current.NumberSequence:D6}");
 					var handedOff = await _communication.SendNotificationAsync(user, entry.DepartmentId,
-						Strings.GetString("NotificationMessage", culture) + " " + (Config.SystemBehaviorConfig.ResgridBaseUrl ?? "").TrimEnd('/') + "/User/WorkOrders/Detail/" + id,
+						workOrderNumber + ": " + Strings.GetString("NotificationMessage", culture),
 						number, department, Strings.GetString("NotificationTitle", culture), profile);
 					await FinishAsync(notice, handedOff ? 2 : 3);
 				}
 				catch (Exception ex)
 				{
 					// Provider errors can contain content or credentials; only routing and exception types leave this boundary.
-					Resgrid.Framework.Logging.LogError($"Work-order notification handoff failed for department {entry.DepartmentId}, order {id}: {ex.GetType().FullName}.");
+					Resgrid.Framework.Logging.LogError($"Work-order notification handoff failed for department {entry.DepartmentId}, order {entry.AggregateId}: {ex.GetType().FullName}.");
 					try { await FinishAsync(notice, 0); }
-					catch (Exception releaseEx) { Resgrid.Framework.Logging.LogError($"Work-order notification lease release failed for department {entry.DepartmentId}, order {id}: {releaseEx.GetType().FullName}."); }
+					catch (Exception releaseEx) { Resgrid.Framework.Logging.LogError($"Work-order notification lease release failed for department {entry.DepartmentId}, order {entry.AggregateId}: {releaseEx.GetType().FullName}."); }
 					throw new InvalidOperationException("Work-order notification handoff failed.");
 				}
 			}
@@ -81,8 +82,8 @@ namespace Resgrid.Services
 			if ((managerNotice || row.Status is 0 or 1) && await _authorization.CanManageAsync(actor, row.TargetGroupId)) return true;
 			// Escalation-role members are recipients too; revalidating without this drops them before the assigned-user check.
 			if (row.EscalatedOn.HasValue && row.EscalationRoleId.HasValue && (await _authorization.ScopeAsync(actor)).RoleIds.Contains(row.EscalationRoleId.Value)) return true;
-			if (row.AssignedToUserId != null) return row.AssignedToUserId == user;
-			return row.AssignedToRoleId.HasValue && (await _authorization.ScopeAsync(actor)).RoleIds.Contains(row.AssignedToRoleId.Value);
+			if (row.AssignedToUserIds.Contains(user)) return true;
+			return row.AssignedToRoleIds.Count != 0 && row.AssignedToRoleIds.Intersect((await _authorization.ScopeAsync(actor)).RoleIds).Any();
 		}
 		private async Task<System.Collections.Generic.List<string>> RecipientsAsync(int departmentId, WorkOrder row, bool managerNotice = false)
         {

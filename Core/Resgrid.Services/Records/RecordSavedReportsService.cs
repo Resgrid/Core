@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -40,9 +41,10 @@ namespace Resgrid.Services.Records
 		private readonly IRmsRecordValueGroupsRepository _groups;
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRmsAccessAuditsRepository _audits;
+        private readonly IDepartmentsService _departments;
 
 		public RecordSavedReportsService(IRmsSavedReportDefinitionsRepository reports, IRecordDefinitionsService definitions, IRecordsService records, IRmsOperationalRecordsRepository recordRows,
-			IRmsRecordValuesRepository values, IRmsRecordValueGroupsRepository groups, IRecordsAuthorizationService authorization, IRmsAccessAuditsRepository audits)
+			IRmsRecordValuesRepository values, IRmsRecordValueGroupsRepository groups, IRecordsAuthorizationService authorization, IRmsAccessAuditsRepository audits, IDepartmentsService departments)
 		{
 			_reports = reports;
 			_definitions = definitions;
@@ -52,6 +54,7 @@ namespace Resgrid.Services.Records
 			_groups = groups;
 			_authorization = authorization;
 			_audits = audits;
+            _departments = departments;
 		}
 
 		public async Task<List<RmsSavedReportDefinition>> GetForDepartmentAsync(int departmentId) => (await _reports.GetForDepartmentAsync(departmentId))?.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ToList() ?? new List<RmsSavedReportDefinition>();
@@ -254,14 +257,17 @@ namespace Resgrid.Services.Records
 				Func<(RmsOperationalRecord Record, RecordValueSet Values, RecordDefinitionSchema Schema, Dictionary<string, string> Map), object> key = s => { var c = Cell(s, spec.SortFieldKey); return c?.Number ?? (object)(c?.Value ?? BuiltIn(s.Record, spec.SortFieldKey) ?? string.Empty); };
 				ordered = spec.SortDescending ? matched.OrderByDescending(key, Comparer<object>.Create(CompareValues)) : matched.OrderBy(key, Comparer<object>.Create(CompareValues));
 			}
-			foreach (var item in ordered)
-				result.Rows.Add(spec.Columns.Select(c => BuiltInColumns.ContainsKey(c) ? BuiltIn(item.Record, c) : Cell(item, c)?.Display ?? string.Empty).ToList());
+			var department = await _departments.GetDepartmentByIdAsync(departmentId, false) ?? new Department();
+            string Display(RecordValueCell cell) => cell?.Type == RmsFieldType.DateTime && !cell.Withheld && DateTime.TryParse(cell.Value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var utc)
+                ? utc.TimeConverterToString(department) : cell?.Display;
+            foreach (var item in ordered)
+				result.Rows.Add(spec.Columns.Select(c => BuiltInColumns.ContainsKey(c) ? BuiltIn(item.Record, c, department) : Display(Cell(item, c)) ?? string.Empty).ToList());
 
 			if (!string.IsNullOrWhiteSpace(spec.GroupByFieldKey) || spec.Aggregates.Count > 0)
 			{
 				var groups = string.IsNullOrWhiteSpace(spec.GroupByFieldKey)
 					? new[] { new { Key = "(all)", Items = matched } }.Select(g => (g.Key, g.Items.AsEnumerable()))
-					: matched.GroupBy(s => BuiltInColumns.ContainsKey(spec.GroupByFieldKey) ? BuiltIn(s.Record, spec.GroupByFieldKey) ?? "(blank)" : Cell(s, spec.GroupByFieldKey)?.Display ?? "(blank)", StringComparer.OrdinalIgnoreCase).Select(g => (g.Key, g.AsEnumerable()));
+					: matched.GroupBy(s => BuiltInColumns.ContainsKey(spec.GroupByFieldKey) ? BuiltIn(s.Record, spec.GroupByFieldKey, department) ?? "(blank)" : Display(Cell(s, spec.GroupByFieldKey)) ?? "(blank)", StringComparer.OrdinalIgnoreCase).Select(g => (g.Key, g.AsEnumerable()));
 				foreach (var (groupKey, items) in groups.OrderBy(g => g.Item1, StringComparer.OrdinalIgnoreCase))
 				{
 					var list = items.ToList();
@@ -304,7 +310,7 @@ namespace Resgrid.Services.Records
 			return item.Values.Scalar(mapped) ?? item.Values.Sections.Where(s => s.Repeating).SelectMany(s => s.Rows).SelectMany(r => r.Cells).FirstOrDefault(c => string.Equals(c.FieldKey, mapped, StringComparison.OrdinalIgnoreCase));
 		}
 
-		private static string BuiltIn(RmsOperationalRecord record, string key)
+		private static string BuiltIn(RmsOperationalRecord record, string key, Department department = null)
 		{
 			switch ((key ?? string.Empty).ToLowerInvariant())
 			{
@@ -312,9 +318,9 @@ namespace Resgrid.Services.Records
 				case "record.draft_reference": return record.DraftReference;
 				case "record.state": return ((RmsRecordState)record.State).ToString();
 				case "record.definition_version": return record.DefinitionVersion.ToString(CultureInfo.InvariantCulture);
-				case "record.started_on": return record.StartedOn?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-				case "record.ended_on": return record.EndedOn?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-				case "record.finalized_on": return record.FinalizedOn?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+				case "record.started_on": return department == null ? record.StartedOn?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) : record.StartedOn?.TimeConverterToString(department);
+				case "record.ended_on": return department == null ? record.EndedOn?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) : record.EndedOn?.TimeConverterToString(department);
+				case "record.finalized_on": return department == null ? record.FinalizedOn?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) : record.FinalizedOn?.TimeConverterToString(department);
 				case "record.author": return record.AuthorUserId;
 				case "record.group": return record.StationGroupId?.ToString(CultureInfo.InvariantCulture);
 				case "record.call_id": return record.CallId?.ToString(CultureInfo.InvariantCulture);

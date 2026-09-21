@@ -7,11 +7,20 @@
     ViewData["Subtitle"] = localizer["RateCardsIntro"].Value;
     var message = ViewBag.Message as string;
     var write = Model.CanWrite && Model.CanManage;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (write)
+        {
+            <a asp-controller="Invoicing" asp-action="EditRateCard" asp-route-area="User" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewRateCard"]</a>
+
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (!string.IsNullOrWhiteSpace(message))
     {
         <div class="alert alert-info">@message</div>
@@ -19,15 +28,10 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["RateCards"]</h5>
-            @if (write)
-            {
-                <div class="ibox-tools">
-                    <a asp-controller="Invoicing" asp-action="EditRateCard" asp-route-area="User" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewRateCard"]</a>
-                </div>
-            }
+
         </div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpRateCards"]</div>
             @if (Model.RateCards.Count == 0)
             {
@@ -63,3 +67,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

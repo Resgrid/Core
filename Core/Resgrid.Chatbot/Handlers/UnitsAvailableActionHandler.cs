@@ -43,6 +43,13 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
+				// Layer 2 for a list: every active member may list their department's units, so the
+				// permission is decided once per request against session.DepartmentId. A per-row
+				// CanUserViewUnitAsync answers the same membership question with two lookups per unit —
+				// over the whole department here, since availability is classified before the cap.
+				if (!await _authorizationService.IsUserValidWithinLimitsAsync(session.UserId, session.DepartmentId))
+					return new ChatbotResponse { Text = ChatbotResources.Get("Units_NoPermission", culture), Processed = false };
+
 				var unitStatuses = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(session.DepartmentId);
 
 				if (unitStatuses == null || !unitStatuses.Any())
@@ -51,12 +58,10 @@ namespace Resgrid.Chatbot.Handlers
 				var lines = new StringBuilder();
 				var availableCount = 0;
 
+				// The department boundary is the per-row rule.
 				foreach (var unitState in unitStatuses.Where(u => u?.Unit != null && u.Unit.DepartmentId == session.DepartmentId)
 					.OrderBy(u => u.Unit.Name))
 				{
-					if (!await _authorizationService.CanUserViewUnitAsync(session.UserId, unitState.Unit.UnitId))
-						continue;
-
 					var availability = await _platformReportingService.ClassifyUnitAvailabilityAsync(session.DepartmentId, unitState.State);
 					if (availability != AvailabilityClass.Available)
 						continue;

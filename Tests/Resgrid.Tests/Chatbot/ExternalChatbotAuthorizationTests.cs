@@ -25,36 +25,65 @@ namespace Resgrid.Tests.Chatbot
 		private const int DepartmentId = 42;
 
 		[Test]
-		public async Task CallsList_FiltersDeniedAndForeignCallsBeforeApplyingTenCallLimit()
+		public async Task CallsList_FiltersForeignCallsBeforeApplyingTenCallLimit_WithOneAuthorizationCheck()
 		{
-			var candidates = Enumerable.Range(1, 12)
-				.Select(id => new Call { CallId = id, DepartmentId = DepartmentId, Name = "HiddenCall" + id }).ToList();
-			candidates.Add(new Call { CallId = 900, DepartmentId = 99, Name = "ForeignCall" });
+			var candidates = new List<Call> { new Call { CallId = 900, DepartmentId = 99, Name = "ForeignCall" } };
 			candidates.AddRange(Enumerable.Range(100, 11)
 				.Select(id => new Call { CallId = id, DepartmentId = DepartmentId, Name = "VisibleCall" + id }));
 			var calls = new Mock<ICallsService>();
 			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(DepartmentId)).ReturnsAsync(candidates);
-			var authorization = new Mock<IAuthorizationService>();
-			authorization.Setup(a => a.CanUserViewCallAsync(UserId, It.IsAny<int>()))
-				.ReturnsAsync((string userId, int callId) => callId >= 100);
+			var authorization = MemberAuthorization();
 			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
 				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), authorization.Object);
 
 			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
 
 			response.Processed.Should().BeTrue();
-			response.Text.Should().NotContain("HiddenCall").And.NotContain("ForeignCall").And.NotContain("VisibleCall110");
+			response.Text.Should().NotContain("ForeignCall").And.NotContain("VisibleCall110");
 			foreach (var id in Enumerable.Range(100, 10)) response.Text.Should().Contain("VisibleCall" + id);
-			authorization.Verify(a => a.CanUserViewCallAsync(It.IsAny<string>(), 900), Times.Never);
+			// One membership decision for the request; never a lookup per row.
+			authorization.Verify(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
+			authorization.Verify(a => a.CanUserViewCallAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
 		}
 
 		[Test]
-		public async Task UnitsList_FiltersDeniedAndForeignUnitsBeforeApplyingFifteenUnitLimit()
+		public async Task CallsList_OnlyForeignRows_ReportsNoActiveCalls()
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<Call> { new Call { CallId = 900, DepartmentId = 99, Name = "ForeignCall" } });
+			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
+				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), MemberAuthorization().Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
+
+			response.Processed.Should().BeTrue();
+			response.Text.Should().Contain("No active calls").And.NotContain("ForeignCall").And.NotContain("Active Calls for");
+		}
+
+		[Test]
+		public async Task CallsList_NonMember_IsDeniedBeforeAnyCallIsRead()
+		{
+			var calls = new Mock<ICallsService>();
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(false);
+			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
+				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), authorization.Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
+
+			response.Processed.Should().BeFalse();
+			response.Text.Should().Contain("permission");
+			calls.Verify(c => c.GetActiveCallsByDepartmentAsync(It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task UnitsList_FiltersForeignUnitsBeforeApplyingFifteenUnitLimit_WithOneAuthorizationCheck()
 		{
 			var candidates = UnitCandidates();
 			var units = new Mock<IUnitsService>();
 			units.Setup(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(candidates);
-			var authorization = UnitAuthorization();
+			var authorization = MemberAuthorization();
 			var states = new Mock<ICustomStateService>();
 			states.Setup(s => s.GetCustomUnitStateAsync(It.IsAny<UnitState>()))
 				.ReturnsAsync(new CustomStateDetail { ButtonText = "Available" });
@@ -63,18 +92,34 @@ namespace Resgrid.Tests.Chatbot
 			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListUnits }, Session());
 
 			response.Processed.Should().BeTrue();
-			response.Text.Should().NotContain("HiddenUnit").And.NotContain("ForeignUnit").And.NotContain("VisibleUnit115");
+			response.Text.Should().NotContain("ForeignUnit").And.NotContain("VisibleUnit115");
 			foreach (var id in Enumerable.Range(100, 15)) response.Text.Should().Contain("VisibleUnit" + id);
-			states.Verify(s => s.GetCustomUnitStateAsync(It.Is<UnitState>(u => u.UnitId < 100 || u.UnitId == 900)), Times.Never);
-			authorization.Verify(a => a.CanUserViewUnitAsync(It.IsAny<string>(), 900), Times.Never);
+			states.Verify(s => s.GetCustomUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 900)), Times.Never);
+			authorization.Verify(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
+			authorization.Verify(a => a.CanUserViewUnitAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
 		}
 
 		[Test]
-		public async Task AvailableUnits_CountAndOverflowIncludeOnlyAuthorizedDepartmentUnits()
+		public async Task UnitsList_NonMember_IsDeniedBeforeAnyUnitIsRead()
+		{
+			var units = new Mock<IUnitsService>();
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(false);
+			var handler = new UnitsActionHandler(units.Object, Mock.Of<ICustomStateService>(), Mock.Of<IDepartmentsService>(), authorization.Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListUnits }, Session());
+
+			response.Processed.Should().BeFalse();
+			response.Text.Should().Contain("permission");
+			units.Verify(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task AvailableUnits_CountAndOverflowIncludeOnlyDepartmentUnits_WithOneAuthorizationCheck()
 		{
 			var units = new Mock<IUnitsService>();
 			units.Setup(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(UnitCandidates());
-			var authorization = UnitAuthorization();
+			var authorization = MemberAuthorization();
 			var states = new Mock<ICustomStateService>();
 			states.Setup(s => s.GetCustomUnitStateAsync(It.IsAny<UnitState>()))
 				.ReturnsAsync(new CustomStateDetail { ButtonText = "Available" });
@@ -87,12 +132,28 @@ namespace Resgrid.Tests.Chatbot
 
 			response.Processed.Should().BeTrue();
 			response.Text.Should().Contain("Available Units (16):").And.Contain("...and 1 more.")
-				.And.NotContain("HiddenUnit").And.NotContain("ForeignUnit").And.NotContain("VisibleUnit115");
+				.And.NotContain("ForeignUnit").And.NotContain("VisibleUnit115");
 			foreach (var id in Enumerable.Range(100, 15)) response.Text.Should().Contain("VisibleUnit" + id);
-			// The fixture uses distinct state ids so even availability classification must not touch denied units.
-			reporting.Verify(r => r.ClassifyUnitAvailabilityAsync(DepartmentId, It.Is<int>(state => state < 100 || state == 900), It.IsAny<CancellationToken>()), Times.Never);
+			// The fixture uses distinct state ids so even availability classification must not touch the foreign unit.
+			reporting.Verify(r => r.ClassifyUnitAvailabilityAsync(DepartmentId, 900, It.IsAny<CancellationToken>()), Times.Never);
 			reporting.Verify(r => r.ClassifyUnitAvailabilityAsync(DepartmentId, It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Exactly(16));
-			authorization.Verify(a => a.CanUserViewUnitAsync(It.IsAny<string>(), 900), Times.Never);
+			authorization.Verify(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
+			authorization.Verify(a => a.CanUserViewUnitAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task AvailableUnits_NonMember_IsDeniedBeforeAnyUnitIsRead()
+		{
+			var units = new Mock<IUnitsService>();
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(false);
+			var handler = new UnitsAvailableActionHandler(units.Object, Mock.Of<ICustomStateService>(), Mock.Of<IPlatformReportingService>(), authorization.Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.UnitsAvailable }, Session());
+
+			response.Processed.Should().BeFalse();
+			response.Text.Should().Contain("permission");
+			units.Verify(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(It.IsAny<int>()), Times.Never);
 		}
 
 		[TestCase(ChatbotPlatform.Telegram)]
@@ -184,18 +245,16 @@ namespace Resgrid.Tests.Chatbot
 
 		private static List<UnitState> UnitCandidates()
 		{
-			var units = Enumerable.Range(1, 16).Select(id => State(id, DepartmentId, "HiddenUnit" + id)).ToList();
-			units.Add(State(900, 99, "ForeignUnit"));
+			var units = new List<UnitState> { State(900, 99, "ForeignUnit") };
 			units.AddRange(Enumerable.Range(100, 16).Select(id => State(id, DepartmentId, "VisibleUnit" + id)));
 			return units;
 		}
 		private static UnitState State(int id, int departmentId, string name) => new()
 		{ UnitId = id, State = id, Unit = new Unit { UnitId = id, DepartmentId = departmentId, Name = name } };
-		private static Mock<IAuthorizationService> UnitAuthorization()
+		private static Mock<IAuthorizationService> MemberAuthorization()
 		{
 			var authorization = new Mock<IAuthorizationService>();
-			authorization.Setup(a => a.CanUserViewUnitAsync(UserId, It.IsAny<int>()))
-				.ReturnsAsync((string userId, int unitId) => unitId >= 100);
+			authorization.Setup(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(true);
 			return authorization;
 		}
 

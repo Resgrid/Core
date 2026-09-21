@@ -18,10 +18,14 @@ namespace Resgrid.Services
         private async Task<WorkOrderPolicyInput> ReadPolicyAsync(ChecklistActor actor)
         {
             var row = await PolicyRowAsync(actor.DepartmentId);
-            if (row == null) return new WorkOrderPolicyInput();
+            if (row == null) return new WorkOrderPolicyInput { Currency = "USD" };
             await RevealAsync(actor, row);
-            var value = Decode<WorkOrderPolicyInput>(row.Content); value.Revision = row.Revision; value.Calendar = Decode<WorkOrderBusinessCalendar>(row.CalendarJson); return value;
+            var value = Decode<WorkOrderPolicyInput>(row.Content); value.Revision = row.Revision; value.Calendar = Decode<WorkOrderBusinessCalendar>(row.CalendarJson);
+            value.Currency = row.CurrencyCode ?? "USD";
+            value.SpendingThreshold = value.SpendingRules.SingleOrDefault(r => r.Currency == value.Currency)?.Threshold;
+            return value;
         }
+        private async Task<string> DepartmentCurrencyAsync(int departmentId) => (await PolicyRowAsync(departmentId))?.CurrencyCode ?? "USD";
         private async Task RequirePolicyManagerAsync(ChecklistActor actor)
         {
             await _authorization.RequireMemberAsync(actor);
@@ -57,14 +61,29 @@ namespace Resgrid.Services
         }
         public async Task SavePolicyAsync(ChecklistActor actor, WorkOrderPolicyInput input)
         {
-            if (input == null || input.SpendingRules == null || input.SpendingRules.Count > 30 || input.SpendingRules.Any(r => r == null || !ValidCurrency(r.Currency) || r.Threshold < 0 || decimal.Round(r.Threshold, 2) != r.Threshold || r.Threshold > 100000000m)
-                || input.SpendingRules.Select(r => r.Currency).Distinct().Count() != input.SpendingRules.Count || input.ApprovalsEnabled && input.SpendingRules.Count == 0) throw new WorkOrderException(400, "OperationsPolicyInvalid");
+            if (input == null || input.Currency != null && !WorkOrderCurrencies.IsSupported(input.Currency)
+                || input.SpendingThreshold < 0 || input.SpendingThreshold > 100000000m || input.SpendingThreshold.HasValue && decimal.Round(input.SpendingThreshold.Value, 2) != input.SpendingThreshold
+                || input.SpendingRules == null || input.SpendingRules.Count > 30 || input.SpendingRules.Any(r => r == null || !ValidCurrency(r.Currency) || r.Threshold < 0 || decimal.Round(r.Threshold, 2) != r.Threshold || r.Threshold > 100000000m)
+                || input.SpendingRules.Select(r => r.Currency).Distinct().Count() != input.SpendingRules.Count) throw new WorkOrderException(400, "OperationsPolicyInvalid");
             ValidateBusinessCalendar(input.Calendar); await RequirePolicyManagerAsync(actor); RequireMaintenanceStore();
             await TransactionAsync(actor, async events =>
             {
                 await RequirePolicyManagerAsync(actor); var row = await PolicyRowAsync(actor.DepartmentId); var previous = row == null ? null : (await RevealAsync(actor, row)).Content;
                 if (row == null && input.Revision != 0 || row != null && row.Revision != input.Revision) throw new WorkOrderException(409, "Conflict");
+                var previousSettings = row == null ? new WorkOrderPolicyInput() : Decode<WorkOrderPolicyInput>(previous);
+                // Older clients may still send the single-currency policy contract. Preserve their currency
+                // on first configuration; subsequent writes cannot change it without the settings field.
+                input.Currency ??= row?.CurrencyCode ?? (input.SpendingRules.Count == 1 ? input.SpendingRules[0].Currency : "USD");
+                if (!WorkOrderCurrencies.IsSupported(input.Currency)) throw new WorkOrderException(400, "OperationsPolicyInvalid");
+                var threshold = input.SpendingThreshold ?? input.SpendingRules.SingleOrDefault(r => r.Currency == input.Currency)?.Threshold;
+                if (input.ApprovalsEnabled && !threshold.HasValue) throw new WorkOrderException(400, "OperationsPolicyInvalid");
+                // Keep historical thresholds in their original denomination for existing orders.
+                // They are never reinterpreted as amounts in the newly selected currency.
+                input.SpendingRules = previousSettings.SpendingRules.Where(r => r.Currency != input.Currency).ToList();
+                if (threshold.HasValue) input.SpendingRules.Add(new WorkOrderSpendingRule { Currency = input.Currency, Threshold = threshold.Value });
+                input.SpendingThreshold = threshold;
                 var insert = row == null; row ??= New<WorkOrderPolicy>(actor); if (!insert) row.Revision++;
+                row.CurrencyCode = input.Currency;
                 row.CalendarJson = JsonConvert.SerializeObject(input.Calendar); row.Content = JsonConvert.SerializeObject(input); await SaveAsync(actor, row, insert);
                 var receipt = New<WorkOrderOperationReceipt>(actor); receipt.Kind = 2; receipt.RequestId = Guid.NewGuid().ToString("D"); receipt.Content = JsonConvert.SerializeObject(new { PolicyId = row.Id, row.Revision, Previous = previous, Settings = input }); await SaveAsync(actor, receipt, true);
                 var audit = await _audit.InsertAsync(new AuditLog { DepartmentId = actor.DepartmentId, ObjectDepartmentId = actor.DepartmentId, UserId = actor.UserId, ObjectId = "WorkOrderPolicy:" + row.Id,
@@ -107,7 +126,7 @@ namespace Resgrid.Services
             if (total <= rule.Threshold) return;
             if (content.Approval?.State != WorkOrderApprovalState.Approved || content.Approval.Currency != currency || content.Approval.Amount < total) throw new WorkOrderException(409, "SpendingApprovalRequired");
         }
-        public async Task RequestApprovalAsync(ChecklistActor actor, int id, WorkOrderApprovalInput input)
+        public async Task RequestApprovalAsync(ChecklistActor actor, string id, WorkOrderApprovalInput input)
         {
             if (input == null) throw new WorkOrderException(400, "InvalidInput"); Money(input.Amount); Text(input.Reason, 4000, true);
             await TransactionAsync(actor, async events =>
@@ -120,7 +139,7 @@ namespace Resgrid.Services
                 await ChangedAsync(actor, row, WorkOrderActivityType.Updated, events, trigger: WorkflowTriggerEventType.WorkOrderApprovalChanged); return true;
             });
         }
-        public async Task DecideApprovalAsync(ChecklistActor actor, int id, WorkOrderApprovalInput input)
+        public async Task DecideApprovalAsync(ChecklistActor actor, string id, WorkOrderApprovalInput input)
         {
             if (input == null) throw new WorkOrderException(400, "InvalidInput"); Text(input.Reason, 4000, true);
             await TransactionAsync(actor, async events =>

@@ -44,7 +44,7 @@ namespace Resgrid.Model.Search
 
 		public string OwnerUserId { get; set; }
 
-		/// <summary>Comma-separated user ids that may see the row regardless of other rules (message recipients).</summary>
+		/// <summary>Comma-separated user ids that may see the row regardless of other rules (message recipients, deployment roster).</summary>
 		public string ParticipantUserIds { get; set; }
 
 		public bool IsAdminOnly { get; set; }

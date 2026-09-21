@@ -2005,9 +2005,9 @@
   <data name="HoldRecordIdHelp" xml:space="preserve"><value>اتركه فارغًا لحفظ كل ما يطابق تعريفًا ونطاقًا زمنيًا بدلًا من ذلك.</value></data>
   <data name="HoldDefinition" xml:space="preserve"><value>نطاق التعريف</value></data>
   <data name="HoldNerisScope" xml:space="preserve"><value>حادث وتحليل NERIS</value></data>
-  <data name="HoldScopeHelp" xml:space="preserve"><value>لنطاق التعريف، اترك كلا التاريخين فارغين لحفظ جميع التواريخ. الأوقات بتوقيت UTC.</value></data>
-  <data name="HoldPeriodStart" xml:space="preserve"><value>بداية الفترة (UTC)</value></data>
-  <data name="HoldPeriodEnd" xml:space="preserve"><value>نهاية الفترة (UTC)</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>لنطاق التعريف، اترك كلا التاريخين فارغين لحفظ جميع التواريخ. الأوقات بتوقيت التوقيت المحلي للقسم.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>بداية الفترة</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>نهاية الفترة</value></data>
   <data name="HoldReason" xml:space="preserve"><value>أساس الحفظ</value></data>
   <data name="HoldReasonLitigation" xml:space="preserve"><value>تقاضٍ</value></data>
   <data name="HoldReasonInvestigation" xml:space="preserve"><value>تحقيق</value></data>
@@ -2038,9 +2038,9 @@
   <data name="EvidenceChooseChannel" xml:space="preserve"><value>اختر قناة</value></data>
   <data name="EvidenceRestricted" xml:space="preserve"><value>يتطلب وصولًا مقيّدًا</value></data>
   <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>لن تُسجَّل أي أدلة لمصدر غير متاح.</value></data>
-  <data name="EvidenceCoverageStart" xml:space="preserve"><value>بداية التغطية (UTC)</value></data>
-  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>نهاية التغطية (UTC)</value></data>
-  <data name="EvidenceValidityTime" xml:space="preserve"><value>وقت الحادث لتحديد الصلاحية (UTC)</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>بداية التغطية</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>نهاية التغطية</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>وقت الحادث لتحديد الصلاحية</value></data>
   <data name="EvidencePersonnel" xml:space="preserve"><value>الأفراد</value></data>
   <data name="EvidenceMessages" xml:space="preserve"><value>الرسائل</value></data>
   <data name="EvidenceNoChoices" xml:space="preserve"><value>لا توجد عناصر متاحة في هذه الصفحة.</value></data>
@@ -2056,7 +2056,7 @@
   <data name="SubmissionNoIdentifier" xml:space="preserve"><value>لم يُسجَّل معرّف</value></data>
   <data name="SubmissionLatestIssue" xml:space="preserve"><value>آخر مشكلة</value></data>
   <data name="SubmissionExchangeHeader" xml:space="preserve"><value>سجل التسليم والاستجابة</value></data>
-  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>الأوقات بتوقيت UTC. تبقى الاستجابات السابقة متاحة بعد الرفض وإعادة المحاولة والتصحيح.</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>الأوقات بتوقيت التوقيت المحلي للقسم. تبقى الاستجابات السابقة متاحة بعد الرفض وإعادة المحاولة والتصحيح.</value></data>
   <data name="SubmissionNoExchanges" xml:space="preserve"><value>لم يُسجَّل سجل تبادل لهذا الإيداع القديم.</value></data>
   <data name="SubmissionOperation" xml:space="preserve"><value>العملية والمرحلة</value></data>
   <data name="SubmissionResponse" xml:space="preserve"><value>استجابة الوجهة</value></data>

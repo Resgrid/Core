@@ -12,7 +12,8 @@ namespace Resgrid.Services
     public static class WorkOrderCsvImport
     {
         // Stable interchange keys; presentation labels and examples are localized by the UI.
-        public const string Header = "Title,Description,Type,Priority,UnitId,GroupId,AssetId,Location,Currency,EstimatedCost,DueUtc,CostCenter";
+        public const string Header = "Title,Description,Type,Priority,UnitId,GroupId,AssetId,Location,EstimatedCost,DueUtc,CostCenter";
+        public const string LegacyHeader = "Title,Description,Type,Priority,UnitId,GroupId,AssetId,Location,Currency,EstimatedCost,DueUtc,CostCenter";
         public static WorkOrderBulkInput Parse(string text, string requestId)
         {
             if (text == null || Encoding.UTF8.GetByteCount(text) > 1024 * 1024) throw new WorkOrderException(400, "BulkCsvInvalid");
@@ -20,7 +21,8 @@ namespace Resgrid.Services
             reader.SetDelimiters(","); string[] headers;
             try { headers = reader.ReadFields(); } catch (MalformedLineException) { throw new WorkOrderException(400, "BulkCsvInvalid"); }
             if (headers?.Length > 0) headers[0] = headers[0].TrimStart('\uFEFF');
-            var keys = Header.Split(',');
+            var legacy = headers != null && headers.SequenceEqual(LegacyHeader.Split(','), StringComparer.OrdinalIgnoreCase);
+            var keys = (legacy ? LegacyHeader : Header).Split(',');
             if (headers == null || !headers.SequenceEqual(keys, StringComparer.OrdinalIgnoreCase)) throw new WorkOrderException(400, "BulkCsvInvalid");
             var result = new WorkOrderBulkInput { RequestId = requestId }; var rowNumber = 1;
             while (!reader.EndOfData)
@@ -30,11 +32,13 @@ namespace Resgrid.Services
                 try
                 {
                     var f = reader.ReadFields(); if (f?.Length != keys.Length) throw new FormatException();
+                    // Existing files remain importable; their currency column cannot override department settings.
+                    if (legacy) f = f.Where((_, index) => index != 8).ToArray();
                     int? Number(string v) => string.IsNullOrWhiteSpace(v) ? null : int.Parse(v, NumberStyles.None, CultureInfo.InvariantCulture);
                     row.Import = new WorkOrderInput { Type = string.IsNullOrWhiteSpace(f[2]) ? WorkOrderType.Corrective : (WorkOrderType)int.Parse(f[2], CultureInfo.InvariantCulture), Priority = string.IsNullOrWhiteSpace(f[3]) ? WorkOrderPriority.Normal : (WorkOrderPriority)int.Parse(f[3], CultureInfo.InvariantCulture),
                         TargetUnitId = Number(f[4]), TargetGroupId = Number(f[5]), InventoryAssetId = string.IsNullOrWhiteSpace(f[6]) ? null : f[6],
-                        DueOn = string.IsNullOrWhiteSpace(f[10]) ? null : DateTime.ParseExact(f[10], new[] { "yyyy-MM-ddTHH:mm:ss'Z'", "yyyy-MM-ddTHH:mm'Z'" }, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal),
-                        Content = new WorkOrderContent { Title = f[0], Description = f[1], LocationText = f[7], Currency = f[8], EstimatedCost = string.IsNullOrWhiteSpace(f[9]) ? null : decimal.Parse(f[9], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), CostCenter = f[11] } };
+                        DueOn = string.IsNullOrWhiteSpace(f[9]) ? null : DateTime.ParseExact(f[9], new[] { "yyyy-MM-ddTHH:mm:ss'Z'", "yyyy-MM-ddTHH:mm'Z'" }, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal),
+                        Content = new WorkOrderContent { Title = f[0], Description = f[1], LocationText = f[7], EstimatedCost = string.IsNullOrWhiteSpace(f[8]) ? null : decimal.Parse(f[8], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), CostCenter = f[10] } };
                 }
                 catch (Exception ex) when (ex is FormatException or OverflowException or MalformedLineException) { row.Import = null; row.ParseError = "BulkCsvInvalid"; }
             }

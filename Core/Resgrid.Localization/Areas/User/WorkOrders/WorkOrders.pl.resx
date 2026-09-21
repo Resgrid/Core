@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Termin odroczony</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Raporty konserwacji</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Historia serwisowa</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Utworzono od (UTC, włącznie)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Utworzono przed (UTC, bez tej chwili)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Obliczono o (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Utworzono od (włącznie)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Utworzono przed (bez tej chwili)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Obliczono o</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Wszystkie zlecenia pracy</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Otwarte zlecenia pracy</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Przeterminowane zlecenia pracy</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Wersja</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Ten raport jest za duży. Zawęź zakres dat lub filtry zasobów.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Wybierz prawidłowy zakres dat; raporty panelu obsługują do 366 dni.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Bieżący stan zleceń utworzonych w wybranym zakresie UTC. Otwarte obejmują prace zakończone oczekujące na zamknięcie. Średni czas naprawy biegnie od pierwszego rozpoczęcia do ostatniego zakończenia, wraz ze wstrzymaniami i ponownymi otwarciami; nieprawidłowe czasy są pomijane. Koszty są zaokrąglane dla każdego wpisu i rozdzielane według waluty; anulowane lub niewydane części są wykluczone. Nieznane koszty i dawne waluty robocizny pozostają nieznane; nie zakłada się kursów wymiany.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Bieżący stan zleceń utworzonych w wybranym zakresie. Otwarte obejmują prace zakończone oczekujące na zamknięcie. Średni czas naprawy biegnie od pierwszego rozpoczęcia do ostatniego zakończenia, wraz ze wstrzymaniami i ponownymi otwarciami; nieprawidłowe czasy są pomijane. Koszty są zaokrąglane dla każdego wpisu i rozdzielane według waluty; anulowane lub niewydane części są wykluczone. Nieznane koszty i dawne waluty robocizny pozostają nieznane; nie zakłada się kursów wymiany.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>Pełna historia serwisowa, chyba że wybrano daty. Każdy wiersz CSV odpowiada jednemu zleceniu i jednej walucie. Znane koszty nie obejmują anulowanych lub niewydanych części; brakujące ceny i dawne waluty robocizny są oznaczone jako nieznane.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Stan zlecenia w chwili zdarzenia, z niezmiennymi odwołaniami do wersji w manifeście. Uwzględnia wcześniejsze otwarte prace konserwacyjne; zakończone prace obejmują okres retrospektywny. Niemożliwy do odtworzenia stan historyczny jest oznaczony jako niedostępny.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Dni wolne (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Docelowy czas reakcji (minuty robocze)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Docelowy czas naprawy (minuty robocze)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Termin reakcji (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Termin naprawy (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Czas reakcji (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Termin reakcji</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Termin naprawy</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Czas reakcji</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Koszty dostawców</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Dodaj koszt dostawcy</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Anuluj koszt</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Przekroczono docelowy termin zlecenia pracy</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Zmieniono koszt dostawcy w zleceniu pracy</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Zmieniono zasady operacyjne zleceń pracy</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Termin reakcji (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Termin naprawy (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Termin reakcji</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Termin naprawy</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Zgłaszaj naprawy, śledź wykonawców i sprawdzaj koszty utrzymania.</value></data>
   <data name="Close" xml:space="preserve"><value>Zamknij</value></data>
   <data name="Continue" xml:space="preserve"><value>Dalej</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Do kogo trafia wygenerowane zlecenie i do kogo jest eskalowane, gdy nikt go nie podejmie.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Steruje oznaczeniem opóźnienia i zegarem poziomu usług.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>Kroki, które wykonuje technik. Niektóre zmiany statusu wymagają ukończenia wszystkich.</value></data>
+  <data name="Users" xml:space="preserve"><value>Użytkownicy</value></data>
+  <data name="Roles" xml:space="preserve"><value>Role</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Wybierz jednego lub więcej użytkowników i/lub ról. Przytrzymaj Ctrl (Windows) lub Command (Mac), aby wybrać wiele pozycji. Każdy wybrany użytkownik lub członek wybranej roli może przyjąć zlecenie pracy.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Ustawienia zleceń pracy</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Skonfiguruj raz dla jednostki walutę, zatwierdzanie wydatków, godziny pracy, dni wolne i cele obsługi.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Walutą zarządza się w ustawieniach zleceń pracy. Istniejące zlecenia zachowują zapisaną walutę.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Dotyczy nowych zleceń i ich opłat dostawców. Istniejące koszty i progi zatwierdzania zachowują pierwotną walutę. Jeśli szablon konserwacji używa innej waluty, szacowany koszt nowych zleceń pozostaje pusty do sprawdzenia.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Wprowadź próg zatwierdzania w wybranej powyżej walucie jednostki. Progi istniejących zleceń w innych walutach zostają zachowane.</value></data>
 </root>

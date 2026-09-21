@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsRatesView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["AnnualRates"];
     ViewData["Title"] = localizer["AnnualRates"].Value;
     ViewData["Subtitle"] = localizer["RatesIntro"].Value;
@@ -9,26 +10,30 @@
     ViewData["MarsCanReconcile"] = Model.CanReconcile;
     var types = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsSubmissionTypes>();
     var years = Model.Profiles.Select(p => p.SubmissionYear).Distinct().OrderByDescending(y => y).ToList();
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (Model.IsManager)
+        {
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-success dropdown-toggle"><i class="fa fa-plus"></i> @localizer["NewSubmission"] <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    @foreach (var t in types) { <li><a asp-action="Rate" asp-route-type="@((int)t)">@localizer["SubmissionType" + t]</a></li> }
+                </ul>
+            </div>
+
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["AnnualRates"]</h5>
-            @if (Model.IsManager)
-            {
-                <div class="ibox-tools">
-                    <div class="btn-group">
-                        <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle"><i class="fa fa-plus"></i> @localizer["NewSubmission"] <span class="caret"></span></button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            @foreach (var t in types) { <li><a asp-action="Rate" asp-route-type="@((int)t)">@localizer["SubmissionType" + t]</a></li> }
-                        </ul>
-                    </div>
-                </div>
-            }
+
         </div>
         <div class="ibox-content">
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpRates"]</div>
@@ -50,7 +55,7 @@
                                 <td>@localizer["RateStatus" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses)p.Status]</td>
                                 <td>@(p.EffectiveOn?.ToString("yyyy-MM-dd") ?? "—") → @(p.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")</td>
                                 <td>@(p.AdministrativeRateMethod == (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsAdministrativeRateMethods.None ? "—" : $"{p.AdministrativeRateValue:0.##} % ({localizer["AdminMethod" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsAdministrativeRateMethods)p.AdministrativeRateMethod]})")</td>
-                                <td>@(p.SignedOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                <td>@(departmentTime.Date(p.SignedOn) ?? "—")</td>
                                 <td>@(p.ObservedExternalStatus ?? "—")</td>
                                 <td class="text-right">@if (Model.IsManager) { <a asp-action="Rate" asp-route-id="@p.CalOesMarsRateProfileId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a> }</td>
                             </tr>
@@ -61,3 +66,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

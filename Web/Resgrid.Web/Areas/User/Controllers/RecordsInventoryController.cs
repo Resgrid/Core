@@ -20,6 +20,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_Create)]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordsInventoryController : SecureBaseController
 	{
 		private readonly IRmsInventoryUsageAdapter _usage;

@@ -1,3 +1,4 @@
+@{ var departmentTime = DepartmentTime.From(ViewData); }
 @model (string DeploymentId, string TimeReportId, string Currency)
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
 <form method="post" asp-controller="Deployments" asp-action="SaveExpense" asp-route-area="User" enctype="multipart/form-data" class="form-horizontal">
@@ -5,7 +6,7 @@
     <input type="hidden" name="DeploymentId" value="@Model.DeploymentId" />
     <input type="hidden" name="DeploymentTimeReportId" value="@Model.TimeReportId" />
     <div class="form-group">
-        <label class="col-sm-2 control-label">@localizer["ExpenseDate"]</label><div class="col-sm-2"><input type="date" name="ExpenseDate" class="form-control input-sm" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required /></div>
+        <label class="col-sm-2 control-label">@localizer["ExpenseDate"]</label><div class="col-sm-2"><input type="date" name="ExpenseDate" class="form-control input-sm" value="@departmentTime.Today.ToString("yyyy-MM-dd")" required /></div>
         <label class="col-sm-1 control-label">@localizer["Type"]</label><div class="col-sm-3">
             <select name="ExpenseType" class="form-control input-sm">
                 @foreach (Resgrid.Model.Invoicing.DeploymentExpenseTypes type in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentExpenseTypes))) { <option value="@((int)type)">@localizer["Expense" + type]</option> }

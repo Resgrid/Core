@@ -31,14 +31,20 @@ namespace Resgrid.Services
         {
             if (!string.IsNullOrEmpty(row.Content)) return row;
             WorkOrderContent fields;
-            if (row.SourceType == 2 && row.RecurrenceVersionId.HasValue)
+            if (row.SourceType == 2 && row.RecurrenceVersionId != null)
             {
-                var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, row.RecurrenceVersionId.Value));
+                var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, row.RecurrenceVersionId));
                 var settings = Decode<WorkOrderRecurrenceInput>(version.Content);
                 fields = settings?.Template?.Content ?? throw new WorkOrderException(409, "MaintenanceUnavailable");
             }
             else if (row.SourceType == 1 && row.SourceChecklistCompletionId != null) fields = new WorkOrderContent { Title = MaintenanceText("GeneratedFailureTitle"), SafetyCritical = true };
             else throw new WorkOrderException(409, "MaintenanceUnavailable");
+            if (row.CurrencyCode != null && fields.Currency != row.CurrencyCode)
+            {
+                // A changed department denomination must not relabel a template's old quote.
+                fields.Currency = row.CurrencyCode;
+                fields.EstimatedCost = null; fields.ApprovedCost = null; fields.Approval = null;
+            }
             // An attended projection only. First mutation seals a row-specific copy with its numeric AAD.
             row.Content = JsonConvert.SerializeObject(new StoredContent { Fields = fields }); return row;
         }
@@ -98,7 +104,7 @@ namespace Resgrid.Services
             catch { _uow.DiscardChanges(); throw; }
             await _outbox.DispatchAfterCommitAsync(events); return events;
         }
-        private async Task ProcessFailureAsync(int departmentId, int intentId, WorkOrderMaintenanceSweep result)
+        private async Task ProcessFailureAsync(int departmentId, string intentId, WorkOrderMaintenanceSweep result)
         {
             await WorkerTransactionAsync(departmentId, async events =>
             {
@@ -118,6 +124,7 @@ namespace Resgrid.Services
                     order.RequestId = request; order.NumberYear = Now.Year; order.NumberSequence = await _store.NextNumberAsync(departmentId, order.NumberYear);
                     order.SourceType = 1; order.SourceChecklistCompletionId = intent.CompletionId; order.SourceChecklistItemId = intent.ItemId; order.SourceOccurrenceId = intent.OccurrenceId;
                     order.Priority = intent.Priority; order.TargetUnitId = target.TargetUnitId; order.TargetGroupId = target.TargetGroupId; order.InventoryAssetId = target.InventoryAssetId;
+                    order.CurrencyCode = await DepartmentCurrencyAsync(departmentId);
                     await PinSlaAsync(order); await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order); await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events); result.Generated++;
                 }
                 if (intent.HoldUnit && order.TargetUnitId.HasValue) { await CreateHoldAsync(owner, order, true, null, events, true); result.Held++; }
@@ -125,12 +132,12 @@ namespace Resgrid.Services
                 intent.WorkOrderId = order.Id; intent.ProcessedOn = Now; intent.UpdatedOn = Now; intent.Revision++; await _store.WriteAsync(intent);
             });
         }
-        public async Task<List<WorkOrderHoldView>> HoldsAsync(ChecklistActor actor, int orderId)
+        public async Task<List<WorkOrderHoldView>> HoldsAsync(ChecklistActor actor, string orderId)
         {
             RequireMaintenanceStore(); await ReadOrderAsync(actor, orderId);
             return (await ChildrenAsync<WorkOrderSafetyHold>(actor, orderId)).Select(h => new WorkOrderHoldView { Hold = h, Content = Decode<WorkOrderHoldContent>(h.Content) }).ToList();
         }
-        public async Task AddHoldAsync(ChecklistActor actor, int orderId, WorkOrderHoldInput input)
+        public async Task AddHoldAsync(ChecklistActor actor, string orderId, WorkOrderHoldInput input)
         {
             if (input == null || !input.Unit && !input.Asset) throw new WorkOrderException(400, "InvalidInput");
             Text(input.Reason, 4000, true); RequireMaintenanceStore();
@@ -172,7 +179,7 @@ namespace Resgrid.Services
             else { hold.Content = JsonConvert.SerializeObject(new WorkOrderHoldContent { Reason = reason }); await SaveAsync(actor, hold, true); }
             await MaintenanceEventAsync(order, WorkflowTriggerEventType.WorkOrderSafetyHoldApplied, events, holdId: hold.Id);
         }
-        public async Task ReleaseHoldAsync(ChecklistActor actor, int holdId, WorkOrderReleaseInput input)
+        public async Task ReleaseHoldAsync(ChecklistActor actor, string holdId, WorkOrderReleaseInput input)
         {
             if (input == null) throw new WorkOrderException(400, "InvalidInput");
             Text(input.Evidence, 4000, true); Text(input.Qualification, 2000, true); RequireMaintenanceStore();
@@ -180,7 +187,7 @@ namespace Resgrid.Services
             {
                 var hold = await _store.GetAsync<WorkOrderSafetyHold>(actor.DepartmentId, holdId);
                 if (hold?.WorkOrderId == null) throw new WorkOrderException(404, "Unavailable");
-                var order = await ReadOrderAsync(actor, hold.WorkOrderId.Value); await RevealAsync(actor, hold); Revision(hold, input.Revision);
+                var order = await ReadOrderAsync(actor, hold.WorkOrderId); await RevealAsync(actor, hold); Revision(hold, input.Revision);
                 if (hold.ReleasedOn.HasValue || !await _authorization.CanManageAsync(actor, order.TargetGroupId)) throw new WorkOrderException(409, "PermissionRequired");
                 if (actor.UserId == order.CompletedBy || actor.UserId == hold.CreatedBy) throw new WorkOrderException(403, "IndependentReleaseRequired");
                 var others = (await _maintenance.ActiveHoldsAsync(actor.DepartmentId, hold.UnitId, hold.AssetId)).Where(h => h.Id != hold.Id).ToList();
@@ -204,7 +211,7 @@ namespace Resgrid.Services
                 await MaintenanceEventAsync(order, WorkflowTriggerEventType.WorkOrderSafetyHoldReleased, events, holdId: hold.Id); return true;
             }, safetyRelease: true);
         }
-        private async Task MaintenanceEventAsync(WorkOrder order, WorkflowTriggerEventType trigger, List<long> events, int? holdId = null, int? recurrenceId = null)
+        private async Task MaintenanceEventAsync(WorkOrder order, WorkflowTriggerEventType trigger, List<long> events, string holdId = null, string recurrenceId = null)
         {
             var entry = await _outbox.EnqueueAsync(order.DepartmentId, "WorkOrders", new DomainEventEnvelope { EventName = trigger.ToString(), AggregateType = "WorkOrder", AggregateId = Key(order), AggregateVersion = order.Revision, Trigger = trigger, OccurredOn = Now,
                 Payload = new { WorkOrderId = order.Id, order.Revision, order.Status, order.Priority, order.TargetUnitId, order.TargetGroupId, order.InventoryAssetId, order.AssignedToRoleId, order.DueOn, HoldId = holdId, RecurrenceId = recurrenceId } });

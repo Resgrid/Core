@@ -744,4 +744,6 @@
   <data name="ChatAccountsBack" xml:space="preserve"><value>Powrót do profilu</value></data>
   <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Kod łączenia jest gotowy.</value></data>
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>W Discord użyj /resgrid i wpisz LINK oraz kod w opcji message. Kolejne polecenia również wysyłaj przez /resgrid.</value></data>
+  <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Kadry i zarządzanie</value></data>
+  <data name="NavigationReadiness" xml:space="preserve"><value>Gotowość</value></data>
 </root>

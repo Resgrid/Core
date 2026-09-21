@@ -7,6 +7,7 @@
     its own steps and the review after them. Field names are unchanged.
 *@
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var choices = (WorkOrderChoices)ViewData["Choices"];
     var canManage = (bool)ViewData["CanManage"];
     var isRecurrence = ViewData["Recurrence"] as bool? == true;
@@ -47,19 +48,19 @@
         @if (!isRecurrence)
         {
             <div class="form-group">
-                <label asp-for="DueOn">@localizer["DueOn"] (UTC)</label>
+                <label asp-for="DueOn">@localizer["DueOn"]</label>
                 @if (Model.Revision > 0)
                 {
                     @* A saved order changes its due date through a deferral, and the service rejects an
                        edit whose DueOn differs from the stored value by even a tick. datetime-local
                        cannot carry that precision (the browser blanks anything past milliseconds), so
                        the exact value posts from a hidden field and the visible one is display only. *@
-                    <input type="hidden" name="@Html.NameFor(m => m.DueOn)" id="@(Html.IdFor(m => m.DueOn) + "_Value")" value="@Model.DueOn?.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")" />
-                    <input class="form-control" id="@Html.IdFor(m => m.DueOn)" type="datetime-local" value="@Model.DueOn?.ToString("yyyy-MM-ddTHH:mm:ss")" step="1" readonly />
+                    <input type="hidden" name="@Html.NameFor(m => m.DueOn)" id="@(Html.IdFor(m => m.DueOn) + "_Value")" value="@(Model.DueOn.HasValue ? DateTime.SpecifyKind(Model.DueOn.Value, DateTimeKind.Utc).ToString("O") : null)" />
+                    <input class="form-control" id="@Html.IdFor(m => m.DueOn)" type="datetime-local" value="@departmentTime.Input(Model.DueOn)" step="0.001" readonly />
                 }
                 else
                 {
-                    <input asp-for="DueOn" class="form-control" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" step="1" />
+                    <input asp-for="DueOn" class="form-control" type="datetime-local" value="@departmentTime.Input(Model.DueOn)" step="0.001" />
                 }
                 <span class="help-block">@localizer["HelpFieldDueOn"]</span>
             </div>
@@ -120,8 +121,9 @@
     <p class="text-muted">@localizer["StepOrderCostHint"]</p>
     <div class="rgw-grid">
         <div class="form-group">
-            <label asp-for="Content.Currency">@localizer["Currency"]</label>
-            <input asp-for="Content.Currency" class="form-control" maxlength="3" pattern="[A-Z]{3}" required />
+            <label>@localizer["Currency"]</label>
+            <p class="form-control-static">@Model.Content.Currency</p>
+            <p class="help-block">@localizer["DepartmentCurrencyHelp"]</p>
         </div>
         <div class="form-group">
             <label asp-for="Content.EstimatedCost">@localizer["EstimatedCost"]</label>

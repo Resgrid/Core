@@ -11,12 +11,12 @@
     var kinds = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsDocumentKinds>();
     var methods = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsCompensationMethods>();
     var overtime = Enum.GetValues<Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsOvertimeMethods>();
-    var today = DateTime.UtcNow;
+    var today = DepartmentTime.From(ViewData).Today;
 }
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">
@@ -91,3 +91,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

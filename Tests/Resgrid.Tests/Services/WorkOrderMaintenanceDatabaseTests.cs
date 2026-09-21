@@ -17,6 +17,26 @@ namespace Resgrid.Tests.Services
 {
     public partial class WorkOrderDatabaseTests
     {
+        [Test, Order(10)]
+        public async Task Multiple_assignees_persist_and_scope_lists_and_reports_before_paging()
+        {
+            using var uow = new UnitOfWork(Connections()); var store = Orders(uow);
+            await uow.CreateOrGetConnectionAsync();
+            var row = await Insert(store);
+            row.AssignedToUserIds = new() { "first", "backup" }; row.AssignedToRoleIds = new() { 801, 802 };
+            await store.WriteAsync(row); uow.CommitChanges();
+            var loaded = await store.GetAsync<WorkOrder>(77, row.Id);
+            loaded.AssignedToUserIds.Should().Equal("first", "backup"); loaded.AssignedToRoleIds.Should().Equal(801, 802);
+            foreach (var scope in new[] { new WorkOrderReadScope { UserId = "backup" }, new WorkOrderReadScope { UserId = "role-backup", RoleIds = new[] { 802 } } })
+            {
+                (await store.ListAsync(77, scope, new WorkOrderFilter { AssignedToMe = true })).Should().Contain(o => o.Id == row.Id);
+                (await store.ReportOrdersAsync(77, scope, new WorkOrderReportQuery(), 500)).Should().Contain(o => o.Id == row.Id);
+                (await store.ListAsync(88, scope, new WorkOrderFilter())).Should().NotContain(o => o.Id == row.Id);
+            }
+            (await store.ListAsync(77, new WorkOrderReadScope { UserId = "outsider" }, new WorkOrderFilter())).Should().NotContain(o => o.Id == row.Id);
+            await uow.CreateOrGetConnectionAsync(); row.AssignedToUserIdsJson = row.AssignedToRoleIdsJson = null; await store.WriteAsync(row); uow.CommitChanges();
+        }
+
         [Test, Order(1)]
         public async Task Recurrence_rollback_refuses_to_destroy_a_manual_orders_original_due()
         {
@@ -71,7 +91,7 @@ namespace Resgrid.Tests.Services
             await repository.AllocateAsync(intent);
             var part = new WorkOrderPart { DepartmentId=77, WorkOrderId=order.Id, CreatedBy="actor", CreatedOn=DateTime.UtcNow, UpdatedOn=DateTime.UtcNow };
             await repository.AllocateAsync(part); owner.CommitChanges();
-            await owner.CreateOrGetConnectionAsync(); intent.Id=0;
+            await owner.CreateOrGetConnectionAsync(); intent.Id="00000000-0000-0000-0000-000000000000";
             await FluentActions.Awaiting(() => repository.AllocateAsync(intent)).Should().ThrowAsync<DbException>(); owner.DiscardChanges();
             await using var db = Connect(_connection);
             await FluentActions.Awaiting(() => db.ExecuteAsync($"INSERT INTO {Q("InventoryTransactions")} ({Q("Id")},{Q("DepartmentId")},{Q("WorkOrderPartId")}) VALUES(@id,88,@part)",new {id=Guid.NewGuid().ToString("D"),part=part.Id})).Should().ThrowAsync<DbException>();

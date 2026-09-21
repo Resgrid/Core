@@ -49,7 +49,7 @@ namespace Resgrid.Tests.Services
 		private static readonly Dictionary<string, string[]> SharedSpellings = new Dictionary<string, string[]>
 		{
 			["de"] = new[] { "Status", "ReadinessPro", "PriorityNormal" },
-			["es"] = new[] { "ReadinessPro", "PriorityNormal" },
+			["es"] = new[] { "ReadinessPro", "PriorityNormal", "Roles" },
 			["fr"] = new[] { "Type", "Description", "Cause", "Note", "Actions", "ReadinessPro", "TypeInspection" },
 			["it"] = new[] { "File", "ReadinessPro" },
 			["pl"] = new[] { "ReadinessPro" },

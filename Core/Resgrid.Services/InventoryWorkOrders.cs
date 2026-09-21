@@ -10,7 +10,7 @@ namespace Resgrid.Services
 {
     public sealed partial class InventoryModernizationService
     {
-        public async Task CancelPendingPartAsync(InventoryActor actor, int partId, string operationId)
+        public async Task CancelPendingPartAsync(InventoryActor actor, string partId, string operationId)
         {
             if (_uow.Transaction == null) throw new InvalidOperationException("The source transaction owns cancellation.");
             await _store.LockDepartmentAsync(actor.DepartmentId);
@@ -22,7 +22,7 @@ namespace Resgrid.Services
             await RequireCommandAccessAsync(actor, receipt.PendingCommand, joined: true);
             operation.State = 3; await SaveAsync(actor, operation, false);
         }
-        public async Task<InventoryResult> PostPartAsync(InventoryActor actor, int partId, InventoryCommand command)
+        public async Task<InventoryResult> PostPartAsync(InventoryActor actor, string partId, InventoryCommand command)
         {
             if (_uow.Transaction == null || _workOrders == null || _maintenanceOrders == null || _readinessAccess == null) throw new InvalidOperationException("Work-order inventory requires its source transaction.");
             await _store.LockDepartmentAsync(actor.DepartmentId);
@@ -42,17 +42,17 @@ namespace Resgrid.Services
         }
         private async Task RequireWorkOrderPartAsync(InventoryActor actor, InventoryPosting line)
         {
-            if (!line.WorkOrderPartId.HasValue || _workOrders == null || _workOrderAuthorization == null || _readinessAccess == null) throw new InventoryException(400, "ReferenceUnavailable");
+            if (line.WorkOrderPartId == null || _workOrders == null || _workOrderAuthorization == null || _readinessAccess == null) throw new InventoryException(400, "ReferenceUnavailable");
             if (!await _readinessAccess.CanUseMaintenanceAsync(actor.DepartmentId)) throw new InventoryException(402, "ReadinessProRequired");
-            var part = await _workOrders.GetAsync<WorkOrderPart>(actor.DepartmentId, line.WorkOrderPartId.Value);
-            if (part?.WorkOrderId?.ToString(System.Globalization.CultureInfo.InvariantCulture) != line.ReferenceId || part.InventoryItemId != line.ItemId || part.VoidedOn.HasValue) throw new InventoryException(409, "ReferenceUnavailable");
+            var part = await _workOrders.GetAsync<WorkOrderPart>(actor.DepartmentId, line.WorkOrderPartId);
+            if (part?.WorkOrderId != line.ReferenceId || part.InventoryItemId != line.ItemId || part.VoidedOn.HasValue) throw new InventoryException(409, "ReferenceUnavailable");
             if (part.Staged) await ValidatePartMovementAsync(actor.DepartmentId, line);
-            else if (line.WorkOrderPartMovementId.HasValue || line.ReversesTransactionId == null && part.InventoryTransactionId != null || line.ReversesTransactionId != null && part.InventoryTransactionId != line.ReversesTransactionId) throw new InventoryException(409, "ReferenceUnavailable");
-            var order = await _workOrders.GetAsync<WorkOrder>(actor.DepartmentId, part.WorkOrderId.Value);
+            else if (line.WorkOrderPartMovementId != null || line.ReversesTransactionId == null && part.InventoryTransactionId != null || line.ReversesTransactionId != null && part.InventoryTransactionId != line.ReversesTransactionId) throw new InventoryException(409, "ReferenceUnavailable");
+            var order = await _workOrders.GetAsync<WorkOrder>(actor.DepartmentId, part.WorkOrderId);
             var principal = new ChecklistActor { DepartmentId = actor.DepartmentId, UserId = actor.UserId, GrantToken = actor.GrantToken };
             if (order == null || order.Status >= 5 || !await _workOrderAuthorization.Value.CanContributeAsync(principal, order)) throw new InventoryException(409, "ReferenceClosed");
         }
-        public async Task<WorkOrderAssetState> ApplyHoldAsync(InventoryActor actor, int orderId, string assetId, int? restoreState = null, int? expectedRevision = null, bool safetyRelease = false)
+        public async Task<WorkOrderAssetState> ApplyHoldAsync(InventoryActor actor, string orderId, string assetId, int? restoreState = null, int? expectedRevision = null, bool safetyRelease = false)
         {
             if (_uow.Transaction == null || _maintenanceOrders == null || _workOrders == null || _workOrderAuthorization == null) throw new InvalidOperationException("Safety changes require the work-order transaction.");
             await _store.LockDepartmentAsync(actor.DepartmentId);
@@ -86,7 +86,7 @@ namespace Resgrid.Services
             var ledger = New<InventoryTransaction>(actor); ledger.ItemId = asset.ItemId; ledger.AssetId = asset.Id; ledger.LotId = asset.LotId;
             ledger.TransactionType = (int)InventoryTransactionType.StatusChange; ledger.OldStatus = old; ledger.NewStatus = asset.Status;
             ledger.FromLocationId = asset.CurrentLocationId; ledger.ToLocationId = asset.CurrentLocationId; ledger.OccurredOn = Now;
-            ledger.ReferenceType = (int)InventoryReferenceType.WorkOrder; ledger.ReferenceId = orderId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            ledger.ReferenceType = (int)InventoryReferenceType.WorkOrder; ledger.ReferenceId = orderId;
             await _store.InsertAsync(ledger);
             var events = new System.Collections.Generic.List<long>(); await EventAsync(ledger, WorkflowTriggerEventType.InventoryAssetStatusChanged, events);
             return new WorkOrderAssetState { State = old, Revision = asset.Revision, OutboxIds = events };

@@ -28,6 +28,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// administrators as the fallback (plan D8). Protected values read REDACTED without a grant.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(12 * 1024 * 1024)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class CertificationsController : SecureBaseController
 	{
 		private static readonly string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt", "xls", "xlsx" };
@@ -554,7 +555,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				HolderName = names.TryGetValue(record.UserId, out var holder) ? holder : record.UserId,
 				VerifiedByName = record.VerifiedByUserId != null && names.TryGetValue(record.VerifiedByUserId, out var verifier) ? verifier : record.VerifiedByUserId,
 				Credits = await _certifications.GetCertificationCreditsAsync(id),
-				DaysUntilExpiry = CertificationRequirementEvaluator.DaysUntilExpiry(record.ExpiresOn, type?.NeverExpires == true, DateTime.UtcNow.Date)
+				DaysUntilExpiry = CertificationRequirementEvaluator.DaysUntilExpiry(record.ExpiresOn, type?.NeverExpires == true, Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today)
 			});
 			return View(view);
 		}
@@ -621,7 +622,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				await _certifications.AddCertificationCreditAsync(new PersonnelCertificationCredit
 				{
-					PersonnelCertificationId = input.PersonnelCertificationId, DepartmentId = DepartmentId, CreditDate = input.CreditDate ?? DateTime.UtcNow.Date, Hours = input.Hours,
+					PersonnelCertificationId = input.PersonnelCertificationId, DepartmentId = DepartmentId, CreditDate = input.CreditDate ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, Hours = input.Hours,
 					Category = input.Category, Description = input.Description, Data = upload.Data, FileName = upload.FileName, FileType = upload.FileType
 				}, UserId, cancellationToken);
 				return Saved(nameof(Record), new { id = input.PersonnelCertificationId });

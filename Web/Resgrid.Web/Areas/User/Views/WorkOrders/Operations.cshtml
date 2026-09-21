@@ -7,6 +7,7 @@
     opens in a dialog rather than sitting inline in a table cell.
 *@
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var d = Model.Detail;
     var id = d.Order.Id;
     var c = d.Input.Content;
@@ -18,32 +19,36 @@
     ViewData["ParentId"] = id.ToString();
     ViewData["CanWrite"] = d.CanWrite;
     var staged = d.Parts.Where(p => p.Staged).ToList();
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <div class="work-order-protected">
+            <a class="btn btn-default" asp-action="Detail" asp-route-id="@id"><i class="fa fa-arrow-left"></i> @d.Order.Number</a>
+
+        </div>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["Operations"] &middot; @d.Order.Title</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="work-order-protected">
                 <div class="alert alert-danger work-order-error" hidden role="alert"></div>
 
-                <div class="rgw-toolbar">
-                    <a class="btn btn-default btn-sm" asp-action="Detail" asp-route-id="@id"><i class="fa fa-arrow-left"></i> @d.Order.Number</a>
-                </div>
-
                 <div class="row">
                     <div class="col-lg-4 col-md-6">
                         <div class="ibox"><div class="ibox-title"><h5>@localizer["ResponseDue"]</h5></div>
-                            <div class="ibox-content"><h3 class="no-margins">@d.ResponseDueOn?.ToString("u")</h3><small>@localizer["RespondedOn"]: @d.ResponseOn?.ToString("u")</small></div></div>
+                            <div class="ibox-content"><h3 class="no-margins">@departmentTime.Format(d.ResponseDueOn)</h3><small>@localizer["RespondedOn"]: @departmentTime.Format(d.ResponseOn)</small></div></div>
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <div class="ibox"><div class="ibox-title"><h5>@localizer["RepairDue"]</h5></div>
-                            <div class="ibox-content"><h3 class="no-margins">@d.RepairDueOn?.ToString("u")</h3></div></div>
+                            <div class="ibox-content"><h3 class="no-margins">@departmentTime.Format(d.RepairDueOn)</h3></div></div>
                     </div>
                 </div>
 
@@ -183,7 +188,7 @@
                                         <td>@movement.PartId</td>
                                         <td><span class="label">@localizer["PartMovement" + (WorkOrderPartMovementKind)movement.Kind]</span></td>
                                         <td class="text-right">@movement.Quantity</td>
-                                        <td>@movement.CreatedOn.ToString("u")</td>
+                                        <td>@departmentTime.Format(movement.CreatedOn)</td>
                                         <td>
                                             <span class="label @(movement.Cancelled ? "label-danger" : pending ? "label-warning" : "label-success")">
                                                 @localizer[movement.Cancelled ? "StatusCancelled" : pending ? "InventoryWitnessPending" : "Done"]
@@ -313,8 +318,8 @@
                                                 <input id="charge-invoice" name="Content.InvoiceReference" class="form-control" maxlength="200" required />
                                             </div>
                                             <div class="form-group">
-                                                <label for="charge-currency">@localizer["Currency"]</label>
-                                                <input id="charge-currency" name="Content.Currency" value="@c.Currency" class="form-control" pattern="[A-Z]{3}" maxlength="3" required />
+                                                <label>@localizer["Currency"]</label>
+                                                <p class="form-control-static">@c.Currency</p>
                                             </div>
                                             <div class="form-group">
                                                 <label for="charge-amount">@localizer["TotalCost"]</label>
@@ -511,5 +516,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_Scripts") }

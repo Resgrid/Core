@@ -16,7 +16,7 @@
         tabs.Add(("Settings", "fa-cog", localizer["BillingSettings"].Value));
     }
 }
-<ul class="nav nav-tabs m-b-md">
+<ul class="nav nav-pills rgw-module-tabs">
     @foreach (var tab in tabs)
     {
         <li class="nav-item @(current == tab.Action ? "active" : null)">

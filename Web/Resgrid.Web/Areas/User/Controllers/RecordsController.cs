@@ -34,6 +34,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// through IRecordsAuthorizationService on every read, never inferred from a list.
 	/// </summary>
 	[Area("User")]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordsController : SecureBaseController
 	{
 		private readonly IRecordsService _recordsService;
@@ -149,9 +150,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanEditRecord(aggregate.Record)) return Forbid();
 			model.DefinitionKey = aggregate.Record.DefinitionKey;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+            var definitionVersion = aggregate.Record.RecordType == null ? aggregate.DefinitionVersionRow ?? await _definitions.GetVersionAsync(DepartmentId, aggregate.Record.DefinitionKey, aggregate.Record.DefinitionVersion) : null;
 			try
 			{
-				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, model.RecordId, model.RowVersion, BuildInput(model), cancellationToken);
+				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, model.RecordId, model.RowVersion, BuildInput(model, definitionVersion?.Schema), cancellationToken);
 				return Json(new { rowVersion = saved.Record.RowVersion });
 			}
 			catch (RecordConcurrencyException) { return Conflict(new { error = "This draft changed elsewhere. Reload it before saving again; your unsaved text remains in this form." }); }
@@ -409,7 +411,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var aggregate = await _recordsService.CreateDraftAsync(DepartmentId, UserId, BuildInput(model), cancellationToken);
+				var aggregate = await _recordsService.CreateDraftAsync(DepartmentId, UserId, BuildInput(model, definitionVersion?.Schema), cancellationToken);
 				await SaveUploadsAsync(aggregate.Record.RmsOperationalRecordId, files, cancellationToken, model.AttachmentClassification);
 
 				if (model.FinalizeAfterSave && model.CanFinalize)
@@ -565,7 +567,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, model.RecordId, model.RowVersion, BuildInput(model), cancellationToken);
+				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, model.RecordId, model.RowVersion, BuildInput(model, definitionVersion?.Schema), cancellationToken);
 				await SaveUploadsAsync(model.RecordId, files, cancellationToken, model.AttachmentClassification);
 
 				if (model.FinalizeAfterSave && model.CanFinalize)
@@ -1370,13 +1372,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				|| (record.AmendsRevisionId != null && ClaimsAuthorizationHelper.CanAmendRecords());
 		}
 
-		private RecordDraftInput BuildInput(RecordEditView model)
+		private RecordDraftInput BuildInput(RecordEditView model, RecordDefinitionSchema schema = null)
 		{
 			var department = model.Department;
+            var time = new DepartmentTime(department);
 			return new RecordDraftInput
 			{
 				CustomFields = model.CustomFields,
-				Values = model.Values ?? new List<RecordValueInput>(),
+				Values = (model.Values ?? new List<RecordValueInput>()).Select(v => time.RecordInput(v, schema)).ToList(),
 				DefinitionKey = model.DefinitionKey,
 				CallId = model.CallId,
 				StationGroupId = model.StationGroupId,
@@ -1426,10 +1429,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!local.HasValue || local.Value == DateTime.MinValue)
 				return null;
-			if (department == null || string.IsNullOrWhiteSpace(department.TimeZone))
-				return DateTime.SpecifyKind(local.Value, DateTimeKind.Utc);
-
-			return DateTimeHelpers.ConvertToUtc(local.Value, department.TimeZone, true);
+			return new Resgrid.Web.Helpers.DepartmentTime(department).ToUtc(local.Value);
 		}
 
 		public static List<RecordParticipantInput> BuildParticipantInput(RecordEditView model) => model.ParticipantRows != null

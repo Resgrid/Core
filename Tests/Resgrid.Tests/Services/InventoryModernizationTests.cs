@@ -421,7 +421,7 @@ namespace Resgrid.Tests.Services
 		[TestCase(true)]
 		public async Task Work_order_closure_preserves_authorized_retries_but_blocks_new_movements(bool joined)
 		{
-			var order = new WorkOrder { Id = 31, DepartmentId = Department, Status = (int)WorkOrderStatus.InProgress };
+			var order = new WorkOrder { Id = "00000000-0000-0000-0000-000000000031", DepartmentId = Department, Status = (int)WorkOrderStatus.InProgress };
 			_workOrders.Setup(s => s.GetAsync<WorkOrder>(Department, order.Id, false)).ReturnsAsync(() => order);
 			_workOrderAuth.Setup(a => a.CanContributeAsync(It.IsAny<ChecklistActor>(), order)).ReturnsAsync(true);
 			var item = Item(); var location = Location(); var command = Receive(item, location, 2);

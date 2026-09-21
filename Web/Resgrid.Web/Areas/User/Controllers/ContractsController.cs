@@ -28,6 +28,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// default) edits. Contracts and compliance documents are customer-facing and not under Advanced Data Protection.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(32 * 1024 * 1024)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class ContractsController : SecureBaseController
 	{
 		private static readonly string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt", "xls", "xlsx", "csv", "heic" };
@@ -140,7 +141,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> New(string contactId = null)
 		{
 			if (!CanManage) return Unauthorized();
-			var view = Page(new ContractEditView { Contract = new ServiceContract { DepartmentId = DepartmentId, ContactId = contactId, StartOn = DateTime.UtcNow.Date, TermsNetDays = 30 } });
+			var view = Page(new ContractEditView { Contract = new ServiceContract { DepartmentId = DepartmentId, ContactId = contactId, StartOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, TermsNetDays = 30 } });
 			await FillLookupsAsync(view);
 			return View("Edit", view);
 		}

@@ -90,11 +90,11 @@ namespace Resgrid.Tests.Services
         [Test]
         public void Operations_CSV_preserves_quoted_text_and_reports_bad_dates_and_columns_per_row()
         {
-            var csv=WorkOrderCsvImport.Header+"\n\"Valve, pump\",\"Line one\nLine two\",0,1,,,,,USD,12.50,,,,\nBroken,,0,1,,,,,USD,2,not-a-date,,\nToo,few";
+            var csv=WorkOrderCsvImport.LegacyHeader+"\n\"Valve, pump\",\"Line one\nLine two\",0,1,,,,,USD,12.50,,,,\nBroken,,0,1,,,,,USD,2,not-a-date,,\nToo,few";
             // Exact column count is independently checked for each record.
             var parsed=WorkOrderCsvImport.Parse(csv,Guid.NewGuid().ToString("D")); parsed.Rows.Should().HaveCount(3);
             parsed.Rows[1].ParseError.Should().NotBeNull(); parsed.Rows[2].ParseError.Should().NotBeNull();
-            var valid=WorkOrderCsvImport.Parse(WorkOrderCsvImport.Header+"\n\"Valve, pump\",\"Line one\nLine two\",0,1,,,,,USD,12.50,,",Guid.NewGuid().ToString("D"));
+            var valid=WorkOrderCsvImport.Parse(WorkOrderCsvImport.LegacyHeader+"\n\"Valve, pump\",\"Line one\nLine two\",0,1,,,,,USD,12.50,,",Guid.NewGuid().ToString("D"));
             valid.Rows.Single().ParseError.Should().BeNull(); valid.Rows.Single().Import.Content.Title.Should().Be("Valve, pump");
             valid.Rows.Single().Import.Content.Description.Should().Be("Line one\nLine two");
         }

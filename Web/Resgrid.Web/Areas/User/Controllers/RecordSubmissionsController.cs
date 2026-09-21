@@ -14,6 +14,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_Submit)]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordSubmissionsController : SecureBaseController
 	{
 		private readonly IRmsSubmissionsRepository _submissions;

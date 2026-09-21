@@ -3,6 +3,7 @@
 @model RecordsReadinessView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["AnalyticsHeader"] + " - " + L["ReadinessHeader"];
 	var r = Model.Readiness;
 	string StateLabel(int? state) => !state.HasValue ? "-" : System.Enum.IsDefined(typeof(UnitStateTypes), state.Value) ? RmsEnumDisplay.Label<UnitStateTypes>(state.Value) : state.Value.ToString();
@@ -31,7 +32,7 @@
 								<tr class="@(u.NeedsAttention ? "warning" : "")">
 									<td>@if (u.NeedsAttention) { <i class="fa fa-exclamation-triangle text-warning"></i> } @u.Label</td>
 									<td>@(u.StationGroupLabel ?? "-")</td>
-									<td>@StateLabel(u.State) @if (u.StateOn.HasValue) { <small class="text-muted">(@RmsEnumDisplay.Utc(u.StateOn))</small> }</td>
+									<td>@StateLabel(u.State) @if (u.StateOn.HasValue) { <small class="text-muted">(@departmentTime.Format(u.StateOn))</small> }</td>
 									<td class="text-right">@(r.Checklists == null ? "-" : u.ChecklistCompleted + "/" + u.ChecklistExpected)</td>
 									<td class="text-right @(u.ChecklistMissed > 0 ? "text-danger" : "")">@(r.Checklists == null ? "-" : u.ChecklistMissed.ToString())</td>
 									<td class="text-right">@(r.Checklists == null ? "-" : RmsAnalyticsDisplay.Percent(u.ChecklistCompletionRatePercent))</td>
@@ -57,7 +58,7 @@
 					else
 					{
 						var ck = r.Checklists;
-						<p class="text-muted">@L["ReadinessCohort"]: @ck.CohortStart.ToString("yyyy-MM-dd") - @ck.CohortEnd.AddDays(-1).ToString("yyyy-MM-dd")</p>
+						<p class="text-muted">@L["ReadinessCohort"]: @departmentTime.Date(ck.CohortStart) - @departmentTime.Date(ck.CohortEnd.AddDays(-1))</p>
 						@if (ck.IsRedacted) { <div class="alert alert-info">@L["ReadinessRedacted"]</div> }
 						@foreach (var s in ck.UnavailableSources) { <div class="alert alert-warning">@L["ReadinessUnavailableSources"]: @s</div> }
 						<div class="row">
@@ -96,7 +97,7 @@
 					else
 					{
 						var wo = r.WorkOrders;
-						<p class="text-muted">@L["ReadinessCohort"]: @wo.CohortStart.ToString("yyyy-MM-dd") - @wo.CohortEnd.AddDays(-1).ToString("yyyy-MM-dd")</p>
+						<p class="text-muted">@L["ReadinessCohort"]: @departmentTime.Date(wo.CohortStart) - @departmentTime.Date(wo.CohortEnd.AddDays(-1))</p>
 						<div class="row">
 							<div class="col-xs-3 rms-kpi"><div class="value">@wo.Total</div><div class="label">@L["AnalyticsTotal"]</div></div>
 							<div class="col-xs-3 rms-kpi"><div class="value">@wo.Open</div><div class="label">@L["Open"]</div></div>

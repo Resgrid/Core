@@ -71,7 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				var when = ParseUtc(scheduledOn) ?? DateTime.UtcNow.Date.AddDays(7);
+				var when = ParseUtc(scheduledOn) ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.AddDays(7));
 				var inspection = await _inspections.ScheduleAsync(DepartmentId, UserId, occupancyId, programId, when, string.IsNullOrWhiteSpace(inspectorUserId) ? UserId : inspectorUserId, cancellationToken);
 				Notify("InspectionScheduled");
 				return RedirectToAction(nameof(Details), new { id = inspection.RmsInspectionId });
@@ -119,7 +119,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				var next = await _inspections.ScheduleReinspectionAsync(DepartmentId, UserId, id, ParseUtc(scheduledOn) ?? DateTime.UtcNow.Date.AddDays(30), cancellationToken);
+				var next = await _inspections.ScheduleReinspectionAsync(DepartmentId, UserId, id, ParseUtc(scheduledOn) ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.AddDays(30)), cancellationToken);
 				Notify("InspectionScheduled");
 				return RedirectToAction(nameof(Details), new { id = next.RmsInspectionId });
 			}

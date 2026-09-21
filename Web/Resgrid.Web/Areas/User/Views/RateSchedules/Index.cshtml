@@ -6,23 +6,26 @@
     ViewData["Subtitle"] = localizer["RateSchedulesIntro"].Value;
     ViewData["RootController"] = "RateSchedules";
     ViewData["RootTitle"] = localizer["RateSchedules"].Value;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="Index" asp-route-all="@(Model.IncludeInactive ? "false" : "true")" class="btn btn-default">@(Model.IncludeInactive ? localizer["ShowActive"] : localizer["ShowAll"])</a>
+        @if (Model.CanManageRates)
+        {
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importModal"><i class="fa fa-upload"></i> @localizer["ImportJson"]</button>
+            <a asp-action="New" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewRateSchedule"]</a>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["RateSchedules"]</h5>
-            <div class="ibox-tools">
-                <a asp-action="Index" asp-route-all="@(Model.IncludeInactive ? "false" : "true")" class="btn btn-default btn-xs">@(Model.IncludeInactive ? localizer["ShowActive"] : localizer["ShowAll"])</a>
-                @if (Model.CanManageRates)
-                {
-                    <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#importModal"><i class="fa fa-upload"></i> @localizer["ImportJson"]</button>
-                    <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewRateSchedule"]</a>
-                }
-            </div>
+
         </div>
         <div class="ibox-content">
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpRateSchedules"]</div>
@@ -69,4 +72,8 @@
             </form>
         </div>
     </div>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

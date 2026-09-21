@@ -10,6 +10,7 @@ using Resgrid.Providers.Claims;
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User"), Authorize(Policy = ResgridResources.RecordLegalHold_Update)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordLegalHoldsController : SecureBaseController
 	{
 		private readonly IRecordsLegalHoldService _holds;
@@ -26,7 +27,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Place(RmsRecordLegalHold input, CancellationToken cancellationToken)
 		{
 			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).FlagEnabled) return NotFound();
-			try { await _holds.PlaceAsync(DepartmentId, UserId, input, cancellationToken); TempData["HoldMessage"] = "Preservation hold placed. It remains active until explicitly released."; }
+			try { input.PeriodStart = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.PeriodStart); input.PeriodEnd = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.PeriodEnd); await _holds.PlaceAsync(DepartmentId, UserId, input, cancellationToken); TempData["HoldMessage"] = "Preservation hold placed. It remains active until explicitly released."; }
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { TempData["HoldError"] = ex.Message; }
 			return RedirectToAction(nameof(Index));

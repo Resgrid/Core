@@ -2,6 +2,7 @@
 @using Resgrid.Model.Checklists
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["ChecklistComplianceReport"];
     ViewData["Tab"] = "Compliance";
     ViewData["Title"] = localizer["ChecklistComplianceReport"].Value;
@@ -15,11 +16,11 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["ChecklistComplianceReport"]</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
+
             @await Html.PartialAsync("_Protection")
 
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["ComplianceMethod"]</div>
@@ -29,13 +30,13 @@
                     @Html.AntiForgeryToken()
                     <div class="rgw-grid">
                         <div class="form-group">
-                            <label for="from">@localizer["ReportFrom"] (UTC)</label>
-                            <input class="form-control" id="from" name="FromUtc" type="date" value="@Model.FromUtc.ToString("yyyy-MM-dd")" required />
+                            <label for="from">@localizer["ReportFrom"]</label>
+                            <input class="form-control" id="from" name="FromUtc" type="date" value="@departmentTime.Date(Model.FromUtc)" required />
                             <span class="help-block">@localizer["ReportRangeHint"]</span>
                         </div>
                         <div class="form-group">
-                            <label for="until">@localizer["ReportUntil"] (UTC)</label>
-                            <input class="form-control" id="until" name="UntilUtc" type="date" value="@Model.UntilUtc.ToString("yyyy-MM-dd")" required />
+                            <label for="until">@localizer["ReportUntil"]</label>
+                            <input class="form-control" id="until" name="UntilUtc" type="date" value="@departmentTime.Date(Model.UntilUtc)" required />
                         </div>
                         <div class="form-group">
                             <label for="target-type">@localizer["TargetType"]</label>
@@ -130,7 +131,7 @@
                     <h3>@localizer["MissedTrend"]</h3>
                     <div class="table-responsive">
                         <table class="table table-striped rgw-table">
-                            <thead><tr><th>@localizer["Date"] (UTC)</th><th class="text-right">@localizer["ExpectedChecks"]</th><th>@localizer["MissedChecks"]</th></tr></thead>
+                            <thead><tr><th>@localizer["Date"]</th><th class="text-right">@localizer["ExpectedChecks"]</th><th>@localizer["MissedChecks"]</th></tr></thead>
                             <tbody>
                                 @foreach (var day in Model.Trend)
                                 {
@@ -165,5 +166,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

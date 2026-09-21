@@ -14,7 +14,7 @@
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <form method="post" asp-action="Save" class="form-horizontal" id="contractForm">
         @Html.AntiForgeryToken()
@@ -94,4 +94,8 @@
             });
         })();
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

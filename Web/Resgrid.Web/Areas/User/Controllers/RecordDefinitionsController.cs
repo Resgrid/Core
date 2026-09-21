@@ -23,6 +23,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.RecordDefinition_Update)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordDefinitionsController : SecureBaseController
 	{
 		private readonly IRecordDefinitionsService _definitions;

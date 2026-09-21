@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Αναβολή προθεσμίας</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Αναφορές συντήρησης</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Ιστορικό συντήρησης</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Δημιουργία από (UTC, συμπεριλαμβάνεται)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Δημιουργία πριν από (UTC, εξαιρείται)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Χρόνος υπολογισμού (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Δημιουργία από (συμπεριλαμβάνεται)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Δημιουργία πριν από (εξαιρείται)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Χρόνος υπολογισμού</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Σύνολο εντολών εργασίας</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Ανοιχτές εντολές εργασίας</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Εκπρόθεσμες εντολές εργασίας</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Αναθεώρηση</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Η αναφορά είναι πολύ μεγάλη. Περιορίστε το χρονικό διάστημα ή τα φίλτρα στόχων.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Επιλέξτε έγκυρο χρονικό διάστημα· οι αναφορές του πίνακα υποστηρίζουν έως 366 ημέρες.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Τρέχουσα κατάσταση των εντολών που δημιουργήθηκαν στο επιλεγμένο διάστημα UTC. Οι ανοιχτές περιλαμβάνουν ολοκληρωμένες εργασίες που αναμένουν κλείσιμο. Ο μέσος χρόνος επισκευής μετρά από την πρώτη έναρξη έως την τελευταία ολοκλήρωση, μαζί με αναστολές και επανανοίγματα· οι μη έγκυροι χρόνοι εξαιρούνται. Τα κόστη στρογγυλοποιούνται ανά εγγραφή και χωρίζονται ανά νόμισμα, χωρίς ακυρωμένα ή μη χορηγημένα ανταλλακτικά. Τα άγνωστα κόστη και τα παλαιά νομίσματα εργασίας παραμένουν άγνωστα· δεν υποτίθενται ισοτιμίες.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Τρέχουσα κατάσταση των εντολών που δημιουργήθηκαν στο επιλεγμένο διάστημα. Οι ανοιχτές περιλαμβάνουν ολοκληρωμένες εργασίες που αναμένουν κλείσιμο. Ο μέσος χρόνος επισκευής μετρά από την πρώτη έναρξη έως την τελευταία ολοκλήρωση, μαζί με αναστολές και επανανοίγματα· οι μη έγκυροι χρόνοι εξαιρούνται. Τα κόστη στρογγυλοποιούνται ανά εγγραφή και χωρίζονται ανά νόμισμα, χωρίς ακυρωμένα ή μη χορηγημένα ανταλλακτικά. Τα άγνωστα κόστη και τα παλαιά νομίσματα εργασίας παραμένουν άγνωστα· δεν υποτίθενται ισοτιμίες.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>Πλήρες ιστορικό συντήρησης, εκτός αν επιλεγούν ημερομηνίες. Κάθε γραμμή CSV αντιστοιχεί σε μία εντολή και ένα νόμισμα. Τα γνωστά κόστη εξαιρούν ακυρωμένα ή μη χορηγημένα ανταλλακτικά· οι ελλείπουσες τιμές και τα παλαιά νομίσματα εργασίας αναφέρονται ως άγνωστα.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Κατάσταση εντολής κατά τον χρόνο του συμβάντος, με αμετάβλητες αναφορές αναθεωρήσεων στο αρχείο τεκμηρίωσης. Περιλαμβάνονται παλαιότερες ανοιχτές συντηρήσεις· οι ολοκληρωμένες εργασίες περιορίζονται στο διάστημα αναδρομής. Η ιστορική κατάσταση που δεν ανακτάται επισημαίνεται ως μη διαθέσιμη.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Μη εργάσιμες ημερομηνίες (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Στόχος απόκρισης (εργάσιμα λεπτά)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Στόχος επισκευής (εργάσιμα λεπτά)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Προθεσμία απόκρισης (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Προθεσμία επισκευής (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Απόκριση στις (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Προθεσμία απόκρισης</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Προθεσμία επισκευής</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Απόκριση στις</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Χρεώσεις προμηθευτών</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Προσθήκη χρέωσης προμηθευτή</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Ακύρωση χρέωσης</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Υπέρβαση στόχου υπηρεσίας εντολής εργασίας</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Αλλαγή χρέωσης προμηθευτή εντολής εργασίας</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Αλλαγή πολιτικής λειτουργιών εντολών εργασίας</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Προθεσμία απόκρισης (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Προθεσμία επισκευής (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Προθεσμία απόκρισης</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Προθεσμία επισκευής</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Δημιουργήστε επισκευές, παρακολουθήστε ποιος τις εκτελεί και δείτε το κόστος συντήρησης.</value></data>
   <data name="Close" xml:space="preserve"><value>Κλείσιμο</value></data>
   <data name="Continue" xml:space="preserve"><value>Συνέχεια</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Σε ποιον πηγαίνει η εντολή που δημιουργείται και σε ποιον κλιμακώνεται αν δεν την αναλάβει κανείς.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Καθορίζει την ένδειξη καθυστέρησης και το χρονόμετρο επιπέδου υπηρεσίας.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>Τα βήματα που ακολουθεί ο τεχνικός. Ορισμένες μεταβάσεις απαιτούν να ολοκληρωθούν όλα.</value></data>
+  <data name="Users" xml:space="preserve"><value>Χρήστες</value></data>
+  <data name="Roles" xml:space="preserve"><value>Ρόλοι</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Επιλέξτε έναν ή περισσότερους χρήστες ή/και ρόλους. Κρατήστε πατημένο το Ctrl (Windows) ή το Command (Mac) για πολλαπλή επιλογή. Κάθε επιλεγμένος χρήστης ή μέλος επιλεγμένου ρόλου μπορεί να αποδεχτεί την εντολή εργασίας.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Ρυθμίσεις εντολών εργασίας</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Ρυθμίστε μία φορά για το τμήμα το νόμισμα, τις εγκρίσεις δαπανών, το ωράριο, τις αργίες και τους στόχους εξυπηρέτησης.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Το νόμισμα ορίζεται στις ρυθμίσεις εντολών εργασίας. Οι υπάρχουσες εντολές διατηρούν το καταγεγραμμένο νόμισμά τους.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Ισχύει για νέες εντολές και τις χρεώσεις προμηθευτών τους. Τα υπάρχοντα κόστη και όρια έγκρισης διατηρούν το αρχικό νόμισμά τους. Αν ένα πρότυπο συντήρησης χρησιμοποιεί άλλο νόμισμα, το εκτιμώμενο κόστος στις νέες εντολές παραμένει κενό για έλεγχο.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Εισαγάγετε το όριο έγκρισης στο νόμισμα του τμήματος που επιλέχθηκε παραπάνω. Διατηρούνται τα όρια των υπαρχουσών εντολών σε άλλα νομίσματα.</value></data>
 </root>

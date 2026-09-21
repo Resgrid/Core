@@ -11,8 +11,8 @@
     var rootTitle = (string)ViewData["RootTitle"];
     var isRoot = string.IsNullOrWhiteSpace(rootController) || string.Equals(title, rootTitle, StringComparison.Ordinal);
 }
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-12">
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="@(ViewData["HeaderActions"] == null ? "col-sm-12" : "col-sm-4")">
         <h2>@title</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
@@ -31,4 +31,5 @@
             <small class="text-muted">@subtitle</small>
         }
     </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
 </div>

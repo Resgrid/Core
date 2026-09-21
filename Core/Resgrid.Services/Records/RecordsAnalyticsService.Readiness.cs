@@ -147,7 +147,9 @@ namespace Resgrid.Services.Records
 			m.ByStationGroup = groups.Where(g => g.Target.Type == ChecklistTargetType.Group).Select(g => Row(g, labels.Group(g.Target.Id))).OrderByDescending(r => r.Missed).ThenBy(r => r.Label, StringComparer.OrdinalIgnoreCase).ToList();
 			m.ByPerson = groups.Where(g => g.Target.Type == ChecklistTargetType.Personnel).Select(g => Row(g, g.Target.Name ?? g.Target.Id)).OrderByDescending(r => r.Missed).ThenBy(r => r.Label, StringComparer.OrdinalIgnoreCase).ToList();
 			m.ByAsset = groups.Where(g => g.Target.Type == ChecklistTargetType.InventoryAsset).Select(g => Row(g, g.Target.Name ?? g.Target.Id)).OrderByDescending(r => r.Missed).ThenBy(r => r.Label, StringComparer.OrdinalIgnoreCase).ToList();
-			m.Trend = (summary.Trend ?? new List<ChecklistMissedTrend>()).OrderBy(t => t.DayUtc).Select(t => new RecordsChecklistTrendPoint { Day = t.DayUtc, Expected = t.Expected, Missed = t.Missed }).ToList();
+			m.Trend = (summary.Entries ?? new List<ChecklistReportEntry>()).Where(e => e.Expected && e.DueUtc.HasValue)
+                .GroupBy(e => Local(e.DueUtc.Value, c).Date).OrderBy(g => g.Key)
+                .Select(g => new RecordsChecklistTrendPoint { Day = g.Key, Expected = g.Count(), Missed = g.Count(e => e.Missed) }).ToList();
 
 			foreach (var g in groups.Where(g => g.Target.Type == ChecklistTargetType.Unit))
 				if (int.TryParse(g.Target.Id, out var unitId) && rows.TryGetValue(unitId, out var row))
@@ -177,7 +179,7 @@ namespace Resgrid.Services.Records
 
 			// Per-unit roll-up from the module's paged history: the same window, the same scope, bounded by the page cap.
 			var byUnit = new Dictionary<int, RecordsWorkOrderUnitRow>();
-			var query = new WorkOrderReportQuery { FromUtc = c.Start, UntilUtc = c.End, GroupId = c.StationGroupId, AfterId = 0 };
+			var query = new WorkOrderReportQuery { FromUtc = c.Start, UntilUtc = c.End, GroupId = c.StationGroupId, AfterId = null };
 			for (var page = 0; ; page++)
 			{
 				if (page >= WorkOrderHistoryPageCap) { m.HistoryTruncated = true; c.Warnings.Add($"The per-unit work-order roll-up covers the first {WorkOrderHistoryPageCap * 50:N0} orders in the window; the module's totals are complete."); break; }
@@ -195,7 +197,7 @@ namespace Resgrid.Services.Records
 					if (order.Status == WorkOrderStatus.OnHold) { u.OnHold++; unitRow.OnHoldWorkOrders++; m.OnHold++; }
 				}
 				if (history?.NextAfterId == null) break;
-				query.AfterId = history.NextAfterId.Value;
+				query.AfterId = history.NextAfterId;
 			}
 			m.ByUnit = byUnit.Values.OrderByDescending(u => u.Overdue).ThenByDescending(u => u.Open).ThenBy(u => u.Label, StringComparer.OrdinalIgnoreCase).ToList();
 			return m;

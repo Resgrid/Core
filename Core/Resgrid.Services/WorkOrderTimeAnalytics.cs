@@ -16,7 +16,7 @@ namespace Resgrid.Services
         }
         private static void PopulateTimeAnalytics(WorkOrderReportEntry entry, WorkOrder order, IEnumerable<WorkOrderActivity> activities, IEnumerable<WorkOrderSafetyHold> holds, DateTime now)
         {
-            var events = activities.Where(a => a.CreatedOn <= now).OrderBy(a => a.CreatedOn).ThenBy(a => a.Id).ToList();
+            var events = activities.Where(a => a.CreatedOn <= now).OrderBy(a => a.CreatedOn).ThenBy(a => a.Revision).ThenBy(a => a.Id).ToList();
             var created = events.FirstOrDefault(a => a.ActivityType == (int)WorkOrderActivityType.Created);
             if (created != null && Math.Abs((created.CreatedOn - order.CreatedOn).TotalMinutes) < 1)
             {

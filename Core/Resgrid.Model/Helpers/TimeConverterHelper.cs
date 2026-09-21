@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -28,10 +28,11 @@ namespace Resgrid.Model.Helpers
 				// runs in globalization-invariant mode, where TimeZoneInfo cannot map a Windows
 				// zone id and throws TimeZoneNotFoundException. NodaTime carries its own tzdb and
 				// needs neither ICU nor the OS /usr/share/zoneinfo files. Mirrors TimeConverterToString.
-				var ianaTz = TZConvert.WindowsToIana(DateTimeHelpers.ConvertTimeZoneString(timeZone));
+				var id = DateTimeHelpers.ConvertTimeZoneString(timeZone);
+                var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(id) ?? DateTimeZoneProviders.Tzdb[TZConvert.WindowsToIana(id)];
 
 				var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(timestamp, DateTimeKind.Utc));
-				return instant.InZone(DateTimeZoneProviders.Tzdb[ianaTz]).ToDateTimeUnspecified();
+				return instant.InZone(zone).ToDateTimeUnspecified();
 			}
 			catch (Exception ex)
 			{
@@ -43,45 +44,10 @@ namespace Resgrid.Model.Helpers
 		}
 
 		public static string TimeConverterToString(this DateTime timestamp, Department department)
-		{
-			//DateTime newTime = timestamp;
-			//TimeZoneInfo timeZoneInfo = null;
-
-			try
-			{
-				//if (!String.IsNullOrEmpty(department.TimeZone))
-				//	timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
-				//else
-				//	timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
-
-				//if (timeZoneInfo != null)
-				//{
-				//	newTime = TimeZoneInfo.ConvertTimeFromUtc(timestamp, timeZoneInfo);
-				//}
-
-				//return newTime.FormatForDepartment(department);
-
-				string timeZone = "Pacific Standard Time";
-
-				if (!String.IsNullOrEmpty(department.TimeZone))
-					timeZone = department.TimeZone;
-
-				var ianaTz = TZConvert.WindowsToIana(timeZone);
-
-				var localTime = Instant.FromDateTimeUtc(DateTime.SpecifyKind(timestamp, DateTimeKind.Utc));   //LocalDateTime.FromDateTime(timestamp);
-				//var zonedDateTime = localTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz]);
-				var zonedDateTime = localTime.InZone(DateTimeZoneProviders.Tzdb[ianaTz]);
-
-				return zonedDateTime.ToDateTimeUnspecified().FormatForDepartment(department);
-			}
-			catch (Exception ex)
-			{
-				var method = new StackTrace().GetFrame(1).GetMethod();
-				Framework.Logging.LogError(String.Format("TimeConverterToString error called from '{0}' of class '{1}' error {2}", method.Name, method.DeclaringType, ex.ToString()));
-
-				return timestamp.FormatForDepartment(department);
-			}
-		}
+        {
+            department ??= new Department();
+            return timestamp.TimeConverter(department).FormatForDepartment(department);
+        }
 
 		public static string FormatForDepartment(this DateTime timestamp, Department department, bool dropSeconds = false)
 		{
@@ -110,10 +76,11 @@ namespace Resgrid.Model.Helpers
 
 				// NodaTime tzdb (no ICU / OS tzdata dependency, unlike TimeZoneInfo). GetUtcOffset
 				// already folds the active DST rule into the returned offset for the given instant.
-				var ianaTz = TZConvert.WindowsToIana(DateTimeHelpers.ConvertTimeZoneString(timeZone));
+				var id = DateTimeHelpers.ConvertTimeZoneString(timeZone);
+                var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(id) ?? DateTimeZoneProviders.Tzdb[TZConvert.WindowsToIana(id)];
 				var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc));
 
-				timeSpan = DateTimeZoneProviders.Tzdb[ianaTz].GetUtcOffset(instant).ToTimeSpan();
+				timeSpan = zone.GetUtcOffset(instant).ToTimeSpan();
 			}
 			catch (Exception ex)
 			{

@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository
             if (field != null) where += $" AND {Col(field)}={P}Value";
             if (pendingOnly)
                 where += typeof(T) == typeof(WorkOrderFailureIntent) ? $" AND {Col("ProcessedOn")} IS NULL" : typeof(T) == typeof(WorkOrderRecurrence) ? $" AND {Col("IsActive")}={Bool(true)}" : throw new ArgumentException("Invalid maintenance queue.");
-            return (await QueryAsync<T>($"SELECT {Cols(Columns<T>(false))} FROM {Tbl(Table<T>())} WHERE {where} ORDER BY {Col("Id")} {Paging()}", new { DepartmentId = departmentId, Value = value, Skip = skip, Take = 500 }, default)).ToList();
+            return (await QueryAsync<T>($"SELECT {Cols(Columns<T>(false))} FROM {Tbl(Table<T>())} WHERE {where} ORDER BY {Col("CreatedOn")},{Col("Id")} {Paging()}", new { DepartmentId = departmentId, Value = value, Skip = skip, Take = 500 }, default)).ToList();
         }
         public async Task<List<int>> MaintenanceDepartmentsAsync(int afterDepartmentId) => (await QueryAsync<int>($"SELECT DISTINCT {Col("DepartmentId")} FROM {Tbl("Departments")} WHERE {Col("DepartmentId")}>{P}After ORDER BY {Col("DepartmentId")} {Paging()}", new { After = afterDepartmentId, Skip = 0, Take = 200 }, default)).ToList();
         public Task<WorkOrderFailureIntent> FailureAsync(int departmentId, string completionId, string itemId) => QueryFirstOrDefaultAsync<WorkOrderFailureIntent>($"SELECT * FROM {Tbl("WorkOrderFailureIntents")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("CompletionId")}={P}CompletionId AND {Col("ItemId")}={P}ItemId", new { DepartmentId = departmentId, CompletionId = completionId, ItemId = itemId }, default);

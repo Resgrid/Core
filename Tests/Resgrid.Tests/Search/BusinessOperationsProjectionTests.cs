@@ -38,8 +38,12 @@ namespace Resgrid.Tests.Search
 			var protection = new Mock<IDepartmentDataProtectionService>();
 			protection.Setup(p => p.IsProtectionEnforcedAsync(It.IsAny<int>())).ReturnsAsync(false);
 			protection.Setup(p => p.GetPinnedCatalogVersionAsync(It.IsAny<int>())).ReturnsAsync(28);
-			_service = new SearchProjectionService(_repository.Object, protection.Object);
+			_personnel = new Mock<IDeploymentPersonnelRepository>();
+			_personnel.Setup(p => p.GetByDeploymentAsync(It.IsAny<string>())).ReturnsAsync(Enumerable.Empty<DeploymentPersonnel>());
+			_service = new SearchProjectionService(_repository.Object, protection.Object, _personnel.Object);
 		}
+
+		private Mock<IDeploymentPersonnelRepository> _personnel;
 
 		[Test]
 		public async Task Invoice_projects_number_status_and_dates_but_never_amounts_lines_or_emails()
@@ -77,10 +81,16 @@ namespace Resgrid.Tests.Search
 			contract.IsActive.Should().BeTrue();
 			string.Join(" ", contract.Summary, contract.Keywords, contract.MetadataJson).Should().NotContain("ap@county");
 
+			// The roster (any personnel row, removed or not — the deployment page's access rule) is the participant set the index scopes on.
+			_personnel.Setup(p => p.GetByDeploymentAsync("dep-1")).ReturnsAsync(new List<DeploymentPersonnel>
+			{
+				new DeploymentPersonnel { UserId = "u-1" }, new DeploymentPersonnel { UserId = "u-2", RemovedOn = new DateTime(2026, 8, 3) }, new DeploymentPersonnel { UserId = "u-1" }
+			});
 			var deployment = await _service.BuildDeploymentAsync(new Deployment { DeploymentId = "dep-1", DepartmentId = 5, Name = "LNU Lightning Complex", Status = (int)DeploymentStatuses.Active, IncidentNumber = "CA-LNU-001234", ResourceOrderNumber = "O-1", RequestNumber = "E-12", StartOn = new DateTime(2026, 8, 1), Notes = "rgdp:1:28:protected-envelope", CallId = 99 });
 			deployment.Title.Should().Be("LNU Lightning Complex");
 			deployment.Keywords.Should().Contain("O-1").And.Contain("E-12").And.Contain("99");
 			deployment.IsActive.Should().BeTrue();
+			deployment.ParticipantUserIds.Should().Be("u-1,u-2");
 			string.Join(" ", deployment.Summary, deployment.Keywords, deployment.SearchText, deployment.MetadataJson).Should().NotContain("rgdp", "the wrapper's notes are ADP catalog 27 and never leave the row");
 
 			var card = await _service.BuildRateCardAsync(new RateCard { RateCardId = "rc-1", DepartmentId = 5, Name = "Standard 2026", IsDefault = true, Active = true });

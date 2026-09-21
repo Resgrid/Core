@@ -39,9 +39,11 @@
                 var response = await fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin', cache: 'no-store' });
                 var result = await response.json();
                 if (concealed || !form.isConnected) return;
-                if (!response.ok || !Number.isInteger(result.id)) { showError(result.message); if (result.code === 'ProtectedDataRequired') form.dispatchEvent(new Event('adp:grant-required')); return; }
+                var destination = form.dataset.destination || 'Detail';
+                var needsId = destination !== 'Settings' && destination !== 'Policy';
+                if (!response.ok || needsId && (typeof result.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(result.id))) { showError(result.message); if (result.code === 'ProtectedDataRequired') form.dispatchEvent(new Event('adp:grant-required')); return; }
                 var reopen = document.createElement('form'); reopen.method = 'POST'; reopen.action = config.reopen;
-                hidden(reopen, 'destination', form.dataset.destination || 'Detail'); hidden(reopen, 'id', String(result.id));
+                hidden(reopen, 'destination', destination); if (needsId) hidden(reopen, 'id', result.id);
                 ['__RequestVerificationToken', '__ResgridProtectedGrant', '__ResgridProtectedGrantExpiresOn'].forEach(function (name) {
                     var field = form.querySelector('input[name="' + name + '"]'); if (field) hidden(reopen, name, field.value);
                 });

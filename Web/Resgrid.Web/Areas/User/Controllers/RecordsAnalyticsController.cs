@@ -74,15 +74,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Prepare(model);
 				// Dates arrive as yyyy-MM-dd from the filter form; the end date is inclusive on the page, exclusive in the query.
-				var endDay = ParseUtc(end)?.Date ?? DateTime.UtcNow.Date;
-				var startDay = ParseUtc(start)?.Date ?? endDay.AddDays(-RecordsAnalyticsLimits.DefaultWindowDays);
+				var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+                var endDay = time.Local(ParseUtc(end))?.Date ?? time.Today;
+				var startDay = time.Local(ParseUtc(start))?.Date ?? endDay.AddDays(-RecordsAnalyticsLimits.DefaultWindowDays);
 				var query = new RecordsAnalyticsQuery
 				{
-					Start = startDay, End = endDay.AddDays(1), StationGroupId = stationGroupId > 0 ? stationGroupId : null, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey,
+					Start = time.ToUtc(startDay), End = time.ToUtc(endDay.AddDays(1)), StationGroupId = stationGroupId > 0 ? stationGroupId : null, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey,
 					TurnoutTargetSeconds = Math.Clamp(turnoutTarget ?? 80, 0, 3600), TravelTargetSeconds = Math.Clamp(travelTarget ?? 240, 0, 7200)
 				};
 				await load(model, query, HttpContext.RequestAborted);
-				model.Start = model.Result?.Start ?? query.Start.Value; model.End = (model.Result?.End ?? query.End.Value).AddDays(-1);
+				model.Start = time.Local(model.Result?.Start ?? query.Start.Value); model.End = time.Local(model.Result?.End ?? query.End.Value).AddDays(-1);
 				model.StationGroupId = query.StationGroupId; model.DefinitionKey = query.DefinitionKey;
 				model.TurnoutTargetSeconds = query.TurnoutTargetSeconds; model.TravelTargetSeconds = query.TravelTargetSeconds;
 				await PopulateAsync(model);

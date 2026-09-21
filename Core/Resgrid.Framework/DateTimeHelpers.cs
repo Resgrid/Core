@@ -97,6 +97,25 @@ namespace Resgrid.Framework
 		}
 
 		/// <summary>
+		/// True when <paramref name="timeZone"/> is a Windows zone id that <see cref="ConvertToUtc"/> and
+		/// <see cref="GetLocalDateTime"/> can resolve (blank counts as "no zone", which both accept).
+		/// </summary>
+		public static bool IsKnownTimeZone(string timeZone)
+		{
+			if (String.IsNullOrWhiteSpace(timeZone))
+				return true;
+
+			try
+			{
+				return DateTimeZoneProviders.Tzdb.GetZoneOrNull(TZConvert.WindowsToIana(timeZone)) != null;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Converts a local (department) time into UTC. When lenient is set, local times that are
 		/// ambiguous or skipped by a DST transition are resolved instead of throwing, which matters
 		/// for user typed timestamps (i.e. a 0130 log entry on the fall back day).

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.WorkOrders;
 namespace Resgrid.Web.Services.Controllers.v4
 {
-    public sealed class WorkOrderMaintenanceCommand<T> { public int Id { get; set; } public T Input { get; set; } }
-    public sealed class WorkOrderCancelPartWitness { public int Id { get; set; } public int PartId { get; set; } public int Revision { get; set; } public string Reason { get; set; } }
+    public sealed class WorkOrderMaintenanceCommand<T> { public string Id { get; set; } public T Input { get; set; } }
+    public sealed class WorkOrderCancelPartWitness { public string Id { get; set; } public string PartId { get; set; } public int Revision { get; set; } public string Reason { get; set; } }
     public sealed partial class WorkOrdersController
     {
         private void MaintenanceAvailable() { if (_maintenance == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); }
@@ -14,7 +14,7 @@ namespace Resgrid.Web.Services.Controllers.v4
         [HttpGet("GetWorkOrderInventoryChoices")]
         public async Task<IActionResult> GetWorkOrderInventoryChoices(string kind, string itemId = null, int page = 0) { MaintenanceAvailable(); return Reply(await _maintenance.InventoryChoicesAsync(Actor, kind, itemId, page)); }
         [HttpGet("GetWorkOrderHolds")]
-        public async Task<IActionResult> GetWorkOrderHolds(int id, int afterId = 0) { if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); var page = await _reports.GetWorkOrderHoldsAsync(Actor, id, afterId); return Reply(page.Items, page.Items.Count, page.NextAfterId.HasValue); }
+        public async Task<IActionResult> GetWorkOrderHolds(string id, string afterId = null) { if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); var page = await _reports.GetWorkOrderHoldsAsync(Actor, id, afterId); return Reply(page.Items, page.Items.Count, page.NextAfterId != null); }
         [HttpPost("AddWorkOrderHold")]
         public async Task<IActionResult> AddWorkOrderHold([FromBody] WorkOrderMaintenanceCommand<WorkOrderHoldInput> command) { MaintenanceAvailable(); Required(command); await _maintenance.AddHoldAsync(Actor, command.Id, Required(command.Input)); return Reply(await _maintenance.HoldsAsync(Actor, command.Id)); }
         [HttpPost("ReleaseWorkOrderHold")]
@@ -22,7 +22,7 @@ namespace Resgrid.Web.Services.Controllers.v4
         [HttpGet("GetWorkOrderRecurrences")]
         public async Task<IActionResult> GetWorkOrderRecurrences(int page = 0) { MaintenanceAvailable(); var rows = await _maintenance.RecurrencesAsync(Actor, page); return Reply(rows.Take(50), System.Math.Min(rows.Count, 50), rows.Count > 50); }
         [HttpGet("GetWorkOrderRecurrence")]
-        public async Task<IActionResult> GetWorkOrderRecurrence(int id, int historyPage = 0) { MaintenanceAvailable(); return Reply(await _maintenance.RecurrenceAsync(Actor, id, historyPage)); }
+        public async Task<IActionResult> GetWorkOrderRecurrence(string id, int historyPage = 0) { MaintenanceAvailable(); return Reply(await _maintenance.RecurrenceAsync(Actor, id, historyPage)); }
         [HttpPost("SaveWorkOrderRecurrence")]
         public async Task<IActionResult> SaveWorkOrderRecurrence([FromBody] WorkOrderRecurrenceInput input) { MaintenanceAvailable(); var id = await _maintenance.SaveRecurrenceAsync(Actor, Required(input)); return Reply(await _maintenance.RecurrenceAsync(Actor, id)); }
         [HttpPost("RecordWorkOrderReading")]

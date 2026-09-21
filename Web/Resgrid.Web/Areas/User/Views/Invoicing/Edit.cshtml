@@ -15,7 +15,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (!string.IsNullOrWhiteSpace(Model.Message))
     {
         <div class="alert alert-info">@Model.Message</div>
@@ -272,4 +272,8 @@
             render();
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

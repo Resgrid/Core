@@ -17,7 +17,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["EditSchedule"]</h5></div>
         <div class="ibox-content">
@@ -188,6 +188,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }
 @section Scripts {
     @await Html.PartialAsync("_ProtectionScripts")

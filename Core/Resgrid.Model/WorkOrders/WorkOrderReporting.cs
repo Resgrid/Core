@@ -15,7 +15,7 @@ namespace Resgrid.Model.WorkOrders
         public int? UnitId { get; set; }
         public int? GroupId { get; set; }
         public string AssetId { get; set; }
-        public int AfterId { get; set; }
+        public string AfterId { get; set; }
     }
     public sealed class WorkOrderCostTotal
     {
@@ -45,12 +45,12 @@ namespace Resgrid.Model.WorkOrders
     public sealed class WorkOrderHistoryPage
     {
         public List<WorkOrderReportEntry> Items { get; set; } = new();
-        public int? NextAfterId { get; set; }
+        public string NextAfterId { get; set; }
     }
     public sealed class WorkOrderEvidencePage<T>
     {
         public List<T> Items { get; set; } = new();
-        public int? NextAfterId { get; set; }
+        public string NextAfterId { get; set; }
     }
     public sealed class WorkOrderStats
     {
@@ -82,9 +82,9 @@ namespace Resgrid.Model.WorkOrders
     /// referenced immutable activity/template through ADP; ciphertext is never copied between rows.</summary>
     public sealed class WorkOrderReportSnapshot
     {
-        public long Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString("D");
         public int DepartmentId { get; set; }
-        public int WorkOrderId { get; set; }
+        public string WorkOrderId { get; set; }
         public int Revision { get; set; }
         public DateTime? ResponseDueOn { get; set; }
         public DateTime? RepairDueOn { get; set; }
@@ -93,8 +93,8 @@ namespace Resgrid.Model.WorkOrders
         public DateTime? RepairBreachedOn { get; set; }
         public int? SlaPolicyRevision { get; set; }
         public DateTime RecordedOn { get; set; }
-        public int? SourceActivityId { get; set; }
-        public int? RecurrenceVersionId { get; set; }
+        public string SourceActivityId { get; set; }
+        public string RecurrenceVersionId { get; set; }
         public int SourceType { get; set; }
         public int Status { get; set; }
         public int Priority { get; set; }
@@ -108,11 +108,11 @@ namespace Resgrid.Model.WorkOrders
     }
     public sealed class ReadinessWorkOrderEvidence
     {
-        public int WorkOrderId { get; set; }
+        public string WorkOrderId { get; set; }
         public int Revision { get; set; }
-        public long? SnapshotId { get; set; }
-        public int? SourceActivityId { get; set; }
-        public int? RecurrenceVersionId { get; set; }
+        public string SnapshotId { get; set; }
+        public string SourceActivityId { get; set; }
+        public string RecurrenceVersionId { get; set; }
         public DateTime RecordedOn { get; set; }
         public string Title { get; set; }
         public int Status { get; set; }
@@ -122,7 +122,7 @@ namespace Resgrid.Model.WorkOrders
         public DateTime? DueOn { get; set; }
         public string ChecklistCompletionId { get; set; }
         public string ChecklistItemId { get; set; }
-        public List<int> ActiveSafetyHoldIds { get; set; } = new();
+        public List<string> ActiveSafetyHoldIds { get; set; } = new();
     }
     public sealed class ReadinessWorkOrderSection
     {
@@ -135,8 +135,8 @@ namespace Resgrid.Model.Services
 {
     public interface IWorkOrderReportingService
     {
-        Task<WorkOrders.WorkOrderEvidencePage<WorkOrders.WorkOrderActivityView>> GetWorkOrderActivityAsync(ChecklistActor actor, int id, int afterId = 0);
-        Task<WorkOrders.WorkOrderEvidencePage<WorkOrders.WorkOrderHoldView>> GetWorkOrderHoldsAsync(ChecklistActor actor, int id, int afterId = 0);
+        Task<WorkOrders.WorkOrderEvidencePage<WorkOrders.WorkOrderActivityView>> GetWorkOrderActivityAsync(ChecklistActor actor, string id, string afterId = null);
+        Task<WorkOrders.WorkOrderEvidencePage<WorkOrders.WorkOrderHoldView>> GetWorkOrderHoldsAsync(ChecklistActor actor, string id, string afterId = null);
         Task<WorkOrders.WorkOrderStats> GetWorkOrderStatsAsync(ChecklistActor actor, WorkOrders.WorkOrderReportQuery query);
         Task<WorkOrders.WorkOrderHistoryPage> GetWorkOrderHistoryAsync(ChecklistActor actor, WorkOrders.WorkOrderReportQuery query);
         Task<byte[]> ExportWorkOrdersAsync(ChecklistActor actor, WorkOrders.WorkOrderReportQuery query);

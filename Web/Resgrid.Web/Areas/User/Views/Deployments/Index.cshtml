@@ -1,27 +1,31 @@
 @model Resgrid.Web.Areas.User.Models.Deployments.DeploymentIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["Deployments"];
     ViewData["Title"] = localizer["Deployments"].Value;
     ViewData["Subtitle"] = localizer["IndexIntro"].Value;
     var pages = Math.Max(1, (int)Math.Ceiling(Model.Total / (double)Model.PageSize));
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a asp-action="Index" asp-route-all="@(Model.OpenOnly ? "true" : "false")" class="btn btn-default">@(Model.OpenOnly ? localizer["ShowAll"] : localizer["ShowOpen"])</a>
+        @if (Model.CanManage)
+        {
+            <a asp-action="FromExternalOrder" class="btn btn-default"><i class="fa fa-exchange"></i> @localizer["CreateFromExternalOrder"]</a>
+            <a asp-action="New" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewDeployment"]</a>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@(Model.MineOnly ? localizer["MyDeployments"] : localizer["Deployments"])</h5>
-            <div class="ibox-tools">
-                <a asp-action="Index" asp-route-all="@(Model.OpenOnly ? "true" : "false")" class="btn btn-default btn-xs">@(Model.OpenOnly ? localizer["ShowAll"] : localizer["ShowOpen"])</a>
-                @if (Model.CanManage)
-                {
-                    <a asp-action="FromExternalOrder" class="btn btn-default btn-xs"><i class="fa fa-exchange"></i> @localizer["CreateFromExternalOrder"]</a>
-                    <a asp-action="New" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewDeployment"]</a>
-                }
-            </div>
+
         </div>
         <div class="ibox-content">
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpIndex"]</div>
@@ -43,7 +47,7 @@
                                 <td>@d.IncidentNumber</td>
                                 <td>@d.ResourceOrderNumber</td>
                                 <td>@(string.IsNullOrWhiteSpace(d.ContactId) ? "" : Model.ContactNames.TryGetValue(d.ContactId, out var contact) ? contact : "")</td>
-                                <td>@(d.StartOn.HasValue ? d.StartOn.Value.ToString("yyyy-MM-dd") : "—") → @(d.EndOn.HasValue ? d.EndOn.Value.ToString("yyyy-MM-dd") : "—")</td>
+                                <td>@(d.StartOn.HasValue ? departmentTime.Date(d.StartOn) : "—") → @(d.EndOn.HasValue ? departmentTime.Date(d.EndOn) : "—")</td>
                                 <td class="text-right"><a asp-action="View" asp-route-id="@d.DeploymentId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i> @localizer["Open"]</a></td>
                             </tr>
                         }
@@ -62,3 +66,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

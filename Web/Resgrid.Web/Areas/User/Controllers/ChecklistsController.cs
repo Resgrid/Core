@@ -19,6 +19,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
 	[Authorize]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public partial class ChecklistsController : SecureBaseController
 	{
 		private readonly IChecklistTemplateService _templates;

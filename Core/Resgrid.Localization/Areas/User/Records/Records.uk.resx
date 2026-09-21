@@ -2005,9 +2005,9 @@
   <data name="HoldRecordIdHelp" xml:space="preserve"><value>Залиште порожнім, щоб утримати все, що відповідає визначенню та діапазону дат.</value></data>
   <data name="HoldDefinition" xml:space="preserve"><value>Обсяг за визначенням</value></data>
   <data name="HoldNerisScope" xml:space="preserve"><value>Подія та аналіз NERIS</value></data>
-  <data name="HoldScopeHelp" xml:space="preserve"><value>Для обсягу за визначенням залиште обидві дати порожніми, щоб зберегти всі. Час у UTC.</value></data>
-  <data name="HoldPeriodStart" xml:space="preserve"><value>Початок періоду (UTC)</value></data>
-  <data name="HoldPeriodEnd" xml:space="preserve"><value>Кінець періоду (UTC)</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>Для обсягу за визначенням залиште обидві дати порожніми, щоб зберегти всі. Час у місцевий час підрозділу.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Початок періоду</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Кінець періоду</value></data>
   <data name="HoldReason" xml:space="preserve"><value>Підстава утримання</value></data>
   <data name="HoldReasonLitigation" xml:space="preserve"><value>Судовий спір</value></data>
   <data name="HoldReasonInvestigation" xml:space="preserve"><value>Розслідування</value></data>
@@ -2038,9 +2038,9 @@
   <data name="EvidenceChooseChannel" xml:space="preserve"><value>Оберіть канал</value></data>
   <data name="EvidenceRestricted" xml:space="preserve"><value>потрібен обмежений доступ</value></data>
   <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Для недоступного джерела докази не записуються.</value></data>
-  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Початок охоплення (UTC)</value></data>
-  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Кінець охоплення (UTC)</value></data>
-  <data name="EvidenceValidityTime" xml:space="preserve"><value>Час події для чинності (UTC)</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Початок охоплення</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Кінець охоплення</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Час події для чинності</value></data>
   <data name="EvidencePersonnel" xml:space="preserve"><value>Особовий склад</value></data>
   <data name="EvidenceMessages" xml:space="preserve"><value>Повідомлення</value></data>
   <data name="EvidenceNoChoices" xml:space="preserve"><value>На цій сторінці немає доступних елементів.</value></data>
@@ -2056,7 +2056,7 @@
   <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Ідентифікатор не записано</value></data>
   <data name="SubmissionLatestIssue" xml:space="preserve"><value>Остання проблема</value></data>
   <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Історія доставки та відповідей</value></data>
-  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Час у UTC. Попередні відповіді залишаються доступними після відмови, повтору та виправлення.</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Час у місцевий час підрозділу. Попередні відповіді залишаються доступними після відмови, повтору та виправлення.</value></data>
   <data name="SubmissionNoExchanges" xml:space="preserve"><value>Для цього застарілого подання історію обміну не записано.</value></data>
   <data name="SubmissionOperation" xml:space="preserve"><value>Операція та етап</value></data>
   <data name="SubmissionResponse" xml:space="preserve"><value>Відповідь призначення</value></data>

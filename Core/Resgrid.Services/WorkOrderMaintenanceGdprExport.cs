@@ -35,7 +35,7 @@ namespace Resgrid.Services
                 PartMovements = await Rows<WorkOrderPartMovement>(r => r.CreatedBy == userId),
                 FailureIntents = await Rows<WorkOrderFailureIntent>(r => r.CreatedBy == userId || r.AuthorizedBy == userId),
                 SafetyHolds = await Rows<WorkOrderSafetyHold>(r => r.CreatedBy == userId || r.ReleasedBy == userId),
-                Recurrences = await Rows<WorkOrderRecurrence>(r => r.CreatedBy == userId || r.AssignedToUserId == userId || related.Contains(r.Id)),
+                Recurrences = await Rows<WorkOrderRecurrence>(r => r.CreatedBy == userId || r.AssignedToUserIds.Contains(userId) || related.Contains(r.Id)),
                 Versions = versions, Readings = readings, Changes = changes
             };
         }

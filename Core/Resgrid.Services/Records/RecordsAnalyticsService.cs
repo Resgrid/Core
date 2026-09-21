@@ -166,7 +166,8 @@ namespace Resgrid.Services.Records
 			context.Start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
 			context.End = DateTime.SpecifyKind(end, DateTimeKind.Utc);
 			context.Visible = (await _authorization.GetVisibleGroupIdsAsync(userId, departmentId))?.ToList();
-			try { context.TimeZone = (await _departmentsService.GetDepartmentByIdAsync(departmentId, false))?.TimeZone; }
+			try { context.TimeZone = (await _departmentsService.GetDepartmentByIdAsync(departmentId, false))?.TimeZone;
+                if (string.IsNullOrWhiteSpace(context.TimeZone)) context.TimeZone = "Pacific Standard Time"; }
 			catch (Exception ex) { Logging.LogException(ex, $"Records analytics: department time zone unavailable for {departmentId}; bucketing in UTC."); }
 			return context;
 		}
@@ -295,7 +296,7 @@ namespace Resgrid.Services.Records
 		private DateTime Local(DateTime utc, Context c)
 		{
 			if (string.IsNullOrWhiteSpace(c.TimeZone)) return utc;
-			try { return DateTimeHelpers.GetLocalDateTime(utc, c.TimeZone); }
+			try { return Resgrid.Model.Helpers.TimeConverterHelper.TimeConverter(utc, new Department { TimeZone = c.TimeZone }); }
 			catch { return utc; }
 		}
 

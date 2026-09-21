@@ -14,9 +14,9 @@ const { chromium } = launch.playwright();
 <script type="application/json" id="work-order-page">{"protectedData":true,"grant":"synthetic-grant","expiry":"2030-01-01T00:00:00Z","reopen":"/User/WorkOrders/Reopen","index":"/User/WorkOrders","error":"Erreur"}</script>`);
         await page.evaluate(()=>{
             window.$=f=>f();window.requests=[];window.reopened=[];
-            window.fail=true;window.allowed=false;
+            window.fail=true;window.allowed=false;window.responseId='00000000-0000-0000-0000-000000000123';
             window.resgridAdpReveal={bindForm:form=>form.addEventListener('submit',e=>{if(!window.allowed)e.preventDefault();})};
-            window.fetch=async(url,options)=>{window.requests.push(Object.fromEntries(options.body));return window.fail ? {ok:false,json:async()=>({message:window.errorMessage || 'Conflit',code:'Conflict'})}:{ok:true,json:async()=>({id:123})};};
+            window.fetch=async(url,options)=>{window.requests.push(Object.fromEntries(options.body));return window.fail ? {ok:false,json:async()=>({message:window.errorMessage || 'Conflit',code:'Conflict'})}:{ok:true,json:async()=>({id:window.responseId})};};
             HTMLFormElement.prototype.submit=function(){window.reopened.push(Object.fromEntries(new FormData(this)));};
         });
         await page.addScriptTag({path:path.resolve(__dirname,'../../../Web/Resgrid.Web/wwwroot/js/app/internal/workorders/work-orders.js')});
@@ -35,6 +35,17 @@ const { chromium } = launch.playwright();
         await page.evaluate(()=>window.fail=false); await page.click('button[type=submit]');
         await page.waitForFunction(()=>reopened.length===1);
         assert.equal(await page.evaluate(()=>reopened[0].destination),'Detail');
+        assert.equal(await page.evaluate(()=>reopened[0].id),'00000000-0000-0000-0000-000000000123');
+        for (const invalidId of [123, '123', 'invalid']) {
+            await page.evaluate(id=>window.responseId=id, invalidId);
+            await page.click('button[type=submit]');
+            assert.equal(await page.evaluate(()=>reopened.length),1,'Entity navigation must reject non-GUID identities');
+        }
+        await page.evaluate(()=>{window.responseId=null;document.querySelector('form.work-order-command').dataset.destination='Settings';});
+        await page.click('button[type=submit]');
+        await page.waitForFunction(()=>reopened.length===2);
+        assert.equal(await page.evaluate(()=>reopened[1].destination),'Settings');
+        assert.equal(await page.evaluate(()=>reopened[1].id),undefined,'Settings navigation needs no entity identity');
         assert.equal(await page.evaluate(()=>reopened[0].__RequestVerificationToken),'synthetic-csrf');
         assert.equal(await page.evaluate(()=>reopened[0].__ResgridProtectedGrant),'synthetic-grant');
         assert.equal(await page.evaluate(()=>document.getElementById('work-order-page').textContent),'');

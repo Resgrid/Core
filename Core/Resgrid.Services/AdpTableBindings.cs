@@ -606,7 +606,7 @@ namespace Resgrid.Services
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
 			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Select(table =>
-				AdpTableBinding.Direct(table, "Id", true, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" }));
+				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" }));
 			// Inventory transactions use their stable GUID public Id for field AAD, independently of the bigint EntryId ledger key.
 			bindings.AddRange(Resgrid.Model.Inventories.InventoryTables.All.Values.Select(table =>
 				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" }));

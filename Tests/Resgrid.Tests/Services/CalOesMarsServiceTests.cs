@@ -334,6 +334,29 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task An_open_ended_referenced_agreement_revised_without_a_start_is_effective_today_and_keeps_the_prior_for_earlier_dates()
+		{
+			var openEnded = await _service.SaveAgreementAsync(new CalOesMarsAgreementSnapshot { DepartmentId = DeptId, DocumentKind = (int)CalOesMarsDocumentKinds.Mou, CompensationMethod = (int)CalOesMarsCompensationMethods.ActualHours, OvertimeMethod = (int)CalOesMarsOvertimeMethods.AfterEightHoursPerDay }, User, null, null);
+			openEnded.StartOn.Should().BeNull("an ordinary agreement keeps the open-ended start it was given");
+			_items.Add(new CalOesMarsWorkItem { CalOesMarsWorkItemId = "wi-open", DepartmentId = DeptId, DeploymentId = "dep-1", RecordType = (int)CalOesMarsRecordTypes.F42, AgreementSnapshotId = openEnded.CalOesMarsAgreementSnapshotId, LocalState = (int)CalOesMarsLocalStates.Closed, MarsRecordId = "F42-1", AddedOn = Dispatch });
+
+			var today = DateTime.UtcNow.Date;
+			var revision = await _service.SaveAgreementAsync(new CalOesMarsAgreementSnapshot { CalOesMarsAgreementSnapshotId = openEnded.CalOesMarsAgreementSnapshotId, DepartmentId = DeptId, DocumentKind = openEnded.DocumentKind, CompensationMethod = openEnded.CompensationMethod, OvertimeMethod = (int)CalOesMarsOvertimeMethods.AfterTwelveHoursPerDay }, User, null, null);
+
+			revision.CalOesMarsAgreementSnapshotId.Should().NotBe(openEnded.CalOesMarsAgreementSnapshotId);
+			revision.StartOn.Should().Be(today, "a referenced revision without a submitted start is effective today, matching the day the prior snapshot closes");
+			(await _service.GetAgreementAsync(openEnded.CalOesMarsAgreementSnapshotId, DeptId)).EndOn.Should().Be(today.AddDays(-1));
+			// Yesterday's dispatch still selects the prior terms; today's selects the revision.
+			(await _service.SelectAgreementAsync(DeptId, null, today.AddDays(-1))).CalOesMarsAgreementSnapshotId.Should().Be(openEnded.CalOesMarsAgreementSnapshotId);
+			(await _service.SelectAgreementAsync(DeptId, null, today)).CalOesMarsAgreementSnapshotId.Should().Be(revision.CalOesMarsAgreementSnapshotId);
+
+			// An end before the effective start is rejected rather than saved as an empty range.
+			_items.Add(new CalOesMarsWorkItem { CalOesMarsWorkItemId = "wi-rev", DepartmentId = DeptId, DeploymentId = "dep-1", RecordType = (int)CalOesMarsRecordTypes.F42, AgreementSnapshotId = revision.CalOesMarsAgreementSnapshotId, LocalState = (int)CalOesMarsLocalStates.Closed, MarsRecordId = "F42-2", AddedOn = Dispatch });
+			await FluentActions.Awaiting(() => _service.SaveAgreementAsync(new CalOesMarsAgreementSnapshot { CalOesMarsAgreementSnapshotId = revision.CalOesMarsAgreementSnapshotId, DepartmentId = DeptId, DocumentKind = revision.DocumentKind, CompensationMethod = revision.CompensationMethod, OvertimeMethod = revision.OvertimeMethod, EndOn = today.AddDays(-2) }, User, null, null))
+				.Should().ThrowAsync<InvalidOperationException>().WithMessage("calmars_dates_invalid");
+		}
+
+		[Test]
 		public async Task Redispatch_closes_the_first_interval_and_opens_a_superseding_f42()
 		{
 			await SeedReadyDepartmentAsync();

@@ -15,9 +15,10 @@ namespace Resgrid.Model.WorkOrders
 		public static string Routing(JObject payload)
 		{
 			var safe = new JObject();
-			foreach (var field in new[] { "WorkOrderId", "Revision", "Status", "Priority", "TargetUnitId", "TargetGroupId", "AssignedToRoleId", "RecurrenceId", "HoldId", "OldStatus", "PolicyId", "ApprovalState" })
+			foreach (var field in new[] { "Revision", "Status", "Priority", "TargetUnitId", "TargetGroupId", "AssignedToRoleId", "OldStatus", "ApprovalState" })
 				if (payload[field]?.Type == JTokenType.Integer && payload[field].Value<long>() >= 0 && payload[field].Value<long>() <= int.MaxValue) safe[field] = payload[field].DeepClone();
-			if (payload["InventoryAssetId"]?.Type == JTokenType.String && Guid.TryParseExact(payload["InventoryAssetId"].Value<string>(), "D", out var asset)) safe["InventoryAssetId"] = asset.ToString("D");
+			foreach (var field in new[] { "WorkOrderId", "RecurrenceId", "HoldId", "PolicyId", "InventoryAssetId" })
+				if (payload[field]?.Type == JTokenType.String && Guid.TryParseExact(payload[field].Value<string>(), "D", out var id)) safe[field] = id.ToString("D");
             foreach (var field in new[] { "DueOn", "ResponseDueOn", "RepairDueOn", "ResponseBreachedOn", "RepairBreachedOn" })
             {
                 if (payload[field] is JValue { Type: JTokenType.Date } date)

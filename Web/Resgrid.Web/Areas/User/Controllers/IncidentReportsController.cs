@@ -29,6 +29,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// department NERIS profile/crosswalk settings. Every read passes the per-record visibility rule.
 	/// </summary>
 	[Area("User")]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class IncidentReportsController : SecureBaseController
 	{
 		private const string IncidentTypeSet = "incident_type";
@@ -1097,10 +1098,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!local.HasValue || local.Value == DateTime.MinValue)
 				return null;
-			if (department == null || string.IsNullOrWhiteSpace(department.TimeZone))
-				return DateTime.SpecifyKind(local.Value, DateTimeKind.Utc);
-
-			return DateTimeHelpers.ConvertToUtc(local.Value, department.TimeZone, true);
+			return new Resgrid.Web.Helpers.DepartmentTime(department).ToUtc(local.Value);
 		}
 
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()

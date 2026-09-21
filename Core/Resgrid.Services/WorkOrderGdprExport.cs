@@ -14,7 +14,7 @@ namespace Resgrid.Services
 		{
 			if (_workOrders == null) throw new InvalidOperationException("Work-order export storage is unavailable.");
 			async Task<T> Safe<T>(T row) where T : WorkOrderRow => await _checklistProtection.Value.ForDisplayAsync(departmentId, row, WorkOrderTables.Fields<T>());
-			async Task<List<T>> Children<T>(int id) where T : WorkOrderRow
+			async Task<List<T>> Children<T>(string id) where T : WorkOrderRow
 			{
 				var result = new List<T>();
 				for (var skip = 0; ; skip += 500) { var batch = await _workOrders.ChildrenAsync<T>(departmentId, id, skip); foreach (var row in batch) result.Add(await Safe(row)); if (batch.Count < 500) return result; }
@@ -26,9 +26,9 @@ namespace Resgrid.Services
 				foreach (var row in rows.Take(50))
 				{
 					var activity = await Children<WorkOrderActivity>(row.Id); var labor = await Children<WorkOrderLabor>(row.Id);
-					if (row.CreatedBy != userId && row.AssignedToUserId != userId && row.CompletedBy != userId && row.VerifiedBy != userId && !activity.Any(a => a.CreatedBy == userId) && !labor.Any(l => l.UserId == userId || l.CreatedBy == userId)) continue;
+					if (row.CreatedBy != userId && !row.AssignedToUserIds.Contains(userId) && row.CompletedBy != userId && row.VerifiedBy != userId && !activity.Any(a => a.CreatedBy == userId) && !labor.Any(l => l.UserId == userId || l.CreatedBy == userId)) continue;
 					var snapshots = new List<WorkOrderReportSnapshot>();
-					long afterId = 0;
+					string afterId = null;
 					while (true)
 					{
 						var batch = await _workOrders.ReportSnapshotHistoryAsync(departmentId, row.Id, afterId);

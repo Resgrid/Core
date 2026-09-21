@@ -744,4 +744,6 @@
   <data name="ChatAccountsBack" xml:space="preserve"><value>Tillbaka till profilen</value></data>
   <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Din länkningskod är klar.</value></data>
   <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>I Discord använder du /resgrid och skriver LINK följt av koden i alternativet message. Använd även /resgrid för efterföljande kommandon.</value></data>
+  <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Personal och verksamhet</value></data>
+  <data name="NavigationReadiness" xml:space="preserve"><value>Beredskap</value></data>
 </root>

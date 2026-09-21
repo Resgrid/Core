@@ -2,13 +2,14 @@
 @model Resgrid.Web.Areas.User.Models.Records.RecordDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
 @{
+    var time = new DepartmentTime(Model.Department);
 	// Definition-driven values on the detail page (RMS-1B): rendered against the pinned version's labels; restricted
 	// cells are withheld here for viewers without RecordRestricted_View.
 	var values = Model.Aggregate.Values;
 	var layout = Model.DefinitionLayout;
 	var sections = values == null ? new List<RecordValueSectionSet>() : (layout == null ? values.Sections : layout.OrderedSectionKeys(values.Sections.Select(s => s.SectionKey)).Select(k => values.Section(k)).Where(s => s != null).ToList());
 	bool Visible(RecordValueCell c) => layout == null || layout.IsFieldVisible(c.FieldKey);
-	string Cell(RecordValueCell c) => c == null || c.Display == null ? "-" : (c.Withheld || (c.Classification == RmsFieldClassification.Restricted && !Model.CanViewRestricted)) ? localizer["WithheldField"].Value : c.Display;
+	string Cell(RecordValueCell c) => c == null || c.Display == null ? "-" : (c.Withheld || (c.Classification == RmsFieldClassification.Restricted && !Model.CanViewRestricted)) ? localizer["WithheldField"].Value : c.Type == RmsFieldType.DateTime ? time.Format(time.Parse(c.Value)) : c.Display;
 }
 @if (values != null)
 {

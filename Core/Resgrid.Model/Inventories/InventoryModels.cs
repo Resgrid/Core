@@ -72,7 +72,7 @@ namespace Resgrid.Model.Inventories
 	/// <summary>EntryId is the bigint database primary key; Id is the stable GUID exposed to integration consumers. Append-only.</summary>
 	public sealed class InventoryTransaction : InventoryRow
 	{
-		public int? WorkOrderPartMovementId { get; set; }
+		public string WorkOrderPartMovementId { get; set; }
 		public long EntryId { get; set; }
 		public string OperationId { get; set; }
 		public int LineNumber { get; set; }
@@ -95,7 +95,7 @@ namespace Resgrid.Model.Inventories
 		public string IssuanceId { get; set; }
 		public string PurchaseOrderItemId { get; set; }
 		public string CountItemId { get; set; }
-		public int? WorkOrderPartId { get; set; }
+		public string WorkOrderPartId { get; set; }
 		public int? LegacyInventoryId { get; set; }
 		public DateTime OccurredOn { get; set; }
 	}

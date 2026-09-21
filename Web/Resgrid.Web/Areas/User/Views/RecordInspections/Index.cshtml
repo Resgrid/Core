@@ -3,6 +3,7 @@
 @model RecordInspectionsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Inspections"];
 	var now = DateTime.UtcNow;
 	string Occ(string id) => Model.OccupancyNames.TryGetValue(id ?? "", out var n) ? n : id;
@@ -51,8 +52,8 @@
 								<td>@i.InspectionNumber</td>
 								<td><a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsOccupancyId">@Occ(i.RmsOccupancyId)</a></td>
 								<td><span class="label label-@RmsEnumDisplay.StateClass((RmsInspectionState)i.State)">@(RmsEnumDisplay.Label<RmsInspectionState>(i.State))</span></td>
-								<td>@RmsEnumDisplay.Day(i.ScheduledOn)</td>
-								<td>@RmsEnumDisplay.Day(i.CompletedOn)</td>
+								<td>@departmentTime.Date(i.ScheduledOn)</td>
+								<td>@departmentTime.Date(i.CompletedOn)</td>
 								<td>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</td>
 								<td><a class="btn btn-xs btn-default" asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsInspectionId">@L["ViewRecordHeader"]</a></td>
 							</tr>

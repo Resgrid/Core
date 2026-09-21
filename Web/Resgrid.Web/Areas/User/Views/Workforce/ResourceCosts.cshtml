@@ -10,20 +10,25 @@
     ViewData["WorkforcePage"] = Model;
     var x = Model.Editing;
     var canEdit = Model.CanViewInternalCosts && Model.CanManage;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (canEdit)
+        {
+            <a asp-action="ResourceCosts" asp-route-edit="new" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["AddResourceProfile"]</a>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-@(x == null ? 12 : 5)">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["ResourceProfiles"]</h5>
-                    @if (canEdit)
-                    {
-                        <div class="ibox-tools"><a asp-action="ResourceCosts" asp-route-edit="new" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> @localizer["AddResourceProfile"]</a></div>
-                    }
+
                 </div>
                 <div class="ibox-content">
                     <p class="small text-muted">@localizer["ResourceProfilesHelp"]</p>
@@ -158,4 +163,8 @@
         });
     })();
 </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

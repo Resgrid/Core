@@ -83,7 +83,6 @@ namespace Resgrid.Web.Areas.User.Models.Records
 			}
 		}
 
-		public static string Utc(DateTime? value) => value.HasValue ? value.Value.ToString("yyyy-MM-dd HH:mm") + " UTC" : "";
 		public static string Day(DateTime? value) => value.HasValue ? value.Value.ToString("yyyy-MM-dd") : "";
 	}
 

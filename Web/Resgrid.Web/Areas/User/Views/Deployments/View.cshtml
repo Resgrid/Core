@@ -3,6 +3,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> contractorStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceStrings
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var d = Model.Deployment;
     ViewBag.Title = "Resgrid | " + d.Name;
     ViewData["Title"] = d.Name;
@@ -11,7 +12,8 @@
     var activeUnits = d.Units.Where(u => u.IsActive).ToList();
     var activePeople = d.Personnel.Where(p => p.IsActive).ToList();
     var activeEquipment = d.Equipment.Where(e => e.IsActive).ToList();
-    string Local(DateTime? value) => value.HasValue ? (Model.Department == null ? value.Value.ToString("yyyy-MM-dd HH:mm") : Resgrid.Model.Helpers.TimeConverterHelper.TimeConverter(value.Value, Model.Department).ToString("yyyy-MM-dd HH:mm")) : "—";
+    string Local(DateTime? value) => departmentTime.Format(value) ?? "—";
+    string Window(DateTime? value) => Local(value);
     string UserName(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : Model.UserNames.TryGetValue(userId, out var n) ? n : userId;
     string UnitName(string deploymentUnitId) { var u = d.Units.FirstOrDefault(x => x.DeploymentUnitId == deploymentUnitId); return u == null ? "" : (u.UnitName ?? u.UnitId.ToString()); }
     // ADP reveal (plan 7.2): catalog 28 values render REDACTED; the step-up modal and the Reveal action fill the marked spans.
@@ -28,11 +30,20 @@
     {
         if (Resgrid.Services.Invoicing.DeploymentService.IsValidTransition(status, candidate)) next.Add(candidate);
     }
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (Model.CanManage)
+        {
+            <a asp-action="Edit" asp-route-id="@d.DeploymentId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+        }
+        <a asp-action="ExportTimeEntries" asp-route-id="@d.DeploymentId" class="btn btn-info"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
     @foreach (var warning in Model.Warnings)
     {
@@ -47,13 +58,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["Deployment"] @await Html.PartialAsync("_StatusBadge", d.Status)</h5>
-                    <div class="ibox-tools">
-                        @if (Model.CanManage)
-                        {
-                            <a asp-action="Edit" asp-route-id="@d.DeploymentId" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
-                        }
-                        <a asp-action="ExportTimeEntries" asp-route-id="@d.DeploymentId" class="btn btn-default btn-xs"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
-                    </div>
+
                 </div>
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
@@ -61,7 +66,7 @@
                         <dt>@localizer["ResourceOrderNumber"]</dt><dd>@(d.ResourceOrderNumber ?? "—") @(string.IsNullOrWhiteSpace(d.RequestNumber) ? "" : $"/ {d.RequestNumber}")</dd>
                         <dt>@localizer["CostCode"]</dt><dd>@(d.CostCode ?? "—")</dd>
                         <dt>@localizer["PointOfHire"]</dt><dd>@(d.PointOfHire ?? "—")</dd>
-                        <dt>@localizer["Window"]</dt><dd>@Local(d.StartOn) → @Local(d.EndOn) @(d.MaxDays.HasValue ? $"({d.MaxDays} {localizer["Days"]})" : "")</dd>
+                        <dt>@localizer["Window"]</dt><dd>@Window(d.StartOn) → @Window(d.EndOn) @(d.MaxDays.HasValue ? $"({d.MaxDays} {localizer["Days"]})" : "")</dd>
                         <dt>@localizer["Contact"]</dt><dd>@(Model.ContactName ?? "—")</dd>
                         <dt>@localizer["Call"]</dt><dd>@if (Model.Call != null) { <a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Model.Call.Number @Model.Call.Name</a> } else { <text>—</text> }</dd>
                         @if (!string.IsNullOrWhiteSpace(d.RmsExternalOrderId))
@@ -118,7 +123,7 @@
 
     <div class="ibox float-e-margins">
         <div class="ibox-content">
-            <ul class="nav nav-tabs m-b-md">
+            <ul class="nav nav-pills rgw-module-tabs">
                 <li class="@(Model.Tab == "roster" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="roster"><i class="fa fa-users"></i> @localizer["Roster"]</a></li>
                 <li class="@(Model.Tab == "time" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="time"><i class="fa fa-clock-o"></i> @localizer["TimeReports"]</a></li>
                 <li class="@(Model.Tab == "expenses" ? "active" : null)"><a asp-action="View" asp-route-id="@d.DeploymentId" asp-route-tab="expenses"><i class="fa fa-money"></i> @localizer["Expenses"]</a></li>
@@ -249,7 +254,7 @@
                 {
                     <form method="post" asp-action="NewTimeReport" asp-route-id="@d.DeploymentId" class="form-inline m-b-md">
                         @Html.AntiForgeryToken()
-                        <input type="date" name="reportDate" class="form-control input-sm" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required />
+                        <input type="date" name="reportDate" class="form-control input-sm" value="@departmentTime.Today.ToString("yyyy-MM-dd")" required />
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> @localizer["NewTimeReport"]</button>
                         <span class="help-block" style="display:inline">@localizer["NewTimeReportHelp"]</span>
                     </form>
@@ -400,7 +405,7 @@
                             @foreach (var run in Model.CostRuns.OrderByDescending(r => r.AddedOn))
                             {
                                 <tr>
-                                    <td>@run.AddedOn.ToString("yyyy-MM-dd")</td><td>@workforceStrings["RunType" + (Resgrid.Model.Workforce.FieldCostRunTypes)run.RunType]</td>
+                                    <td>@departmentTime.Date(run.AddedOn)</td><td>@workforceStrings["RunType" + (Resgrid.Model.Workforce.FieldCostRunTypes)run.RunType]</td>
                                     <td>@workforceStrings["RunStatus" + (Resgrid.Model.Workforce.FieldCostRunStatuses)run.Status]</td>
                                     <td class="text-right">@run.TotalLoadedCost.ToString("N2") @run.Currency</td><td class="text-right">@(run.RevenueAmount?.ToString("N2") ?? "—")</td><td class="text-right">@(run.ContributionMargin?.ToString("N2") ?? "—")</td>
                                     <td class="text-right"><a asp-controller="Workforce" asp-action="CostRun" asp-route-id="@run.FieldCostRunId" class="btn btn-xs btn-default"><i class="fa fa-folder-open"></i></a></td>
@@ -476,4 +481,8 @@
             unit.addEventListener('change', filter); filter();
         })();
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

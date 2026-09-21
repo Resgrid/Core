@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.Invoicing.BillingSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["BillingSettings"];
     ViewData["Tab"] = "Settings";
     ViewData["Title"] = localizer["BillingSettings"].Value;
@@ -16,7 +17,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (Model.SaveSuccess)
     {
         <div class="alert alert-success">@localizer["Saved"]</div>
@@ -28,9 +29,8 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["BillingSettings"]</h5></div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
 
-            <ul class="nav nav-pills m-b-md">
+            <ul class="nav nav-pills rgw-module-tabs">
                 <li class="@(onlineActive ? null : "active")"><a data-toggle="tab" href="#identity">@localizer["BillingIdentity"]</a></li>
                 @if (showOnlineTab)
                 {
@@ -144,8 +144,8 @@
                                 <dl class="dl-horizontal">
                                     <dt>@localizer["ConnectedAccount"]</dt><dd><code>@connection.ExternalAccountId</code> <span class="label @statusCss">@localizer["ConnectionStatus" + status]</span> <span class="label label-default">@(connection.Environment == (int)Resgrid.Model.Invoicing.PaymentEnvironments.Live ? localizer["LiveMode"] : localizer["SandboxMode"])</span></dd>
                                     <dt>@localizer["BusinessName"]</dt><dd>@(connection.DisplayName ?? "—") @(string.IsNullOrWhiteSpace(connection.Country) ? "" : "(" + connection.Country + (string.IsNullOrWhiteSpace(connection.DefaultCurrency) ? "" : ", " + connection.DefaultCurrency) + ")")</dd>
-                                    <dt>@localizer["ConnectedOn"]</dt><dd>@connection.ConnectedOn.ToString("yyyy-MM-dd HH:mm") UTC</dd>
-                                    <dt>@localizer["LastVerified"]</dt><dd>@(connection.LastVerifiedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</dd>
+                                    <dt>@localizer["ConnectedOn"]</dt><dd>@departmentTime.Format(connection.ConnectedOn)</dd>
+                                    <dt>@localizer["LastVerified"]</dt><dd>@(departmentTime.Format(connection.LastVerifiedOn) ?? "—")</dd>
                                     <dt>@localizer["Capabilities"]</dt>
                                     <dd>
                                         @foreach (var capability in op.Capabilities)
@@ -202,3 +202,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

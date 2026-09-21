@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>Zadysponowane jednostki</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>Sprzęt wydany w chwili zdarzenia</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>Zaplanowana wysyłka zawiera powiadomienie PDF i bezpieczny odnośnik do raportu. Otwórz raport, aby zweryfikować bieżący dostęp i odblokować chronione dane; wyniki kontroli i dane osobowe nie są wysyłane pocztą elektroniczną.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wybierz chronologiczny okres UTC nie dłuższy niż 93 dni.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wybierz chronologiczny okres nie dłuższy niż 93 dni.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Ten raport jest zbyt duży. Wybierz krótszy okres.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Zdarzenie jest niedostępne lub odmówiono dostępu.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Historyczne pochodzenie sprzętu jest niepełne lub niespójne.</value></data>

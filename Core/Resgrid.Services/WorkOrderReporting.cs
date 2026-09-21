@@ -20,23 +20,23 @@ namespace Resgrid.Services
             var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, rows.Select(r => (r, Key(r))).ToList(), WorkOrderTables.Fields<T>(), actor.GrantToken, actor.UserId);
             if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && hadPlaintext) throw new WorkOrderException(403, "ProtectedDataRequired");
         }
-        private async Task<WorkOrderEvidencePage<V>> EvidencePageAsync<T, V>(ChecklistActor actor, int id, int afterId, Func<T, V> project) where T : WorkOrderRow
+        private async Task<WorkOrderEvidencePage<V>> EvidencePageAsync<T, V>(ChecklistActor actor, string id, string afterId, Func<T, V> project) where T : WorkOrderRow
         {
-            if (afterId < 0) throw new WorkOrderException(400, "InvalidInput");
+            if (afterId != null && !Guid.TryParseExact(afterId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
             var order = await ReadOrderAsync(actor, id);
             var rows = await _store.ReportChildrenAsync<T>(actor.DepartmentId, new[] { id }, afterId, 51);
             var page = new WorkOrderEvidencePage<V> { NextAfterId = rows.Count > 50 ? rows[49].Id : null };
             foreach (var row in rows.Take(50)) page.Items.Add(project(await RevealAsync(actor, row)));
             await VerifyReportAccessAsync(actor, new[] { order }); return page;
         }
-        public Task<WorkOrderEvidencePage<WorkOrderActivityView>> GetWorkOrderActivityAsync(ChecklistActor actor, int id, int afterId = 0) => EvidencePageAsync<WorkOrderActivity, WorkOrderActivityView>(actor, id, afterId, a =>
+        public Task<WorkOrderEvidencePage<WorkOrderActivityView>> GetWorkOrderActivityAsync(ChecklistActor actor, string id, string afterId = null) => EvidencePageAsync<WorkOrderActivity, WorkOrderActivityView>(actor, id, afterId, a =>
         {
             var view = Decode<WorkOrderActivityView>(a.Content); view.Id = a.Id; view.Type = (WorkOrderActivityType)a.ActivityType; view.UserId = a.CreatedBy; view.CreatedOn = a.CreatedOn; view.OldStatus = a.OldStatus; view.NewStatus = a.NewStatus; return view;
         });
-        public Task<WorkOrderEvidencePage<WorkOrderHoldView>> GetWorkOrderHoldsAsync(ChecklistActor actor, int id, int afterId = 0) => EvidencePageAsync<WorkOrderSafetyHold, WorkOrderHoldView>(actor, id, afterId, h => new WorkOrderHoldView { Hold = h, Content = Decode<WorkOrderHoldContent>(h.Content) });
+        public Task<WorkOrderEvidencePage<WorkOrderHoldView>> GetWorkOrderHoldsAsync(ChecklistActor actor, string id, string afterId = null) => EvidencePageAsync<WorkOrderSafetyHold, WorkOrderHoldView>(actor, id, afterId, h => new WorkOrderHoldView { Hold = h, Content = Decode<WorkOrderHoldContent>(h.Content) });
         private WorkOrderReportQuery ReportQuery(WorkOrderReportQuery input, bool statistics)
         {
-            if (input == null || input.AfterId < 0 || input.UnitId <= 0 || input.GroupId <= 0 || input.FromUtc?.Kind == DateTimeKind.Local || input.UntilUtc?.Kind == DateTimeKind.Local
+            if (input == null || (input.AfterId != null && !Guid.TryParseExact(input.AfterId, "D", out _)) || input.UnitId <= 0 || input.GroupId <= 0 || input.FromUtc?.Kind == DateTimeKind.Local || input.UntilUtc?.Kind == DateTimeKind.Local
                 || input.Status.HasValue && !Enum.IsDefined(input.Status.Value) || input.Priority.HasValue && !Enum.IsDefined(input.Priority.Value)
                 || input.AssetId != null && !Guid.TryParseExact(input.AssetId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
             var query = new WorkOrderReportQuery { FromUtc = input.FromUtc, UntilUtc = input.UntilUtc, AfterId = input.AfterId, UnitId = input.UnitId, GroupId = input.GroupId, AssetId = input.AssetId, Status = input.Status, Priority = input.Priority };
@@ -46,16 +46,16 @@ namespace Resgrid.Services
                 || statistics && query.UntilUtc - query.FromUtc > TimeSpan.FromDays(366)) throw new WorkOrderException(400, "ReportRangeInvalid");
             return query;
         }
-        private async Task<List<T>> ReportChildrenAsync<T>(ChecklistActor actor, int[] ids) where T : WorkOrderRow
+        private async Task<List<T>> ReportChildrenAsync<T>(ChecklistActor actor, string[] ids) where T : WorkOrderRow
         {
-            var result = new List<T>(); var after = 0;
+            var result = new List<T>(); string after = null;
             while (true)
             {
                 var rows = await _store.ReportChildrenAsync<T>(actor.DepartmentId, ids, after, 500);
                 await RevealReportBatchAsync(actor, rows);
                 foreach (var row in rows)
                 {
-                    if (!row.WorkOrderId.HasValue || !ids.Contains(row.WorkOrderId.Value)) throw new WorkOrderException(404, "Unavailable");
+                    if (row.WorkOrderId == null || !ids.Contains(row.WorkOrderId)) throw new WorkOrderException(404, "Unavailable");
                     result.Add(row);
                 }
                 if (result.Count > ReportLimit) throw new WorkOrderException(400, "ReportTooLarge");
@@ -83,11 +83,11 @@ namespace Resgrid.Services
         {
             if (rows.Count == 0) return new();
             var ids = rows.Select(x => x.Id).ToArray();
-            var labor = (await ReportChildrenAsync<WorkOrderLabor>(actor, ids)).ToLookup(x => x.WorkOrderId.Value);
-            var parts = (await ReportChildrenAsync<WorkOrderPart>(actor, ids)).ToLookup(x => x.WorkOrderId.Value);
-            var vendor = (await ReportChildrenAsync<WorkOrderVendorCharge>(actor, ids)).ToLookup(x => x.WorkOrderId.Value);
-            var activity = (await ReportChildrenAsync<WorkOrderActivity>(actor, ids)).ToLookup(x => x.WorkOrderId.Value);
-            var holds = (await ReportChildrenAsync<WorkOrderSafetyHold>(actor, ids)).ToLookup(x => x.WorkOrderId.Value);
+            var labor = (await ReportChildrenAsync<WorkOrderLabor>(actor, ids)).ToLookup(x => x.WorkOrderId);
+            var parts = (await ReportChildrenAsync<WorkOrderPart>(actor, ids)).ToLookup(x => x.WorkOrderId);
+            var vendor = (await ReportChildrenAsync<WorkOrderVendorCharge>(actor, ids)).ToLookup(x => x.WorkOrderId);
+            var activity = (await ReportChildrenAsync<WorkOrderActivity>(actor, ids)).ToLookup(x => x.WorkOrderId);
+            var holds = (await ReportChildrenAsync<WorkOrderSafetyHold>(actor, ids)).ToLookup(x => x.WorkOrderId);
             var entries = new List<WorkOrderReportEntry>();
             await RevealReportBatchAsync(actor, rows);
             foreach (var row in rows)
@@ -136,7 +136,7 @@ namespace Resgrid.Services
         private async Task<(List<WorkOrder> Rows, List<WorkOrderReportEntry> Entries)> AllReportEntriesAsync(ChecklistActor actor, WorkOrderReportQuery query)
         {
             await _authorization.RequireMemberAsync(actor); var scope = await _authorization.ScopeAsync(actor);
-            var all = new List<WorkOrder>(); var entries = new List<WorkOrderReportEntry>(); query.AfterId = 0;
+            var all = new List<WorkOrder>(); var entries = new List<WorkOrderReportEntry>(); query.AfterId = null;
             while (true)
             {
                 var rows = await _store.ReportOrdersAsync(actor.DepartmentId, scope, query, 500);
@@ -187,7 +187,7 @@ namespace Resgrid.Services
             var section = new ReadinessWorkOrderSection { RestrictedScope = !scope.All }; if (unitIds.Length == 0 && assetIds.Length == 0) return section;
             // Include older still-open maintenance as well as completed work in the packet lookback.
             section.HistoryUnavailable = await _store.HasUnrecoverableReportHistoryAsync(actor.DepartmentId, scope, callUtc);
-            var captured = new List<WorkOrder>(); var scanned = 0; var afterId = 0;
+            var captured = new List<WorkOrder>(); var scanned = 0; string afterId = null;
             while (true)
             {
                 var rows = await _store.ReportPacketOrdersAsync(actor.DepartmentId, scope, callUtc, unitIds, assetIds, afterId);
@@ -210,15 +210,15 @@ namespace Resgrid.Services
                     if (status >= 5 && (completed ?? row.CreatedOn) < fromUtc && lastChange < fromUtc) continue;
                     WorkOrderContent fields;
                     if (snapshot == null) { await RevealOrderAsync(actor, row); fields = Decode<StoredContent>(row.Content).Fields; }
-                    else if (snapshot.SourceActivityId.HasValue)
+                    else if (snapshot.SourceActivityId != null)
                     {
-                        var activity = await RevealAsync(actor, await _store.GetAsync<WorkOrderActivity>(actor.DepartmentId, snapshot.SourceActivityId.Value));
+                        var activity = await RevealAsync(actor, await _store.GetAsync<WorkOrderActivity>(actor.DepartmentId, snapshot.SourceActivityId));
                         if (activity.WorkOrderId != row.Id) throw new WorkOrderException(409, "Unavailable");
                         fields = JObject.Parse(activity.Content ?? "{}")["Snapshot"]?.ToObject<WorkOrderContent>();
                     }
-                    else if (snapshot.SourceType == 2 && snapshot.RecurrenceVersionId.HasValue)
+                    else if (snapshot.SourceType == 2 && snapshot.RecurrenceVersionId != null)
                     {
-                        var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, snapshot.RecurrenceVersionId.Value));
+                        var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, snapshot.RecurrenceVersionId));
                         fields = Decode<WorkOrderRecurrenceInput>(version.Content)?.Template?.Content;
                     }
                     else if (snapshot.SourceType == 1) { await RevealAsync(actor, await _store.GetAsync<WorkOrder>(actor.DepartmentId, row.Id)); fields = new WorkOrderContent { Title = MaintenanceText("GeneratedFailureTitle") }; }

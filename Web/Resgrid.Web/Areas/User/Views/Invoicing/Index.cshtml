@@ -3,17 +3,28 @@
 @using Resgrid.Web.Areas.User.Models.Invoicing
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["Invoicing"];
     ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["Invoicing"].Value;
     ViewData["Subtitle"] = localizer["InvoicingIntro"].Value;
     var message = ViewBag.Message as string;
     var currency = Model.Invoices.FirstOrDefault()?.Currency ?? "USD";
     var pages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (Model.CanWrite && Model.CanManage)
+        {
+            <a asp-controller="Invoicing" asp-action="New" asp-route-area="User" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewInvoice"]</a>
+
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @if (!string.IsNullOrWhiteSpace(message))
     {
         <div class="alert alert-info">@message</div>
@@ -59,15 +70,9 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>@localizer["Invoices"]</h5>
-            @if (Model.CanWrite && Model.CanManage)
-            {
-                <div class="ibox-tools">
-                    <a asp-controller="Invoicing" asp-action="New" asp-route-area="User" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewInvoice"]</a>
-                </div>
-            }
+
         </div>
         <div class="ibox-content">
-            @await Html.PartialAsync("_Tabs")
 
             <form method="get" asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="form-inline m-b-md">
                 <div class="form-group">
@@ -117,7 +122,7 @@
                                     <td><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a></td>
                                     <td>@(Model.ContactName(invoice.ContactId) ?? "—")</td>
                                     <td>@await Html.PartialAsync("_Status", invoice.Status)</td>
-                                    <td>@(invoice.IssuedOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                    <td>@(departmentTime.Date(invoice.IssuedOn) ?? "—")</td>
                                     <td>@(invoice.DueOn?.ToString("yyyy-MM-dd") ?? "—")</td>
                                     <td class="text-right">@invoice.Total.ToString("N2") @invoice.Currency</td>
                                     <td class="text-right">@invoice.Balance.ToString("N2") @invoice.Currency</td>
@@ -151,3 +156,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

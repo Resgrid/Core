@@ -3,6 +3,7 @@
 @model RecordInvestigationDetailsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	var c = Model.Case;
 	ViewBag.Title = "Resgrid | " + L["Investigations"] + " | " + c.CaseNumber;
 	var returnUrl = Url.Action("Details", "RecordInvestigations", new { area = "User", id = c.RmsInvestigationCaseId });
@@ -36,7 +37,7 @@
 				<form method="post" class="form-horizontal" asp-controller="RecordInvestigations" asp-action="Update" asp-route-area="User">
 					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" /><input type="hidden" name="rowVersion" value="@c.RowVersion" />
 					<div class="form-group"><label class="col-sm-3 control-label">@L["Title"]</label><div class="col-sm-9"><input class="form-control" name="title" value="@Text(c.Title)" maxlength="200" readonly="@(!Model.CanWrite)" /></div></div>
-					<div class="form-group"><label class="col-sm-3 control-label">@L["OpenedOn"]</label><div class="col-sm-9"><p class="form-control-static">@RmsEnumDisplay.Utc(c.OpenedOn) · @Model.UserName(c.OpenedByUserId)</p></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["OpenedOn"]</label><div class="col-sm-9"><p class="form-control-static">@departmentTime.Format(c.OpenedOn) · @Model.UserName(c.OpenedByUserId)</p></div></div>
 					<div class="form-group"><label class="col-sm-3 control-label">@L["LeadInvestigator"]</label><div class="col-sm-9">@if (Model.IsLead && !c.IsClosed) { <select class="form-control" name="leadInvestigatorUserId">@foreach (var m in Model.Members) { <option value="@m.Value" selected="@(m.Value == c.LeadInvestigatorUserId)">@m.Text</option> }</select> } else { <p class="form-control-static">@Model.UserName(c.LeadInvestigatorUserId)</p> }</div></div>
 					<div class="form-group"><label class="col-sm-3 control-label">@L["Occupancies"]</label><div class="col-sm-9"><div class="input-group"><input class="form-control" name="occupancyId" value="@c.RmsOccupancyId" maxlength="36" readonly="@(!Model.CanWrite)" />@if (!string.IsNullOrWhiteSpace(c.RmsOccupancyId)) { <span class="input-group-btn"><a class="btn btn-default" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@c.RmsOccupancyId">@L["ViewRecordHeader"]</a></span> }</div></div></div>
 					<div class="form-group"><label class="col-sm-3 control-label">@L["CallId"]</label><div class="col-sm-9"><input class="form-control" type="number" name="callId" value="@c.CallId" readonly="@(!Model.CanWrite)" /></div></div>
@@ -45,8 +46,8 @@
 				</form>
 			</div></div>
 			<div class="ibox"><div class="ibox-title"><h5>@L["Findings"]</h5></div><div class="ibox-content">
-				@if (c.FindingsApprovedOn.HasValue) { <p class="text-success"><i class="fa fa-check"></i> @L["FindingsApprovedNotice"] @RmsEnumDisplay.Utc(c.FindingsApprovedOn) · @Model.UserName(c.FindingsApprovedByUserId)</p> }
-				else if (c.FindingsRecordedOn.HasValue) { <p class="text-warning">@L["FindingsPendingNotice"] @RmsEnumDisplay.Utc(c.FindingsRecordedOn) · @Model.UserName(c.FindingsAuthorUserId)</p> }
+				@if (c.FindingsApprovedOn.HasValue) { <p class="text-success"><i class="fa fa-check"></i> @L["FindingsApprovedNotice"] @departmentTime.Format(c.FindingsApprovedOn) · @Model.UserName(c.FindingsApprovedByUserId)</p> }
+				else if (c.FindingsRecordedOn.HasValue) { <p class="text-warning">@L["FindingsPendingNotice"] @departmentTime.Format(c.FindingsRecordedOn) · @Model.UserName(c.FindingsAuthorUserId)</p> }
 				<form method="post" class="form-horizontal" asp-controller="RecordInvestigations" asp-action="Findings" asp-route-area="User">
 					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" />
 					<div class="form-group"><label class="col-sm-3 control-label">@L["CauseClassification"]</label><div class="col-sm-9"><select class="form-control" name="classification" asp-items="Model.Classifications" disabled="@(!Model.CanWrite || pendingReview)"></select></div></div>
@@ -69,7 +70,7 @@
 					<tbody>
 					@foreach (var m in Model.Aggregate.Members.Where(m => m.IsActive))
 					{
-						<tr><td>@Model.UserName(m.UserId)</td><td>@(RmsEnumDisplay.Label<RmsInvestigationRole>(m.Role))</td><td>@RmsEnumDisplay.Day(m.AddedOn)</td><td>@if (Model.IsLead && !c.IsClosed && m.UserId != c.LeadInvestigatorUserId) { <form method="post" style="display:inline" asp-controller="RecordInvestigations" asp-action="RemoveMember" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" /><input type="hidden" name="memberId" value="@m.RmsInvestigationCaseMemberId" /><button class="btn btn-xs btn-danger">@L["RemoveRow"]</button></form> }</td></tr>
+						<tr><td>@Model.UserName(m.UserId)</td><td>@(RmsEnumDisplay.Label<RmsInvestigationRole>(m.Role))</td><td>@departmentTime.Date(m.AddedOn)</td><td>@if (Model.IsLead && !c.IsClosed && m.UserId != c.LeadInvestigatorUserId) { <form method="post" style="display:inline" asp-controller="RecordInvestigations" asp-action="RemoveMember" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" /><input type="hidden" name="memberId" value="@m.RmsInvestigationCaseMemberId" /><button class="btn btn-xs btn-danger">@L["RemoveRow"]</button></form> }</td></tr>
 					}
 					</tbody>
 				</table>
@@ -87,7 +88,7 @@
 				<p class="text-muted"><small>@L["LinkedIncidentsHelp"]</small></p>
 				@foreach (var inc in Model.Aggregate.Incidents)
 				{
-					<p><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@inc.RecordId">@inc.RecordNumber</a> · @L["PinnedRevision"] @inc.PinnedRevisionId · @RmsEnumDisplay.Day(inc.LinkedOn)
+					<p><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@inc.RecordId">@inc.RecordNumber</a> · @L["PinnedRevision"] @inc.PinnedRevisionId · @departmentTime.Date(inc.LinkedOn)
 						@if (Model.CanWrite) { <form method="post" style="display:inline" asp-controller="RecordInvestigations" asp-action="UnlinkIncident" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" /><input type="hidden" name="linkId" value="@inc.RmsInvestigationCaseIncidentId" /><button class="btn btn-xs btn-default">@L["Unlink"]</button></form> }</p>
 				}
 				@if (Model.CanWrite)
@@ -102,7 +103,7 @@
 			<div class="ibox"><div class="ibox-title"><h5>@L["Referrals"]</h5></div><div class="ibox-content">
 				@foreach (var r in Model.Aggregate.Referrals)
 				{
-					<p><strong>@Text(r.Agency)</strong> · @(RmsEnumDisplay.Label<RmsReferralState>(r.State)) · @RmsEnumDisplay.Day(r.ReferredOn) · @Text(r.ReferenceNumber)<br /><small>@Text(r.Reason)</small>
+					<p><strong>@Text(r.Agency)</strong> · @(RmsEnumDisplay.Label<RmsReferralState>(r.State)) · @departmentTime.Date(r.ReferredOn) · @Text(r.ReferenceNumber)<br /><small>@Text(r.Reason)</small>
 						@if (Model.CanWrite) { <form method="post" class="form-inline" asp-controller="RecordInvestigations" asp-action="ReferralState" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" /><input type="hidden" name="referralId" value="@r.RmsInvestigationReferralId" /><select class="form-control input-sm" name="state" asp-items="Model.ReferralStates"></select> <button class="btn btn-xs btn-default">@L["Transition"]</button></form> }</p>
 				}
 				@if (Model.CanWrite)
@@ -120,7 +121,7 @@
 				@foreach (var n in Model.Aggregate.Notes.OrderByDescending(n => n.OccurredOn))
 				{
 					<div class="panel panel-default"><div class="panel-body">
-						<p><strong>@Text(n.Subject)</strong> <small class="text-muted">@(RmsEnumDisplay.Label<RmsInvestigationNoteKind>(n.Kind)) · @RmsEnumDisplay.Utc(n.OccurredOn) · @Model.UserName(n.AuthorUserId) @(n.IsLocked ? Html.Raw("<i class=\"fa fa-lock\"></i>") : null)</small></p>
+						<p><strong>@Text(n.Subject)</strong> <small class="text-muted">@(RmsEnumDisplay.Label<RmsInvestigationNoteKind>(n.Kind)) · @departmentTime.Format(n.OccurredOn) · @Model.UserName(n.AuthorUserId) @(n.IsLocked ? Html.Raw("<i class=\"fa fa-lock\"></i>") : null)</small></p>
 						<p style="white-space:pre-wrap">@Text(n.Body)</p>
 					</div></div>
 				}
@@ -142,7 +143,7 @@
 						<tbody>
 						@foreach (var e in Model.Aggregate.Evidence)
 						{
-							<tr><td>@e.EvidenceNumber</td><td>@(RmsEnumDisplay.Label<RmsInvestigationEvidenceKind>(e.Kind))</td><td>@Text(e.Description)<br /><small>@RmsEnumDisplay.Day(e.CollectedOn) @Text(e.CollectedFrom)</small></td><td>@(RmsEnumDisplay.Label<RmsEvidenceState>(e.State))</td><td>@(string.IsNullOrWhiteSpace(e.CurrentCustodianUserId) ? Text(e.CurrentCustodianExternal) : Model.UserName(e.CurrentCustodianUserId))</td><td><a class="btn btn-xs btn-default" asp-controller="RecordInvestigations" asp-action="Custody" asp-route-area="User" asp-route-id="@c.RmsInvestigationCaseId" asp-route-evidenceId="@e.RmsInvestigationEvidenceId">@L["CustodyChain"]</a></td></tr>
+							<tr><td>@e.EvidenceNumber</td><td>@(RmsEnumDisplay.Label<RmsInvestigationEvidenceKind>(e.Kind))</td><td>@Text(e.Description)<br /><small>@departmentTime.Date(e.CollectedOn) @Text(e.CollectedFrom)</small></td><td>@(RmsEnumDisplay.Label<RmsEvidenceState>(e.State))</td><td>@(string.IsNullOrWhiteSpace(e.CurrentCustodianUserId) ? Text(e.CurrentCustodianExternal) : Model.UserName(e.CurrentCustodianUserId))</td><td><a class="btn btn-xs btn-default" asp-controller="RecordInvestigations" asp-action="Custody" asp-route-area="User" asp-route-id="@c.RmsInvestigationCaseId" asp-route-evidenceId="@e.RmsInvestigationEvidenceId">@L["CustodyChain"]</a></td></tr>
 						}
 						</tbody>
 					</table>
@@ -171,7 +172,7 @@
 					}
 					else
 					{
-						<p>@L["ClosedOn"] @RmsEnumDisplay.Utc(c.ClosedOn) · @Model.UserName(c.ClosedByUserId)<br /><small>@Text(c.ClosureReason)</small></p>
+						<p>@L["ClosedOn"] @departmentTime.Format(c.ClosedOn) · @Model.UserName(c.ClosedByUserId)<br /><small>@Text(c.ClosureReason)</small></p>
 						<form method="post" class="form-inline" asp-controller="RecordInvestigations" asp-action="Reopen" asp-route-area="User">
 							@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" />
 							<input class="form-control input-sm" name="reason" maxlength="1000" placeholder="@L["ReasonText"]" required />
@@ -181,7 +182,7 @@
 				</div></div>
 				<div class="ibox"><div class="ibox-title"><h5>@L["AccessAudit"]</h5></div><div class="ibox-content">
 					<table class="table table-condensed">
-						<tbody>@foreach (var a in Model.Audit) { <tr><td>@RmsEnumDisplay.Utc(a.OccurredOn)</td><td>@Model.UserName(a.ActorUserId)</td><td>@(RmsEnumDisplay.Label<RmsAccessAuditAction>(a.Action))</td><td>@(a.Successful ? "" : L["Rejected"].Value)</td></tr> }</tbody>
+						<tbody>@foreach (var a in Model.Audit) { <tr><td>@departmentTime.Format(a.OccurredOn)</td><td>@Model.UserName(a.ActorUserId)</td><td>@(RmsEnumDisplay.Label<RmsAccessAuditAction>(a.Action))</td><td>@(a.Successful ? "" : L["Rejected"].Value)</td></tr> }</tbody>
 					</table>
 				</div></div>
 			}

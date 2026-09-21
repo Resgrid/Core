@@ -14,7 +14,7 @@ namespace Resgrid.Model.WorkOrders
 		public string EventId { get; set; }
 		public string UserId { get; set; }
 		public int DepartmentId { get; set; }
-		public int WorkOrderId { get; set; }
+		public string WorkOrderId { get; set; }
 		public int State { get; set; }
 		public string LeaseOwner { get; set; }
 		public DateTime? LeaseExpiresOn { get; set; }

@@ -262,9 +262,9 @@
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Термін відкладено</value></data>
   <data name="MaintenanceReports" xml:space="preserve"><value>Звіти з технічного обслуговування</value></data>
   <data name="ServiceHistory" xml:space="preserve"><value>Історія обслуговування</value></data>
-  <data name="ReportFrom" xml:space="preserve"><value>Створено від (UTC, включно)</value></data>
-  <data name="ReportUntil" xml:space="preserve"><value>Створено до (UTC, не включно)</value></data>
-  <data name="AsOfUtc" xml:space="preserve"><value>Час розрахунку (UTC)</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Створено від (включно)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Створено до (не включно)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Час розрахунку</value></data>
   <data name="TotalOrders" xml:space="preserve"><value>Усього нарядів на роботи</value></data>
   <data name="OpenOrders" xml:space="preserve"><value>Відкриті наряди на роботи</value></data>
   <data name="OverdueOrders" xml:space="preserve"><value>Прострочені наряди на роботи</value></data>
@@ -290,7 +290,7 @@
   <data name="Revision" xml:space="preserve"><value>Редакція</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>Цей звіт завеликий. Звузьте діапазон дат або фільтри ресурсів.</value></data>
   <data name="ReportRangeInvalid" xml:space="preserve"><value>Виберіть коректний діапазон дат; звіти панелі підтримують до 366 днів.</value></data>
-  <data name="ReportMethod" xml:space="preserve"><value>Поточний стан нарядів, створених у вибраному діапазоні UTC. Відкриті включають завершені роботи, що очікують закриття. Середній час ремонту вимірюється від першого початку до останнього завершення, включно з призупиненнями та повторними відкриттями; некоректні значення часу виключаються. Витрати округлюються для кожного запису й розділяються за валютою, без скасованих або невиданих запчастин. Невідомі витрати й давні валюти оплати праці залишаються невідомими; курси обміну не припускаються.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Поточний стан нарядів, створених у вибраному діапазоні. Відкриті включають завершені роботи, що очікують закриття. Середній час ремонту вимірюється від першого початку до останнього завершення, включно з призупиненнями та повторними відкриттями; некоректні значення часу виключаються. Витрати округлюються для кожного запису й розділяються за валютою, без скасованих або невиданих запчастин. Невідомі витрати й давні валюти оплати праці залишаються невідомими; курси обміну не припускаються.</value></data>
   <data name="HistoryMethod" xml:space="preserve"><value>Повна історія обслуговування, якщо не вибрано дати. Кожен рядок CSV відповідає одному наряду й одній валюті. Відомі витрати не включають скасовані або невидані запчастини; відсутні ціни та давні валюти оплати праці позначаються як невідомі.</value></data>
   <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Стан наряду на момент виклику з незмінними посиланнями на редакції в маніфесті. Включено давніші відкриті роботи з обслуговування; завершені роботи охоплюють ретроспективний період. Історичний стан, який неможливо відновити, позначається як недоступний.</value></data>
 
@@ -313,9 +313,9 @@
 <data name="Holidays" xml:space="preserve"><value>Неробочі дати (YYYY-MM-DD)</value></data>
 <data name="ResponseMinutes" xml:space="preserve"><value>Цільовий час реагування (робочі хвилини)</value></data>
 <data name="RepairMinutes" xml:space="preserve"><value>Цільовий час ремонту (робочі хвилини)</value></data>
-<data name="ResponseDue" xml:space="preserve"><value>Кінцевий термін реагування (UTC)</value></data>
-<data name="RepairDue" xml:space="preserve"><value>Кінцевий термін ремонту (UTC)</value></data>
-<data name="RespondedOn" xml:space="preserve"><value>Час реагування (UTC)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Кінцевий термін реагування</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Кінцевий термін ремонту</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Час реагування</value></data>
 <data name="VendorCharges" xml:space="preserve"><value>Витрати на постачальників</value></data>
 <data name="AddVendorCharge" xml:space="preserve"><value>Додати витрати на постачальника</value></data>
 <data name="VoidCharge" xml:space="preserve"><value>Анулювати витрати</value></data>
@@ -374,8 +374,8 @@
 <data name="WorkOrderSlaBreached" xml:space="preserve"><value>Цільовий строк обслуговування наряду порушено</value></data>
 <data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Витрати на постачальника в наряді змінено</value></data>
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Правила операцій нарядів змінено</value></data>
-<data name="ResponseDueOn" xml:space="preserve"><value>Кінцевий термін реагування (UTC)</value></data>
-<data name="RepairDueOn" xml:space="preserve"><value>Кінцевий термін ремонту (UTC)</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Кінцевий термін реагування</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Кінцевий термін ремонту</value></data>
   <data name="WorkOrdersIntro" xml:space="preserve"><value>Створюйте ремонти, стежте за виконавцями та дивіться вартість обслуговування.</value></data>
   <data name="Close" xml:space="preserve"><value>Закрити</value></data>
   <data name="Continue" xml:space="preserve"><value>Продовжити</value></data>
@@ -397,4 +397,12 @@
   <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Кому надходить створений наряд і кому ескалюється, якщо ніхто його не взяв.</value></data>
   <data name="HelpFieldDueOn" xml:space="preserve"><value>Визначає позначку прострочення та відлік рівня обслуговування.</value></data>
   <data name="HelpFieldSteps" xml:space="preserve"><value>Кроки, які виконує технік. Деякі переходи вимагають завершення всіх.</value></data>
+  <data name="Users" xml:space="preserve"><value>Користувачі</value></data>
+  <data name="Roles" xml:space="preserve"><value>Ролі</value></data>
+  <data name="MultipleAssigneesHint" xml:space="preserve"><value>Виберіть одного чи кількох користувачів та/або ролі. Утримуйте Ctrl (Windows) або Command (Mac), щоб вибрати кілька записів. Будь-який вибраний користувач або учасник вибраної ролі може прийняти наряд на роботу.</value></data>
+  <data name="WorkOrderSettings" xml:space="preserve"><value>Налаштування нарядів на роботи</value></data>
+  <data name="WorkOrderSettingsHelp" xml:space="preserve"><value>Налаштуйте один раз для підрозділу валюту, погодження витрат, робочі години, свята та цілі обслуговування.</value></data>
+  <data name="DepartmentCurrencyHelp" xml:space="preserve"><value>Валюта визначається в налаштуваннях нарядів на роботи. Наявні наряди зберігають записану валюту.</value></data>
+  <data name="DepartmentCurrencySettingsHelp" xml:space="preserve"><value>Застосовується до нових нарядів та їхніх витрат на постачальників. Наявні витрати й пороги погодження зберігають початкову валюту. Якщо шаблон обслуговування використовує іншу валюту, очікувана вартість нових нарядів залишається порожньою для перевірки.</value></data>
+  <data name="DepartmentThresholdHelp" xml:space="preserve"><value>Введіть поріг погодження у валюті підрозділу, вибраній вище. Пороги наявних нарядів в інших валютах зберігаються.</value></data>
 </root>

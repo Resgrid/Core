@@ -11,8 +11,8 @@
     var page = ViewData["WorkforcePage"] as Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView ?? new Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView();
     var canView = page.CanManage || page.CanViewCompensation || page.CanViewInternalCosts || page.CanViewPayData;
 }
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-12">
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="@(ViewData["HeaderActions"] == null ? "col-sm-12" : "col-sm-4")">
         <h2>@title</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
@@ -30,39 +30,40 @@
         {
             <small class="text-muted">@subtitle</small>
         }
+    </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
         @if (canView)
         {
-            <div class="m-t-sm">
-                <div class="btn-group">
-                    <a asp-controller="Workforce" asp-action="Index" class="btn btn-xs @(tab == "dashboard" ? "btn-primary" : "btn-default")"><i class="fa fa-dashboard"></i> @workforceStrings["TabDashboard"]</a>
+            <div class="col-sm-12 rgw-module-navigation">
+                <ul class="nav nav-pills rgw-module-tabs">
+                    <li class="@(tab == "dashboard" ? "active" : null)"><a asp-controller="Workforce" asp-action="Index" aria-current="@(tab == "dashboard" ? "page" : null)"><i class="fa fa-dashboard"></i> @workforceStrings["TabDashboard"]</a></li>
                     @if (page.WorkforceEnabled && (page.CanManage || page.CanViewCompensation || page.CanViewPayData))
                     {
-                        <a asp-controller="Workforce" asp-action="Employer" class="btn btn-xs @(tab == "employer" ? "btn-primary" : "btn-default")"><i class="fa fa-building"></i> @workforceStrings["TabEmployer"]</a>
-                        <a asp-controller="Workforce" asp-action="Establishments" class="btn btn-xs @(tab == "establishments" ? "btn-primary" : "btn-default")"><i class="fa fa-map-marker"></i> @workforceStrings["TabEstablishments"]</a>
-                        <a asp-controller="Workforce" asp-action="Contractors" class="btn btn-xs @(tab == "contractors" ? "btn-primary" : "btn-default")"><i class="fa fa-briefcase"></i> @workforceStrings["TabContractors"]</a>
-                        <a asp-controller="Workforce" asp-action="Workers" class="btn btn-xs @(tab == "workers" ? "btn-primary" : "btn-default")"><i class="fa fa-users"></i> @workforceStrings["TabWorkers"]</a>
+                        <li class="@(tab == "employer" ? "active" : null)"><a asp-controller="Workforce" asp-action="Employer" aria-current="@(tab == "employer" ? "page" : null)"><i class="fa fa-building"></i> @workforceStrings["TabEmployer"]</a></li>
+                        <li class="@(tab == "establishments" ? "active" : null)"><a asp-controller="Workforce" asp-action="Establishments" aria-current="@(tab == "establishments" ? "page" : null)"><i class="fa fa-map-marker"></i> @workforceStrings["TabEstablishments"]</a></li>
+                        <li class="@(tab == "contractors" ? "active" : null)"><a asp-controller="Workforce" asp-action="Contractors" aria-current="@(tab == "contractors" ? "page" : null)"><i class="fa fa-briefcase"></i> @workforceStrings["TabContractors"]</a></li>
+                        <li class="@(tab == "workers" ? "active" : null)"><a asp-controller="Workforce" asp-action="Workers" aria-current="@(tab == "workers" ? "page" : null)"><i class="fa fa-users"></i> @workforceStrings["TabWorkers"]</a></li>
                     }
                     @if (page.WorkforceEnabled && page.CanViewCompensation)
                     {
-                        <a asp-controller="Workforce" asp-action="Compensation" class="btn btn-xs @(tab == "compensation" ? "btn-primary" : "btn-default")"><i class="fa fa-money"></i> @workforceStrings["TabCompensation"]</a>
-                        <a asp-controller="Workforce" asp-action="WorkEntries" class="btn btn-xs @(tab == "workentries" ? "btn-primary" : "btn-default")"><i class="fa fa-clock-o"></i> @workforceStrings["TabWorkEntries"]</a>
-                        <a asp-controller="Workforce" asp-action="AnnualFacts" class="btn btn-xs @(tab == "annualfacts" ? "btn-primary" : "btn-default")"><i class="fa fa-file-text-o"></i> @workforceStrings["TabAnnualFacts"]</a>
+                        <li class="@(tab == "compensation" ? "active" : null)"><a asp-controller="Workforce" asp-action="Compensation" aria-current="@(tab == "compensation" ? "page" : null)"><i class="fa fa-money"></i> @workforceStrings["TabCompensation"]</a></li>
+                        <li class="@(tab == "workentries" ? "active" : null)"><a asp-controller="Workforce" asp-action="WorkEntries" aria-current="@(tab == "workentries" ? "page" : null)"><i class="fa fa-clock-o"></i> @workforceStrings["TabWorkEntries"]</a></li>
+                        <li class="@(tab == "annualfacts" ? "active" : null)"><a asp-controller="Workforce" asp-action="AnnualFacts" aria-current="@(tab == "annualfacts" ? "page" : null)"><i class="fa fa-file-text-o"></i> @workforceStrings["TabAnnualFacts"]</a></li>
                     }
                     @if (page.WorkforceEnabled && page.CanViewInternalCosts)
                     {
-                        <a asp-controller="Workforce" asp-action="ResourceCosts" class="btn btn-xs @(tab == "resourcecosts" ? "btn-primary" : "btn-default")"><i class="fa fa-truck"></i> @workforceStrings["TabResourceCosts"]</a>
-                        <a asp-controller="Workforce" asp-action="CostRuns" class="btn btn-xs @(tab == "costruns" ? "btn-primary" : "btn-default")"><i class="fa fa-calculator"></i> @workforceStrings["TabCostRuns"]</a>
+                        <li class="@(tab == "resourcecosts" ? "active" : null)"><a asp-controller="Workforce" asp-action="ResourceCosts" aria-current="@(tab == "resourcecosts" ? "page" : null)"><i class="fa fa-truck"></i> @workforceStrings["TabResourceCosts"]</a></li>
+                        <li class="@(tab == "costruns" ? "active" : null)"><a asp-controller="Workforce" asp-action="CostRuns" aria-current="@(tab == "costruns" ? "page" : null)"><i class="fa fa-calculator"></i> @workforceStrings["TabCostRuns"]</a></li>
                     }
                     @if (page.PayDataEnabled && page.CanViewPayData)
                     {
-                        <a asp-controller="Workforce" asp-action="PayData" class="btn btn-xs @(tab == "paydata" ? "btn-primary" : "btn-default")"><i class="fa fa-bar-chart"></i> @workforceStrings["TabPayData"]</a>
+                        <li class="@(tab == "paydata" ? "active" : null)"><a asp-controller="Workforce" asp-action="PayData" aria-current="@(tab == "paydata" ? "page" : null)"><i class="fa fa-bar-chart"></i> @workforceStrings["TabPayData"]</a></li>
                     }
                     @if (page.PayDataEnabled)
                     {
-                        <a asp-controller="Workforce" asp-action="MyDemographics" class="btn btn-xs @(tab == "mydemographics" ? "btn-primary" : "btn-default")"><i class="fa fa-user-secret"></i> @workforceStrings["MyDemographics"]</a>
+                        <li class="@(tab == "mydemographics" ? "active" : null)"><a asp-controller="Workforce" asp-action="MyDemographics" aria-current="@(tab == "mydemographics" ? "page" : null)"><i class="fa fa-user-secret"></i> @workforceStrings["MyDemographics"]</a></li>
                     }
-                </div>
+                </ul>
             </div>
         }
-    </div>
 </div>

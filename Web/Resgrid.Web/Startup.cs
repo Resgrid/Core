@@ -486,6 +486,7 @@ namespace Resgrid.Web
 
 
 			services.AddScoped<Filters.RequireActivePlanFilter>();
+			services.AddScoped<Helpers.DepartmentLocalTimeFilter>();
 
 			var builder = services.AddMvc().AddMvcOptions(options =>
 			{

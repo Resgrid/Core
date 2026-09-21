@@ -2,26 +2,30 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentStrings
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var c = Model.Contract;
     ViewBag.Title = "Resgrid | " + c.Name;
     ViewData["Title"] = c.Name;
     ViewData["Subtitle"] = localizer["ContractDetailIntro"].Value;
     ViewData["RootController"] = "Contracts";
     ViewData["RootTitle"] = localizer["Contracts"].Value;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        @if (Model.CanManageContracts) { <a asp-action="Edit" asp-route-id="@c.ServiceContractId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
+        @if (Model.CanManageBids) { <a asp-controller="Bids" asp-action="New" asp-route-contactId="@c.ContactId" asp-route-contractId="@c.ServiceContractId" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewBid"]</a> }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <div class="row">
         <div class="col-md-7">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["Contract"] @await Html.PartialAsync("_ContractStatusBadge", c.Status)</h5>
-                    <div class="ibox-tools">
-                        @if (Model.CanManageContracts) { <a asp-action="Edit" asp-route-id="@c.ServiceContractId" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> @localizer["Edit"]</a> }
-                        @if (Model.CanManageBids) { <a asp-controller="Bids" asp-action="New" asp-route-contactId="@c.ContactId" asp-route-contractId="@c.ServiceContractId" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewBid"]</a> }
-                    </div>
+
                 </div>
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
@@ -101,7 +105,7 @@
                     else
                     {
                         <table class="table table-condensed"><tbody>
-                            @foreach (var d in Model.Deployments) { <tr><td><a asp-controller="Deployments" asp-action="View" asp-route-id="@d.DeploymentId">@d.Name</a></td><td>@deploymentStrings["Status" + (Resgrid.Model.Invoicing.DeploymentStatuses)d.Status]</td><td>@(d.StartOn?.ToString("yyyy-MM-dd") ?? "—")</td></tr> }
+                            @foreach (var d in Model.Deployments) { <tr><td><a asp-controller="Deployments" asp-action="View" asp-route-id="@d.DeploymentId">@d.Name</a></td><td>@deploymentStrings["Status" + (Resgrid.Model.Invoicing.DeploymentStatuses)d.Status]</td><td>@(departmentTime.Date(d.StartOn) ?? "—")</td></tr> }
                         </tbody></table>
                     }
                 </div>
@@ -113,7 +117,7 @@
                     else
                     {
                         <table class="table table-condensed"><tbody>
-                            @foreach (var i in Model.Invoices) { <tr><td><a asp-controller="Invoicing" asp-action="View" asp-route-id="@i.InvoiceId">#@i.InvoiceNumber</a></td><td>@(i.IssuedOn?.ToString("yyyy-MM-dd") ?? "—")</td><td class="text-right">@i.Total.ToString("N2") @i.Currency</td></tr> }
+                            @foreach (var i in Model.Invoices) { <tr><td><a asp-controller="Invoicing" asp-action="View" asp-route-id="@i.InvoiceId">#@i.InvoiceNumber</a></td><td>@(departmentTime.Date(i.IssuedOn) ?? "—")</td><td class="text-right">@i.Total.ToString("N2") @i.Currency</td></tr> }
                         </tbody></table>
                     }
                 </div>
@@ -121,3 +125,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

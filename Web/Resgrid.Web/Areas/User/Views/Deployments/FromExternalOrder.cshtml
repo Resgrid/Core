@@ -9,7 +9,7 @@
 
 @await Html.PartialAsync("_Shell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Deployments.DeploymentPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["OpenExternalOrders"]</h5></div>
@@ -94,4 +94,8 @@
     <script>
         document.getElementById('createCall') && document.getElementById('createCall').addEventListener('change', function () { document.getElementById('callFields').style.display = this.checked ? '' : 'none'; });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

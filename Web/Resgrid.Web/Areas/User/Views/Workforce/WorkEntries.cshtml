@@ -13,7 +13,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="row">
         <div class="col-md-@(x == null ? 12 : 8)">
@@ -87,3 +87,7 @@
         }
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

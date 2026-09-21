@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.ContractorBilling.ComplianceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     ViewBag.Title = "Resgrid | " + localizer["ComplianceDocuments"];
     ViewData["Title"] = localizer["ComplianceDocuments"].Value;
     ViewData["Subtitle"] = localizer["ComplianceIntro"].Value;
@@ -8,12 +9,12 @@
     ViewData["RootTitle"] = localizer["Contracts"].Value;
     var docTypes = Enum.GetValues(typeof(Resgrid.Model.Invoicing.ComplianceDocumentTypes)).Cast<Resgrid.Model.Invoicing.ComplianceDocumentTypes>().ToList();
     var editing = Model.Editing ?? new Resgrid.Model.Invoicing.DepartmentComplianceDocument { AlertLeadDays = 30 };
-    var today = DateTime.UtcNow.Date;
+    var today = departmentTime.Today;
 }
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <div class="row">
         <div class="col-md-8">
@@ -81,3 +82,7 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

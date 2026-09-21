@@ -84,7 +84,7 @@ namespace Resgrid.Tests.Services
             _runner.GetRequiredService<IMigrationRunner>().MigrateUp();
             (await store.ReportSnapshotsAsync(77, new[] { row.Id }, at)).Single().Should().BeEquivalentTo(first);
             await using var db = Connect(_connection);
-            await FluentActions.Awaiting(() => db.ExecuteAsync($"INSERT INTO {Q("WorkOrderReportSnapshots")} ({Q("DepartmentId")},{Q("WorkOrderId")},{Q("Revision")},{Q("RecordedOn")},{Q("SourceType")},{Q("Status")},{Q("Priority")}) VALUES(88,@Id,1,@At,0,0,0)", new { Id = row.Id, At = at })).Should().ThrowAsync<DbException>();
+            await FluentActions.Awaiting(() => db.ExecuteAsync($"INSERT INTO {Q("WorkOrderReportSnapshots")} ({Q("Id")},{Q("DepartmentId")},{Q("WorkOrderId")},{Q("Revision")},{Q("RecordedOn")},{Q("SourceType")},{Q("Status")},{Q("Priority")}) VALUES(@SnapshotId,88,@Id,1,@At,0,0,0)", new { SnapshotId = Guid.NewGuid().ToString("D"), Id = row.Id, At = at })).Should().ThrowAsync<DbException>();
             first.ResponseDueOn.Should().Be(at.AddHours(1)); first.SlaPolicyRevision.Should().Be(1);
             // The historical clock must prevent rollback even after the current policy target is disabled.
             await uow.CreateOrGetConnectionAsync(); row.SlaPolicyRevision = null; row.ResponseDueOn = null; row.RepairDueOn = null; await store.WriteAsync(row); uow.CommitChanges();
@@ -98,14 +98,14 @@ namespace Resgrid.Tests.Services
             var source = _type == DatabaseTypes.Postgres ? "SELECT generate_series(1,50000) AS n" : "SELECT TOP (50000) ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS n FROM sys.all_objects a CROSS JOIN sys.all_objects b";
             var guid = _type == DatabaseTypes.Postgres ? "md5(n::text || 'readiness-p2m4')::uuid::text" : "CONVERT(varchar(36),NEWID())";
             var date = _type == DatabaseTypes.Postgres ? "timestamp '2010-01-01' + (n % 365) * interval '1 day'" : "DATEADD(day,CAST(n % 365 AS int),CAST('2010-01-01' AS datetime2))";
-            await db.ExecuteAsync($"INSERT INTO {Q("WorkOrders")} ({Q("DepartmentId")},{Q("CreatedBy")},{Q("RequestId")},{Q("NumberYear")},{Q("NumberSequence")},{Q("CreatedOn")},{Q("UpdatedOn")},{Q("Content")},{Q("InventoryAssetId")},{Q("TargetUnitId")},{Q("Type")},{Q("Status")},{Q("Priority")},{Q("SourceType")}) SELECT 77,'scale-author',{guid},2010,n,{date},{date},'{{\"Fields\":{{\"Title\":\"synthetic scale row\"}}}}',CASE WHEN n<=12 THEN @Asset ELSE NULL END,CASE WHEN n<=12 THEN 999 ELSE NULL END,0,0,1,0 FROM ({source}) seed", new { Asset = asset }, commandTimeout: 120);
+            await db.ExecuteAsync($"INSERT INTO {Q("WorkOrders")} ({Q("Id")},{Q("DepartmentId")},{Q("CreatedBy")},{Q("RequestId")},{Q("NumberYear")},{Q("NumberSequence")},{Q("CreatedOn")},{Q("UpdatedOn")},{Q("Content")},{Q("InventoryAssetId")},{Q("TargetUnitId")},{Q("Type")},{Q("Status")},{Q("Priority")},{Q("SourceType")}) SELECT {guid},77,'scale-author',{guid},2010,n,{date},{date},'{{\"Fields\":{{\"Title\":\"synthetic scale row\"}}}}',CASE WHEN n<=12 THEN @Asset ELSE NULL END,CASE WHEN n<=12 THEN 999 ELSE NULL END,0,0,1,0 FROM ({source}) seed", new { Asset = asset }, commandTimeout: 120);
             await db.ExecuteAsync(_type == DatabaseTypes.Postgres ? "ANALYZE workorders" : "UPDATE STATISTICS WorkOrders WITH FULLSCAN");
             using (var uow = new UnitOfWork(Connections()))
             {
                 var store = Orders(uow); var scope = new WorkOrderReadScope { UserId = "scale-author", All = true };
-                var page = await store.ReportPacketOrdersAsync(77, scope, new DateTime(2011, 1, 1), new[] { 999 }, Array.Empty<string>(), 0);
+                var page = await store.ReportPacketOrdersAsync(77, scope, new DateTime(2011, 1, 1), new[] { 999 }, Array.Empty<string>(), null);
                 page.Should().HaveCount(12, "a small call must not load the full department history");
-                (await store.ReportPacketOrdersAsync(88, scope, new DateTime(2011, 1, 1), new[] { 999 }, Array.Empty<string>(), 0)).Should().BeEmpty();
+                (await store.ReportPacketOrdersAsync(88, scope, new DateTime(2011, 1, 1), new[] { 999 }, Array.Empty<string>(), null)).Should().BeEmpty();
                 (await store.HasUnrecoverableReportHistoryAsync(77, scope, new DateTime(2011, 1, 1))).Should().BeFalse();
                 var packet = await ReportService(store, uow).ReadinessEvidenceAsync(new ChecklistActor { DepartmentId = 77, UserId = "scale-author" }, new DateTime(2010, 12, 1), new DateTime(2011, 1, 1), new[] { 999 }, Array.Empty<string>());
                 packet.Items.Should().HaveCount(12); packet.HistoryUnavailable.Should().BeFalse();
@@ -113,7 +113,7 @@ namespace Resgrid.Tests.Services
             var predicates = new[] { ($"{Q("InventoryAssetId")}='{asset}'", "ix_workorders_asset"), ($"{Q("TargetUnitId")}=999", "ix_workorders_unit"), ($"{Q("CreatedOn")}>='2011-01-01' AND {Q("CreatedOn")}<'2012-01-01'", "ix_workorders_reportcreated") };
             foreach (var (predicate, index) in predicates)
             {
-                var sql = $"SELECT * FROM {Q("WorkOrders")} WHERE {Q("DepartmentId")}=77 AND {Q("IsDeleted")}={(_type == DatabaseTypes.Postgres ? "false" : "0")} AND {Q("Id")}>0 AND {predicate} ORDER BY {Q("Id")} " + (_type == DatabaseTypes.Postgres ? "LIMIT 51 OFFSET 0" : "OFFSET 0 ROWS FETCH NEXT 51 ROWS ONLY");
+                var sql = $"SELECT * FROM {Q("WorkOrders")} WHERE {Q("DepartmentId")}=77 AND {Q("IsDeleted")}={(_type == DatabaseTypes.Postgres ? "false" : "0")} AND {predicate} ORDER BY {Q("Id")} " + (_type == DatabaseTypes.Postgres ? "LIMIT 51 OFFSET 0" : "OFFSET 0 ROWS FETCH NEXT 51 ROWS ONLY");
                 string plan;
                 if (_type == DatabaseTypes.Postgres) plan = await db.ExecuteScalarAsync<string>("EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) " + sql);
                 else

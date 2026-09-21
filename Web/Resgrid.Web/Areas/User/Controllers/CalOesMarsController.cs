@@ -28,6 +28,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// expense drafts. The UI says "Prepared for MARS" or "Observed in MARS", never "Submitted" from a download.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public sealed class CalOesMarsController : SecureBaseController
 	{
 		private readonly ICalOesMarsService _mars;
@@ -131,7 +132,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Index(DateTime? asOf = null)
 		{
-			var view = Page(new CalOesMarsDashboardView { AsOf = (asOf ?? DateTime.UtcNow).Date });
+			var view = Page(new CalOesMarsDashboardView { AsOf = (asOf ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today).Date });
 			view.Readiness = await _mars.GetAgencyReadinessAsync(DepartmentId, view.AsOf);
 			view.Authority = CalOesMarsAuthorityProfile.Get(view.Readiness.AuthorityProfileCode) ?? CalOesMarsAuthorityProfile.Current;
 			return View(view);
@@ -229,7 +230,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				view.WorkforceEnabled = await _access.CanUseWorkforceAsync(DepartmentId);
 				view.NextStatuses = Enum.GetValues<CalOesMarsRateProfileStatuses>().Where(s => Resgrid.Services.CostRecovery.CalOesMarsService.IsValidRateTransition((CalOesMarsRateProfileStatuses)view.Profile.Status, s)).ToList();
 			}
-			else view.Profile = new CalOesMarsRateProfile { DepartmentId = DepartmentId, SubmissionYear = DateTime.UtcNow.Year, SubmissionType = type ?? (int)CalOesMarsSubmissionTypes.SalarySurvey, EffectiveOn = new DateTime(DateTime.UtcNow.Year, 1, 1) };
+			else view.Profile = new CalOesMarsRateProfile { DepartmentId = DepartmentId, SubmissionYear = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year, SubmissionType = type ?? (int)CalOesMarsSubmissionTypes.SalarySurvey, EffectiveOn = new DateTime(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year, 1, 1) };
 			view.LinesJson = JsonConvert.SerializeObject(view.Profile.Lines ?? new List<CalOesMarsRateLine>(), ScriptJson);
 			view.InputsJson = JsonConvert.SerializeObject((view.Profile.AdministrativeInputs ?? new List<CalOesMarsAdministrativeRateInput>()).Select(i => new { i.CalOesMarsAdministrativeRateInputId, i.FiscalYear, i.FunctionCode, i.CategoryCode, i.Classification, Amount = i.Amount, i.SourceSystem, i.SourceLine, i.IncidentDirectExclusion, i.DoubleCountMarker, i.ReviewStatus, i.ReviewReason }), ScriptJson);
 			return View(view);
@@ -303,7 +304,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!IsManager) return Unauthorized();
 			if (!await _access.CanUseWorkforceAsync(DepartmentId)) return Refused(403, "workforce_disabled", "Rate", new { id });
-			var draft = await _mars.BuildSalarySurveyDraftAsync(id, DepartmentId, asOf ?? DateTime.UtcNow.Date, UserId, Ip, Agent);
+			var draft = await _mars.BuildSalarySurveyDraftAsync(id, DepartmentId, asOf ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, UserId, Ip, Agent);
 			if (!draft.IsReady) { TempData["CalOesMarsMessage"] = string.Join(" ", draft.Blockers.Select(b => ErrorText("SurveyBlocker_" + b))); return RedirectToAction("Rate", new { id }); }
 			TempData["CalOesMarsSaved"] = true;
 			TempData["CalOesMarsMessage"] = string.Format(_strings["SalarySurveyDraftBuilt"].Value, draft.LinesWritten, draft.EmployeesIncluded, draft.UnknownClassifications.Count, draft.Classifications.Count(c => c.SingleEmployee));
@@ -441,7 +442,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (item == null) return NotFound();
 			if (!IsManager && !rostered) return Unauthorized();
 			var snapshot = JsonConvert.DeserializeObject<CalOesMarsF42Snapshot>(snapshotJson ?? "{}") ?? new CalOesMarsF42Snapshot();
-			await _mars.SaveF42SnapshotAsync(id, DepartmentId, snapshot, UserId, Ip, Agent);
+			var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+            snapshot.ReturnedOn = time.ToUtc(snapshot.ReturnedOn);
+            snapshot.RespondingSignedOn = time.ToUtc(snapshot.RespondingSignedOn);
+            snapshot.IncidentAuthorizedOn = time.ToUtc(snapshot.IncidentAuthorizedOn);
+            foreach (var person in snapshot.Personnel ?? new List<CalOesMarsF42Person>())
+            { person.CommittedOn = time.ToUtc(person.CommittedOn); person.ReleasedOn = time.ToUtc(person.ReleasedOn); }
+            await _mars.SaveF42SnapshotAsync(id, DepartmentId, snapshot, UserId, Ip, Agent);
 			return Saved("WorkItem", new { id });
 		}, "WorkItem", new { id });
 
@@ -451,7 +458,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var (item, rostered) = await LoadItemAsync(id);
 			if (item == null) return NotFound();
 			if (!IsManager && !rostered) return Unauthorized();
-			await _mars.SaveExpenseSnapshotAsync(id, DepartmentId, input ?? new CalOesMarsExpenseClaimSnapshot(), UserId, Ip, Agent);
+			if (input != null) { input.SignedOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.SignedOn); input.ApprovedOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.ApprovedOn); }
+            await _mars.SaveExpenseSnapshotAsync(id, DepartmentId, input ?? new CalOesMarsExpenseClaimSnapshot(), UserId, Ip, Agent);
 			return Saved("WorkItem", new { id });
 		}, "WorkItem", new { id });
 
@@ -565,7 +573,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var invoice = await _mars.RecordMarsInvoiceAsync(DepartmentId, input.DeploymentId, new CalOesMarsInvoiceObservation
 			{
 				MarsInvoiceId = input.MarsInvoiceId, InvoiceDate = input.InvoiceDate, InvoicedTotal = input.InvoicedTotal, PayingEntity = input.PayingEntity, ExternalStatus = input.ExternalStatus,
-				ObservedOn = input.ObservedOn, CoveredWorkItemIds = input.CoveredWorkItemIds ?? new List<string>(), Comment = input.Comment
+				ObservedOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.ObservedOn), CoveredWorkItemIds = input.CoveredWorkItemIds ?? new List<string>(), Comment = input.Comment
 			}, UserId, Ip, Agent);
 			return Saved("Invoice", new { id = invoice.CalOesMarsWorkItemId });
 		}, "Reconciliation");
@@ -591,15 +599,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public Task<IActionResult> RecordPayment(string id, CalOesMarsPaymentInput input) => GuardedAsync(async () =>
 		{
 			if (!CanReconcile) return Unauthorized();
-			await _mars.RecordPaymentAsync(id, DepartmentId, new CalOesMarsPaymentObservation { PaidTotal = input.PaidTotal, PaidOn = input.PaidOn, PaymentReference = input.PaymentReference, PayingEntityStatus = input.PayingEntityStatus, Comment = input.Comment }, UserId, Ip, Agent);
+			await _mars.RecordPaymentAsync(id, DepartmentId, new CalOesMarsPaymentObservation { PaidTotal = input.PaidTotal, PaidOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input.PaidOn), PaymentReference = input.PaymentReference, PayingEntityStatus = input.PayingEntityStatus, Comment = input.Comment }, UserId, Ip, Agent);
 			return Saved("Invoice", new { id });
 		}, "Invoice", new { id });
 
 		#endregion
 
-		private static CalOesMarsExternalObservation ToObservation(CalOesMarsObservationInput input) => new CalOesMarsExternalObservation
+		private CalOesMarsExternalObservation ToObservation(CalOesMarsObservationInput input) => new CalOesMarsExternalObservation
 		{
-			ExternalId = input?.ExternalId, ExternalStatus = input?.ExternalStatus, ObservedOn = input?.ObservedOn, Comment = input?.Comment, ArtifactChecksum = input?.ArtifactChecksum, ArtifactAttachmentId = input?.ArtifactAttachmentId
+			ExternalId = input?.ExternalId, ExternalStatus = input?.ExternalStatus, ObservedOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(input?.ObservedOn), Comment = input?.Comment, ArtifactChecksum = input?.ArtifactChecksum, ArtifactAttachmentId = input?.ArtifactAttachmentId
 		};
 	}
 }

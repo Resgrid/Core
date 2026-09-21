@@ -21,7 +21,8 @@ namespace Resgrid.Tests.Services
     public sealed class WorkOrderNotificationTests
     {
         [TestCase(false, false),TestCase(true, false),TestCase(false, true),TestCase(true, true)]
-        public async Task Current_role_members_or_triage_managers_receive_localized_metadata_only_once(bool triage, bool revoked)
+        [TestCase(false, false, true), TestCase(false, true, true)]
+        public async Task Current_role_members_or_triage_managers_receive_localized_metadata_only_once(bool triage, bool revoked, bool multiple = false)
         {
             var store=new Mock<IWorkOrderRepository>(); var auth=new Mock<IWorkOrderAuthorizationService>();
             var access=new Mock<IReadinessAccessService>();access.Setup(a=>a.CanUseMaintenanceAsync(77)).ReturnsAsync(true);
@@ -37,19 +38,21 @@ namespace Resgrid.Tests.Services
             auth.Setup(a=>a.RecipientsAsync(77,It.IsAny<WorkOrder>())).ReturnsAsync(triage ? new List<string>() : new List<string>{"tech1","tech2"});
             auth.Setup(a=>a.ScopeAsync(It.IsAny<ChecklistActor>())).ReturnsAsync((ChecklistActor a)=>new WorkOrderReadScope {UserId=a.UserId,RoleIds=a.UserId.StartsWith("tech")?new[]{3}:Array.Empty<int>()});
             var profiles=new Mock<IUserProfileService>();profiles.Setup(p=>p.GetProfileByUserIdAsync(It.IsAny<string>(), false)).ReturnsAsync(new UserProfile {Language="fr"});
-            var row=new WorkOrder {Id=19,DepartmentId=77,CreatedBy="requester",Status=triage?0:2,AssignedToRoleId=triage?null:3,Content="SYNTHETIC-PHI-CANARY"};
-            store.Setup(s=>s.GetAsync<WorkOrder>(77,19,true)).ReturnsAsync(row);
+            var row=new WorkOrder {Id="00000000-0000-0000-0000-000000000019",NumberYear=2026,NumberSequence=19,DepartmentId=77,CreatedBy="requester",Status=triage?0:2,AssignedToRoleId=triage?null:3,IsProtected=true,Content="SYNTHETIC-PHI-CANARY"};
+            if (multiple) { row.AssignedToRoleId = null; row.AssignedToUserIds = new() { "tech1" }; row.AssignedToRoleIds = new() { 2, 3 }; }
+            store.Setup(s=>s.GetAsync<WorkOrder>(77,"00000000-0000-0000-0000-000000000019",true)).ReturnsAsync(row);
             var states=new Dictionary<string,int>();
             store.Setup(s=>s.ClaimNotificationAsync(It.IsAny<WorkOrderNotification>(),It.IsAny<DateTime>())).ReturnsAsync((WorkOrderNotification n,DateTime now)=>states.TryGetValue(n.UserId,out var state)?state:1);
             store.Setup(s=>s.FinishNotificationAsync(It.IsAny<WorkOrderNotification>(),It.IsAny<int>(),It.IsAny<DateTime>())).ReturnsAsync((WorkOrderNotification n,int state,DateTime now)=>{states[n.UserId]=state;return true;});
             var service=new WorkOrderNotificationService(store.Object,auth.Object,access.Object,uow.Object,communication.Object,departments.Object,Mock.Of<IDepartmentSettingsService>(),profiles.Object);
-            var entry=new DomainEventOutboxEntry {DepartmentId=77,ProducerSubsystem="WorkOrders",AggregateId="19",EventId=Guid.NewGuid().ToString(),TriggerEventType=triage?70:72};
+            var entry=new DomainEventOutboxEntry {DepartmentId=77,ProducerSubsystem="WorkOrders",AggregateId="00000000-0000-0000-0000-000000000019",EventId=Guid.NewGuid().ToString(),TriggerEventType=triage?70:72};
             await service.DispatchAsync(entry); await service.DispatchAsync(entry);
             departments.Verify(d=>d.GetAllMembersForDepartmentUnlimitedAsync(77,true),Times.Exactly(2));
             auth.Verify(a=>a.RecipientsAsync(77,It.IsAny<WorkOrder>()),Times.Exactly(2));
             var sends=communication.Invocations.Where(i=>i.Method.Name=="SendNotificationAsync").ToList();
             sends.Select(i=>(string)i.Arguments[0]).Should().BeEquivalentTo(revoked?new[]{"requester"}:triage?new[]{"requester","manager"}:new[]{"requester","tech1","tech2"});
-            foreach(var send in sends) ((string)send.Arguments[2]).Should().Contain("nécessite votre attention").And.NotContain("CANARY").And.NotContain("grant");
+            foreach(var send in sends) ((string)send.Arguments[2]).Should().StartWith("WO-2026-000019: ").And.Contain("nécessite votre attention")
+                .And.NotContain("CANARY").And.NotContain("grant").And.NotContain("http").And.NotContain("/User/").And.NotContain(row.Id);
             access.Setup(a=>a.CanUseMaintenanceAsync(77)).ReturnsAsync(false);
             entry.EventId=Guid.NewGuid().ToString();await service.DispatchAsync(entry);
             communication.Invocations.Count.Should().Be(sends.Count);

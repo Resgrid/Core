@@ -12,7 +12,7 @@
 
 @await Html.PartialAsync("_WorkforceShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_WorkforceMessage", (Resgrid.Web.Areas.User.Models.Workforce.WorkforcePageView)Model)
     <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["ProtectedNotice"]</div>
     <div class="row">
@@ -80,3 +80,7 @@
         <div class="row"><div class="col-md-6"><div class="ibox"><div class="ibox-content"><p>@localizer["MyDemographicsIntro"]</p><a asp-action="MyDemographics" class="btn btn-primary">@localizer["MyDemographics"]</a></div></div></div></div>
     }
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

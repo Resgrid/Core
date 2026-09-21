@@ -110,6 +110,31 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task Viewer_scoped_families_return_only_the_viewers_own_rows_and_messages_stay_scoped()
+		{
+			// Two deployments: u1 is rostered on the first only. The roster is the projection's participant set.
+			await _indexer.IndexAsync(new[]
+			{
+				Projection(1, SearchEntityTypes.Deployment, "dep-1", "Ridge Complex strike team", keywords: "CA-LNU-001234", participants: "u1,u4", occurred: new DateTime(2026, 1, 10)),
+				Projection(1, SearchEntityTypes.Deployment, "dep-2", "Ridge Complex water tender", keywords: "CA-LNU-001235", participants: "u4", occurred: new DateTime(2026, 1, 11))
+			}, "1.25.3");
+			await _indexer.CommitAsync();
+			var scoped = new List<string> { SearchEntityTypes.Deployment };
+
+			var rostered = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "ridge complex", ViewerUserId = "u1", ViewerScopedEntityTypes = scoped });
+			var stranger = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "ridge complex", ViewerUserId = "u9", ViewerScopedEntityTypes = scoped });
+			var claimHolder = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "ridge complex", ViewerUserId = "u9" });
+			var messageStillScoped = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "shift swap", ViewerUserId = "u9", ViewerScopedEntityTypes = scoped });
+
+			rostered.Hits.Select(h => h.EntityId).Should().Equal("dep-1");
+			rostered.Total.Should().Be(1, "the index counts only the rows the scope admits");
+			stranger.Hits.Should().BeEmpty();
+			stranger.Total.Should().Be(0);
+			claimHolder.Hits.Select(h => h.EntityId).Should().BeEquivalentTo(new[] { "dep-1", "dep-2" }, "without the scope the family is department-wide, as for a claim holder");
+			messageStillScoped.Hits.Should().BeEmpty("naming extra families never un-scopes messages");
+		}
+
+		[Test]
 		public async Task Admin_only_rows_are_hidden_unless_the_viewer_is_an_admin()
 		{
 			var member = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "engine", ViewerUserId = "u1" });

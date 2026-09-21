@@ -55,13 +55,13 @@ namespace Resgrid.Tests.Services
 			_service = new WorkOrdersService(_store, _auth.Object, _access.Object, _uow.Object, audit.Object, _outbox.Object, new Lazy<IProtectedReadService>(() => _read.Object), new Lazy<IProtectedWriteService>(() => _write.Object), _scanner.Object);
 		}
 		private static WorkOrderInput Input(bool safety = false) => new WorkOrderInput { RequestId = Guid.NewGuid().ToString("D"), Content = new WorkOrderContent { Title = "Synthetic equipment repair", Description = "PII-PHI-CANARY narrative", SafetyCritical = safety } };
-		private async Task<WorkOrderDetail> Transition(int id, WorkOrderStatus status, ChecklistActor actor = null, string reason = null, string evidence = null)
+		private async Task<WorkOrderDetail> Transition(string id, WorkOrderStatus status, ChecklistActor actor = null, string reason = null, string evidence = null)
 		{
 			actor ??= _actor; var current = await _service.GetAsync(actor, id);
 			await _service.TransitionAsync(actor, id, new WorkOrderTransition { Revision = current.Order.Revision, Status = status, Reason = reason, Resolution = "Repaired", Cause = "Wear", VerificationEvidence = evidence });
 			return await _service.GetAsync(actor, id);
 		}
-		private async Task<int> Assigned(bool safety = false)
+		private async Task<string> Assigned(bool safety = false)
 		{
 			var row = await _service.CreateAsync(_actor, Input(safety)); var id = row.Order.Id;
 			row = await Transition(id, WorkOrderStatus.Accepted);
@@ -143,12 +143,12 @@ namespace Resgrid.Tests.Services
 			public void Begin() { BeginReporting(); _before = _rows.ToDictionary(p => p.Key, p => p.Value.Select(v => (WorkOrderRow)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(v), p.Key)).ToList()); }
 			public void Rollback() { RollbackReporting(); if (_before != null) _rows = _before; }
 			public Task LockDepartmentAsync(int departmentId) => Task.CompletedTask;
-			public Task<T> GetAsync<T>(int departmentId, int id, bool includeData = true) where T : WorkOrderRow => Task.FromResult(All<T>().SingleOrDefault(r => r.DepartmentId == departmentId && r.Id == id));
+			public Task<T> GetAsync<T>(int departmentId, string id, bool includeData = true) where T : WorkOrderRow => Task.FromResult(All<T>().SingleOrDefault(r => r.DepartmentId == departmentId && r.Id == id));
 			public Task<WorkOrder> RequestAsync(int departmentId, string requestId) => Task.FromResult(All<WorkOrder>().SingleOrDefault(r => r.DepartmentId == departmentId && r.RequestId == requestId));
-			public Task<List<WorkOrder>> ListAsync(int departmentId, WorkOrderReadScope scope, WorkOrderFilter filter) => Task.FromResult(All<WorkOrder>().Where(r => r.DepartmentId == departmentId && scope.Allows(r)).OrderByDescending(r => r.Id).Skip(filter.Page * 50).Take(51).ToList());
-			public Task<List<T>> ChildrenAsync<T>(int departmentId, int orderId, int skip = 0) where T : WorkOrderRow => Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId && r.WorkOrderId == orderId).Skip(skip).Take(500).ToList());
+			public Task<List<WorkOrder>> ListAsync(int departmentId, WorkOrderReadScope scope, WorkOrderFilter filter) => Task.FromResult(All<WorkOrder>().Where(r => r.DepartmentId == departmentId && scope.Allows(r)).OrderByDescending(r => r.NumberYear).ThenByDescending(r => r.NumberSequence).Skip(filter.Page * 50).Take(51).ToList());
+			public Task<List<T>> ChildrenAsync<T>(int departmentId, string orderId, int skip = 0) where T : WorkOrderRow => Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId && r.WorkOrderId == orderId).Skip(skip).Take(500).ToList());
 			public Task<int> NextNumberAsync(int departmentId, int year) => Task.FromResult(All<WorkOrder>().Where(r => r.DepartmentId == departmentId && r.NumberYear == year).Select(r => r.NumberSequence).DefaultIfEmpty().Max() + 1);
-			public Task AllocateAsync<T>(T row) where T : WorkOrderRow { if (!_rows.ContainsKey(typeof(T))) _rows[typeof(T)] = new List<WorkOrderRow>(); row.Content.Should().BeNull(); row.Id = _rows[typeof(T)].Count + 1; _rows[typeof(T)].Add(Copy(row)); return Task.CompletedTask; }
+			public Task AllocateAsync<T>(T row) where T : WorkOrderRow { if (!_rows.ContainsKey(typeof(T))) _rows[typeof(T)] = new List<WorkOrderRow>(); row.Content.Should().BeNull(); row.Id = Guid.NewGuid().ToString("D"); _rows[typeof(T)].Add(Copy(row)); return Task.CompletedTask; }
 			public Task WriteAsync<T>(T row) where T : WorkOrderRow { var list = _rows[typeof(T)]; list[list.FindIndex(r => r.Id == row.Id && r.DepartmentId == row.DepartmentId)] = Copy(row); return Task.CompletedTask; }
 			public Task<int> ClaimNotificationAsync(WorkOrderNotification row, DateTime now) => Task.FromResult(1);
 			public Task<bool> FinishNotificationAsync(WorkOrderNotification row, int state, DateTime now) => Task.FromResult(true);

@@ -2005,9 +2005,9 @@
   <data name="HoldRecordIdHelp" xml:space="preserve"><value>Laissez vide pour conserver tout ce qui correspond à une définition et une plage de dates.</value></data>
   <data name="HoldDefinition" xml:space="preserve"><value>Portée par définition</value></data>
   <data name="HoldNerisScope" xml:space="preserve"><value>Intervention et analyse NERIS</value></data>
-  <data name="HoldScopeHelp" xml:space="preserve"><value>Pour une portée par définition, laissez les deux dates vides pour tout conserver. Heures en UTC.</value></data>
-  <data name="HoldPeriodStart" xml:space="preserve"><value>Début de la période (UTC)</value></data>
-  <data name="HoldPeriodEnd" xml:space="preserve"><value>Fin de la période (UTC)</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>Pour une portée par définition, laissez les deux dates vides pour tout conserver. Heures en heure locale du département.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Début de la période</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Fin de la période</value></data>
   <data name="HoldReason" xml:space="preserve"><value>Fondement de la conservation</value></data>
   <data name="HoldReasonLitigation" xml:space="preserve"><value>Contentieux</value></data>
   <data name="HoldReasonInvestigation" xml:space="preserve"><value>Enquête</value></data>
@@ -2038,9 +2038,9 @@
   <data name="EvidenceChooseChannel" xml:space="preserve"><value>Choisir un canal</value></data>
   <data name="EvidenceRestricted" xml:space="preserve"><value>accès restreint requis</value></data>
   <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Aucune preuve ne sera enregistrée pour une source indisponible.</value></data>
-  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Début de la couverture (UTC)</value></data>
-  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Fin de la couverture (UTC)</value></data>
-  <data name="EvidenceValidityTime" xml:space="preserve"><value>Heure de l'intervention pour la validité (UTC)</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Début de la couverture</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Fin de la couverture</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Heure de l'intervention pour la validité</value></data>
   <data name="EvidencePersonnel" xml:space="preserve"><value>Personnels</value></data>
   <data name="EvidenceMessages" xml:space="preserve"><value>Messages du canal</value></data>
   <data name="EvidenceNoChoices" xml:space="preserve"><value>Aucun élément accessible sur cette page.</value></data>
@@ -2056,7 +2056,7 @@
   <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Aucun identifiant enregistré</value></data>
   <data name="SubmissionLatestIssue" xml:space="preserve"><value>Dernier incident</value></data>
   <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Historique d'envoi et de réponse</value></data>
-  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Heures en UTC. Les réponses antérieures restent disponibles après un rejet, une nouvelle tentative et une correction.</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Heures en heure locale du département. Les réponses antérieures restent disponibles après un rejet, une nouvelle tentative et une correction.</value></data>
   <data name="SubmissionNoExchanges" xml:space="preserve"><value>Aucun historique d'échange n'a été enregistré pour cet envoi hérité.</value></data>
   <data name="SubmissionOperation" xml:space="preserve"><value>Opération et étape</value></data>
   <data name="SubmissionResponse" xml:space="preserve"><value>Réponse de la destination</value></data>

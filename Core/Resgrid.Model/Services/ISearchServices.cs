@@ -101,6 +101,13 @@ namespace Resgrid.Model.Services
 		public string Text { get; set; }
 		public List<string> EntityTypes { get; set; }
 		public string ViewerUserId { get; set; }
+		/// <summary>
+		/// Families the index returns only when <see cref="ViewerUserId"/> is the projection's owner or a participant, in
+		/// addition to Message (always viewer-scoped). The orchestrator names the families whose per-hit rule is
+		/// membership for this caller — deployments for a member without the Deployments/View claim — so rows the caller
+		/// can never see do not consume the candidate window or suppress the total.
+		/// </summary>
+		public List<string> ViewerScopedEntityTypes { get; set; }
 		public bool IncludeAdminOnly { get; set; }
 		public bool Prefix { get; set; }
 		public int Skip { get; set; }

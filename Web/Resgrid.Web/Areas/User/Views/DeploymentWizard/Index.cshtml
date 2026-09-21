@@ -12,7 +12,7 @@
 
 @await Html.PartialAsync("_ContractorShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     @await Html.PartialAsync("_ContractorMessage", (Resgrid.Web.Areas.User.Models.ContractorBilling.ContractorPageView)Model)
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["ScheduleDeploymentCall"]</h5></div>
@@ -250,4 +250,8 @@
             show(0);
         })();
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

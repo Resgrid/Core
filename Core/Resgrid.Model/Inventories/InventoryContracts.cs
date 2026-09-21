@@ -22,7 +22,7 @@ namespace Resgrid.Model.Inventories
 	public sealed class InventoryAssetInput { public string Id { get; set; } public string RequestId { get; set; } public string ItemId { get; set; } public string LocationId { get; set; } public string LotId { get; set; } public DateTime? ExpiresOn { get; set; } public InventoryAssetContent Details { get; set; } = new(); }
 	public sealed class InventoryPosting
 	{
-		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public int? WorkOrderPartMovementId { get; set; }
+		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string WorkOrderPartMovementId { get; set; }
 		public string ItemId { get; set; }
 		public string AssetId { get; set; }
 		public string LotId { get; set; }
@@ -40,7 +40,7 @@ namespace Resgrid.Model.Inventories
 		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public InventoryUsageType? UsageType { get; set; }
 		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string PurchaseOrderItemId { get; set; }
 		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string CountItemId { get; set; }
-		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public int? WorkOrderPartId { get; set; }
+		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string WorkOrderPartId { get; set; }
 		public string Note { get; set; }
 		public decimal? UnitCost { get; set; }
 	}

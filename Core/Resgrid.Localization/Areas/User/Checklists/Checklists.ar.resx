@@ -663,7 +663,7 @@
   <data name="DispatchedUnits" xml:space="preserve"><value>الوحدات المرسلة</value></data>
   <data name="IssuedEquipment" xml:space="preserve"><value>المعدات المصروفة وقت البلاغ</value></data>
   <data name="ScheduledReportProtected" xml:space="preserve"><value>تحتوي الرسالة المجدولة على إشعار PDF ورابط آمن للتقرير. افتح التقرير للتحقق من صلاحياتك الحالية وفتح البيانات المحمية؛ لا تُرسل نتائج الفحوص أو البيانات الشخصية بالبريد الإلكتروني.</value></data>
-  <data name="ReportRangeInvalid" xml:space="preserve"><value>حدد فترة زمنية مرتبة بتوقيت UTC لا تتجاوز 93 يوماً.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>حدد فترة زمنية مرتبة بتوقيت لا تتجاوز 93 يوماً.</value></data>
   <data name="ReportTooLarge" xml:space="preserve"><value>هذا التقرير كبير جداً. حدد فترة أقصر.</value></data>
   <data name="ReadinessCallUnavailable" xml:space="preserve"><value>البلاغ غير متاح أو تم رفض الوصول.</value></data>
   <data name="HistoricalAssetInvalid" xml:space="preserve"><value>بيانات المصدر التاريخي للمعدات ناقصة أو غير متسقة.</value></data>

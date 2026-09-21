@@ -2,6 +2,7 @@
 @model Resgrid.Web.Areas.User.Models.Records.RecordsFieldRolloutView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + localizer["FieldRollout"];
 }
 @functions {
@@ -180,6 +181,6 @@
 			}
 		</div>
 
-		<p class="text-muted small">@string.Format(localizer["RolloutGeneratedOn"].Value, Model.Rollout.GeneratedOn.ToString("u"))</p>
+		<p class="text-muted small">@string.Format(localizer["RolloutGeneratedOn"].Value, departmentTime.Format(Model.Rollout.GeneratedOn))</p>
 	}
 </div>

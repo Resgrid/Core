@@ -1,6 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsHandoffView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> localizer
 @{
+    var departmentTime = DepartmentTime.From(ViewData);
     var w = Model.Item;
     var m = Model.Manifest;
     ViewBag.Title = "Resgrid | " + localizer["PortalHandoff"];
@@ -9,21 +10,24 @@
     ViewData["MarsTab"] = "queue";
     ViewData["MarsIsManager"] = Model.IsManager;
     ViewData["MarsCanReconcile"] = Model.CanReconcile;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a href="@m.PortalUrl" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fa fa-external-link"></i> @localizer["OpenPortal"]</a>
+        <a asp-action="WorkItem" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-default">@localizer["Back"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
 @await Html.PartialAsync("_CalOesMarsShell")
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content rgw-page">
     <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["HandoffWarning"]</div>
     <div class="row">
         <div class="col-md-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["RecordType" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes)w.RecordType] @await Html.PartialAsync("_WorkItemStateBadge", w.LocalState)</h5>
-                    <div class="ibox-tools">
-                        <a href="@m.PortalUrl" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-xs"><i class="fa fa-external-link"></i> @localizer["OpenPortal"]</a>
-                        <a asp-action="WorkItem" asp-route-id="@w.CalOesMarsWorkItemId" class="btn btn-default btn-xs">@localizer["Back"]</a>
-                    </div>
+
                 </div>
                 <div class="ibox-content">
                     <table class="table table-condensed" id="handoff">
@@ -57,7 +61,7 @@
                         <dt>@localizer["RateProfileVersion"]</dt><dd><small>@(m.RateProfileVersion ?? "—")</small></dd>
                         <dt>@localizer["Agreement"]</dt><dd><small>@(m.AgreementSnapshotId ?? "—")</small></dd>
                         <dt>@localizer["Checksum"]</dt><dd><small>@m.Checksum</small></dd>
-                        <dt>@localizer["GeneratedOn"]</dt><dd>@m.GeneratedOn.ToString("yyyy-MM-dd HH:mm") UTC</dd>
+                        <dt>@localizer["GeneratedOn"]</dt><dd>@departmentTime.Format(m.GeneratedOn)</dd>
                     </dl>
                     <p class="text-muted small">@localizer["NotAnImportFile"]</p>
                     @if (m.Validation != null && !m.Validation.IsReadyForPortal) { <p class="text-danger">@localizer["HandoffWithErrors"]</p> }
@@ -75,4 +79,8 @@
             if (navigator.clipboard) { navigator.clipboard.writeText(text); }
         });
     </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
 }

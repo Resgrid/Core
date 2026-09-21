@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using Resgrid.Web.Helpers;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,17 +15,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public partial class ChecklistsController
 	{
 		[HttpGet]
-		public Task<IActionResult> Compliance() => ComplianceView(new ChecklistReportQuery { FromUtc = DateTime.UtcNow.Date.AddDays(-30), UntilUtc = DateTime.UtcNow.Date.AddDays(1) });
+		public Task<IActionResult> Compliance() => ComplianceView(new ChecklistReportQuery { FromUtc = DepartmentTime.From(ViewData).Today.AddDays(-30), UntilUtc = DepartmentTime.From(ViewData).Today.AddDays(1) });
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> Compliance(ChecklistReportQuery query) => ComplianceView(query);
 		private async Task<IActionResult> ComplianceView(ChecklistReportQuery query)
 		{
-			try { return View("Compliance", await _checklists.GetComplianceSummaryAsync(Actor, query)); }
+			var time = DepartmentTime.From(ViewData);
+            query.FromUtc = time.ToUtc(query.FromUtc); query.UntilUtc = time.ToUtc(query.UntilUtc);
+            try
+            {
+                var report = await _checklists.GetComplianceSummaryAsync(Actor, query);
+                // Buckets are local calendar days; shifting UTC midnight would mislabel the day.
+                report.Trend = report.Entries.Where(e => e.Expected && e.DueUtc.HasValue)
+                    .GroupBy(e => time.Local(e.DueUtc.Value).Date)
+                    .Select(g => new ChecklistMissedTrend { DayUtc = g.Key, Expected = g.Count(), Missed = g.Count(e => e.Missed) })
+                    .OrderBy(g => g.DayUtc).ToList();
+                return View("Compliance", report);
+            }
 			catch (ChecklistException ex) when (ex.StatusCode == 403 && ex.Message.StartsWith("Unlock", StringComparison.Ordinal))
 			{ ViewBag.ProtectionEnforced = true; return View("Compliance", new ChecklistComplianceSummary { FromUtc = query.FromUtc, UntilUtc = query.UntilUtc, TargetType = query.TargetType, TargetId = query.TargetId, IsRedacted = true }); }
 		}
 		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> ComplianceCsv(ChecklistReportQuery query) => File(ChecklistReportDocuments.Csv(await _checklists.GetComplianceSummaryAsync(Actor, query)), "text/csv; charset=utf-8", "checklist-compliance.csv");
+		public async Task<IActionResult> ComplianceCsv(ChecklistReportQuery query)
+        {
+            query.FromUtc = DepartmentTime.From(ViewData).ToUtc(query.FromUtc);
+            query.UntilUtc = DepartmentTime.From(ViewData).ToUtc(query.UntilUtc);
+            return File(ChecklistReportDocuments.Csv(await _checklists.GetComplianceSummaryAsync(Actor, query)), "text/csv; charset=utf-8", "checklist-compliance.csv");
+        }
 		[HttpGet]
 		public IActionResult ReadinessPacket() => View("ReadinessPacket");
 		[HttpPost, ValidateAntiForgeryToken]
@@ -36,7 +54,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ReadinessPacketDownload(int callId, int lookbackDays, [FromServices] IPdfProvider pdf)
 		{
 			var manifest = await _checklists.GetReadinessPacketForCallAsync(Actor, callId, lookbackDays);
-			var package = ChecklistReportDocuments.Package(manifest, pdf);
+			var package = ChecklistReportDocuments.Package(manifest, pdf, DepartmentTime.From(ViewData).Format);
 			// Revalidate the attended source after potentially slow PDF conversion.
 			var current = await _checklists.GetReadinessPacketForCallAsync(Actor, callId, lookbackDays);
 			ChecklistReportDocuments.EnsureStillAuthorized(manifest, current);

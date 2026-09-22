@@ -291,5 +291,35 @@
   <data name="ValidationDuplicateMachineNames" xml:space="preserve">
     <value>Διπλότυπα ονόματα συστήματος: {0}. Κάθε όνομα συστήματος πρέπει να είναι μοναδικό εντός αυτού του τύπου οντότητας.</value>
   </data>
+  <data name="RecordCustomFieldsTitle" xml:space="preserve">
+    <value>Προσαρμοσμένα πεδία εγγραφών</value>
+  </data>
+  <data name="RecordCustomFieldsIntro" xml:space="preserve">
+    <value>Επιλέξτε τον τύπο εγγραφής του οποίου τη φόρμα θέλετε να επεκτείνετε.</value>
+  </data>
+  <data name="RecordTypeRun" xml:space="preserve">
+    <value>Επέμβαση</value>
+  </data>
+  <data name="RecordTypeTraining" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="RecordTypeWork" xml:space="preserve">
+    <value>Εργασία</value>
+  </data>
+  <data name="RecordTypeMeeting" xml:space="preserve">
+    <value>Συνάντηση</value>
+  </data>
+  <data name="RecordTypeCoroner" xml:space="preserve">
+    <value>Ιατροδικαστής</value>
+  </data>
+  <data name="RecordTypeCallback" xml:space="preserve">
+    <value>Επανακλήση</value>
+  </data>
+  <data name="RecordTypeUnitActivity" xml:space="preserve">
+    <value>Δραστηριότητα μονάδας</value>
+  </data>
+  <data name="RecordTypeNerisIncident" xml:space="preserve">
+    <value>Αναφορά συμβάντος NERIS</value>
+  </data>
 </root>
 

@@ -54,7 +54,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 							.WithColumn(N("LegacyInventoryTypeId")).AsInt32().Nullable(); break;
 					case "InventoryLocations":
 						table.WithColumn(N("LocationType")).AsInt32().NotNullable().WithColumn(N("GroupId")).AsInt32().Nullable()
-							.WithColumn(N("UnitId")).AsInt32().Nullable().WithColumn(N("UserId")).AsString(128).Nullable()
+							.WithColumn(N("UnitId")).AsInt32().Nullable().WithColumn(N("UserId")).AsCustom("citext").Nullable()
 							.WithColumn(N("ContainerAssetId")).AsString(36).Nullable().WithColumn(N("ParentLocationId")).AsString(36).Nullable()
 							.WithColumn(N("IsDefault")).AsBoolean().NotNullable().WithDefaultValue(false); break;
 					case "InventoryLots":
@@ -90,7 +90,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					case "InventoryIssuances":
 						table.WithColumn(N("ItemId")).AsString(36).NotNullable().WithColumn(N("AssetId")).AsString(36).Nullable().WithColumn(N("LotId")).AsString(36).Nullable()
 							.WithColumn(N("Quantity")).AsDecimal(24, 6).NotNullable().WithColumn(N("ReturnedQuantity")).AsDecimal(24, 6).NotNullable().WithDefaultValue(0)
-							.WithColumn(N("IssuedToUserId")).AsString(128).Nullable().WithColumn(N("IssuedToUnitId")).AsInt32().Nullable()
+							.WithColumn(N("IssuedToUserId")).AsCustom("citext").Nullable().WithColumn(N("IssuedToUnitId")).AsInt32().Nullable()
 							.WithColumn(N("LocationId")).AsString(36).NotNullable().WithColumn(N("ReturnedToLocationId")).AsString(36).Nullable()
 							.WithColumn(N("IssuedOn")).AsDateTime2().NotNullable().WithColumn(N("ExpectedReturnOn")).AsDateTime2().Nullable().WithColumn(N("ReturnedOn")).AsDateTime2().Nullable()
 							.WithColumn(N("Status")).AsInt32().NotNullable().WithColumn(N("ReferenceType")).AsInt32().NotNullable().WithColumn(N("ReferenceId")).AsString(128).Nullable(); break;

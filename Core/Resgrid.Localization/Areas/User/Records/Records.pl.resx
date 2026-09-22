@@ -1217,7 +1217,6 @@
   <data name="Deployments" xml:space="preserve"><value>Oddelegowania</value></data>
   <data name="DeploymentsIntro" xml:space="preserve"><value>Zewnętrzne zamówienia zasobów realizowane przez jednostkę. System zamawiający pozostaje wiążący: artefakty są przechowywane jako niezmienne migawki i nic nie jest zapisywane zwrotnie.</value></data>
   <data name="NewDeployment" xml:space="preserve"><value>Nowe oddelegowanie</value></data>
-  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Oddelegowania to funkcja w podglądzie: wzorce zbudowano z opublikowanej dokumentacji IROC, CIFFC i EMAC, nie z integracji na żywo. Zweryfikuj z systemem zamawiającym.</value></data>
   <data name="DeploymentOrder" xml:space="preserve"><value>Zamówienie</value></data>
   <data name="DeploymentOrderNumber" xml:space="preserve"><value>Numer zamówienia</value></data>
   <data name="DeploymentIncident" xml:space="preserve"><value>Zdarzenie</value></data>
@@ -2109,4 +2108,52 @@
   <data name="ExportListHeader" xml:space="preserve"><value>Eksportuj tę listę</value></data>
   <data name="MoreMenu" xml:space="preserve"><value>Więcej</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Zużycie zapasów</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Raporty z działań</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Historia działań, raporty i eksporty tylko do odczytu. Zarządzaj działaniami w obszarze Kadr i operacji biznesowych.</value></data>
+  <data name="DeploymentExportResources" xml:space="preserve"><value>Eksportuj zasoby CSV</value></data>
+  <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Otwórz zarządzanie działaniami</value></data>
+  <data name="DeploymentExternalOrders" xml:space="preserve"><value>Zlecenia zewnętrzne</value></data>
+  <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Nowe zlecenie zewnętrzne</value></data>
+  <data name="HydrantImportBack" xml:space="preserve"><value>Wróć do hydrantów</value></data>
+  <data name="HydrantImportNotSaved" xml:space="preserve"><value>Nie zapisano żadnych hydrantów. Popraw poniższe wiersze i ponownie zaimportuj plik.</value></data>
+  <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Wyświetlono {0} z {1} wierszy z błędami. JSON używa numerów elementów, a CSV numerów wierszy.</value></data>
+  <data name="HydrantImportRow" xml:space="preserve"><value>Element / wiersz</value></data>
+  <data name="HydrantImportCorrection" xml:space="preserve"><value>Jak poprawić</value></data>
+  <data name="HydrantImportSource" xml:space="preserve"><value>Prześlij lub wklej dane hydrantów</value></data>
+  <data name="HydrantImportIntro" xml:space="preserve"><value>Importuj do 20 000 hydrantów. Istniejące numery zostaną zaktualizowane, a nowe dodane.</value></data>
+  <data name="HydrantImportFile" xml:space="preserve"><value>Wybierz plik</value></data>
+  <data name="HydrantImportFileHelp" xml:space="preserve"><value>Plik UTF-8 .json lub .csv, do 10 MB. Rozszerzenie określa format.</value></data>
+  <data name="HydrantImportReselect" xml:space="preserve"><value>Wybierz ponownie poprawiony plik.</value></data>
+  <data name="HydrantImportPaste" xml:space="preserve"><value>Lub wklej JSON / CSV</value></data>
+  <data name="HydrantImportFormat" xml:space="preserve"><value>Format wklejonych danych</value></data>
+  <data name="HydrantImportContent" xml:space="preserve"><value>Wklejone dane</value></data>
+  <data name="HydrantImportValidationHelp" xml:space="preserve"><value>Każdy wiersz jest sprawdzany przed zapisem. Jeśli choć jeden jest nieprawidłowy, nic nie zostanie zaimportowane. Pozostaw stronę otwartą do wyświetlenia wyniku.</value></data>
+  <data name="HydrantImportWorking" xml:space="preserve"><value>Sprawdzanie i importowanie…</value></data>
+  <data name="HydrantImportGuide" xml:space="preserve"><value>Format pliku i przykłady</value></data>
+  <data name="HydrantImportRequired" xml:space="preserve"><value>Wymagane: number (tekst, 1–64 znaki), latitude (od -90 do 90), longitude (od -180 do 180). Każdy numer musi być unikatowy w pliku.</value></data>
+  <data name="HydrantImportOptional" xml:space="preserve"><value>Opcjonalne: type, address (do 500 znaków), main_size (cale, powyżej 0 do 9999.99), flow_gpm (nieujemna liczba całkowita), owner (do 200 znaków).</value></data>
+  <data name="HydrantImportTypesHelp" xml:space="preserve"><value>W JSON liczby nie mają cudzysłowów, a nazwy i adresy wymagają podwójnych cudzysłowów. Używaj kropki dziesiętnej. Pomiń wartości opcjonalne lub użyj null. CSV wymaga nagłówka; wartości z przecinkami lub podziałami wiersza umieść w cudzysłowach.</value></data>
+  <data name="HydrantImportJsonExample" xml:space="preserve"><value>Pobierz przykład JSON</value></data>
+  <data name="HydrantImportCsvExample" xml:space="preserve"><value>Pobierz przykład CSV</value></data>
+  <data name="HydrantImportMappingHelp" xml:space="preserve"><value>Zarządzaj hydrantami tutaj, aby pokazać przepływ i stan na mapach. POI to oddzielne punkty orientacyjne; powiązane POI pojawiają się tylko raz na warstwie Hydranty.</value></data>
+  <data name="HydrantMapLoadFailed" xml:space="preserve"><value>Nie udało się wczytać hydrantów.</value></data>
+  <data name="HydrantMapRetry" xml:space="preserve"><value>Spróbuj ponownie</value></data>
+  <data name="CallPickerBrowse" xml:space="preserve"><value>Przeglądaj zgłoszenia</value></data>
+  <data name="CallPickerSearch" xml:space="preserve"><value>Szukaj numeru, nazwy lub adresu</value></data>
+  <data name="CallPickerStatus" xml:space="preserve"><value>Status zgłoszenia</value></data>
+  <data name="CallPickerAll" xml:space="preserve"><value>Wszystkie zgłoszenia</value></data>
+  <data name="CallPickerActive" xml:space="preserve"><value>Aktywne zgłoszenia</value></data>
+  <data name="CallPickerClosed" xml:space="preserve"><value>Zamknięte zgłoszenia</value></data>
+  <data name="CallPickerFrom" xml:space="preserve"><value>Od daty</value></data>
+  <data name="CallPickerTo" xml:space="preserve"><value>Do daty włącznie</value></data>
+  <data name="CallPickerApply" xml:space="preserve"><value>Szukaj</value></data>
+  <data name="CallPickerPrevious" xml:space="preserve"><value>Poprzednia</value></data>
+  <data name="CallPickerNext" xml:space="preserve"><value>Następna</value></data>
+  <data name="CallPickerLoading" xml:space="preserve"><value>Ładowanie zgłoszeń…</value></data>
+  <data name="CallPickerError" xml:space="preserve"><value>Nie udało się wczytać zgłoszeń. Wyszukaj ponownie.</value></data>
+  <data name="CallPickerEmpty" xml:space="preserve"><value>Brak pasujących zgłoszeń na tej stronie.</value></data>
+  <data name="CallPickerMetadata" xml:space="preserve"><value>Chronione zgłoszenia można wyszukiwać według numeru; nazwy i adresy są ukryte.</value></data>
+  <data name="CallPickerRequiresScript" xml:space="preserve"><value>Włącz JavaScript, aby wyszukać i wybrać zgłoszenie.</value></data>
+  <data name="CallPickerDates" xml:space="preserve"><value>Podaj prawidłowy zakres dat, w którym początek nie jest późniejszy niż koniec.</value></data>
+  <data name="CallPickerUnavailable" xml:space="preserve"><value>Wybierz dostępne zgłoszenie z listy lub wyczyść wybór.</value></data>
 </root>

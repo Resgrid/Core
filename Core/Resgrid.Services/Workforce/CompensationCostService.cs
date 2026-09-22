@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Model.Workforce;
 using Resgrid.Services.Invoicing;
@@ -28,10 +29,11 @@ namespace Resgrid.Services.Workforce
 		private readonly IWorkforceEmploymentRepository _employments;
 		private readonly IWorkforceJobAssignmentRepository _assignments;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUnitOfWork _unitOfWork;
 		private readonly WorkforceProtectionSeam _seam;
 
 		public CompensationCostService(IEmployeeCompensationProfileRepository profiles, IEmployeePayComponentRepository payComponents, IEmployeeCostComponentRepository costComponents,
-			IWorkforceEmploymentRepository employments, IWorkforceJobAssignmentRepository assignments, IEventAggregator eventAggregator,
+			IWorkforceEmploymentRepository employments, IWorkforceJobAssignmentRepository assignments, IEventAggregator eventAggregator, IUnitOfWork unitOfWork,
 			Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null)
 		{
 			_profiles = profiles;
@@ -40,6 +42,7 @@ namespace Resgrid.Services.Workforce
 			_employments = employments;
 			_assignments = assignments;
 			_eventAggregator = eventAggregator;
+			_unitOfWork = unitOfWork;
 			_seam = new WorkforceProtectionSeam(protectedWrite, protectedRead, grant);
 		}
 
@@ -100,6 +103,30 @@ namespace Resgrid.Services.Workforce
 		public async Task<EmployeeCompensationProfile> SaveProfileAsync(EmployeeCompensationProfile profile, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
 			if (profile == null) throw new ArgumentNullException(nameof(profile));
+			var audits = new List<AuditEvent>();
+			var saved = await WriteProfileAsync(profile, userId, ipAddress, userAgent, audits, cancellationToken);
+			Publish(audits);
+			return await GetProfileAsync(saved.EmployeeCompensationProfileId, profile.DepartmentId);
+		}
+
+		public async Task<EmployeeCompensationProfile> SaveProfileWithComponentsAsync(EmployeeCompensationProfile profile, List<EmployeePayComponent> payComponents, List<EmployeeCostComponent> costComponents,
+			string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		{
+			if (profile == null) throw new ArgumentNullException(nameof(profile));
+			// One transaction: a failed component write must not leave the profile (or a partial component set) behind.
+			// The audit events are the same two the separate calls raise, published only once the writes have committed.
+			var audits = new List<AuditEvent>();
+			var saved = await TransactionAsync(async () =>
+			{
+				var row = await WriteProfileAsync(profile, userId, ipAddress, userAgent, audits, cancellationToken);
+				return await WriteComponentsAsync(row.EmployeeCompensationProfileId, profile.DepartmentId, payComponents, costComponents, userId, ipAddress, userAgent, audits, cancellationToken);
+			}, cancellationToken);
+			Publish(audits);
+			return await GetProfileAsync(saved.EmployeeCompensationProfileId, profile.DepartmentId);
+		}
+
+		private async Task<EmployeeCompensationProfile> WriteProfileAsync(EmployeeCompensationProfile profile, string userId, string ipAddress, string userAgent, List<AuditEvent> audits, CancellationToken cancellationToken)
+		{
 			if (!Enum.IsDefined(typeof(CompensationScopes), profile.Scope)) throw new InvalidOperationException("workforce_scope_invalid");
 			if (!Enum.IsDefined(typeof(PayBases), profile.PayBasis)) throw new InvalidOperationException("workforce_pay_basis_invalid");
 			if (profile.ExpiresOn.HasValue && profile.ExpiresOn < profile.EffectiveOn) throw new InvalidOperationException("workforce_dates_invalid");
@@ -132,13 +159,22 @@ namespace Resgrid.Services.Workforce
 			if (priorRates != null && priorRates != (target.BaseAmount, target.RegularHourlyEquivalent, target.RateMultipliersJson, target.PayBasis).ToString()) { target.IsApproved = false; target.ApprovedByUserId = null; target.ApprovedOn = null; }
 			if (existing != null) { target.RowVersion = existing.RowVersion + 1; target.EditedOn = now; target.EditedByUserId = userId; }
 			var saved = await _seam.SaveAsync(_profiles, target, existing, profile.DepartmentId, WorkforceProtectedFields.Compensation, cancellationToken);
-			Audit(profile.DepartmentId, userId, AuditLogTypes.WorkforceCompensationChanged, ipAddress, userAgent, before, saved);
-			return await GetProfileAsync(saved.EmployeeCompensationProfileId, profile.DepartmentId);
+			audits.Add(BuildAudit(profile.DepartmentId, userId, AuditLogTypes.WorkforceCompensationChanged, ipAddress, userAgent, before, saved));
+			return saved;
 		}
 
 		private static bool Overlaps(EmployeeCompensationProfile a, EmployeeCompensationProfile b) => a.EffectiveOn.Date <= (b.ExpiresOn ?? DateTime.MaxValue).Date && (a.ExpiresOn ?? DateTime.MaxValue).Date >= b.EffectiveOn.Date;
 
 		public async Task<EmployeeCompensationProfile> SaveComponentsAsync(string profileId, int departmentId, List<EmployeePayComponent> payComponents, List<EmployeeCostComponent> costComponents, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		{
+			var audits = new List<AuditEvent>();
+			var profile = await WriteComponentsAsync(profileId, departmentId, payComponents, costComponents, userId, ipAddress, userAgent, audits, cancellationToken);
+			Publish(audits);
+			return await GetProfileAsync(profile.EmployeeCompensationProfileId, departmentId);
+		}
+
+		private async Task<EmployeeCompensationProfile> WriteComponentsAsync(string profileId, int departmentId, List<EmployeePayComponent> payComponents, List<EmployeeCostComponent> costComponents, string userId, string ipAddress, string userAgent,
+			List<AuditEvent> audits, CancellationToken cancellationToken)
 		{
 			var profile = await _profiles.GetByIdForDepartmentAsync(profileId ?? string.Empty, departmentId);
 			if (profile == null || profile.IsDeleted) throw new InvalidOperationException("workforce_not_found");
@@ -180,8 +216,8 @@ namespace Resgrid.Services.Workforce
 			}
 			profile.IsApproved = false; profile.ApprovedByUserId = null; profile.ApprovedOn = null; profile.RowVersion++; profile.EditedOn = now; profile.EditedByUserId = userId;
 			await _profiles.SaveOrUpdateAsync(profile, cancellationToken);
-			Audit(departmentId, userId, AuditLogTypes.WorkforceCompensationChanged, ipAddress, userAgent, before, profile);
-			return await GetProfileAsync(profile.EmployeeCompensationProfileId, departmentId);
+			audits.Add(BuildAudit(departmentId, userId, AuditLogTypes.WorkforceCompensationChanged, ipAddress, userAgent, before, profile));
+			return profile;
 		}
 
 		public async Task<EmployeeCompensationProfile> ApproveProfileAsync(string profileId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
@@ -303,11 +339,38 @@ namespace Resgrid.Services.Workforce
 		}
 
 		private void Audit(int departmentId, string userId, AuditLogTypes type, string ipAddress, string userAgent, string before, EmployeeCompensationProfile after)
+			=> _eventAggregator.SendMessage<AuditEvent>(BuildAudit(departmentId, userId, type, ipAddress, userAgent, before, after));
+
+		private static AuditEvent BuildAudit(int departmentId, string userId, AuditLogTypes type, string ipAddress, string userAgent, string before, EmployeeCompensationProfile after)
 		{
 			var audit = DeploymentService.NewAuditEvent(departmentId, userId, type, ipAddress, userAgent);
 			audit.Before = before;
 			audit.After = after == null ? null : Snapshot(after);
-			_eventAggregator.SendMessage<AuditEvent>(audit);
+			return audit;
+		}
+
+		private void Publish(IEnumerable<AuditEvent> audits)
+		{
+			foreach (var audit in audits) _eventAggregator.SendMessage<AuditEvent>(audit);
+		}
+
+		/// <summary>TimeTrackingService pattern: joins an ambient transaction when one is open, otherwise owns commit / discard.</summary>
+		private async Task<T> TransactionAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
+		{
+			if (_unitOfWork == null || _unitOfWork.Transaction != null)
+				return await action();
+			try
+			{
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+				var result = await action();
+				_unitOfWork.CommitChanges();
+				return result;
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
 		}
 
 		#endregion

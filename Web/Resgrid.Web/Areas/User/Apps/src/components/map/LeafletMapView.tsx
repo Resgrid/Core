@@ -21,12 +21,18 @@ interface MarkerState {
   poiImage: string;
   markerShape: string;
   color: string;
-  markerType: number;
+  markerType: MapMarkerInfo['Type'];
   infoWindowContent: string;
   hideLabels: boolean;
 }
 
 function createMarkerIcon(marker: MapMarkerInfo): L.Icon | L.DivIcon {
+  if (Number(marker.Type) === 5) {
+    const dot = document.createElement('span');
+    dot.className = 'rg-map__hydrant-dot';
+    dot.style.backgroundColor = marker.Color || '#999999';
+    return L.divIcon({ className: '', html: dot, iconSize: [18, 18], iconAnchor: [9, 9] });
+  }
   if (isPoiMarker(marker)) {
     const iconClass = getPoiIconClass(marker);
     const color = marker.Color || '#2563eb';
@@ -61,7 +67,9 @@ function createMarker(markerInfo: MapMarkerInfo, hideLabels: boolean): L.Marker 
   });
 
   if (!hideLabels && markerInfo.Title) {
-    marker.bindTooltip(markerInfo.Title, {
+    const label = document.createElement('span');
+    label.textContent = markerInfo.Title;
+    marker.bindTooltip(label, {
       permanent: true,
       direction: 'bottom',
       className: 'rg-map__tooltip',

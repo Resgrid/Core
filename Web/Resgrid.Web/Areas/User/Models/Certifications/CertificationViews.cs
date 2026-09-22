@@ -23,6 +23,25 @@ namespace Resgrid.Web.Areas.User.Models.Certifications
 		public List<PersonnelCertification> Records { get; set; } = new List<PersonnelCertification>();
 	}
 
+	public class CertificationAddView : CertificationPageView
+	{
+		public CertificationRecordInput Input { get; set; } = new CertificationRecordInput();
+		public IReadOnlyDictionary<string, string> Personnel { get; set; } = new Dictionary<string, string>();
+		public List<DepartmentCertificationType> Types { get; set; } = new List<DepartmentCertificationType>();
+	}
+
+	public class CertificationRecordInput
+	{
+		public string UserId { get; set; }
+		public int? DepartmentCertificationTypeId { get; set; }
+		public string Name { get; set; }
+		public string Number { get; set; }
+		public string Area { get; set; }
+		public string IssuedBy { get; set; }
+		public DateTime? RecievedOn { get; set; }
+		public DateTime? ExpiresOn { get; set; }
+	}
+
 	public class CertificationDashboardView : CertificationPageView
 	{
 		public CertificationExpiryDashboard Dashboard { get; set; } = new CertificationExpiryDashboard();

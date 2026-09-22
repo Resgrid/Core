@@ -35,6 +35,7 @@ namespace Resgrid.Web.Areas.User.Models.Inventory
 		public List<InventoryVendor> Vendors { get; set; } = new();
 		public List<InventoryVendorChoice> VendorContacts { get; set; } = new();
 		public InventoryPurchaseOrderDetail PurchaseOrder { get; set; }
+		public string DepartmentCurrency { get; set; } = "USD";
 		public InventoryValuation Valuation { get; set; }
 		public InventoryCountDetail CountDetail { get; set; }
 		public bool CanViewReports { get; set; }

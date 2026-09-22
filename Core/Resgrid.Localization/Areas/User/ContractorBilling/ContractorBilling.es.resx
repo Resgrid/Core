@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Días máximos de despliegue</value></data>
   <data name="MealCode" xml:space="preserve"><value>Código de comida</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Elegibilidad de comidas</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>Ventanas JSON por código de comida, p. ej. [{"MealCode":"B","StartsBeforeMinutes":420}]; una dieta fuera de ventana se avisa, no se bloquea.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Añada una regla para cada código de comida (por ejemplo, B para desayuno). Introduzca las horas límite locales del turno; deje una hora en blanco si no hay límite. Las solicitudes fuera de estos límites muestran una advertencia y pueden enviarse.</value></data>
   <data name="Missing" xml:space="preserve"><value>Falta</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Prellenado por multiplicador</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Base + espera + multiplicadores de HE generan las bandas horarias; los valores guardados siguen siendo importes explícitos.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Los recargos no pueden ser negativos.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>El recargo necesita un nombre.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>No se encontró el recargo.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>No hay reglas de elegibilidad de comidas. Añada una regla para establecer límites horarios.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Añadir regla de comida</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Eliminar regla de comida</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>El turno empieza a más tardar a las</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>El turno termina como mínimo a las</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Introduzca un código de comida de 1 a 10 caracteres.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Cada código de comida solo puede tener una regla de elegibilidad.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Introduzca una hora válida entre 00:00 y 23:59.</value></data>
 </root>

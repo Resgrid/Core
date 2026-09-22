@@ -30,40 +30,22 @@
         <div class="alert alert-info">@message</div>
     }
 
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="widget style1 navy-bg">
-                <div class="row">
-                    <div class="col-xs-4 text-center"><i class="fa fa-money fa-4x"></i></div>
-                    <div class="col-xs-8 text-right">
-                        <span>@localizer["OutstandingBalance"]</span>
-                        <h2 class="font-bold">@InvoiceIndexView.FormatBalances(Model.OutstandingBalances)</h2>
-                    </div>
-                </div>
-            </div>
+    <div class="rgw-invoice-summary">
+        <div class="widget style1 navy-bg rgw-invoice-stat">
+            <i class="fa fa-money rgw-invoice-stat-icon" aria-hidden="true"></i>
+            <span>@localizer["OutstandingBalance"]</span>
+            <h2 class="font-bold">@InvoiceIndexView.FormatBalances(Model.OutstandingBalances)</h2>
         </div>
-        <div class="col-sm-4">
-            <div class="widget style1 @(Model.OverdueCount > 0 ? "red-bg" : "lazur-bg")">
-                <div class="row">
-                    <div class="col-xs-4 text-center"><i class="fa fa-exclamation-triangle fa-4x"></i></div>
-                    <div class="col-xs-8 text-right">
-                        <span>@localizer["OverdueBalance"]</span>
-                        <h2 class="font-bold">@InvoiceIndexView.FormatBalances(Model.OverdueBalances)</h2>
-                        <small>@Model.OverdueCount @localizer["InvoicesLower"]</small>
-                    </div>
-                </div>
-            </div>
+        <div class="widget style1 @(Model.OverdueCount > 0 ? "red-bg" : "lazur-bg") rgw-invoice-stat">
+            <i class="fa fa-exclamation-triangle rgw-invoice-stat-icon" aria-hidden="true"></i>
+            <span>@localizer["OverdueBalance"]</span>
+            <h2 class="font-bold">@InvoiceIndexView.FormatBalances(Model.OverdueBalances)</h2>
+            <small>@Model.OverdueCount @localizer["InvoicesLower"]</small>
         </div>
-        <div class="col-sm-4">
-            <div class="widget style1 gray-bg">
-                <div class="row">
-                    <div class="col-xs-4 text-center"><i class="fa fa-file-text-o fa-4x"></i></div>
-                    <div class="col-xs-8 text-right">
-                        <span>@localizer["Invoices"]</span>
-                        <h2 class="font-bold">@Model.TotalCount</h2>
-                    </div>
-                </div>
-            </div>
+        <div class="widget style1 rgw-invoice-stat rgw-invoice-stat-total">
+            <i class="fa fa-file-text-o rgw-invoice-stat-icon" aria-hidden="true"></i>
+            <span>@localizer["Invoices"]</span>
+            <h2 class="font-bold">@Model.TotalCount</h2>
         </div>
     </div>
 

@@ -842,4 +842,6 @@
   <data name="StepMovementAmountHint" xml:space="preserve"><value>The quantity and the reason. Both end up on the ledger entry this creates.</value></data>
   <data name="StepReturnHint" xml:space="preserve"><value>Say how much came back, where it went, and what condition it is in.</value></data>
   <data name="Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="M4SupplierHelp" xml:space="preserve"><value>Missing a supplier? Add one on the Suppliers page.</value></data>
+  <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Choose the currency for this order. New orders default to your department's currency.</value></data>
 </root>

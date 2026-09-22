@@ -81,7 +81,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Preview_packs_are_labeled_and_locked_classification_floors_apply()
 		{
 			var catalog = await _h.Templates.GetCatalogAsync();
-			catalog.Where(p => p.IsPreview).Select(p => p.PackKey).Should().BeEquivalentTo(new[] { "pack.cert", "pack.mutual-aid", "pack.incident-support" });
+			catalog.Where(p => p.IsPreview).Select(p => p.PackKey).Should().BeEquivalentTo(new[] { "pack.cert", "pack.incident-support" });
 			catalog.Single(p => p.PackKey == "pack.hazmat").IsPreview.Should().BeFalse();
 			var incident = await _h.Templates.RenderAsync("template.security-incident", "generic", null);
 			incident.Schema.FindField("name").Classification.Should().Be(RmsFieldClassification.Restricted, "involved-person names carry the pack's restricted floor");

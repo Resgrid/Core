@@ -1217,7 +1217,6 @@
   <data name="Deployments" xml:space="preserve"><value>Αποστολές</value></data>
   <data name="DeploymentsIntro" xml:space="preserve"><value>Εξωτερικές παραγγελίες πόρων που καλύπτει το τμήμα σας. Το σύστημα παραγγελίας παραμένει έγκυρο: τα τεχνουργήματα αποθηκεύονται ως αμετάβλητα στιγμιότυπα και τίποτα δεν γράφεται πίσω.</value></data>
   <data name="NewDeployment" xml:space="preserve"><value>Νέα αποστολή</value></data>
-  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Οι αποστολές είναι λειτουργία προεπισκόπησης: τα πρότυπα βασίστηκαν σε δημοσιευμένη τεκμηρίωση IROC, CIFFC και EMAC, όχι σε ζωντανές ενοποιήσεις. Επαληθεύστε με το σύστημα παραγγελίας σας.</value></data>
   <data name="DeploymentOrder" xml:space="preserve"><value>Παραγγελία</value></data>
   <data name="DeploymentOrderNumber" xml:space="preserve"><value>Αριθμός παραγγελίας</value></data>
   <data name="DeploymentIncident" xml:space="preserve"><value>Συμβάν</value></data>
@@ -2109,4 +2108,52 @@
   <data name="ExportListHeader" xml:space="preserve"><value>Εξαγωγή αυτής της λίστας</value></data>
   <data name="MoreMenu" xml:space="preserve"><value>Περισσότερα</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Χρήση αποθεμάτων</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Αναφορές αναπτύξεων</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Ιστορικό, αναφορές και εξαγωγές αναπτύξεων μόνο για ανάγνωση. Διαχειριστείτε τις αναπτύξεις στο Προσωπικό και επιχειρησιακές λειτουργίες.</value></data>
+  <data name="DeploymentExportResources" xml:space="preserve"><value>Εξαγωγή πόρων CSV</value></data>
+  <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Άνοιγμα διαχείρισης ανάπτυξης</value></data>
+  <data name="DeploymentExternalOrders" xml:space="preserve"><value>Εξωτερικές εντολές</value></data>
+  <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Νέα εξωτερική εντολή</value></data>
+  <data name="HydrantImportBack" xml:space="preserve"><value>Επιστροφή στους κρουνούς</value></data>
+  <data name="HydrantImportNotSaved" xml:space="preserve"><value>Δεν αποθηκεύτηκε κανένας κρουνός. Διορθώστε τις παρακάτω γραμμές και εισαγάγετε ξανά το αρχείο.</value></data>
+  <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Εμφανίζονται {0} από {1} γραμμές με προβλήματα. Το JSON χρησιμοποιεί αριθμούς στοιχείων, το CSV αριθμούς γραμμών.</value></data>
+  <data name="HydrantImportRow" xml:space="preserve"><value>Στοιχείο / γραμμή</value></data>
+  <data name="HydrantImportCorrection" xml:space="preserve"><value>Τρόπος διόρθωσης</value></data>
+  <data name="HydrantImportSource" xml:space="preserve"><value>Μεταφόρτωση ή επικόλληση δεδομένων κρουνών</value></data>
+  <data name="HydrantImportIntro" xml:space="preserve"><value>Εισαγάγετε έως 20.000 κρουνούς. Οι υπάρχοντες αριθμοί ενημερώνονται και οι νέοι προστίθενται.</value></data>
+  <data name="HydrantImportFile" xml:space="preserve"><value>Επιλογή αρχείου</value></data>
+  <data name="HydrantImportFileHelp" xml:space="preserve"><value>Αρχείο UTF-8 .json ή .csv, έως 10 MB. Η επέκταση καθορίζει τη μορφή.</value></data>
+  <data name="HydrantImportReselect" xml:space="preserve"><value>Επιλέξτε ξανά το διορθωμένο αρχείο.</value></data>
+  <data name="HydrantImportPaste" xml:space="preserve"><value>Ή επικολλήστε JSON / CSV</value></data>
+  <data name="HydrantImportFormat" xml:space="preserve"><value>Μορφή επικολλημένων δεδομένων</value></data>
+  <data name="HydrantImportContent" xml:space="preserve"><value>Επικολλημένα δεδομένα</value></data>
+  <data name="HydrantImportValidationHelp" xml:space="preserve"><value>Κάθε γραμμή ελέγχεται πριν από την αποθήκευση. Αν κάποια είναι άκυρη, δεν εισάγεται τίποτα. Κρατήστε τη σελίδα ανοιχτή μέχρι να εμφανιστεί το αποτέλεσμα.</value></data>
+  <data name="HydrantImportWorking" xml:space="preserve"><value>Έλεγχος και εισαγωγή…</value></data>
+  <data name="HydrantImportGuide" xml:space="preserve"><value>Μορφή αρχείου και παραδείγματα</value></data>
+  <data name="HydrantImportRequired" xml:space="preserve"><value>Υποχρεωτικά: number (κείμενο, 1–64 χαρακτήρες), latitude (-90 έως 90), longitude (-180 έως 180). Κάθε αριθμός πρέπει να είναι μοναδικός στο αρχείο.</value></data>
+  <data name="HydrantImportOptional" xml:space="preserve"><value>Προαιρετικά: type, address (έως 500 χαρακτήρες), main_size (ίντσες, πάνω από 0 έως 9999.99), flow_gpm (μη αρνητικός ακέραιος), owner (έως 200 χαρακτήρες).</value></data>
+  <data name="HydrantImportTypesHelp" xml:space="preserve"><value>Στο JSON οι αριθμοί είναι χωρίς εισαγωγικά, ενώ ονόματα και διευθύνσεις έχουν διπλά εισαγωγικά. Χρησιμοποιήστε τελεία για δεκαδικά. Παραλείψτε προαιρετικές τιμές ή χρησιμοποιήστε null. Το CSV απαιτεί κεφαλίδα· βάλτε σε εισαγωγικά τιμές με κόμματα ή αλλαγές γραμμής.</value></data>
+  <data name="HydrantImportJsonExample" xml:space="preserve"><value>Λήψη παραδείγματος JSON</value></data>
+  <data name="HydrantImportCsvExample" xml:space="preserve"><value>Λήψη παραδείγματος CSV</value></data>
+  <data name="HydrantImportMappingHelp" xml:space="preserve"><value>Διαχειριστείτε εδώ τους κρουνούς για εμφάνιση παροχής και κατάστασης στους χάρτες. Τα POI είναι ξεχωριστά ορόσημα· τα συνδεδεμένα εμφανίζονται μόνο μία φορά στο επίπεδο κρουνών.</value></data>
+  <data name="HydrantMapLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση των κρουνών.</value></data>
+  <data name="HydrantMapRetry" xml:space="preserve"><value>Επανάληψη</value></data>
+  <data name="CallPickerBrowse" xml:space="preserve"><value>Περιήγηση κλήσεων</value></data>
+  <data name="CallPickerSearch" xml:space="preserve"><value>Αναζήτηση αριθμού, ονόματος ή διεύθυνσης</value></data>
+  <data name="CallPickerStatus" xml:space="preserve"><value>Κατάσταση κλήσης</value></data>
+  <data name="CallPickerAll" xml:space="preserve"><value>Όλες οι κλήσεις</value></data>
+  <data name="CallPickerActive" xml:space="preserve"><value>Ενεργές κλήσεις</value></data>
+  <data name="CallPickerClosed" xml:space="preserve"><value>Κλειστές κλήσεις</value></data>
+  <data name="CallPickerFrom" xml:space="preserve"><value>Από ημερομηνία</value></data>
+  <data name="CallPickerTo" xml:space="preserve"><value>Έως ημερομηνία (συμπεριλαμβάνεται)</value></data>
+  <data name="CallPickerApply" xml:space="preserve"><value>Αναζήτηση</value></data>
+  <data name="CallPickerPrevious" xml:space="preserve"><value>Προηγούμενη</value></data>
+  <data name="CallPickerNext" xml:space="preserve"><value>Επόμενη</value></data>
+  <data name="CallPickerLoading" xml:space="preserve"><value>Φόρτωση κλήσεων…</value></data>
+  <data name="CallPickerError" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση κλήσεων. Αναζητήστε ξανά.</value></data>
+  <data name="CallPickerEmpty" xml:space="preserve"><value>Δεν υπάρχουν αντίστοιχες κλήσεις σε αυτή τη σελίδα.</value></data>
+  <data name="CallPickerMetadata" xml:space="preserve"><value>Οι προστατευμένες κλήσεις αναζητούνται με αριθμό· τα ονόματα και οι διευθύνσεις αποκρύπτονται.</value></data>
+  <data name="CallPickerRequiresScript" xml:space="preserve"><value>Ενεργοποιήστε τη JavaScript για αναζήτηση και επιλογή κλήσης.</value></data>
+  <data name="CallPickerDates" xml:space="preserve"><value>Εισαγάγετε έγκυρο εύρος ημερομηνιών με την αρχή πριν ή κατά τη λήξη.</value></data>
+  <data name="CallPickerUnavailable" xml:space="preserve"><value>Επιλέξτε διαθέσιμη κλήση από τη λίστα ή διαγράψτε την επιλογή.</value></data>
 </root>

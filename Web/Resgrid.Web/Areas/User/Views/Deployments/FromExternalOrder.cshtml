@@ -14,6 +14,7 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title"><h5>@localizer["OpenExternalOrders"]</h5></div>
         <div class="ibox-content">
+            @if (Model.RecordsEnabled) { <p><a class="btn btn-success" asp-controller="DeploymentOrders" asp-action="New">@localizer["NewExternalOrder"]</a></p> }
             @if (!Model.RecordsEnabled)
             {
                 <div class="alert alert-warning">@localizer["RecordsRequired"]</div>

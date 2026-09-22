@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Mapping.MapIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> hydrantStrings
 @{
 	ViewBag.Title = "Resgrid | " + localizer["MappingHeader"];
 	ViewBag.LoadAngular = true;
@@ -42,6 +43,7 @@
 	{
 			<div class="col-sm-8">
 				<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+					@if (Model.HydrantsEnabled) { <a class="btn btn-default" asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User">@hydrantStrings["Hydrants"]</a> }
 					<a title="Manage POIs" class="btn btn-primary" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Manage POIs</a>
 				</div>
 				<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">

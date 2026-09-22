@@ -5,10 +5,10 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Deployments" xml:space="preserve"><value>Dyslokacje</value></data>
-  <data name="DeploymentFinance" xml:space="preserve"><value>Finanse dyslokacji</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Dyslokacje</value></data>
   <data name="MyDeployments" xml:space="preserve"><value>Moje dyslokacje</value></data>
-  <data name="IndexIntro" xml:space="preserve"><value>Finansowe otoczki dyslokacji: obsady, dzienne raporty czasu, wydatki i pliki dla dyslokacji rozliczanych, w trybie zwrotu kosztów i operacyjnych.</value></data>
-  <data name="HelpIndex" xml:space="preserve"><value>Dyslokacja grupuje jednostki, personel i sprzęt wysłane do zdarzenia wraz z dziennymi raportami czasu i wydatkami. Powiąż ją ze zgłoszeniem lub ze zleceniem pomocy wzajemnej z Records.</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Planuj i prowadź działania, zarządzaj zasobami oraz rejestruj czas i wydatki.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Tutaj zarządzaj działaniami operacyjnymi. Raporty i historia są dostępne w RMS.</value></data>
   <data name="NoDeployments" xml:space="preserve"><value>Brak dyslokacji.</value></data>
   <data name="ShowAll" xml:space="preserve"><value>Pokaż wszystkie</value></data>
   <data name="ShowOpen" xml:space="preserve"><value>Pokaż tylko otwarte</value></data>
@@ -32,7 +32,7 @@
   <data name="Days" xml:space="preserve"><value>dni</value></data>
   <data name="MaxDays" xml:space="preserve"><value>Maks. dni</value></data>
   <data name="Notes" xml:space="preserve"><value>Notatki</value></data>
-  <data name="ExternalOrderLinked" xml:space="preserve"><value>Powiązana ze zleceniem zewnętrznym w Records</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Powiązane zlecenie zewnętrzne</value></data>
   <data name="Deployment" xml:space="preserve"><value>Dyslokacja</value></data>
   <data name="AgencyIdentifiers" xml:space="preserve"><value>Identyfikatory agencji</value></data>
   <data name="Jurisdiction" xml:space="preserve"><value>Jurysdykcja</value></data>
@@ -51,7 +51,7 @@
   <data name="Cancel" xml:space="preserve"><value>Anuluj</value></data>
   <data name="Saved" xml:space="preserve"><value>Zapisano.</value></data>
   <data name="SaveFailed" xml:space="preserve"><value>Nie udało się zapisać zmiany.</value></data>
-  <data name="ExternalOrderIntro" xml:space="preserve"><value>Opakuj otwarte zlecenie pomocy wzajemnej z Records w dyslokację, aby śledzić i rozliczać czas, wydatki i obsadę. Samo zlecenie pozostaje w Records.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Powiąż istniejące zlecenie zewnętrzne z jego działaniami operacyjnymi.</value></data>
   <data name="OpenExternalOrders" xml:space="preserve"><value>Otwarte zlecenia zewnętrzne</value></data>
   <data name="RecordsRequired" xml:space="preserve"><value>System Records nie jest włączony dla tej jednostki organizacyjnej, więc nie ma zleceń zewnętrznych do wyboru.</value></data>
   <data name="NoOpenExternalOrders" xml:space="preserve"><value>Brak otwartych zleceń zewnętrznych bez dyslokacji.</value></data>
@@ -125,7 +125,6 @@
   <data name="Size" xml:space="preserve"><value>Rozmiar</value></data>
   <data name="Added" xml:space="preserve"><value>Dodano</value></data>
   <data name="Upload" xml:space="preserve"><value>Prześlij</value></data>
-  <data name="PreviewManifest" xml:space="preserve"><value>Podgląd manifestu</value></data>
   <data name="GenerateManifest" xml:space="preserve"><value>Zapisz PDF manifestu</value></data>
   <data name="Billable" xml:space="preserve"><value>Rozliczany</value></data>
   <data name="MealCode" xml:space="preserve"><value>Kod posiłku</value></data>
@@ -225,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Wybierz zlecenie zewnętrzne.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>To zlecenie zewnętrzne ma już dyslokację.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Nie znaleziono zlecenia zewnętrznego.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Nie masz uprawnień Rejestrów do zamknięcia zlecenia zewnętrznego tych działań, więc nie można ich zakończyć.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Nie znaleziono jednostki.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Ta jednostka jest już w obsadzie.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Dyslokacja jest zakończona lub anulowana, a jej obsada jest zablokowana.</value></data>
@@ -264,4 +264,15 @@
   <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Dodano plik dyslokacji</value></data>
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Chroniona dyslokacja</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Chroniony raport czasu</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Raporty z działań</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Historia działań, raporty i eksporty tylko do odczytu. Zarządzaj działaniami w obszarze Kadr i operacji biznesowych.</value></data>
+  <data name="ExportSummary" xml:space="preserve"><value>Eksportuj podsumowanie CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Drukuj raport</value></data>
+  <data name="ExportData" xml:space="preserve"><value>Eksportuj raport JSON</value></data>
+  <data name="OpenOperations" xml:space="preserve"><value>Otwórz zarządzanie działaniami</value></data>
+  <data name="ExternalOrders" xml:space="preserve"><value>Zlecenia zewnętrzne</value></data>
+  <data name="NewExternalOrder" xml:space="preserve"><value>Nowe zlecenie zewnętrzne</value></data>
+  <data name="deployments_resources_not_returned" xml:space="preserve"><value>Wszystkie zasoby muszą wrócić do bazy przed zakończeniem działań.</value></data>
+  <data name="ViewManifest" xml:space="preserve"><value>Wyświetl wykaz</value></data>
+  <data name="ResourceExport" xml:space="preserve"><value>Eksportuj zasoby CSV</value></data>
 </root>

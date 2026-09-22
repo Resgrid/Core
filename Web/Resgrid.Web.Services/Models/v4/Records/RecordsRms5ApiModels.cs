@@ -347,7 +347,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	public class HydrantServiceStateInput { public string HydrantId { get; set; } public bool InService { get; set; } public string Reason { get; set; } }
 	public class HydrantFlowTestInput { public string HydrantId { get; set; } public DateTime? TestedOn { get; set; } public int StaticPressurePsi { get; set; } public int ResidualPressurePsi { get; set; } public int PitotPressurePsi { get; set; } public decimal OutletDiameterInches { get; set; } public decimal Coefficient { get; set; } public string Notes { get; set; } }
 	public class HydrantMaintenanceInput { public string HydrantId { get; set; } public DateTime? PerformedOn { get; set; } public int Kind { get; set; } public string Notes { get; set; } public bool ReturnedToService { get; set; } }
-	public class HydrantImportInput { public string Csv { get; set; } }
+	public class HydrantImportInput { public string Csv { get; set; } public string Json { get; set; } }
 
 	public class HydrantsResult : StandardApiResponseV4Base { public List<HydrantData> Data { get; set; } = new List<HydrantData>(); }
 	public class HydrantResult : StandardApiResponseV4Base { public HydrantAggregateData Data { get; set; } }

@@ -74,6 +74,7 @@ export default function MapElement(props: MapElementProps) {
   const [showStations, setShowStations] = useState(() => readBooleanPreference('rg-map:show-stations', true));
   const [showUnits, setShowUnits] = useState(() => readBooleanPreference('rg-map:show-units', true));
   const [showPersonnel, setShowPersonnel] = useState(() => readBooleanPreference('rg-map:show-personnel', true));
+  const [showHydrants, setShowHydrants] = useState(() => readBooleanPreference('rg-map:show-hydrants', true));
   const [showPois, setShowPois] = useState(() => readBooleanPreference('rg-map:show-pois', true));
   const [poiLayerVisibility, setPoiLayerVisibility] = useState<Record<string, boolean>>({});
   const [hideLabels, setHideLabels] = useState(() => readBooleanPreference('rg-map:hide-labels', false));
@@ -144,6 +145,8 @@ export default function MapElement(props: MapElementProps) {
             return showStations;
           case mapMarkerTypes.personnel:
             return showPersonnel;
+          case mapMarkerTypes.hydrant:
+            return showHydrants;
           case mapMarkerTypes.poi:
             return showPois && (poiLayerVisibility[getPoiLayerId(marker)] ?? true);
           default:
@@ -158,6 +161,7 @@ export default function MapElement(props: MapElementProps) {
     showCalls,
     showPersonnel,
     showPois,
+    showHydrants,
     showStations,
     showUnits,
   ]);
@@ -167,6 +171,7 @@ export default function MapElement(props: MapElementProps) {
   useEffect(() => writeBooleanPreference('rg-map:show-units', showUnits), [showUnits]);
   useEffect(() => writeBooleanPreference('rg-map:show-personnel', showPersonnel), [showPersonnel]);
   useEffect(() => writeBooleanPreference('rg-map:show-pois', showPois), [showPois]);
+  useEffect(() => writeBooleanPreference('rg-map:show-hydrants', showHydrants), [showHydrants]);
   useEffect(() => writeBooleanPreference('rg-map:hide-labels', hideLabels), [hideLabels]);
 
   useEffect(() => {
@@ -456,6 +461,7 @@ export default function MapElement(props: MapElementProps) {
       {!hasMapSource && <div className="rg-error">{missingSourceMessage}</div>}
 
       {combinedError && <div className="rg-error rg-map__message">{combinedError}</div>}
+      {mapData?.HydrantsError && <div className="rg-error rg-map__message" role="alert">{mapData.HydrantsError}</div>}
 
       <div className="rg-map__viewport" style={{ height: mapHeight }}>
         {MapRenderer && hasMapSource && (
@@ -472,8 +478,14 @@ export default function MapElement(props: MapElementProps) {
           />
         )}
 
-        {(layers.length > 0 || poiLayers.length > 0) && (
+        {(layers.length > 0 || poiLayers.length > 0 || mapData?.HydrantsAvailable) && (
           <div className="rg-map__layers rg-card">
+            {mapData?.HydrantsAvailable && (
+              <label className="rg-map__layer-toggle">
+                <input type="checkbox" checked={showHydrants} onChange={(event) => setShowHydrants(event.target.checked)} />
+                <span>{(window as any).rgHydrantMap?.label || 'Hydrants'}</span>
+              </label>
+            )}
             {layers.length > 0 && (
               <div className="rg-map__layer-section">
                 <div className="rg-map__layers-title">Map layers</div>

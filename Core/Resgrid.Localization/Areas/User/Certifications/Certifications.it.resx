@@ -225,4 +225,8 @@
   <data name="UnitCertificationRemoved" xml:space="preserve"><value>Certificazione unità rimossa</value></data>
   <data name="CertificationRemoved" xml:space="preserve"><value>Certificazione rimossa</value></data>
   <data name="CertificationCreditAdded" xml:space="preserve"><value>Crediti di certificazione aggiunti</value></data>
+  <data name="AddCertification" xml:space="preserve"><value>Aggiungi certificazione</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Seleziona un membro</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Seleziona un tipo di certificazione</value></data>
+  <data name="CertificationNameRequired" xml:space="preserve"><value>Inserisci un nome per la certificazione.</value></data>
 </root>

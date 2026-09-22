@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using Newtonsoft.Json
 @using Resgrid.Model.Inventories
+@using Resgrid.Model.WorkOrders
 @using Resgrid.Web.Areas.User.Models
 @using Resgrid.Web.Areas.User.Models.Inventory
 @using Resgrid.Web.Helpers
@@ -53,6 +54,10 @@
     var detail = Model.PurchaseOrder;
     var order = detail?.Order;
     var orderContent = InventoryWorkspaceView.Details<InventoryPurchaseOrderContent>(order);
+    var currency = order?.CurrencyCode ?? Model.DepartmentCurrency;
+    var currencyOptions = WorkOrderCurrencies.Options.Select(x => new SelectListItem { Value = x.Key, Text = x.Key + " — " + x.Value }).ToList();
+    if (!string.IsNullOrEmpty(currency) && currencyOptions.All(x => x.Value != currency))
+        currencyOptions.Add(new SelectListItem { Value = currency, Text = currency });
 
     var tabs = new (string Key, string Icon)[]
     {
@@ -529,8 +534,15 @@
                                             <p class="text-muted">@localizer["M4StepOrderHeaderHint"]</p>
                                             <div class="rgw-grid">
                                                 @Field("Number", "M4PurchaseOrderNumber", orderContent.Number, required: true, help: "M4PurchaseOrderNumberHelp", maxLength: 80)
-                                                @Field("VendorId", "M4Supplier", order?.VendorId, options: vendorOptions, required: true)
-                                                @Field("CurrencyCode", "M4Currency", order?.CurrencyCode, required: true, help: "HelpFieldCurrency", maxLength: 3)
+                                                <div class="form-group">
+                                                    <label for="m4-order-supplier">@localizer["M4Supplier"]</label>
+                                                    @Html.DropDownList("VendorId", new SelectList(vendorOptions, "Value", "Text", order?.VendorId), new { id = "m4-order-supplier", @class = "form-control", required = "required", aria_describedby = "m4-order-supplier-help" })
+                                                    <p id="m4-order-supplier-help" class="help-block">
+                                                        @localizer["M4SupplierHelp"]
+                                                        <a asp-action="Purchasing" asp-route-tab="Vendors">@localizer["M4NewVendor"]</a>
+                                                    </p>
+                                                </div>
+                                                @Field("CurrencyCode", "M4Currency", currency, options: currencyOptions, required: true, help: "M4PurchaseOrderCurrencyHelp")
                                                 @Field("Note", "Note", orderContent.Note, "textarea", help: "HelpFieldNote", wide: true)
                                             </div>
                                         </div>

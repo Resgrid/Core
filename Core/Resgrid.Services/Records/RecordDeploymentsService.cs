@@ -13,7 +13,7 @@ using Resgrid.Model.Services;
 namespace Resgrid.Services.Records
 {
 	/// <summary>
-	/// Create Deployment from External Order (RMS plan section 4.1 "external-order fill contract", RMS-1C, Preview).
+	/// Create Deployment from External Order (RMS plan section 4.1 "external-order fill contract", deployment operations).
 	/// The ordering system (IROC, CIFFC, a member agency, a local compact) stays authoritative: the order arrives as a
 	/// manually entered, checksummed snapshot; each supplied resource links to its exact request/fill number; later
 	/// snapshots are versioned, never overwriting signed history; and a resource is returned only when the
@@ -399,7 +399,7 @@ namespace Resgrid.Services.Records
 			var order = await RequireEditableAsync(departmentId, userId, orderId);
 			if (order.RowVersion != expectedRowVersion) throw new RecordConcurrencyException(order.RmsExternalOrderId, expectedRowVersion, order.RowVersion);
 			var fills = (await _fills.GetForOrderAsync(departmentId, orderId))?.ToList() ?? new List<RmsExternalOrderFill>();
-			var active = fills.Where(f => f.Status != (int)RmsDeploymentFillStatus.Declined).ToList();
+			var active = fills.Where(f => !f.DeletedOn.HasValue && f.Status != (int)RmsDeploymentFillStatus.Declined).ToList();
 			if (active.Count == 0) throw new InvalidOperationException("A deployment with no accepted fill has nothing to close out.");
 			var notReturned = active.Where(f => f.Status != (int)RmsDeploymentFillStatus.Returned).Select(f => f.RequestNumber).ToList();
 			if (notReturned.Count > 0) throw new InvalidOperationException("Closeout needs every resource back at its home unit; still out: " + string.Join(", ", notReturned) + ". An external release flag does not return a resource.");

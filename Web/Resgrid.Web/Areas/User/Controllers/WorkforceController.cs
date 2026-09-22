@@ -414,10 +414,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!CanManageCompensation) return Unauthorized();
 			input.DepartmentId = DepartmentId;
-			var saved = await _compensation.SaveProfileAsync(input, UserId, Ip, Agent);
 			var pay = string.IsNullOrWhiteSpace(payComponentsJson) ? new List<EmployeePayComponent>() : JsonConvert.DeserializeObject<List<EmployeePayComponent>>(payComponentsJson) ?? new List<EmployeePayComponent>();
 			var cost = string.IsNullOrWhiteSpace(costComponentsJson) ? new List<EmployeeCostComponent>() : JsonConvert.DeserializeObject<List<EmployeeCostComponent>>(costComponentsJson) ?? new List<EmployeeCostComponent>();
-			await _compensation.SaveComponentsAsync(saved.EmployeeCompensationProfileId, DepartmentId, pay, cost, UserId, Ip, Agent);
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(input.RateMultipliersJson) && !WorkforceProtectionSeamHelper.IsUnavailable(input.RateMultipliersJson))
+				{
+					var multipliers = Resgrid.Framework.JsonInput.Read<Dictionary<string, decimal>>(input.RateMultipliersJson, nameof(input.RateMultipliersJson));
+					foreach (var multiplier in multipliers)
+					{
+						if (!Enum.GetNames<PayCodes>().Contains(multiplier.Key, StringComparer.OrdinalIgnoreCase)) throw new Resgrid.Framework.JsonInputException("RateMultipliersJson: $." + multiplier.Key + ": use a pay code from " + string.Join(", ", Enum.GetNames<PayCodes>()) + ".");
+						if (multiplier.Value < 0) throw new Resgrid.Framework.JsonInputException("RateMultipliersJson: $." + multiplier.Key + ": use zero or a positive multiplier.");
+					}
+				}
+			}
+			catch (Resgrid.Framework.JsonInputException ex)
+			{
+				if (IsAjax()) return BadRequest(new { message = ex.Message });
+				var view = Page(new WorkforceCompensationProfileView { Profile = input, Roles = await RoleItemsAsync(), PayComponentsJson = JsonConvert.SerializeObject(pay, ScriptJson), CostComponentsJson = JsonConvert.SerializeObject(cost, ScriptJson) });
+				view.Message = ex.Message;
+				Response.StatusCode = 400;
+				return View("CompensationProfile", view);
+			}
+			var saved = await _compensation.SaveProfileWithComponentsAsync(input, pay, cost, UserId, Ip, Agent);
 			return Saved("CompensationProfile", new { id = saved.EmployeeCompensationProfileId });
 		}, "Compensation");
 

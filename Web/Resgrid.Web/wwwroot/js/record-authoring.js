@@ -11,6 +11,8 @@
         if (template) editor.setContents(editor.clipboard.convert(template.innerHTML));
         else editor.setText(text.value);
         text.hidden = true;
+        // Bootstrap's .form-control display rule overrides the hidden attribute.
+        text.style.display = 'none';
         function collect() { text.value = editor.getText().trim() ? editor.root.innerHTML : ''; }
         editor.on('text-change', function (_, __, source) { collect(); if (source === 'user') form.dispatchEvent(new Event('input', { bubbles: true })); });
         form.addEventListener('rms:collect', collect); form.addEventListener('submit', collect);

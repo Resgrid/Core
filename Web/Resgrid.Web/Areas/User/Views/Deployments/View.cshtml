@@ -36,6 +36,10 @@
         {
             <a asp-action="Edit" asp-route-id="@d.DeploymentId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
         }
+        @if (Model.ReportsAvailable)
+        {
+            <a asp-controller="RecordDeployments" asp-action="Report" asp-route-id="@d.DeploymentId" class="btn btn-default">@localizer["DeploymentReports"]</a>
+        }
         <a asp-action="ExportTimeEntries" asp-route-id="@d.DeploymentId" class="btn btn-info"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
     </text>;
     ViewData["HeaderActions"] = headerActions;
@@ -75,7 +79,7 @@
                             <dd>
                                 @if (Model.External?.Order != null)
                                 {
-                                    <a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@d.RmsExternalOrderId">@Model.External.Order.OrderNumber — @Model.External.Order.IncidentName</a>
+                                    <a asp-controller="@(Model.CanManage ? "DeploymentOrders" : "RecordDeployments")" asp-action="Details" asp-route-area="User" asp-route-id="@d.RmsExternalOrderId">@Model.External.Order.OrderNumber — @Model.External.Order.IncidentName</a>
                                     <span class="text-muted">· @string.Format(localizer["FillCount"].Value, Model.External.Fills.Count)</span>
                                 }
                                 else
@@ -85,7 +89,8 @@
                             </dd>
                         }
                         <dt>@localizer["Jurisdiction"]</dt><dd>@(d.HomeCountry ?? "—")@(string.IsNullOrWhiteSpace(d.HomeSubdivision) ? "" : "-" + d.HomeSubdivision) → @(d.HostCountry ?? "—")@(string.IsNullOrWhiteSpace(d.HostSubdivision) ? "" : "-" + d.HostSubdivision) @(d.OutOfProvince ? "· " + localizer["OutOfProvince"] : "") @(d.TravelViaAir ? "· " + localizer["TravelViaAir"] : "")</dd>
-                        <dt>@localizer["Currency"]</dt><dd>@(d.Currency ?? "—") · @(d.LocalTimeZoneId ?? Model.Department?.TimeZone)</dd>
+                        <dt>@localizer["Currency"]</dt><dd>@(d.Currency ?? "—")</dd>
+                        <dt>@localizer["TimeZone"]</dt><dd>@(d.LocalTimeZoneId ?? Model.Department?.TimeZone ?? "—")</dd>
                         @if (!string.IsNullOrWhiteSpace(d.Notes)) { <dt>@localizer["Notes"]</dt><dd><span data-adp-field="deployments.notes">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(d.Notes)</span></dd> }
                     </dl>
                 </div>
@@ -308,10 +313,10 @@
             }
             else if (Model.Tab == "billing" && Model.ContractorBilling)
             {
-                @* Contractor billing (C-M2): charge run preview, contract compliance checklist, generate invoice, linked invoices. *@
+                @* Contractor billing (C-M2): charge calculation, contract compliance checklist, generate invoice, linked invoices. *@
                 <div class="row">
                     <div class="col-md-8">
-                        <h4>@contractorStrings["ChargePreview"]</h4>
+                        <h4>@contractorStrings["Billing"]</h4>
                         @if (Model.Charges == null)
                         {
                             <p class="text-muted">@contractorStrings["ChargesUnavailable"]</p>
@@ -453,7 +458,7 @@
                         }
                     </div>
                     <div class="col-md-4 text-right">
-                        <a asp-action="Manifest" asp-route-id="@d.DeploymentId" class="btn btn-sm btn-default" target="_blank"><i class="fa fa-eye"></i> @localizer["PreviewManifest"]</a>
+                        <a asp-action="Manifest" asp-route-id="@d.DeploymentId" class="btn btn-sm btn-default" target="_blank"><i class="fa fa-eye"></i> @localizer["ViewManifest"]</a>
                         @if (Model.CanManage)
                         {
                             <form method="post" asp-action="GenerateManifest" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-sm btn-primary"><i class="fa fa-file-pdf-o"></i> @localizer["GenerateManifest"]</button></form>

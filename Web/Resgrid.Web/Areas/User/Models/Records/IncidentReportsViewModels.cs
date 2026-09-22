@@ -25,6 +25,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public string StateFilter { get; set; }
 		public List<SelectListItem> States { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> ActiveCalls { get; set; } = new List<SelectListItem>();
+		public int? SelectedCallId { get; set; }
 		public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();
 		public int TotalPages => PageSize <= 0 ? 1 : Math.Max(1, (int)Math.Ceiling(Total / (double)PageSize));
 	}

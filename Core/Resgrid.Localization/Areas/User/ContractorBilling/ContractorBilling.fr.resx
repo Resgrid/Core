@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Jours de déploiement max</value></data>
   <data name="MealCode" xml:space="preserve"><value>Code repas</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Éligibilité aux repas</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>Fenêtres JSON par code repas, p. ex. [{"MealCode":"B","StartsBeforeMinutes":420}] ; une indemnité hors fenêtre est signalée, pas bloquée.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Ajoutez une règle par code repas (par exemple, B pour le petit-déjeuner). Saisissez les heures limites locales du service ; laissez une heure vide pour ne pas fixer de limite. Les demandes hors de ces limites affichent un avertissement et peuvent toujours être envoyées.</value></data>
   <data name="Missing" xml:space="preserve"><value>Manquant</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Préremplissage par multiplicateur</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Base + attente + multiplicateurs HS génèrent les tranches horaires ; les valeurs enregistrées restent des montants explicites.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Les majorations ne peuvent pas être négatives.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>La majoration a besoin d'un nom.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>La majoration est introuvable.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Aucune règle d’éligibilité aux repas. Ajoutez une règle pour définir des limites horaires.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Ajouter une règle de repas</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Supprimer la règle de repas</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Le service commence au plus tard à</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Le service se termine au plus tôt à</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Saisissez un code repas de 1 à 10 caractères.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Chaque code repas ne peut avoir qu’une seule règle d’éligibilité.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Saisissez une heure valide entre 00:00 et 23:59.</value></data>
 </root>

@@ -65,7 +65,7 @@ namespace Resgrid.Model.Services
 		public List<RmsPreventionAttachment> Attachments { get; set; } = new List<RmsPreventionAttachment>();
 	}
 
-	/// <summary>Hydrants and water sources, flow tests, maintenance, service state, CSV import and the response-map layer.</summary>
+	/// <summary>Hydrants and water sources, flow tests, maintenance, service state, JSON/CSV import and the response-map layer.</summary>
 	public interface IRecordsHydrantsService
 	{
 		Task<bool> IsModuleEnabledAsync(int departmentId);
@@ -76,6 +76,7 @@ namespace Resgrid.Model.Services
 		Task<RmsHydrant> SetServiceStateAsync(int departmentId, string userId, string hydrantId, bool inService, string reason, CancellationToken cancellationToken = default);
 		Task<RmsHydrantFlowTest> RecordFlowTestAsync(int departmentId, string userId, RmsHydrantFlowTest input, CancellationToken cancellationToken = default);
 		Task<RmsHydrantMaintenance> RecordMaintenanceAsync(int departmentId, string userId, RmsHydrantMaintenance input, CancellationToken cancellationToken = default);
+		Task<HydrantImportResult> ImportAsync(int departmentId, string userId, string content, string format, CancellationToken cancellationToken = default);
 		Task<HydrantImportResult> ImportCsvAsync(int departmentId, string userId, string csv, CancellationToken cancellationToken = default);
 		Task<List<HydrantMapPoint>> GetMapLayerAsync(int departmentId, string userId, decimal? minLat, decimal? maxLat, decimal? minLon, decimal? maxLon);
 		Task<List<RmsHydrant>> GetNearestAsync(int departmentId, decimal latitude, decimal longitude, int take, double maxMeters);

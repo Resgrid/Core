@@ -2985,9 +2985,8 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController">
             <summary>
-            Create Deployment from External Order over v4 (RMS plan section 4.1 external-order fill contract, RMS-1C,
-            Preview). Manual entry and artifact snapshots only; no ordering-system connector and no write-back. Creating
-            or changing a deployment needs Record_Create; reading needs Record_View plus visibility of its Record.
+            Create Deployment from External Order over v4 (RMS plan section 4.1 external-order fill contract, operational workspace). Manual entry and artifact snapshots only; no ordering-system connector and no write-back. Creating
+            or changing a deployment uses DeploymentOrders routes and needs Deployments_Update plus Record_Create; reading needs Record_View plus visibility of its Record.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController.TransitionFill(System.String,Resgrid.Model.RecordDeploymentFillTransitionInput,System.Threading.CancellationToken)">
@@ -3055,10 +3054,10 @@
             <summary>The stored file of a run; under ADP the bytes are opened through the seam for this caller.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController">
-            <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): flow tests, maintenance, service state, CSV import and the response-map layer.</summary>
+            <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): flow tests, maintenance, service state, JSON/CSV import and the response-map layer.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.Import(Resgrid.Web.Services.Models.v4.Records.HydrantImportInput,System.Threading.CancellationToken)">
-            <summary>CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner).</summary>
+            <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.MapLayer(System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
             <summary>Map layer for the response map and the apps; bounded to a viewport when bounds are given.</summary>

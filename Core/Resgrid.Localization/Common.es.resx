@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -787,4 +787,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Personal y operaciones</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Preparación</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Panel</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>Use JSON válido: escriba el texto entre comillas dobles; los números y true/false sin comillas. Las fechas usan el formato ISO. Los nombres siguen el esquema (sin distinguir mayúsculas). Los errores indican el campo; los índices empiezan en 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>Deje en blanco para usar una lista u objeto vacío.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>Ejemplo de JSON</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>Esquema JSON (nombres y tipos de campos)</value>
+  </data>
 </root>

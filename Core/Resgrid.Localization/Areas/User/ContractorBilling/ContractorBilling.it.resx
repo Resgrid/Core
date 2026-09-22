@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Giorni massimi di intervento</value></data>
   <data name="MealCode" xml:space="preserve"><value>Codice pasto</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Diritto ai pasti</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>Finestre JSON per codice pasto, es. [{"MealCode":"B","StartsBeforeMinutes":420}]; una diaria fuori finestra genera un avviso, non un blocco.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Aggiungi una regola per ogni codice pasto (ad esempio, B per la colazione). Inserisci gli orari limite locali del turno; lascia vuoto un orario per non applicare limiti. Le richieste fuori da questi limiti mostrano un avviso e possono comunque essere inviate.</value></data>
   <data name="Missing" xml:space="preserve"><value>Mancante</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Precompilazione con moltiplicatore</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Base + attesa + moltiplicatori STR generano le fasce orarie; i valori salvati restano importi espliciti.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Le maggiorazioni non possono essere negative.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>La maggiorazione richiede un nome.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Maggiorazione non trovata.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Nessuna regola di idoneità ai pasti. Aggiungi una regola per impostare i limiti orari.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Aggiungi regola pasto</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Rimuovi regola pasto</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Il turno inizia entro le</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Il turno termina non prima delle</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Inserisci un codice pasto da 1 a 10 caratteri.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Ogni codice pasto può avere una sola regola di idoneità.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Inserisci un orario valido tra 00:00 e 23:59.</value></data>
 </root>

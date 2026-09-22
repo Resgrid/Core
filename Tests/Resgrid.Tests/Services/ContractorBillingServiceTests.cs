@@ -214,13 +214,30 @@ namespace Resgrid.Tests.Services
 			imported.Entries.Should().HaveCount(2);
 			imported.Entries.Single(e => e.Name == "FFT2").Band(RateBandTypes.Overtime1).Rate.Should().Be(60);
 			imported.Premiums.Single().Overtime1Adder.Should().Be(7.5m);
-			(await FluentActions.Awaiting(() => _rates.ImportScheduleJsonAsync(DeptId, "{ nope", User, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("rateschedules_import_invalid");
+			(await FluentActions.Awaiting(() => _rates.ImportScheduleJsonAsync(DeptId, "{ nope", User, null, null)).Should().ThrowAsync<Resgrid.Framework.JsonInputException>()).Which.Message.Should().Contain("line 1");
 
 			await _contractService.SaveContractAsync(new ServiceContract { DepartmentId = DeptId, ContactId = "customer", Name = "Standing", StartOn = Day, RateScheduleId = schedule.RateScheduleId }, User, null, null);
 			(await FluentActions.Awaiting(() => _rates.DeleteScheduleAsync(schedule.RateScheduleId, DeptId, User, null, null)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("rateschedules_in_use");
 		}
 
 		#endregion
+
+		[TestCase("{\"Name\":\"test\",\"FormatVersion\":2}", "FormatVersion")]
+		[TestCase("{\"Name\":\"test\",\"Currency\":\"dollars\"}", "Currency")]
+		[TestCase("{\"Name\":\"test\",\"EffectiveOn\":\"2026-09-22\",\"ExpiresOn\":\"2026-09-21\"}", "ExpiresOn")]
+		[TestCase("{\"Name\":\"test\",\"Entries\":[{\"Name\":\"valid\"},{\"Name\":\"bad\",\"EntryType\":1}]}", "Entries[1].CrewSize")]
+		[TestCase("{\"Name\":\"test\",\"Entries\":[{\"Name\":\"bad\",\"Bands\":[{\"Rate\":-1}]}]}", "Bands[0].Rate")]
+		[TestCase("{\"Name\":\"test\",\"Premiums\":[{\"Name\":\"bad\",\"StandbyAdder\":-1}]}", "Premiums[0].StandbyAdder")]
+		[TestCase("{\"Name\":\"test\",\"Premiums\":[{}]}", "Premiums[0].Name")]
+		[TestCase("{\"Name\":\"test\",\"Policy\":{\"MealEligibility\":[{\"MealCode\":\"breakfast\",\"StartsBeforeMinutes\":1440}]}}", "StartsBeforeMinutes")]
+		public async Task Invalid_imports_report_the_field_before_writing_any_rows(string json, string field)
+		{
+			(await FluentActions.Awaiting(() => _rates.ImportScheduleJsonAsync(DeptId, json, User, null, null)).Should().ThrowAsync<Resgrid.Framework.JsonInputException>()).Which.Message.Should().Contain(field);
+			_schedules.Should().BeEmpty();
+			_entries.Should().BeEmpty();
+			_bands.Should().BeEmpty();
+			_premiums.Should().BeEmpty();
+		}
 
 		#region Contracts and compliance
 

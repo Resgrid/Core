@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Μέγ. ημέρες ανάπτυξης</value></data>
   <data name="MealCode" xml:space="preserve"><value>Κωδικός γεύματος</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Δικαίωμα γευμάτων</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>Παράθυρα JSON ανά κωδικό γεύματος, π.χ. [{"MealCode":"B","StartsBeforeMinutes":420}]· ημερήσια αποζημίωση εκτός παραθύρου προειδοποιεί, δεν μπλοκάρει.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Προσθέστε έναν κανόνα για κάθε κωδικό γεύματος (π.χ. B για πρωινό). Εισαγάγετε τα τοπικά χρονικά όρια της βάρδιας· αφήστε την ώρα κενή αν δεν υπάρχει όριο. Οι αιτήσεις εκτός αυτών των ορίων εμφανίζουν προειδοποίηση και μπορούν να υποβληθούν.</value></data>
   <data name="Missing" xml:space="preserve"><value>Λείπει</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Προσυμπλήρωση με πολλαπλασιαστή</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Βάση + αναμονή + πολλαπλασιαστές ΥΠ δημιουργούν τις ωριαίες ζώνες· οι αποθηκευμένες τιμές μένουν ρητά ποσά.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Οι προσαυξήσεις δεν μπορούν να είναι αρνητικές.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>Η προσαύξηση χρειάζεται όνομα.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Η προσαύξηση δεν βρέθηκε.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Δεν υπάρχουν κανόνες δικαιώματος γευμάτων. Προσθέστε έναν κανόνα για να ορίσετε χρονικά όρια.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Προσθήκη κανόνα γεύματος</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Αφαίρεση κανόνα γεύματος</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Η βάρδια αρχίζει το αργότερο στις</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Η βάρδια τελειώνει το νωρίτερο στις</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Εισαγάγετε κωδικό γεύματος με 1 έως 10 χαρακτήρες.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Κάθε κωδικός γεύματος μπορεί να έχει μόνο έναν κανόνα δικαιώματος.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Εισαγάγετε έγκυρη ώρα από 00:00 έως 23:59.</value></data>
 </root>

@@ -1217,7 +1217,6 @@
   <data name="Deployments" xml:space="preserve"><value>الانتشارات</value></data>
   <data name="DeploymentsIntro" xml:space="preserve"><value>طلبات موارد خارجية يلبيها قسمك. يبقى نظام الطلب هو المرجع: تُخزَّن المستندات كلقطات ثابتة ولا يُكتب شيء إليه.</value></data>
   <data name="NewDeployment" xml:space="preserve"><value>انتشار جديد</value></data>
-  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>الانتشارات ميزة معاينة: بُنيت النماذج من وثائق IROC وCIFFC وEMAC المنشورة وليس من تكاملات مباشرة. تحقق منها مقابل نظام الطلب لديك.</value></data>
   <data name="DeploymentOrder" xml:space="preserve"><value>الطلب</value></data>
   <data name="DeploymentOrderNumber" xml:space="preserve"><value>رقم الطلب</value></data>
   <data name="DeploymentIncident" xml:space="preserve"><value>الحادث</value></data>
@@ -2109,4 +2108,52 @@
   <data name="ExportListHeader" xml:space="preserve"><value>تصدير هذه القائمة</value></data>
   <data name="MoreMenu" xml:space="preserve"><value>المزيد</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>استخدام المخزون</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>تقارير الانتشار</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>سجل الانتشار والتقارير وعمليات التصدير للقراءة فقط. أدر عمليات الانتشار في قسم القوى العاملة والعمليات التجارية.</value></data>
+  <data name="DeploymentExportResources" xml:space="preserve"><value>تصدير الموارد بصيغة CSV</value></data>
+  <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>فتح إدارة الانتشار</value></data>
+  <data name="DeploymentExternalOrders" xml:space="preserve"><value>الأوامر الخارجية</value></data>
+  <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>أمر خارجي جديد</value></data>
+  <data name="HydrantImportBack" xml:space="preserve"><value>العودة إلى صنابير الإطفاء</value></data>
+  <data name="HydrantImportNotSaved" xml:space="preserve"><value>لم يتم حفظ أي صنبور. صحح الصفوف أدناه ثم استورد الملف مجددًا.</value></data>
+  <data name="HydrantImportIssuesShown" xml:space="preserve"><value>عرض {0} من أصل {1} صفوف بها مشكلات. يستخدم JSON أرقام العناصر ويستخدم CSV أرقام الأسطر.</value></data>
+  <data name="HydrantImportRow" xml:space="preserve"><value>العنصر / السطر</value></data>
+  <data name="HydrantImportCorrection" xml:space="preserve"><value>كيفية التصحيح</value></data>
+  <data name="HydrantImportSource" xml:space="preserve"><value>رفع بيانات صنابير الإطفاء أو لصقها</value></data>
+  <data name="HydrantImportIntro" xml:space="preserve"><value>استورد حتى 20,000 صنبور. تُحدّث الأرقام الموجودة وتُضاف الأرقام الجديدة.</value></data>
+  <data name="HydrantImportFile" xml:space="preserve"><value>اختيار ملف</value></data>
+  <data name="HydrantImportFileHelp" xml:space="preserve"><value>ملف UTF-8 بصيغة .json أو .csv بحجم يصل إلى 10 ميغابايت. يحدد الامتداد صيغة الملف.</value></data>
+  <data name="HydrantImportReselect" xml:space="preserve"><value>اختر الملف المصحح مرة أخرى.</value></data>
+  <data name="HydrantImportPaste" xml:space="preserve"><value>أو الصق JSON / CSV</value></data>
+  <data name="HydrantImportFormat" xml:space="preserve"><value>صيغة البيانات الملصقة</value></data>
+  <data name="HydrantImportContent" xml:space="preserve"><value>البيانات الملصقة</value></data>
+  <data name="HydrantImportValidationHelp" xml:space="preserve"><value>يُتحقق من كل صف قبل الحفظ. إذا كان أي صف غير صالح فلن يُستورد شيء. أبقِ الصفحة مفتوحة حتى تظهر النتيجة.</value></data>
+  <data name="HydrantImportWorking" xml:space="preserve"><value>جارٍ التحقق والاستيراد…</value></data>
+  <data name="HydrantImportGuide" xml:space="preserve"><value>صيغة الملف والأمثلة</value></data>
+  <data name="HydrantImportRequired" xml:space="preserve"><value>مطلوب: number (نص من 1 إلى 64 حرفًا)، latitude (من -90 إلى 90)، longitude (من -180 إلى 180). يجب ألا يتكرر الرقم في الملف.</value></data>
+  <data name="HydrantImportOptional" xml:space="preserve"><value>اختياري: type وaddress (حتى 500 حرف) وmain_size (بالبوصة، أكبر من 0 وحتى 9999.99) وflow_gpm (عدد صحيح غير سالب) وowner (حتى 200 حرف).</value></data>
+  <data name="HydrantImportTypesHelp" xml:space="preserve"><value>تُكتب أرقام JSON دون علامات اقتباس والأسماء والعناوين بين علامتي اقتباس مزدوجتين. استخدم النقطة العشرية. احذف القيم الاختيارية أو استخدم null. يتطلب CSV صف عناوين؛ ضع القيم التي تتضمن فواصل أو أسطرًا جديدة بين علامتي اقتباس.</value></data>
+  <data name="HydrantImportJsonExample" xml:space="preserve"><value>تنزيل مثال JSON</value></data>
+  <data name="HydrantImportCsvExample" xml:space="preserve"><value>تنزيل مثال CSV</value></data>
+  <data name="HydrantImportMappingHelp" xml:space="preserve"><value>أدر صنابير الإطفاء هنا لإظهار التدفق وحالة الخدمة على الخرائط. نقاط الاهتمام معالم منفصلة؛ تظهر النقاط المرتبطة مرة واحدة فقط في طبقة صنابير الإطفاء.</value></data>
+  <data name="HydrantMapLoadFailed" xml:space="preserve"><value>تعذر تحميل صنابير الإطفاء.</value></data>
+  <data name="HydrantMapRetry" xml:space="preserve"><value>إعادة المحاولة</value></data>
+  <data name="CallPickerBrowse" xml:space="preserve"><value>استعراض البلاغات</value></data>
+  <data name="CallPickerSearch" xml:space="preserve"><value>البحث برقم البلاغ أو الاسم أو العنوان</value></data>
+  <data name="CallPickerStatus" xml:space="preserve"><value>حالة البلاغ</value></data>
+  <data name="CallPickerAll" xml:space="preserve"><value>كل البلاغات</value></data>
+  <data name="CallPickerActive" xml:space="preserve"><value>البلاغات النشطة</value></data>
+  <data name="CallPickerClosed" xml:space="preserve"><value>البلاغات المغلقة</value></data>
+  <data name="CallPickerFrom" xml:space="preserve"><value>من تاريخ</value></data>
+  <data name="CallPickerTo" xml:space="preserve"><value>حتى تاريخ شاملًا</value></data>
+  <data name="CallPickerApply" xml:space="preserve"><value>بحث</value></data>
+  <data name="CallPickerPrevious" xml:space="preserve"><value>السابق</value></data>
+  <data name="CallPickerNext" xml:space="preserve"><value>التالي</value></data>
+  <data name="CallPickerLoading" xml:space="preserve"><value>جارٍ تحميل البلاغات…</value></data>
+  <data name="CallPickerError" xml:space="preserve"><value>تعذر تحميل البلاغات. حاول البحث مجددًا.</value></data>
+  <data name="CallPickerEmpty" xml:space="preserve"><value>لا توجد بلاغات مطابقة في هذه الصفحة.</value></data>
+  <data name="CallPickerMetadata" xml:space="preserve"><value>يمكن البحث في البلاغات المحمية برقم البلاغ؛ الأسماء والعناوين مخفية.</value></data>
+  <data name="CallPickerRequiresScript" xml:space="preserve"><value>فعّل JavaScript للبحث عن بلاغ واختياره.</value></data>
+  <data name="CallPickerDates" xml:space="preserve"><value>أدخل نطاق تواريخ صالحًا بحيث لا تكون البداية بعد النهاية.</value></data>
+  <data name="CallPickerUnavailable" xml:space="preserve"><value>اختر بلاغًا متاحًا من القائمة أو امسح الاختيار.</value></data>
 </root>

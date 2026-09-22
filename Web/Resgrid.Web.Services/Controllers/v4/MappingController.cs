@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -45,6 +45,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IMappingService _mappingService;
+		private readonly IRecordsHydrantsService _hydrantsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IIndoorMapService _indoorMapService;
 		private readonly ICustomMapService _customMapService;
@@ -69,7 +70,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IIndoorMapService indoorMapService,
 			ICustomMapService customMapService,
 			IProtectedReadService protectedReadService,
-			IDepartmentDataProtectionService dataProtectionService
+			IDepartmentDataProtectionService dataProtectionService,
+			IRecordsHydrantsService hydrantsService
 			)
 		{
 			_usersService = usersService;
@@ -85,6 +87,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
 			_mappingService = mappingService;
+			_hydrantsService = hydrantsService;
 			_authorizationService = authorizationService;
 			_indoorMapService = indoorMapService;
 			_customMapService = customMapService;
@@ -508,6 +511,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			var hydrantPoints = new List<HydrantMapPoint>();
+			try
+			{
+				hydrantPoints = await GetHydrantPointsAsync();
+				result.Data.HydrantsAvailable = User.HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View) && await _hydrantsService.IsModuleEnabledAsync(DepartmentId);
+			}
+			catch (OperationCanceledException) { throw; }
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Hydrant map layer could not be loaded");
+				result.Data.HydrantsError = "Hydrants could not be loaded. Refresh the page to retry. Other map layers remain available.";
+			}
+			var hydrantPoiIds = hydrantPoints.Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
+			result.Data.MapMakerInfos.AddRange(hydrantPoints.Select(ConvertHydrantMapMarker));
+
 			if (poiTypes != null && poiTypes.Any())
 			{
 				foreach (var poiType in poiTypes.Where(x => x.Pois != null && x.Pois.Any()))
@@ -523,7 +541,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						IsDestination = poiType.IsDestination
 					});
 
-					foreach (var poi in poiType.Pois)
+					foreach (var poi in poiType.Pois.Where(p => !hydrantPoiIds.Contains(p.PoiId)))
 					{
 						result.Data.MapMakerInfos.Add(ConvertPoiMapMarker(poi, poiType));
 					}
@@ -704,6 +722,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Marker = poiType.Marker,
 				IsDestination = poiType.IsDestination
 			};
+		}
+
+
+		private async Task<List<HydrantMapPoint>> GetHydrantPointsAsync()
+		{
+			if (!User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View)) return new List<HydrantMapPoint>();
+			try
+			{
+				if (!await _hydrantsService.IsModuleEnabledAsync(DepartmentId)) return new List<HydrantMapPoint>();
+				return await _hydrantsService.GetMapLayerAsync(DepartmentId, UserId, null, null, null, null);
+			}
+			catch (UnauthorizedAccessException) { return new List<HydrantMapPoint>(); }
+			catch (RecordsModuleDisabledException) { return new List<HydrantMapPoint>(); }
+		}
+
+		public static MapMakerInfoData ConvertHydrantMapMarker(HydrantMapPoint point)
+		{
+			var title = "Hydrant " + point.HydrantNumber;
+			var info = "<strong>" + System.Net.WebUtility.HtmlEncode(title) + "</strong><br/>" + (point.InService ? "In service" : "Out of service");
+			if (point.FlowGpm.HasValue) info += "<br/>" + point.FlowGpm.Value.ToString(CultureInfo.InvariantCulture) + " gpm";
+			return new MapMakerInfoData { Id = "hydrant-" + point.HydrantId, Latitude = (double)point.Latitude, Longitude = (double)point.Longitude,
+				Title = title, InfoWindowContent = info, Type = 5, LayerId = "hydrants", LayerName = "Hydrants", Color = point.Color, ImagePath = "hydrant", zIndex = 5 };
 		}
 
 		private static MapMakerInfoData ConvertPoiMapMarker(Poi poi, PoiType poiType)

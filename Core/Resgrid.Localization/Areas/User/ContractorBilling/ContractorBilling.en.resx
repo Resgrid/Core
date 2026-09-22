@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Max deployment days</value></data>
   <data name="MealCode" xml:space="preserve"><value>Meal code</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Meal eligibility</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>JSON windows per meal code, e.g. [{"MealCode":"B","StartsBeforeMinutes":420}]; a per diem outside its window is warned, not blocked.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Add a rule for each meal code (for example, B for breakfast). Enter local shift cutoff times; leave a time blank for no limit. Claims outside these limits show a warning and can still be submitted.</value></data>
   <data name="Missing" xml:space="preserve"><value>Missing</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Multiplier prefill</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Base + standby + OT multipliers draft the hourly bands; the stored values stay explicit dollars.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Premium adders cannot be negative.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>The premium needs a name.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>The premium was not found.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>No meal eligibility rules. Add a rule to set time limits.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Add meal rule</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Remove meal rule</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Shift starts at or before</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Shift ends at or after</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Enter a meal code of 1 to 10 characters.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Each meal code can have only one eligibility rule.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Enter a valid time from 00:00 to 23:59.</value></data>
 </root>

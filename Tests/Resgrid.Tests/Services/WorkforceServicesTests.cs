@@ -13,6 +13,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Model.Workforce;
 using Resgrid.Services.Workforce;
@@ -41,6 +42,7 @@ namespace Resgrid.Tests.Services
 		private List<AuditEvent> _audits; private List<string> _notifications;
 		private List<Deployment> _deployments; private List<DeploymentPersonnel> _personnel; private List<DeploymentUnit> _units; private List<DeploymentTimeReport> _reports; private List<DeploymentTimeEntry> _entries; private List<DeploymentExpense> _expenses;
 		private List<CalOesMarsWorkItem> _marsItems;
+		private Mock<IUnitOfWork> _unitOfWork; private Mock<IEmployeePayComponentRepository> _payComponentRepository; private int _commits; private int _discards;
 		private WorkforceService _workforce; private CompensationCostService _compensation; private FieldCostingService _costing; private PayDataDemographicsService _demographicsService; private CaPayDataReportingService _reporting;
 
 		[SetUp]
@@ -166,12 +168,36 @@ namespace Resgrid.Tests.Services
 			events.Setup(e => e.SendMessage<AuditEvent>(It.IsAny<AuditEvent>())).Callback<AuditEvent>(a => _audits.Add(a));
 
 			_workforce = new WorkforceService(employers.Object, affiliates.Object, establishments.Object, contractors.Object, workers.Object, employments.Object, assignments.Object, workEntries.Object, facts.Object, userProfiles.Object, events.Object);
-			_compensation = new CompensationCostService(profiles.Object, payComponents.Object, costComponents.Object, employments.Object, assignments.Object, events.Object);
+			_payComponentRepository = payComponents;
+			_unitOfWork = TransactionalStores(_profiles, _payComponents, _costComponents);
+			_compensation = new CompensationCostService(profiles.Object, payComponents.Object, costComponents.Object, employments.Object, assignments.Object, events.Object, _unitOfWork.Object);
 			_costing = new FieldCostingService(resourceProfiles.Object, resourceComponents.Object, usage.Object, runs.Object, lines.Object, workers.Object, employments.Object, workEntries.Object, _compensation,
 				bids.Object, bidLines.Object, deployments.Object, personnel.Object, units.Object, reports.Object, entries.Object, expenses.Object, invoices.Object, new Lazy<ICalOesMarsService>(() => mars.Object), unitsService.Object, events.Object);
 			_demographicsService = new PayDataDemographicsService(demographics.Object, workers.Object, employments.Object, _workforce, events.Object);
 			_reporting = new CaPayDataReportingService(reportRuns.Object, snapshots.Object, rows.Object, artifacts.Object, employers.Object, affiliates.Object, establishments.Object, contractors.Object, workers.Object, employments.Object, assignments.Object,
 				workEntries.Object, facts.Object, demographics.Object, userProfiles.Object, departments.Object, new Lazy<ICommunicationService>(() => communication.Object), null, events.Object);
+		}
+
+		/// <summary>Stands in for the database transaction: the in-memory stores are restored on discard, kept on commit.</summary>
+		private Mock<IUnitOfWork> TransactionalStores(List<EmployeeCompensationProfile> profiles, List<EmployeePayComponent> pay, List<EmployeeCostComponent> cost)
+		{
+			_commits = 0; _discards = 0;
+			(List<EmployeeCompensationProfile> Profiles, List<EmployeePayComponent> Pay, List<EmployeeCostComponent> Cost)? snapshot = null;
+			var unitOfWork = new Mock<IUnitOfWork>();
+			unitOfWork.Setup(u => u.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()))
+				.Callback(() => snapshot ??= (profiles.ToList(), pay.ToList(), cost.ToList()))
+				.ReturnsAsync((System.Data.Common.DbConnection)null);
+			unitOfWork.Setup(u => u.CommitChanges()).Callback(() => { _commits++; snapshot = null; });
+			unitOfWork.Setup(u => u.DiscardChanges()).Callback(() =>
+			{
+				_discards++;
+				if (snapshot == null) return;
+				profiles.Clear(); profiles.AddRange(snapshot.Value.Profiles);
+				pay.Clear(); pay.AddRange(snapshot.Value.Pay);
+				cost.Clear(); cost.AddRange(snapshot.Value.Cost);
+				snapshot = null;
+			});
+			return unitOfWork;
 		}
 
 		private static Mock<TRepo> Repo<TRepo, T>(List<T> store, Func<T, string> id, Action<T, string> setId) where TRepo : class, IRepository<T> where T : class, IEntity
@@ -208,6 +234,38 @@ namespace Resgrid.Tests.Services
 			next.WorkforceEmploymentId.Should().NotBe(employment.WorkforceEmploymentId);
 			(await _workforce.GetEmploymentsForWorkerAsync(worker.WorkforceWorkerId, DeptId)).Should().HaveCount(2);
 			_audits.Should().Contain(a => a.Type == AuditLogTypes.WorkforceEmploymentChanged);
+		}
+
+		[Test]
+		public async Task Saving_a_profile_with_components_commits_both_writes_and_audits_after_commit()
+		{
+			var saved = await _compensation.SaveProfileWithComponentsAsync(
+				new EmployeeCompensationProfile { DepartmentId = DeptId, Scope = (int)CompensationScopes.DepartmentDefault, PayBasis = (int)PayBases.Hourly, BaseAmountValue = 20m, EffectiveOn = new DateTime(2024, 1, 1) },
+				new List<EmployeePayComponent> { new EmployeePayComponent { Category = (int)PayComponentCategories.Ems, Basis = (int)PayComponentBases.PerHour, AmountValue = 4m } },
+				new List<EmployeeCostComponent> { new EmployeeCostComponent { Category = (int)CostComponentCategories.EmployerPayrollTax, Basis = (int)CostComponentBases.PercentOfEligiblePay, RateAmountValue = 7.65m } }, User, null, null);
+
+			_profiles.Should().ContainSingle().Which.EmployeeCompensationProfileId.Should().Be(saved.EmployeeCompensationProfileId);
+			saved.PayComponents.Should().ContainSingle(); saved.CostComponents.Should().ContainSingle();
+			_commits.Should().Be(1); _discards.Should().Be(0);
+			_audits.Where(a => a.Type == AuditLogTypes.WorkforceCompensationChanged).Should().HaveCount(2, "the profile save and the component replacement are audited as when saved separately");
+		}
+
+		[Test]
+		public async Task A_failed_component_write_leaves_no_profile_row_and_no_audit()
+		{
+			_payComponentRepository.Setup(r => r.SaveOrUpdateAsync(It.IsAny<EmployeePayComponent>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new InvalidOperationException("component insert failed"));
+
+			Func<Task> save = () => _compensation.SaveProfileWithComponentsAsync(
+				new EmployeeCompensationProfile { DepartmentId = DeptId, Scope = (int)CompensationScopes.DepartmentDefault, PayBasis = (int)PayBases.Hourly, BaseAmountValue = 20m, EffectiveOn = new DateTime(2024, 1, 1) },
+				new List<EmployeePayComponent> { new EmployeePayComponent { Category = (int)PayComponentCategories.Ems, Basis = (int)PayComponentBases.PerHour, AmountValue = 4m } },
+				new List<EmployeeCostComponent>(), User, null, null);
+
+			await save.Should().ThrowAsync<InvalidOperationException>().WithMessage("component insert failed");
+			_profiles.Should().BeEmpty("the profile insert rolls back with the failed component write");
+			_payComponents.Should().BeEmpty();
+			_commits.Should().Be(0); _discards.Should().Be(1);
+			_audits.Should().NotContain(a => a.Type == AuditLogTypes.WorkforceCompensationChanged, "nothing was saved, so nothing is audited");
 		}
 
 		[Test]

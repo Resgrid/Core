@@ -41,7 +41,8 @@
 			var canDisclosures = usable && ClaimsAuthorizationHelper.CanManageRecordDisclosures();
 			var canTemplates = usable && ClaimsAuthorizationHelper.CanManageRecordReports();
 			var canDefinitions = usable && ClaimsAuthorizationHelper.CanManageRecordDefinitions();
-			var canDeployments = usable && ClaimsAuthorizationHelper.CanCreateRecord();
+			// Deployment reports are read-only and stay readable after operational features are disabled (RecordDeploymentsController).
+			var canDeployments = Model.ModuleState.FlagEnabled && ClaimsAuthorizationHelper.CanViewRecords();
 			var showManage = canDisclosures || canTemplates || canDefinitions || canDeployments || Model.IsDepartmentAdmin;
 		}
 		<div class="btn-toolbar top-page-buttons" style="float:right;padding-right:15px;">
@@ -95,7 +96,7 @@
 						}
 						@if (canDeployments)
 						{
-							<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User"><i class="fa fa-globe"></i> @localizer["Deployments"]</a></li>
+							<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User"><i class="fa fa-globe"></i> @localizer["DeploymentReports"]</a></li>
 						}
 						@if (canDefinitions)
 						{

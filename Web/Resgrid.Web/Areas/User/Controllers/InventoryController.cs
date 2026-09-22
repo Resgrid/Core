@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model;
 using Resgrid.Model.Inventories;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Inventory;
 using Resgrid.Web.Helpers;
@@ -19,6 +20,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	{
 		private readonly IInventoryCatalogService _catalog;
 		private readonly IInventoryPurchasingService _purchasing;
+		private readonly IWorkOrderMaintenanceRepository _workOrderSettings;
 		private readonly IInventoryStockService _stock;
 		private readonly IInventoryTransferService _transfers;
 		private readonly IInventoryIssuanceService _issuance;
@@ -32,8 +34,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> _strings;
 		public InventoryController(IInventoryCatalogService catalog, IInventoryStockService stock, IInventoryTransferService transfers, IInventoryIssuanceService issuance,
 			IInventoryMigrationService migration, IInventoryAuthorizationService auth, IProtectedGrantContext grant, IDepartmentDataProtectionService protection,
-			IUnitsService units, IDepartmentGroupsService groups, IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings, IInventoryPurchasingService purchasing = null)
-		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _auth = auth; _grant = grant; _protection = protection; _units = units; _groups = groups; _departments = departments; _strings = strings; _purchasing = purchasing; }
+			IUnitsService units, IDepartmentGroupsService groups, IDepartmentsService departments, IWorkOrderMaintenanceRepository workOrderSettings, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings, IInventoryPurchasingService purchasing = null)
+		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _auth = auth; _grant = grant; _protection = protection; _units = units; _groups = groups; _departments = departments; _workOrderSettings = workOrderSettings; _strings = strings; _purchasing = purchasing; }
 		private InventoryActor Actor => new() { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{

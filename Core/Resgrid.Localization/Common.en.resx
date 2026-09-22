@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -799,4 +799,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Workforce &amp; Business Ops</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Readiness</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>Use valid JSON: put text in double quotes; enter numbers and true/false without quotes. Dates use ISO format. Field names follow the schema (letter case is ignored). Errors identify the field; array indexes start at 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>Leave blank to use an empty list or object.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>JSON example</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>JSON schema (field names and types)</value>
+  </data>
 </root>

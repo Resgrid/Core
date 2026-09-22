@@ -80,6 +80,11 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.MigrationsPg\Resgrid.Providers.MigrationsPg.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="WebOptimizer.Core">
+      <HintPath>..\..\References\WebOptimizer\WebOptimizer.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Data\TestCall.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

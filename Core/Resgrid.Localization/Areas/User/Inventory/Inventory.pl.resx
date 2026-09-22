@@ -783,4 +783,6 @@
   <data name="StepMovementAmountHint" xml:space="preserve"><value>Ilość i powód. Oba trafiają do tworzonego zapisu księgi.</value></data>
   <data name="StepReturnHint" xml:space="preserve"><value>Podaj, ile wróciło, gdzie trafiło i w jakim jest stanie.</value></data>
   <data name="Inactive" xml:space="preserve"><value>Nieaktywny</value></data>
+  <data name="M4SupplierHelp" xml:space="preserve"><value>Brakuje dostawcy? Dodaj go na stronie dostawców.</value></data>
+  <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Wybierz walutę dla tego zamówienia. Nowe zamówienia domyślnie używają waluty Twojej jednostki.</value></data>
 </root>

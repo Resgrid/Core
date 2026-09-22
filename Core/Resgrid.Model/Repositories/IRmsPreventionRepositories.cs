@@ -130,6 +130,12 @@ namespace Resgrid.Model.Repositories
 	{
 		Task<RmsHydrant> GetByIdForDepartmentAsync(int departmentId, string hydrantId);
 		Task<RmsHydrant> GetByNumberAsync(int departmentId, string hydrantNumber);
+		/// <summary>
+		/// Batch form of <see cref="GetByNumberAsync"/>: the database matches each requested number with the same SQL equality (so the
+		/// column collation decides case sensitivity, exactly as for the single lookup) and the result is keyed by the requested string
+		/// as passed in (ordinal). Numbers with no live match are absent.
+		/// </summary>
+		Task<IReadOnlyDictionary<string, RmsHydrant>> GetByNumbersAsync(int departmentId, IEnumerable<string> hydrantNumbers);
 		Task<IEnumerable<RmsHydrant>> GetAllLiveAsync(int departmentId);
 		Task<IEnumerable<RmsHydrant>> GetByIdsAsync(int departmentId, IEnumerable<string> hydrantIds);
 		Task<IEnumerable<RmsHydrant>> GetInBoundsAsync(int departmentId, decimal minLat, decimal maxLat, decimal minLon, decimal maxLon, int take);

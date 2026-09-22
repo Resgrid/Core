@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Resgrid.Model.Services
 {
 	/// <summary>
-	/// Create Deployment from External Order (RMS plan section 4.1 "external-order fill contract", RMS-1C, Preview).
+	/// Create Deployment from External Order (RMS plan section 4.1 "external-order fill contract", deployment operations).
 	/// Manual entry and artifact snapshot only: no IROC, CIFFC or member-agency connector, no write-back, no inferred
 	/// order updates. Every deployment is a Record on the mutual-aid deployment definition, so lifecycle, audit,
 	/// revisions, retention and Workflow events are the ordinary Records ones.

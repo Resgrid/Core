@@ -156,6 +156,7 @@ namespace Resgrid.Model.Invoicing
 	/// <summary>A qualification minimum a crew entry requires (NWCG position or certification code + count).</summary>
 	public sealed class RequiredCertification
 	{
+		[Required]
 		public string Code { get; set; }
 		public int MinCount { get; set; } = 1;
 

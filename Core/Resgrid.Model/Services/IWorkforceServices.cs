@@ -55,6 +55,8 @@ namespace Resgrid.Model.Services
 		Task<EmployeeCompensationProfile> GetProfileAsync(string profileId, int departmentId);
 		Task<EmployeeCompensationProfile> SaveProfileAsync(EmployeeCompensationProfile profile, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<EmployeeCompensationProfile> SaveComponentsAsync(string profileId, int departmentId, List<EmployeePayComponent> payComponents, List<EmployeeCostComponent> costComponents, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Saves the profile and replaces its pay / cost components in one transaction: nothing is written unless both succeed.</summary>
+		Task<EmployeeCompensationProfile> SaveProfileWithComponentsAsync(EmployeeCompensationProfile profile, List<EmployeePayComponent> payComponents, List<EmployeeCostComponent> costComponents, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<EmployeeCompensationProfile> ApproveProfileAsync(string profileId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<bool> DeleteProfileAsync(string profileId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Employee profile → role default → department default as of the date, decrypted through the costing workload. Null when nothing resolves.</summary>

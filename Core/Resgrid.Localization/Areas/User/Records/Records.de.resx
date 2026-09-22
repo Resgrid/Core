@@ -1217,7 +1217,6 @@
   <data name="Deployments" xml:space="preserve"><value>Einsätze</value></data>
   <data name="DeploymentsIntro" xml:space="preserve"><value>Externe Ressourcenanforderungen, die Ihre Abteilung erfüllt. Das anfordernde System bleibt maßgeblich: Artefakte werden als unveränderliche Snapshots gespeichert, nichts wird zurückgeschrieben.</value></data>
   <data name="NewDeployment" xml:space="preserve"><value>Neuer Einsatz</value></data>
-  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Einsätze sind eine Vorschaufunktion: Vorlagen wurden aus veröffentlichter IROC-, CIFFC- und EMAC-Dokumentation erstellt, nicht aus Live-Integrationen. Prüfen Sie gegen Ihr Anforderungssystem.</value></data>
   <data name="DeploymentOrder" xml:space="preserve"><value>Anforderung</value></data>
   <data name="DeploymentOrderNumber" xml:space="preserve"><value>Anforderungsnummer</value></data>
   <data name="DeploymentIncident" xml:space="preserve"><value>Ereignis</value></data>
@@ -2109,4 +2108,52 @@
   <data name="ExportListHeader" xml:space="preserve"><value>Diese Liste exportieren</value></data>
   <data name="MoreMenu" xml:space="preserve"><value>Mehr</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Bestandsverbrauch</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Einsatzberichte</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Schreibgeschützter Einsatzverlauf, Berichte und Exporte. Einsätze werden unter Personal und Geschäftsbetrieb verwaltet.</value></data>
+  <data name="DeploymentExportResources" xml:space="preserve"><value>Ressourcen als CSV exportieren</value></data>
+  <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Einsatzverwaltung öffnen</value></data>
+  <data name="DeploymentExternalOrders" xml:space="preserve"><value>Externe Aufträge</value></data>
+  <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Neuer externer Auftrag</value></data>
+  <data name="HydrantImportBack" xml:space="preserve"><value>Zurück zu Hydranten</value></data>
+  <data name="HydrantImportNotSaved" xml:space="preserve"><value>Es wurden keine Hydranten gespeichert. Korrigieren Sie die folgenden Zeilen und importieren Sie die Datei erneut.</value></data>
+  <data name="HydrantImportIssuesShown" xml:space="preserve"><value>{0} von {1} fehlerhaften Zeilen werden angezeigt. JSON verwendet Eintragsnummern, CSV Zeilennummern.</value></data>
+  <data name="HydrantImportRow" xml:space="preserve"><value>Eintrag / Zeile</value></data>
+  <data name="HydrantImportCorrection" xml:space="preserve"><value>So beheben Sie das Problem</value></data>
+  <data name="HydrantImportSource" xml:space="preserve"><value>Hydrantendaten hochladen oder einfügen</value></data>
+  <data name="HydrantImportIntro" xml:space="preserve"><value>Importieren Sie bis zu 20.000 Hydranten. Vorhandene Hydrantennummern werden aktualisiert, neue hinzugefügt.</value></data>
+  <data name="HydrantImportFile" xml:space="preserve"><value>Datei auswählen</value></data>
+  <data name="HydrantImportFileHelp" xml:space="preserve"><value>UTF-8-Datei (.json oder .csv), bis zu 10 MB. Die Dateiendung bestimmt das Format.</value></data>
+  <data name="HydrantImportReselect" xml:space="preserve"><value>Wählen Sie die korrigierte Datei erneut aus.</value></data>
+  <data name="HydrantImportPaste" xml:space="preserve"><value>Oder JSON / CSV einfügen</value></data>
+  <data name="HydrantImportFormat" xml:space="preserve"><value>Format der eingefügten Daten</value></data>
+  <data name="HydrantImportContent" xml:space="preserve"><value>Eingefügte Daten</value></data>
+  <data name="HydrantImportValidationHelp" xml:space="preserve"><value>Alle Zeilen werden vor dem Speichern geprüft. Bei einem Fehler wird nichts importiert. Lassen Sie diese Seite bis zum Ergebnis geöffnet.</value></data>
+  <data name="HydrantImportWorking" xml:space="preserve"><value>Prüfung und Import laufen…</value></data>
+  <data name="HydrantImportGuide" xml:space="preserve"><value>Dateiformat und Beispiele</value></data>
+  <data name="HydrantImportRequired" xml:space="preserve"><value>Pflichtfelder: number (Text, 1–64 Zeichen), latitude (-90 bis 90), longitude (-180 bis 180). Jede Nummer darf nur einmal vorkommen.</value></data>
+  <data name="HydrantImportOptional" xml:space="preserve"><value>Optional: type, address (max. 500 Zeichen), main_size (Zoll, größer als 0 bis 9999.99), flow_gpm (nichtnegative ganze Zahl), owner (max. 200 Zeichen).</value></data>
+  <data name="HydrantImportTypesHelp" xml:space="preserve"><value>JSON-Zahlen ohne Anführungszeichen angeben; Namen und Adressen in doppelte Anführungszeichen setzen. Dezimalpunkt verwenden. Optionale Werte weglassen oder null verwenden. CSV benötigt eine Kopfzeile; Werte mit Kommas oder Zeilenumbrüchen in Anführungszeichen setzen.</value></data>
+  <data name="HydrantImportJsonExample" xml:space="preserve"><value>JSON-Beispiel herunterladen</value></data>
+  <data name="HydrantImportCsvExample" xml:space="preserve"><value>CSV-Beispiel herunterladen</value></data>
+  <data name="HydrantImportMappingHelp" xml:space="preserve"><value>Verwalten Sie Hydranten hier, um Durchfluss und Betriebsstatus auf Karten anzuzeigen. Karten-POIs sind separate Orientierungspunkte; verknüpfte POIs erscheinen nur einmal in der Hydrantenebene.</value></data>
+  <data name="HydrantMapLoadFailed" xml:space="preserve"><value>Hydranten konnten nicht geladen werden.</value></data>
+  <data name="HydrantMapRetry" xml:space="preserve"><value>Erneut versuchen</value></data>
+  <data name="CallPickerBrowse" xml:space="preserve"><value>Einsätze durchsuchen</value></data>
+  <data name="CallPickerSearch" xml:space="preserve"><value>Einsatznummer, Name oder Adresse suchen</value></data>
+  <data name="CallPickerStatus" xml:space="preserve"><value>Einsatzstatus</value></data>
+  <data name="CallPickerAll" xml:space="preserve"><value>Alle Einsätze</value></data>
+  <data name="CallPickerActive" xml:space="preserve"><value>Aktive Einsätze</value></data>
+  <data name="CallPickerClosed" xml:space="preserve"><value>Abgeschlossene Einsätze</value></data>
+  <data name="CallPickerFrom" xml:space="preserve"><value>Ab Datum</value></data>
+  <data name="CallPickerTo" xml:space="preserve"><value>Bis einschließlich</value></data>
+  <data name="CallPickerApply" xml:space="preserve"><value>Suchen</value></data>
+  <data name="CallPickerPrevious" xml:space="preserve"><value>Zurück</value></data>
+  <data name="CallPickerNext" xml:space="preserve"><value>Weiter</value></data>
+  <data name="CallPickerLoading" xml:space="preserve"><value>Einsätze werden geladen…</value></data>
+  <data name="CallPickerError" xml:space="preserve"><value>Einsätze konnten nicht geladen werden. Suchen Sie erneut.</value></data>
+  <data name="CallPickerEmpty" xml:space="preserve"><value>Keine passenden Einsätze auf dieser Seite.</value></data>
+  <data name="CallPickerMetadata" xml:space="preserve"><value>Geschützte Einsätze können nach Einsatznummer gesucht werden; Namen und Adressen sind ausgeblendet.</value></data>
+  <data name="CallPickerRequiresScript" xml:space="preserve"><value>Aktivieren Sie JavaScript, um einen Einsatz zu suchen und auszuwählen.</value></data>
+  <data name="CallPickerDates" xml:space="preserve"><value>Geben Sie einen gültigen Zeitraum ein. Der Beginn darf nicht nach dem Ende liegen.</value></data>
+  <data name="CallPickerUnavailable" xml:space="preserve"><value>Wählen Sie einen verfügbaren Einsatz aus der Liste oder löschen Sie die Auswahl.</value></data>
 </root>

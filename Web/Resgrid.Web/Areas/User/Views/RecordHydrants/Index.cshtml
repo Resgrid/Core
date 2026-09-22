@@ -19,6 +19,7 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanAdminister)
 			{
+				<a class="btn btn-primary" asp-controller="RecordHydrants" asp-action="Import" asp-route-area="User"><i class="fa fa-upload"></i> @L["ImportHydrants"]</a>
 				<a class="btn btn-success" asp-controller="RecordHydrants" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewHydrant"]</a>
 			}
 		</div>
@@ -27,13 +28,6 @@
 <div class="wrapper wrapper-content">
 	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
 	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
-	@if (Model.ImportResult != null && Model.ImportResult.Rejected.Count > 0)
-	{
-		<div class="alert alert-warning">
-			<strong>@L["ImportRejectedRows"]</strong>
-			<ul>@foreach (var r in Model.ImportResult.Rejected.Take(50)) { <li>#@r.Line @r.HydrantNumber: @r.Error</li> }</ul>
-		</div>
-	}
 	<div class="row">
 		<div class="col-md-8">
 			<div class="ibox"><div class="ibox-content">
@@ -70,45 +64,18 @@
 				<div id="hydrantMap" style="height:360px"></div>
 				<p class="text-muted m-t-xs"><small>@L["HydrantMapHint"]</small></p>
 			</div></div>
-			@if (Model.CanAdminister)
-			{
-				<div class="ibox"><div class="ibox-title"><h5>@L["ImportHydrants"]</h5></div><div class="ibox-content">
-					<p class="text-muted">@L["ImportHydrantsHelp"]</p>
-					<form method="post" asp-controller="RecordHydrants" asp-action="Import" asp-route-area="User">
-						@Html.AntiForgeryToken()
-						<textarea class="form-control" name="csv" rows="6" style="font-family:monospace" placeholder="number,latitude,longitude,type,address,main_size,flow_gpm,owner"></textarea>
-						<button class="btn btn-sm btn-default m-t-xs"><i class="fa fa-upload"></i> @L["ImportHydrants"]</button>
-					</form>
-				</div></div>
-			}
+
 		</div>
 	</div>
 </div>
 @section Scripts {
 	<script>
 		(function () {
-			var points = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MapPoints.Select(p => new { p.HydrantId, p.HydrantNumber, Lat = p.Latitude, Lon = p.Longitude, p.InService, p.FlowClass, p.FlowGpm }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
 			if (typeof L === 'undefined' || !document.getElementById('hydrantMap')) { return; }
 			var map = L.map('hydrantMap');
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
-			var colors = ['#999', '#1ab394', '#23c6c8', '#f8ac59', '#ed5565'];
-			var bounds = [];
-			points.forEach(function (p) {
-				var color = p.InService ? colors[p.FlowClass] || '#999' : '#000';
-				var m = L.circleMarker([p.Lat, p.Lon], { radius: 7, color: color, fillColor: color, fillOpacity: 0.8 }).addTo(map);
-				// Hydrant numbers are department-entered, so the popup is built from text nodes: markup in stored
-				// data renders as the characters it is instead of executing inside the popup.
-				var popup = document.createElement('div');
-				var link = document.createElement('a');
-				link.href = '@Url.Action("Details", "RecordHydrants", new { area = "User" })?id=' + encodeURIComponent(p.HydrantId);
-				link.textContent = p.HydrantNumber || '';
-				popup.appendChild(link);
-				if (p.FlowGpm) { popup.appendChild(document.createElement('br')); popup.appendChild(document.createTextNode(p.FlowGpm + ' gpm')); }
-				if (!p.InService) { popup.appendChild(document.createElement('br')); var outOfService = document.createElement('b'); outOfService.textContent = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(L["OutOfService"].Value)); popup.appendChild(outOfService); }
-				m.bindPopup(popup);
-				bounds.push([p.Lat, p.Lon]);
-			});
-			if (bounds.length) { map.fitBounds(bounds, { padding: [20, 20] }); } else { map.setView([39.5, -98.35], 4); }
+			var bounds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MapPoints.Select(p => new[] { p.Latitude, p.Longitude })));
+			if (bounds.length) { map.fitBounds(bounds, { padding: [20, 20], maxZoom: 17 }); } else { map.setView([39.5, -98.35], 4); }
 		})();
 	</script>
 }

@@ -8,6 +8,26 @@
 	var t = Model.Telemetry;
 	var p = Model.Prevention;
 }
+@section Styles {
+	<style>
+		.records-health-stats dt,
+		.records-health-stats dd {
+			overflow-wrap: anywhere;
+		}
+
+		@@media (min-width: 768px) {
+			.records-health-stats {
+				display: grid;
+				grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+				column-gap: 20px;
+			}
+
+			.records-health-stats dt {
+				text-align: right;
+			}
+		}
+	</style>
+}
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-8">
 		<h2>@L["RecordsHealth"]</h2>
@@ -32,7 +52,7 @@
 	<div class="row">
 		<div class="col-md-4">
 			<div class="ibox"><div class="ibox-title"><h5>@L["ActivateHeader"]</h5></div><div class="ibox-content">
-				<dl class="dl-horizontal">
+				<dl class="records-health-stats">
 					<dt>@L["RecordsModuleActive"]</dt><dd>@(t.RecordsActive ? L["Yes"].Value : L["No"].Value) @departmentTime.Format(t.ActivatedOn)</dd>
 					<dt>@L["LegacyWriteAttempts"]</dt><dd class="@(t.LegacyWriteAttempts > 0 ? "text-danger" : "")">@t.LegacyWriteAttempts</dd>
 					<dt>@L["AuthorizationDenials"]</dt><dd>@t.AuthorizationDenials</dd>
@@ -41,7 +61,7 @@
 				</dl>
 			</div></div>
 			<div class="ibox"><div class="ibox-title"><h5>@L["OutboxHeader"]</h5></div><div class="ibox-content">
-				<dl class="dl-horizontal">
+				<dl class="records-health-stats">
 					<dt>@L["OutboxPending"]</dt><dd>@t.OutboxPending</dd>
 					<dt>@L["OutboxFailed"]</dt><dd class="@(t.OutboxFailed > 0 ? "text-danger" : "")">@t.OutboxFailed</dd>
 					<dt>@L["OutboxOldest"]</dt><dd class="@(t.OutboxLagAlert ? "text-danger" : "")">@(t.OutboxOldestPendingSeconds.HasValue ? t.OutboxOldestPendingSeconds.Value.ToString("0") + " s" : "-")</dd>
@@ -50,7 +70,7 @@
 		</div>
 		<div class="col-md-4">
 			<div class="ibox"><div class="ibox-title"><h5>@L["WorkflowRuns"]</h5></div><div class="ibox-content">
-				<dl class="dl-horizontal">
+				<dl class="records-health-stats">
 					<dt>@L["RunsCompleted"]</dt><dd>@t.WorkflowRunsCompleted</dd>
 					<dt>@L["RunsSkipped"]</dt><dd>@t.WorkflowRunsSkipped</dd>
 					<dt>@L["RunsFailed"]</dt><dd class="@(t.WorkflowRunsFailed > 0 ? "text-danger" : "")">@t.WorkflowRunsFailed</dd>
@@ -58,7 +78,7 @@
 				</dl>
 			</div></div>
 			<div class="ibox"><div class="ibox-title"><h5>@L["RecordsHeader"]</h5></div><div class="ibox-content">
-				<dl class="dl-horizontal">
+				<dl class="records-health-stats">
 					<dt>@L["RecordsCreated"]</dt><dd>@t.RecordsCreated</dd>
 					<dt>@L["RecordsFinalized"]</dt><dd>@t.RecordsFinalized</dd>
 					<dt>@L["RecordsOverdue"]</dt><dd>@t.RecordsOverdue</dd>
@@ -71,7 +91,7 @@
 		</div>
 		<div class="col-md-4">
 			<div class="ibox"><div class="ibox-title"><h5>@L["PreventionHeader"]</h5></div><div class="ibox-content">
-				<dl class="dl-horizontal">
+				<dl class="records-health-stats">
 					<dt>@L["Occupancies"]</dt><dd>@p.Occupancies (@p.OccupanciesReviewOverdue @L["Overdue"])</dd>
 					<dt>@L["Inspections"]</dt><dd>@p.InspectionsScheduled (@p.InspectionsDue @L["Overdue"])</dd>
 					<dt>@L["Violations"]</dt><dd>@p.ViolationsOpen (@p.ViolationsOverdue @L["Overdue"])</dd>

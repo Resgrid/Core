@@ -5,10 +5,10 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Deployments" xml:space="preserve"><value>Αποστολές</value></data>
-  <data name="DeploymentFinance" xml:space="preserve"><value>Οικονομικά αποστολών</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Αποστολές</value></data>
   <data name="MyDeployments" xml:space="preserve"><value>Οι αποστολές μου</value></data>
-  <data name="IndexIntro" xml:space="preserve"><value>Οικονομικά περιβλήματα αποστολών: συνθέσεις, ημερήσιες αναφορές χρόνου, έξοδα και αρχεία για τιμολογήσιμες, ανάκτησης κόστους και επιχειρησιακές αποστολές.</value></data>
-  <data name="HelpIndex" xml:space="preserve"><value>Μια αποστολή ομαδοποιεί τις μονάδες, το προσωπικό και τον εξοπλισμό που στάλθηκαν σε ένα συμβάν μαζί με τις ημερήσιες αναφορές χρόνου και τα έξοδα. Συνδέστε την με μια κλήση ή με μια εντολή αμοιβαίας συνδρομής από το Records.</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Σχεδιάστε και εκτελέστε αναπτύξεις, διαχειριστείτε πόρους και καταγράψτε χρόνο και έξοδα.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Διαχειριστείτε εδώ τις επιχειρήσεις ανάπτυξης. Οι αναφορές και το ιστορικό διατίθενται στο RMS.</value></data>
   <data name="NoDeployments" xml:space="preserve"><value>Δεν υπάρχουν αποστολές ακόμη.</value></data>
   <data name="ShowAll" xml:space="preserve"><value>Εμφάνιση όλων</value></data>
   <data name="ShowOpen" xml:space="preserve"><value>Εμφάνιση μόνο ανοιχτών</value></data>
@@ -32,7 +32,7 @@
   <data name="Days" xml:space="preserve"><value>ημέρες</value></data>
   <data name="MaxDays" xml:space="preserve"><value>Μέγ. ημέρες</value></data>
   <data name="Notes" xml:space="preserve"><value>Σημειώσεις</value></data>
-  <data name="ExternalOrderLinked" xml:space="preserve"><value>Συνδεδεμένη με εξωτερική εντολή του Records</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Συνδεδεμένη εξωτερική εντολή</value></data>
   <data name="Deployment" xml:space="preserve"><value>Αποστολή</value></data>
   <data name="AgencyIdentifiers" xml:space="preserve"><value>Αναγνωριστικά φορέα</value></data>
   <data name="Jurisdiction" xml:space="preserve"><value>Δικαιοδοσία</value></data>
@@ -51,7 +51,7 @@
   <data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
   <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
   <data name="SaveFailed" xml:space="preserve"><value>Η αλλαγή δεν ήταν δυνατό να αποθηκευτεί.</value></data>
-  <data name="ExternalOrderIntro" xml:space="preserve"><value>Περιβάλετε μια ανοιχτή εντολή αμοιβαίας συνδρομής του Records με μια αποστολή ώστε να παρακολουθούνται και να τιμολογούνται χρόνος, έξοδα και σύνθεση. Η ίδια η εντολή παραμένει στο Records.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Συνδέστε μια υπάρχουσα εξωτερική εντολή με την επιχειρησιακή ανάπτυξή της.</value></data>
   <data name="OpenExternalOrders" xml:space="preserve"><value>Ανοιχτές εξωτερικές εντολές</value></data>
   <data name="RecordsRequired" xml:space="preserve"><value>Το σύστημα Records δεν είναι ενεργοποιημένο για αυτό το τμήμα, οπότε δεν υπάρχουν εξωτερικές εντολές προς επιλογή.</value></data>
   <data name="NoOpenExternalOrders" xml:space="preserve"><value>Δεν υπάρχουν ανοιχτές εξωτερικές εντολές χωρίς αποστολή.</value></data>
@@ -125,7 +125,6 @@
   <data name="Size" xml:space="preserve"><value>Μέγεθος</value></data>
   <data name="Added" xml:space="preserve"><value>Προστέθηκε</value></data>
   <data name="Upload" xml:space="preserve"><value>Μεταφόρτωση</value></data>
-  <data name="PreviewManifest" xml:space="preserve"><value>Προεπισκόπηση δηλωτικού</value></data>
   <data name="GenerateManifest" xml:space="preserve"><value>Αρχειοθέτηση PDF δηλωτικού</value></data>
   <data name="Billable" xml:space="preserve"><value>Τιμολογήσιμο</value></data>
   <data name="MealCode" xml:space="preserve"><value>Κωδικός γεύματος</value></data>
@@ -225,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Επιλέξτε εξωτερική εντολή.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Αυτή η εξωτερική εντολή έχει ήδη αποστολή.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Η εξωτερική εντολή δεν βρέθηκε.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Δεν έχετε δικαίωμα Αρχείων για να κλείσετε την εξωτερική εντολή αυτής της ανάπτυξης, επομένως η ανάπτυξη δεν μπορεί να ολοκληρωθεί.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Η μονάδα δεν βρέθηκε.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Αυτή η μονάδα είναι ήδη στη σύνθεση.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Η αποστολή είναι ολοκληρωμένη ή ακυρωμένη και η σύνθεσή της είναι κλειδωμένη.</value></data>
@@ -264,4 +264,15 @@
   <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Προστέθηκε αρχείο αποστολής</value></data>
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Προστατευμένη αποστολή</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Προστατευμένη αναφορά χρόνου</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Αναφορές αναπτύξεων</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Ιστορικό, αναφορές και εξαγωγές αναπτύξεων μόνο για ανάγνωση. Διαχειριστείτε τις αναπτύξεις στο Προσωπικό και επιχειρησιακές λειτουργίες.</value></data>
+  <data name="ExportSummary" xml:space="preserve"><value>Εξαγωγή σύνοψης CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Εκτύπωση αναφοράς</value></data>
+  <data name="ExportData" xml:space="preserve"><value>Εξαγωγή αναφοράς JSON</value></data>
+  <data name="OpenOperations" xml:space="preserve"><value>Άνοιγμα διαχείρισης ανάπτυξης</value></data>
+  <data name="ExternalOrders" xml:space="preserve"><value>Εξωτερικές εντολές</value></data>
+  <data name="NewExternalOrder" xml:space="preserve"><value>Νέα εξωτερική εντολή</value></data>
+  <data name="deployments_resources_not_returned" xml:space="preserve"><value>Όλοι οι πόροι πρέπει να επιστρέψουν στη βάση πριν ολοκληρωθεί η ανάπτυξη.</value></data>
+  <data name="ViewManifest" xml:space="preserve"><value>Προβολή καταλόγου</value></data>
+  <data name="ResourceExport" xml:space="preserve"><value>Εξαγωγή πόρων CSV</value></data>
 </root>

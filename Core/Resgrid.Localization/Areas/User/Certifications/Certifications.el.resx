@@ -225,4 +225,8 @@
   <data name="UnitCertificationRemoved" xml:space="preserve"><value>Αφαιρέθηκε πιστοποίηση μονάδας</value></data>
   <data name="CertificationRemoved" xml:space="preserve"><value>Αφαιρέθηκε πιστοποίηση</value></data>
   <data name="CertificationCreditAdded" xml:space="preserve"><value>Προστέθηκαν μονάδες πιστοποίησης</value></data>
+  <data name="AddCertification" xml:space="preserve"><value>Προσθήκη πιστοποίησης</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Επιλέξτε μέλος</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Επιλέξτε τύπο πιστοποίησης</value></data>
+  <data name="CertificationNameRequired" xml:space="preserve"><value>Εισαγάγετε όνομα πιστοποίησης.</value></data>
 </root>

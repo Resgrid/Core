@@ -66,10 +66,12 @@
             <div class="ibox-content">
                 @if (Model.Schedule == null) { <div class="alert alert-warning">@localizer["NoScheduleWarning"]</div> }
                 <p class="text-muted small">@localizer["LinesHelp"]</p>
-                <table class="table table-condensed" id="lineTable">
-                    <thead><tr><th style="width:22%">@localizer["RateEntry"]</th><th>@localizer["LineType"]</th><th style="width:20%">@localizer["Description"]</th><th>@localizer["CrewSize"]</th><th>@localizer["Quantity"]</th><th>@localizer["HoursPerDay"]</th><th>@localizer["Days"]</th><th>@localizer["Rate"]</th><th>@localizer["Premiums"]</th><th>@localizer["Taxable"]</th><th class="text-right">@localizer["Amount"]</th><th></th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <div class="bid-lines-scroll">
+                    <table class="table table-condensed" id="lineTable">
+                        <thead><tr><th style="width:22%">@localizer["RateEntry"]</th><th>@localizer["LineType"]</th><th style="width:20%">@localizer["Description"]</th><th>@localizer["CrewSize"]</th><th>@localizer["Quantity"]</th><th>@localizer["HoursPerDay"]</th><th>@localizer["Days"]</th><th>@localizer["Rate"]</th><th>@localizer["Premiums"]</th><th>@localizer["Taxable"]</th><th class="text-right">@localizer["Amount"]</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </form>
@@ -146,4 +148,11 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .bid-lines-scroll { overflow-x: auto; }
+        #lineTable .form-control { min-width: 6em; }
+        #lineTable .l-entry,
+        #lineTable .l-desc { min-width: 14em; }
+        #lineTable .l-type { width: auto; min-width: 10em; }
+    </style>
 }

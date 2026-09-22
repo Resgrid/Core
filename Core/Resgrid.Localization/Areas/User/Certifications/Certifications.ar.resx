@@ -225,4 +225,8 @@
   <data name="UnitCertificationRemoved" xml:space="preserve"><value>تمت إزالة شهادة وحدة</value></data>
   <data name="CertificationRemoved" xml:space="preserve"><value>تمت إزالة شهادة</value></data>
   <data name="CertificationCreditAdded" xml:space="preserve"><value>تمت إضافة ساعات اعتماد شهادة</value></data>
+  <data name="AddCertification" xml:space="preserve"><value>إضافة شهادة</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>اختر عضوًا</value></data>
+  <data name="SelectType" xml:space="preserve"><value>اختر نوع الشهادة</value></data>
+  <data name="CertificationNameRequired" xml:space="preserve"><value>أدخل اسم الشهادة.</value></data>
 </root>

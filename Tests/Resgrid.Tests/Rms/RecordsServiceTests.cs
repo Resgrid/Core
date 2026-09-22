@@ -213,6 +213,31 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Officer_form_can_remove_participants_and_clear_the_last_participant()
+		{
+			var input = TrainingInput();
+			input.Participants.Add(new RecordParticipantInput { UserId = "p3", UnitId = 5, Role = "Instructor" });
+			var created = await _service.CreateDraftAsync(Dept, "author", input);
+			var model = new Resgrid.Web.Areas.User.Models.Records.RecordEditView
+			{
+				ParticipantRows = new List<Resgrid.Web.Areas.User.Models.Records.RecordParticipantEditRow>
+				{
+					new Resgrid.Web.Areas.User.Models.Records.RecordParticipantEditRow { Selected = true, UserId = "p3", UnitId = 5, Role = "Instructor" }
+				}
+			};
+			input.Participants = Resgrid.Web.Areas.User.Controllers.RecordsController.BuildParticipantInput(model);
+			var saved = await _service.SaveDraftAsync(Dept, "author", created.Record.RmsOperationalRecordId, created.Record.RowVersion, input);
+			saved.Participants.Should().ContainSingle(p => p.UserId == "p3" && p.UnitId == 5 && p.Role == "Instructor");
+
+			// With every row removed, the browser posts no ParticipantRows fields.
+			input.Participants = Resgrid.Web.Areas.User.Controllers.RecordsController.BuildParticipantInput(new Resgrid.Web.Areas.User.Models.Records.RecordEditView());
+			var cleared = await _service.SaveDraftAsync(Dept, "author", saved.Record.RmsOperationalRecordId, saved.Record.RowVersion, input);
+			cleared.Participants.Should().BeEmpty();
+			var reloaded = await _service.GetAsync(Dept, cleared.Record.RmsOperationalRecordId);
+			reloaded.Participants.Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task Participant_assignment_rejects_foreign_units_and_nonmembers()
 		{
 			var input = TrainingInput(); input.Participants[0].UnitId = 99;

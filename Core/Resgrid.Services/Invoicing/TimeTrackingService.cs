@@ -105,6 +105,20 @@ namespace Resgrid.Services.Invoicing
 			return report;
 		}
 
+		public async Task<List<DeploymentTimeReport>> GetTimeReportsWithEntriesAsync(string deploymentId, int departmentId)
+		{
+			var reports = (await GetTimeReportsAsync(deploymentId, departmentId)).Where(r => !r.IsDeleted).ToList();
+			if (reports.Count == 0) return reports;
+			// Same order as GetByReportAsync (SortOrder, StartTime); the deployment read orders by StartTime only.
+			var entries = ((await _entries.GetByDeploymentAsync(deploymentId)) ?? Enumerable.Empty<DeploymentTimeEntry>())
+				.Where(e => e.DepartmentId == departmentId && e.DeploymentTimeReportId != null)
+				.GroupBy(e => e.DeploymentTimeReportId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.OrderBy(e => e.SortOrder).ThenBy(e => e.StartTime).ToList(), StringComparer.OrdinalIgnoreCase);
+			foreach (var report in reports)
+				report.Entries = entries.TryGetValue(report.DeploymentTimeReportId, out var rows) ? rows : new List<DeploymentTimeEntry>();
+			return reports;
+		}
+
 		public async Task<List<DeploymentTimeReport>> GetUnbilledApprovedReportsAsync(int departmentId, string deploymentId = null)
 		{
 			var reports = (await _reports.GetUnbilledApprovedAsync(departmentId, deploymentId))?.ToList() ?? new List<DeploymentTimeReport>();

@@ -1,52 +1,33 @@
-@using Resgrid.Model
-@using Resgrid.Model.Helpers
-@model Resgrid.Web.Areas.User.Models.Records.RecordDeploymentsIndexView
-@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@model Resgrid.Web.Areas.User.Models.Deployments.DeploymentReportsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @{
-	ViewBag.Title = "Resgrid | " + localizer["Deployments"];
+    ViewBag.Title = "Resgrid | " + localizer["DeploymentReports"];
+    var time = DepartmentTime.From(ViewData);
+    var list = Model.Operations;
+    var pages = Math.Max(1, (int)Math.Ceiling(list.Total / (double)list.PageSize));
 }
-
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-8">
-		<h2>@localizer["Deployments"] <span class="label label-warning">@localizer["PreviewPack"]</span></h2>
-		<ol class="breadcrumb">
-			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
-			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
-			<li class="active"><strong>@localizer["Deployments"]</strong></li>
-		</ol>
-	</div>
-	<div class="col-sm-4">
-		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			@if (Model.IsDepartmentAdmin) { <a class="btn btn-default" asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User"><i class="fa fa-plug"></i> @localizer["Connectors"]</a> }
-			@if (Model.CanCreate) { <a class="btn btn-success" asp-controller="RecordDeployments" asp-action="New" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewDeployment"]</a> }
-		</div>
-	</div>
-</div>
-
+<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12">
+    <h2>@localizer["DeploymentReports"]</h2>
+    <ol class="breadcrumb"><li><a asp-controller="Records" asp-action="Index">@recordsLocalizer["RecordsHeader"]</a></li><li class="active">@localizer["DeploymentReports"]</li></ol>
+</div></div>
 <div class="wrapper wrapper-content">
-	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
-	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
-	<div class="ibox">
-		<div class="ibox-content">
-			<p class="text-muted">@localizer["DeploymentsIntro"]</p>
-			<p><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User" asp-route-includeClosed="@(!Model.IncludeClosed)">@(Model.IncludeClosed ? localizer["DeploymentHideClosed"] : localizer["DeploymentIncludeClosed"])</a></p>
-			<table class="table table-striped">
-				<thead><tr><th>@localizer["DeploymentOrderNumber"]</th><th>@localizer["DeploymentIncident"]</th><th>@localizer["TemplateProfile"]</th><th>@localizer["DeploymentSource"]</th><th>@localizer["DeploymentStatus"]</th><th>@localizer["Created"]</th><th></th></tr></thead>
-				<tbody>
-					@foreach (var o in Model.Orders)
-					{
-						<tr>
-							<td><a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">@o.OrderNumber</a></td>
-							<td>@o.IncidentName <small class="text-muted">@o.IncidentNumber</small></td>
-							<td><code>@o.ProfileKey</code> @if (o.OwnershipMarker == RmsExternalOrderOwnership.Connector) { <span class="label label-info" title="@localizer["DeploymentOwnedByConnector"]"><i class="fa fa-plug"></i></span> }</td>
-							<td>@o.SourceScheme@(string.IsNullOrEmpty(o.SourceSystem) ? "" : " / " + o.SourceSystem) @if (!string.IsNullOrEmpty(o.SourceVersion)) { <small class="text-muted">v@(o.SourceVersion)</small> }</td>
-							<td>@((RmsExternalOrderStatus)o.Status)</td>
-							<td>@o.CreatedOn.TimeConverterToString(Model.Department)</td>
-							<td class="text-right"><a class="btn btn-xs btn-default" asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">@commonLocalizer["View"]</a></td>
-						</tr>
-					}
-				</tbody>
-			</table>
-		</div>
-	</div>
+    <p class="alert alert-info">@localizer["ReportingIntro"]</p>
+    <p><a class="btn btn-default" asp-action="Index" asp-route-includeClosed="@list.OpenOnly">@(list.OpenOnly ? localizer["ShowAll"] : localizer["ShowOpen"])</a>
+    @if (Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanExportRecords()) { <a class="btn btn-info" asp-action="ExportSummary" asp-route-includeClosed="@(!list.OpenOnly)">@localizer["ExportSummary"]</a> }</p>
+    <div class="ibox"><div class="ibox-content table-responsive">
+    <table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Status"]</th><th>@localizer["FinanceMode"]</th><th>@localizer["IncidentNumber"]</th><th>@localizer["Window"]</th></tr></thead><tbody>
+    @foreach (var d in list.Deployments) {
+        <tr><td><a asp-action="Report" asp-route-id="@d.DeploymentId">@d.Name</a></td><td>@localizer["Status" + (Resgrid.Model.Invoicing.DeploymentStatuses)d.Status]</td><td>@localizer["Finance" + (Resgrid.Model.Invoicing.DeploymentFinanceModes)d.FinanceMode]</td><td>@d.IncidentNumber</td><td>@time.Format(d.StartOn) → @time.Format(d.EndOn)</td></tr>
+    }
+    </tbody></table>
+    @if (list.Deployments.Count == 0) { <p>@localizer["NoDeployments"]</p> }
+    @if (pages > 1) { <ul class="pagination">@for (var p = 1; p <= pages; p++) { <li class="@(p == list.Page ? "active" : "")"><a asp-action="Index" asp-route-page="@p" asp-route-includeClosed="@(!list.OpenOnly)">@p</a></li> }</ul> }
+    </div></div>
+    @if (Model.Orders.Count > 0) {
+    <div class="ibox"><div class="ibox-title"><h5>@localizer["ExternalOrders"]</h5></div><div class="ibox-content table-responsive">
+        <table class="table table-striped"><thead><tr><th>@localizer["ResourceOrderNumber"]</th><th>@localizer["Name"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
+        @foreach (var order in Model.Orders) { <tr><td><a asp-action="Details" asp-route-id="@order.RmsExternalOrderId">@order.OrderNumber</a></td><td>@order.IncidentName</td><td>@((Resgrid.Model.RmsExternalOrderStatus)order.Status)</td></tr> }
+        </tbody></table>
+    </div></div> }
 </div>

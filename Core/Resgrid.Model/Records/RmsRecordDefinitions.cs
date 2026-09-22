@@ -319,6 +319,7 @@ namespace Resgrid.Model
 		public const int MaxRuleDepth = 6;
 
 		public int SchemaVersion { get; set; } = CurrentSchemaVersion;
+		[JsonProperty(Required = Required.DisallowNull)]
 		public List<RecordSectionSchema> Sections { get; set; } = new List<RecordSectionSchema>();
 
 		private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, Formatting = Formatting.None };
@@ -357,7 +358,9 @@ namespace Resgrid.Model
 		public int? MinRows { get; set; }
 		public int? MaxRows { get; set; }
 		/// <summary>Visibility rules (Show) over fields of the same version.</summary>
+		[JsonProperty(Required = Required.DisallowNull)]
 		public List<RecordRuleSchema> Rules { get; set; } = new List<RecordRuleSchema>();
+		[JsonProperty(Required = Required.DisallowNull)]
 		public List<RecordFieldSchema> Fields { get; set; } = new List<RecordFieldSchema>();
 	}
 
@@ -371,6 +374,7 @@ namespace Resgrid.Model
 		public bool Required { get; set; }
 		public bool RequiredToFinalize { get; set; }
 		public RmsFieldClassification Classification { get; set; }
+		[JsonProperty(Required = Newtonsoft.Json.Required.DisallowNull)]
 		public List<RecordOptionSchema> Options { get; set; } = new List<RecordOptionSchema>();
 		public decimal? Min { get; set; }
 		public decimal? Max { get; set; }
@@ -390,6 +394,7 @@ namespace Resgrid.Model
 		public bool Aggregatable { get; set; }
 		public bool WorkflowExposed { get; set; }
 		public bool Exportable { get; set; } = true;
+		[JsonProperty(Required = Newtonsoft.Json.Required.DisallowNull)]
 		public List<RecordRuleSchema> Rules { get; set; } = new List<RecordRuleSchema>();
 	}
 
@@ -489,7 +494,9 @@ namespace Resgrid.Model
 
 	public class RecordDefinitionFieldMapping
 	{
+		[System.ComponentModel.DataAnnotations.Required]
 		public string FromFieldKey { get; set; }
+		[System.ComponentModel.DataAnnotations.Required]
 		public string ToFieldKey { get; set; }
 	}
 

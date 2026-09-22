@@ -1,0 +1,11 @@
+@model Resgrid.Web.Helpers.JsonInputHelp
+@inject IStringLocalizer<Resgrid.Localization.Common> jsonStrings
+<div class="json-input-help">
+    <p class="help-block">@jsonStrings["JsonInputHelp"] @if (Model.Optional) { @jsonStrings["JsonInputOptional"] }</p>
+    <strong>@jsonStrings["JsonInputExample"] — @Model.Field</strong>
+    <pre style="max-height:240px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere"><code>@Model.Example</code></pre>
+    <details>
+        <summary>@jsonStrings["JsonInputSchema"] — @Model.Field</summary>
+        <pre style="max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere"><code>@Model.Schema</code></pre>
+    </details>
+</div>

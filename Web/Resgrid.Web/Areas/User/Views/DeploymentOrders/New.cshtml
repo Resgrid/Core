@@ -7,10 +7,10 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-8">
-		<h2>@localizer["NewDeployment"] <span class="label label-warning">@localizer["PreviewPack"]</span></h2>
+		<h2>@localizer["NewDeployment"]</h2>
 		<ol class="breadcrumb">
 			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
-			<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
+			<li><a asp-controller="DeploymentOrders" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
 			<li class="active"><strong>@localizer["NewDeployment"]</strong></li>
 		</ol>
 	</div>
@@ -18,9 +18,10 @@
 
 <div class="wrapper wrapper-content">
 	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
-	<div class="alert alert-info">@localizer["DeploymentPreviewStatement"]</div>
-	<form class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="RecordDeployments" asp-action="New" asp-route-area="User">
+	<div class="alert alert-info">@localizer["DeploymentsIntro"]</div>
+	<form class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="DeploymentOrders" asp-action="New" asp-route-area="User">
 		@Html.AntiForgeryToken()
+        <input type="hidden" asp-for="IdempotencyKey" />
 		<div class="row">
 			<div class="col-md-6">
 				<div class="ibox">
@@ -58,7 +59,7 @@
 		</div>
 		<div class="ibox"><div class="ibox-content">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @localizer["DeploymentCreate"]</button>
-			<a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+			<a class="btn btn-default" asp-controller="DeploymentOrders" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
 		</div></div>
 	</form>
 </div>

@@ -27,13 +27,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsInvestigationsService _investigations;
 		private readonly IRecordsOccupancyService _occupancies;
 		private readonly IUserProfileService _profiles;
+		private readonly ICallsService _calls;
+		private readonly IRecordsAuthorizationService _authorization;
 
 		public RecordInvestigationsController(IRecordsInvestigationsService investigations, IRecordsOccupancyService occupancies, IUserProfileService profiles,
-			IRecordsCutoverService cutover, IFeatureToggleService featureToggles, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer) : base(cutover, featureToggles, localizer)
+			IRecordsCutoverService cutover, IFeatureToggleService featureToggles, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
+			ICallsService calls, IRecordsAuthorizationService authorization) : base(cutover, featureToggles, localizer)
 		{
 			_investigations = investigations;
 			_occupancies = occupancies;
 			_profiles = profiles;
+			_calls = calls;
+			_authorization = authorization;
 		}
 
 		private const string Flag = FeatureFlagKeys.RecordsInvestigations;
@@ -79,6 +84,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Open(RecordInvestigationOpenView model, CancellationToken cancellationToken)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
+			if (model.CallId.HasValue)
+			{
+				if (!ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
+				var call = await _calls.GetCallByIdAsync(model.CallId.Value);
+				if (call == null || call.IsDeleted || call.DepartmentId != DepartmentId || !await _authorization.CanReadSourceCallAsync(UserId, DepartmentId, call))
+					ModelState.AddModelError(nameof(model.CallId), Localizer["CallPickerUnavailable"]);
+			}
+			if (!ModelState.IsValid)
+			{
+				Prepare(model);
+				await PopulateOccupanciesAsync(model);
+				return View(model);
+			}
 			try
 			{
 				var opened = await _investigations.OpenAsync(DepartmentId, UserId, model.Title, string.IsNullOrWhiteSpace(model.OccupancyId) ? null : model.OccupancyId, model.CallId, model.IncidentSummary, cancellationToken);

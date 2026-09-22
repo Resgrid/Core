@@ -1,29 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Records
 {
-	/// <summary>Hydrants and other water sources (RMS plan section 4.3, RMS-5): flow/test history, maintenance, in/out-of-service state, CSV import and the response-map layer.</summary>
+	/// <summary>Hydrants and other water sources (RMS plan section 4.3, RMS-5): flow/test history, maintenance, in/out-of-service state, JSON/CSV import and the response-map layer.</summary>
 	public class RecordsHydrantsService : IRecordsHydrantsService
 	{
 		public const int TestIntervalMonths = 12;
+		/// <summary>Import rows per batch: one number lookup and one transaction each (matches the repository's lookup chunk).</summary>
+		public const int ImportBatchSize = 1000;
 
 		private readonly RecordsPreventionGate _gate;
 		private readonly IRmsHydrantsRepository _hydrants;
 		private readonly IRmsHydrantFlowTestsRepository _flowTests;
 		private readonly IRmsHydrantMaintenancesRepository _maintenance;
 		private readonly IRmsPreventionAttachmentsRepository _attachments;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public RecordsHydrantsService(RecordsPreventionGate gate, IRmsHydrantsRepository hydrants, IRmsHydrantFlowTestsRepository flowTests, IRmsHydrantMaintenancesRepository maintenance, IRmsPreventionAttachmentsRepository attachments)
+		public RecordsHydrantsService(RecordsPreventionGate gate, IRmsHydrantsRepository hydrants, IRmsHydrantFlowTestsRepository flowTests, IRmsHydrantMaintenancesRepository maintenance, IRmsPreventionAttachmentsRepository attachments,
+			IUnitOfWork unitOfWork)
 		{
-			_gate = gate; _hydrants = hydrants; _flowTests = flowTests; _maintenance = maintenance; _attachments = attachments;
+			_gate = gate; _hydrants = hydrants; _flowTests = flowTests; _maintenance = maintenance; _attachments = attachments; _unitOfWork = unitOfWork;
 		}
 
 		public Task<bool> IsModuleEnabledAsync(int departmentId) => _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Hydrants);
@@ -60,12 +64,16 @@ namespace Resgrid.Services.Records
 			return entity;
 		}
 
-		private async Task<RmsHydrant> UpsertAsync(int departmentId, string userId, RmsHydrant input, string source, CancellationToken cancellationToken)
+		/// <param name="byNumber">Import batches pass the batch lookup (<see cref="IRmsHydrantsRepository.GetByNumbersAsync"/>, keyed by the
+		/// normalized number); null falls back to the single-row lookup.</param>
+		private async Task<RmsHydrant> UpsertAsync(int departmentId, string userId, RmsHydrant input, string source, CancellationToken cancellationToken, IReadOnlyDictionary<string, RmsHydrant> byNumber = null)
 		{
 			var now = DateTime.UtcNow;
 			var number = RecordsPreventionGate.Require(input.HydrantNumber, 64, "A hydrant needs a number.");
 			if (input.Latitude < -90 || input.Latitude > 90 || input.Longitude < -180 || input.Longitude > 180) throw new ArgumentException("Hydrant coordinates are out of range.");
-			var existing = string.IsNullOrWhiteSpace(input.RmsHydrantId) ? await _hydrants.GetByNumberAsync(departmentId, number) : await _hydrants.GetByIdForDepartmentAsync(departmentId, input.RmsHydrantId);
+			var existing = !string.IsNullOrWhiteSpace(input.RmsHydrantId) ? await _hydrants.GetByIdForDepartmentAsync(departmentId, input.RmsHydrantId)
+				: byNumber != null ? (byNumber.TryGetValue(number, out var match) ? match : null)
+				: await _hydrants.GetByNumberAsync(departmentId, number);
 			if (existing != null && existing.DeletedOn != null) existing = null;
 			var entity = existing ?? new RmsHydrant { RmsHydrantId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), InService = true, CreatedOn = now, CreatedByUserId = userId, RowVersion = 0, Source = source };
 			if (existing != null && !string.Equals(existing.HydrantNumber, number, StringComparison.OrdinalIgnoreCase))
@@ -75,7 +83,7 @@ namespace Resgrid.Services.Records
 			}
 			entity.HydrantNumber = number; entity.Type = input.Type == 0 ? (int)RmsHydrantType.DryBarrel : input.Type; entity.Latitude = input.Latitude; entity.Longitude = input.Longitude;
 			entity.AddressText = RecordsPreventionGate.Trim(input.AddressText, 500); entity.OwnerKind = input.OwnerKind == 0 ? (int)RmsHydrantOwnerKind.Municipal : input.OwnerKind; entity.OwnerName = RecordsPreventionGate.Trim(input.OwnerName, 200);
-			entity.MainSizeInches = input.MainSizeInches; entity.Notes = RecordsPreventionGate.Trim(input.Notes, 4000); entity.PoiId = input.PoiId;
+			entity.MainSizeInches = input.MainSizeInches; if (source == "manual") { entity.Notes = RecordsPreventionGate.Trim(input.Notes, 4000); entity.PoiId = input.PoiId; }
 			if (input.FlowGpm.HasValue) { entity.FlowGpm = input.FlowGpm; entity.FlowClass = (int)HydrantFlowCalculator.Classify(input.FlowGpm); }
 			if (input.StaticPressurePsi.HasValue) entity.StaticPressurePsi = input.StaticPressurePsi;
 			if (input.ResidualPressurePsi.HasValue) entity.ResidualPressurePsi = input.ResidualPressurePsi;
@@ -154,66 +162,88 @@ namespace Resgrid.Services.Records
 			return row;
 		}
 
-		public async Task<HydrantImportResult> ImportCsvAsync(int departmentId, string userId, string csv, CancellationToken cancellationToken = default)
+		public Task<HydrantImportResult> ImportCsvAsync(int departmentId, string userId, string csv, CancellationToken cancellationToken = default)
+			=> ImportAsync(departmentId, userId, csv, "csv", cancellationToken);
+
+		public async Task<HydrantImportResult> ImportAsync(int departmentId, string userId, string content, string format, CancellationToken cancellationToken = default)
 		{
 			await RequireAdminAsync(departmentId, userId);
-			if (string.IsNullOrWhiteSpace(csv)) throw new ArgumentException("The import file is empty.");
-			var result = new HydrantImportResult();
-			var lines = csv.Split('\n').Select(l => l.TrimEnd('\r')).Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
-			if (lines.Count == 0) return result;
-			var header = RecordsInspectionsService.CsvSplit(lines[0]).Select(h => h.Trim().ToLowerInvariant().Replace(" ", "_")).ToList();
-			var hasHeader = header.Contains("latitude") || header.Contains("lat") || header.Contains("number") || header.Contains("hydrant_number");
-			int Index(params string[] names) { foreach (var n in names) { var i = header.IndexOf(n); if (i >= 0) return i; } return -1; }
-			var iNumber = hasHeader ? Index("hydrant_number", "number", "id") : 0;
-			var iLat = hasHeader ? Index("latitude", "lat") : 1;
-			var iLon = hasHeader ? Index("longitude", "lon", "lng") : 2;
-			var iType = hasHeader ? Index("type") : 3;
-			var iAddress = hasHeader ? Index("address") : 4;
-			var iMain = hasHeader ? Index("main_size", "main_size_inches", "main") : 5;
-			var iFlow = hasHeader ? Index("flow_gpm", "flow") : 6;
-			var iOwner = hasHeader ? Index("owner", "owner_name") : 7;
-			if (iNumber < 0 || iLat < 0 || iLon < 0) throw new ArgumentException("The CSV needs hydrant number, latitude and longitude columns.");
+			var batch = HydrantImportParser.Parse(content, format);
+			var result = batch.Result;
+			if (result.ValidationFailed) return result;
 			var existingNumbers = ((await _hydrants.GetAllLiveAsync(departmentId)) ?? Enumerable.Empty<RmsHydrant>()).Select(h => h.HydrantNumber).ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-			for (var lineNo = hasHeader ? 1 : 0; lineNo < lines.Count && result.RowsRead < 20000; lineNo++)
+			var source = format.ToLowerInvariant() + "-import";
+			// Each batch is one number lookup plus one transaction instead of a lookup and an autocommitted write per row. A batch that
+			// fails is rolled back and replayed through the original row-by-row path, so the row the import stops at, the partial
+			// counts and the failure message are exactly those of a row-by-row import.
+			foreach (var chunk in batch.Rows.Chunk(ImportBatchSize))
 			{
-				var cells = RecordsInspectionsService.CsvSplit(lines[lineNo]);
-				string Cell(int i) => i >= 0 && i < cells.Count ? cells[i].Trim() : null;
-				var row = new HydrantImportRow { Line = lineNo + 1, HydrantNumber = Cell(iNumber), Type = Cell(iType), Address = Cell(iAddress), MainSize = Cell(iMain), FlowGpm = Cell(iFlow), Owner = Cell(iOwner) };
-				result.RowsRead++;
-				if (string.IsNullOrWhiteSpace(row.HydrantNumber)) { row.Error = "Missing hydrant number"; result.Rejected.Add(row); continue; }
-				if (!decimal.TryParse(Cell(iLat), NumberStyles.Float, CultureInfo.InvariantCulture, out var lat) || !decimal.TryParse(Cell(iLon), NumberStyles.Float, CultureInfo.InvariantCulture, out var lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180)
-				{ row.Error = "Invalid coordinates"; result.Rejected.Add(row); continue; }
-				row.Latitude = lat; row.Longitude = lon;
-				var input = new RmsHydrant
+				if (await TryImportBatchAsync(departmentId, userId, chunk, source, cancellationToken))
 				{
-					HydrantNumber = row.HydrantNumber, Latitude = lat, Longitude = lon, AddressText = row.Address, OwnerName = row.Owner, Type = (int)ParseType(row.Type),
-					MainSizeInches = decimal.TryParse(row.MainSize, NumberStyles.Float, CultureInfo.InvariantCulture, out var main) ? main : (decimal?)null,
-					FlowGpm = int.TryParse(row.FlowGpm, out var flow) ? flow : (int?)null,
-					OwnerKind = string.IsNullOrWhiteSpace(row.Owner) ? (int)RmsHydrantOwnerKind.Municipal : (int)RmsHydrantOwnerKind.Other
-				};
-				var existed = existingNumbers.Contains(row.HydrantNumber);
-				try
-				{
-					await UpsertAsync(departmentId, userId, input, "csv-import", cancellationToken);
-					if (existed) result.Updated++; else { result.Created++; existingNumbers.Add(row.HydrantNumber); }
+					foreach (var item in chunk)
+						if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+					continue;
 				}
-				catch (ArgumentException ex) { row.Error = ex.Message; result.Rejected.Add(row); }
+				var stopped = false;
+				foreach (var item in chunk)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					try
+					{
+						await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken);
+						if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+					}
+					catch (OperationCanceledException) { throw; }
+					catch (Exception ex)
+					{
+						Resgrid.Framework.Logging.LogException(ex, "Hydrant import save failed");
+						result.FailureMessage = $"Import stopped at row {item.Row.Line} ({item.Row.HydrantNumber}). {result.Created} created and {result.Updated} updated before the failure. Check the hydrant list, then retry the file; matching numbers are updated. If the issue continues, contact your administrator.";
+						stopped = true;
+						break;
+					}
+				}
+				if (stopped) break;
 			}
-			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Admin, "Hydrants imported", departmentId.ToString(), new { result.RowsRead, result.Created, result.Updated, rejected = result.Rejected.Count }, cancellationToken: cancellationToken);
+			try
+			{
+				await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Admin, "Hydrants imported", departmentId.ToString(), new { result.RowsRead, result.Created, result.Updated, result.FailureMessage }, cancellationToken: cancellationToken);
+			}
+			catch (OperationCanceledException) { throw; }
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, "Hydrant import audit failed");
+				result.FailureMessage = (result.FailureMessage ?? "Hydrant saves completed.") + " The import activity could not be recorded. Review the saved hydrants and contact your administrator.";
+			}
 			return result;
 		}
 
-		private static RmsHydrantType ParseType(string value)
+		/// <summary>Writes one import batch in a single transaction. False (rolled back) when any row fails; cancellation rolls back and rethrows.</summary>
+		private async Task<bool> TryImportBatchAsync(int departmentId, string userId, (HydrantImportRow Row, RmsHydrant Hydrant)[] chunk, string source, CancellationToken cancellationToken)
 		{
-			if (string.IsNullOrWhiteSpace(value)) return RmsHydrantType.DryBarrel;
-			var v = value.Trim().ToLowerInvariant().Replace(" ", "").Replace("-", "").Replace("_", "");
-			if (v.StartsWith("dry")) return RmsHydrantType.DryBarrel;
-			if (v.StartsWith("wet")) return RmsHydrantType.WetBarrel;
-			if (v.Contains("standpipe")) return RmsHydrantType.Standpipe;
-			if (v.Contains("cistern") || v.Contains("tank")) return RmsHydrantType.Cistern;
-			if (v.Contains("draft") || v.Contains("pond") || v.Contains("lake") || v.Contains("river")) return RmsHydrantType.DraftingSite;
-			return RmsHydrantType.Other;
+			// Inside an ambient transaction a failed batch could not be rolled back on its own to replay; use the row-by-row path.
+			if (_unitOfWork == null || _unitOfWork.Transaction != null) return false;
+			try
+			{
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+				// Keys are the normalized numbers UpsertAsync looks up; a row with an invalid number has none and fails in UpsertAsync.
+				var numbers = chunk.Where(i => string.IsNullOrWhiteSpace(i.Hydrant.RmsHydrantId) && !string.IsNullOrWhiteSpace(i.Hydrant.HydrantNumber))
+					.Select(i => i.Hydrant.HydrantNumber.Trim()).ToList();
+				var byNumber = await _hydrants.GetByNumbersAsync(departmentId, numbers);
+				foreach (var item in chunk)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken, byNumber);
+				}
+				_unitOfWork.CommitChanges();
+				return true;
+			}
+			catch (OperationCanceledException) { _unitOfWork.DiscardChanges(); throw; }
+			catch (Exception ex)
+			{
+				_unitOfWork.DiscardChanges();
+				Resgrid.Framework.Logging.LogError($"Hydrant import batch rolled back and replayed row by row ({ex.GetType().Name}).");
+				return false;
+			}
 		}
 
 		public async Task<List<HydrantMapPoint>> GetMapLayerAsync(int departmentId, string userId, decimal? minLat, decimal? maxLat, decimal? minLon, decimal? maxLon)
@@ -222,7 +252,7 @@ namespace Resgrid.Services.Records
 			IEnumerable<RmsHydrant> rows = minLat.HasValue && maxLat.HasValue && minLon.HasValue && maxLon.HasValue
 				? await _hydrants.GetInBoundsAsync(departmentId, Math.Min(minLat.Value, maxLat.Value), Math.Max(minLat.Value, maxLat.Value), Math.Min(minLon.Value, maxLon.Value), Math.Max(minLon.Value, maxLon.Value), 5000)
 				: await _hydrants.GetAllLiveAsync(departmentId);
-			return (rows ?? Enumerable.Empty<RmsHydrant>()).Select(h => new HydrantMapPoint { HydrantId = h.RmsHydrantId, HydrantNumber = h.HydrantNumber, Type = h.Type, Latitude = h.Latitude, Longitude = h.Longitude, FlowClass = h.FlowClass, FlowGpm = h.FlowGpm, InService = h.InService, MainSizeInches = h.MainSizeInches }).ToList();
+			return (rows ?? Enumerable.Empty<RmsHydrant>()).Select(h => new HydrantMapPoint { HydrantId = h.RmsHydrantId, PoiId = h.PoiId, HydrantNumber = h.HydrantNumber, Type = h.Type, Latitude = h.Latitude, Longitude = h.Longitude, FlowClass = h.FlowClass, FlowGpm = h.FlowGpm, InService = h.InService, MainSizeInches = h.MainSizeInches }).ToList();
 		}
 
 		public async Task<List<RmsHydrant>> GetNearestAsync(int departmentId, decimal latitude, decimal longitude, int take, double maxMeters)

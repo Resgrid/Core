@@ -55,31 +55,19 @@
 
 			<p class="text-muted">@localizer["IncidentReportsIntro"]</p>
 
-			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord() && ClaimsAuthorizationHelper.CanViewCalls())
 			{
 				<div class="ibox">
 					<div class="ibox-title"><h5><i class="fa fa-phone"></i> @localizer["StartFromCall"]</h5></div>
 					<div class="ibox-content">
-						@if (Model.ActiveCalls.Count == 0)
-						{
-							<p class="text-muted">@localizer["NoActiveCalls"]</p>
-						}
-						else
-						{
-							<form class="form-inline" method="post" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User">
-								@Html.AntiForgeryToken()
-								<div class="form-group">
-									<label class="sr-only" for="callId">@localizer["SelectCall"]</label>
-									<select class="form-control" name="callId" id="callId" style="min-width:320px">
-										@foreach (var c in Model.ActiveCalls)
-										{
-											<option value="@c.Value">@c.Text</option>
-										}
-									</select>
-								</div>
-								<button type="submit" class="btn btn-success"><i class="icon-plus"></i> @localizer["StartIncidentReport"]</button>
-							</form>
-						}
+						<form method="post" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<div class="form-group">
+								<label for="CallId">@localizer["SelectCall"]</label>
+								<partial name="_RecordCallPicker" model="Model.SelectedCallId" view-data='new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["CallRequired"] = true }' />
+							</div>
+							<button type="submit" class="btn btn-success"><i class="icon-plus"></i> @localizer["StartIncidentReport"]</button>
+						</form>
 					</div>
 				</div>
 			}
@@ -163,3 +151,6 @@
 		</div>
 	</div>
 </div>
+@section Scripts {
+	<script src="~/js/record-call-picker.js" asp-append-version="true"></script>
+}

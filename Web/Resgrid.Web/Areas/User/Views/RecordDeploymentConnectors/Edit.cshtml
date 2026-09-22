@@ -26,7 +26,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-8">
-		<h2>@title <span class="label label-warning">@localizer["PreviewPack"]</span>
+		<h2>@title
 			@if (c != null)
 			{
 				if (c.IsEnabled) { <span class="label label-primary">@localizer["ConnectorEnabled"]</span> } else { <span class="label label-default">@localizer["ConnectorDisabled"]</span> }
@@ -35,7 +35,7 @@
 		</h2>
 		<ol class="breadcrumb">
 			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
-			<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
+			<li><a asp-controller="DeploymentOrders" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
 			<li><a asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User">@localizer["Connectors"]</a></li>
 			<li class="active"><strong>@title</strong></li>
 		</ol>
@@ -128,7 +128,7 @@
 								<tbody>
 									@foreach (var item in Model.Reconciliation)
 									{
-										<tr><td><a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@item.OrderId">@item.OrderNumber</a></td><td>@item.RequestNumber</td><td>@Kind(item.Kind)</td><td><code>@item.SourceStatus</code></td><td><code>@item.LocalStatus</code></td></tr>
+										<tr><td><a asp-controller="DeploymentOrders" asp-action="Details" asp-route-area="User" asp-route-id="@item.OrderId">@item.OrderNumber</a></td><td>@item.RequestNumber</td><td>@Kind(item.Kind)</td><td><code>@item.SourceStatus</code></td><td><code>@item.LocalStatus</code></td></tr>
 									}
 								</tbody>
 							</table>

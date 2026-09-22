@@ -83,4 +83,34 @@
   <data name="ValidationDuplicateMachineNames" xml:space="preserve">
     <value>Duplicate machine name(s): {0}. Each machine name must be unique within this entity type.</value>
   </data>
+  <data name="RecordCustomFieldsTitle" xml:space="preserve">
+    <value>Campos personalizados de registros</value>
+  </data>
+  <data name="RecordCustomFieldsIntro" xml:space="preserve">
+    <value>Elija el tipo de registro cuyo formulario desea ampliar.</value>
+  </data>
+  <data name="RecordTypeRun" xml:space="preserve">
+    <value>Intervención</value>
+  </data>
+  <data name="RecordTypeTraining" xml:space="preserve">
+    <value>Capacitación</value>
+  </data>
+  <data name="RecordTypeWork" xml:space="preserve">
+    <value>Trabajo</value>
+  </data>
+  <data name="RecordTypeMeeting" xml:space="preserve">
+    <value>Reunión</value>
+  </data>
+  <data name="RecordTypeCoroner" xml:space="preserve">
+    <value>Forense</value>
+  </data>
+  <data name="RecordTypeCallback" xml:space="preserve">
+    <value>Rellamada</value>
+  </data>
+  <data name="RecordTypeUnitActivity" xml:space="preserve">
+    <value>Actividad de la unidad</value>
+  </data>
+  <data name="RecordTypeNerisIncident" xml:space="preserve">
+    <value>Informe de incidente NERIS</value>
+  </data>
 </root>

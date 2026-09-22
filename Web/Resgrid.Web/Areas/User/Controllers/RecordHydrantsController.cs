@@ -1,5 +1,9 @@
 using System;
 using System.Linq;
+using System.IO;
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using Resgrid.Services.Records;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +16,7 @@ using Resgrid.Web.Areas.User.Models.Records;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
-	/// <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): list with the map layer, editor, flow tests, maintenance, service state and CSV import.</summary>
+	/// <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): list with the map layer, editor, flow tests, maintenance, service state and JSON/CSV import.</summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_View)]
 	public class RecordHydrantsController : RecordsPreventionMvcControllerBase
@@ -36,7 +40,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var model = Prepare(new RecordHydrantsIndexView { Hydrants = (await _hydrants.ListAsync(DepartmentId, UserId)).OrderBy(h => h.HydrantNumber).ToList() });
 				model.MapPoints = await _hydrants.GetMapLayerAsync(DepartmentId, UserId, null, null, null, null);
 				model.TestDue = await _hydrants.CountTestDueAsync(DepartmentId, DateTime.UtcNow);
-				if (TempData["HydrantImport"] is string json) model.ImportResult = Newtonsoft.Json.JsonConvert.DeserializeObject<HydrantImportResult>(json);
 				return View(model);
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }
@@ -146,19 +149,82 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction(nameof(Details), new { id });
 		}
 
-		[HttpPost, ValidateAntiForgeryToken]
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
-		public async Task<IActionResult> Import(string csv, CancellationToken cancellationToken)
+		public async Task<IActionResult> Import()
 		{
-			if (!await ModuleOnAsync(Flag)) return NotFound();
+			if (!await _hydrants.IsModuleEnabledAsync(DepartmentId)) return NotFound();
+			return View(Prepare(new RecordHydrantImportView()));
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<IActionResult> ImportExample(string format = "json")
+		{
+			if (!await _hydrants.IsModuleEnabledAsync(DepartmentId)) return NotFound();
+			if (format != "json" && format != "csv") return BadRequest();
+			return File(Encoding.UTF8.GetBytes(format == "json" ? HydrantImportParser.JsonExample : HydrantImportParser.CsvExample),
+				format == "json" ? "application/json" : "text/csv", "hydrants-example." + format);
+		}
+
+		[HttpPost, ValidateAntiForgeryToken]
+		[RequestSizeLimit(24 * 1024 * 1024)]
+		[RequestFormLimits(MultipartBodyLengthLimit = 24 * 1024 * 1024, ValueLengthLimit = 12 * 1024 * 1024)]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<IActionResult> Import([Bind("Content,Format")] RecordHydrantImportView model, IFormFile file, CancellationToken cancellationToken)
+		{
+			if (!await _hydrants.IsModuleEnabledAsync(DepartmentId)) return NotFound();
+			// Result and FileName describe this attempt; never trust posted result fields.
+			model.Result = null;
+			model.FileName = null;
+			Prepare(model);
+			if (!ModelState.IsValid) return View(model);
 			try
 			{
-				var result = await _hydrants.ImportCsvAsync(DepartmentId, UserId, csv, cancellationToken);
-				TempData["HydrantImport"] = Newtonsoft.Json.JsonConvert.SerializeObject(result);
-				Notify("ImportResult", result.RowsRead, result.Created, result.Updated, result.Rejected.Count);
+				var content = model.Content;
+				if (file != null)
+				{
+					if (!string.IsNullOrWhiteSpace(content)) throw new ArgumentException("Choose a file or paste data, not both. Clear the pasted text to use the file.");
+					if (file.Length == 0) throw new ArgumentException("The selected file is empty. Choose a file containing hydrants.");
+					if (file.Length > HydrantImportParser.MaximumBytes) throw new ArgumentException("The file exceeds 10 MB. Split it into smaller files and try again.");
+					var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+					if (extension != ".json" && extension != ".csv") throw new ArgumentException("Choose a .json or .csv file using one of the downloadable examples.");
+					model.Format = extension.Substring(1);
+					model.FileName = Path.GetFileName(file.FileName);
+					using var reader = new StreamReader(file.OpenReadStream(), new UTF8Encoding(false, true), detectEncodingFromByteOrderMarks: false);
+					content = await reader.ReadToEndAsync(cancellationToken);
+				}
+				model.Result = await _hydrants.ImportAsync(DepartmentId, UserId, content, model.Format, cancellationToken);
+				if (!model.Result.ValidationFailed && model.Result.FailureMessage == null)
+				{
+					model.Content = null;
+					ModelState.Clear();
+				}
 			}
-			catch (Exception ex) { var f = Fail(ex); if (f != null) return f; }
-			return RedirectToAction(nameof(Index));
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordsModuleDisabledException) { return NotFound(); }
+			catch (OperationCanceledException) { throw; }
+			catch (DecoderFallbackException) { ModelState.AddModelError(string.Empty, "The file could not be read as UTF-8 text. Save it as UTF-8 JSON or CSV and upload it again."); }
+			catch (ArgumentException ex) { ModelState.AddModelError(string.Empty, ex.Message); }
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, "Hydrant import failed");
+				ModelState.AddModelError(string.Empty, "The import could not finish. Review the hydrant list, then retry the file; matching numbers are updated. If this continues, contact your administrator.");
+			}
+			return View(model);
+		}
+
+		[HttpGet]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> MapLayer()
+		{
+			try
+			{
+				if (!await _hydrants.IsModuleEnabledAsync(DepartmentId)) return NotFound();
+				return Json(await _hydrants.GetMapLayerAsync(DepartmentId, UserId, null, null, null, null));
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordsModuleDisabledException) { return NotFound(); }
 		}
 	}
 }

@@ -659,4 +659,6 @@
   <data name="StepMovementAmountHint" xml:space="preserve"><value>الكمية والسبب. كلاهما يُدرج في القيد الذي يُنشأ.</value></data>
   <data name="StepReturnHint" xml:space="preserve"><value>حدّد الكمية المُعادة، وإلى أين ذهبت، وحالتها.</value></data>
   <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
+  <data name="M4SupplierHelp" xml:space="preserve"><value>هل يوجد مورّد غير مدرج؟ أضفه من صفحة المورّدين.</value></data>
+  <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>اختر عملة هذا الطلب. تستخدم الطلبات الجديدة عملة القسم افتراضيًا.</value></data>
 </root>

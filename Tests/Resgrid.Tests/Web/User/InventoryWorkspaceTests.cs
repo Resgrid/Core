@@ -15,6 +15,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Inventories;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Controllers;
 using Resgrid.Web.Areas.User.Models.Inventory;
@@ -60,7 +61,7 @@ namespace Resgrid.Tests.Web.User
 			_http.Request.Method = "GET";
 			var accessor = new HttpContextAccessor { HttpContext = _http }; _previousAccessor = ClaimsAuthorizationHelper._httpContextAccessor; ClaimsAuthorizationHelper._httpContextAccessor = accessor;
 			_controller = new InventoryController(_catalog.Object, Mock.Of<IInventoryStockService>(), Mock.Of<IInventoryTransferService>(), Mock.Of<IInventoryIssuanceService>(),
-				_migration.Object, _authorization.Object, new HttpProtectedGrantContext(accessor), _protection.Object, units.Object, groups.Object, departments.Object, strings.Object)
+				_migration.Object, _authorization.Object, new HttpProtectedGrantContext(accessor), _protection.Object, units.Object, groups.Object, departments.Object, Mock.Of<IWorkOrderMaintenanceRepository>(), strings.Object)
 			{ ControllerContext = new ControllerContext { HttpContext = _http } };
 		}
 

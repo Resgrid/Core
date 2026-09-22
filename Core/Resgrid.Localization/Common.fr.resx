@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -747,4 +747,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Effectifs et gestion</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Préparation opérationnelle</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Tableau de bord</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>Utilisez du JSON valide : texte entre guillemets doubles, nombres et true/false sans guillemets. Les dates utilisent le format ISO. Les noms suivent le schéma (sans distinction de casse). Les erreurs indiquent le champ ; les indices commencent à 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>Laissez vide pour utiliser une liste ou un objet vide.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>Exemple JSON</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>Schéma JSON (noms et types des champs)</value>
+  </data>
 </root>

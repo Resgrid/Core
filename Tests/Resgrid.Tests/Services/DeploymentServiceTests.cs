@@ -21,7 +21,7 @@ namespace Resgrid.Tests.Services
 {
 	/// <summary>Workforce &amp; Business Operations plan Phase C (deployment core): lifecycle, roster gates, external-order wrapping and events.</summary>
 	[TestFixture]
-	public class DeploymentServiceTests
+	public partial class DeploymentServiceTests
 	{
 		private const int DeptId = 7;
 		private const string Manager = "manager";

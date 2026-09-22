@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Макс. днів розгортання</value></data>
   <data name="MealCode" xml:space="preserve"><value>Код харчування</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Право на харчування</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>Вікна JSON за кодом прийому їжі, напр. [{"MealCode":"B","StartsBeforeMinutes":420}]; добові поза вікном лише попереджаються, не блокуються.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Додайте правило для кожного коду харчування (наприклад, B для сніданку). Введіть місцевий граничний час зміни; залиште час порожнім, якщо обмеження немає. Заявки поза цими межами показують попередження, але їх усе одно можна подати.</value></data>
   <data name="Missing" xml:space="preserve"><value>Відсутній</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Попереднє заповнення множником</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>База + чергування + множники ПН формують погодинні смуги; збережені значення лишаються явними сумами.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Надбавки не можуть бути від'ємними.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>Надбавка потребує назви.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Надбавку не знайдено.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Правил права на харчування немає. Додайте правило, щоб установити часові межі.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Додати правило харчування</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Видалити правило харчування</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Зміна починається не пізніше</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Зміна закінчується не раніше</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Введіть код харчування довжиною від 1 до 10 символів.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Кожен код харчування може мати лише одне правило права на харчування.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Введіть коректний час від 00:00 до 23:59.</value></data>
 </root>

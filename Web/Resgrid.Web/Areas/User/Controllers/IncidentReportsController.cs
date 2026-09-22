@@ -159,7 +159,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<IActionResult> Index(int? year, string state, int page = 1)
+		public async Task<IActionResult> Index(int? year, string state, int page = 1, int? callId = null)
 		{
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
@@ -205,15 +205,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Total = await _incidentReports.CountAsync(DepartmentId, query);
 			model.PersonnelNames = await PersonnelNamesAsync();
 
-			if (ClaimsAuthorizationHelper.CanCreateRecord() && ClaimsAuthorizationHelper.CanViewCalls())
-			{
-				var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>();
-				var readable = new List<Call>();
-				foreach (var call in calls)
-					if (await _recordsAuthorizationService.CanReadSourceCallAsync(UserId, DepartmentId, call)) readable.Add(call);
-				model.ActiveCalls = readable.OrderByDescending(c => c.LoggedOn)
-					.Select(c => new SelectListItem { Value = c.CallId.ToString(), Text = $"{c.Number} - {c.Name}" }).ToList();
-			}
+			model.SelectedCallId = callId;
 
 			return View(model);
 		}
@@ -227,6 +219,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.RecordsUsable)
 				return NotFound();
+			if (!ModelState.IsValid || callId <= 0)
+			{
+				TempData["RecordsError"] = _localizer["CallPickerUnavailable"].Value;
+				return RedirectToAction("Index");
+			}
 
 			try
 			{
@@ -239,7 +236,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (ArgumentException ex)
 			{
 				TempData["RecordsError"] = ex.Message;
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", new { callId });
 			}
 		}
 

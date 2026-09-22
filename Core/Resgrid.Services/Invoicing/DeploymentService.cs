@@ -273,6 +273,22 @@ namespace Resgrid.Services.Invoicing
 			if (oldStatus == status) { await LoadRosterAsync(deployment); return deployment; }
 			if (!IsValidTransition(oldStatus, status)) throw new InvalidOperationException("deployments_status_transition_invalid");
 
+			// An agency release is not a return home. Completing the shared workspace closes its source order
+			// through the same audited lifecycle, which refuses outstanding resources and stale versions.
+			// The Records authorization stays the caller's: a deployment manager without Records rights over the order
+			// cannot close it, and is told so rather than failing the request.
+			if (status == DeploymentStatuses.Completed && !string.IsNullOrWhiteSpace(deployment.RmsExternalOrderId))
+			{
+				try
+				{
+					var source = await _recordDeployments.GetAsync(departmentId, userId, deployment.RmsExternalOrderId);
+					if (source?.Order == null || !source.AllReturned) throw new InvalidOperationException("deployments_resources_not_returned");
+					if (source.Order.Status != (int)RmsExternalOrderStatus.ClosedOut)
+						await _recordDeployments.CloseoutAsync(departmentId, userId, source.Order.RmsExternalOrderId, source.Order.RowVersion, null, cancellationToken);
+				}
+				catch (UnauthorizedAccessException) { throw new InvalidOperationException("deployments_external_order_closeout_not_authorized"); }
+			}
+
 			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.DeploymentStatusChanged, ipAddress, userAgent);
 			audit.Before = Snapshot(deployment);
 			deployment.Status = (int)status;

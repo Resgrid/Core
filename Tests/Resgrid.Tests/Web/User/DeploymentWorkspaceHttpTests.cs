@@ -68,6 +68,10 @@ namespace Resgrid.Tests.Web.User
             _orders.Setup(x => x.CreateFromExternalOrderAsync(77, It.IsAny<string>(), It.IsAny<RecordDeploymentCreateInput>(), It.IsAny<CancellationToken>())).ReturnsAsync(_order);
             _orders.Setup(x => x.TransitionFillAsync(77, It.IsAny<string>(), "fill", It.IsAny<RecordDeploymentFillTransitionInput>(), It.IsAny<CancellationToken>())).ReturnsAsync(_order.Fills[0]);
             _time.Setup(x => x.GetTimeReportsAsync("deployment", 77)).ReturnsAsync(new List<DeploymentTimeReport>());
+            _time.Setup(x => x.GetTimeReportsWithEntriesAsync("deployment", 77)).ReturnsAsync(new List<DeploymentTimeReport>
+            {
+                new DeploymentTimeReport { DeploymentTimeReportId = "time", ReportNumber = 41, Entries = new List<DeploymentTimeEntry> { new DeploymentTimeEntry { MileageKm = 123.5m } } }
+            });
             _time.Setup(x => x.GetExpensesAsync("deployment", 77)).ReturnsAsync(new List<DeploymentExpense>());
             _time.Setup(x => x.ExportTimeEntriesCsvAsync("deployment", 77)).ReturnsAsync("Subject,Hours\r\nMember,8\r\n");
         }
@@ -92,6 +96,22 @@ namespace Resgrid.Tests.Web.User
         }
 
         [Test]
+        public async Task Report_index_hides_linked_orders_without_reloading_their_deployment()
+        {
+            // The linked deployment returned by the order lookup already carries its roster; it is not loaded a second time.
+            _operations.Setup(x => x.GetDeploymentByExternalOrderIdAsync("order", 77)).ReturnsAsync(_deployment);
+            await WithServer(async client =>
+            {
+                SignIn(client, "member");
+                var html = await client.GetStringAsync("/User/RecordDeployments/Index");
+                html.Should().NotContain("Synthetic incident");
+                SignIn(client, "outsider");
+                (await client.GetStringAsync("/User/RecordDeployments/Index")).Should().Contain("Synthetic incident");
+            });
+            _operations.Verify(x => x.GetDeploymentByIdAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Test]
         public async Task Report_downloads_obey_membership_and_export_permission()
         {
             await WithServer(async client =>
@@ -102,7 +122,7 @@ namespace Resgrid.Tests.Web.User
                 SignIn(client, "member");
                 var json = await client.GetAsync("/User/RecordDeployments/Export?id=deployment");
                 json.StatusCode.Should().Be(HttpStatusCode.OK);
-                (await json.Content.ReadAsStringAsync()).Should().Contain("Synthetic deployment").And.NotContain("PRIVATE-NOTES");
+                (await json.Content.ReadAsStringAsync()).Should().Contain("Synthetic deployment").And.NotContain("PRIVATE-NOTES").And.Contain("41").And.Contain("123.5");
                 client.DefaultRequestHeaders.Add("Test-No-Export", "true");
                 (await client.GetAsync("/User/RecordDeployments/Export?id=deployment")).StatusCode.Should().Be(HttpStatusCode.Forbidden);
             });

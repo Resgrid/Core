@@ -48,9 +48,13 @@ namespace Resgrid.Web.Areas.User.Controllers
         private async Task<Deployment> AccessibleAsync(string id)
         {
             var deployment = await _deployments.GetDeploymentByIdAsync(id, DepartmentId);
-            return deployment != null && deployment.DepartmentId == DepartmentId && !deployment.IsDeleted &&
-                (CanViewAll || deployment.Personnel.Any(p => p.UserId == UserId)) ? deployment : null;
+            return IsAccessible(deployment) ? deployment : null;
         }
+
+        // Applied to an already-loaded deployment (it carries its roster) so a lookup by order does not load it twice.
+        private bool IsAccessible(Deployment deployment) =>
+            deployment != null && deployment.DepartmentId == DepartmentId && !deployment.IsDeleted &&
+            (CanViewAll || deployment.Personnel.Any(p => p.UserId == UserId));
 
         private async Task<Dictionary<string, string>> NamesAsync() =>
             (await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>())
@@ -78,7 +82,7 @@ namespace Resgrid.Web.Areas.User.Controllers
             foreach (var order in await _orders.ListAsync(DepartmentId, UserId, includeClosed))
             {
                 var linked = await _deployments.GetDeploymentByExternalOrderIdAsync(order.RmsExternalOrderId, DepartmentId);
-                if (linked == null || await AccessibleAsync(linked.DeploymentId) == null)
+                if (!IsAccessible(linked))
                     model.Orders.Add(order);
             }
             return View(model);
@@ -121,7 +125,7 @@ namespace Resgrid.Web.Areas.User.Controllers
                 {
                     Deployment = order, Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false),
                     PersonnelNames = await NamesAsync(), CanEdit = false,
-                    OperationalDeploymentId = linked != null && await AccessibleAsync(linked.DeploymentId) != null ? linked.DeploymentId : null
+                    OperationalDeploymentId = IsAccessible(linked) ? linked.DeploymentId : null
                 });
             }
             catch (UnauthorizedAccessException) { return Forbid(); }
@@ -194,14 +198,8 @@ namespace Resgrid.Web.Areas.User.Controllers
             var d = await AccessibleAsync(id);
             if (d == null) return NotFound();
             // Explicit projection excludes protected notes, document bytes and ORM metadata.
-            var reports = await _time.GetTimeReportsAsync(id, DepartmentId);
-            var time = new List<object>();
-            foreach (var summary in reports)
-            {
-                var report = await _time.GetTimeReportByIdAsync(summary.DeploymentTimeReportId, DepartmentId);
-                if (report != null) time.Add(new { report.ReportNumber, report.ReportDate, report.Status,
-                    Entries = report.Entries.Select(e => new { e.SubjectType, e.SubjectId, e.EntryType, e.StartTime, e.EndTime, e.Hours, e.MileageKm }) });
-            }
+            var time = (await _time.GetTimeReportsWithEntriesAsync(id, DepartmentId)).Select(report => new { report.ReportNumber, report.ReportDate, report.Status,
+                Entries = report.Entries.Select(e => new { e.SubjectType, e.SubjectId, e.EntryType, e.StartTime, e.EndTime, e.Hours, e.MileageKm }) }).ToList();
             var expenses = await _time.GetExpensesAsync(id, DepartmentId);
             var data = new
             {

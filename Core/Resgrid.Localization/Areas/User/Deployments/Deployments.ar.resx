@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>اختر طلبًا خارجيًا.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>هذا الطلب الخارجي لديه انتشار بالفعل.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>لم يتم العثور على الطلب الخارجي.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>ليس لديك صلاحية السجلات لإغلاق الطلب الخارجي لهذا الانتشار، لذا لا يمكن إكمال الانتشار.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>لم يتم العثور على الوحدة.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>هذه الوحدة موجودة بالفعل في التشكيل.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>الانتشار مكتمل أو ملغى وتشكيله مقفل.</value></data>

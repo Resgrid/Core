@@ -86,9 +86,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
+		// The hydrant overlay is optional: a failed module check must not take the map or POI import page down with it.
+		private async Task<bool> HydrantsAvailableAsync()
+		{
+			if (!User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View)) return false;
+			try { return await _hydrantsService.IsModuleEnabledAsync(DepartmentId); }
+			catch (OperationCanceledException) { throw; }
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Hydrant module state unavailable; hiding the hydrant layer");
+				return false;
+			}
+		}
+
 		public async Task<IActionResult> Index()
 		{
-			var model = new MapIndexView { HydrantsEnabled = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View) && await _hydrantsService.IsModuleEnabledAsync(DepartmentId) };
+			var model = new MapIndexView { HydrantsEnabled = await HydrantsAvailableAsync() };
 
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 			var center = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
@@ -350,7 +363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ImportPOIs(int poiTypeId)
 		{
-			var model = new ImportPOIsView { HydrantsEnabled = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View) && await _hydrantsService.IsModuleEnabledAsync(DepartmentId) };
+			var model = new ImportPOIsView { HydrantsEnabled = await HydrantsAvailableAsync() };
 			model.TypeId = poiTypeId;
 
 			return View(model);

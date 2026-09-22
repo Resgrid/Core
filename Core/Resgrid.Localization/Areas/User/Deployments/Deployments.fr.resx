@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Choisissez un ordre externe.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Cet ordre externe a déjà un déploiement.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>L'ordre externe est introuvable.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Vous n'avez pas l'autorisation Dossiers nécessaire pour clôturer l'ordre externe de ce déploiement ; il ne peut donc pas être terminé.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>L'unité est introuvable.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Cette unité est déjà dans l'effectif.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Le déploiement est terminé ou annulé et son effectif est verrouillé.</value></data>

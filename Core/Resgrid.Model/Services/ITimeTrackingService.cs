@@ -18,6 +18,8 @@ namespace Resgrid.Model.Services
 		/// <summary>Personnel hours across the deployment's non-void reports, read in one pass for the deployment page.</summary>
 		Task<decimal> GetPersonnelHoursAsync(string deploymentId, int departmentId);
 		Task<DeploymentTimeReport> GetTimeReportByIdAsync(string deploymentTimeReportId, int departmentId);
+		/// <summary>Every live report of the deployment with its entries, in two reads (report + entries per report would be N+1).</summary>
+		Task<List<DeploymentTimeReport>> GetTimeReportsWithEntriesAsync(string deploymentId, int departmentId);
 		Task<List<DeploymentTimeReport>> GetUnbilledApprovedReportsAsync(int departmentId, string deploymentId = null);
 
 		/// <summary>Allocates the next report number, copies the deployment's agency identifiers and prefills one Deployment entry per active roster subject (prior report's times when one exists).</summary>

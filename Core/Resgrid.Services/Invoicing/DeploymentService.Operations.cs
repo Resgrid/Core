@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Invoicing;
 
@@ -17,20 +18,33 @@ namespace Resgrid.Services.Invoicing
             if (source == null) throw new InvalidOperationException("deployments_external_order_not_found");
 
             // Only accepted, currently deployed resources become active roster entries. Historical entries stay intact.
+            // A stale row (unit gone, member left the department) is logged and skipped like the initial prefill, so it
+            // cannot hold back the later fills or the status reconciliation below.
             var seatable = source.Fills.Where(f => !f.DeletedOn.HasValue && f.Status >= (int)RmsDeploymentFillStatus.Accepted &&
                 f.Status <= (int)RmsDeploymentFillStatus.Assigned && f.Status != (int)RmsDeploymentFillStatus.Declined).ToList();
             foreach (var unitId in seatable.Where(f => f.AssignedUnitId.HasValue).Select(f => f.AssignedUnitId.Value).Distinct())
                 if (!deployment.Units.Any(u => u.UnitId == unitId && u.IsActive))
-                    await AddUnitAsync(deployment.DeploymentId, departmentId, unitId, null, null, userId, ipAddress, userAgent, cancellationToken);
+                {
+                    try { await AddUnitAsync(deployment.DeploymentId, departmentId, unitId, null, null, userId, ipAddress, userAgent, cancellationToken); }
+                    catch (InvalidOperationException ex) { Logging.LogError($"External order {orderId}: unit {unitId} not seated ({ex.Message})."); }
+                }
             deployment = await GetDeploymentByIdAsync(deployment.DeploymentId, departmentId);
             foreach (var fill in seatable.Where(f => !string.IsNullOrWhiteSpace(f.AssignedUserId)))
                 if (!deployment.Personnel.Any(p => p.IsActive && p.UserId == fill.AssignedUserId))
                 {
-                    await AddPersonnelAsync(deployment.DeploymentId, departmentId, new DeploymentPersonnelInput
+                    try
                     {
-                        UserId = fill.AssignedUserId, CertificationCode = fill.Position, RmsExternalOrderFillId = fill.RmsExternalOrderFillId,
-                        DeploymentUnitId = deployment.Units.FirstOrDefault(u => u.IsActive && u.UnitId == fill.AssignedUnitId)?.DeploymentUnitId
-                    }, userId, ipAddress, userAgent, cancellationToken);
+                        await AddPersonnelAsync(deployment.DeploymentId, departmentId, new DeploymentPersonnelInput
+                        {
+                            UserId = fill.AssignedUserId, CertificationCode = fill.Position, RmsExternalOrderFillId = fill.RmsExternalOrderFillId,
+                            DeploymentUnitId = deployment.Units.FirstOrDefault(u => u.IsActive && u.UnitId == fill.AssignedUnitId)?.DeploymentUnitId
+                        }, userId, ipAddress, userAgent, cancellationToken);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        Logging.LogError($"External order {orderId}: fill {fill.RmsExternalOrderFillId} not seated ({ex.Message}).");
+                        continue;
+                    }
                     deployment = await GetDeploymentByIdAsync(deployment.DeploymentId, departmentId);
                 }
 

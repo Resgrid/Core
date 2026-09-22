@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Records
@@ -13,16 +14,20 @@ namespace Resgrid.Services.Records
 	public class RecordsHydrantsService : IRecordsHydrantsService
 	{
 		public const int TestIntervalMonths = 12;
+		/// <summary>Import rows per batch: one number lookup and one transaction each (matches the repository's lookup chunk).</summary>
+		public const int ImportBatchSize = 1000;
 
 		private readonly RecordsPreventionGate _gate;
 		private readonly IRmsHydrantsRepository _hydrants;
 		private readonly IRmsHydrantFlowTestsRepository _flowTests;
 		private readonly IRmsHydrantMaintenancesRepository _maintenance;
 		private readonly IRmsPreventionAttachmentsRepository _attachments;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public RecordsHydrantsService(RecordsPreventionGate gate, IRmsHydrantsRepository hydrants, IRmsHydrantFlowTestsRepository flowTests, IRmsHydrantMaintenancesRepository maintenance, IRmsPreventionAttachmentsRepository attachments)
+		public RecordsHydrantsService(RecordsPreventionGate gate, IRmsHydrantsRepository hydrants, IRmsHydrantFlowTestsRepository flowTests, IRmsHydrantMaintenancesRepository maintenance, IRmsPreventionAttachmentsRepository attachments,
+			IUnitOfWork unitOfWork)
 		{
-			_gate = gate; _hydrants = hydrants; _flowTests = flowTests; _maintenance = maintenance; _attachments = attachments;
+			_gate = gate; _hydrants = hydrants; _flowTests = flowTests; _maintenance = maintenance; _attachments = attachments; _unitOfWork = unitOfWork;
 		}
 
 		public Task<bool> IsModuleEnabledAsync(int departmentId) => _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Hydrants);
@@ -59,12 +64,16 @@ namespace Resgrid.Services.Records
 			return entity;
 		}
 
-		private async Task<RmsHydrant> UpsertAsync(int departmentId, string userId, RmsHydrant input, string source, CancellationToken cancellationToken)
+		/// <param name="byNumber">Import batches pass the batch lookup (<see cref="IRmsHydrantsRepository.GetByNumbersAsync"/>, keyed by the
+		/// normalized number); null falls back to the single-row lookup.</param>
+		private async Task<RmsHydrant> UpsertAsync(int departmentId, string userId, RmsHydrant input, string source, CancellationToken cancellationToken, IReadOnlyDictionary<string, RmsHydrant> byNumber = null)
 		{
 			var now = DateTime.UtcNow;
 			var number = RecordsPreventionGate.Require(input.HydrantNumber, 64, "A hydrant needs a number.");
 			if (input.Latitude < -90 || input.Latitude > 90 || input.Longitude < -180 || input.Longitude > 180) throw new ArgumentException("Hydrant coordinates are out of range.");
-			var existing = string.IsNullOrWhiteSpace(input.RmsHydrantId) ? await _hydrants.GetByNumberAsync(departmentId, number) : await _hydrants.GetByIdForDepartmentAsync(departmentId, input.RmsHydrantId);
+			var existing = !string.IsNullOrWhiteSpace(input.RmsHydrantId) ? await _hydrants.GetByIdForDepartmentAsync(departmentId, input.RmsHydrantId)
+				: byNumber != null ? (byNumber.TryGetValue(number, out var match) ? match : null)
+				: await _hydrants.GetByNumberAsync(departmentId, number);
 			if (existing != null && existing.DeletedOn != null) existing = null;
 			var entity = existing ?? new RmsHydrant { RmsHydrantId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), InService = true, CreatedOn = now, CreatedByUserId = userId, RowVersion = 0, Source = source };
 			if (existing != null && !string.Equals(existing.HydrantNumber, number, StringComparison.OrdinalIgnoreCase))
@@ -163,21 +172,37 @@ namespace Resgrid.Services.Records
 			var result = batch.Result;
 			if (result.ValidationFailed) return result;
 			var existingNumbers = ((await _hydrants.GetAllLiveAsync(departmentId)) ?? Enumerable.Empty<RmsHydrant>()).Select(h => h.HydrantNumber).ToHashSet(StringComparer.OrdinalIgnoreCase);
-			foreach (var item in batch.Rows)
+			var source = format.ToLowerInvariant() + "-import";
+			// Each batch is one number lookup plus one transaction instead of a lookup and an autocommitted write per row. A batch that
+			// fails is rolled back and replayed through the original row-by-row path, so the row the import stops at, the partial
+			// counts and the failure message are exactly those of a row-by-row import.
+			foreach (var chunk in batch.Rows.Chunk(ImportBatchSize))
 			{
-				cancellationToken.ThrowIfCancellationRequested();
-				try
+				if (await TryImportBatchAsync(departmentId, userId, chunk, source, cancellationToken))
 				{
-					await UpsertAsync(departmentId, userId, item.Hydrant, format.ToLowerInvariant() + "-import", cancellationToken);
-					if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+					foreach (var item in chunk)
+						if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+					continue;
 				}
-				catch (OperationCanceledException) { throw; }
-				catch (Exception ex)
+				var stopped = false;
+				foreach (var item in chunk)
 				{
-					Resgrid.Framework.Logging.LogException(ex, "Hydrant import save failed");
-					result.FailureMessage = $"Import stopped at row {item.Row.Line} ({item.Row.HydrantNumber}). {result.Created} created and {result.Updated} updated before the failure. Check the hydrant list, then retry the file; matching numbers are updated. If the issue continues, contact your administrator.";
-					break;
+					cancellationToken.ThrowIfCancellationRequested();
+					try
+					{
+						await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken);
+						if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+					}
+					catch (OperationCanceledException) { throw; }
+					catch (Exception ex)
+					{
+						Resgrid.Framework.Logging.LogException(ex, "Hydrant import save failed");
+						result.FailureMessage = $"Import stopped at row {item.Row.Line} ({item.Row.HydrantNumber}). {result.Created} created and {result.Updated} updated before the failure. Check the hydrant list, then retry the file; matching numbers are updated. If the issue continues, contact your administrator.";
+						stopped = true;
+						break;
+					}
 				}
+				if (stopped) break;
 			}
 			try
 			{
@@ -190,6 +215,35 @@ namespace Resgrid.Services.Records
 				result.FailureMessage = (result.FailureMessage ?? "Hydrant saves completed.") + " The import activity could not be recorded. Review the saved hydrants and contact your administrator.";
 			}
 			return result;
+		}
+
+		/// <summary>Writes one import batch in a single transaction. False (rolled back) when any row fails; cancellation rolls back and rethrows.</summary>
+		private async Task<bool> TryImportBatchAsync(int departmentId, string userId, (HydrantImportRow Row, RmsHydrant Hydrant)[] chunk, string source, CancellationToken cancellationToken)
+		{
+			// Inside an ambient transaction a failed batch could not be rolled back on its own to replay; use the row-by-row path.
+			if (_unitOfWork == null || _unitOfWork.Transaction != null) return false;
+			try
+			{
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+				// Keys are the normalized numbers UpsertAsync looks up; a row with an invalid number has none and fails in UpsertAsync.
+				var numbers = chunk.Where(i => string.IsNullOrWhiteSpace(i.Hydrant.RmsHydrantId) && !string.IsNullOrWhiteSpace(i.Hydrant.HydrantNumber))
+					.Select(i => i.Hydrant.HydrantNumber.Trim()).ToList();
+				var byNumber = await _hydrants.GetByNumbersAsync(departmentId, numbers);
+				foreach (var item in chunk)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken, byNumber);
+				}
+				_unitOfWork.CommitChanges();
+				return true;
+			}
+			catch (OperationCanceledException) { _unitOfWork.DiscardChanges(); throw; }
+			catch (Exception ex)
+			{
+				_unitOfWork.DiscardChanges();
+				Resgrid.Framework.Logging.LogError($"Hydrant import batch rolled back and replayed row by row ({ex.GetType().Name}).");
+				return false;
+			}
 		}
 
 		public async Task<List<HydrantMapPoint>> GetMapLayerAsync(int departmentId, string userId, decimal? minLat, decimal? maxLat, decimal? minLon, decimal? maxLon)

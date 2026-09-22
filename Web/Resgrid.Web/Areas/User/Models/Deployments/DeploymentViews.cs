@@ -124,6 +124,8 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 		public Dictionary<string, string> UserNames { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public List<DeploymentRosterWarning> Warnings { get; set; } = new List<DeploymentRosterWarning>();
 		public bool IsRostered { get; set; }
+		/// <summary>The read-only deployment report (Records) is linked only when the viewer can open it.</summary>
+		public bool ReportsAvailable { get; set; }
 		/// <summary>Contractor billing (C-M2): the Billing tab is offered when the department holds the entitlement and the deployment is billable.</summary>
 		public bool ContractorBilling { get; set; }
 		/// <summary>Phase E internal cost tab (ViewInternalCosts + Workforce.InternalCosting); null when hidden.</summary>

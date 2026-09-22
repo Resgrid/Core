@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Scegli un ordine esterno.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Quell'ordine esterno ha già un impiego.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Ordine esterno non trovato.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Non hai l'autorizzazione Registri per chiudere l'ordine esterno di questo dispiegamento, quindi non può essere completato.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Unità non trovata.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Quell'unità è già in organico.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>L'impiego è completato o annullato e il suo organico è bloccato.</value></data>

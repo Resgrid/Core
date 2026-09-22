@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Välj en extern beställning.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Den externa beställningen har redan en insats.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Den externa beställningen hittades inte.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Du saknar behörighet för Journaler att stänga insatsens externa beställning, så insatsen kan inte avslutas.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Enheten hittades inte.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Den enheten finns redan i bemanningen.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Insatsen är avslutad eller avbruten och bemanningen är låst.</value></data>

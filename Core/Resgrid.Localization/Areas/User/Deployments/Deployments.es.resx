@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Elija una orden externa.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Esa orden externa ya tiene un despliegue.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>No se encontró la orden externa.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>No tiene permiso de Registros para cerrar la orden externa de este despliegue, por lo que no se puede finalizar.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>No se encontró la unidad.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Esa unidad ya está en la dotación.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>El despliegue está completado o cancelado y su dotación está bloqueada.</value></data>

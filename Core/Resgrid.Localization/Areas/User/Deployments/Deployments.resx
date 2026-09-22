@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Choose an external order.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>That external order already has a deployment.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>The external order was not found.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>You do not have Records permission to close this deployment's external order, so the deployment cannot be completed.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>The unit was not found.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>That unit is already on the roster.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>The deployment is completed or cancelled and its roster is locked.</value></data>

@@ -134,6 +134,35 @@ namespace Resgrid.Tests.Services
         }
 
         [Test]
+        public async Task Completing_without_records_rights_over_the_order_is_a_domain_refusal()
+        {
+            // Arrange: Deployments_Update without Records CreateRecord; Records authorization is not bypassed.
+            ExternalSource(RmsDeploymentFillStatus.Returned);
+            _records.Setup(r => r.CloseoutAsync(DeptId, Manager, "order", 5, null, It.IsAny<CancellationToken>())).ThrowsAsync(new UnauthorizedAccessException("Editing this deployment is not authorized."));
+            // Act
+            var command = () => _service.SetDeploymentStatusAsync("operation", DeptId, DeploymentStatuses.Completed, Manager, null, null);
+            // Assert
+            await command.Should().ThrowAsync<InvalidOperationException>().WithMessage("deployments_external_order_closeout_not_authorized");
+            _storedDeployments.Single().Status.Should().Be((int)DeploymentStatuses.Planned);
+        }
+
+        [Test]
+        public async Task A_stale_roster_row_does_not_stop_later_fills_or_the_status_update()
+        {
+            // Arrange: the first fill names a unit that no longer exists, the second a current member.
+            var source = ExternalSource(RmsDeploymentFillStatus.Mobilized);
+            source.Fills[0].AssignedUnitId = 99;
+            source.Fills.Add(new RmsExternalOrderFill { RmsExternalOrderFillId = "fill-2", Status = (int)RmsDeploymentFillStatus.Mobilized, AssignedUserId = "ghost" });
+            source.Fills.Add(new RmsExternalOrderFill { RmsExternalOrderFillId = "fill-3", Status = (int)RmsDeploymentFillStatus.Mobilized, AssignedUserId = "alice" });
+            // Act
+            var result = await _service.SynchronizeExternalOrderAsync("order", DeptId, Manager, null, null);
+            // Assert
+            result.Units.Should().BeEmpty();
+            result.Personnel.Should().ContainSingle().Which.RmsExternalOrderFillId.Should().Be("fill-3");
+            result.Status.Should().Be((int)DeploymentStatuses.Active);
+        }
+
+        [Test]
         public async Task A_failed_source_closeout_does_not_mark_the_operation_complete()
         {
             ExternalSource(RmsDeploymentFillStatus.Returned);

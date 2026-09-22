@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Wählen Sie einen externen Auftrag.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Dieser externe Auftrag hat bereits einen Einsatz.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Der externe Auftrag wurde nicht gefunden.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Ihnen fehlt die Akten-Berechtigung, um den externen Auftrag dieses Einsatzes abzuschließen. Der Einsatz kann daher nicht abgeschlossen werden.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Die Einheit wurde nicht gefunden.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Diese Einheit ist bereits in der Besetzung.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Der Einsatz ist abgeschlossen oder abgebrochen und seine Besetzung ist gesperrt.</value></data>

@@ -436,8 +436,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Response.StatusCode = 400;
 				return View("CompensationProfile", view);
 			}
-			var saved = await _compensation.SaveProfileAsync(input, UserId, Ip, Agent);
-			await _compensation.SaveComponentsAsync(saved.EmployeeCompensationProfileId, DepartmentId, pay, cost, UserId, Ip, Agent);
+			var saved = await _compensation.SaveProfileWithComponentsAsync(input, pay, cost, UserId, Ip, Agent);
 			return Saved("CompensationProfile", new { id = saved.EmployeeCompensationProfileId });
 		}, "Compensation");
 

@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Wybierz zlecenie zewnętrzne.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>To zlecenie zewnętrzne ma już dyslokację.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Nie znaleziono zlecenia zewnętrznego.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>Nie masz uprawnień Rejestrów do zamknięcia zlecenia zewnętrznego tych działań, więc nie można ich zakończyć.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Nie znaleziono jednostki.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Ta jednostka jest już w obsadzie.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Dyslokacja jest zakończona lub anulowana, a jej obsada jest zablokowana.</value></data>

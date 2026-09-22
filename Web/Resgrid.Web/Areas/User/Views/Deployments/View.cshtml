@@ -36,7 +36,10 @@
         {
             <a asp-action="Edit" asp-route-id="@d.DeploymentId" class="btn btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
         }
-        <a asp-controller="RecordDeployments" asp-action="Report" asp-route-id="@d.DeploymentId" class="btn btn-default">@localizer["DeploymentReports"]</a>
+        @if (Model.ReportsAvailable)
+        {
+            <a asp-controller="RecordDeployments" asp-action="Report" asp-route-id="@d.DeploymentId" class="btn btn-default">@localizer["DeploymentReports"]</a>
+        }
         <a asp-action="ExportTimeEntries" asp-route-id="@d.DeploymentId" class="btn btn-info"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
     </text>;
     ViewData["HeaderActions"] = headerActions;

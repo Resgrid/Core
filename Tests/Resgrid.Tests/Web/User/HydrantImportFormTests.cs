@@ -41,7 +41,7 @@ namespace Resgrid.Tests.Web.User
 			public void OnResultExecuting(ResultExecutingContext context)
 			{
 				if (context.Result is ViewResult view)
-					context.Result = new PartialViewResult { ViewName = "/Areas/User/Views/RecordHydrants/" + (view.ViewName ?? context.RouteData.Values["action"]) + ".cshtml", ViewData = view.ViewData, TempData = view.TempData };
+					context.Result = new PartialViewResult { ViewName = "/Areas/User/Views/" + context.RouteData.Values["controller"] + "/" + (view.ViewName ?? context.RouteData.Values["action"]) + ".cshtml", ViewData = view.ViewData, TempData = view.TempData };
 			}
 			public void OnResultExecuted(ResultExecutedContext context) { }
 		}
@@ -164,6 +164,10 @@ namespace Resgrid.Tests.Web.User
 				hydrants.Setup(x => x.IsModuleEnabledAsync(77)).ReturnsAsync(false);
 				(await client.GetAsync("/User/RecordHydrants/Import")).StatusCode.Should().Be(HttpStatusCode.NotFound);
 				(await client.GetStringAsync("/User/Mapping/GetPoisForType?poiTypeId=1")).Should().Contain("Linked hydrant");
+				// The hydrant overlay is optional: an unreadable module state hides it instead of failing the POI import page.
+				hydrants.Setup(x => x.IsModuleEnabledAsync(77)).ThrowsAsync(new TimeoutException("module state unavailable"));
+				var poiImport = await client.GetAsync("/User/Mapping/ImportPOIs?poiTypeId=1");
+				poiImport.StatusCode.Should().Be(HttpStatusCode.OK, await poiImport.Content.ReadAsStringAsync());
 			}
 			finally { await app.StopAsync(); ClaimsAuthorizationHelper._httpContextAccessor = previous; }
 		}

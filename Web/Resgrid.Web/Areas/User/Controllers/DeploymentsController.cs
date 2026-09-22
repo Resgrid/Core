@@ -357,6 +357,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			view.Expenses = await _timeTracking.GetExpensesAsync(id, DepartmentId);
 			view.Attachments = await _deployments.GetAttachmentsAsync(id, DepartmentId);
 			view.TotalExpenses = view.Expenses.Sum(e => e.Amount);
+			// RecordDeploymentsController admits Record_View holders while the Records flag is on.
+			view.ReportsAvailable = ClaimsAuthorizationHelper.CanViewRecords() && await _flags.IsEnabledAsync(FeatureFlagKeys.RecordsSystem, DepartmentId);
 			view.UserNames = await PersonnelNamesAsync();
 			if (deployment.CallId.HasValue) view.Call = await _calls.GetCallByIdAsync(deployment.CallId.Value);
 			if (!string.IsNullOrWhiteSpace(deployment.ContactId)) view.ContactName = (await _contacts.GetContactByIdAsync(deployment.ContactId))?.Name;

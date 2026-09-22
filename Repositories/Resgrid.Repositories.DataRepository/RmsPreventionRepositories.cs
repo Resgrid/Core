@@ -356,6 +356,40 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<RmsHydrant> GetByNumberAsync(int departmentId, string hydrantNumber)
 			=> QueryFirstOrDefaultAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("HydrantNumber")} = {P}Number AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Number = hydrantNumber });
 
+		/// <summary>Numbers per round trip: DepartmentId plus this many stays under SQL Server's 2,100-parameter ceiling.</summary>
+		public const int NumberLookupChunkSize = 1000;
+
+		public async Task<IReadOnlyDictionary<string, RmsHydrant>> GetByNumbersAsync(int departmentId, IEnumerable<string> hydrantNumbers)
+		{
+			var result = new Dictionary<string, RmsHydrant>(StringComparer.Ordinal);
+			var requested = (hydrantNumbers ?? Enumerable.Empty<string>()).Where(n => n != null).Distinct(StringComparer.Ordinal).ToList();
+			foreach (var chunk in requested.Chunk(NumberLookupChunkSize))
+			{
+				// The requested value is joined, not compared in memory: "h.HydrantNumber = r.RequestedNumber" is the same predicate
+				// as GetByNumberAsync's "HydrantNumber = @Number", so the column collation decides the match on both databases.
+				var parameters = new DynamicParameters();
+				parameters.Add("DepartmentId", departmentId);
+				string requestedRows;
+				if (IsPostgres)
+				{
+					parameters.Add("Numbers", chunk);
+					requestedRows = $"unnest({P}Numbers) AS r({Col("RequestedNumber")})";
+				}
+				else
+				{
+					var names = new List<string>(chunk.Length);
+					for (var i = 0; i < chunk.Length; i++) { parameters.Add("N" + i, chunk[i]); names.Add($"({P}N{i})"); }
+					requestedRows = $"(VALUES {string.Join(", ", names)}) AS r({Col("RequestedNumber")})";
+				}
+				var sql = $"SELECT h.*, r.{Col("RequestedNumber")} FROM {requestedRows} JOIN {Tbl("RmsHydrants")} h ON h.{Col("DepartmentId")} = {P}DepartmentId AND h.{Col("HydrantNumber")} = r.{Col("RequestedNumber")} AND h.{Col("DeletedOn")} IS NULL";
+				var rows = await RunAsync(c => c.QueryAsync<RmsHydrant, string, (RmsHydrant Hydrant, string Requested)>(
+					new Dapper.CommandDefinition(sql, parameters, UnitOfWork.Transaction), (hydrant, number) => (hydrant, number), splitOn: "RequestedNumber"));
+				// First match wins, like GetByNumberAsync's QueryFirstOrDefault.
+				foreach (var row in rows) result.TryAdd(row.Requested, row.Hydrant);
+			}
+			return result;
+		}
+
 		public Task<IEnumerable<RmsHydrant>> GetAllLiveAsync(int departmentId)
 			=> QueryAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL ORDER BY {Col("HydrantNumber")}", new { DepartmentId = departmentId });
 

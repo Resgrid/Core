@@ -224,6 +224,7 @@
   <data name="deployments_external_order_required" xml:space="preserve"><value>Виберіть зовнішнє замовлення.</value></data>
   <data name="deployments_external_order_already_linked" xml:space="preserve"><value>Це зовнішнє замовлення вже має розгортання.</value></data>
   <data name="deployments_external_order_not_found" xml:space="preserve"><value>Зовнішнє замовлення не знайдено.</value></data>
+  <data name="deployments_external_order_closeout_not_authorized" xml:space="preserve"><value>У вас немає дозволу Записів, щоб закрити зовнішнє замовлення цього розгортання, тому його не можна завершити.</value></data>
   <data name="deployments_unit_not_found" xml:space="preserve"><value>Підрозділ не знайдено.</value></data>
   <data name="deployments_unit_already_rostered" xml:space="preserve"><value>Цей підрозділ уже у складі.</value></data>
   <data name="deployments_closed" xml:space="preserve"><value>Розгортання завершено або скасовано, і його склад заблоковано.</value></data>

@@ -153,7 +153,21 @@ namespace Resgrid.Tests.Rms
 	public class FakeHydrants : InMemoryRepo<RmsHydrant>, IRmsHydrantsRepository
 	{
 		public Task<RmsHydrant> GetByIdForDepartmentAsync(int departmentId, string hydrantId) => Task.FromResult(Rows.FirstOrDefault(h => h.DepartmentId == departmentId && h.RmsHydrantId == hydrantId));
-		public Task<RmsHydrant> GetByNumberAsync(int departmentId, string hydrantNumber) => Task.FromResult(Live(departmentId).FirstOrDefault(h => string.Equals(h.HydrantNumber, hydrantNumber, StringComparison.OrdinalIgnoreCase)));
+		// Stands in for the SQL Server default (case-insensitive) collation; the batch lookup must match exactly like the single one.
+		public int NumberLookups { get; private set; }
+		public int BatchNumberLookups { get; private set; }
+		public Task<RmsHydrant> GetByNumberAsync(int departmentId, string hydrantNumber) { NumberLookups++; return Task.FromResult(Live(departmentId).FirstOrDefault(h => string.Equals(h.HydrantNumber, hydrantNumber, StringComparison.OrdinalIgnoreCase))); }
+		public Task<IReadOnlyDictionary<string, RmsHydrant>> GetByNumbersAsync(int departmentId, IEnumerable<string> hydrantNumbers)
+		{
+			BatchNumberLookups++;
+			var result = new Dictionary<string, RmsHydrant>(StringComparer.Ordinal);
+			foreach (var number in hydrantNumbers.Distinct(StringComparer.Ordinal))
+			{
+				var match = Live(departmentId).FirstOrDefault(h => string.Equals(h.HydrantNumber, number, StringComparison.OrdinalIgnoreCase));
+				if (match != null) result[number] = match;
+			}
+			return Task.FromResult<IReadOnlyDictionary<string, RmsHydrant>>(result);
+		}
 		public Task<IEnumerable<RmsHydrant>> GetAllLiveAsync(int departmentId) => Task.FromResult<IEnumerable<RmsHydrant>>(Live(departmentId).ToList());
 		public Task<IEnumerable<RmsHydrant>> GetByIdsAsync(int departmentId, IEnumerable<string> hydrantIds) { var ids = hydrantIds.ToHashSet(); return Task.FromResult<IEnumerable<RmsHydrant>>(Rows.Where(h => h.DepartmentId == departmentId && ids.Contains(h.RmsHydrantId)).ToList()); }
 		public Task<IEnumerable<RmsHydrant>> GetInBoundsAsync(int departmentId, decimal minLat, decimal maxLat, decimal minLon, decimal maxLon, int take) => Task.FromResult<IEnumerable<RmsHydrant>>(Live(departmentId).Where(h => h.Latitude >= minLat && h.Latitude <= maxLat && h.Longitude >= minLon && h.Longitude <= maxLon).Take(take).ToList());
@@ -383,7 +397,7 @@ namespace Resgrid.Tests.Rms
 			Gate = new RecordsPreventionGate(Cutover.Object, Flags.Object, Authorization.Object, Sequences, Audits);
 			OccupancyService = new RecordsOccupancyService(Gate, Occupancies, Links, Hazards, Crosswalks, Provenance, Ownerships, Violations, Hydrants, ContactPreplans.Object, ContactHazards.Object, Contacts.Object, Addresses.Object, Pois.Object, ProtectedReads.Object, Grant.Object, Protection, UnitOfWork.Object);
 			InspectionsService = new RecordsInspectionsService(Gate, CodeSets, CodeSections, Programs, Inspections, Violations, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);
-			HydrantsService = new RecordsHydrantsService(Gate, Hydrants, FlowTests, Maintenance, Attachments);
+			HydrantsService = new RecordsHydrantsService(Gate, Hydrants, FlowTests, Maintenance, Attachments, UnitOfWork.Object);
 			PermitsService = new RecordsPermitsService(Gate, PermitTypes, Permits, PlanReviews, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);
 			CrrService = new RecordsCrrService(Gate, Crr, Occupancies);
 			AttachmentsService = new RecordsPreventionAttachmentsService(Gate, Attachments, CaseMembers, Evidence, Scanner.Object, Protection);

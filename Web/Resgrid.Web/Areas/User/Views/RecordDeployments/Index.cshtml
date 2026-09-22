@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Deployments.DeploymentReportsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["DeploymentReports"];
     var time = DepartmentTime.From(ViewData);
@@ -8,7 +9,7 @@
 }
 <div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12">
     <h2>@localizer["DeploymentReports"]</h2>
-    <ol class="breadcrumb"><li><a asp-controller="Records" asp-action="Index">@localizer["DeploymentReports"]</a></li><li class="active">@localizer["DeploymentReports"]</li></ol>
+    <ol class="breadcrumb"><li><a asp-controller="Records" asp-action="Index">@recordsLocalizer["RecordsHeader"]</a></li><li class="active">@localizer["DeploymentReports"]</li></ol>
 </div></div>
 <div class="wrapper wrapper-content">
     <p class="alert alert-info">@localizer["ReportingIntro"]</p>

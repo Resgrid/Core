@@ -36,6 +36,7 @@ namespace Resgrid.Web.Areas.User.Models.ContractorBilling
 		public List<SelectListItem> UnitTypes { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> CertificationTypes { get; set; } = new List<SelectListItem>();
 		public string ExportJson { get; set; }
+		public List<MealEligibilityInput> MealEligibility { get; set; } = new List<MealEligibilityInput>();
 	}
 
 	public class RateScheduleInput
@@ -58,7 +59,25 @@ namespace Resgrid.Web.Areas.User.Models.ContractorBilling
 		public int OvertimeBasis { get; set; }
 		public decimal? FuelDeductionRatePerLitre { get; set; }
 		public int ContinuousRunGapMinutes { get; set; } = 60;
-		public string MealEligibilityJson { get; set; }
+		public List<MealEligibilityInput> MealEligibility { get; set; } = new List<MealEligibilityInput>();
+	}
+
+	public class MealEligibilityInput
+	{
+		public string MealCode { get; set; }
+		public string StartsBefore { get; set; }
+		public string EndsAfter { get; set; }
+
+		public static MealEligibilityInput FromWindow(MealEligibilityWindow window) => new MealEligibilityInput
+		{
+			MealCode = window.MealCode,
+			StartsBefore = FormatTime(window.StartsBeforeMinutes),
+			EndsAfter = FormatTime(window.EndsAfterMinutes)
+		};
+
+		private static string FormatTime(int? minutes) => minutes.HasValue
+			? TimeSpan.FromMinutes(minutes.Value).ToString(@"hh\:mm", System.Globalization.CultureInfo.InvariantCulture)
+			: null;
 	}
 
 	public class RateEntryInput

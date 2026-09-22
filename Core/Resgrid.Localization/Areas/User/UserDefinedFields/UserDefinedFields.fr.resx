@@ -83,4 +83,34 @@
   <data name="ValidationDuplicateMachineNames" xml:space="preserve">
     <value>Duplicate machine name(s): {0}. Each machine name must be unique within this entity type.</value>
   </data>
+  <data name="RecordCustomFieldsTitle" xml:space="preserve">
+    <value>Champs personnalisés des dossiers</value>
+  </data>
+  <data name="RecordCustomFieldsIntro" xml:space="preserve">
+    <value>Choisissez le type de dossier dont vous souhaitez compléter le formulaire.</value>
+  </data>
+  <data name="RecordTypeRun" xml:space="preserve">
+    <value>Intervention</value>
+  </data>
+  <data name="RecordTypeTraining" xml:space="preserve">
+    <value>Formation</value>
+  </data>
+  <data name="RecordTypeWork" xml:space="preserve">
+    <value>Travail</value>
+  </data>
+  <data name="RecordTypeMeeting" xml:space="preserve">
+    <value>Réunion</value>
+  </data>
+  <data name="RecordTypeCoroner" xml:space="preserve">
+    <value>Médecin légiste</value>
+  </data>
+  <data name="RecordTypeCallback" xml:space="preserve">
+    <value>Rappel</value>
+  </data>
+  <data name="RecordTypeUnitActivity" xml:space="preserve">
+    <value>Activité de l’unité</value>
+  </data>
+  <data name="RecordTypeNerisIncident" xml:space="preserve">
+    <value>Rapport d’incident NERIS</value>
+  </data>
 </root>

@@ -1,223 +1,264 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Resgrid.Model;
+using Resgrid.Model.Invoicing;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Areas.User.Models.Deployments;
 using Resgrid.Web.Areas.User.Models.Records;
 using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
-	/// <summary>
-	/// Create Deployment from External Order (RMS plan section 4.1, RMS-1C, Preview): the coordinator records the
-	/// external order and the requests the department fills, then walks each fill through mobilization, release and
-	/// the actual return home. Manual entry and artifact snapshots only; no ordering-system connector.
-	/// </summary>
-	[Area("User")]
-	[Authorize(Policy = ResgridResources.Record_View)]
-	[Resgrid.Web.Helpers.DepartmentLocalTime]
-	public class RecordDeploymentsController : SecureBaseController
-	{
-		private readonly IRecordDeploymentsService _deployments;
-		private readonly IRecordsCutoverService _cutover;
-		private readonly IDepartmentsService _departments;
-		private readonly IDepartmentGroupsService _groups;
-		private readonly IUnitsService _units;
-		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
+    /// <summary>Read-only deployment reporting. Commands live in Deployments / DeploymentOrders.</summary>
+    [Area("User"), Authorize(Policy = ResgridResources.Record_View)]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    [Resgrid.Web.Helpers.DepartmentLocalTime]
+    public class RecordDeploymentsController : SecureBaseController
+    {
+        private readonly IRecordDeploymentsService _orders;
+        private readonly IDeploymentService _deployments;
+        private readonly ITimeTrackingService _time;
+        private readonly IDepartmentsService _departments;
+        private readonly IRecordsCutoverService _cutover;
 
-		public RecordDeploymentsController(IRecordDeploymentsService deployments, IRecordsCutoverService cutover, IDepartmentsService departments, IDepartmentGroupsService groups, IUnitsService units,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer)
-		{
-			_deployments = deployments;
-			_cutover = cutover;
-			_departments = departments;
-			_groups = groups;
-			_units = units;
-			_localizer = localizer;
-		}
+        public RecordDeploymentsController(IRecordDeploymentsService orders, IDeploymentService deployments,
+            ITimeTrackingService time, IDepartmentsService departments, IRecordsCutoverService cutover)
+        {
+            _orders = orders; _deployments = deployments; _time = time; _departments = departments; _cutover = cutover;
+        }
 
-		[HttpGet]
-		public async Task<IActionResult> Index(bool includeClosed = false)
-		{
-			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).FlagEnabled) return NotFound();
-			var model = new RecordDeploymentsIndexView { Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false), Orders = await _deployments.ListAsync(DepartmentId, UserId, includeClosed), IncludeClosed = includeClosed, CanCreate = ClaimsAuthorizationHelper.CanCreateRecord(), IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() };
-			if (TempData["RecordsMessage"] is string message) model.Message = message;
-			if (TempData["RecordsError"] is string error) model.ErrorMessage = error;
-			return View(model);
-		}
+        private static bool CanManage => ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanManageDeployments();
+        private static bool CanViewAll => CanManage || ClaimsAuthorizationHelper.CanViewDeployments();
 
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> New()
-		{
-			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
-			var model = new RecordDeploymentNewView();
-			await PopulateAsync(model);
-			return View(model);
-		}
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            // Retained reports remain available when operational features are disabled.
+            if (!(await _cutover.GetModuleStateAsync(DepartmentId)).FlagEnabled) { context.Result = NotFound(); return; }
+            await next();
+        }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> New(RecordDeploymentNewView model, IFormFile artifact, CancellationToken cancellationToken)
-		{
-			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
-			try
-			{
-				var input = new RecordDeploymentCreateInput
-				{
-					ProfileKey = model.ProfileKey, SourceScheme = model.SourceScheme, SourceSystem = model.SourceSystem, OrderNumber = model.OrderNumber, IncidentName = model.IncidentName, IncidentNumber = model.IncidentNumber,
-					IncidentCountry = model.IncidentCountry, IncidentSubdivision = model.IncidentSubdivision, OrderingOffice = model.OrderingOffice, DispatchOffice = model.DispatchOffice, RequestingAgency = model.RequestingAgency,
-					ReceivingAgency = model.ReceivingAgency, SendingAgency = model.SendingAgency, DepartmentRole = model.DepartmentRole, CostCode = model.CostCode, AgreementReference = model.AgreementReference,
-					CurrencyCode = string.IsNullOrWhiteSpace(model.CurrencyCode) ? null : model.CurrencyCode, MeasurementSystem = string.IsNullOrWhiteSpace(model.MeasurementSystem) ? null : model.MeasurementSystem, TimeZoneId = model.TimeZoneId,
-					SourceCapturedOn = model.SourceCapturedOn, SourceVersion = model.SourceVersion, ArtifactSafeUrl = model.ArtifactSafeUrl, StationGroupId = model.StationGroupId, OriginClient = RmsOriginClient.Web,
-					Fills = (model.Fills ?? new List<RecordDeploymentFillInput>()).Where(f => f != null && !string.IsNullOrWhiteSpace(f.RequestNumber)).ToList()
-				};
-				if (artifact != null && artifact.Length > 0)
-				{
-					using var stream = new MemoryStream();
-					await artifact.CopyToAsync(stream, cancellationToken);
-					input.ArtifactData = stream.ToArray(); input.ArtifactFileName = Path.GetFileName(artifact.FileName); input.ArtifactContentType = artifact.ContentType;
-				}
-				foreach (var fill in input.Fills) fill.NeededOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(fill.NeededOn);
-				var created = await _deployments.CreateFromExternalOrderAsync(DepartmentId, UserId, input, cancellationToken);
-				TempData["RecordsMessage"] = _localizer["DeploymentCreated"].Value;
-				return RedirectToAction("Details", new { id = created.Order.RmsExternalOrderId });
-			}
-			catch (UnauthorizedAccessException) { return Forbid(); }
-			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
-			{
-				model.ErrorMessage = ex.Message;
-				await PopulateAsync(model);
-				return View(model);
-			}
-		}
+        private async Task<Deployment> AccessibleAsync(string id)
+        {
+            var deployment = await _deployments.GetDeploymentByIdAsync(id, DepartmentId);
+            return deployment != null && deployment.DepartmentId == DepartmentId && !deployment.IsDeleted &&
+                (CanViewAll || deployment.Personnel.Any(p => p.UserId == UserId)) ? deployment : null;
+        }
 
-		[HttpGet]
-		public async Task<IActionResult> Details(string id)
-		{
-			var model = await BuildDetailsAsync(id);
-			if (model == null) return NotFound();
-			if (TempData["RecordsMessage"] is string message) model.Message = message;
-			if (TempData["RecordsError"] is string error) model.ErrorMessage = error;
-			return View(model);
-		}
+        private async Task<Dictionary<string, string>> NamesAsync() =>
+            (await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>())
+                .GroupBy(p => p.UserId).ToDictionary(g => g.Key, g => g.First().Name);
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> AddFill(string id, RecordDeploymentFillInput newFill, CancellationToken cancellationToken)
-		{
-			try
-			{
-				newFill.NeededOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(newFill.NeededOn);
-				await _deployments.AddFillAsync(DepartmentId, UserId, id, newFill, cancellationToken);
-				TempData["RecordsMessage"] = _localizer["DeploymentFillAdded"].Value;
-			}
-			catch (UnauthorizedAccessException) { return Forbid(); }
-			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { TempData["RecordsError"] = ex.Message; }
-			return RedirectToAction("Details", new { id });
-		}
+        [HttpGet]
+        public async Task<IActionResult> Index(bool includeClosed = true, int page = 1)
+        {
+            var model = new DeploymentReportsView { Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false) };
+            var list = model.Operations;
+            list.Page = Math.Clamp(page, 1, int.MaxValue / list.PageSize);
+            list.OpenOnly = !includeClosed;
+            if (CanViewAll)
+            {
+                list.Total = await _deployments.CountDeploymentsForDepartmentAsync(DepartmentId, list.OpenOnly);
+                list.Deployments = await _deployments.GetDeploymentsForDepartmentAsync(DepartmentId, list.OpenOnly, (list.Page - 1) * list.PageSize, list.PageSize);
+            }
+            else
+            {
+                var mine = await _deployments.GetDeploymentsForUserAsync(DepartmentId, UserId, list.OpenOnly);
+                list.Total = mine.Count;
+                list.Deployments = mine.Skip((list.Page - 1) * list.PageSize).Take(list.PageSize).ToList();
+            }
+            // Historical external orders remain readable before they are linked into the workspace.
+            foreach (var order in await _orders.ListAsync(DepartmentId, UserId, includeClosed))
+            {
+                var linked = await _deployments.GetDeploymentByExternalOrderIdAsync(order.RmsExternalOrderId, DepartmentId);
+                if (linked == null || await AccessibleAsync(linked.DeploymentId) == null)
+                    model.Orders.Add(order);
+            }
+            return View(model);
+        }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> Transition(string id, string fillId, int status, DateTime? occurredOn, string reason, string notes, CancellationToken cancellationToken)
-		{
-			try
-			{
-				await _deployments.TransitionFillAsync(DepartmentId, UserId, fillId, new RecordDeploymentFillTransitionInput { Status = (RmsDeploymentFillStatus)status, OccurredOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(occurredOn), Reason = reason, Notes = notes }, cancellationToken);
-				TempData["RecordsMessage"] = _localizer["DeploymentFillUpdated"].Value;
-			}
-			catch (UnauthorizedAccessException) { return Forbid(); }
-			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { TempData["RecordsError"] = ex.Message; }
-			return RedirectToAction("Details", new { id });
-		}
+        [HttpGet]
+        public async Task<IActionResult> Report(string id)
+        {
+            var deployment = await AccessibleAsync(id);
+            if (deployment == null) return NotFound();
+            return View(new DeploymentReportView
+            {
+                Deployment = deployment, Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false),
+                TimeReports = await _time.GetTimeReportsAsync(id, DepartmentId), Expenses = await _time.GetExpensesAsync(id, DepartmentId),
+                Attachments = await _deployments.GetAttachmentsAsync(id, DepartmentId), PersonnelNames = await NamesAsync(), CanManage = CanManage
+            });
+        }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> Snapshot(string id, string sourceVersion, IFormFile artifact, CancellationToken cancellationToken)
-		{
-			try
-			{
-				if (artifact == null || artifact.Length == 0) throw new ArgumentException(_localizer["DeploymentSnapshotNeedsFile"].Value);
-				using var stream = new MemoryStream();
-				await artifact.CopyToAsync(stream, cancellationToken);
-				await _deployments.RecordSourceSnapshotAsync(DepartmentId, UserId, id, sourceVersion, stream.ToArray(), Path.GetFileName(artifact.FileName), artifact.ContentType, cancellationToken);
-				TempData["RecordsMessage"] = _localizer["DeploymentSnapshotRecorded"].Value;
-			}
-			catch (UnauthorizedAccessException) { return Forbid(); }
-			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { TempData["RecordsError"] = ex.Message; }
-			return RedirectToAction("Details", new { id });
-		}
+        [HttpGet]
+        public async Task<IActionResult> Print(string id)
+        {
+            var result = await Report(id);
+            if (result is ViewResult view)
+            {
+                view.ViewName = "Report";
+                view.ViewData["StandaloneReport"] = true;
+            }
+            return result;
+        }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> Closeout(string id, long rowVersion, string notes, CancellationToken cancellationToken)
-		{
-			try
-			{
-				await _deployments.CloseoutAsync(DepartmentId, UserId, id, rowVersion, notes, cancellationToken);
-				TempData["RecordsMessage"] = _localizer["DeploymentClosedOut"].Value;
-			}
-			catch (UnauthorizedAccessException) { return Forbid(); }
-			catch (RecordConcurrencyException) { TempData["RecordsError"] = _localizer["ConcurrencyError"].Value; }
-			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { TempData["RecordsError"] = ex.Message; }
-			return RedirectToAction("Details", new { id });
-		}
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            try
+            {
+                var order = await _orders.GetAsync(DepartmentId, UserId, id);
+                if (order == null) return NotFound();
+                var linked = await _deployments.GetDeploymentByExternalOrderIdAsync(id, DepartmentId);
+                return View(new RecordDeploymentDetailsView
+                {
+                    Deployment = order, Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false),
+                    PersonnelNames = await NamesAsync(), CanEdit = false,
+                    OperationalDeploymentId = linked != null && await AccessibleAsync(linked.DeploymentId) != null ? linked.DeploymentId : null
+                });
+            }
+            catch (UnauthorizedAccessException) { return Forbid(); }
+        }
 
-		[HttpGet]
-		public async Task<IActionResult> Artifact(string id)
-		{
-			try
-			{
-				var aggregate = await _deployments.GetAsync(DepartmentId, UserId, id, true);
-				if (aggregate?.Order?.ArtifactData == null) return NotFound();
-				return File(aggregate.Order.ArtifactData, string.IsNullOrWhiteSpace(aggregate.Order.ArtifactContentType) ? "application/octet-stream" : aggregate.Order.ArtifactContentType, aggregate.Order.ArtifactFileName ?? "order-artifact");
-			}
-			catch (UnauthorizedAccessException) { return Forbid(); }
-		}
+        [HttpGet]
+        public IActionResult New() => RedirectToAction("New", "DeploymentOrders");
 
-		private async Task<RecordDeploymentDetailsView> BuildDetailsAsync(string id)
-		{
-			RecordDeploymentAggregate aggregate;
-			try { aggregate = await _deployments.GetAsync(DepartmentId, UserId, id); }
-			catch (UnauthorizedAccessException) { return null; }
-			if (aggregate == null) return null;
-			var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
-			var units = await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
-			return new RecordDeploymentDetailsView
-			{
-				Deployment = aggregate, Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false),
-				PersonnelNames = names.GroupBy(n => n.UserId).ToDictionary(g => g.Key, g => g.First().Name), CanEdit = ClaimsAuthorizationHelper.CanCreateRecord() && aggregate.Order.Status != (int)RmsExternalOrderStatus.ClosedOut,
-				ProvenanceStatement = _localizer["DeploymentPreviewStatement"].Value,
-				Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList(),
-				AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList()
-			};
-		}
+        [HttpGet]
+        public async Task<IActionResult> ForRecord(string id)
+        {
+            try
+            {
+                var order = await _orders.GetForRecordAsync(DepartmentId, UserId, id);
+                return order == null ? NotFound() : RedirectToAction("Details", new { id = order.Order.RmsExternalOrderId });
+            }
+            catch (UnauthorizedAccessException) { return Forbid(); }
+        }
 
-		private async Task PopulateAsync(RecordDeploymentNewView model)
-		{
-			model.Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false);
-			model.Profiles = RmsDeploymentProfiles.All.Select(p => new SelectListItem { Value = p, Text = p }).ToList();
-			var groups = await _groups.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
-			model.Stations = groups.OrderBy(g => g.Name).Select(g => new SelectListItem { Value = g.DepartmentGroupId.ToString(), Text = g.Name }).ToList();
-			var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
-			model.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
-			var units = await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
-			model.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
-			while (model.Fills.Count < 3) model.Fills.Add(new RecordDeploymentFillInput());
-		}
-	}
+        [HttpGet]
+        public async Task<IActionResult> Artifact(string id)
+        {
+            try
+            {
+                var order = await _orders.GetAsync(DepartmentId, UserId, id, true);
+                if (order?.Order?.ArtifactData == null) return NotFound();
+                return File(order.Order.ArtifactData, "application/octet-stream", order.Order.ArtifactFileName ?? "external-order");
+            }
+            catch (UnauthorizedAccessException) { return Forbid(); }
+        }
+
+        [HttpGet]
+        [Authorize(Policy = ResgridResources.Record_Export)]
+        public async Task<IActionResult> ExportTimeEntries(string id)
+        {
+            if (await AccessibleAsync(id) == null) return NotFound();
+            return Csv(await _time.ExportTimeEntriesCsvAsync(id, DepartmentId), "deployment-time.csv");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Manifest(string id)
+        {
+            if (await AccessibleAsync(id) == null) return NotFound();
+            // Render only; GenerateManifestAsync would persist a new attachment.
+            return Content(await _deployments.RenderManifestHtmlAsync(id, DepartmentId), "text/html", Encoding.UTF8);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TimeReport(string id)
+        {
+            var report = await _time.GetTimeReportByIdAsync(id, DepartmentId);
+            if (report == null || await AccessibleAsync(report.DeploymentId) == null) return NotFound();
+            return Content(await _time.RenderTimeReportHtmlAsync(id, DepartmentId), "text/html", Encoding.UTF8);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Attachment(int id)
+        {
+            var file = await _deployments.GetAttachmentAsync(id, DepartmentId, false);
+            if (file == null || await AccessibleAsync(file.DeploymentId) == null) return NotFound();
+            file = await _deployments.GetAttachmentAsync(id, DepartmentId, true);
+            if (file?.Data == null) return NotFound();
+            return File(file.Data, "application/octet-stream", file.FileName ?? "deployment-document");
+        }
+
+        [HttpGet]
+        [Authorize(Policy = ResgridResources.Record_Export)]
+        public async Task<IActionResult> Export(string id)
+        {
+            var d = await AccessibleAsync(id);
+            if (d == null) return NotFound();
+            // Explicit projection excludes protected notes, document bytes and ORM metadata.
+            var reports = await _time.GetTimeReportsAsync(id, DepartmentId);
+            var time = new List<object>();
+            foreach (var summary in reports)
+            {
+                var report = await _time.GetTimeReportByIdAsync(summary.DeploymentTimeReportId, DepartmentId);
+                if (report != null) time.Add(new { report.ReportNumber, report.ReportDate, report.Status,
+                    Entries = report.Entries.Select(e => new { e.SubjectType, e.SubjectId, e.EntryType, e.StartTime, e.EndTime, e.Hours, e.MileageKm }) });
+            }
+            var expenses = await _time.GetExpensesAsync(id, DepartmentId);
+            var data = new
+            {
+                d.DeploymentId, d.Name, d.Status, d.FinanceMode, d.IncidentNumber, d.ResourceOrderNumber, d.StartOn, d.EndOn, d.Currency,
+                Units = d.Units.Select(u => new { u.UnitId, u.UnitName, u.CallSign, u.AddedOn, u.RemovedOn }),
+                Personnel = d.Personnel.Select(p => new { p.UserId, p.CertificationCode, p.CallSign, p.AddedOn, p.RemovedOn }),
+                Equipment = d.Equipment.Select(e => new { e.DeploymentEquipmentId, e.FreeTextName, e.InventoryAssetId, e.InventoryItemId, e.IssuedOn, e.ReturnedOn }),
+                TimeReports = time,
+                Expenses = expenses.Select(e => new { e.ExpenseDate, e.ExpenseType, e.Amount, e.Currency, e.Billable })
+            };
+            return File(Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented)), "application/json", "deployment-report.json");
+        }
+
+        [HttpGet]
+        [Authorize(Policy = ResgridResources.Record_Export)]
+        public async Task<IActionResult> ExportOrders(string id)
+        {
+            try
+            {
+                var order = await _orders.GetAsync(DepartmentId, UserId, id);
+                if (order == null) return NotFound();
+                var csv = new StringBuilder("Order,Incident,Request,Resource,Position,User,Unit,Status,MobilizedUtc,CheckedInUtc,ReleasedUtc,ReturnedUtc\r\n");
+                foreach (var f in order.Fills)
+                    csv.AppendLine(string.Join(",", new object[] { order.Order.OrderNumber, order.Order.IncidentName, f.RequestNumber, f.ResourceKind,
+                        f.Position, f.AssignedUserId, f.AssignedUnitId, (RmsDeploymentFillStatus)f.Status, f.MobilizedOn, f.CheckedInOn, f.ReleasedOn, f.ReturnedOn }.Select(Cell)));
+                return Csv(csv.ToString(), "deployment-resources.csv");
+            }
+            catch (UnauthorizedAccessException) { return Forbid(); }
+        }
+
+        [HttpGet]
+        [Authorize(Policy = ResgridResources.Record_Export)]
+        public async Task<IActionResult> ExportSummary(bool includeClosed = true)
+        {
+            var csv = new StringBuilder("DeploymentId,Name,Status,FinanceMode,Incident,Order,StartUtc,EndUtc,Currency\r\n");
+            var skip = 0;
+            while (true)
+            {
+                HttpContext.RequestAborted.ThrowIfCancellationRequested();
+                var rows = CanViewAll ? await _deployments.GetDeploymentsForDepartmentAsync(DepartmentId, !includeClosed, skip, 200)
+                    : await _deployments.GetDeploymentsForUserAsync(DepartmentId, UserId, !includeClosed);
+                foreach (var d in rows)
+                    csv.AppendLine(string.Join(",", new object[] { d.DeploymentId, d.Name, (DeploymentStatuses)d.Status, (DeploymentFinanceModes)d.FinanceMode,
+                        d.IncidentNumber, d.ResourceOrderNumber, d.StartOn, d.EndOn, d.Currency }.Select(Cell)));
+                if (!CanViewAll || rows.Count < 200) break;
+                skip += rows.Count;
+            }
+            return Csv(csv.ToString(), "deployment-summary.csv");
+        }
+
+        private FileContentResult Csv(string value, string name) => File(Encoding.UTF8.GetBytes(value), "text/csv; charset=utf-8", name);
+        internal static string Cell(object value)
+        {
+            var text = value is DateTime date ? date.ToString("O", CultureInfo.InvariantCulture) : Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
+            var trimmed = text.TrimStart();
+            if (trimmed.StartsWith('=') || trimmed.StartsWith('+') || trimmed.StartsWith('-') || trimmed.StartsWith('@') || text.StartsWith('\t') || text.StartsWith('\r')) text = "'" + text;
+            return "\"" + text.Replace("\"", "\"\"") + "\"";
+        }
+    }
 }

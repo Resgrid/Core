@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Max insatsdagar</value></data>
   <data name="MealCode" xml:space="preserve"><value>Måltidskod</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Måltidsberättigande</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>JSON-fönster per måltidskod, t.ex. [{"MealCode":"B","StartsBeforeMinutes":420}]; ett traktamente utanför fönstret varnas, blockeras inte.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Lägg till en regel för varje måltidskod (till exempel B för frukost). Ange lokala gränstider för arbetspasset; lämna en tid tom om ingen gräns ska gälla. Anspråk utanför dessa gränser visar en varning och kan ändå skickas in.</value></data>
   <data name="Missing" xml:space="preserve"><value>Saknas</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Förifyllning med multiplikator</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Bas + beredskap + ÖT-multiplikatorer skapar timbanden; lagrade värden förblir uttryckliga belopp.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Tillägg kan inte vara negativa.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>Tillägget behöver ett namn.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Tillägget hittades inte.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Inga regler för måltidsberättigande. Lägg till en regel för att ange tidsgränser.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Lägg till måltidsregel</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Ta bort måltidsregel</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Arbetspasset börjar senast</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Arbetspasset slutar tidigast</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Ange en måltidskod med 1 till 10 tecken.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Varje måltidskod får bara ha en regel för berättigande.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Ange en giltig tid från 00:00 till 23:59.</value></data>
 </root>

@@ -6,6 +6,26 @@
     var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["CrrActivities"];
 }
+@section Styles {
+	<style>
+		.crr-summary {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			gap: 12px 20px;
+		}
+
+		.crr-summary dt {
+			min-width: 0;
+			white-space: normal;
+			overflow-wrap: anywhere;
+		}
+
+		.crr-summary dd {
+			margin: 0;
+			text-align: right;
+		}
+	</style>
+}
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-6">
 		<h2>@L["CrrActivities"]</h2>
@@ -61,7 +81,7 @@
 		</div>
 		<div class="col-md-4">
 			<div class="ibox"><div class="ibox-title"><h5>@L["CrrSummary"]</h5></div><div class="ibox-content">
-				<dl class="dl-horizontal">
+				<dl class="crr-summary">
 					<dt>@L["CrrActivities"]</dt><dd>@Model.Summary.Activities</dd>
 					<dt>@L["AudienceCount"]</dt><dd>@Model.Summary.Audience</dd>
 					<dt>@L["SmokeAlarmsInstalled"]</dt><dd>@Model.Summary.SmokeAlarmsInstalled</dd>

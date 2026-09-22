@@ -1,0 +1,31 @@
+@model int?
+@using Resgrid.Web.Helpers
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+<div class="record-call-picker" data-call-picker data-url="@Url.Action("Search", "RecordCalls", new { area = "User" })"
+	 data-loading="@L["CallPickerLoading"]" data-error="@L["CallPickerError"]" data-empty="@L["CallPickerEmpty"]" data-metadata="@L["CallPickerMetadata"]" data-dates="@L["CallPickerDates"]">
+	<select id="CallId" name="CallId" class="form-control" aria-label="@L["Call"]" required="@(ViewData["CallRequired"] is true)" data-call-value>
+		<option value="">@L[ViewData["CallRequired"] is true ? "SelectCall" : "NoCall"]</option>
+		@if (Model.HasValue) { <option value="@Model.Value" selected>@L["Call"] #@Model.Value</option> }
+	</select>
+	@if (ClaimsAuthorizationHelper.CanViewCalls())
+	{
+		<details class="m-t-sm" data-call-browser>
+			<summary class="text-primary">@L["CallPickerBrowse"]</summary>
+			<div class="well well-sm m-t-sm" data-call-filters>
+				<label class="control-label" for="call-search">@L["CallPickerSearch"]</label>
+				<input id="call-search" type="search" class="form-control" maxlength="200" data-call-term autocomplete="off" />
+				<label class="control-label" for="call-status">@L["CallPickerStatus"]</label>
+				<select id="call-status" class="form-control" data-call-status><option value="">@L["CallPickerAll"]</option><option value="active">@L["CallPickerActive"]</option><option value="closed">@L["CallPickerClosed"]</option></select>
+				<div class="row" style="margin-left: 0; margin-right: 0;">
+					<div class="col-sm-6"><label class="control-label" for="call-from">@L["CallPickerFrom"]</label><input id="call-from" type="date" class="form-control" data-call-from /></div>
+					<div class="col-sm-6"><label class="control-label" for="call-to">@L["CallPickerTo"]</label><input id="call-to" type="date" class="form-control" data-call-to /></div>
+				</div>
+				<button type="button" class="btn btn-default btn-sm m-t-sm" data-call-search>@L["CallPickerApply"]</button>
+			</div>
+			<p class="text-muted" role="status" aria-live="polite" data-call-message></p>
+			<div class="list-group" style="max-height: 300px; overflow-y: auto;" data-call-results></div>
+			<div class="m-b-sm"><button type="button" class="btn btn-default btn-sm" data-call-prev disabled>@L["CallPickerPrevious"]</button> <button type="button" class="btn btn-default btn-sm" data-call-next disabled>@L["CallPickerNext"]</button></div>
+		</details>
+	}
+	<noscript><p>@L["CallPickerRequiresScript"]</p></noscript>
+</div>

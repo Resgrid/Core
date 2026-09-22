@@ -321,6 +321,11 @@ namespace Resgrid.Services
 			return new List<Call>();
 		}
 
+		public async Task<List<Call>> SearchCallCandidatesAsync(int departmentId, CallSearchQuery query)
+		{
+			return (await _callsRepository.SearchCallCandidatesAsync(departmentId, query)).ToList();
+		}
+
 		public async Task<List<Call>> GetLatest10ActiveCallsByDepartmentAsync(int departmentId)
 		{
 			var calls = (from c in await _callsRepository.GetAllOpenCallsByDepartmentAsync(departmentId)

@@ -257,7 +257,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await RequireManageAsync()) return Forbid();
 			try
 			{
-				var mapping = string.IsNullOrWhiteSpace(mappingJson) ? new List<RecordDefinitionFieldMapping>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<RecordDefinitionFieldMapping>>(mappingJson) ?? new List<RecordDefinitionFieldMapping>();
+				var mapping = string.IsNullOrWhiteSpace(mappingJson) ? new List<RecordDefinitionFieldMapping>() : Resgrid.Framework.JsonInput.Read<List<RecordDefinitionFieldMapping>>(mappingJson, nameof(mappingJson));
 				var result = await _definitions.MigrateDraftsAsync(DepartmentId, UserId, key, from, to, mapping, preview, cancellationToken);
 				TempData["RecordsMessage"] = string.Format(_localizer[preview ? "DefinitionMigrationPreview" : "DefinitionMigrationDone"].Value, result.Migrated, result.Skipped, result.UnmappedFieldKeys.Count == 0 ? "-" : string.Join(", ", result.UnmappedFieldKeys));
 			}
@@ -324,7 +324,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private static RecordDefinitionSchema SafeParse(string json)
 		{
-			try { return RecordDefinitionSchema.Parse(json); } catch (Newtonsoft.Json.JsonException) { return new RecordDefinitionSchema(); }
+			try { return Resgrid.Framework.JsonInput.Read<RecordDefinitionSchema>(json); } catch (Resgrid.Framework.JsonInputException) { return new RecordDefinitionSchema(); }
 		}
 
 		private void ReadTempData(RecordsBaseView model)

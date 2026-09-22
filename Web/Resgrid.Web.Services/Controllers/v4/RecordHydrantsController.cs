@@ -12,7 +12,7 @@ using Resgrid.Web.Services.Models.v4;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
-	/// <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): flow tests, maintenance, service state, CSV import and the response-map layer.</summary>
+	/// <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): flow tests, maintenance, service state, JSON/CSV import and the response-map layer.</summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
@@ -105,13 +105,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
-		/// <summary>CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner).</summary>
+		/// <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.</summary>
 		[HttpPost("Import")]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
 		public async Task<ActionResult<HydrantImportResultData>> Import([FromBody] HydrantImportInput input, CancellationToken cancellationToken)
 		{
 			if (!await FlagOnAsync()) return NotFound();
-			try { return Ok(Done(new HydrantImportResultData { Data = await _hydrants.ImportCsvAsync(DepartmentId, UserId, input?.Csv, cancellationToken), PageSize = 1 })); }
+			if (input == null || (!string.IsNullOrWhiteSpace(input.Csv) && !string.IsNullOrWhiteSpace(input.Json))) return BadRequest("Supply either Json or Csv content, not both.");
+			var hasJson = !string.IsNullOrWhiteSpace(input.Json);
+			try { return Ok(Done(new HydrantImportResultData { Data = await _hydrants.ImportAsync(DepartmentId, UserId, hasJson ? input.Json : input.Csv, hasJson ? "json" : "csv", cancellationToken), PageSize = 1 })); }
 			catch (Exception ex) { return Fail(ex); }
 		}
 

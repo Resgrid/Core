@@ -1,0 +1,86 @@
+@using Resgrid.Services.Records
+@model Resgrid.Web.Areas.User.Models.Records.RecordHydrantImportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{ ViewBag.Title = "Resgrid | " + L["ImportHydrants"]; }
+<style>
+	#hydrantImportErrors { table-layout:fixed; width:100%; }
+	#hydrantImportErrors th, #hydrantImportErrors td { white-space:normal; overflow-wrap:anywhere; }
+</style>
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["ImportHydrants"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-action="Index">@L["Hydrants"]</a></li>
+			<li class="active"><strong>@L["ImportHydrants"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4"><a class="btn btn-white pull-right m-t-md" asp-action="Index">@L["HydrantImportBack"]</a></div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (Model.Result != null)
+	{
+		<div class="alert @(Model.Result.ValidationFailed || Model.Result.FailureMessage != null ? "alert-warning" : "alert-success")" role="status">
+			<p>@string.Format(L["ImportResult"].Value, Model.Result.RowsRead, Model.Result.Created, Model.Result.Updated, Model.Result.Rejected.Count)</p>
+			@if (Model.Result.ValidationFailed) { <p><strong>@L["HydrantImportNotSaved"]</strong></p> }
+			@if (Model.Result.FailureMessage != null) { <p>@Model.Result.FailureMessage</p> }
+		</div>
+		@if (Model.Result.Rejected.Count > 0)
+		{
+			<div class="ibox"><div class="ibox-title"><h5>@L["ImportRejectedRows"]</h5></div><div class="ibox-content">
+				<p>@string.Format(L["HydrantImportIssuesShown"].Value, Math.Min(200, Model.Result.Rejected.Count), Model.Result.Rejected.Count)</p>
+				<div class="table-responsive"><table class="table table-striped" id="hydrantImportErrors">
+					<thead><tr><th style="width:15%">@L["HydrantImportRow"]</th><th style="width:20%">@L["HydrantNumber"]</th><th>@L["HydrantImportCorrection"]</th></tr></thead>
+					<tbody>@foreach (var row in Model.Result.Rejected.Take(200)) { <tr><td>@row.Line</td><td>@row.HydrantNumber</td><td>@row.Error</td></tr> }</tbody>
+				</table></div>
+			</div></div>
+		}
+	}
+	<div class="row">
+		<div class="col-md-7"><div class="ibox"><div class="ibox-title"><h5>@L["HydrantImportSource"]</h5></div><div class="ibox-content">
+			<p>@L["HydrantImportIntro"]</p>
+			<form method="post" asp-action="Import" enctype="multipart/form-data" id="hydrantImportForm">
+				@Html.AntiForgeryToken()
+				<div asp-validation-summary="All" class="text-danger" role="alert"></div>
+				<div class="form-group well">
+					<label for="hydrantFile">@L["HydrantImportFile"]</label>
+					<input type="file" id="hydrantFile" name="file" accept=".json,.csv,application/json,text/csv" aria-describedby="hydrantFileHelp" style="max-width:100%" />
+					<p class="help-block" id="hydrantFileHelp">@L["HydrantImportFileHelp"]</p>
+					@if (!string.IsNullOrEmpty(Model.FileName)) { <p class="help-block">@Model.FileName @if (!ViewData.ModelState.IsValid || Model.Result?.ValidationFailed == true || Model.Result?.FailureMessage != null) { <span>— @L["HydrantImportReselect"]</span> }</p> }
+				</div>
+				<details open="@(!string.IsNullOrEmpty(Model.Content) ? "open" : null)">
+					<summary class="m-b-sm">@L["HydrantImportPaste"]</summary>
+					<div class="form-group"><label asp-for="Format">@L["HydrantImportFormat"]</label><select asp-for="Format" class="form-control"><option value="json">JSON</option><option value="csv">CSV</option></select></div>
+					<div class="form-group"><label asp-for="Content">@L["HydrantImportContent"]</label><textarea asp-for="Content" rows="12" class="form-control" spellcheck="false" style="font-family:monospace;resize:vertical"></textarea></div>
+				</details>
+				<p class="text-muted m-t-md">@L["HydrantImportValidationHelp"]</p>
+				<button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @L["ImportHydrants"]</button>
+				<span id="hydrantImportProgress" class="m-l-sm" role="status" hidden>@L["HydrantImportWorking"]</span>
+			</form>
+		</div></div></div>
+		<div class="col-md-5"><div class="ibox"><div class="ibox-title"><h5>@L["HydrantImportGuide"]</h5></div><div class="ibox-content">
+			<p>@L["HydrantImportRequired"]</p>
+			<p>@L["HydrantImportOptional"]</p>
+			<p><code>type</code>: <code>DryBarrel</code>, <code>WetBarrel</code>, <code>Standpipe</code>, <code>Cistern</code>, <code>DraftingSite</code>, <code>Other</code> (1–6).</p>
+			<p>@L["HydrantImportTypesHelp"]</p>
+			<p><a asp-action="ImportExample" asp-route-format="json">@L["HydrantImportJsonExample"]</a> · <a asp-action="ImportExample" asp-route-format="csv">@L["HydrantImportCsvExample"]</a></p>
+			<pre style="white-space:pre-wrap;overflow-wrap:anywhere">@HydrantImportParser.JsonExample</pre>
+			<p>@L["HydrantImportMappingHelp"]</p>
+		</div></div></div>
+	</div>
+</div>
+@section Scripts {
+	<script>
+		var hydrantFile = document.getElementById('hydrantFile');
+		hydrantFile.addEventListener('change', function () {
+			var file = this.files[0];
+			this.setCustomValidity(file && (file.size > 10 * 1024 * 1024 || !/\.(json|csv)$/i.test(file.name))
+				? document.getElementById('hydrantFileHelp').textContent : '');
+			this.reportValidity();
+		});
+		document.getElementById('hydrantImportForm').addEventListener('submit', function () {
+			this.querySelector('button[type="submit"]').disabled = true;
+			document.getElementById('hydrantImportProgress').hidden = false;
+		});
+	</script>
+}

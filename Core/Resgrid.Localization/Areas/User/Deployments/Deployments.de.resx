@@ -5,10 +5,10 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Deployments" xml:space="preserve"><value>Einsätze</value></data>
-  <data name="DeploymentFinance" xml:space="preserve"><value>Einsatzabrechnung</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Einsätze</value></data>
   <data name="MyDeployments" xml:space="preserve"><value>Meine Einsätze</value></data>
-  <data name="IndexIntro" xml:space="preserve"><value>Finanzhüllen für Einsätze: Besetzungslisten, tägliche Zeitberichte, Spesen und Dateien für abrechenbare, kostenerstattete und rein operative Einsätze.</value></data>
-  <data name="HelpIndex" xml:space="preserve"><value>Ein Einsatz fasst die zu einem Ereignis entsandten Einheiten, Personen und Ausrüstung mit ihren täglichen Zeitberichten und Spesen zusammen. Verknüpfen Sie ihn mit einem Alarm oder einem Nachbarschaftshilfe-Auftrag aus Records.</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Einsätze planen und durchführen, Ressourcen verwalten sowie Zeiten und Ausgaben erfassen.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Verwalten Sie hier den Einsatzbetrieb. Berichte und gespeicherte Verläufe sind im RMS verfügbar.</value></data>
   <data name="NoDeployments" xml:space="preserve"><value>Noch keine Einsätze.</value></data>
   <data name="ShowAll" xml:space="preserve"><value>Alle anzeigen</value></data>
   <data name="ShowOpen" xml:space="preserve"><value>Nur offene anzeigen</value></data>
@@ -32,7 +32,7 @@
   <data name="Days" xml:space="preserve"><value>Tage</value></data>
   <data name="MaxDays" xml:space="preserve"><value>Max. Tage</value></data>
   <data name="Notes" xml:space="preserve"><value>Notizen</value></data>
-  <data name="ExternalOrderLinked" xml:space="preserve"><value>Mit einem externen Auftrag aus Records verknüpft</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Verknüpfter externer Auftrag</value></data>
   <data name="Deployment" xml:space="preserve"><value>Einsatz</value></data>
   <data name="AgencyIdentifiers" xml:space="preserve"><value>Behördenkennungen</value></data>
   <data name="Jurisdiction" xml:space="preserve"><value>Zuständigkeit</value></data>
@@ -51,7 +51,7 @@
   <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
   <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
   <data name="SaveFailed" xml:space="preserve"><value>Die Änderung konnte nicht gespeichert werden.</value></data>
-  <data name="ExternalOrderIntro" xml:space="preserve"><value>Hüllen Sie einen offenen Nachbarschaftshilfe-Auftrag aus Records in einen Einsatz, damit Zeiten, Spesen und Besetzung erfasst und abgerechnet werden können. Der Auftrag selbst bleibt in Records.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Einen bestehenden externen Auftrag mit seinem operativen Einsatz verknüpfen.</value></data>
   <data name="OpenExternalOrders" xml:space="preserve"><value>Offene externe Aufträge</value></data>
   <data name="RecordsRequired" xml:space="preserve"><value>Das Records-System ist für diese Organisation nicht aktiviert, daher gibt es keine externen Aufträge zur Auswahl.</value></data>
   <data name="NoOpenExternalOrders" xml:space="preserve"><value>Keine offenen externen Aufträge ohne Einsatz.</value></data>
@@ -125,7 +125,6 @@
   <data name="Size" xml:space="preserve"><value>Größe</value></data>
   <data name="Added" xml:space="preserve"><value>Hinzugefügt</value></data>
   <data name="Upload" xml:space="preserve"><value>Hochladen</value></data>
-  <data name="PreviewManifest" xml:space="preserve"><value>Manifest-Vorschau</value></data>
   <data name="GenerateManifest" xml:space="preserve"><value>Manifest-PDF ablegen</value></data>
   <data name="Billable" xml:space="preserve"><value>Abrechenbar</value></data>
   <data name="MealCode" xml:space="preserve"><value>Mahlzeitencode</value></data>
@@ -264,4 +263,15 @@
   <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Einsatzdatei hinzugefügt</value></data>
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Geschützter Einsatz</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Geschützter Zeitbericht</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Einsatzberichte</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Schreibgeschützter Einsatzverlauf, Berichte und Exporte. Einsätze werden unter Personal und Geschäftsbetrieb verwaltet.</value></data>
+  <data name="ExportSummary" xml:space="preserve"><value>Übersicht als CSV exportieren</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Bericht drucken</value></data>
+  <data name="ExportData" xml:space="preserve"><value>Bericht als JSON exportieren</value></data>
+  <data name="OpenOperations" xml:space="preserve"><value>Einsatzverwaltung öffnen</value></data>
+  <data name="ExternalOrders" xml:space="preserve"><value>Externe Aufträge</value></data>
+  <data name="NewExternalOrder" xml:space="preserve"><value>Neuer externer Auftrag</value></data>
+  <data name="deployments_resources_not_returned" xml:space="preserve"><value>Alle Ressourcen müssen zurückgekehrt sein, bevor der Einsatz abgeschlossen werden kann.</value></data>
+  <data name="ViewManifest" xml:space="preserve"><value>Manifest anzeigen</value></data>
+  <data name="ResourceExport" xml:space="preserve"><value>Ressourcen als CSV exportieren</value></data>
 </root>

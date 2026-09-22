@@ -11,6 +11,8 @@ namespace Resgrid.Model.Repositories
 	/// <seealso cref="Call" />
 	public interface ICallsRepository: IRepository<Call>
 	{
+		Task<IEnumerable<Call>> SearchCallCandidatesAsync(int departmentId, CallSearchQuery query);
+
 		/// <summary>
 		/// Gets all calls by department date range asynchronous.
 		/// </summary>

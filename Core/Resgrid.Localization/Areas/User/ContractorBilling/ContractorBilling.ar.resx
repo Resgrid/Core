@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>الحد الأقصى لأيام الانتشار</value></data>
   <data name="MealCode" xml:space="preserve"><value>رمز الوجبة</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>أهلية الوجبات</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>نوافذ JSON لكل رمز وجبة، مثل [{"MealCode":"B","StartsBeforeMinutes":420}]؛ البدل خارج نافذته يُنبَّه عنه ولا يُمنع.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>أضف قاعدة لكل رمز وجبة (مثل B للإفطار). أدخل أوقات حدود الوردية بالتوقيت المحلي؛ اترك الوقت فارغًا إذا لم يكن هناك حد. تُظهر المطالبات خارج هذه الحدود تحذيرًا ويمكن تقديمها.</value></data>
   <data name="Missing" xml:space="preserve"><value>مفقود</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>التعبئة المسبقة بالمضاعف</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>الأساس + الاستعداد + مضاعفات الإضافي تُنشئ الشرائح الساعية؛ تبقى القيم المخزنة مبالغ صريحة.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>لا يمكن أن تكون العلاوات سالبة.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>تحتاج العلاوة إلى اسم.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>لم يتم العثور على العلاوة.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>لا توجد قواعد لأهلية الوجبات. أضف قاعدة لتحديد الحدود الزمنية.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>إضافة قاعدة وجبة</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>إزالة قاعدة وجبة</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>تبدأ الوردية في أو قبل</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>تنتهي الوردية في أو بعد</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>أدخل رمز وجبة من حرف واحد إلى 10 أحرف.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>يمكن أن يكون لكل رمز وجبة قاعدة أهلية واحدة فقط.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>أدخل وقتًا صالحًا من 00:00 إلى 23:59.</value></data>
 </root>

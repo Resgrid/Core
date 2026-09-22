@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Queries.Calls;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class CallsRepository : RepositoryBase<Call>, ICallsRepository
+	public partial class CallsRepository : RepositoryBase<Call>, ICallsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;

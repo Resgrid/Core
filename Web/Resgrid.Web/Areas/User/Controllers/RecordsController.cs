@@ -37,6 +37,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Resgrid.Web.Helpers.DepartmentLocalTime]
 	public class RecordsController : SecureBaseController
 	{
+        public override async Task OnActionExecutionAsync(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context, Microsoft.AspNetCore.Mvc.Filters.ActionExecutionDelegate next)
+        {
+            var action = (context.ActionDescriptor as Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)?.ActionName;
+            var writes = new[] { "Create", "Autosave", "Edit", "Finalize", "Amend", "AbandonAmendment", "Void", "Reassign", "CancelDraft", "AddAttachment", "NewRunCall", "Bulk" };
+            var isWrite = Microsoft.AspNetCore.Http.HttpMethods.IsPost(Request.Method) && writes.Contains(action);
+            if (isWrite || action is "New" or "NewRevealed" or "Details" or "Edit" or "EditRevealed")
+            {
+                var input = context.ActionArguments.Values.OfType<RecordEditView>().FirstOrDefault();
+                var key = input?.DefinitionKey ?? (context.ActionArguments.TryGetValue("definitionKey", out var definition) ? definition as string : null);
+                var id = input?.RecordId ?? (context.ActionArguments.TryGetValue("id", out var value) ? value as string : null);
+                var isDeployment = false;
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    var record = await LoadAuthorizedAsync(id);
+                    if (record?.Record != null && record.Record.RecordType == null) key = record.Record.DefinitionKey;
+                }
+                if (!string.IsNullOrWhiteSpace(key) && !RmsDefinitionKeys.LockedTypes.ContainsKey(key))
+                    isDeployment = string.Equals((await _definitions.GetAsync(DepartmentId, key))?.Definition?.TemplateKey,
+                        RecordDeploymentsService.DeploymentTemplateKey, StringComparison.OrdinalIgnoreCase);
+                if (isWrite && action == "Bulk" && context.ActionArguments.TryGetValue("ids", out var ids) && ids is List<string> recordIds)
+                    foreach (var recordId in recordIds)
+                    {
+                        var record = await LoadAuthorizedAsync(recordId);
+                        if (record?.Record?.RecordType == null && record?.Record?.DefinitionKey != null &&
+                            string.Equals((await _definitions.GetAsync(DepartmentId, record.Record.DefinitionKey))?.Definition?.TemplateKey,
+                                RecordDeploymentsService.DeploymentTemplateKey, StringComparison.OrdinalIgnoreCase)) { isDeployment = true; break; }
+                    }
+                if (isDeployment)
+                {
+                    if (isWrite) context.Result = Forbid();
+                    else if (string.IsNullOrWhiteSpace(id)) context.Result = RedirectToAction("New", "DeploymentOrders");
+                    else context.Result = RedirectToAction("ForRecord", action == "Details" ? "RecordDeployments" : "DeploymentOrders", new { id });
+                    return;
+                }
+            }
+            await next();
+        }
+
 		private readonly IRecordsService _recordsService;
 		private readonly IRecordsBulkPacketService _bulk;
 		private readonly IRecordsFieldRolloutService _fieldRollout;
@@ -1481,24 +1519,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = groups.OrderBy(g => g.Name).Select(g => new SelectListItem { Value = g.DepartmentGroupId.ToString(), Text = g.Name }).ToList();
 
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
-			model.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
+			var members = await _departmentsService.GetAllMembersForDepartmentUnlimitedAsync(DepartmentId, bypassCache: true) ?? new List<DepartmentMember>();
+			var selectableUserIds = members.Where(m => m.DepartmentId == DepartmentId && !m.IsDeleted && !m.IsHidden.GetValueOrDefault() && !m.IsDisabled.GetValueOrDefault())
+				.Select(m => m.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			model.Personnel = names.Where(n => selectableUserIds.Contains(n.UserId)).OrderBy(n => n.Name)
+				.Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
 			model.ParticipantRows ??= model.ParticipantUserIds.Select(id => new RecordParticipantEditRow { UserId = id, Selected = true }).ToList();
 			if (model.ParticipantRows.All(p => !string.IsNullOrWhiteSpace(p.UserId))) model.ParticipantRows.Add(new RecordParticipantEditRow { Selected = true });
 
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			model.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
 
-			var calls = ClaimsAuthorizationHelper.CanViewCalls() ? await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>() : new List<Call>();
-			model.Calls = new List<SelectListItem>();
-			foreach (var call in calls.OrderByDescending(c => c.LoggedOn))
-				if (await _recordsAuthorizationService.CanReadSourceCallAsync(UserId, DepartmentId, call))
-					model.Calls.Add(new SelectListItem { Value = call.CallId.ToString(), Text = $"{call.Number} {call.Name}" });
-			if (model.CallId.HasValue && model.Calls.All(c => c.Value != model.CallId.Value.ToString()))
-			{
-				// Retain the existing binding without reopening its source. Otherwise a browser posts the blank option
-				// after access is revoked and an unrelated edit would erase the authorized snapshot.
-				model.Calls.Insert(0, new SelectListItem { Value = model.CallId.Value.ToString(), Text = $"{model.Details?.CallNumber ?? model.CallId.Value.ToString()} {model.Details?.CallName}".Trim() });
-			}
+			// The shared call picker resolves the selected call and searches bounded pages on demand.
+			// Its initial option retains the binding even when access to an existing source was revoked.
 		}
 
 		/// <summary>Locked Logs-parity definitions plus the department's published definitions (RMS-1B).</summary>
@@ -1558,8 +1591,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			form.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			form.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
-			var calls = ClaimsAuthorizationHelper.CanViewCalls() ? await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>() : new List<Call>();
-			form.Calls = calls.OrderByDescending(c => c.LoggedOn).Select(c => new SelectListItem { Value = c.CallId.ToString(), Text = $"{c.Number} - {c.Name}" }).ToList();
+			// Additional typed call-reference fields retain their own lists; the report's primary CallId uses the paged picker.
+			form.Calls = new List<SelectListItem>();
+			if (ClaimsAuthorizationHelper.CanViewCalls() && version.Schema.Sections.Any(s => s.Fields.Any(f => f.Type == RmsFieldType.CallReference)))
+				foreach (var call in (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>()).OrderByDescending(c => c.LoggedOn))
+					if (await _recordsAuthorizationService.CanReadSourceCallAsync(UserId, DepartmentId, call))
+						form.Calls.Add(new SelectListItem { Value = call.CallId.ToString(), Text = $"{call.Number} - {ProtectedDataEnvelope.SafeDisplay(call.Name)}" });
 			try
 			{
 				var contacts = await _contacts.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>();

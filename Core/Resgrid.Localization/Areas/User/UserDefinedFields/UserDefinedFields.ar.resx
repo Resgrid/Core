@@ -80,4 +80,34 @@
   <data name="ValidationMachineNameRequired" xml:space="preserve"><value>الاسم الآلي مطلوب.</value></data>
   <data name="ValidationMachineNamePattern" xml:space="preserve"><value>استخدم أحرفاً وأرقاماً وشرطات سفلية فقط، تبدأ بحرف أو شرطة سفلية.</value></data>
   <data name="ValidationDuplicateMachineNames" xml:space="preserve"><value>أسماء آلية مكررة: {0}. يجب أن يكون كل اسم آلي فريداً ضمن نوع الكيان هذا.</value></data>
+  <data name="RecordCustomFieldsTitle" xml:space="preserve">
+    <value>الحقول المخصصة للسجلات</value>
+  </data>
+  <data name="RecordCustomFieldsIntro" xml:space="preserve">
+    <value>اختر نوع السجل الذي تريد إضافة حقول إلى نموذجه.</value>
+  </data>
+  <data name="RecordTypeRun" xml:space="preserve">
+    <value>استجابة لبلاغ</value>
+  </data>
+  <data name="RecordTypeTraining" xml:space="preserve">
+    <value>تدريب</value>
+  </data>
+  <data name="RecordTypeWork" xml:space="preserve">
+    <value>عمل</value>
+  </data>
+  <data name="RecordTypeMeeting" xml:space="preserve">
+    <value>اجتماع</value>
+  </data>
+  <data name="RecordTypeCoroner" xml:space="preserve">
+    <value>الطب الشرعي</value>
+  </data>
+  <data name="RecordTypeCallback" xml:space="preserve">
+    <value>استدعاء</value>
+  </data>
+  <data name="RecordTypeUnitActivity" xml:space="preserve">
+    <value>نشاط الوحدة</value>
+  </data>
+  <data name="RecordTypeNerisIncident" xml:space="preserve">
+    <value>تقرير حادث NERIS</value>
+  </data>
 </root>

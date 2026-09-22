@@ -199,6 +199,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<RateScheduleResult>("contractor_billing_disabled", StatusCodes.Status403Forbidden);
 			if (input == null) return BadRequest();
 			try { return Ok(await _rateSchedules.ImportScheduleJsonAsync(DepartmentId, input.Json, UserId, Ip, Agent, cancellationToken)); }
+			catch (Resgrid.Framework.JsonInputException ex)
+			{
+				Response.Headers["X-Resgrid-Reason"] = "rateschedules_import_invalid";
+				return BadRequest(new Microsoft.AspNetCore.Mvc.ProblemDetails { Status = 400, Title = "Rate schedule JSON is invalid", Detail = ex.Message });
+			}
 			catch (InvalidOperationException ex) when (ex.Message.StartsWith("rateschedules_", StringComparison.Ordinal)) { return Failed<RateScheduleResult>(ex.Message); }
 		}
 

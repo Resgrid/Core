@@ -139,7 +139,7 @@ namespace Resgrid.Services.Records
 				{
 					var checksum = RecordSnapshotSerializer.Checksum(string.Join("|", pack.Definitions.Select(d => d.Key + ":" + RecordSnapshotSerializer.Checksum(d.Schema.Canonical()))));
 					var row = existingPacks.FirstOrDefault(p => p.PackKey == pack.Key && p.Version == pack.Version);
-					if (row != null && row.ContentChecksum == checksum) continue;
+					if (row != null && row.ContentChecksum == checksum && row.IsPreview == pack.IsPreview && row.Description == pack.Description) continue;
 					var now = DateTime.UtcNow;
 					row ??= new RmsTemplatePackVersion { RmsTemplatePackVersionId = Guid.NewGuid().ToString(), DepartmentId = RmsTemplatePackVersion.ProductDepartmentId, ProtectionId = Guid.NewGuid().ToString(), PackKey = pack.Key, Version = pack.Version, CreatedOn = now, RowVersion = 0 };
 					row.Name = pack.Name; row.Category = pack.Category; row.Description = pack.Description; row.IsPreview = pack.IsPreview;

@@ -60,7 +60,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 						break;
 					case "InventoryAlertDeliveries":
 						table.WithColumn(N("AlertId")).AsString(36).NotNullable()
-							.WithColumn(N("UserId")).AsString(128).NotNullable()
+							.WithColumn(N("UserId")).AsCustom("citext").NotNullable()
 							.WithColumn(N("State")).AsInt32().NotNullable().WithDefaultValue(0)
 							.WithColumn(N("NextAttemptOn")).AsDateTime2().NotNullable()
 							.WithColumn(N("LeaseUntil")).AsDateTime2().Nullable()

@@ -73,6 +73,7 @@
 						@Html.AntiForgeryToken()
 						<h4>@localizer["DefinitionMigrateDrafts"]</h4>
 						<div class="form-group"><label class="col-sm-2 control-label">@localizer["DefinitionMigrationMap"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" name="mappingJson" placeholder='[{"fromFieldKey":"old","toFieldKey":"new"}]'></textarea></div></div>
+						@await Html.PartialAsync("_JsonInputHelp", Resgrid.Web.Helpers.JsonInputHelp.For<List<RecordDefinitionFieldMapping>>("mappingJson", "[{\"FromFieldKey\":\"old_key\",\"ToFieldKey\":\"new_key\"}]", optional: true))
 						<div class="form-group"><div class="col-sm-8 col-sm-offset-2">
 							<button type="submit" class="btn btn-default" name="preview" value="true">@localizer["DefinitionMigratePreview"]</button>
 							<button type="submit" class="btn btn-warning" name="preview" value="false" onclick="return confirm('@localizer["DefinitionMigrateConfirm"]');">@localizer["DefinitionMigrateRun"]</button>

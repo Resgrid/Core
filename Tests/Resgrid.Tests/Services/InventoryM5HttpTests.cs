@@ -320,6 +320,7 @@ namespace Resgrid.Tests.Services
 			builder.Services.AddSingleton(_issuance.Object); builder.Services.AddSingleton(_migration.Object); builder.Services.AddSingleton(_authorization.Object); builder.Services.AddSingleton(_purchasing.Object);
 			builder.Services.AddSingleton(operations.Object); builder.Services.AddSingleton(pdf ?? Mock.Of<IPdfProvider>());
 			builder.Services.AddSingleton(Mock.Of<IUnitsService>()); builder.Services.AddSingleton(Mock.Of<IDepartmentGroupsService>()); builder.Services.AddSingleton(Mock.Of<IDepartmentsService>());
+			builder.Services.AddSingleton(Mock.Of<Resgrid.Model.Repositories.IWorkOrderMaintenanceRepository>());
 			builder.Services.AddSingleton<IProtectedGrantContext, HttpProtectedGrantContext>();
 			var protection = new Mock<IDepartmentDataProtectionService>(); protection.Setup(x => x.IsProtectionEnforcedAsync(77)).ReturnsAsync(protectedData); builder.Services.AddSingleton(protection.Object);
 			await using var app = builder.Build(); var previousMvc = ClaimsAuthorizationHelper._httpContextAccessor; var previousApi = ApiClaims._httpContextAccessor;

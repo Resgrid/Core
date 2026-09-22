@@ -168,6 +168,89 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Dashboard
 
 		[HttpGet]
+		public async Task<IActionResult> Add()
+		{
+			if (!CanManage)
+				return Unauthorized();
+			return View(await AddViewAsync(new CertificationRecordInput()));
+		}
+
+		private async Task<CertificationAddView> AddViewAsync(CertificationRecordInput input)
+		{
+			return Page(new CertificationAddView
+			{
+				Input = input,
+				Personnel = await PersonnelNamesAsync(),
+				Types = (await _certifications.GetAllCertificationTypesByDepartmentAsync(DepartmentId) ?? new List<DepartmentCertificationType>())
+					.Where(t => t.DepartmentId == DepartmentId && !t.IsDeleted && t.IsActive && !t.IsUnitScoped)
+					.OrderBy(t => t.Type).ToList()
+			});
+		}
+
+		[HttpPost, ValidateAntiForgeryToken]
+		public async Task<IActionResult> Add([Bind(Prefix = "Input")] CertificationRecordInput input, IFormFile fileToUpload, CancellationToken cancellationToken)
+		{
+			if (!CanManage)
+				return Unauthorized();
+			if (input == null)
+				return BadRequest();
+
+			if (string.IsNullOrWhiteSpace(input.UserId))
+				ModelState.AddModelError("Input.UserId", _strings["SelectMember"]);
+			else
+			{
+				// Do not authorize a posted subject using the cached display-name list.
+				var member = await _departments.GetDepartmentMemberAsync(input.UserId, DepartmentId, bypassCache: true);
+				if (member == null || member.DepartmentId != DepartmentId || member.IsDeleted ||
+					!string.Equals(member.UserId, input.UserId, StringComparison.OrdinalIgnoreCase))
+					return Unauthorized();
+			}
+
+			var view = await AddViewAsync(input);
+			var type = view.Types.FirstOrDefault(t => t.DepartmentCertificationTypeId == input.DepartmentCertificationTypeId);
+			if (type == null)
+				ModelState.AddModelError("Input.DepartmentCertificationTypeId", _strings["SelectType"]);
+			if (string.IsNullOrWhiteSpace(input.Name))
+				ModelState.AddModelError("Input.Name", _strings["CertificationNameRequired"]);
+			if (!ModelState.IsValid)
+				return View(view);
+
+			var upload = await ReadUploadAsync(fileToUpload, cancellationToken);
+			if (upload.Error != null)
+			{
+				ModelState.AddModelError("fileToUpload", ErrorText(upload.Error));
+				return View(view);
+			}
+
+			try
+			{
+				await _certifications.SaveCertificationAsync(new PersonnelCertification
+				{
+					DepartmentId = DepartmentId,
+					UserId = input.UserId,
+					DepartmentCertificationTypeId = type.DepartmentCertificationTypeId,
+					Type = type.Type,
+					Name = input.Name.Trim(),
+					Number = input.Number,
+					Area = input.Area,
+					IssuedBy = input.IssuedBy,
+					RecievedOn = input.RecievedOn,
+					ExpiresOn = type.NeverExpires ? null : input.ExpiresOn,
+					Status = (int)PersonnelCertificationStatuses.Active,
+					Data = upload.Data,
+					Filename = upload.FileName,
+					Filetype = upload.FileType
+				}, cancellationToken);
+				return Saved(nameof(Index));
+			}
+			catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal))
+			{
+				ModelState.AddModelError(string.Empty, ErrorText(ex.Message));
+				return View(view);
+			}
+		}
+
+		[HttpGet]
 		public async Task<IActionResult> Index(string scope = "person", int? category = null, int? groupId = null, int? roleId = null)
 		{
 			if (!CanView)

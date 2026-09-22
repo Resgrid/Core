@@ -6,6 +6,7 @@ export const mapMarkerTypes = {
   station: 2,
   personnel: 3,
   poi: 4,
+  hydrant: 5,
 } as const;
 
 export interface MapMarkerInfo {
@@ -40,6 +41,8 @@ export interface PoiLayerInfo {
 
 export interface GetMapDataResult {
   Data: {
+    HydrantsAvailable?: boolean;
+    HydrantsError?: string;
     CenterLat: number;
     CenterLon: number;
     ZoomLevel: number;

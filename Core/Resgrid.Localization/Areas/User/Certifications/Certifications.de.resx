@@ -225,4 +225,8 @@
   <data name="UnitCertificationRemoved" xml:space="preserve"><value>Einheitszertifizierung entfernt</value></data>
   <data name="CertificationRemoved" xml:space="preserve"><value>Zertifizierung entfernt</value></data>
   <data name="CertificationCreditAdded" xml:space="preserve"><value>Fortbildungspunkte hinzugefügt</value></data>
+  <data name="AddCertification" xml:space="preserve"><value>Zertifizierung hinzufügen</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Mitglied auswählen</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Zertifizierungstyp auswählen</value></data>
+  <data name="CertificationNameRequired" xml:space="preserve"><value>Geben Sie einen Namen für die Zertifizierung ein.</value></data>
 </root>

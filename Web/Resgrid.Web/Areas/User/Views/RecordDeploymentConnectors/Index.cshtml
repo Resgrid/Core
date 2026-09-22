@@ -22,11 +22,11 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-8">
-		<h2>@localizer["Connectors"] <span class="label label-warning">@localizer["PreviewPack"]</span></h2>
+		<h2>@localizer["Connectors"]</h2>
 		<ol class="breadcrumb">
 			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
 			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
-			<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
+			<li><a asp-controller="DeploymentOrders" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
 			<li class="active"><strong>@localizer["Connectors"]</strong></li>
 		</ol>
 	</div>
@@ -84,7 +84,7 @@
 						@foreach (var item in Model.Reconciliation)
 						{
 							<tr>
-								<td><a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@item.OrderId">@item.OrderNumber</a></td>
+								<td><a asp-controller="DeploymentOrders" asp-action="Details" asp-route-area="User" asp-route-id="@item.OrderId">@item.OrderNumber</a></td>
 								<td>@item.RequestNumber</td>
 								<td>@Kind(item.Kind)</td>
 								<td><code>@item.SourceStatus</code></td>

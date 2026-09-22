@@ -314,4 +314,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>القوى العاملة وعمليات الأعمال</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>الجاهزية</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>لوحة المعلومات</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>استخدم JSON صالحًا: ضع النص بين علامتي اقتباس مزدوجتين، وأدخل الأرقام وtrue/false دون اقتباس. استخدم تنسيق ISO للتواريخ. تتبع أسماء الحقول المخطط دون تمييز حالة الأحرف. تحدد الأخطاء الحقل، وتبدأ فهارس المصفوفات من 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>اتركه فارغًا لاستخدام قائمة أو كائن فارغ.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>مثال JSON</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>مخطط JSON (أسماء الحقول وأنواعها)</value>
+  </data>
 </root>

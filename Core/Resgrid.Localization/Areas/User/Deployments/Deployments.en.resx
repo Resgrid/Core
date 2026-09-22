@@ -5,10 +5,10 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Deployments" xml:space="preserve"><value>Deployments</value></data>
-  <data name="DeploymentFinance" xml:space="preserve"><value>Deployment Finance</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Deployments</value></data>
   <data name="MyDeployments" xml:space="preserve"><value>My Deployments</value></data>
-  <data name="IndexIntro" xml:space="preserve"><value>Deployment finance wrappers: rosters, daily time reports, expenses and files for billable, cost-recovery and operational deployments.</value></data>
-  <data name="HelpIndex" xml:space="preserve"><value>A deployment groups the units, personnel and equipment sent to an incident with their daily time reports and expenses. Link it to a call or to a Records mutual-aid order.</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Plan and run deployments, manage resources, and record time and expenses.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Manage deployment operations here. Reporting and retained history are available in RMS.</value></data>
   <data name="NoDeployments" xml:space="preserve"><value>No deployments yet.</value></data>
   <data name="ShowAll" xml:space="preserve"><value>Show all</value></data>
   <data name="ShowOpen" xml:space="preserve"><value>Show open only</value></data>
@@ -32,7 +32,7 @@
   <data name="Days" xml:space="preserve"><value>days</value></data>
   <data name="MaxDays" xml:space="preserve"><value>Max days</value></data>
   <data name="Notes" xml:space="preserve"><value>Notes</value></data>
-  <data name="ExternalOrderLinked" xml:space="preserve"><value>Linked to a Records external order</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Linked external order</value></data>
   <data name="Deployment" xml:space="preserve"><value>Deployment</value></data>
   <data name="AgencyIdentifiers" xml:space="preserve"><value>Agency identifiers</value></data>
   <data name="Jurisdiction" xml:space="preserve"><value>Jurisdiction</value></data>
@@ -51,7 +51,7 @@
   <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Saved" xml:space="preserve"><value>Saved.</value></data>
   <data name="SaveFailed" xml:space="preserve"><value>The change could not be saved.</value></data>
-  <data name="ExternalOrderIntro" xml:space="preserve"><value>Wrap an open Records mutual-aid order in a deployment so time, expenses and the roster can be tracked and billed. The order itself stays in Records.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Link an existing external order to its operational deployment.</value></data>
   <data name="OpenExternalOrders" xml:space="preserve"><value>Open external orders</value></data>
   <data name="RecordsRequired" xml:space="preserve"><value>The Records system is not enabled for this department, so there are no external orders to pick from.</value></data>
   <data name="NoOpenExternalOrders" xml:space="preserve"><value>No open external orders without a deployment.</value></data>
@@ -125,7 +125,6 @@
   <data name="Size" xml:space="preserve"><value>Size</value></data>
   <data name="Added" xml:space="preserve"><value>Added</value></data>
   <data name="Upload" xml:space="preserve"><value>Upload</value></data>
-  <data name="PreviewManifest" xml:space="preserve"><value>Preview manifest</value></data>
   <data name="GenerateManifest" xml:space="preserve"><value>File manifest PDF</value></data>
   <data name="Billable" xml:space="preserve"><value>Billable</value></data>
   <data name="MealCode" xml:space="preserve"><value>Meal code</value></data>
@@ -264,4 +263,15 @@
   <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Deployment file added</value></data>
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Protected deployment</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Protected time report</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Deployment reports</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Read-only deployment history, reports and exports. Manage deployments in Workforce &amp; Business Ops.</value></data>
+  <data name="ExportSummary" xml:space="preserve"><value>Export summary CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Print report</value></data>
+  <data name="ExportData" xml:space="preserve"><value>Export report JSON</value></data>
+  <data name="OpenOperations" xml:space="preserve"><value>Open deployment workspace</value></data>
+  <data name="ExternalOrders" xml:space="preserve"><value>External orders</value></data>
+  <data name="NewExternalOrder" xml:space="preserve"><value>New external order</value></data>
+  <data name="deployments_resources_not_returned" xml:space="preserve"><value>Every resource must return home before the deployment can be completed.</value></data>
+  <data name="ViewManifest" xml:space="preserve"><value>View manifest</value></data>
+  <data name="ResourceExport" xml:space="preserve"><value>Export resource CSV</value></data>
 </root>

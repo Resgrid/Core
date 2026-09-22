@@ -1217,7 +1217,6 @@
   <data name="Deployments" xml:space="preserve"><value>Розгортання</value></data>
   <data name="DeploymentsIntro" xml:space="preserve"><value>Зовнішні замовлення ресурсів, які виконує ваш підрозділ. Система замовлення залишається авторитетною: артефакти зберігаються як незмінні знімки, і нічого не записується назад.</value></data>
   <data name="NewDeployment" xml:space="preserve"><value>Нове розгортання</value></data>
-  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Розгортання є функцією попереднього перегляду: шаблони побудовано з опублікованої документації IROC, CIFFC та EMAC, а не з живих інтеграцій. Перевірте у своїй системі замовлення.</value></data>
   <data name="DeploymentOrder" xml:space="preserve"><value>Замовлення</value></data>
   <data name="DeploymentOrderNumber" xml:space="preserve"><value>Номер замовлення</value></data>
   <data name="DeploymentIncident" xml:space="preserve"><value>Інцидент</value></data>
@@ -2109,4 +2108,52 @@
   <data name="ExportListHeader" xml:space="preserve"><value>Експортувати цей список</value></data>
   <data name="MoreMenu" xml:space="preserve"><value>Більше</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Використання запасів</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Звіти про розгортання</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Історія розгортань, звіти та експорт лише для читання. Керуйте розгортаннями в розділі персоналу та бізнес-операцій.</value></data>
+  <data name="DeploymentExportResources" xml:space="preserve"><value>Експортувати ресурси CSV</value></data>
+  <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Відкрити керування розгортанням</value></data>
+  <data name="DeploymentExternalOrders" xml:space="preserve"><value>Зовнішні замовлення</value></data>
+  <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Нове зовнішнє замовлення</value></data>
+  <data name="HydrantImportBack" xml:space="preserve"><value>Назад до гідрантів</value></data>
+  <data name="HydrantImportNotSaved" xml:space="preserve"><value>Жодного гідранта не збережено. Виправте рядки нижче та імпортуйте файл знову.</value></data>
+  <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Показано {0} із {1} рядків із помилками. JSON використовує номери елементів, CSV — номери рядків.</value></data>
+  <data name="HydrantImportRow" xml:space="preserve"><value>Елемент / рядок</value></data>
+  <data name="HydrantImportCorrection" xml:space="preserve"><value>Як виправити</value></data>
+  <data name="HydrantImportSource" xml:space="preserve"><value>Завантажити або вставити дані гідрантів</value></data>
+  <data name="HydrantImportIntro" xml:space="preserve"><value>Імпортуйте до 20 000 гідрантів. Наявні номери буде оновлено, нові — додано.</value></data>
+  <data name="HydrantImportFile" xml:space="preserve"><value>Вибрати файл</value></data>
+  <data name="HydrantImportFileHelp" xml:space="preserve"><value>Файл UTF-8 .json або .csv, до 10 МБ. Розширення визначає формат.</value></data>
+  <data name="HydrantImportReselect" xml:space="preserve"><value>Виберіть виправлений файл ще раз.</value></data>
+  <data name="HydrantImportPaste" xml:space="preserve"><value>Або вставте JSON / CSV</value></data>
+  <data name="HydrantImportFormat" xml:space="preserve"><value>Формат вставлених даних</value></data>
+  <data name="HydrantImportContent" xml:space="preserve"><value>Вставлені дані</value></data>
+  <data name="HydrantImportValidationHelp" xml:space="preserve"><value>Кожен рядок перевіряється перед збереженням. Якщо хоч один рядок некоректний, нічого не імпортується. Не закривайте сторінку до появи результату.</value></data>
+  <data name="HydrantImportWorking" xml:space="preserve"><value>Перевірка та імпорт…</value></data>
+  <data name="HydrantImportGuide" xml:space="preserve"><value>Формат файлу та приклади</value></data>
+  <data name="HydrantImportRequired" xml:space="preserve"><value>Обов’язкові: number (текст, 1–64 символи), latitude (від -90 до 90), longitude (від -180 до 180). Кожен номер у файлі має бути унікальним.</value></data>
+  <data name="HydrantImportOptional" xml:space="preserve"><value>Необов’язкові: type, address (до 500 символів), main_size (дюйми, більше 0 і до 9999.99), flow_gpm (невід’ємне ціле число), owner (до 200 символів).</value></data>
+  <data name="HydrantImportTypesHelp" xml:space="preserve"><value>У JSON числа мають бути без лапок, а назви й адреси — у подвійних лапках. Використовуйте десяткову крапку. Пропустіть необов’язкові значення або вкажіть null. CSV потребує заголовка; значення з комами чи переносами рядків беріть у лапки.</value></data>
+  <data name="HydrantImportJsonExample" xml:space="preserve"><value>Завантажити приклад JSON</value></data>
+  <data name="HydrantImportCsvExample" xml:space="preserve"><value>Завантажити приклад CSV</value></data>
+  <data name="HydrantImportMappingHelp" xml:space="preserve"><value>Керуйте гідрантами тут, щоб показувати витрату води та стан на картах. POI — окремі орієнтири; пов’язані POI відображаються лише раз на шарі гідрантів.</value></data>
+  <data name="HydrantMapLoadFailed" xml:space="preserve"><value>Не вдалося завантажити гідранти.</value></data>
+  <data name="HydrantMapRetry" xml:space="preserve"><value>Спробувати знову</value></data>
+  <data name="CallPickerBrowse" xml:space="preserve"><value>Переглянути виклики</value></data>
+  <data name="CallPickerSearch" xml:space="preserve"><value>Пошук за номером, назвою або адресою</value></data>
+  <data name="CallPickerStatus" xml:space="preserve"><value>Стан виклику</value></data>
+  <data name="CallPickerAll" xml:space="preserve"><value>Усі виклики</value></data>
+  <data name="CallPickerActive" xml:space="preserve"><value>Активні виклики</value></data>
+  <data name="CallPickerClosed" xml:space="preserve"><value>Закриті виклики</value></data>
+  <data name="CallPickerFrom" xml:space="preserve"><value>Від дати</value></data>
+  <data name="CallPickerTo" xml:space="preserve"><value>До дати включно</value></data>
+  <data name="CallPickerApply" xml:space="preserve"><value>Шукати</value></data>
+  <data name="CallPickerPrevious" xml:space="preserve"><value>Назад</value></data>
+  <data name="CallPickerNext" xml:space="preserve"><value>Далі</value></data>
+  <data name="CallPickerLoading" xml:space="preserve"><value>Завантаження викликів…</value></data>
+  <data name="CallPickerError" xml:space="preserve"><value>Не вдалося завантажити виклики. Повторіть пошук.</value></data>
+  <data name="CallPickerEmpty" xml:space="preserve"><value>На цій сторінці немає відповідних викликів.</value></data>
+  <data name="CallPickerMetadata" xml:space="preserve"><value>Захищені виклики можна шукати за номером; назви та адреси приховано.</value></data>
+  <data name="CallPickerRequiresScript" xml:space="preserve"><value>Увімкніть JavaScript для пошуку та вибору виклику.</value></data>
+  <data name="CallPickerDates" xml:space="preserve"><value>Укажіть правильний діапазон дат: початок має бути не пізніше за кінець.</value></data>
+  <data name="CallPickerUnavailable" xml:space="preserve"><value>Виберіть доступний виклик зі списку або очистьте вибір.</value></data>
 </root>

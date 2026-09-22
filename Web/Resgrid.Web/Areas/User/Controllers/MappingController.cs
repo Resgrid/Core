@@ -43,13 +43,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IRecordsHydrantsService _hydrantsService;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
 			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
@@ -63,11 +64,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
 			_protectedReadService = protectedReadService;
+			_hydrantsService = hydrantsService;
+		}
+
+
+		private async Task<List<HydrantMapPoint>> GetHydrantPointsAsync()
+		{
+			if (!User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View)) return new List<HydrantMapPoint>();
+			try
+			{
+				if (!await _hydrantsService.IsModuleEnabledAsync(DepartmentId)) return new List<HydrantMapPoint>();
+				return await _hydrantsService.GetMapLayerAsync(DepartmentId, UserId, null, null, null, null);
+			}
+			catch (UnauthorizedAccessException) { return new List<HydrantMapPoint>(); }
+			catch (RecordsModuleDisabledException) { return new List<HydrantMapPoint>(); }
+			catch (OperationCanceledException) { throw; }
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Hydrant duplicate suppression unavailable; retaining existing POI markers");
+				return new List<HydrantMapPoint>();
+			}
 		}
 
 		public async Task<IActionResult> Index()
 		{
-			var model = new MapIndexView();
+			var model = new MapIndexView { HydrantsEnabled = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View) && await _hydrantsService.IsModuleEnabledAsync(DepartmentId) };
 
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 			var center = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
@@ -329,7 +350,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ImportPOIs(int poiTypeId)
 		{
-			var model = new ImportPOIsView();
+			var model = new ImportPOIsView { HydrantsEnabled = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.View) && await _hydrantsService.IsModuleEnabledAsync(DepartmentId) };
 			model.TypeId = poiTypeId;
 
 			return View(model);
@@ -745,13 +766,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
+			var hydrantPoiIds = (await GetHydrantPointsAsync()).Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
+
 			if (input.ShowPOIs)
 			{
 				var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
 				foreach (var poiType in poiTypes)
 				{
-					foreach (var poi in poiType.Pois)
+					foreach (var poi in poiType.Pois.Where(p => !hydrantPoiIds.Contains(p.PoiId)))
 					{
 						MapMakerInfo info = new MapMakerInfo();
 						info.ImagePath = poiType.Image;
@@ -783,7 +806,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (poiType.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			foreach (var poi in poiType.Pois)
+			var hydrantPoiIds = (await GetHydrantPointsAsync()).Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
+
+			foreach (var poi in poiType.Pois.Where(p => !hydrantPoiIds.Contains(p.PoiId)))
 			{
 				MapMakerInfo info = new MapMakerInfo();
 				info.ImagePath = poiType.Image;
@@ -813,7 +838,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (poiType.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			foreach (var poi in poiType.Pois)
+			var hydrantPoiIds = (await GetHydrantPointsAsync()).Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
+
+			foreach (var poi in poiType.Pois.Where(p => !hydrantPoiIds.Contains(p.PoiId)))
 			{
 				var poiJson = new PoiJson();
 				poiJson.PoiId = poi.PoiId;

@@ -281,6 +281,7 @@ namespace Resgrid.Model
 		public RmsJurisdictionProfileVersion HostProfile { get; set; }
 		public bool IsPreview => true;
 		/// <summary>A deployment is returned only when every accepted fill reached Returned; the external release flag alone never closes it.</summary>
-		public bool AllReturned => Fills.Where(f => f.Status != (int)RmsDeploymentFillStatus.Declined).All(f => f.Status == (int)RmsDeploymentFillStatus.Returned) && Fills.Any();
+		public bool AllReturned => Fills.Any(f => !f.DeletedOn.HasValue && f.Status != (int)RmsDeploymentFillStatus.Declined)
+			&& Fills.Where(f => !f.DeletedOn.HasValue && f.Status != (int)RmsDeploymentFillStatus.Declined).All(f => f.Status == (int)RmsDeploymentFillStatus.Returned);
 	}
 }

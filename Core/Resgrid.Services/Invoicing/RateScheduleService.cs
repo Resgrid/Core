@@ -365,13 +365,7 @@ namespace Resgrid.Services.Invoicing
 
 		public async Task<RateSchedule> ImportScheduleJsonAsync(int departmentId, string json, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
-			if (string.IsNullOrWhiteSpace(json)) throw new InvalidOperationException("rateschedules_import_invalid");
-			RateScheduleExport export;
-			try { export = JsonConvert.DeserializeObject<RateScheduleExport>(json); }
-			catch (JsonException) { throw new InvalidOperationException("rateschedules_import_invalid"); }
-			if (export == null || string.IsNullOrWhiteSpace(export.Name)) throw new InvalidOperationException("rateschedules_import_invalid");
-			if (export.Entries?.Any(e => string.IsNullOrWhiteSpace(e.Name) || !Enum.IsDefined(typeof(RateEntryTypes), e.EntryType) || !Enum.IsDefined(typeof(BillingBases), e.BillingBasis) || (e.Bands?.Any(b => !Enum.IsDefined(typeof(RateBandTypes), b.BandType) || b.Rate < 0) ?? false)) ?? false)
-				throw new InvalidOperationException("rateschedules_import_invalid");
+			var export = RateScheduleJsonImport.Read(json);
 
 			// Import is a template, never a cross-department reference: ids, department scoping and inventory links are dropped.
 			var template = new RateSchedule
@@ -396,7 +390,7 @@ namespace Resgrid.Services.Invoicing
 		public sealed class RateScheduleExport
 		{
 			public int FormatVersion { get; set; } = 1;
-			public string Name { get; set; }
+			[System.ComponentModel.DataAnnotations.Required] public string Name { get; set; }
 			public string Description { get; set; }
 			public string Currency { get; set; }
 			public DateTime? EffectiveOn { get; set; }
@@ -408,7 +402,7 @@ namespace Resgrid.Services.Invoicing
 			public sealed class Entry
 			{
 				public int EntryType { get; set; }
-				public string Name { get; set; }
+				[System.ComponentModel.DataAnnotations.Required] public string Name { get; set; }
 				public string Code { get; set; }
 				public string GroupKey { get; set; }
 				public int? CrewSize { get; set; }
@@ -437,7 +431,7 @@ namespace Resgrid.Services.Invoicing
 
 			public sealed class Premium
 			{
-				public string Name { get; set; }
+				[System.ComponentModel.DataAnnotations.Required] public string Name { get; set; }
 				public string Code { get; set; }
 				public decimal StandbyAdder { get; set; }
 				public decimal DeploymentAdder { get; set; }

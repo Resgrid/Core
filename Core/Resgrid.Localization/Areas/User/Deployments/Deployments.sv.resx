@@ -5,10 +5,10 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Deployments" xml:space="preserve"><value>Insatser</value></data>
-  <data name="DeploymentFinance" xml:space="preserve"><value>Insatsekonomi</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Insatser</value></data>
   <data name="MyDeployments" xml:space="preserve"><value>Mina insatser</value></data>
-  <data name="IndexIntro" xml:space="preserve"><value>Ekonomiska omslag för insatser: bemanning, dagliga tidrapporter, utlägg och filer för fakturerbara, kostnadsåtervinnande och operativa insatser.</value></data>
-  <data name="HelpIndex" xml:space="preserve"><value>En insats samlar de enheter, den personal och den utrustning som skickats till en händelse tillsammans med dagliga tidrapporter och utlägg. Koppla den till ett larm eller till en beställning för ömsesidigt bistånd i Records.</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Planera och genomför insatser, hantera resurser och registrera tid och utgifter.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Hantera insatsverksamheten här. Rapporter och historik finns i RMS.</value></data>
   <data name="NoDeployments" xml:space="preserve"><value>Inga insatser ännu.</value></data>
   <data name="ShowAll" xml:space="preserve"><value>Visa alla</value></data>
   <data name="ShowOpen" xml:space="preserve"><value>Visa endast öppna</value></data>
@@ -32,7 +32,7 @@
   <data name="Days" xml:space="preserve"><value>dagar</value></data>
   <data name="MaxDays" xml:space="preserve"><value>Max dagar</value></data>
   <data name="Notes" xml:space="preserve"><value>Anteckningar</value></data>
-  <data name="ExternalOrderLinked" xml:space="preserve"><value>Kopplad till en extern beställning i Records</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Länkad extern order</value></data>
   <data name="Deployment" xml:space="preserve"><value>Insats</value></data>
   <data name="AgencyIdentifiers" xml:space="preserve"><value>Myndighetsidentifierare</value></data>
   <data name="Jurisdiction" xml:space="preserve"><value>Jurisdiktion</value></data>
@@ -51,7 +51,7 @@
   <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
   <data name="Saved" xml:space="preserve"><value>Sparat.</value></data>
   <data name="SaveFailed" xml:space="preserve"><value>Ändringen kunde inte sparas.</value></data>
-  <data name="ExternalOrderIntro" xml:space="preserve"><value>Omslut en öppen beställning för ömsesidigt bistånd i Records med en insats så att tid, utlägg och bemanning kan följas upp och faktureras. Själva beställningen stannar i Records.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Koppla en befintlig extern order till dess operativa insats.</value></data>
   <data name="OpenExternalOrders" xml:space="preserve"><value>Öppna externa beställningar</value></data>
   <data name="RecordsRequired" xml:space="preserve"><value>Records-systemet är inte aktiverat för den här avdelningen, så det finns inga externa beställningar att välja.</value></data>
   <data name="NoOpenExternalOrders" xml:space="preserve"><value>Inga öppna externa beställningar utan insats.</value></data>
@@ -125,7 +125,6 @@
   <data name="Size" xml:space="preserve"><value>Storlek</value></data>
   <data name="Added" xml:space="preserve"><value>Tillagd</value></data>
   <data name="Upload" xml:space="preserve"><value>Ladda upp</value></data>
-  <data name="PreviewManifest" xml:space="preserve"><value>Förhandsgranska manifest</value></data>
   <data name="GenerateManifest" xml:space="preserve"><value>Arkivera manifest-PDF</value></data>
   <data name="Billable" xml:space="preserve"><value>Fakturerbart</value></data>
   <data name="MealCode" xml:space="preserve"><value>Måltidskod</value></data>
@@ -264,4 +263,15 @@
   <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Insatsfil tillagd</value></data>
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Skyddad insats</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Skyddad tidrapport</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Insatsrapporter</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Insatshistorik, rapporter och exporter med läsbehörighet. Hantera insatser i Personal och verksamhetsdrift.</value></data>
+  <data name="ExportSummary" xml:space="preserve"><value>Exportera sammanfattning som CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Skriv ut rapport</value></data>
+  <data name="ExportData" xml:space="preserve"><value>Exportera rapport som JSON</value></data>
+  <data name="OpenOperations" xml:space="preserve"><value>Öppna insatshanteringen</value></data>
+  <data name="ExternalOrders" xml:space="preserve"><value>Externa order</value></data>
+  <data name="NewExternalOrder" xml:space="preserve"><value>Ny extern order</value></data>
+  <data name="deployments_resources_not_returned" xml:space="preserve"><value>Alla resurser måste ha återvänt till basen innan insatsen kan avslutas.</value></data>
+  <data name="ViewManifest" xml:space="preserve"><value>Visa manifest</value></data>
+  <data name="ResourceExport" xml:space="preserve"><value>Exportera resurser som CSV</value></data>
 </root>

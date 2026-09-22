@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -747,4 +747,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Personal och verksamhet</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Beredskap</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Översikt</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>Använd giltig JSON: text inom dubbla citattecken; tal och true/false utan citattecken. Datum använder ISO-format. Fältnamn följer schemat (skiftläge ignoreras). Fel anger fältet; arrayindex börjar på 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>Lämna tomt för att använda en tom lista eller ett tomt objekt.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>JSON-exempel</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>JSON-schema (fältnamn och typer)</value>
+  </data>
 </root>

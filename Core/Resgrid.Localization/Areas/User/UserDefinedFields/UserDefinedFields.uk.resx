@@ -83,4 +83,34 @@
   <data name="ValidationDuplicateMachineNames" xml:space="preserve">
     <value>Duplicate machine name(s): {0}. Each machine name must be unique within this entity type.</value>
   </data>
+  <data name="RecordCustomFieldsTitle" xml:space="preserve">
+    <value>Користувацькі поля записів</value>
+  </data>
+  <data name="RecordCustomFieldsIntro" xml:space="preserve">
+    <value>Виберіть тип запису, форму якого потрібно розширити.</value>
+  </data>
+  <data name="RecordTypeRun" xml:space="preserve">
+    <value>Виїзд</value>
+  </data>
+  <data name="RecordTypeTraining" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="RecordTypeWork" xml:space="preserve">
+    <value>Робота</value>
+  </data>
+  <data name="RecordTypeMeeting" xml:space="preserve">
+    <value>Нарада</value>
+  </data>
+  <data name="RecordTypeCoroner" xml:space="preserve">
+    <value>Судмедексперт</value>
+  </data>
+  <data name="RecordTypeCallback" xml:space="preserve">
+    <value>Повторний виклик</value>
+  </data>
+  <data name="RecordTypeUnitActivity" xml:space="preserve">
+    <value>Діяльність підрозділу</value>
+  </data>
+  <data name="RecordTypeNerisIncident" xml:space="preserve">
+    <value>Звіт про інцидент NERIS</value>
+  </data>
 </root>

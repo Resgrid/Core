@@ -118,6 +118,12 @@ namespace Resgrid.Model
 	public class HydrantMapPoint
 	{
 		public string HydrantId { get; set; }
+		public int? PoiId { get; set; }
+		public string Color => !InService ? "#000000" : (RmsHydrantFlowClass)FlowClass switch
+		{
+			RmsHydrantFlowClass.AA => "#23c6c8", RmsHydrantFlowClass.A => "#1ab394",
+			RmsHydrantFlowClass.B => "#f8ac59", RmsHydrantFlowClass.C => "#ed5565", _ => "#999999"
+		};
 		public string HydrantNumber { get; set; }
 		public int Type { get; set; }
 		public decimal Latitude { get; set; }
@@ -145,6 +151,8 @@ namespace Resgrid.Model
 
 	public class HydrantImportResult
 	{
+		public bool ValidationFailed { get; set; }
+		public string FailureMessage { get; set; }
 		public int RowsRead { get; set; }
 		public int Created { get; set; }
 		public int Updated { get; set; }

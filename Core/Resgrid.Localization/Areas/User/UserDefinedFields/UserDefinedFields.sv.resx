@@ -83,4 +83,34 @@
   <data name="ValidationDuplicateMachineNames" xml:space="preserve">
     <value>Duplicate machine name(s): {0}. Each machine name must be unique within this entity type.</value>
   </data>
+  <data name="RecordCustomFieldsTitle" xml:space="preserve">
+    <value>Anpassade fält för poster</value>
+  </data>
+  <data name="RecordCustomFieldsIntro" xml:space="preserve">
+    <value>Välj den posttyp vars formulär du vill utöka.</value>
+  </data>
+  <data name="RecordTypeRun" xml:space="preserve">
+    <value>Utryckning</value>
+  </data>
+  <data name="RecordTypeTraining" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="RecordTypeWork" xml:space="preserve">
+    <value>Arbete</value>
+  </data>
+  <data name="RecordTypeMeeting" xml:space="preserve">
+    <value>Möte</value>
+  </data>
+  <data name="RecordTypeCoroner" xml:space="preserve">
+    <value>Rättsläkare</value>
+  </data>
+  <data name="RecordTypeCallback" xml:space="preserve">
+    <value>Återinkallning</value>
+  </data>
+  <data name="RecordTypeUnitActivity" xml:space="preserve">
+    <value>Enhetsaktivitet</value>
+  </data>
+  <data name="RecordTypeNerisIncident" xml:space="preserve">
+    <value>NERIS-incidentrapport</value>
+  </data>
 </root>

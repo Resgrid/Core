@@ -11,6 +11,7 @@
         <a asp-action="Index" asp-route-all="@(Model.OpenOnly ? "true" : "false")" class="btn btn-default">@(Model.OpenOnly ? localizer["ShowAll"] : localizer["ShowOpen"])</a>
         @if (Model.CanManage)
         {
+            <a asp-controller="DeploymentOrders" asp-action="Index" class="btn btn-default"><i class="fa fa-globe"></i> @localizer["ExternalOrders"]</a>
             <a asp-action="FromExternalOrder" class="btn btn-default"><i class="fa fa-exchange"></i> @localizer["CreateFromExternalOrder"]</a>
             <a asp-action="New" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["NewDeployment"]</a>
         }

@@ -23,7 +23,7 @@ interface MarkerState {
   poiImage: string;
   markerShape: string;
   color: string;
-  markerType: number;
+  markerType: MapMarkerInfo['Type'];
   infoWindowContent: string;
   hideLabels: boolean;
 }
@@ -33,7 +33,12 @@ function createMarkerElement(markerInfo: MapMarkerInfo, hideLabels: boolean): HT
   wrapper.className = 'rg-map__marker';
   wrapper.title = hideLabels ? '' : markerInfo.Title;
 
-  if (isPoiMarker(markerInfo)) {
+  if (Number(markerInfo.Type) === 5) {
+    const dot = document.createElement('span');
+    dot.className = 'rg-map__hydrant-dot';
+    dot.style.backgroundColor = markerInfo.Color || '#999999';
+    wrapper.appendChild(dot);
+  } else if (isPoiMarker(markerInfo)) {
     wrapper.classList.add('rg-map__marker--poi');
     wrapper.style.setProperty('--rg-map-poi-color', markerInfo.Color || '#2563eb');
 

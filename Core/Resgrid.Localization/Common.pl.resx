@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -747,4 +747,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Kadry i zarządzanie</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Gotowość</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Pulpit</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>Użyj poprawnego JSON: tekst w podwójnych cudzysłowach; liczby i true/false bez cudzysłowów. Daty mają format ISO. Nazwy pól są zgodne ze schematem (wielkość liter jest pomijana). Błędy wskazują pole; indeksy tablic zaczynają się od 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>Pozostaw puste, aby użyć pustej listy lub obiektu.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>Przykład JSON</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>Schemat JSON (nazwy i typy pól)</value>
+  </data>
 </root>

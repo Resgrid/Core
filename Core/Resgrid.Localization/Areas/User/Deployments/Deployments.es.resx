@@ -5,10 +5,10 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Deployments" xml:space="preserve"><value>Despliegues</value></data>
-  <data name="DeploymentFinance" xml:space="preserve"><value>Finanzas de despliegue</value></data>
+  <data name="DeploymentFinance" xml:space="preserve"><value>Despliegues</value></data>
   <data name="MyDeployments" xml:space="preserve"><value>Mis despliegues</value></data>
-  <data name="IndexIntro" xml:space="preserve"><value>Envoltorios financieros de despliegues: dotaciones, partes diarios de horas, gastos y archivos para despliegues facturables, de recuperación de costes y operativos.</value></data>
-  <data name="HelpIndex" xml:space="preserve"><value>Un despliegue agrupa las unidades, el personal y el equipo enviados a un incidente con sus partes diarios de horas y gastos. Vincúlelo a una llamada o a una orden de ayuda mutua de Records.</value></data>
+  <data name="IndexIntro" xml:space="preserve"><value>Planifique y ejecute despliegues, gestione recursos y registre horas y gastos.</value></data>
+  <data name="HelpIndex" xml:space="preserve"><value>Gestione aquí las operaciones del despliegue. Los informes y el historial se encuentran en RMS.</value></data>
   <data name="NoDeployments" xml:space="preserve"><value>Aún no hay despliegues.</value></data>
   <data name="ShowAll" xml:space="preserve"><value>Mostrar todos</value></data>
   <data name="ShowOpen" xml:space="preserve"><value>Mostrar solo abiertos</value></data>
@@ -32,7 +32,7 @@
   <data name="Days" xml:space="preserve"><value>días</value></data>
   <data name="MaxDays" xml:space="preserve"><value>Máx. días</value></data>
   <data name="Notes" xml:space="preserve"><value>Notas</value></data>
-  <data name="ExternalOrderLinked" xml:space="preserve"><value>Vinculado a una orden externa de Records</value></data>
+  <data name="ExternalOrderLinked" xml:space="preserve"><value>Orden externa vinculada</value></data>
   <data name="Deployment" xml:space="preserve"><value>Despliegue</value></data>
   <data name="AgencyIdentifiers" xml:space="preserve"><value>Identificadores de la agencia</value></data>
   <data name="Jurisdiction" xml:space="preserve"><value>Jurisdicción</value></data>
@@ -51,7 +51,7 @@
   <data name="Cancel" xml:space="preserve"><value>Cancelar</value></data>
   <data name="Saved" xml:space="preserve"><value>Guardado.</value></data>
   <data name="SaveFailed" xml:space="preserve"><value>No se pudo guardar el cambio.</value></data>
-  <data name="ExternalOrderIntro" xml:space="preserve"><value>Envuelva una orden abierta de ayuda mutua de Records en un despliegue para registrar y facturar horas, gastos y dotación. La orden permanece en Records.</value></data>
+  <data name="ExternalOrderIntro" xml:space="preserve"><value>Vincule una orden externa existente con su despliegue operativo.</value></data>
   <data name="OpenExternalOrders" xml:space="preserve"><value>Órdenes externas abiertas</value></data>
   <data name="RecordsRequired" xml:space="preserve"><value>El sistema Records no está habilitado para este departamento, así que no hay órdenes externas para elegir.</value></data>
   <data name="NoOpenExternalOrders" xml:space="preserve"><value>No hay órdenes externas abiertas sin despliegue.</value></data>
@@ -125,7 +125,6 @@
   <data name="Size" xml:space="preserve"><value>Tamaño</value></data>
   <data name="Added" xml:space="preserve"><value>Añadido</value></data>
   <data name="Upload" xml:space="preserve"><value>Subir</value></data>
-  <data name="PreviewManifest" xml:space="preserve"><value>Vista previa del manifiesto</value></data>
   <data name="GenerateManifest" xml:space="preserve"><value>Archivar PDF del manifiesto</value></data>
   <data name="Billable" xml:space="preserve"><value>Facturable</value></data>
   <data name="MealCode" xml:space="preserve"><value>Código de comida</value></data>
@@ -264,4 +263,15 @@
   <data name="DeploymentAttachmentAdded" xml:space="preserve"><value>Archivo de despliegue añadido</value></data>
   <data name="AdpProtectedDeployment" xml:space="preserve"><value>Despliegue protegido</value></data>
   <data name="AdpProtectedTimeReport" xml:space="preserve"><value>Parte de horas protegido</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Informes de despliegues</value></data>
+  <data name="ReportingIntro" xml:space="preserve"><value>Historial, informes y exportaciones de despliegues de solo lectura. Gestione los despliegues en Personal y operaciones empresariales.</value></data>
+  <data name="ExportSummary" xml:space="preserve"><value>Exportar resumen CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Imprimir informe</value></data>
+  <data name="ExportData" xml:space="preserve"><value>Exportar informe JSON</value></data>
+  <data name="OpenOperations" xml:space="preserve"><value>Abrir gestión del despliegue</value></data>
+  <data name="ExternalOrders" xml:space="preserve"><value>Órdenes externas</value></data>
+  <data name="NewExternalOrder" xml:space="preserve"><value>Nueva orden externa</value></data>
+  <data name="deployments_resources_not_returned" xml:space="preserve"><value>Todos los recursos deben regresar a su base antes de finalizar el despliegue.</value></data>
+  <data name="ViewManifest" xml:space="preserve"><value>Ver manifiesto</value></data>
+  <data name="ResourceExport" xml:space="preserve"><value>Exportar recursos CSV</value></data>
 </root>

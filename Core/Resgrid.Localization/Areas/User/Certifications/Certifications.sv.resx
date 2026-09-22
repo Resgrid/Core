@@ -225,4 +225,8 @@
   <data name="UnitCertificationRemoved" xml:space="preserve"><value>Enhetscertifiering borttagen</value></data>
   <data name="CertificationRemoved" xml:space="preserve"><value>Certifiering borttagen</value></data>
   <data name="CertificationCreditAdded" xml:space="preserve"><value>Certifieringspoäng tillagda</value></data>
+  <data name="AddCertification" xml:space="preserve"><value>Lägg till certifiering</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Välj en medlem</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Välj en certifieringstyp</value></data>
+  <data name="CertificationNameRequired" xml:space="preserve"><value>Ange ett namn på certifieringen.</value></data>
 </root>

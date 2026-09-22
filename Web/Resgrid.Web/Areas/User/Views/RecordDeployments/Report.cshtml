@@ -1,0 +1,57 @@
+@using Resgrid.Model.Invoicing
+@model Resgrid.Web.Areas.User.Models.Deployments.DeploymentReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> localizer
+@{
+    var d = Model.Deployment;
+    var time = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["DeploymentReports"] + " — " + d.Name;
+    var standalone = ViewData["StandaloneReport"] is true;
+    if (standalone) { Layout = null; }
+    string Who(string id) => !string.IsNullOrWhiteSpace(id) && Model.PersonnelNames.TryGetValue(id, out var name) ? name : id;
+}
+@if (standalone) {
+    <style>body{font-family:Arial,sans-serif;color:#222;margin:24px}table{width:100%;border-collapse:collapse;margin-bottom:18px}td,th{padding:6px;border-bottom:1px solid #ccc;text-align:left}dt{font-weight:bold}dd{margin-bottom:8px}@@media print{.hidden-print{display:none}.ibox{break-inside:avoid}}</style>
+}
+<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12">
+    <h2>@d.Name</h2><ol class="breadcrumb"><li><a asp-action="Index">@localizer["DeploymentReports"]</a></li><li class="active">@d.Name</li></ol>
+    <p class="text-muted">@localizer["ReportingIntro"]</p>
+    <div class="btn-group hidden-print">
+        @if (standalone) { <button type="button" class="btn btn-default" onclick="window.print()">@localizer["PrintReport"]</button> }
+        else { <a class="btn btn-default" asp-action="Print" asp-route-id="@d.DeploymentId" target="_blank" rel="noopener">@localizer["PrintReport"]</a> }
+        @if (Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanExportRecords()) { <a class="btn btn-info" asp-action="Export" asp-route-id="@d.DeploymentId">@localizer["ExportData"]</a> }
+        @if (Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanExportRecords()) { <a class="btn btn-info" asp-action="ExportTimeEntries" asp-route-id="@d.DeploymentId">@localizer["ExportCsv"]</a> }
+        <a class="btn btn-default" asp-action="Manifest" asp-route-id="@d.DeploymentId" target="_blank" rel="noopener">@localizer["AttachmentManifest"]</a>
+        @if (Model.CanManage) { <a class="btn btn-primary" asp-controller="Deployments" asp-action="View" asp-route-id="@d.DeploymentId">@localizer["OpenOperations"]</a> }
+    </div>
+</div></div>
+<div class="wrapper wrapper-content">
+    <div class="ibox"><div class="ibox-content">
+        <dl class="dl-horizontal">
+            <dt>@localizer["Status"]</dt><dd>@localizer["Status" + (DeploymentStatuses)d.Status]</dd>
+            <dt>@localizer["FinanceMode"]</dt><dd>@localizer["Finance" + (DeploymentFinanceModes)d.FinanceMode]</dd>
+            <dt>@localizer["IncidentNumber"]</dt><dd>@d.IncidentNumber</dd>
+            <dt>@localizer["ResourceOrderNumber"]</dt><dd>@d.ResourceOrderNumber</dd>
+            <dt>@localizer["Window"]</dt><dd>@time.Format(d.StartOn) → @time.Format(d.EndOn)</dd>
+            @if (!string.IsNullOrWhiteSpace(d.RmsExternalOrderId)) { <dt>@localizer["ExternalOrder"]</dt><dd><a asp-action="Details" asp-route-id="@d.RmsExternalOrderId">@localizer["ExternalOrder"]</a></dd> }
+        </dl>
+    </div></div>
+    <div class="ibox"><div class="ibox-title"><h5>@localizer["Roster"]</h5></div><div class="ibox-content table-responsive">
+        <h4>@localizer["Units"]</h4><table class="table table-striped"><tbody>@foreach (var u in d.Units) { <tr><td>@(u.UnitName ?? u.UnitId.ToString())</td><td>@u.CallSign</td><td>@time.Format(u.AddedOn) → @time.Format(u.RemovedOn)</td></tr> }</tbody></table>
+        <h4>@localizer["Personnel"]</h4><table class="table table-striped"><tbody>@foreach (var p in d.Personnel) { <tr><td>@Who(p.UserId)</td><td>@p.CertificationCode</td><td>@time.Format(p.AddedOn) → @time.Format(p.RemovedOn)</td></tr> }</tbody></table>
+        <h4>@localizer["Equipment"]</h4><table class="table table-striped"><tbody>@foreach (var e in d.Equipment) { <tr><td>@(e.FreeTextName ?? e.InventoryAssetId ?? e.InventoryItemId)</td><td>@time.Format(e.IssuedOn) → @time.Format(e.ReturnedOn)</td></tr> }</tbody></table>
+    </div></div>
+    <div class="ibox"><div class="ibox-title"><h5>@localizer["TimeReports"]</h5></div><div class="ibox-content table-responsive">
+        <table class="table table-striped"><thead><tr><th>@localizer["TimeReports"]</th><th>@localizer["ReportDate"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
+        @foreach (var r in Model.TimeReports) { <tr><td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId" target="_blank" rel="noopener">@r.ReportNumber</a></td><td>@r.ReportDate.ToString("d")</td><td>@localizer["ReportStatus" + (DeploymentTimeReportStatuses)r.Status]</td></tr> }
+        </tbody></table>
+    </div></div>
+    <div class="ibox"><div class="ibox-title"><h5>@localizer["Expenses"]</h5></div><div class="ibox-content table-responsive">
+        <table class="table table-striped"><thead><tr><th>@localizer["ExpenseDate"]</th><th>@localizer["Description"]</th><th>@localizer["Amount"]</th><th>@localizer["Currency"]</th></tr></thead><tbody>
+        @foreach (var e in Model.Expenses) { <tr><td>@e.ExpenseDate.ToString("d")</td><td>@e.Description</td><td>@e.Amount.ToString("N2")</td><td>@e.Currency</td></tr> }
+        </tbody></table>
+        @foreach (var total in Model.Expenses.GroupBy(e => e.Currency)) { <p><strong>@total.Key @total.Sum(e => e.Amount).ToString("N2")</strong></p> }
+    </div></div>
+    <div class="ibox"><div class="ibox-title"><h5>@localizer["Files"]</h5></div><div class="ibox-content"><ul>
+        @foreach (var file in Model.Attachments) { <li><a asp-action="Attachment" asp-route-id="@file.DeploymentAttachmentId">@file.FileName</a></li> }
+    </ul></div></div>
+</div>

@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Maks. dni wyjazdu</value></data>
   <data name="MealCode" xml:space="preserve"><value>Kod posiłku</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Uprawnienia do posiłków</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>Okna JSON na kod posiłku, np. [{"MealCode":"B","StartsBeforeMinutes":420}]; dieta poza oknem jest ostrzeżeniem, nie blokadą.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Dodaj regułę dla każdego kodu posiłku (np. B dla śniadania). Wprowadź lokalne godziny graniczne zmiany; pozostaw godzinę pustą, aby nie stosować limitu. Wnioski poza tymi limitami wyświetlają ostrzeżenie i nadal można je przesłać.</value></data>
   <data name="Missing" xml:space="preserve"><value>Brak</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Wstępne wypełnienie mnożnikiem</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Baza + gotowość + mnożniki nadgodzin tworzą pasma godzinowe; zapisane wartości pozostają jawnymi kwotami.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Dodatki nie mogą być ujemne.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>Dodatek wymaga nazwy.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Nie znaleziono dodatku.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Brak reguł uprawnień do posiłków. Dodaj regułę, aby ustawić limity godzinowe.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Dodaj regułę posiłku</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Usuń regułę posiłku</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Zmiana zaczyna się najpóźniej o</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Zmiana kończy się najwcześniej o</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Wprowadź kod posiłku o długości od 1 do 10 znaków.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Każdy kod posiłku może mieć tylko jedną regułę uprawnień.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Wprowadź prawidłową godzinę od 00:00 do 23:59.</value></data>
 </root>

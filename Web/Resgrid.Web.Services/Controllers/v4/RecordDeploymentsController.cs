@@ -17,9 +17,8 @@ using Resgrid.Web.ServicesCore.Helpers;
 namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
-	/// Create Deployment from External Order over v4 (RMS plan section 4.1 external-order fill contract, RMS-1C,
-	/// Preview). Manual entry and artifact snapshots only; no ordering-system connector and no write-back. Creating
-	/// or changing a deployment needs Record_Create; reading needs Record_View plus visibility of its Record.
+	/// Create Deployment from External Order over v4 (RMS plan section 4.1 external-order fill contract, operational workspace). Manual entry and artifact snapshots only; no ordering-system connector and no write-back. Creating
+	/// or changing a deployment uses DeploymentOrders routes and needs Deployments_Update plus Record_Create; reading needs Record_View plus visibility of its Record.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -28,12 +27,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class RecordDeploymentsController : V4AuthenticatedApiControllerbase
 	{
 		private readonly IRecordDeploymentsService _deployments;
+        private readonly IDeploymentService _operations;
+        private readonly IFeatureToggleService _flags;
 		private readonly IRmsExternalOrdersRepository _orders;
 		private readonly IRecordsCutoverService _cutoverService;
 
-		public RecordDeploymentsController(IRecordDeploymentsService deployments, IRmsExternalOrdersRepository orders, IRecordsCutoverService cutoverService)
+		public RecordDeploymentsController(IRecordDeploymentsService deployments, IRmsExternalOrdersRepository orders, IRecordsCutoverService cutoverService, IDeploymentService operations, IFeatureToggleService flags)
 		{
 			_deployments = deployments;
+            _operations = operations;
+            _flags = flags;
 			_orders = orders;
 			_cutoverService = cutoverService;
 		}
@@ -91,7 +94,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
-		[HttpPost("Create")]
+		[HttpPost("~/api/v{VersionId:apiVersion}/DeploymentOrders/Create")]
+        [Authorize(Policy = ResgridResources.Deployments_Update)]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -107,14 +111,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var created = RecordsRms1bApiMapper.ToCreateInput(input, origin);
 				created.IdempotencyKey = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
 				var aggregate = await _deployments.CreateFromExternalOrderAsync(DepartmentId, UserId, created, cancellationToken);
-				var created201 = Wrap(aggregate, ResponseHelper.Created);
+				var operation = await _operations.GetDeploymentByExternalOrderIdAsync(aggregate.Order.RmsExternalOrderId, DepartmentId)
+                    ?? await _operations.CreateFromExternalOrderAsync(DepartmentId, new Resgrid.Model.Invoicing.ExternalOrderDeploymentInput
+                    { RmsExternalOrderId = aggregate.Order.RmsExternalOrderId, PrefillRoster = true }, UserId, null, null, cancellationToken);
+                await _operations.SynchronizeExternalOrderAsync(aggregate.Order.RmsExternalOrderId, DepartmentId, UserId, null, null, cancellationToken);
+                var created201 = Wrap(aggregate, ResponseHelper.Created);
 				if (created201 == null) return NotFound();
 				return StatusCode(StatusCodes.Status201Created, created201);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
 
-		[HttpPost("AddFill")]
+		[HttpPost("~/api/v{VersionId:apiVersion}/DeploymentOrders/AddFill")]
+        [Authorize(Policy = ResgridResources.Deployments_Update)]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_Create)]
@@ -133,7 +142,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>Moves one fill through accept/decline, mobilize, check-in, assign, release, demobilize and return.</summary>
-		[HttpPost("TransitionFill")]
+		[HttpPost("~/api/v{VersionId:apiVersion}/DeploymentOrders/TransitionFill")]
+        [Authorize(Policy = ResgridResources.Deployments_Update)]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -147,14 +157,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				input.ExpectedRowVersion ??= RecordsApiContract.ParseETag(Request.Headers[RecordsApiContract.IfMatchHeader]);
 				var fill = await _deployments.TransitionFillAsync(DepartmentId, UserId, fillId, input, cancellationToken);
-				var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, fill.RmsExternalOrderId));
+				await _operations.SynchronizeExternalOrderAsync(fill.RmsExternalOrderId, DepartmentId, UserId, null, null, cancellationToken);
+                var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, fill.RmsExternalOrderId));
 				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
 
 		/// <summary>Records a later snapshot of the same external order; the previous artifact stays on record as a superseded reference.</summary>
-		[HttpPost("Snapshot")]
+		[HttpPost("~/api/v{VersionId:apiVersion}/DeploymentOrders/Snapshot")]
+        [Authorize(Policy = ResgridResources.Deployments_Update)]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_Create)]
@@ -174,7 +186,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
-		[HttpPost("Closeout")]
+		[HttpPost("~/api/v{VersionId:apiVersion}/DeploymentOrders/Closeout")]
+        [Authorize(Policy = ResgridResources.Deployments_Update)]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -188,6 +201,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				await _deployments.CloseoutAsync(DepartmentId, UserId, id, rowVersion, input.Notes, cancellationToken);
+                await _operations.SynchronizeExternalOrderAsync(id, DepartmentId, UserId, null, null, cancellationToken);
 				var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, id));
 				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
@@ -238,7 +252,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<ActionResult> UsableAsync()
 		{
-			var state = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!await _flags.IsEnabledAsync(FeatureFlagKeys.Deployments, DepartmentId)) return NotFound();
+            var state = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!state.FlagEnabled) return NotFound();
 			return state.RecordsUsable ? null : Problem(statusCode: StatusCodes.Status409Conflict, title: "Records is not activated for this department.", type: "records_not_activated");
 		}

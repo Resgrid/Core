@@ -53,6 +53,7 @@
                                 <div class="col-sm-4"><div class="form-group"><label>@localizer["HoursPerYear"]</label><input type="number" step="0.01" name="StandardHoursPerYear" class="form-control" value="@p.StandardHoursPerYear" /></div></div>
                             </div>
                             <div class="form-group"><label>@localizer["RateMultipliers"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="RateMultipliersJson" class="form-control" placeholder='{"Overtime":1.5,"DoubleTime":2,"Standby":1,"Travel":1}' value="@ProtectedDataEnvelope.SafeDisplay(p.RateMultipliersJson)" /><span class="help-block">@localizer["RateMultipliersHelp"]</span></div>
+                            @await Html.PartialAsync("_JsonInputHelp", Resgrid.Web.Helpers.JsonInputHelp.For<Dictionary<string, decimal>>("RateMultipliersJson", "{\"Overtime\":1.5,\"DoubleTime\":2,\"Standby\":1,\"Travel\":1}", optional: true, schema: Resgrid.Web.Helpers.JsonInputHelp.RateMultipliersSchema()))
                             <div class="form-group"><label>@localizer["Source"]</label><input type="text" name="Source" class="form-control" maxlength="100" value="@p.Source" /></div>
                         </fieldset>
                         @if (Model.CanManageCompensation)

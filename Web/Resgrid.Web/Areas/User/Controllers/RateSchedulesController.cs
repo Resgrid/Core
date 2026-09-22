@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -126,6 +127,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var schedule = await _rateSchedules.GetScheduleByIdAsync(id, DepartmentId, includeInactive: true);
 			if (schedule == null) return NotFound();
 			var view = Page(new RateScheduleEditView { Schedule = schedule, Policy = schedule.Policy, ExportJson = await _rateSchedules.ExportScheduleJsonAsync(id, DepartmentId) });
+			view.MealEligibility = (view.Policy.MealEligibility ?? new List<MealEligibilityWindow>()).Where(w => w != null).Select(MealEligibilityInput.FromWindow).ToList();
 			await FillLookupsAsync(view);
 			return View(view);
 		}
@@ -151,21 +153,72 @@ namespace Resgrid.Web.Areas.User.Controllers
 				OvertimeBasis = Enum.IsDefined(typeof(OvertimeBases), input.OvertimeBasis) ? (OvertimeBases)input.OvertimeBasis : OvertimeBases.ConsecutiveHours, FuelDeductionRatePerLitre = input.FuelDeductionRatePerLitre,
 				ContinuousRunGapMinutes = input.ContinuousRunGapMinutes
 			};
-			if (!string.IsNullOrWhiteSpace(input.MealEligibilityJson))
+			policy.MealEligibility = ValidateMealEligibility(input.MealEligibility);
+			var schedule = new RateSchedule
 			{
-				try { policy.MealEligibility = JsonConvert.DeserializeObject<List<MealEligibilityWindow>>(input.MealEligibilityJson) ?? new List<MealEligibilityWindow>(); }
-				catch (JsonException) { return Refused(400, "rateschedules_policy_invalid", string.IsNullOrWhiteSpace(input.RateScheduleId) ? "New" : "Edit", new { id = input.RateScheduleId }); }
-			}
+				RateScheduleId = input.RateScheduleId, DepartmentId = DepartmentId, Name = input.Name, Description = input.Description, Currency = input.Currency,
+				EffectiveOn = input.EffectiveOn, ExpiresOn = input.ExpiresOn, IsActive = input.IsActive
+			};
+			if (!ModelState.IsValid) return await RedisplayScheduleAsync(input, schedule, policy);
+			schedule.PolicyJson = policy.ToJson();
 			try
 			{
-				var saved = await _rateSchedules.SaveScheduleAsync(new RateSchedule
-				{
-					RateScheduleId = input.RateScheduleId, DepartmentId = DepartmentId, Name = input.Name, Description = input.Description, Currency = input.Currency,
-					EffectiveOn = input.EffectiveOn, ExpiresOn = input.ExpiresOn, IsActive = input.IsActive, PolicyJson = policy.ToJson()
-				}, UserId, Ip, Agent, cancellationToken);
+				var saved = await _rateSchedules.SaveScheduleAsync(schedule, UserId, Ip, Agent, cancellationToken);
 				return Saved("Edit", new { id = saved.RateScheduleId });
 			}
-			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, string.IsNullOrWhiteSpace(input.RateScheduleId) ? "New" : "Edit", new { id = input.RateScheduleId }); }
+			catch (InvalidOperationException ex) when (IsDomainError(ex))
+			{
+				ModelState.AddModelError(string.Empty, ErrorText(ex.Message));
+				return await RedisplayScheduleAsync(input, schedule, policy);
+			}
+		}
+
+		private List<MealEligibilityWindow> ValidateMealEligibility(List<MealEligibilityInput> rows)
+		{
+			var windows = new List<MealEligibilityWindow>();
+			var codes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			for (var i = 0; i < (rows?.Count ?? 0); i++)
+			{
+				var row = rows[i];
+				if (row == null || (string.IsNullOrWhiteSpace(row.MealCode) && string.IsNullOrWhiteSpace(row.StartsBefore) && string.IsNullOrWhiteSpace(row.EndsAfter))) continue;
+				var prefix = $"MealEligibility[{i}]";
+				var code = row.MealCode?.Trim();
+				if (string.IsNullOrEmpty(code) || code.Length > 10)
+					ModelState.AddModelError(prefix + ".MealCode", _strings["MealCodeInvalid"]);
+				else if (!codes.Add(code))
+					ModelState.AddModelError(prefix + ".MealCode", _strings["MealCodeDuplicate"]);
+				windows.Add(new MealEligibilityWindow
+				{
+					MealCode = code,
+					StartsBeforeMinutes = ParseMealTime(row.StartsBefore, prefix + ".StartsBefore"),
+					EndsAfterMinutes = ParseMealTime(row.EndsAfter, prefix + ".EndsAfter")
+				});
+			}
+			return windows;
+		}
+
+		private int? ParseMealTime(string value, string key)
+		{
+			if (string.IsNullOrWhiteSpace(value)) return null;
+			if (TimeOnly.TryParseExact(value, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
+				return time.Hour * 60 + time.Minute;
+			ModelState.AddModelError(key, _strings["MealTimeInvalid"]);
+			return null;
+		}
+
+		private async Task<IActionResult> RedisplayScheduleAsync(RateScheduleInput input, RateSchedule schedule, RateSchedulePolicy policy)
+		{
+			var view = Page(new RateScheduleEditView { Schedule = schedule, Policy = policy, MealEligibility = input.MealEligibility ?? new List<MealEligibilityInput>() });
+			if (!view.IsNew)
+			{
+				var existing = await _rateSchedules.GetScheduleByIdAsync(schedule.RateScheduleId, DepartmentId, includeInactive: true);
+				if (existing == null) return NotFound();
+				schedule.Entries = existing.Entries;
+				schedule.Premiums = existing.Premiums;
+				view.ExportJson = await _rateSchedules.ExportScheduleJsonAsync(schedule.RateScheduleId, DepartmentId);
+			}
+			await FillLookupsAsync(view);
+			return View("Edit", view);
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
@@ -207,6 +260,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			try
 			{
+				if (!string.IsNullOrWhiteSpace(input.RequiredCertificationsJson))
+					Resgrid.Services.Invoicing.RateScheduleJsonImport.ReadRequirements(input.RequiredCertificationsJson);
 				await _rateSchedules.SaveEntryAsync(new RateScheduleEntry
 				{
 					RateScheduleEntryId = input.RateScheduleEntryId, RateScheduleId = input.RateScheduleId, DepartmentId = DepartmentId, EntryType = input.EntryType, Name = input.Name, Code = input.Code, GroupKey = input.GroupKey,
@@ -214,6 +269,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					RequiredCertificationsJson = input.RequiredCertificationsJson, SortOrder = input.SortOrder, IsActive = input.IsActive, Bands = bands
 				}, UserId, Ip, Agent, cancellationToken);
 				return Saved("Edit", new { id = input.RateScheduleId });
+			}
+			catch (JsonInputException ex)
+			{
+				if (IsAjax()) return BadRequest(new { message = ex.Message });
+				TempData["ContractorMessage"] = ex.Message;
+				return RedirectToAction("Edit", new { id = input.RateScheduleId });
 			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "Edit", new { id = input.RateScheduleId }); }
 		}
@@ -274,6 +335,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var imported = await _rateSchedules.ImportScheduleJsonAsync(DepartmentId, content, UserId, Ip, Agent, cancellationToken);
 				return Saved("Edit", new { id = imported.RateScheduleId });
+			}
+			catch (JsonInputException ex)
+			{
+				if (IsAjax()) return BadRequest(new { message = ex.Message, code = "rateschedules_import_invalid" });
+				ViewData["ImportJson"] = content;
+				ViewData["ImportError"] = ex.Message;
+				Response.StatusCode = 400;
+				return View("Index", Page(new RateScheduleIndexView { Schedules = await _rateSchedules.GetSchedulesForDepartmentAsync(DepartmentId) }));
 			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "Index"); }
 		}

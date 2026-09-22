@@ -59,14 +59,19 @@
 @if (Model.CanManageRates)
 {
     <div class="modal fade" id="importModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form method="post" asp-action="Import" enctype="multipart/form-data" class="modal-content">
                 @Html.AntiForgeryToken()
                 <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">@localizer["ImportJson"]</h4></div>
                 <div class="modal-body">
                     <p class="text-muted">@localizer["ImportJsonHelp"]</p>
-                    <div class="form-group"><label>@localizer["File"]</label><input type="file" name="file" accept=".json,application/json" class="form-control" /></div>
-                    <div class="form-group"><label>@localizer["OrPasteJson"]</label><textarea name="json" class="form-control" rows="6"></textarea></div>
+                    @if (ViewData["ImportError"] is string importError)
+                    {
+                        <div class="alert alert-danger" role="alert" tabindex="-1" id="importError">@importError</div>
+                    }
+                    <div class="form-group"><label for="importFile">@localizer["File"]</label><input id="importFile" type="file" name="file" accept=".json,application/json" class="form-control" /></div>
+                    <div class="form-group"><label for="importJson">@localizer["OrPasteJson"]</label><textarea id="importJson" name="json" class="form-control" rows="10">@ViewData["ImportJson"]</textarea></div>
+                    @await Html.PartialAsync("_JsonInputHelp", Resgrid.Web.Helpers.JsonInputHelp.For<Resgrid.Services.Invoicing.RateScheduleService.RateScheduleExport>(localizer["ImportJson"].Value, "{\n  \"FormatVersion\": 1,\n  \"Name\": \"Example rates\",\n  \"Currency\": \"USD\",\n  \"EffectiveOn\": \"2026-09-22\",\n  \"Entries\": [{\n    \"EntryType\": 4,\n    \"Name\": \"Support service\",\n    \"BillingBasis\": 0,\n    \"IsActive\": true,\n    \"Bands\": [{ \"BandType\": 1, \"Rate\": 25.50 }]\n  }],\n  \"Premiums\": []\n}", schema: Resgrid.Services.Invoicing.RateScheduleJsonImport.Schema()))
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Import"]</button></div>
             </form>
@@ -76,4 +81,11 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    @if (ViewData["ImportError"] != null)
+    {
+        <script>$(function () { $('#importModal').on('shown.bs.modal', function () { $('#importError').focus(); }).modal('show'); });</script>
+    }
 }

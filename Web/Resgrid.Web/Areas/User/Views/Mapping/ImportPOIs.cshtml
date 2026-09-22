@@ -1,6 +1,7 @@
 
 @model Resgrid.Web.Areas.User.Models.Mapping.ImportPOIsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> hydrantStrings
 @{
 	ViewBag.Title = "Resgrid | " + localizer["ImportPOIsPageTitle"];
 }
@@ -32,6 +33,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
+					@if (Model.HydrantsEnabled) { <p class="alert alert-info">@hydrantStrings["HydrantImportMappingHelp"] <a asp-controller="RecordHydrants" asp-action="Index">@hydrantStrings["Hydrants"]</a></p> }
 					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="ImportPOIs" asp-route-area="User" method="post" enctype="multipart/form-data">
 
 						<div class="row">

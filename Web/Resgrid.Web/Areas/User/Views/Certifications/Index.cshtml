@@ -28,6 +28,10 @@
 
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
         <a asp-controller="Certifications" asp-action="DashboardCsv" asp-route-area="User" asp-route-scope="@Model.Scope" asp-route-category="@Model.Category" asp-route-groupId="@Model.GroupId" asp-route-roleId="@Model.RoleId" class="btn btn-info"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
+        @if (Model.CanManage)
+        {
+            <a asp-controller="Certifications" asp-action="Add" asp-route-area="User" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["AddCertification"]</a>
+        }
     </text>;
     ViewData["HeaderActions"] = headerActions;
 }

@@ -62,9 +62,15 @@ namespace Resgrid.Tests.Rms
 			var result = await _h.HydrantsService.ImportCsvAsync(Dept, Admin,
 				"number,latitude,longitude,type,address,main_size,flow_gpm,owner\nH-1,45.5001,-122.6001,wet barrel,1 River Rd,6,1100,City\nH-2,45.6,-122.7,dry,,8,,\nH-3,bad,-122.7,dry,,,,\n,45.6,-122.7,dry,,,,\nH-4,45.51,-122.61,cistern,Tank Hill,,,Private Water Co\n");
 			result.RowsRead.Should().Be(5);
+			result.Created.Should().Be(0);
+			result.Updated.Should().Be(0);
+			result.ValidationFailed.Should().BeTrue();
+			result.Rejected.Should().HaveCount(2);
+			_h.Hydrants.Rows.Should().ContainSingle();
+			result = await _h.HydrantsService.ImportCsvAsync(Dept, Admin,
+				"number,latitude,longitude,type,address,main_size,flow_gpm,owner\nH-1,45.5001,-122.6001,wet barrel,1 River Rd,6,1100,City\nH-2,45.6,-122.7,dry,,8,,\nH-4,45.51,-122.61,cistern,Tank Hill,,,Private Water Co\n");
 			result.Created.Should().Be(2);
 			result.Updated.Should().Be(1);
-			result.Rejected.Select(r => r.Error).Should().BeEquivalentTo(new[] { "Invalid coordinates", "Missing hydrant number" });
 			var h1 = _h.Hydrants.Rows.Single(h => h.HydrantNumber == "H-1");
 			h1.Type.Should().Be((int)RmsHydrantType.WetBarrel);
 			h1.FlowGpm.Should().Be(1100);

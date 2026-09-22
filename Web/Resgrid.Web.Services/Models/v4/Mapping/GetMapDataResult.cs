@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Resgrid.Web.Services.Models.v4.Mapping
 {
@@ -26,6 +26,8 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 			PoiLayers = new List<PoiLayerData>();
 		}
 
+		public bool HydrantsAvailable { get; set; }
+		public string HydrantsError { get; set; }
 		public double CenterLat { get; set; }
 		public double CenterLon { get; set; }
 		public int ZoomLevel { get; set; }

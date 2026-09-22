@@ -93,6 +93,7 @@
 						</div></div>
 						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionChangeNotes"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="ChangeNotes"></textarea></div></div>
 						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionMigrationMap"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="MigrationMapJson" placeholder='[{"fromFieldKey":"old","toFieldKey":"new"}]'></textarea></div></div>
+						@await Html.PartialAsync("_JsonInputHelp", Resgrid.Web.Helpers.JsonInputHelp.For<List<RecordDefinitionFieldMapping>>("MigrationMapJson", "[{\"FromFieldKey\":\"old_key\",\"ToFieldKey\":\"new_key\"}]", optional: true))
 						<p><code>@localizer["DefinitionCapability"]: @Model.MinimumClientCapability</code></p>
 					</div>
 				</div>
@@ -103,6 +104,7 @@
 					<div class="ibox-content">
 						<p class="text-muted">@localizer["DefinitionSchemaHelp"]</p>
 						<textarea class="form-control" rows="28" name="SchemaJson" id="SchemaJson" style="font-family:monospace;font-size:12px" @(readOnly ? "readonly" : "")>@Model.SchemaJson</textarea>
+						@await Html.PartialAsync("_JsonInputHelp", Resgrid.Web.Helpers.JsonInputHelp.For<RecordDefinitionSchema>("SchemaJson", "{\n  \"SchemaVersion\": 1,\n  \"Sections\": [{\n    \"Key\": \"details\",\n    \"Label\": \"Details\",\n    \"Fields\": [{\n      \"Key\": \"notes\",\n      \"Label\": \"Notes\",\n      \"Type\": \"LongText\",\n      \"Required\": false\n    }]\n  }]\n}", optional: false))
 					</div>
 				</div>
 				<div class="ibox">

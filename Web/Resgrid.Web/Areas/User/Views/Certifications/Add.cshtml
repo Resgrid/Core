@@ -1,0 +1,91 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationAddView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> profileLocalizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AddCertification"];
+    ViewData["Tab"] = "Dashboard";
+    ViewData["Title"] = localizer["AddCertification"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["AddCertification"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Types.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoTypesYet"] @if (Model.CanSetup) { <a asp-controller="Certifications" asp-action="Types" asp-route-area="User">@localizer["CertificationTypes"]</a> }</p>
+            }
+            <form method="post" asp-controller="Certifications" asp-action="Add" asp-route-area="User" class="form-horizontal" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label required" asp-for="Input.UserId">@localizer["Member"]</label>
+                    <div class="col-sm-6">
+                        <select asp-for="Input.UserId" class="form-control" required>
+                            <option value="">@localizer["SelectMember"]</option>
+                            @foreach (var person in Model.Personnel.OrderBy(p => p.Value))
+                            {
+                                <option value="@person.Key">@person.Value</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label required" asp-for="Input.DepartmentCertificationTypeId">@localizer["TypeName"]</label>
+                    <div class="col-sm-6">
+                        <select asp-for="Input.DepartmentCertificationTypeId" class="form-control" required>
+                            <option value="">@localizer["SelectType"]</option>
+                            @foreach (var type in Model.Types)
+                            {
+                                <option value="@type.DepartmentCertificationTypeId">@type.Type@(type.NeverExpires ? " — " + localizer["NeverExpires"].Value : string.Empty)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label required" asp-for="Input.Name">@commonLocalizer["Name"]</label>
+                    <div class="col-sm-6"><input asp-for="Input.Name" class="form-control" required /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" asp-for="Input.Number">@localizer["Number"]</label>
+                    <div class="col-sm-6"><input asp-for="Input.Number" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" asp-for="Input.Area">@profileLocalizer["ValidAreaLabel"]</label>
+                    <div class="col-sm-6"><input asp-for="Input.Area" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" asp-for="Input.IssuedBy">@localizer["IssuedBy"]</label>
+                    <div class="col-sm-6"><input asp-for="Input.IssuedBy" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" asp-for="Input.RecievedOn">@localizer["IssuedOn"]</label>
+                    <div class="col-sm-3"><input asp-for="Input.RecievedOn" type="date" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" asp-for="Input.ExpiresOn">@localizer["ExpiresOn"]</label>
+                    <div class="col-sm-3"><input asp-for="Input.ExpiresOn" type="date" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="fileToUpload">@localizer["File"]</label>
+                    <div class="col-sm-6">
+                        <input type="file" name="fileToUpload" id="fileToUpload" class="form-control" aria-describedby="file-hint" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.xls,.xlsx" />
+                        <span class="help-block" id="file-hint">@localizer["FileHint"]</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <a asp-controller="Certifications" asp-action="Index" asp-route-area="User" class="btn btn-white">@localizer["Cancel"]</a>
+                        <button type="submit" class="btn btn-primary" disabled="@(Model.Types.Count == 0 || Model.Personnel.Count == 0)">@localizer["Save"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

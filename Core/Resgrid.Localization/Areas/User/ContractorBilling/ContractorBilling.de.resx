@@ -233,7 +233,7 @@
   <data name="MaxDeploymentDays" xml:space="preserve"><value>Max. Einsatztage</value></data>
   <data name="MealCode" xml:space="preserve"><value>Verpflegungscode</value></data>
   <data name="MealEligibility" xml:space="preserve"><value>Verpflegungsanspruch</value></data>
-  <data name="MealEligibilityHelp" xml:space="preserve"><value>JSON-Fenster je Verpflegungscode, z. B. [{"MealCode":"B","StartsBeforeMinutes":420}]; ein Tagegeld außerhalb wird gewarnt, nicht blockiert.</value></data>
+  <data name="MealEligibilityHelp" xml:space="preserve"><value>Fügen Sie für jeden Verpflegungscode eine Regel hinzu (z. B. B für Frühstück). Geben Sie die lokalen Schichtgrenzzeiten ein; ein leeres Zeitfeld bedeutet keine Begrenzung. Ansprüche außerhalb dieser Grenzen lösen eine Warnung aus und können weiterhin eingereicht werden.</value></data>
   <data name="Missing" xml:space="preserve"><value>Fehlt</value></data>
   <data name="MultiplierPrefill" xml:space="preserve"><value>Vorbelegung per Multiplikator</value></data>
   <data name="MultiplierPrefillHelp" xml:space="preserve"><value>Basis + Bereitschaft + ÜS-Multiplikatoren erzeugen die Stundenbänder; gespeichert werden explizite Beträge.</value></data>
@@ -428,4 +428,12 @@
   <data name="rateschedules_premium_invalid" xml:space="preserve"><value>Zuschläge dürfen nicht negativ sein.</value></data>
   <data name="rateschedules_premium_name_required" xml:space="preserve"><value>Der Zuschlag braucht einen Namen.</value></data>
   <data name="rateschedules_premium_not_found" xml:space="preserve"><value>Der Zuschlag wurde nicht gefunden.</value></data>
+  <data name="MealEligibilityEmpty" xml:space="preserve"><value>Keine Verpflegungsregeln. Fügen Sie eine Regel hinzu, um Zeitgrenzen festzulegen.</value></data>
+  <data name="AddMealEligibility" xml:space="preserve"><value>Verpflegungsregel hinzufügen</value></data>
+  <data name="RemoveMealEligibility" xml:space="preserve"><value>Verpflegungsregel entfernen</value></data>
+  <data name="MealStartsBefore" xml:space="preserve"><value>Schichtbeginn spätestens um</value></data>
+  <data name="MealEndsAfter" xml:space="preserve"><value>Schichtende frühestens um</value></data>
+  <data name="MealCodeInvalid" xml:space="preserve"><value>Geben Sie einen Verpflegungscode mit 1 bis 10 Zeichen ein.</value></data>
+  <data name="MealCodeDuplicate" xml:space="preserve"><value>Jeder Verpflegungscode darf nur eine Anspruchsregel haben.</value></data>
+  <data name="MealTimeInvalid" xml:space="preserve"><value>Geben Sie eine gültige Uhrzeit von 00:00 bis 23:59 ein.</value></data>
 </root>

@@ -1217,7 +1217,6 @@
   <data name="Deployments" xml:space="preserve"><value>Insatser</value></data>
   <data name="DeploymentsIntro" xml:space="preserve"><value>Externa resursbeställningar som din avdelning fyller. Beställningssystemet är fortsatt auktoritativt: artefakter lagras som oföränderliga ögonblicksbilder och inget skrivs tillbaka.</value></data>
   <data name="NewDeployment" xml:space="preserve"><value>Ny insats</value></data>
-  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Insatser är en förhandsvisningsfunktion: mallarna byggdes från publicerad IROC-, CIFFC- och EMAC-dokumentation, inte från liveintegrationer. Verifiera mot ditt beställningssystem.</value></data>
   <data name="DeploymentOrder" xml:space="preserve"><value>Beställning</value></data>
   <data name="DeploymentOrderNumber" xml:space="preserve"><value>Beställningsnummer</value></data>
   <data name="DeploymentIncident" xml:space="preserve"><value>Händelse</value></data>
@@ -2109,4 +2108,52 @@
   <data name="ExportListHeader" xml:space="preserve"><value>Exportera den här listan</value></data>
   <data name="MoreMenu" xml:space="preserve"><value>Mer</value></data>
   <data name="InventoryUsage" xml:space="preserve"><value>Lagerförbrukning</value></data>
+  <data name="DeploymentReports" xml:space="preserve"><value>Insatsrapporter</value></data>
+  <data name="DeploymentReportingIntro" xml:space="preserve"><value>Insatshistorik, rapporter och exporter med läsbehörighet. Hantera insatser i Personal och verksamhetsdrift.</value></data>
+  <data name="DeploymentExportResources" xml:space="preserve"><value>Exportera resurser som CSV</value></data>
+  <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Öppna insatshanteringen</value></data>
+  <data name="DeploymentExternalOrders" xml:space="preserve"><value>Externa order</value></data>
+  <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Ny extern order</value></data>
+  <data name="HydrantImportBack" xml:space="preserve"><value>Tillbaka till brandposter</value></data>
+  <data name="HydrantImportNotSaved" xml:space="preserve"><value>Inga brandposter sparades. Rätta raderna nedan och importera filen igen.</value></data>
+  <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Visar {0} av {1} rader med problem. JSON använder postnummer; CSV använder radnummer.</value></data>
+  <data name="HydrantImportRow" xml:space="preserve"><value>Post / rad</value></data>
+  <data name="HydrantImportCorrection" xml:space="preserve"><value>Så rättar du felet</value></data>
+  <data name="HydrantImportSource" xml:space="preserve"><value>Ladda upp eller klistra in brandpostdata</value></data>
+  <data name="HydrantImportIntro" xml:space="preserve"><value>Importera upp till 20 000 brandposter. Befintliga nummer uppdateras och nya läggs till.</value></data>
+  <data name="HydrantImportFile" xml:space="preserve"><value>Välj en fil</value></data>
+  <data name="HydrantImportFileHelp" xml:space="preserve"><value>UTF-8-fil i .json eller .csv, högst 10 MB. Filändelsen avgör formatet.</value></data>
+  <data name="HydrantImportReselect" xml:space="preserve"><value>Välj den rättade filen igen.</value></data>
+  <data name="HydrantImportPaste" xml:space="preserve"><value>Eller klistra in JSON / CSV</value></data>
+  <data name="HydrantImportFormat" xml:space="preserve"><value>Format för inklistrade data</value></data>
+  <data name="HydrantImportContent" xml:space="preserve"><value>Inklistrade data</value></data>
+  <data name="HydrantImportValidationHelp" xml:space="preserve"><value>Varje rad kontrolleras före sparandet. Om någon rad är ogiltig importeras ingenting. Låt sidan vara öppen tills resultatet visas.</value></data>
+  <data name="HydrantImportWorking" xml:space="preserve"><value>Kontrollerar och importerar…</value></data>
+  <data name="HydrantImportGuide" xml:space="preserve"><value>Filformat och exempel</value></data>
+  <data name="HydrantImportRequired" xml:space="preserve"><value>Obligatoriska: number (text, 1–64 tecken), latitude (-90 till 90), longitude (-180 till 180). Varje nummer måste vara unikt i filen.</value></data>
+  <data name="HydrantImportOptional" xml:space="preserve"><value>Valfria: type, address (högst 500 tecken), main_size (tum, över 0 till 9999.99), flow_gpm (icke-negativt heltal), owner (högst 200 tecken).</value></data>
+  <data name="HydrantImportTypesHelp" xml:space="preserve"><value>JSON-tal ska sakna citattecken; namn och adresser ska ha dubbla citattecken. Använd decimalpunkt. Utelämna valfria värden eller använd null. CSV kräver en rubrikrad; sätt citattecken runt värden med kommatecken eller radbrytningar.</value></data>
+  <data name="HydrantImportJsonExample" xml:space="preserve"><value>Ladda ned JSON-exempel</value></data>
+  <data name="HydrantImportCsvExample" xml:space="preserve"><value>Ladda ned CSV-exempel</value></data>
+  <data name="HydrantImportMappingHelp" xml:space="preserve"><value>Hantera brandposter här för att visa flöde och driftstatus på kartor. POI är separata landmärken; länkade POI visas bara en gång i lagret Brandposter.</value></data>
+  <data name="HydrantMapLoadFailed" xml:space="preserve"><value>Brandposterna kunde inte hämtas.</value></data>
+  <data name="HydrantMapRetry" xml:space="preserve"><value>Försök igen</value></data>
+  <data name="CallPickerBrowse" xml:space="preserve"><value>Bläddra bland larm</value></data>
+  <data name="CallPickerSearch" xml:space="preserve"><value>Sök larmnummer, namn eller adress</value></data>
+  <data name="CallPickerStatus" xml:space="preserve"><value>Larmstatus</value></data>
+  <data name="CallPickerAll" xml:space="preserve"><value>Alla larm</value></data>
+  <data name="CallPickerActive" xml:space="preserve"><value>Aktiva larm</value></data>
+  <data name="CallPickerClosed" xml:space="preserve"><value>Avslutade larm</value></data>
+  <data name="CallPickerFrom" xml:space="preserve"><value>Från datum</value></data>
+  <data name="CallPickerTo" xml:space="preserve"><value>Till och med datum</value></data>
+  <data name="CallPickerApply" xml:space="preserve"><value>Sök</value></data>
+  <data name="CallPickerPrevious" xml:space="preserve"><value>Föregående</value></data>
+  <data name="CallPickerNext" xml:space="preserve"><value>Nästa</value></data>
+  <data name="CallPickerLoading" xml:space="preserve"><value>Läser in larm…</value></data>
+  <data name="CallPickerError" xml:space="preserve"><value>Larmen kunde inte läsas in. Sök igen.</value></data>
+  <data name="CallPickerEmpty" xml:space="preserve"><value>Inga matchande larm på den här sidan.</value></data>
+  <data name="CallPickerMetadata" xml:space="preserve"><value>Skyddade larm kan sökas efter larmnummer; namn och adresser är dolda.</value></data>
+  <data name="CallPickerRequiresScript" xml:space="preserve"><value>Aktivera JavaScript för att söka och välja ett larm.</value></data>
+  <data name="CallPickerDates" xml:space="preserve"><value>Ange ett giltigt datumintervall där början inte är efter slutet.</value></data>
+  <data name="CallPickerUnavailable" xml:space="preserve"><value>Välj ett tillgängligt larm i listan eller rensa valet.</value></data>
 </root>

@@ -6,6 +6,32 @@
     var successMessage = TempData["SuccessMessage"] as string;
 }
 
+@section Styles {
+    <style>
+        .udf-record-types { display: flex; flex-wrap: wrap; gap: 8px; }
+        .udf-record-types .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 100%;
+            min-height: 40px;
+            padding: 9px 14px;
+            border: 1px solid #cbdfe9;
+            border-radius: 4px;
+            background: #edf5fa;
+            color: #245b7c;
+            font-weight: 600;
+            text-align: start;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+        .udf-record-types .btn:hover,
+        .udf-record-types .btn:focus { background: #d9eaf5; border-color: #1c84c6; color: #18577f; }
+        /* The shared theme clears button outlines with !important. */
+        .udf-record-types .btn:focus-visible { outline: 2px solid #1c84c6 !important; outline-offset: 2px; }
+    </style>
+}
+
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-8">
         <h2>@localizer["PageHeader"]</h2>
@@ -17,13 +43,26 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
-    <div class="ibox"><div class="ibox-title"><h3>Record custom fields</h3></div><div class="ibox-content">
-        <p>Choose the record type whose form you want to extend.</p>
-        @foreach (var key in Resgrid.Model.RmsDefinitionKeys.LockedTypes.Keys.Concat(new[] { Resgrid.Model.RmsDefinitionKeys.NerisIncidentReport }))
-        {
-            <a class="btn btn-default" asp-action="Edit" asp-route-entityType="4" asp-route-recordDefinitionKey="@key" asp-route-recordDefinitionVersion="1">@key</a>
-        }
-    </div></div>
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5 id="record-custom-fields-heading">@localizer["RecordCustomFieldsTitle"]</h5>
+        </div>
+        <div class="ibox-content">
+            <p class="text-muted m-b-md">@localizer["RecordCustomFieldsIntro"]</p>
+            <nav class="udf-record-types" aria-labelledby="record-custom-fields-heading">
+                @foreach (var key in Resgrid.Model.RmsDefinitionKeys.LockedTypes.Keys.Concat(new[] { Resgrid.Model.RmsDefinitionKeys.NerisIncidentReport }))
+                {
+                    var labelKey = Resgrid.Model.RmsDefinitionKeys.LockedTypes.TryGetValue(key, out var recordType)
+                        ? "RecordType" + recordType
+                        : "RecordTypeNerisIncident";
+                    <a class="btn btn-default" asp-action="Edit" asp-route-entityType="4" asp-route-recordDefinitionKey="@key" asp-route-recordDefinitionVersion="1">
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                        <span>@localizer[labelKey]</span>
+                    </a>
+                }
+            </nav>
+        </div>
+    </div>
     <div class="row">
         <div class="col-lg-12">
 

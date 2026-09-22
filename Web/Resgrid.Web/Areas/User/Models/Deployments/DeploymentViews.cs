@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Invoicing;
+using Resgrid.Model.WorkOrders;
 
 namespace Resgrid.Web.Areas.User.Models.Deployments
 {
@@ -30,10 +34,40 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 
 	public class DeploymentEditView : DeploymentPageView
 	{
+		private static readonly IReadOnlyDictionary<string, string> CountryOptions = LoadCountries();
+
 		public DeploymentInput Deployment { get; set; } = new DeploymentInput();
 		public List<Contact> Contacts { get; set; } = new List<Contact>();
+		public List<SelectListItem> HomeCountries => Options(CountryOptions.OrderBy(c => c.Value), Deployment.HomeCountry);
+		public List<SelectListItem> HostCountries => Options(CountryOptions.OrderBy(c => c.Value), Deployment.HostCountry);
+		public List<SelectListItem> TimeZones => Options(Resgrid.Model.TimeZones.Zones, Deployment.LocalTimeZoneId);
+		public List<SelectListItem> Currencies => Options(WorkOrderCurrencies.Options.Select(c => new KeyValuePair<string, string>(c.Key, $"{c.Key} — {c.Value}")), Deployment.Currency);
 		public bool IsProtected { get; set; }
 		public bool IsNew => string.IsNullOrWhiteSpace(Deployment.DeploymentId);
+
+		private static IReadOnlyDictionary<string, string> LoadCountries()
+		{
+			var countries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+			{
+				RegionInfo region;
+				try { region = new RegionInfo(culture.Name); }
+				catch (ArgumentException) { continue; }
+				var code = region.TwoLetterISORegionName;
+				if (code.Length == 2 && code.All(c => c >= 'A' && c <= 'Z'))
+					countries.TryAdd(code, region.EnglishName);
+			}
+			return countries;
+		}
+
+		private static List<SelectListItem> Options(IEnumerable<KeyValuePair<string, string>> options, string selected)
+		{
+			var items = options.Select(o => new SelectListItem(o.Value, o.Key, string.Equals(o.Key, selected, StringComparison.OrdinalIgnoreCase))).ToList();
+			// Preserve previously entered values that are absent from the current catalogs.
+			if (!string.IsNullOrWhiteSpace(selected) && !items.Any(i => i.Selected))
+				items.Add(new SelectListItem(selected, selected, true));
+			return items;
+		}
 	}
 
 	public class DeploymentInput

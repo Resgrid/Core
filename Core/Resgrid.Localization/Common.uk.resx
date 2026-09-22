@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -747,4 +747,16 @@
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Персонал і бізнес-операції</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Готовність</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Панель огляду</value></data>
+  <data name="JsonInputHelp" xml:space="preserve">
+    <value>Використовуйте коректний JSON: текст у подвійних лапках, числа й true/false без лапок. Дати мають формат ISO. Назви полів відповідають схемі (регістр не враховується). Помилки вказують поле; індекси масиву починаються з 0.</value>
+  </data>
+  <data name="JsonInputOptional" xml:space="preserve">
+    <value>Залиште порожнім, щоб використати порожній список або об’єкт.</value>
+  </data>
+  <data name="JsonInputExample" xml:space="preserve">
+    <value>Приклад JSON</value>
+  </data>
+  <data name="JsonInputSchema" xml:space="preserve">
+    <value>Схема JSON (назви й типи полів)</value>
+  </data>
 </root>

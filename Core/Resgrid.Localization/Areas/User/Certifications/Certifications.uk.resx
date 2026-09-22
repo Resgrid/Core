@@ -225,4 +225,8 @@
   <data name="UnitCertificationRemoved" xml:space="preserve"><value>Вилучено сертифікацію підрозділу</value></data>
   <data name="CertificationRemoved" xml:space="preserve"><value>Вилучено сертифікацію</value></data>
   <data name="CertificationCreditAdded" xml:space="preserve"><value>Додано кредити сертифікації</value></data>
+  <data name="AddCertification" xml:space="preserve"><value>Додати сертифікацію</value></data>
+  <data name="SelectMember" xml:space="preserve"><value>Виберіть учасника</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Виберіть тип сертифікації</value></data>
+  <data name="CertificationNameRequired" xml:space="preserve"><value>Введіть назву сертифікації.</value></data>
 </root>

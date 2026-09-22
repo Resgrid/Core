@@ -31,7 +31,7 @@
 	var workforceManager = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewWorkforce() || ClaimsAuthorizationHelper.CanViewInternalCosts() || ClaimsAuthorizationHelper.CanViewPayDataReporting();
 	var showWorkforce = (workforceEnabled || payDataEnabled) && workforceManager;
 	var showMyDemographics = payDataEnabled && !showWorkforce;
-	var onWorkforceBusinessPage = Html.IsController("Certifications", "Workforce", "Invoicing", "Deployments", "Bids", "Contracts", "CalOesMars");
+	var onWorkforceBusinessPage = Html.IsController("Certifications", "Workforce", "Invoicing", "Deployments", "DeploymentOrders", "RecordDeploymentConnectors", "Bids", "Contracts", "CalOesMars");
 	var onReadinessPage = Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting",
 		"Checklists", "ChecklistsScheduling", "ChecklistReports", "ChecklistReporting", "ChecklistReminders");
 }
@@ -122,7 +122,7 @@
 				// Records owns a lot of screens, so it is a collapsible group rather than a dozen
 				// top level entries. The group opens and highlights on any records page, including
 				// the ones reached from inside Records that have no link of their own.
-				var onRecordsPage = Html.IsController("Records", "RecordCrr", "RecordDefinitions", "RecordDeploymentConnectors",
+				var onRecordsPage = Html.IsController("Records", "RecordCrr", "RecordDefinitions",
 					"RecordDeployments", "RecordDocuments", "RecordEvidence", "RecordHydrants", "RecordInspections",
 					"RecordInvestigations", "RecordLegalHolds", "RecordOccupancies", "RecordPermits", "RecordSavedReports",
 					"RecordSubmissions", "RecordsAnalytics", "RecordsExportTemplates", "RecordsHealth", "RecordsInventory",
@@ -146,6 +146,9 @@
 						</li>
 						<li class="@(onRecordsQueue ? "active" : null)">
 							<a asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-list"></i> @commonLocalizer["RecordsAllModule"]</a>
+						</li>
+						<li class="@Html.IsSelected(controller: "RecordDeployments")">
+							<a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @recordsLocalizer["DeploymentReports"]</a>
 						</li>
 						@if (legalHoldsOn)
 						{
@@ -285,9 +288,9 @@
 						}
 						@if (showDeployments)
 						{
-							@* Workforce & Business Operations plan, Phase C (deployment core, free): labelled "Deployment Finance" so it is not confused with Records → Deployments (risk 40). Members see only the deployments they are rostered on. *@
-							<li class="@Html.IsSelected(controller: "Deployments")">
-								<a asp-controller="Deployments" asp-action="Index" asp-route-area="User"><i class="fa fa-truck"></i> <span class="nav-label">@deploymentLocalizer["DeploymentFinance"]</span></a>
+							@* Workforce & Business Operations plan, Phase C (deployment core, free): operations live here; Records exposes read-only deployment reports. Members see only the deployments they are rostered on. *@
+							<li class="@(Html.IsController("Deployments", "DeploymentOrders", "RecordDeploymentConnectors") ? "active" : null)">
+								<a asp-controller="Deployments" asp-action="Index" asp-route-area="User"><i class="fa fa-truck"></i> <span class="nav-label">@deploymentLocalizer["Deployments"]</span></a>
 							</li>
 						}
 						@if (showContractorBilling)

@@ -173,6 +173,11 @@
 .rms-kpi .value { font-size: 26px; font-weight: 600; }
 .rms-kpi .label { color: #888; font-size: 12px; text-transform: uppercase; }
 
+/* Let localized lifecycle labels wrap while keeping each value with its label. */
+.rms-lifecycle-stats { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; }
+.rms-lifecycle-stats dt { overflow-wrap: anywhere; }
+.rms-lifecycle-stats dd { margin: 0; text-align: right; }
+
 .rms-heat { border-collapse: collapse; width: 100%; font-size: 10px; }
 .rms-heat td, .rms-heat th { border: 1px solid #eee; padding: 2px; text-align: center; width: 3.7%; }
 .rms-heat .heat-0 { background: #ffffff; color: #cccccc; }

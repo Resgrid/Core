@@ -1,0 +1,25 @@
+@model Resgrid.Web.Areas.User.Models.ContractorBilling.MealEligibilityInput
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContractorBilling.ContractorBilling> localizer
+@{
+    var prefix = "MealEligibility[" + ViewData["MealIndex"] + "]";
+}
+<div class="well well-sm meal-eligibility-row">
+    <div class="row">
+        <div class="col-sm-4">
+            @Html.Label(prefix + ".MealCode", localizer["MealCode"].Value)
+            @Html.TextBox(prefix + ".MealCode", Model.MealCode, new { @class = "form-control", maxlength = "10", data_meal_field = "MealCode" })
+            @Html.ValidationMessage(prefix + ".MealCode", "", new { @class = "text-danger" })
+        </div>
+        <div class="col-sm-4">
+            @Html.Label(prefix + ".StartsBefore", localizer["MealStartsBefore"].Value)
+            @Html.TextBox(prefix + ".StartsBefore", Model.StartsBefore, new { @class = "form-control", type = "time", step = "60", data_meal_field = "StartsBefore" })
+            @Html.ValidationMessage(prefix + ".StartsBefore", "", new { @class = "text-danger" })
+        </div>
+        <div class="col-sm-4">
+            @Html.Label(prefix + ".EndsAfter", localizer["MealEndsAfter"].Value)
+            @Html.TextBox(prefix + ".EndsAfter", Model.EndsAfter, new { @class = "form-control", type = "time", step = "60", data_meal_field = "EndsAfter" })
+            @Html.ValidationMessage(prefix + ".EndsAfter", "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <button type="button" class="btn btn-default btn-xs m-t-sm" data-remove-meal-eligibility>@localizer["RemoveMealEligibility"]</button>
+</div>

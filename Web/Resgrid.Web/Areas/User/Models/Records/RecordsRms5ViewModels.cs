@@ -225,8 +225,15 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	{
 		public List<RmsHydrant> Hydrants { get; set; } = new List<RmsHydrant>();
 		public List<HydrantMapPoint> MapPoints { get; set; } = new List<HydrantMapPoint>();
-		public HydrantImportResult ImportResult { get; set; }
 		public int TestDue { get; set; }
+	}
+
+	public class RecordHydrantImportView : RecordsPreventionBaseView
+	{
+		public string Content { get; set; }
+		public string Format { get; set; } = "json";
+		public string FileName { get; set; }
+		public HydrantImportResult Result { get; set; }
 	}
 
 	public class RecordHydrantEditView : RecordsPreventionBaseView

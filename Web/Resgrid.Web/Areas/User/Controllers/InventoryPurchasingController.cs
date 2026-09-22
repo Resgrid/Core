@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Inventories;
 using Resgrid.Model.Services;
+using Resgrid.Model.WorkOrders;
 using Resgrid.Web.Areas.User.Models.Inventory;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -55,6 +56,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						if (id == null) await PageAsync<InventoryPurchaseOrder>(view);
 						else view.PurchaseOrder = await PurchasingService.GetPurchaseOrderAsync(Actor, id);
+						if (view.PurchaseOrder == null && view.CanWrite)
+							view.DepartmentCurrency = (await _workOrderSettings.QueryMaintenanceAsync<WorkOrderPolicy>(DepartmentId)).SingleOrDefault()?.CurrencyCode ?? "USD";
 						view.Items = await PurchasingChoicesAsync<InventoryItem>();
 						if (view.PurchaseOrder != null)
 						{

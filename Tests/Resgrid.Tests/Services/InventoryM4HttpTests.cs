@@ -23,7 +23,9 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Inventories;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Model.WorkOrders;
 using Resgrid.Web.Areas.User.Models.Inventory;
 using Resgrid.Web.Helpers;
 using DataProtectionController = Resgrid.Web.Services.Controllers.v4.DataProtectionController;
@@ -259,6 +261,38 @@ namespace Resgrid.Tests.Services
 			});
 		}
 
+		[TestCase(null, null, "USD")]
+		[TestCase("CAD", null, "CAD")]
+		[TestCase("CAD", "EUR", "EUR")]
+		[TestCase("CAD", "ZZZ", "ZZZ")]
+		public async Task Purchase_order_currency_selector_defaults_to_department_and_preserves_saved_currency(string departmentCurrency, string savedCurrency, string expected)
+		{
+			ConfigurePurchasingMvc();
+			if (savedCurrency != null)
+				_purchasing.Setup(x => x.GetPurchaseOrderAsync(It.IsAny<InventoryActor>(), PurchaseOrderId)).ReturnsAsync(new InventoryPurchaseOrderDetail
+				{
+					Order = new InventoryPurchaseOrder { Id = PurchaseOrderId, DepartmentId = 77, VendorId = VendorId, CurrencyCode = savedCurrency }
+				});
+			await WithPurchasingMvc(async (client, views) =>
+			{
+				SignIn(client);
+				var page = await client.GetAsync(MvcRoute + "Purchasing" + (savedCurrency == null ? "" : "?id=" + PurchaseOrderId));
+				await Success(page);
+				var html = await page.Content.ReadAsStringAsync();
+				var selector = Regex.Match(html, "<select[^>]*name=\"CurrencyCode\"[^>]*>.*?</select>", RegexOptions.Singleline).Value;
+				selector.Should().NotBeEmpty().And.Contain("required");
+				var selected = Regex.Matches(selector, "<option[^>]*>").Single(x => x.Value.Contains("selected"));
+				WebUtility.HtmlDecode(Regex.Match(selected.Value, "value=\"([^\"]+)\"").Groups[1].Value).Should().Be(expected);
+				selector.Should().Contain("value=\"USD\"").And.Contain("value=\"EUR\"").And.Contain("value=\"CAD\"");
+				html.Should().NotContain("<input name=\"CurrencyCode\"").And.NotContain(">M4SupplierHelp<").And.NotContain(">M4PurchaseOrderCurrencyHelp<");
+				var help = Regex.Match(html, "<p id=\"m4-order-supplier-help\"[^>]*>.*?</p>", RegexOptions.Singleline).Value;
+				var supplierLink = WebUtility.HtmlDecode(Regex.Match(help, "href=\"([^\"]+)\"").Groups[1].Value);
+				supplierLink.Should().Be(MvcRoute + "Purchasing?tab=Vendors");
+				var suppliers = await client.GetAsync(supplierLink); await Success(suppliers);
+				(await suppliers.Content.ReadAsStringAsync()).Should().Contain("id=\"m4-new-vendor\"");
+			}, departmentCurrency: departmentCurrency);
+		}
+
 		private void ConfigurePurchasingMvc()
 		{
 			_catalog.Setup(x => x.ListAsync<InventoryVendor>(It.IsAny<InventoryActor>(), It.IsAny<int>())).ReturnsAsync(new InventoryPage<InventoryVendor>());
@@ -283,7 +317,7 @@ namespace Resgrid.Tests.Services
 			}
 			public void OnResultExecuted(ResultExecutedContext context) { }
 		}
-		private async Task WithPurchasingMvc(Func<HttpClient, PurchasingBodyFilter, Task> test, bool protectedData = false)
+		private async Task WithPurchasingMvc(Func<HttpClient, PurchasingBodyFilter, Task> test, bool protectedData = false, string departmentCurrency = null)
 		{
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (directory != null && !File.Exists(Path.Combine(directory.FullName, "Resgrid.sln"))) directory = directory.Parent;
@@ -300,6 +334,10 @@ namespace Resgrid.Tests.Services
 			builder.Services.AddSingleton(_catalog.Object); builder.Services.AddSingleton(_stock.Object); builder.Services.AddSingleton(_transfers.Object);
 			builder.Services.AddSingleton(_issuance.Object); builder.Services.AddSingleton(_migration.Object); builder.Services.AddSingleton(_authorization.Object); builder.Services.AddSingleton(_purchasing.Object);
 			builder.Services.AddSingleton(Mock.Of<IUnitsService>()); builder.Services.AddSingleton(Mock.Of<IDepartmentGroupsService>()); builder.Services.AddSingleton(Mock.Of<IDepartmentsService>());
+			var settings = new Mock<IWorkOrderMaintenanceRepository>();
+			settings.Setup(x => x.QueryMaintenanceAsync<WorkOrderPolicy>(77, null, null, 0, false))
+				.ReturnsAsync(departmentCurrency == null ? new List<WorkOrderPolicy>() : new List<WorkOrderPolicy> { new() { DepartmentId = 77, CurrencyCode = departmentCurrency } });
+			builder.Services.AddSingleton(settings.Object);
 			builder.Services.AddSingleton<IProtectedGrantContext, HttpProtectedGrantContext>();
 			var protection = new Mock<IDepartmentDataProtectionService>(); protection.Setup(x => x.IsProtectionEnforcedAsync(77)).ReturnsAsync(protectedData); builder.Services.AddSingleton(protection.Object);
 			await using var app = builder.Build(); var previous = ClaimsAuthorizationHelper._httpContextAccessor;

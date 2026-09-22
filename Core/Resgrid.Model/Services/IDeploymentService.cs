@@ -39,6 +39,8 @@ namespace Resgrid.Model.Services
 		Task<Deployment> CreateFromExternalOrderAsync(int departmentId, ExternalOrderDeploymentInput input, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>The order and fills behind a deployment, read through the Records service (never the RMS tables).</summary>
 		Task<DeploymentExternalContext> GetExternalContextAsync(string deploymentId, int departmentId, string userId);
+		/// <summary>Reconciles the linked operational roster and coarse status after an external-order resource command.</summary>
+		Task<Deployment> SynchronizeExternalOrderAsync(string orderId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 
 		Task<DeploymentRosterResult> AddUnitAsync(string deploymentId, int departmentId, int unitId, string callSign, string notes, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default, string rateScheduleEntryId = null);
 		Task<bool> RemoveUnitAsync(string deploymentUnitId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);

@@ -1,0 +1,14 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> hydrantStrings
+@if (ClaimsAuthorizationHelper.CanViewRecords())
+{
+	<script>
+		window.rgHydrantMap = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
+			url = Url.Action("MapLayer", "RecordHydrants", new { area = "User" }),
+			detailsUrl = Url.Action("Details", "RecordHydrants", new { area = "User" }),
+			label = hydrantStrings["Hydrants"].Value, inService = hydrantStrings["InService"].Value,
+			outOfService = hydrantStrings["OutOfService"].Value, failure = hydrantStrings["HydrantMapLoadFailed"].Value,
+			retry = hydrantStrings["HydrantMapRetry"].Value
+		}));
+	</script>
+	<script src="~/js/hydrant-map-layer.js" asp-append-version="true"></script>
+}

@@ -111,9 +111,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 				ReviewDueHours = ReviewDueHours, ApproveDueHours = ApproveDueHours, RequireAuthorAttestation = RequireAuthorAttestation,
 				Numbering = new RecordDefinitionNumbering { Prefix = NumberPrefix?.Trim().ToUpperInvariant(), Assignment = (RmsNumberAssignment)NumberAssignment, PerGroupSequence = PerGroupSequence, PerIncidentSequence = PerIncidentSequence, ResetYearly = ResetYearly, SequenceWidth = SequenceWidth },
 				RetentionYears = RetentionYears, Classification = (RmsFieldClassification)Classification,
-				Schema = RecordDefinitionSchema.Parse(SchemaJson),
+				Schema = Resgrid.Framework.JsonInput.Read<RecordDefinitionSchema>(SchemaJson, nameof(SchemaJson)),
 				ClientSurface = new RecordDefinitionClientSurface { Responder = SurfaceResponder, Unit = SurfaceUnit, IncidentCommand = SurfaceIncidentCommand, Dispatch = SurfaceDispatch, AllowOffline = AllowOffline, AllowAttachments = AllowAttachments, RetainMediaLocation = RetainMediaLocation },
-				MigrationMap = string.IsNullOrWhiteSpace(MigrationMapJson) ? new List<RecordDefinitionFieldMapping>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<RecordDefinitionFieldMapping>>(MigrationMapJson) ?? new List<RecordDefinitionFieldMapping>(),
+				MigrationMap = string.IsNullOrWhiteSpace(MigrationMapJson) ? new List<RecordDefinitionFieldMapping>() : Resgrid.Framework.JsonInput.Read<List<RecordDefinitionFieldMapping>>(MigrationMapJson, nameof(MigrationMapJson)),
 				ChangeNotes = ChangeNotes
 			};
 		}
@@ -282,9 +282,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 			{
 				Columns = (Columns ?? new List<string>()).Where(c => !string.IsNullOrWhiteSpace(c)).ToList(), GroupByFieldKey = string.IsNullOrWhiteSpace(GroupByFieldKey) ? null : GroupByFieldKey, SortFieldKey = string.IsNullOrWhiteSpace(SortFieldKey) ? null : SortFieldKey,
 				SortDescending = SortDescending, IncludeDrafts = IncludeDrafts, WindowDays = WindowDays,
-				Filters = string.IsNullOrWhiteSpace(FiltersJson) ? new List<RecordReportFilter>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<RecordReportFilter>>(FiltersJson) ?? new List<RecordReportFilter>(),
-				Aggregates = string.IsNullOrWhiteSpace(AggregatesJson) ? new List<RecordReportAggregateSpec>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<RecordReportAggregateSpec>>(AggregatesJson) ?? new List<RecordReportAggregateSpec>(),
-				VersionMappings = string.IsNullOrWhiteSpace(VersionMappingsJson) ? new Dictionary<int, Dictionary<string, string>>() : Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, Dictionary<string, string>>>(VersionMappingsJson) ?? new Dictionary<int, Dictionary<string, string>>()
+				Filters = string.IsNullOrWhiteSpace(FiltersJson) ? new List<RecordReportFilter>() : Resgrid.Framework.JsonInput.Read<List<RecordReportFilter>>(FiltersJson, nameof(FiltersJson)),
+				Aggregates = string.IsNullOrWhiteSpace(AggregatesJson) ? new List<RecordReportAggregateSpec>() : Resgrid.Framework.JsonInput.Read<List<RecordReportAggregateSpec>>(AggregatesJson, nameof(AggregatesJson)),
+				VersionMappings = string.IsNullOrWhiteSpace(VersionMappingsJson) ? new Dictionary<int, Dictionary<string, string>>() : Resgrid.Framework.JsonInput.Read<Dictionary<int, Dictionary<string, string>>>(VersionMappingsJson, nameof(VersionMappingsJson))
 			};
 			return new RmsSavedReportDefinition { RmsSavedReportDefinitionId = ReportId, RowVersion = RowVersion, Name = Name, Description = Description, DefinitionKey = DefinitionKey, DefinitionVersion = DefinitionVersion, Spec = spec, MaxRowsPerRun = MaxRowsPerRun, IncludeRestricted = IncludeRestricted };
 		}
@@ -322,6 +322,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 	public class RecordDeploymentNewView : RecordsBaseView
 	{
+        public string IdempotencyKey { get; set; }
 		public string ProfileKey { get; set; } = RmsDeploymentProfiles.Generic;
 		public string SourceScheme { get; set; }
 		public string SourceSystem { get; set; }
@@ -360,6 +361,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 	public class RecordDeploymentDetailsView : RecordsBaseView
 	{
+        public string OperationalDeploymentId { get; set; }
 		public RecordDeploymentAggregate Deployment { get; set; }
 		public Department Department { get; set; }
 		public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();

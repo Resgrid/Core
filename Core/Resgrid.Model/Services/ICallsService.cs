@@ -11,6 +11,8 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface ICallsService
 	{
+		Task<List<Call>> SearchCallCandidatesAsync(int departmentId, CallSearchQuery query);
+
 		/// <summary>
 		/// Saves the call asynchronous.
 		/// </summary>

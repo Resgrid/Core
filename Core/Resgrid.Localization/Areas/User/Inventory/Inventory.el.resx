@@ -842,4 +842,6 @@
   <data name="StepMovementAmountHint" xml:space="preserve"><value>Η ποσότητα και ο λόγος. Και τα δύο καταγράφονται στην εγγραφή που δημιουργείται.</value></data>
   <data name="StepReturnHint" xml:space="preserve"><value>Δηλώστε πόσα επέστρεψαν, πού πήγαν και σε τι κατάσταση είναι.</value></data>
   <data name="Inactive" xml:space="preserve"><value>Ανενεργό</value></data>
+  <data name="M4SupplierHelp" xml:space="preserve"><value>Λείπει ένας προμηθευτής; Προσθέστε τον στη σελίδα Προμηθευτές.</value></data>
+  <data name="M4PurchaseOrderCurrencyHelp" xml:space="preserve"><value>Επιλέξτε το νόμισμα για αυτή την παραγγελία. Οι νέες παραγγελίες χρησιμοποιούν από προεπιλογή το νόμισμα του τμήματός σας.</value></data>
 </root>

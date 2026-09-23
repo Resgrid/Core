@@ -464,9 +464,12 @@ var resgrid;
                 $('#' + gridName).find(':checkbox').prop('checked', item.checked);
             }
             newcall.checkAllUnits = checkAllUnits;
+            // Type, priority and template changes can overlap; only the latest request's protocols are shown.
+            var protocolsRequest = 0;
             function checkForProtocols() {
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
+                var request = ++protocolsRequest;
 
                 $("#protocols tr").remove();
 
@@ -475,6 +478,9 @@ var resgrid;
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {
+                    if (request !== protocolsRequest)
+                        return;
+
                     if (data) {
                         resgrid.dispatch.newcall.protocolCount = 0;
 

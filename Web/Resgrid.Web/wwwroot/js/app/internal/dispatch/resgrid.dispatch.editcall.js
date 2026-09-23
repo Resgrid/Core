@@ -460,9 +460,12 @@ var resgrid;
             // run, so an early click can't call into an undefined namespace (RESGRID-WEB-1MA).
             $('#setCallTemplateButton').on('click', fillCallTemplate).prop('disabled', false);
 
+            // Type, priority and template changes can overlap; only the latest request's protocols are shown.
+            var protocolsRequest = 0;
             function checkForProtocols() {
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
+                var request = ++protocolsRequest;
 
                 $("#protocols tr").remove();
 
@@ -471,6 +474,9 @@ var resgrid;
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {
+                    if (request !== protocolsRequest)
+                        return;
+
                     if (data) {
                         resgrid.dispatch.editcall.protocolCount = 0;
 

@@ -176,7 +176,7 @@ namespace Resgrid.Services
 			foreach (var subject in subjects)
 			{
 				// Another dispatch that overlaps this one is walked from its own start, so the states are read from there.
-				var others = OtherDispatches(windowsByUnit, subject.UnitId, call.CallId, subject.Start);
+				var others = OtherDispatches(windowsByUnit, subject.UnitId, call.CallId, subject.Start, end);
 				var from = others != null ? Earliest(subject.Start, others.Min(x => x.Start)) : subject.Start;
 
 				var states = await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(subject.UnitId, from, end);
@@ -351,7 +351,7 @@ namespace Resgrid.Services
 						continue;
 
 					result[call.CallId].AddRange(CallStatusAttribution.InferUnitStates(call.CallId, start, end, states,
-						s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, OtherDispatches(windowsByUnit, dispatch.UnitId, call.CallId, start)));
+						s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, OtherDispatches(windowsByUnit, dispatch.UnitId, call.CallId, start, end)));
 				}
 			}
 
@@ -410,7 +410,7 @@ namespace Resgrid.Services
 
 				inferred.AddRange(CallStatusAttribution.InferActionLogs(callId, subject.Value.Start, end, subject.Value.RequireEngagement, logs,
 					l => CallStatusLinkage.IsClearingPersonnelStatus(l.ActionTypeId, baseTypes), statusLookup,
-					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start)));
+					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start, end)));
 			}
 
 			return inferred;
@@ -493,17 +493,19 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// The unit's/person's dispatches to calls other than this one, made from <see cref="CallStatusAttribution.OverlapLookback"/>
-		/// before their dispatch to it (<paramref name="start"/>); null when there are none.
+		/// The unit's/person's dispatches to calls other than this one that overlap its walk: made from
+		/// <see cref="CallStatusAttribution.OverlapLookback"/> before their dispatch to it (<paramref name="start"/>) up to its
+		/// <paramref name="end"/>, and not over before <paramref name="start"/>; null when there are none. A dispatch outside
+		/// that window can't take a status this walk sees.
 		/// </summary>
-		private static List<CallDispatchSpan> OtherDispatches<TKey>(Dictionary<TKey, List<CallDispatchWindow>> windows, TKey key, int callId, DateTime start)
+		private static List<CallDispatchSpan> OtherDispatches<TKey>(Dictionary<TKey, List<CallDispatchWindow>> windows, TKey key, int callId, DateTime start, DateTime end)
 		{
 			if (!windows.TryGetValue(key, out var subjectWindows))
 				return null;
 
 			var from = start.Subtract(CallStatusAttribution.OverlapLookback);
 			var others = CallStatusAttribution.DispatchSpans(subjectWindows.Where(x => x.CallId != callId), DateTime.UtcNow)
-				.Where(x => x.Start >= from).ToList();
+				.Where(x => x.Start >= from && x.Start <= end && x.End >= start).ToList();
 
 			return others.Count > 0 ? others : null;
 		}

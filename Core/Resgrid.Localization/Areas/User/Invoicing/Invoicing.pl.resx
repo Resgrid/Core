@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Otwórz wyjazd</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Domyślny cennik</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Rozliczenia wykonawcy: używany dla ofert i wyjazdów tego klienta, gdy żadna umowa nie wskazuje cennika.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>czas na miejscu powiązany automatycznie</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Status „Na miejscu” jednostki (lub status, który go zakończył) wysłano bez zgłoszenia; Resgrid powiązał go z tym zgłoszeniem na podstawie poprzedniego statusu jednostki lub jej zadysponowania. Sprawdź czas przed wysłaniem.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>czas na miejscu wywnioskowany</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>Jednostka ustawiła status „Na miejscu” (lub status, który go zakończył) bez celu, będąc zadysponowaną do tego zgłoszenia; Resgrid wywnioskował, że należy on do tego zgłoszenia. Sprawdź czas przed wysłaniem.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>brak statusu na miejscu: czas trwania zgłoszenia</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Jednostka nigdy nie zgłosiła statusu „Na miejscu” w tym zgłoszeniu, więc pozycja nalicza czas od zarejestrowania zgłoszenia do jego zamknięcia. Sprawdź ilość przed wysłaniem.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>czas na miejscu ze statusu jednostki</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Jednostka sama powiązała swój status „Na miejscu” oraz status, który go zakończył, z tym zgłoszeniem.</value></data>
 </root>

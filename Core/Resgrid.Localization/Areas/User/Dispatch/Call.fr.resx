@@ -848,4 +848,22 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Rapport d'incident</value>
   </data>
+  <data name="StatusLinkAuto" xml:space="preserve">
+    <value>lié automatiquement</value>
+  </data>
+  <data name="StatusLinkInferred" xml:space="preserve">
+    <value>déduit</value>
+  </data>
+  <data name="StatusLinkAutoHelp" xml:space="preserve">
+    <value>Envoyé sans appel. Resgrid l'a lié à cet appel d'après le statut précédent ou l'envoi.</value>
+  </data>
+  <data name="StatusLinkInferredHelp" xml:space="preserve">
+    <value>Défini sans destination par une unité ou une personne envoyée sur cet appel pendant l'intervention.</value>
+  </data>
+  <data name="StatusLinkLegend" xml:space="preserve">
+    <value>Lié automatiquement : envoyé sans appel ; Resgrid l'a lié d'après le statut précédent ou l'envoi. Déduit : défini sans destination par une unité ou une personne envoyée sur cet appel pendant l'intervention.</value>
+  </data>
+  <data name="UnitTimes" xml:space="preserve">
+    <value>Horaires des unités</value>
+  </data>
 </root>

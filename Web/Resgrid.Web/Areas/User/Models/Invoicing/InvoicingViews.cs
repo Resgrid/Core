@@ -228,6 +228,9 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public decimal Quantity { get; set; }
 		public decimal UnitRate { get; set; }
 		public bool Taxable { get; set; } = true;
+
+		/// <summary>Only honoured for a new line added from a call preview; existing lines keep the time source they were generated with.</summary>
+		public int? TimeSource { get; set; }
 	}
 
 	public sealed class RecordPaymentInput

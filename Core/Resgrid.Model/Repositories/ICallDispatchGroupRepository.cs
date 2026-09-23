@@ -23,5 +23,10 @@ namespace Resgrid.Model.Repositories
 		/// <param name="callId">The call identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;CallDispatchGroup&gt;&gt;.</returns>
 		Task<IEnumerable<CallDispatchGroup>> GetAllCallDispatchGroupByCallIdAsync(int callId);
+
+		/// <summary>
+		/// Gets the group dispatches of every department call logged in the range (UTC, inclusive).
+		/// </summary>
+		Task<IEnumerable<CallDispatchGroup>> GetCallDispatchGroupsForCallsInRangeAsync(int departmentId, System.DateTime startDate, System.DateTime endDate);
 	}
 }

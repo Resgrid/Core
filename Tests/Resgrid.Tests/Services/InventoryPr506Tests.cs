@@ -135,7 +135,7 @@ namespace Resgrid.Tests.Services
 		[TestCase(false, false), TestCase(true, true), TestCase(true, false), TestCase(false, true)]
 		public void Unit_retention_dependencies_are_accepted_only_as_a_pair(bool hasStore, bool hasUnit)
 		{
-			Action construct = () => new UnitsService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			Action construct = () => new UnitsService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
 				hasStore ? Mock.Of<IInventoryStore>() : null, hasUnit ? Mock.Of<IUnitOfWork>() : null);
 			if (hasStore == hasUnit) construct.Should().NotThrow();
 			else construct.Should().Throw<ArgumentException>();

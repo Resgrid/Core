@@ -78,5 +78,13 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Location { get; set; }
 		public string StatusText { get; set; }
 		public string StatusColor { get; set; }
+
+		/// <summary>
+		/// For status activity: how the status came to be on this call (StatusDestinationSources: 1 chosen by the sender,
+		/// 2 carried forward from the previous status's call, 3 from the one open dispatch, 4 from the unit the person rode,
+		/// 5 inferred from a dispatched unit's/person's status that named no destination). Null for older rows and for
+		/// non-status entries.
+		/// </summary>
+		public int? DestinationSource { get; set; }
 	}
 }

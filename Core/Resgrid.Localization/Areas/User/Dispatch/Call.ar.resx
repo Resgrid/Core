@@ -281,4 +281,22 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>تقرير الحادث</value>
   </data>
+  <data name="StatusLinkAuto" xml:space="preserve">
+    <value>مرتبط تلقائيًا</value>
+  </data>
+  <data name="StatusLinkInferred" xml:space="preserve">
+    <value>مستنتج</value>
+  </data>
+  <data name="StatusLinkAutoHelp" xml:space="preserve">
+    <value>أُرسلت دون بلاغ. ربطها Resgrid بهذا البلاغ استنادًا إلى الحالة السابقة أو الإرسال.</value>
+  </data>
+  <data name="StatusLinkInferredHelp" xml:space="preserve">
+    <value>حُدِّدت دون وجهة من وحدة أو شخص أُرسل إلى هذا البلاغ أثناء العمل عليه.</value>
+  </data>
+  <data name="StatusLinkLegend" xml:space="preserve">
+    <value>مرتبط تلقائيًا: أُرسلت دون بلاغ وربطها Resgrid استنادًا إلى الحالة السابقة أو الإرسال. مستنتج: حُدِّدت دون وجهة من وحدة أو شخص أُرسل إلى هذا البلاغ أثناء العمل عليه.</value>
+  </data>
+  <data name="UnitTimes" xml:space="preserve">
+    <value>أوقات الوحدات</value>
+  </data>
 </root>

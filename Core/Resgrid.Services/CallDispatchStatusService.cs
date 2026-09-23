@@ -86,7 +86,7 @@ namespace Resgrid.Services
 
 			foreach (var userId in shiftUserIds)
 			{
-				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, statusToSet, null, call.CallId, cancellationToken);
+				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, statusToSet, null, call.CallId, (int)DestinationEntityTypes.Call, cancellationToken);
 			}
 		}
 

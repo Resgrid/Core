@@ -34,7 +34,6 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectALogsByDateRangeQuery { get; set; }
 		public string SelectALogsByDidQuery { get; set; }
 		public string SelectLastActionLogForUserQuery { get; set; }
-		public string SelectActionLogsByCallIdTypeQuery { get; set; }
 		public string SelectPreviousActionLogsByUserQuery { get; set; }
 		public string SelectLastActionLogByUserIdQuery { get; set; }
 		public string SelectActionLogsByCallIdQuery {get;set;}
@@ -349,6 +348,14 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCallNotesByCallIdQuery { get; set; }
 		public string SelectAllCallGroupDispsByCallIdQuery { get; set; }
 		public string SelectAllCallUnitDispsByCallIdQuery { get; set; }
+		public string SelectOpenCallIdsForUnitQuery { get; set; }
+		public string SelectOpenCallIdsForUserQuery { get; set; }
+		public string SelectCallUnitDispatchesForCallsInRangeQuery { get; set; }
+		public string SelectCallDispatchesForCallsInRangeQuery { get; set; }
+		public string SelectCallDispatchGroupsForCallsInRangeQuery { get; set; }
+		public string SelectCallDispatchRolesForCallsInRangeQuery { get; set; }
+		public string SelectUnitDispatchWindowsQuery { get; set; }
+		public string SelectPersonnelDispatchWindowsQuery { get; set; }
 		public string SelectAllCallRoleDispsByCallIdQuery { get; set; }
 		public string SelectCallYearsByDeptQuery { get; set; }
 		public string SelectAllClosedCallsByDidYearQuery { get; set; }

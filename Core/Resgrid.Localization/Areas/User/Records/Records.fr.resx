@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Activez JavaScript pour rechercher et sélectionner une intervention.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Saisissez une période valide dont le début précède ou égale la fin.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Sélectionnez une intervention disponible dans la liste ou effacez la sélection.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Déduit</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Lié automatiquement</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Certains horaires d'unité proviennent de statuts que l'unité n'a pas liés elle-même à cet appel : Resgrid les a liés automatiquement (d'après le statut précédent de l'unité ou son envoi) ou déduits (définis sans destination alors que l'unité était envoyée ici). Vérifiez-les avant de finaliser.</value></data>
 </root>

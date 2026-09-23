@@ -848,4 +848,22 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Звіт про інцидент</value>
   </data>
+  <data name="StatusLinkAuto" xml:space="preserve">
+    <value>пов’язано автоматично</value>
+  </data>
+  <data name="StatusLinkInferred" xml:space="preserve">
+    <value>виведено</value>
+  </data>
+  <data name="StatusLinkAutoHelp" xml:space="preserve">
+    <value>Надіслано без виклику. Resgrid пов’язав його з цим викликом за попереднім статусом або направленням.</value>
+  </data>
+  <data name="StatusLinkInferredHelp" xml:space="preserve">
+    <value>Встановлено без пункту призначення підрозділом або особою, направленими на цей виклик, під час роботи на ньому.</value>
+  </data>
+  <data name="StatusLinkLegend" xml:space="preserve">
+    <value>Пов’язано автоматично: надіслано без виклику; Resgrid пов’язав за попереднім статусом або направленням. Виведено: встановлено без пункту призначення підрозділом або особою, направленими на цей виклик, під час роботи на ньому.</value>
+  </data>
+  <data name="UnitTimes" xml:space="preserve">
+    <value>Час підрозділів</value>
+  </data>
 </root>

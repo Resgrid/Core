@@ -40,6 +40,7 @@ namespace Resgrid.Services
 
 		// Lazy: the Records cutover guard (RMS plan section 4.1) is consulted only on a legacy UnitLog write.
 		private readonly Lazy<IRecordsCutoverService> _recordsCutoverService;
+		private readonly ICallStatusAttributionService _callStatusAttributionService;
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
@@ -50,9 +51,11 @@ namespace Resgrid.Services
 			IUnitLocationsDocRepository unitLocationsDocRepository, Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
 			IUnitActiveRolesRepository unitActiveRolesRepository,
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
-			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null, Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService,
+			ICallStatusAttributionService callStatusAttributionService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_recordsCutoverService = recordsCutoverService;
+			_callStatusAttributionService = callStatusAttributionService;
 			if ((inventoryStore == null) != (inventoryUnitOfWork == null))
 				throw new ArgumentException("Inventory storage and its unit of work must be supplied together.", nameof(inventoryStore));
 			_inventoryStore = inventoryStore; _inventoryUnitOfWork = inventoryUnitOfWork;
@@ -384,6 +387,9 @@ namespace Resgrid.Services
 				}
 			}
 
+			// No destination is sent on this path: link the state to the call the unit is working, if there is one.
+			await _callStatusAttributionService.AttributeUnitStateAsync(state, previousState, departmentId);
+
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
 			// ADP write safety net (plan 4.2/19.2), catalog v2: unit-state note, geolocation and the
@@ -426,6 +432,10 @@ namespace Resgrid.Services
 					}
 				}
 			}
+
+			// Every client and server path lands here: a state sent without a destination is linked to the call the unit
+			// is working (previous state's open call, or its one open dispatch), and a sent destination is marked explicit.
+			await _callStatusAttributionService.AttributeUnitStateAsync(state, previousState, departmentId);
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
@@ -615,33 +625,27 @@ namespace Resgrid.Services
 
 		public async Task<List<UnitState>> GetUnitStatesForCallAsync(int departmentId, int callId)
 		{
-			List<int> callEnabledStates = new List<int>();
-			var states = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+			// Every state that names the call counts (Cancelled, Delayed, a custom status whose destination
+			// setting was later changed, ...): the call record is an audit trail, not a filtered view. Only
+			// untyped legacy rows whose status targets stations are dropped, see CallStatusLinkage.
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+			var statusLookup = CallStatusLinkage.BuildStatusLookup(_customStateService.GetDefaultUnitStatuses(), customStates, CustomStateTypes.Unit);
 
-			callEnabledStates.Add((int)UnitStateTypes.Enroute);
-			callEnabledStates.Add((int)UnitStateTypes.Committed);
-			callEnabledStates.Add((int)UnitStateTypes.Manual);
-			callEnabledStates.Add((int)UnitStateTypes.OnScene);
-			callEnabledStates.Add((int)UnitStateTypes.Responding);
-			callEnabledStates.Add((int)UnitStateTypes.Returning);
-			callEnabledStates.Add((int)UnitStateTypes.Released);
-			callEnabledStates.Add((int)UnitStateTypes.Staging);
-			callEnabledStates.Add((int)UnitStateTypes.Available);
+			var unitStates = (await _unitStatesRepository.GetAllStatesByCallIdAsync(departmentId, callId) ?? Enumerable.Empty<UnitState>())
+				.Where(us => us.BelongsToCall(statusLookup))
+				.ToList();
 
-			var nonNullStates = from state in states
-								where state.Details != null
-								select state;
-
-			callEnabledStates.AddRange(from state in nonNullStates
-									   from detail in state.Details
-									   where detail.DetailType.SupportsCalls()
-									   select detail.CustomStateDetailId);
-
-			var unitStates = (from us in await _unitStatesRepository.GetAllStatesByCallIdAsync(callId)
-												where callEnabledStates.Contains(us.State)
-												select us).ToList();
+			// Plus what the call's dispatched units did while working it without naming the call (flagged Inferred).
+			unitStates.AddRange(await _callStatusAttributionService.GetInferredUnitStatesForCallAsync(departmentId, callId) ?? new List<UnitState>());
 
 			return unitStates;
+		}
+
+		public async Task<Dictionary<int, int>> GetCustomUnitStateBaseTypesAsync(int departmentId)
+		{
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+
+			return CallStatusLinkage.BuildUnitBaseTypeMap(customStates);
 		}
 
 		public async Task<UnitLocationWriteResult> AddUnitLocationAsync(UnitsLocation location, int departmentId, CancellationToken cancellationToken = default(CancellationToken))

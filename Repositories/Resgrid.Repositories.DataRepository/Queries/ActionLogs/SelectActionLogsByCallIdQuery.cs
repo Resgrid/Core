@@ -20,10 +20,12 @@ namespace Resgrid.Repositories.DataRepository.Queries.ActionLogs
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
-						"%CALLID%"
+						"%CALLID%",
+						"%DID%"
 					},
 					new string[] {
-						"CallId"
+						"CallId",
+						"DepartmentId"
 					},
 					new string[] {
 						"%ACTIONLOGSTABLE%",

@@ -51,7 +51,8 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IUnitActiveRolesRepository>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<ILimitsService>(),
 				Mock.Of<IPersonnelRolesService>(),
 				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object),
-				new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()));
+				new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()),
+				Mock.Of<ICallStatusAttributionService>());
 		}
 
 		private static UnitState BuildState() => new UnitState

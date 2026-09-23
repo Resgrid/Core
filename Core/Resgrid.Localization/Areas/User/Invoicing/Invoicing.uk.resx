@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Відкрити розгортання</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Типовий тарифний план</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Розрахунки підрядника: використовується для пропозицій і розгортань цього замовника, коли договір не вказує план.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>час на місці пов’язано автоматично</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Статус підрозділу «На місці» (або статус, що його завершив) надіслано без виклику; Resgrid пов’язав його з цим викликом за попереднім статусом підрозділу або його направленням. Перевірте час перед надсиланням.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>час на місці виведено</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>Підрозділ встановив статус «На місці» (або статус, що його завершив) без пункту призначення, будучи направленим на цей виклик; Resgrid вивів, що він належить до цього виклику. Перевірте час перед надсиланням.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>немає статусу «на місці»: тривалість виклику</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Підрозділ жодного разу не повідомив «На місці» на цьому виклику, тому рядок нараховує час від реєстрації виклику до його закриття. Перевірте кількість перед надсиланням.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>час на місці зі статусу підрозділу</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Підрозділ сам пов’язав свій статус «На місці» та статус, що його завершив, із цим викликом.</value></data>
 </root>

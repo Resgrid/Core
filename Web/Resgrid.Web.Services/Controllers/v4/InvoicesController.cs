@@ -338,7 +338,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				data.LineItems = (invoice.LineItems ?? new List<InvoiceLineItem>()).OrderBy(x => x.SortOrder).Select(x => new InvoiceLineItemData
 				{
-					InvoiceLineItemId = x.InvoiceLineItemId, CallId = x.CallId, Description = x.Description, Quantity = x.Quantity, UnitRate = x.UnitRate, Amount = x.Amount, Taxable = x.Taxable, SortOrder = x.SortOrder
+					InvoiceLineItemId = x.InvoiceLineItemId, CallId = x.CallId, Description = x.Description, Quantity = x.Quantity, UnitRate = x.UnitRate, Amount = x.Amount, Taxable = x.Taxable, SortOrder = x.SortOrder, TimeSource = x.TimeSource
 				}).ToList();
 				data.Payments = (invoice.Payments ?? new List<InvoicePayment>()).OrderBy(x => x.PaidOn).Select(x => new InvoicePaymentData
 				{

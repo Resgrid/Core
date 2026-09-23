@@ -2286,8 +2286,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _protectedReadService.ResolveCallLogsForReadAsync(DepartmentId, model.CallLogs,
 				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
-			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
+			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
@@ -2353,8 +2353,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _protectedReadService.ResolveCallLogsForReadAsync(call.DepartmentId, model.CallLogs,
 					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
-				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
+				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
@@ -2392,8 +2392,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _protectedReadService.ResolveCallLogsForReadAsync(call.DepartmentId, model.CallLogs,
 					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
-				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
+				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(call.DepartmentId);
 				model.Units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
@@ -3426,6 +3426,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, model.Call.CallId)).OrderBy(y => y.Timestamp).ToList();
 			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, model.Call.CallId)).OrderBy(y => y.Timestamp).ToList();
+
+			// The call-scoped state query joins the unit but not its station, which the Units tab's Group column reads.
+			foreach (var unitState in model.UnitStates.Where(x => x.Unit != null && x.Unit.StationGroup == null && x.Unit.StationGroupId.HasValue))
+				unitState.Unit.StationGroup = model.Groups?.FirstOrDefault(g => g.DepartmentGroupId == unitState.Unit.StationGroupId.Value);
 
 			model.UserGroupRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(model.Call.DepartmentId, true, true, true);
 

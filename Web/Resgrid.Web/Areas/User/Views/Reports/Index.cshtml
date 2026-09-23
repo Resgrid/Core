@@ -158,6 +158,17 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <a href="@Url.Action("CallUnitTimesReportParams", "Reports", new { Area = "User" })">@localizer["CallUnitTimesReportName"]</a>
+                                </td>
+                                <td>
+                                    @localizer["CallUnitTimesReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("CallUnitTimesReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     <a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })">@localizer["PersonnelStaffingHistoryReportName"]</a>
                                 </td>
                                 <td>

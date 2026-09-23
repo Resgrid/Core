@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Open deployment</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Default rate schedule</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Contractor billing: used for this customer's bids and deployments when no contract names a schedule.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>on-scene time auto-linked</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>The unit's On Scene status (or the status that ended it) was sent without a call; Resgrid linked it to this call from the unit's previous status or its dispatch. Check the time before sending.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>on-scene time inferred</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>The unit set its On Scene status (or the status that ended it) with no destination while dispatched to this call; Resgrid inferred it belongs to this call. Check the time before sending.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>no on-scene status: call duration</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>The unit never reported On Scene on this call, so the line bills the time from the call being logged to its close. Check the quantity before sending.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>on-scene time from unit status</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>The unit linked its On Scene status, and the status that ended it, to this call itself.</value></data>
 </root>

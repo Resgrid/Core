@@ -28,6 +28,9 @@ var resgrid;
                     placeholder: '',
                     theme: 'snow'
                 });
+                // addCallNote1 reads noteQuillDescription, so its button is enabled only once the
+                // editor exists. Bound here rather than inline (RESGRID-WEB-1MA).
+                $('#note-box-submit1').on('click', addCallNote1).prop('disabled', false);
 
                 $(document).on('submit', '#newCallForm', function () {
                     $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
@@ -121,6 +124,9 @@ var resgrid;
 				});
 			}
 			viewcall.addCallNote = addCallNote;
+			// Bound here rather than inline: the button renders disabled until this script has
+			// run, so an early click can't call into an undefined namespace (RESGRID-WEB-1MA).
+			$('#note-box-submit').on('click', addCallNote).prop('disabled', false);
 			function addCallNote1() {
 				$.ajax({
 					url: resgrid.absoluteBaseUrl + '/User/Dispatch/AddCallNote',
@@ -204,6 +210,8 @@ var resgrid;
 				});
 			}
 			viewcall.reOpenCall = reOpenCall;
+			// Bound here rather than inline (RESGRID-WEB-1MA); the button renders disabled until now.
+			$('#reOpenCallButton').on('click', reOpenCall).prop('disabled', false);
 		})(viewcall = dispatch.viewcall || (dispatch.viewcall = {}));
 	})(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

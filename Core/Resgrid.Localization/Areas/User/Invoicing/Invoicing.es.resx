@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Abrir despliegue</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Tabla de tarifas predeterminada</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Facturación de contratista: se usa en las ofertas y despliegues de este cliente cuando ningún contrato indica una tabla.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>tiempo en escena vinculado automáticamente</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>El estado En escena de la unidad (o el estado que lo terminó) se envió sin llamada; Resgrid lo vinculó a esta llamada a partir del estado anterior de la unidad o de su despacho. Compruebe el tiempo antes de enviar.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>tiempo en escena deducido</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>La unidad estableció su estado En escena (o el estado que lo terminó) sin destino mientras estaba despachada a esta llamada; Resgrid dedujo que pertenece a esta llamada. Compruebe el tiempo antes de enviar.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>sin estado en escena: duración de la llamada</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>La unidad nunca informó En escena en esta llamada, por lo que la línea factura el tiempo desde el registro de la llamada hasta su cierre. Compruebe la cantidad antes de enviar.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>tiempo en escena del estado de la unidad</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>La unidad vinculó ella misma su estado En escena, y el estado que lo terminó, a esta llamada.</value></data>
 </root>

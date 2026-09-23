@@ -2406,6 +2406,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
+			var actionLogs = new List<ActionLog>();
 			foreach (var eventId in eventIds)
 			{
 				var actionLog = await _actionLogsService.GetActionLogByIdAsync(eventId);
@@ -2418,6 +2419,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!await _authorizationService.CanUserViewPersonAsync(UserId, actionLog.UserId, DepartmentId))
 					continue;
 
+				actionLogs.Add(actionLog);
+			}
+
+			var calls = await ReferencedCallsHelper.AddReferencedCallsAsync(_callsService, DepartmentId, activeCalls, actionLogs
+				.Where(x => x.DestinationId.HasValue && x.GetEffectiveDestinationType() != DestinationEntityTypes.Station && x.GetEffectiveDestinationType() != DestinationEntityTypes.Poi)
+				.Select(x => x.DestinationId.Value));
+
+			foreach (var actionLog in actionLogs)
+			{
 				var personnelEvent = new PersonnelEventJson();
 				personnelEvent.EventId = actionLog.ActionLogId;
 				personnelEvent.UserId = actionLog.UserId;
@@ -2430,7 +2440,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(model.Department);
 				personnelEvent.Note = actionLog.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, calls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();

@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>فعّل JavaScript للبحث عن بلاغ واختياره.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>أدخل نطاق تواريخ صالحًا بحيث لا تكون البداية بعد النهاية.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>اختر بلاغًا متاحًا من القائمة أو امسح الاختيار.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>مستنتج</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>مرتبط تلقائيًا</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>بعض أوقات الوحدات مأخوذة من حالات لم تربطها الوحدة بهذا البلاغ بنفسها: ربطها Resgrid تلقائيًا (من الحالة السابقة للوحدة أو إرسالها) أو استنتجها (حُدّدت دون وجهة أثناء إرسال الوحدة إلى هنا). تحقّق منها قبل الإنهاء.</value></data>
 </root>

@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Enable JavaScript to search and select a call.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Enter a valid date range with the start on or before the end.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Choose an available call from the list, or clear the selection.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Inferred</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Auto-linked</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Some unit times come from statuses the unit did not link to this call itself: Resgrid auto-linked them (from the unit's previous status or its dispatch) or inferred them (set with no destination while the unit was dispatched here). Check them before finalizing.</value></data>
 </root>

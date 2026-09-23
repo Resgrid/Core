@@ -198,6 +198,22 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void On_scene_window_reports_where_the_billed_time_came_from()
+		{
+			var t0 = new DateTime(2026, 9, 18, 8, 0, 0, DateTimeKind.Utc);
+			List<UnitState> States(int? onSceneSource, int? endSource) => new List<UnitState>
+			{
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.OnScene, Timestamp = t0.AddMinutes(12), DestinationSource = onSceneSource },
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, Timestamp = t0.AddMinutes(95), DestinationSource = endSource }
+			};
+
+			InvoicingService.OnSceneWindow(States((int)StatusDestinationSources.Explicit, null), t0, t0.AddHours(3)).Should().Be((83, InvoiceLineTimeSources.UnitStatus));
+			InvoicingService.OnSceneWindow(States((int)StatusDestinationSources.CarryForward, (int)StatusDestinationSources.Explicit), t0, t0.AddHours(3)).Source.Should().Be(InvoiceLineTimeSources.AutoLinkedStatus);
+			InvoicingService.OnSceneWindow(States((int)StatusDestinationSources.Explicit, (int)StatusDestinationSources.Inferred), t0, t0.AddHours(3)).Source.Should().Be(InvoiceLineTimeSources.InferredStatus, "an inferred end status makes the billed window inferred");
+			InvoicingService.OnSceneWindow(new List<UnitState>(), t0, t0.AddMinutes(45)).Should().Be((45, InvoiceLineTimeSources.CallWindow));
+		}
+
+		[Test]
 		public void On_scene_minutes_fall_back_to_the_call_window_and_never_go_negative()
 		{
 			var t0 = new DateTime(2026, 9, 18, 8, 0, 0, DateTimeKind.Utc);
@@ -575,6 +591,29 @@ namespace Resgrid.Tests.Services
 			saved.LineItems.Select(l => l.Amount).Should().Equal(150m, 200m, 0m, 50m);
 			saved.SubTotal.Should().Be(400m);
 			_rateCardItems.Verify(r => r.GetByIdForDepartmentAsync("item-1", 7), Times.Once, "the minimum is looked up once per rate card item");
+		}
+
+		[Test]
+		public async Task Saving_line_items_keeps_the_generated_time_source_and_time_report_of_existing_lines()
+		{
+			DraftWithProfile();
+
+			var first = await Build().SaveInvoiceLineItemsAsync("inv-1", 7, new List<InvoiceLineItem>
+			{
+				new InvoiceLineItem { Description = "Engine 5 on scene", Quantity = 1.5m, UnitRate = 100m, TimeSource = (int)InvoiceLineTimeSources.InferredStatus, DeploymentTimeReportId = "dtr-1" },
+				new InvoiceLineItem { Description = "Bogus source", Quantity = 1m, UnitRate = 10m, TimeSource = 99 }
+			}, "user-1", null, null);
+			var lineId = first.LineItems.First(l => l.Description == "Engine 5 on scene").InvoiceLineItemId;
+
+			// The editor posts existing lines back without provenance.
+			await Build().SaveInvoiceLineItemsAsync("inv-1", 7, new List<InvoiceLineItem>
+			{
+				new InvoiceLineItem { InvoiceLineItemId = lineId, Description = "Engine 5 on scene", Quantity = 2m, UnitRate = 100m }
+			}, "user-1", null, null);
+
+			_lineItems.Verify(r => r.SaveOrUpdateAsync(It.Is<InvoiceLineItem>(l => l.InvoiceLineItemId == lineId && l.TimeSource == (int)InvoiceLineTimeSources.InferredStatus && l.DeploymentTimeReportId == "dtr-1"),
+				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));
+			_lineItems.Verify(r => r.SaveOrUpdateAsync(It.Is<InvoiceLineItem>(l => l.Description == "Bogus source" && l.TimeSource == null), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
 
 		[Test]

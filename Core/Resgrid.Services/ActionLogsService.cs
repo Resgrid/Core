@@ -28,11 +28,13 @@ namespace Resgrid.Services
 		private readonly IGeoService _geoService;
 		private readonly ICustomStateService _customStateService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly ICallStatusAttributionService _callStatusAttributionService;
 
 		public ActionLogsService(IActionLogsRepository actionLogsRepository, IUsersService usersService,
 			IDepartmentMembersRepository departmentMembersRepository, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentsService departmentsService, IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator,
-			IGeoService geoService, ICustomStateService customStateService, ICacheProvider cacheProvider)
+			IGeoService geoService, ICustomStateService customStateService, ICacheProvider cacheProvider,
+			ICallStatusAttributionService callStatusAttributionService)
 		{
 			_actionLogsRepository = actionLogsRepository;
 			_usersService = usersService;
@@ -44,6 +46,7 @@ namespace Resgrid.Services
 			_geoService = geoService;
 			_customStateService = customStateService;
 			_cacheProvider = cacheProvider;
+			_callStatusAttributionService = callStatusAttributionService;
 		}
 
 		#endregion Private Members and Constructors
@@ -184,6 +187,15 @@ namespace Resgrid.Services
 		public async Task<ActionLog> SaveActionLogAsync(ActionLog actionLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			actionLog.Timestamp = actionLog.Timestamp.ToUniversalTime();
+
+			// Every single-status path lands here: a status sent without a destination is linked to the call the person is
+			// working (the unit they were placed on, the previous status's open call, or their one open dispatch), and a
+			// sent destination is marked explicit. Bulk resets (SaveAllActionLogsAsync) are left as sent.
+			if (actionLog.ActionLogId == 0)
+			{
+				var previous = !string.IsNullOrWhiteSpace(actionLog.UserId) ? await _actionLogsRepository.GetLastActionLogForUserAsync(actionLog.UserId) : null;
+				await _callStatusAttributionService.AttributeActionLogAsync(actionLog, previous);
+			}
 
 			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken, true);
 
@@ -417,20 +429,19 @@ namespace Resgrid.Services
 
 		public async Task<List<ActionLog>> GetActionLogsForCallAsync(int departmentId, int callId)
 		{
-			List<int> callEnabledStates = new List<int>();
-			var states = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+			// Every status that names the call counts (Responding, On Unit, a release back to Standing By, a
+			// custom status whose destination setting was later changed, ...). Only untyped legacy rows whose
+			// status targets stations are dropped, see CallStatusLinkage.
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+			var statusLookup = CallStatusLinkage.BuildStatusLookup(_customStateService.GetDefaultPersonStatuses(), customStates, CustomStateTypes.Personnel);
 
-			callEnabledStates.Add((int)ActionTypes.OnScene);
-			callEnabledStates.Add((int)ActionTypes.RespondingToScene);
+			var items = await _actionLogsRepository.GetActionLogsForCallAsync(departmentId, callId) ?? Enumerable.Empty<ActionLog>();
+			var logs = items.Where(x => x.BelongsToCall(statusLookup)).ToList();
 
-			var nonNullStates = from state in states
-								where state.Details != null
-								select state;
+			// Plus what the call's dispatched personnel did while working it without naming the call (flagged Inferred).
+			logs.AddRange(await _callStatusAttributionService.GetInferredActionLogsForCallAsync(departmentId, callId) ?? new List<ActionLog>());
 
-			callEnabledStates.AddRange(from state in nonNullStates from detail in state.Details where detail.DetailType.SupportsCalls() select detail.CustomStateDetailId);
-
-			var items = await _actionLogsRepository.GetActionLogsForCallAndTypesAsync(callId, callEnabledStates);
-			return items.ToList();
+			return logs;
 		}
 
 		public async Task<ActionLog> CreateUnitLinkedStatus(string userId, int departmentId, int unitStateId, string unitName, CancellationToken cancellationToken = default(CancellationToken))

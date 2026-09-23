@@ -1098,8 +1098,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (key.ToString().StartsWith("selectEvent_"))
 				{
-					var eventId = int.Parse(key.ToString().Replace("selectEvent_", ""));
-					eventIds.Add(eventId);
+					var suffix = key.ToString().Replace("selectEvent_", "");
+					if (int.TryParse(suffix, out var eventId))
+						eventIds.Add(eventId);
 				}
 			}
 
@@ -1109,20 +1110,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
+			// Only this department's unit states, and only for units the member may view.
+			var eventRecords = new List<UnitState>();
 			foreach (var eventId in eventIds)
 			{
-				var eventJson = new UnitEventJson();
 				var eventRecord = await _unitsService.GetUnitStateByIdAsync(eventId);
 
-				model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+				if (eventRecord?.Unit == null || eventRecord.Unit.DepartmentId != DepartmentId)
+					continue;
+
+				if (!await _authorizationService.CanUserViewUnitAsync(UserId, eventRecord.UnitId))
+					continue;
+
+				eventRecords.Add(eventRecord);
+			}
+
+			var calls = await ReferencedCallsHelper.AddReferencedCallsAsync(_callsService, DepartmentId, activeCalls, eventRecords
+				.Where(x => x.DestinationId.HasValue && (!x.DestinationType.HasValue || x.DestinationType == (int)DestinationEntityTypes.Call))
+				.Select(x => x.DestinationId.Value));
+
+			foreach (var eventRecord in eventRecords)
+			{
+				var eventJson = new UnitEventJson();
 
 				eventJson.UnitName = eventRecord.Unit.Name;
-				eventJson.State = StringHelpers.GetDescription(((UnitStateTypes)eventRecord.State));
+				var customState = await _customStateService.GetCustomUnitStateAsync(eventRecord);
+				// Custom statuses store their detail id, which has no UnitStateTypes description.
+				eventJson.State = customState?.ButtonText ?? StringHelpers.GetDescription(((UnitStateTypes)eventRecord.State));
 				eventJson.Timestamp = eventRecord.Timestamp.TimeConverterToString(model.Department).ToString();
 				eventJson.Note = eventRecord.Note;
-				var customState = await _customStateService.GetCustomUnitStateAsync(eventRecord);
-				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, activeCalls, stations, pois, _localizer);
+				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, calls, stations, pois, _localizer);
 				eventJson.DestinationName = destination.Name;
 
 				if (eventRecord.LocalTimestamp.HasValue)
@@ -1387,7 +1406,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						unitJson.StateId = state.State;
 						unitJson.State = "Unknown";
 						unitJson.StateColor = "#d1dade";
-						unitJson.TextColor = "5E5E5E";
+						unitJson.TextColor = "#5E5E5E";
 						unitJson.Timestamp = state.Timestamp.TimeConverterToString(department);
 					}
 				}

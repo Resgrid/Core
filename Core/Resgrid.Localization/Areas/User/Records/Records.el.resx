@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Ενεργοποιήστε τη JavaScript για αναζήτηση και επιλογή κλήσης.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Εισαγάγετε έγκυρο εύρος ημερομηνιών με την αρχή πριν ή κατά τη λήξη.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Επιλέξτε διαθέσιμη κλήση από τη λίστα ή διαγράψτε την επιλογή.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Συναγόμενο</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Αυτόματη σύνδεση</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Ορισμένοι χρόνοι μονάδων προέρχονται από καταστάσεις που η μονάδα δεν συνέδεσε η ίδια με αυτή την κλήση: το Resgrid τις συνέδεσε αυτόματα (από την προηγούμενη κατάσταση ή την αποστολή της μονάδας) ή τις συνήγαγε (ορίστηκαν χωρίς προορισμό ενώ η μονάδα είχε σταλεί εδώ). Ελέγξτε τις πριν από την οριστικοποίηση.</value></data>
 </root>

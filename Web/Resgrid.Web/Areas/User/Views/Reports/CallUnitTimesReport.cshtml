@@ -1,0 +1,159 @@
+@using Resgrid.Model.Helpers
+@using Resgrid.Model.Reporting
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Reports.Calls.CallUnitTimesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
+@{
+	Layout = null;
+
+	string Time(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "";
+
+	string SourceText(CallUnitTimesSources source)
+	{
+		switch (source)
+		{
+			case CallUnitTimesSources.AutoLinked: return localizer["CallUnitTimesSourceAuto"];
+			case CallUnitTimesSources.Inferred: return localizer["CallUnitTimesSourceInferred"];
+			case CallUnitTimesSources.DispatchOnly: return localizer["CallUnitTimesSourceDispatchOnly"];
+			default: return localizer["CallUnitTimesSourceExplicit"];
+		}
+	}
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>@localizer["CallUnitTimesReportName"]</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="@localizer["CallUnitTimesReportName"]">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<style>
+		.table th, .table td {
+			padding: 6px !important;
+			line-height: 18px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+
+		.call-heading {
+			margin-top: 18px;
+		}
+
+		@@media print {
+			.no-print {
+				display: none !important;
+			}
+		}
+	</style>
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-1">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-6" style="text-align: right;">
+				<h3 style="margin-top: 10px;">@localizer["CallUnitTimesReportName"]</h3>
+				<span>@Model.Start.FormatForDepartment(Model.Department)</span><span> - </span><span>@Model.End.FormatForDepartment(Model.Department)</span>
+				<div class="no-print" style="margin-top: 6px;">
+					<a class="btn btn-default btn-xs" asp-controller="Reports" asp-action="CallUnitTimesReportCsv" asp-route-area="User"
+					   asp-route-start="@(Model.CallId.HasValue ? null : Model.Start.ToString("s"))" asp-route-end="@(Model.CallId.HasValue ? null : Model.End.ToString("s"))"
+					   asp-route-callId="@Model.CallId">@localizer["CallUnitTimesDownloadCsv"]</a>
+				</div>
+			</div>
+		</div>
+
+		@if (!Model.Calls.Any())
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<p>@localizer["CallUnitTimesNoCalls"]</p>
+				</div>
+			</div>
+		}
+
+		@foreach (var call in Model.Calls)
+		{
+			<div class="row call-heading">
+				<div class="col-md-10 col-md-offset-1">
+					<h4>
+						@call.Number @call.Name
+						<small>@call.Type &middot; @Time(call.LoggedOn)@(call.ClosedOn.HasValue ? " - " + Time(call.ClosedOn) : "")</small>
+					</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					@if (!call.Units.Any())
+					{
+						<p class="text-muted">@localizer["CallUnitTimesNoUnits"]</p>
+					}
+					else
+					{
+						<table class="table table-condensed table-striped">
+							<thead>
+								<tr>
+									<th>@localizer["CallUnitTimesUnitHeader"]</th>
+									<th>@localizer["CallUnitTimesDispatchedHeader"]</th>
+									<th>@localizer["CallUnitTimesEnRouteHeader"]</th>
+									<th>@localizer["CallUnitTimesOnSceneHeader"]</th>
+									<th>@localizer["CallUnitTimesStagingHeader"]</th>
+									<th>@localizer["CallUnitTimesClearedHeader"]</th>
+									<th>@localizer["CallUnitTimesSourceHeader"]</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var unit in call.Units)
+								{
+									<tr>
+										<td>
+											@unit.UnitName
+											@if (!string.IsNullOrWhiteSpace(unit.Group))
+											{
+												<br /><small class="text-muted">@unit.Group</small>
+											}
+										</td>
+										<td>@Time(unit.Times.DispatchedOn)</td>
+										<td>@Time(unit.Times.EnrouteOn)</td>
+										<td>@Time(unit.Times.OnSceneOn)</td>
+										<td>@Time(unit.Times.StagingOn)</td>
+										<td>@Time(unit.Times.ClearedOn)</td>
+										<td>@SourceText(unit.Times.Source)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					}
+				</div>
+			</div>
+		}
+
+		@if (Model.AnyAutoLinked || Model.AnyInferred)
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<p class="small text-muted">@localizer["CallUnitTimesLegend"]</p>
+				</div>
+			</div>
+		}
+
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1" style="text-align: right;">
+				@Model.RunOn.FormatForDepartment(Model.Department)
+			</div>
+		</div>
+	</div>
+</body>
+</html>

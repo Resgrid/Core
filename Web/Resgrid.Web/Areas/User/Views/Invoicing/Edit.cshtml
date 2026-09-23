@@ -9,7 +9,7 @@
     ViewData["Title"] = localizer["Invoice"].Value + " #" + invoice.InvoiceNumber;
     ViewData["Subtitle"] = localizer["EditInvoiceIntro"].Value;
     var lines = (invoice.LineItems ?? new List<InvoiceLineItem>()).OrderBy(x => x.SortOrder)
-        .Select(x => new { invoiceLineItemId = x.InvoiceLineItemId, callId = x.CallId, rateCardItemId = x.RateCardItemId, description = x.Description, quantity = x.Quantity, unitRate = x.UnitRate, taxable = x.Taxable }).ToList();
+        .Select(x => new { invoiceLineItemId = x.InvoiceLineItemId, callId = x.CallId, rateCardItemId = x.RateCardItemId, description = x.Description, quantity = x.Quantity, unitRate = x.UnitRate, taxable = x.Taxable, timeSource = x.TimeSource }).ToList();
     var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
 }
 
@@ -169,6 +169,17 @@
 
 @section Scripts {
     <script type="application/json" id="invoiceLines">@Html.Raw(JsonConvert.SerializeObject(lines, jsonSettings))</script>
+    <script type="application/json" id="timeSourceText">@Html.Raw(JsonConvert.SerializeObject(new
+    {
+        unitStatus = localizer["TimeSourceUnitStatus"].Value,
+        unitStatusHelp = localizer["TimeSourceUnitStatusHelp"].Value,
+        auto = localizer["TimeSourceAutoLinked"].Value,
+        autoHelp = localizer["TimeSourceAutoLinkedHelp"].Value,
+        inferred = localizer["TimeSourceInferred"].Value,
+        inferredHelp = localizer["TimeSourceInferredHelp"].Value,
+        window = localizer["TimeSourceCallWindow"].Value,
+        windowHelp = localizer["TimeSourceCallWindowHelp"].Value
+    }, jsonSettings))</script>
     <script>
         $(function () {
             var lines = JSON.parse(document.getElementById('invoiceLines').textContent);
@@ -187,9 +198,18 @@
                 saveFailed: '@localizer["SaveFailed"]',
                 invoiced: '@localizer["AlreadyInvoiced"]'
             };
+            // Longer, translated sentences travel as JSON so apostrophes and quotes survive into the badges' titles.
+            var timeText = JSON.parse(document.getElementById('timeSourceText').textContent);
 
             function money(v) { return (Math.round((Number(v) || 0) * 100) / 100).toFixed(2); }
             function esc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+
+            // Where a generated line's on-scene time came from (InvoiceLineTimeSources): 1 unit status, 2 auto-linked, 3 inferred, 4 call window.
+            function timeSourceBadge(source) {
+                var kinds = { 1: ['label-success', timeText.unitStatus, timeText.unitStatusHelp], 2: ['label-info', timeText.auto, timeText.autoHelp], 3: ['label-warning', timeText.inferred, timeText.inferredHelp], 4: ['label-default', timeText.window, timeText.windowHelp] };
+                var kind = kinds[source];
+                return kind ? ' <span class="label ' + kind[0] + '" title="' + esc(kind[2]) + '">' + esc(kind[1]) + '</span>' : '';
+            }
 
             function render() {
                 var body = $('#linesTable tbody').empty();
@@ -199,7 +219,7 @@
                     subTotal += amount;
                     body.append(
                         '<tr data-index="' + i + '">' +
-                        '<td><input type="text" class="form-control input-sm line-desc" maxlength="500" value="' + esc(l.description) + '"' + (l.invoiceLineItemId ? '' : '') + '>' + (l.callId ? '<small class="text-muted">Call ' + esc(l.callId) + '</small>' : '') + '</td>' +
+                        '<td><input type="text" class="form-control input-sm line-desc" maxlength="500" value="' + esc(l.description) + '"' + (l.invoiceLineItemId ? '' : '') + '>' + (l.callId ? '<small class="text-muted">Call ' + esc(l.callId) + '</small>' : '') + timeSourceBadge(l.timeSource) + '</td>' +
                         '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-qty" value="' + esc(l.quantity) + '"></td>' +
                         '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-rate" value="' + esc(l.unitRate) + '"></td>' +
                         '<td class="text-center"><input type="checkbox" class="line-tax"' + (l.taxable ? ' checked' : '') + '></td>' +
@@ -262,7 +282,7 @@
                 var button = $(this).prop('disabled', true);
                 $.getJSON(urls.preview, { id: invoiceId, callId: button.data('id'), rateCardId: $('#rateCardId').val() }).done(function (generated) {
                     sync();
-                    generated.forEach(function (g) { lines.push({ callId: g.callId, rateCardItemId: g.rateCardItemId, description: g.description, quantity: g.quantity, unitRate: g.unitRate, taxable: g.taxable }); });
+                    generated.forEach(function (g) { lines.push({ callId: g.callId, rateCardItemId: g.rateCardItemId, description: g.description, quantity: g.quantity, unitRate: g.unitRate, taxable: g.taxable, timeSource: g.timeSource }); });
                     render();
                     $('#callModal').modal('hide');
                     toastr.success(text.added);

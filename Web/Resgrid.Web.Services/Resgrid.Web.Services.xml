@@ -469,6 +469,18 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.SafeContactName(Resgrid.Model.Contact)">
             <summary>A redacted name part collapses the whole display name to the REDACTED placeholder.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.LinkSuffix(System.Nullable{System.Int32})">
+            <summary>
+            Marks history text for statuses that reached the call without the sender naming it.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveStatusDetail(System.Int32,System.Collections.Generic.List{Resgrid.Model.CustomStateDetail},System.Collections.Generic.List{Resgrid.Model.CustomState})">
+            <summary>
+            Resolves a raw unit state / personnel action type (built-in value or custom status detail id) to its
+            status detail for labelling. Returns null when the status can't be resolved (e.g. a built-in value with
+            no default button, or a custom detail from another department).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -2876,6 +2888,13 @@
             <param name="input">Status and related data</param>
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController.SavePersonStatusAsync(System.String,System.Int32,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Writes a personnel status. The note is kept whether or not a destination was picked, and the status is
+            stamped with the time the member set it (so an offline-queued status replayed later keeps its real
+            time), falling back to now when the client time is missing or implausible.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ProtocolsController">
             <summary>
@@ -7700,6 +7719,14 @@
             Default constructor
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.DestinationSource">
+            <summary>
+            For status activity: how the status came to be on this call (StatusDestinationSources: 1 chosen by the sender,
+            2 carried forward from the previous status's call, 3 from the one open dispatch, 4 from the unit the person rode,
+            5 inferred from a dispatched unit's/person's status that named no destination). Null for older rows and for
+            non-status entries.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult">
             <summary>
             Gets the history of all actions taken during a call
@@ -7743,6 +7770,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.Info">
             <summary>
             Text describing the history event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResultData.DestinationSource">
+            <summary>
+            For status events: how the status came to be on this call (see DispatchedEventResultData.DestinationSource).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallResult">
@@ -12162,6 +12194,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData.Payments">
             <summary>Populated by GetInvoice only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceLineItemData.TimeSource">
+            <summary>
+            Generated hourly unit lines: where the on-scene time came from (InvoiceLineTimeSources: 1 the unit's own status,
+            2 a status Resgrid auto-linked to the call, 3 a status inferred for the call, 4 the call window). Null otherwise.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicePaymentData.Method">
             <summary>InvoicePaymentMethods value (Check 0, Cash 1, Ach 2, CardExternal 3, Other 4, Online 5).</summary>

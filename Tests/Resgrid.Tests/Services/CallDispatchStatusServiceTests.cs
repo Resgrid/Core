@@ -35,7 +35,7 @@ namespace Resgrid.Tests.Services
 				.Setup(x => x.GetDepartmentByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
 				.ReturnsAsync(new Department { DepartmentId = 7, TimeZone = "UTC" });
 			_actionLogsService
-				.Setup(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.Setup(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new ActionLog());
 			_unitsService
 				.Setup(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -76,8 +76,8 @@ namespace Resgrid.Tests.Services
 
 			await _service.ApplyDispatchStatusesAsync(call);
 
-			_actionLogsService.Verify(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.RespondingToScene, null, 12, It.IsAny<CancellationToken>()), Times.Once);
-			_actionLogsService.Verify(x => x.SetUserActionAsync("user2", 7, (int)ActionTypes.RespondingToScene, null, 12, It.IsAny<CancellationToken>()), Times.Once);
+			_actionLogsService.Verify(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.RespondingToScene, null, 12, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+			_actionLogsService.Verify(x => x.SetUserActionAsync("user2", 7, (int)ActionTypes.RespondingToScene, null, 12, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s =>
 					s.UnitId == 11 &&
@@ -109,7 +109,7 @@ namespace Resgrid.Tests.Services
 
 			await _service.ApplyReleaseStatusesAsync(call, new[] { 5 }, new[] { 11 });
 
-			_actionLogsService.Verify(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.AvailableStation, null, 22, It.IsAny<CancellationToken>()), Times.Once);
+			_actionLogsService.Verify(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.AvailableStation, null, 22, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s =>
 					s.UnitId == 11 &&
@@ -138,7 +138,7 @@ namespace Resgrid.Tests.Services
 			await _service.ApplyDispatchStatusesAsync(call, new[] { 5 }, new[] { 11 });
 
 			_shiftsService.Verify(x => x.GetShiftSignupsByDepartmentGroupIdAndDayAsync(It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
-			_actionLogsService.Verify(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+			_actionLogsService.Verify(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s =>
 					s.UnitId == 11 &&

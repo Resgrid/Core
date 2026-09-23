@@ -848,4 +848,22 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Einsatzbericht</value>
   </data>
+  <data name="StatusLinkAuto" xml:space="preserve">
+    <value>automatisch verknüpft</value>
+  </data>
+  <data name="StatusLinkInferred" xml:space="preserve">
+    <value>abgeleitet</value>
+  </data>
+  <data name="StatusLinkAutoHelp" xml:space="preserve">
+    <value>Ohne Einsatz gesendet. Resgrid hat den Status anhand des vorherigen Status oder der Alarmierung mit diesem Einsatz verknüpft.</value>
+  </data>
+  <data name="StatusLinkInferredHelp" xml:space="preserve">
+    <value>Ohne Ziel gesetzt von einer Einheit oder Person, die zu diesem Einsatz alarmiert war, während sie ihn abarbeitete.</value>
+  </data>
+  <data name="StatusLinkLegend" xml:space="preserve">
+    <value>Automatisch verknüpft: ohne Einsatz gesendet; Resgrid hat den Status anhand des vorherigen Status oder der Alarmierung verknüpft. Abgeleitet: ohne Ziel gesetzt von einer Einheit oder Person, die zu diesem Einsatz alarmiert war, während sie ihn abarbeitete.</value>
+  </data>
+  <data name="UnitTimes" xml:space="preserve">
+    <value>Einheitenzeiten</value>
+  </data>
 </root>

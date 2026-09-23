@@ -367,7 +367,7 @@
                                             {
                                                 @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>")
                                                 ;
-                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_0\", this)'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_0'>")
+                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' class='check-all-units' data-unit-grid='unitGroups_0'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_0'>")
                                                 ;
 
                                                 if (ungroupedUnits2 != null && ungroupedUnits2.Any())
@@ -418,7 +418,7 @@
                                                         ;
                                                     }
 
-                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_" + Model.Groups[i].DepartmentGroupId + "\", this)'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' class='check-all-units' data-unit-grid='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
                                                     ;
 
                                                     if (groupUnits != null && groupUnits.Any())
@@ -528,7 +528,7 @@
                 <button type="button" class="btn" data-dismiss="modal"
                         aria-hidden="true">@commonLocalizer["Close"]</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"
-                        onclick="resgrid.dispatch.newcall.fillCallTemplate();">@localizer["SetTemplateButton"]</button>
+                        id="setCallTemplateButton" disabled>@localizer["SetTemplateButton"]</button>
             </div>
         </div>
     </div>

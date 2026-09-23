@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Aktivera JavaScript för att söka och välja ett larm.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Ange ett giltigt datumintervall där början inte är efter slutet.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Välj ett tillgängligt larm i listan eller rensa valet.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Härledd</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Automatiskt kopplad</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Vissa enhetstider kommer från statusar som enheten inte själv kopplade till detta larm: Resgrid kopplade dem automatiskt (utifrån enhetens föregående status eller dess utlarmning) eller härledde dem (satta utan destination medan enheten var larmad hit). Kontrollera dem innan du slutför.</value></data>
 </root>

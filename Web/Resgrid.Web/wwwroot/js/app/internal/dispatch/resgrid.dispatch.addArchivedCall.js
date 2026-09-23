@@ -439,18 +439,30 @@
                                 $('#Call_Type').val(data.CallType);
                             }
 
-                            if (data.CallPriority && data.CallPriority >= 0) {
+                            // Priority 0 is a real value (the default Low priority), so test the
+                            // type rather than truthiness.
+                            if (typeof data.CallPriority === 'number' && data.CallPriority >= 0) {
                                 $('#CallPriority').val(data.CallPriority);
                             }
+
+                            // .val() raises no change event, so re-run the type/priority
+                            // handler for the template's values.
+                            checkForProtocols();
                         }
                     });
                 }
             }
             addArchivedCall.fillCallTemplate = fillCallTemplate;
+            // Bound here rather than inline: the button renders disabled until this script has
+            // run, so an early click can't call into an undefined namespace (RESGRID-WEB-1MA).
+            $('#setCallTemplateButton').on('click', fillCallTemplate).prop('disabled', false);
 
+            // Type, priority and template changes can overlap; only the latest request's protocols are shown.
+            var protocolsRequest = 0;
             function checkForProtocols() {
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
+                var request = ++protocolsRequest;
 
                 $("#protocols tr").remove();
 
@@ -459,6 +471,9 @@
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {
+                    if (request !== protocolsRequest)
+                        return;
+
                     if (data) {
                         resgrid.dispatch.addArchivedCall.protocolCount = 0;
 

@@ -339,16 +339,32 @@ var resgrid;
                                     $('#Call_Type').val(data.CallType);
                                 }
 
-                                if (data.CallPriority && data.CallPriority >= 0) {
+                                // Priority 0 is a real value (the default Low priority), so test the
+                                // type rather than truthiness.
+                                if (typeof data.CallPriority === 'number' && data.CallPriority >= 0) {
                                     $('#CallPriority').val(data.CallPriority);
                                 }
 
                                 $('input[name="Call.CheckInTimersEnabled"]').prop('checked', !!data.CheckInTimersEnabled);
+
+                                // .val() raises no change event, so the type/priority handlers never
+                                // ran for a template. Re-run them here so the template's run card and
+                                // protocols show up (and pre-check resources) as if picked by hand.
+                                checkForProtocols();
+                                newcall.checkForRecommendations();
                             }
                         });
                     }
                 }
                 newcall.fillCallTemplate = fillCallTemplate;
+
+                // Bound here rather than with inline handlers: the page is clickable while this
+                // script is still loading, and an inline call into resgrid.dispatch.newcall would
+                // throw until it has run (RESGRID-WEB-1MA). The button renders disabled until now.
+                $('#setCallTemplateButton').on('click', fillCallTemplate).prop('disabled', false);
+                $(document).on('change', '.check-all-units', function () {
+                    checkAllUnits($(this).attr('data-unit-grid'), this);
+                });
 
                 $('#personnelGrid').on('click', '#checkAllPersonnel', function () {
                     $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked);
@@ -448,9 +464,12 @@ var resgrid;
                 $('#' + gridName).find(':checkbox').prop('checked', item.checked);
             }
             newcall.checkAllUnits = checkAllUnits;
+            // Type, priority and template changes can overlap; only the latest request's protocols are shown.
+            var protocolsRequest = 0;
             function checkForProtocols() {
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
+                var request = ++protocolsRequest;
 
                 $("#protocols tr").remove();
 
@@ -459,6 +478,9 @@ var resgrid;
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {
+                    if (request !== protocolsRequest)
+                        return;
+
                     if (data) {
                         resgrid.dispatch.newcall.protocolCount = 0;
 

@@ -56,6 +56,32 @@ namespace Resgrid.Tests.Services
         }
 
         [Test]
+        public async Task Generation_drops_removed_disabled_or_hidden_assignees_instead_of_failing_the_schedule()
+        {
+            Maintenance();
+            var input = Schedule(); input.AssignedToUserIds = new() { "tech-a", "departed" };
+            await _service.SaveRecurrenceAsync(_actor, input);
+            _inactiveMaintenanceMembers.Add("departed");
+            var sweep = await _service.GenerateMaintenanceAsync(77);
+            sweep.Generated.Should().Be(1); sweep.Errors.Should().Be(0);
+            var order = _store.All<WorkOrder>().Single();
+            order.AssignedToUserIds.Should().Equal("tech-a"); order.Status.Should().Be((int)WorkOrderStatus.Assigned);
+            _auth.Verify(a => a.ValidateAssignmentAsync(It.IsAny<ChecklistActor>(), It.IsAny<WorkOrder>(), "departed", null), Times.Once, "only the save validated the departed member; generation never assigns them");
+        }
+
+        [Test]
+        public async Task Generation_opens_an_order_unassigned_when_its_only_assignee_has_left()
+        {
+            Maintenance();
+            var input = Schedule(); input.AssignedToUserIds = new() { "departed" };
+            await _service.SaveRecurrenceAsync(_actor, input);
+            _inactiveMaintenanceMembers.Add("departed");
+            (await _service.GenerateMaintenanceAsync(77)).Generated.Should().Be(1);
+            var order = _store.All<WorkOrder>().Single();
+            order.AssignedToUserIds.Should().BeEmpty(); order.Status.Should().Be((int)WorkOrderStatus.Accepted, "an unassigned order goes to the managers");
+        }
+
+        [Test]
         public async Task Invalid_secondary_assignee_rejects_the_entire_schedule()
         {
             Maintenance(); var input = Schedule(); input.AssignedToUserIds = new() { "allowed", "foreign" };

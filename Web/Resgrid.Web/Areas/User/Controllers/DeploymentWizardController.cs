@@ -126,7 +126,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var personConflicts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			try
 			{
-				var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
+				var names = await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>();
 				foreach (var warning in await _deployments.GetWindowConflictsAsync(DepartmentId, windowStart, windowEnd, names.Select(n => n.UserId), units.Select(u => u.UnitId)))
 				{
 					if (warning.Code != DeploymentRosterWarning.ScheduleConflict) continue;
@@ -142,8 +142,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Seats = (seats.TryGetValue(u.UnitId, out var roleList) ? roleList : new List<UnitRole>()).Select(r => new WizardSeat { UnitRoleId = r.UnitRoleId, Name = r.Name, PersonnelRoleRequired = r.PersonnelRoleRequired, PersonnelRoleId = r.PersonnelRoleId }).ToList()
 			}).ToList();
 
-			// Personnel roster with status, staffing, roles and typed certifications (Phase D) for step 3.
-			var people = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
+			// Personnel roster with status, staffing, roles and typed certifications (Phase D) for step 3: active members only.
+			var people = await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>();
 			var roleMap = new Dictionary<string, List<PersonnelRole>>(StringComparer.OrdinalIgnoreCase);
 			try { roleMap = await _roles.GetAllRolesForUsersInDepartmentAsync(DepartmentId) ?? roleMap; } catch (Exception ex) { Logging.LogException(ex, "Deployment wizard: roles unavailable."); }
 			var statusMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>Die Nutzungsablesung ist ungültig.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Der Arbeitsmodus ist ungültig.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>Dieses Mitglied hat bereits einen Beschäftigtendatensatz.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Wählen Sie ein aktuelles Mitglied dieser Abteilung.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>Eine Person benötigt ein Mitglied oder einen externen Schlüssel.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Die Beschäftigungsart ist ungültig.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Die Person wurde nicht gefunden.</value></data>

@@ -1197,6 +1197,8 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.UploadChecklistRunEvidence(Resgrid.Web.Services.Models.v4.Checklists.ChecklistEvidenceInput)">
             <summary>In-memory image transport for native clients, with the same size, scan, revision and ADP rules as multipart uploads.</summary>
+            <remarks>Shares the multipart action's path (the Responder and Unit apps post JSON to it), so it is hidden from the OpenAPI
+            document: Swashbuckle rejects the whole document when two visible actions share a method and path (RESGRID-API-9F).</remarks>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommandsController">
             <summary>
@@ -1697,6 +1699,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DeploymentsController.GetAccess">
             <summary>Whether the deployment core is available to this department and what the caller may do. Always answers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DeploymentsController.DetailAsync(Resgrid.Model.Invoicing.Deployment)">
+            <summary>A field member reads a deployment they are rostered on or whose deployed unit they crew; the detail carries their time scope.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DeploymentsController.GetDeploymentByCallId(System.Int32)">
             <summary>The billing context behind a call (mobile: call → deployment).</summary>
@@ -2423,6 +2428,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetLowStockItems(System.Int32)">
             <summary>Bulk items at/below their reorder point, using only stock locations this caller can view. Page is the catalog page.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetAccess(System.Nullable{System.Int32})">
+            <summary>Field apps: whether inventory is usable, whether the caller may count (AdjustInventory at the unit's holder location) and the unit's countable locations.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.InvoicesController">
             <summary>
@@ -3838,14 +3846,32 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.TimeReportsController">
             <summary>
-            Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file
-            DTRs from the field: a rostered member may create, edit, sign and submit reports and expenses on their own
-            deployments without any new claim; approval and void need TimeReports_Approve. Receipts upload as base64 and
-            are stored as Receipt attachments; DTOs carry UpdatedOn for delta-sync.
+            Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file from the
+            field without any new claim: a member writes their own roster row (individual report) and, for every deployed unit they
+            crew (on the deployment roster for that unit, or seated on the apparatus through an active unit role), that unit's Crew
+            Time Report — the unit, its crew and its equipment (M0227). Entries of subjects a caller may not write are kept as stored.
+            Approval and void need TimeReports_Approve. Entry times travel as UTC instants plus department-local wall clock
+            (StartLocal/EndLocal) so field apps never do zone math. Receipts upload as base64; DTOs carry UpdatedOn for delta-sync.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.AccessAsync(System.String)">
+            <summary>The deployment and the caller's time scope on it; both null when the deployment is not in this department.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.SaveTimeEntries(Resgrid.Web.Services.Models.v4.Deployments.SaveTimeEntriesInput,System.Threading.CancellationToken)">
-            <summary>Replaces the report's entries as a batch. Validation errors come back with the unchanged report and status Failure.</summary>
+            <summary>
+            Replaces the entries of the subjects the caller may write (every subject for a manager); other subjects' entries stay as
+            stored. StartLocal/EndLocal, when sent, are department-local wall clock and win over StartTime/EndTime. Validation
+            errors come back with the unchanged report and status Failure.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.SignTimeReport(Resgrid.Web.Services.Models.v4.Deployments.SignTimeReportInput,System.Threading.CancellationToken)">
+            <summary>Crew boss / contractor signature (the acting user) and/or the customer signer's typed name.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.SaveExpense(Resgrid.Web.Services.Models.v4.Deployments.SaveExpenseInput,System.Threading.CancellationToken)">
+            <summary>A field member adds expenses on a deployment they may write time for and edits only the ones they added; managers edit any.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.TryResolve(System.String,System.DateTime,Resgrid.Model.Department,System.DateTime@)">
+            <summary>A department-local wall clock wins when sent; otherwise the UTC instant (the converter already normalised it).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
@@ -8728,10 +8754,25 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.RedactedFields">
             <summary>ADP: stable catalog field ids ("contacts.email") whose values are REDACTED.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.CategoryName">
+            <summary>The contact category's display name and color (the Category entity itself is never sent).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.PhysicalAddress">
+            <summary>Resolved physical address (contact detail only; null on list rows or when none is set).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.MailingAddress">
+            <summary>Resolved mailing address when it differs from the physical one (contact detail only).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.CustomFields">
+            <summary>Mobile-visible custom field values with their labels, in form order (contact detail only).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.UdfValues">
             <summary>
             User Defined Field values for this contact
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactAddressData.Formatted">
+            <summary>One-line form for display and for handing to a maps app.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Certifications.CertificationTypeData.Category">
             <summary>CertificationCategories value.</summary>
@@ -11328,8 +11369,32 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentData.FinanceMode">
             <summary>DeploymentFinanceModes value.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentData.TimeAccess">
+            <summary>What the caller may do with this deployment's time (detail reads only; null on list rows).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Deployments.DeploymentTimeAccessData">
+            <summary>
+            The caller's time scope on one deployment (M0227), computed by the server so a field app never infers it: their own
+            roster row (individual report), the deployed units they crew (crew time report) and every subject id they may write.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentTimeAccessData.TimeZone">
+            <summary>The department zone time entries are written and shown in (StartLocal/EndLocal).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentAttachmentData.AttachmentType">
             <summary>DeploymentAttachmentTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.Scope">
+            <summary>DeploymentTimeReportScopes value: 0 deployment-wide DTR, 1 crew time report, 2 individual.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.DeploymentUnitId">
+            <summary>Crew time report: the deployment unit whose crew it covers.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.DeploymentPersonnelId">
+            <summary>Individual report: the roster row it covers.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.CanAct">
+            <summary>Whether the caller may write, sign and submit this report (its scope is theirs); the server re-checks.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.Status">
             <summary>DeploymentTimeReportStatuses value.</summary>
@@ -11339,6 +11404,27 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.EntryType">
             <summary>DeploymentTimeEntryTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.StartTime">
+            <summary>UTC instant ("Z").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.EndTime">
+            <summary>UTC instant ("Z").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.StartLocal">
+            <summary>
+            Department-local wall clock "yyyy-MM-ddTHH:mm" — what the crew writes on a paper time report. On save a non-empty
+            value wins over <see cref="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.StartTime"/> and is converted in the department's zone, so a field app never does zone math.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.EndLocal">
+            <summary>Department-local wall clock end; see <see cref="P:Resgrid.Web.Services.Models.v4.Deployments.TimeEntryData.StartLocal"/>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.NewTimeReportInput.DeploymentUnitId">
+            <summary>Crew time report for this deployment unit (the unit, its crew and equipment).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.NewTimeReportInput.DeploymentPersonnelId">
+            <summary>Individual time report for this roster row.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.ExpenseData.ExpenseType">
             <summary>DeploymentExpenseTypes value.</summary>
@@ -15981,6 +16067,12 @@
             <summary>
             Returns the TTS audio URL for the given text, generating it if necessary.
             Respects the provided cancellation token for timeout control.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.ServicesCore.Startup.ConfigureSwagger(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
+            <summary>
+            The v4 OpenAPI document settings. Shared with SwaggerDocumentTests, which generates the whole document,
+            so a conflicting method/path pair fails the test suite instead of /swagger/v4/swagger.json in production.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Helpers.DispatchListHelper">

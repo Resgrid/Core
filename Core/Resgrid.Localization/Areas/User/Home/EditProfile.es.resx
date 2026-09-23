@@ -174,6 +174,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Desactivar el usuario</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>No se puede habilitar a esta persona: el departamento ha alcanzado el límite de personal de su plan o no se pudo comprobar el plan. Los miembros deshabilitados no cuentan para el límite. Elimine o deshabilite a otra persona, o mejore el plan, y vuelva a intentarlo. No se guardó nada de esta página.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Editar</value>
   </data>

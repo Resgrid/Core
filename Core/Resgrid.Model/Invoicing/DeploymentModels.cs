@@ -38,6 +38,18 @@ namespace Resgrid.Model.Invoicing
 		Void = 4
 	}
 
+	/// <summary>
+	/// Who a daily time report covers (M0227). A deployment-wide DTR is the contractor/manager paper; a crew report is the
+	/// Crew Time Report (CTR) one deployed unit files for itself, its crew and its equipment; an individual report is a single
+	/// resource's own time. A subject may sit on only one live report per day, so the scopes never double-count.
+	/// </summary>
+	public enum DeploymentTimeReportScopes
+	{
+		Deployment = 0,
+		Crew = 1,
+		Individual = 2
+	}
+
 	public enum DeploymentTimeSubjectTypes
 	{
 		Personnel = 0,
@@ -243,6 +255,10 @@ namespace Resgrid.Model.Invoicing
 		public int DepartmentId { get; set; }
 		public int ReportNumber { get; set; }
 		public DateTime ReportDate { get; set; }
+		/// <summary>Crew time report scope: the deployed unit whose crew and equipment this report covers (M0227).</summary>
+		public string DeploymentUnitId { get; set; }
+		/// <summary>Individual time report scope: the single roster row this report covers (M0227).</summary>
+		public string DeploymentPersonnelId { get; set; }
 		/// <summary><see cref="DeploymentTimeReportStatuses"/>.</summary>
 		public int Status { get; set; }
 		public string IncidentNumber { get; set; }
@@ -274,11 +290,17 @@ namespace Resgrid.Model.Invoicing
 		public List<DeploymentTimeEntry> Entries { get; set; } = new List<DeploymentTimeEntry>();
 		[NotMapped]
 		public bool IsEditable => Status is (int)DeploymentTimeReportStatuses.Draft or (int)DeploymentTimeReportStatuses.Submitted;
+		[NotMapped]
+		public DeploymentTimeReportScopes Scope => !string.IsNullOrWhiteSpace(DeploymentPersonnelId) ? DeploymentTimeReportScopes.Individual
+			: !string.IsNullOrWhiteSpace(DeploymentUnitId) ? DeploymentTimeReportScopes.Crew : DeploymentTimeReportScopes.Deployment;
+		/// <summary>True while the report still counts toward billing and the one-report-per-subject-per-day rule.</summary>
+		[NotMapped]
+		public bool IsLive => !IsDeleted && Status != (int)DeploymentTimeReportStatuses.Void;
 		[NotMapped] public string TableName => "DeploymentTimeReports";
 		[NotMapped] public string IdName => "DeploymentTimeReportId";
 		[NotMapped] public int IdType => 1;
 		[NotMapped] [JsonIgnore] public object IdValue { get => DeploymentTimeReportId; set => DeploymentTimeReportId = (string)value; }
-		[NotMapped] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName", "Entries", "IsEditable" };
+		[NotMapped] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName", "Entries", "IsEditable", "Scope", "IsLive" };
 	}
 
 	/// <summary>One time span for one subject on a DTR (multi-span per day supported). Times are UTC.</summary>

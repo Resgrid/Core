@@ -448,7 +448,8 @@ namespace Resgrid.Web
 			{
 				// jquery/js app files and css
 #if !DEBUG
-				pipeline.MinifyJsFiles("/js/app/**/*.js", "/js/site.js");
+				// InvertIfReturn is disabled in these settings; see ScriptMinificationSettings (RESGRID-WEB-1MP, RESGRID-WEB-1MK).
+				pipeline.MinifyJsFiles(Helpers.ScriptMinificationSettings.Create(), "/js/app/**/*.js", "/js/site.js");
 #endif
 				pipeline.MinifyCssFiles("/css/**/*.css");
 

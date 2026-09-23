@@ -112,6 +112,7 @@ namespace Resgrid.Tests.Services
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = DeptId, Name = "Test County Fire", TimeZone = "Pacific Standard Time" });
 			departments.Setup(d => d.GetAllAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
+			departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
 			var outbox = new Mock<IDomainEventOutboxService>();
 			outbox.Setup(o => o.EnqueueAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DomainEventEnvelope>(), It.IsAny<CancellationToken>()))
 				.Callback<int, string, DomainEventEnvelope, CancellationToken>((_, __, e, ___) => _published.Add(e)).ReturnsAsync(new DomainEventOutboxEntry());

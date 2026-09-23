@@ -58,6 +58,7 @@ namespace Resgrid.Tests.Rms
 			Defs = new FakeRmsDefinitionStore(Store);
 
 			Authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+			Authorization.Setup(a => a.IsAssignableMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
 			Authorization.Setup(a => a.IsDepartmentAdminAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync((string u, int d) => u == Admin && d == Dept);
 			Authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
 			Authorization.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);

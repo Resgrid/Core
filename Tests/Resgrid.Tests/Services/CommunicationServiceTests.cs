@@ -352,6 +352,19 @@ namespace Resgrid.Tests.Services
 				//_pushServiceMock.Verify(m => m.PushCall(It.IsAny<StandardPushCall>(), Users.TestUser1Id));
 			}
 
+			[TestCase("NWO:00000000-0000-0000-0000-000000000019", "NWO:00000000-0000-0000-0000-000000000019")]
+			[TestCase(null, null)]
+			[TestCase(" ", null)]
+			public async Task notification_event_code_rides_only_on_the_push(string eventCode, string expectedId)
+			{
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id, SendNotificationSms = true, MobileNumberVerified = true, SendNotificationPush = true };
+
+				await _communicationService.SendNotificationAsync(profile.UserId, 1, "WO-2026-000019: needs attention", "15555550100", new Department { Code = "ABCD" }, "Work order", profile, false, eventCode);
+
+				_pushServiceMock.Verify(m => m.PushNotification(It.Is<StandardPushMessage>(s => s.Id == expectedId && s.Title == "Work order"), profile.UserId, profile), Times.Once);
+				_smsServiceMock.Verify(m => m.SendNotificationAsync(profile.UserId, 1, "Work order WO-2026-000019: needs attention", "15555550100", profile), Times.Once);
+			}
+
 			[TestCase(true, true)]
 			[TestCase(null, true)]
 			[TestCase(false, false)]

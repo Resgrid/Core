@@ -100,6 +100,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Record grant for this department is refused before the action runs, and a granted one is confined to
 		/// reads because no mutating Record policy is ever issued to it (registry section 4.4).
 		/// </summary>
+		[NonAction]
 		public void OnActionExecuting(ActionExecutingContext context)
 		{
 			if (!RecordsSystemPrincipal.IsSystemPrincipal(User))
@@ -110,6 +111,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "This system principal has no configured Record grant for this department.", type: "record_grant_missing");
 		}
 
+		[NonAction]
 		public void OnActionExecuted(ActionExecutedContext context)
 		{
 		}

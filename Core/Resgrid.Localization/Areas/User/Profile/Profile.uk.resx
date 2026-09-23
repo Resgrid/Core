@@ -176,6 +176,9 @@
   <data name="JoinDepartmentInfo" xml:space="preserve">
     <value>You need to supply the current Department Id and Code for the Resgrid Department you wish to join.</value>
   </data>
+  <data name="JoinDepartmentFull" xml:space="preserve">
+    <value>Цей підрозділ зараз не може прийняти нових членів: він досяг ліміту персоналу свого тарифного плану, або план не вдалося перевірити. Зверніться до адміністратора підрозділу.</value>
+  </data>
   <data name="NewPassword" xml:space="preserve">
     <value>New Password</value>
   </data>

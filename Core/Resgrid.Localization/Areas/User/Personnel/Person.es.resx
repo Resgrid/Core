@@ -189,6 +189,18 @@
   <data name="ExistingUserHelp2" xml:space="preserve">
     <value>, según la dirección de correo electrónico, ya tenía una cuenta de Resgrid en otro departamento. La cuenta de usuario ahora se ha agregado &lt;b&gt;con su configuración de perfil anterior (nombre, números de teléfono, preferencias, etc.)&lt;/b&gt; al departamento. Debido a que el usuario está en varios departamentos, necesita activar este departamento para ver su información desde su opción "Ver sus departamentos" en el menú desplegable de su perfil (debajo de la imagen de perfil en la esquina superior izquierda).</value>
   </data>
+  <data name="AddExistingUserConfirmHeader" xml:space="preserve">
+    <value>Agregar usuario existente</value>
+  </data>
+  <data name="ExistingUserConfirmText" xml:space="preserve">
+    <value>, según su dirección de correo electrónico, ya tiene una cuenta de Resgrid en otro departamento. Al agregarlo, esa cuenta se incorpora a este departamento con su configuración de perfil actual (nombre, teléfonos, preferencias). Se une como miembro normal y verá este departamento cuando cambie a él desde "Tus Departamentos" en el menú de perfil.</value>
+  </data>
+  <data name="AddExistingUserButton" xml:space="preserve">
+    <value>Agregar al departamento</value>
+  </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Este departamento ha alcanzado el límite de personal de su plan, o no se pudo comprobar el plan en este momento. Elimine a alguien que ya no necesite acceso o mejore el plan y vuelva a intentarlo.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Nombre de pila</value>
   </data>
@@ -296,6 +308,12 @@
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
     <value>departamento pero fue borrado previamente. La cuenta de usuario ahora se ha recuperado y reactivado dentro de este departamento y aparecerá &lt;b&gt;con su configuración de perfil anterior (nombre, números de teléfono, preferencias, etc.)&lt;/b&gt; en el departamento.</value>
+  </data>
+  <data name="ReactivatePersonConfirmText" xml:space="preserve">
+    <value>departamento, pero fue eliminado. Al reactivarlo, la cuenta vuelve a este departamento con su configuración de perfil anterior (nombre, teléfonos, preferencias). La persona vuelve como miembro normal; conceda de nuevo los permisos de administrador por separado si los necesita.</value>
+  </data>
+  <data name="ReactivatePersonButton" xml:space="preserve">
+    <value>Reactivar</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
     <value>ADVERTENCIA: Esto eliminará permanentemente este rol. ¿Estás seguro de que quieres eliminar el rol?</value>

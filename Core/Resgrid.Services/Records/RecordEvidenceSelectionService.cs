@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,7 +89,7 @@ namespace Resgrid.Services.Records
 				}
 				else if (sourceKind == RmsEvidenceKind.CertificationSnapshot)
 				{
-					foreach (var person in await _departments.GetAllPersonnelNamesForDepartmentAsync(departmentId))
+					foreach (var person in await _departments.GetSelectablePersonnelNamesAsync(departmentId) ?? new List<PersonName>())
 						if (await _sourceAuthorization.Value.CanUserViewPersonAsync(userId, person.UserId, departmentId))
 							selection.Choices.Add(new RecordEvidenceChoice { Id = person.UserId, Label = person.Name });
 				}

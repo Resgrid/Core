@@ -38,6 +38,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IBusinessOperationsAccessService _access;
 		private readonly IPersonnelRolesService _roles;
 		private readonly IUserProfileService _profiles;
+		private readonly IDepartmentsService _departments;
 		private readonly IUnitsService _units;
 		private readonly IDeploymentService _deployments;
 		private readonly IBidsService _bids;
@@ -46,8 +47,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		public WorkforceController(IWorkforceService workforce, ICompensationCostService compensation, IFieldCostingService costing, IPayDataDemographicsService demographics, ICaPayDataReportingService reporting,
 			IBusinessOperationsAccessService access, IPersonnelRolesService roles, IUserProfileService profiles, IUnitsService units, IDeploymentService deployments, IBidsService bids, ICallsService calls,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> strings)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> strings, IDepartmentsService departments)
 		{
+			_departments = departments;
 			_workforce = workforce;
 			_compensation = compensation;
 			_costing = costing;
@@ -292,7 +294,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			view.EmploymentCounts = employments.GroupBy(e => e.WorkforceWorkerId).ToDictionary(g => g.Key, g => g.Count());
 			var names = await MemberNamesAsync();
 			var linked = new HashSet<string>(view.Workers.Where(w => w.UserId != null).Select(w => w.UserId), StringComparer.OrdinalIgnoreCase);
-			view.Members = names.Where(n => !linked.Contains(n.Key)).OrderBy(n => n.Value).Select(n => new SelectListItem(n.Value, n.Key)).ToList();
+			// The add-worker picker offers active members only (the service still refuses removed, disabled or foreign ids).
+			var active = await _departments.GetActiveMemberUserIdsAsync(DepartmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			view.Members = names.Where(n => active.Contains(n.Key) && !linked.Contains(n.Key)).OrderBy(n => n.Value).Select(n => new SelectListItem(n.Value, n.Key)).ToList();
 			return View(view);
 		}
 

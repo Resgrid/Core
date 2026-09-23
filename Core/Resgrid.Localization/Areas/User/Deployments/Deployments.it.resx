@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Aggiungi membro</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Il membro non soddisfa i requisiti del posto. Spunta «Assegna anche se un requisito non è soddisfatto» per forzare.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Nuovo rapporto ore</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Un rapporto al giorno; le voci sono precompilate dall'organico.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Un rapporto al giorno per ogni equipaggio o persona; le voci sono precompilate dall'organico.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Ancora nessun rapporto ore.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Data del rapporto</value></data>
   <data name="Submitted" xml:space="preserve"><value>Inviato</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Tutte le risorse devono rientrare alla base prima di completare il dispiegamento.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Visualizza manifesto</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Esporta risorse CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Copre</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Intero dispiegamento</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Equipaggio: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Individuale: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Una voce di tempo riguarda qualcuno al di fuori dell'equipaggio o della persona di questo rapporto</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Questo soggetto ha già del tempo su un altro rapporto per lo stesso giorno</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Questo equipaggio o questa persona non è attivo in questo dispiegamento.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Questo equipaggio o questa persona ha già del tempo su un altro rapporto per questo giorno.</value></data>
 </root>

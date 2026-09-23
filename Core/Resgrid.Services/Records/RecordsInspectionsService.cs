@@ -258,6 +258,8 @@ namespace Resgrid.Services.Records
 				program = await _programs.GetByIdForDepartmentAsync(departmentId, programId);
 				if (program == null || program.DeletedOn != null) throw new ArgumentException("The inspection program does not exist.");
 			}
+			if (!string.IsNullOrWhiteSpace(inspectorUserId) && !await _gate.IsAssignableAsync(departmentId, inspectorUserId))
+				throw new ArgumentException("The inspector must be an active member of the department.");
 			var inspection = await CreateScheduledAsync(departmentId, userId, occupancy, program, scheduledOn, inspectorUserId, null, cancellationToken);
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Inspection scheduled", inspection.RmsInspectionId, new { inspection.InspectionNumber, occupancyId, programId, scheduledOn }, cancellationToken: cancellationToken);
 			return inspection;
@@ -363,7 +365,9 @@ namespace Resgrid.Services.Records
 			if (parent.State != (int)RmsInspectionState.ReinspectionRequired && parent.State != (int)RmsInspectionState.Completed) throw new InvalidOperationException("Only a completed inspection can be re-inspected.");
 			var occupancy = await _occupancies.GetByIdForDepartmentAsync(departmentId, parent.RmsOccupancyId) ?? throw new InvalidOperationException("The occupancy no longer exists.");
 			var program = string.IsNullOrWhiteSpace(parent.RmsInspectionProgramId) ? null : await _programs.GetByIdForDepartmentAsync(departmentId, parent.RmsInspectionProgramId);
-			var child = await CreateScheduledAsync(departmentId, userId, occupancy, program, scheduledOn, parent.InspectorUserId, parent.RmsInspectionId, cancellationToken);
+			// The re-inspection goes to the same inspector only while they are still an active member; otherwise it is left unassigned.
+			var inspector = await _gate.IsAssignableAsync(departmentId, parent.InspectorUserId) ? parent.InspectorUserId : null;
+			var child = await CreateScheduledAsync(departmentId, userId, occupancy, program, scheduledOn, inspector, parent.RmsInspectionId, cancellationToken);
 			foreach (var violation in ((await _violations.GetForInspectionAsync(departmentId, inspectionId)) ?? Enumerable.Empty<RmsViolation>()).Where(v => v.IsOpen))
 			{ violation.ReinspectionId = child.RmsInspectionId; violation.ModifiedOn = DateTime.UtcNow; violation.RowVersion++; await _violations.UpdateAsync(violation, cancellationToken, true); }
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Re-inspection scheduled", child.RmsInspectionId, new { parent = parent.RmsInspectionId, scheduledOn }, cancellationToken: cancellationToken);

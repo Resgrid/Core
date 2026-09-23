@@ -1165,12 +1165,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _departmentSettingsService.SetRecordsSearchConfigAsync(DepartmentId, searchConfig, cancellationToken);
 
 			// Setting 77 (plan section 4.9): the statutory clock is bounded, the profile must be one the disclosure
-			// workflow knows, and the release approver must be a current member so a departed user is never the gate.
+			// workflow knows, and a newly chosen release approver must be a current member so a departed user is never made the gate.
 			var disclosure = await _departmentSettingsService.GetRecordsDisclosureConfigAsync(DepartmentId, true) ?? new RecordsDisclosureConfig();
 			disclosure.StatutoryClockDays = Math.Max(1, Math.Min(365, model.DisclosureStatutoryClockDays));
 			disclosure.DefaultRedactionProfile = RmsRedactionProfiles.IsKnown(model.DisclosureDefaultRedactionProfile) ? model.DisclosureDefaultRedactionProfile : RmsRedactionProfiles.Standard;
 			var approver = string.IsNullOrWhiteSpace(model.DisclosureReleaseApproverUserId) ? null : model.DisclosureReleaseApproverUserId.Trim();
-			if (approver != null && !await _recordsAuthorizationService.IsActiveMemberAsync(approver, DepartmentId))
+			// Only a newly chosen approver is checked. The saved one comes back selected even after going inactive (see
+			// BuildSettingsAsync), and saving an unrelated setting must not quietly turn the gate into "any admin".
+			var unchanged = approver != null && string.Equals(approver, disclosure.ReleaseApproverUserId, StringComparison.OrdinalIgnoreCase);
+			if (approver != null && !unchanged && !await _recordsAuthorizationService.IsActiveMemberAsync(approver, DepartmentId))
 				approver = null;
 			disclosure.ReleaseApproverUserId = approver;
 			await _departmentSettingsService.SetRecordsDisclosureConfigAsync(DepartmentId, disclosure, cancellationToken);
@@ -1239,8 +1242,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DisclosureReleaseApproverUserId = disclosure.ReleaseApproverUserId;
 			model.RedactionProfiles = RmsRedactionProfiles.All.Select(p => new SelectListItem { Value = p, Text = _localizer["RedactionProfile" + p] }).ToList();
 			model.ReleaseApprovers.Add(new SelectListItem { Value = string.Empty, Text = _localizer["DisclosureApproverAnyAdmin"] });
-			foreach (var person in (await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>()).OrderBy(p => p.Name))
-				model.ReleaseApprovers.Add(new SelectListItem { Value = person.UserId, Text = person.Name });
+			var approvers = await SelectablePersonnelNamesAsync();
+			// A saved approver who has since gone inactive stays listed (and selected) rather than silently reverting to "any admin" on save.
+			if (!string.IsNullOrWhiteSpace(disclosure.ReleaseApproverUserId) && !approvers.ContainsKey(disclosure.ReleaseApproverUserId))
+				model.ReleaseApprovers.Add(new SelectListItem { Value = disclosure.ReleaseApproverUserId, Text = (await PersonnelNamesAsync()).TryGetValue(disclosure.ReleaseApproverUserId, out var approverName) ? approverName : disclosure.ReleaseApproverUserId });
+			foreach (var person in approvers.OrderBy(p => p.Value, StringComparer.CurrentCultureIgnoreCase))
+				model.ReleaseApprovers.Add(new SelectListItem { Value = person.Key, Text = person.Value });
 
 			var layout = await _printLayouts.GetDepartmentDefaultAsync(DepartmentId);
 			model.PrintLayout = layout.Config ?? RecordsPrintLayoutConfig.Default();
@@ -1356,6 +1363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Aggregate = aggregate,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				PersonnelNames = await PersonnelNamesAsync(),
+				ReassignCandidates = await SelectablePersonnelNamesAsync(),
 				GroupNames = groups.ToDictionary(g => g.DepartmentGroupId, g => g.Name),
 				CanEdit = CanEditRecord(aggregate.Record),
 				CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords(),
@@ -1587,8 +1595,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
 			form.Stations = groups.OrderBy(g => g.Name).Select(g => new SelectListItem { Value = g.DepartmentGroupId.ToString(), Text = g.Name }).ToList();
-			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
-			form.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
+			// Person fields pick active members; a value already on the record keeps its label through PersonnelLabels.
+			form.Personnel = (await SelectablePersonnelNamesAsync()).OrderBy(n => n.Value, StringComparer.CurrentCultureIgnoreCase).Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+			form.PersonnelLabels = await PersonnelNamesAsync();
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			form.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
 			// Additional typed call-reference fields retain their own lists; the report's primary CallId uses the paged picker.
@@ -1666,7 +1675,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanBulkPacket = await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ExportRecords);
 			if (model.CanBulkAssign)
 			{
-				var names = await PersonnelNamesAsync();
+				var names = await SelectablePersonnelNamesAsync();
 				model.Reviewers = names.OrderBy(n => n.Value, StringComparer.CurrentCultureIgnoreCase).Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
 			}
 		}
@@ -1720,11 +1729,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return File(run.Data, run.ContentType ?? "application/octet-stream", run.FileName ?? "packet");
 		}
 
+		/// <summary>Every member's name, inactive ones included: labels record content and history.</summary>
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()
+			=> NameMap(await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
+
+		/// <summary>The members a picker may offer: removed, disabled and hidden members are left out.</summary>
+		private async Task<Dictionary<string, string>> SelectablePersonnelNamesAsync()
+			=> NameMap(await _departmentsService.GetSelectablePersonnelNamesAsync(DepartmentId));
+
+		private static Dictionary<string, string> NameMap(List<PersonName> names)
 		{
-			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
 			var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var name in names)
+			foreach (var name in names ?? new List<PersonName>())
 			{
 				if (!string.IsNullOrWhiteSpace(name.UserId))
 					map[name.UserId] = name.Name;

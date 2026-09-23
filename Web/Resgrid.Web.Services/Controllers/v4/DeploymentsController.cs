@@ -32,12 +32,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDeploymentService _deployments;
 		private readonly IFeatureToggleService _flags;
 		private readonly IBusinessOperationsAccessService _access;
+		private readonly IDepartmentsService _departments;
 
-		public DeploymentsController(IDeploymentService deployments, IFeatureToggleService flags, IBusinessOperationsAccessService access)
+		public DeploymentsController(IDeploymentService deployments, IFeatureToggleService flags, IBusinessOperationsAccessService access, IDepartmentsService departments)
 		{
 			_deployments = deployments;
 			_flags = flags;
 			_access = access;
+			_departments = departments;
 		}
 
 		internal static bool CanManage() => ClaimsAuthorizationHelper.CanManageDeployments() || ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
@@ -97,8 +99,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<DeploymentResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			var deployment = await _deployments.GetDeploymentByIdAsync(id, DepartmentId);
 			if (deployment == null) return NotFound();
-			if (!CanView() && !deployment.Personnel.Any(p => p.UserId == UserId)) return Unauthorized();
-			return Ok(deployment);
+			return await DetailAsync(deployment);
+		}
+
+		/// <summary>A field member reads a deployment they are rostered on or whose deployed unit they crew; the detail carries their time scope.</summary>
+		private async Task<ActionResult<DeploymentResult>> DetailAsync(Deployment deployment)
+		{
+			var access = await _deployments.GetTimeAccessAsync(deployment, UserId, CanManage());
+			if (!CanView() && !access.CanRead) return Unauthorized();
+			var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+			var result = new DeploymentResult { Data = Map(deployment, true), PageSize = 1, Status = ResponseHelper.Success };
+			result.Data.TimeAccess = new DeploymentTimeAccessData
+			{
+				CanManage = access.CanManage, CanApprove = ClaimsAuthorizationHelper.CanApproveTimeReports() || ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
+				PersonnelId = access.PersonnelId, CrewUnitIds = access.CrewUnitIds.ToList(), WritableSubjectIds = access.WritableSubjectIds.OrderBy(s => s, StringComparer.Ordinal).ToList(),
+				TimeZone = string.IsNullOrWhiteSpace(department?.TimeZone) ? "Pacific Standard Time" : department.TimeZone
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
 		}
 
 		/// <summary>The billing context behind a call (mobile: call → deployment).</summary>
@@ -109,8 +127,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<DeploymentResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			var deployment = await _deployments.GetDeploymentByCallIdAsync(callId, DepartmentId);
 			if (deployment == null) return NotFound();
-			if (!CanView() && !deployment.Personnel.Any(p => p.UserId == UserId)) return Unauthorized();
-			return Ok(deployment);
+			return await DetailAsync(deployment);
 		}
 
 		[HttpPost("SaveDeployment")]
@@ -284,7 +301,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<DeploymentAttachmentsResult>> GetAttachments(string deploymentId)
 		{
 			if (!await EnabledAsync()) return Failed<DeploymentAttachmentsResult>("deployments_disabled", StatusCodes.Status403Forbidden);
-			if (!CanView() && !await _deployments.IsRosteredAsync(deploymentId, DepartmentId, UserId)) return Unauthorized();
+			if (!CanView() && !await _deployments.CanFieldMemberSeeAsync(deploymentId, DepartmentId, UserId)) return Unauthorized();
 			var rows = await _deployments.GetAttachmentsAsync(deploymentId, DepartmentId);
 			var result = new DeploymentAttachmentsResult { Data = rows.Select(MapAttachment).ToList(), PageSize = rows.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);

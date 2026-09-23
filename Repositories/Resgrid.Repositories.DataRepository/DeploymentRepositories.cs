@@ -68,6 +68,10 @@ namespace Resgrid.Repositories.DataRepository
 				$"WHERE u.{Col("DepartmentId")} = {P}DepartmentId AND {InList("UnitId", "UnitIds", "u")} AND u.{Col("RemovedOn")} IS NULL AND d.{Col("IsDeleted")} = {(IsPostgres ? "FALSE" : "0")} AND d.{Col("Status")} IN (0, 1, 2, 3) " +
 				$"AND (d.{Col("StartOn")} IS NULL OR d.{Col("StartOn")} <= {P}WindowEnd) AND (d.{Col("EndOn")} IS NULL OR d.{Col("EndOn")} >= {P}WindowStart) AND d.{Col("DeploymentId")} <> {P}Excluding",
 				new { DepartmentId = departmentId, UnitIds = InListValue(unitIds), WindowStart = DatabaseTimestamp(windowStart), WindowEnd = DatabaseTimestamp(windowEnd), Excluding = excludingDeploymentId ?? string.Empty });
+
+		public Task<IEnumerable<DeploymentUnit>> GetForUnitsAsync(int departmentId, IEnumerable<int> unitIds) =>
+			QueryAsync<DeploymentUnit>($"SELECT * FROM {Tbl("DeploymentUnits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("UnitId", "UnitIds")} ORDER BY {Col("AddedOn")}",
+				new { DepartmentId = departmentId, UnitIds = InListValue(unitIds) });
 	}
 
 	public class DeploymentPersonnelRepository : RmsRepositoryBase<DeploymentPersonnel>, IDeploymentPersonnelRepository

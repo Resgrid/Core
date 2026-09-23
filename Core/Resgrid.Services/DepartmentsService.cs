@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Custom;
 using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
@@ -265,20 +266,39 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public async Task<DepartmentMember> ReactivateUserAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<DepartmentMember> ReactivateUserAsync(int departmentId, string userId, string reactivatingUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var dm = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userId);
+			if (dm == null)
+				return null;
+
+			var before = dm.CloneJsonToString();
 			dm.IsDeleted = false;
 			dm.IsHidden = false;
 			dm.IsDisabled = false;
+			// Removal clears admin standing, but a row removed before it did may still carry it: a returning member comes
+			// back as a regular member either way, and an admin grants admin again on purpose.
+			dm.IsAdmin = false;
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = departmentId,
+				UserId = reactivatingUserId,
+				Type = AuditLogTypes.UserReactivated,
+				Before = before,
+				After = saved.CloneJsonToString(),
+				Successful = true,
+				ServerName = Environment.MachineName
+			});
 
 			// The member row just changed its deleted/hidden/disabled flags and the department's user
 			// list gained a name back -- both are cached reads that would otherwise serve the old answer.
 			InvalidateDepartmentUsersInCache(departmentId);
 			InvalidateDepartmentMemberInCache(userId, departmentId);
 			SendMembershipVisibilityRefresh(departmentId);
+			// The returning member takes a personnel seat again, so the cached plan counts are stale.
+			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
 
 			return saved;
 		}
@@ -344,6 +364,9 @@ namespace Resgrid.Services
 			if (member != null)
 			{
 				member.IsDeleted = true;
+				// A removed member is not an admin of anything: clear the standing with the removal (the UserRemoved audit
+				// records it before and after) so a later reactivation cannot bring it back silently.
+				member.IsAdmin = false;
 				await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
 				if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(departmentId, SearchEntityTypes.Personnel, userIdToDelete, cancellationToken);
 
@@ -648,10 +671,34 @@ namespace Resgrid.Services
 				return await getDepartmentPersonnelNames();
 		}
 
+		public async Task<List<PersonName>> GetSelectablePersonnelNamesAsync(int departmentId)
+		{
+			var active = await GetActiveMemberUserIdsAsync(departmentId);
+			return (await GetAllPersonnelNamesForDepartmentAsync(departmentId) ?? new List<PersonName>())
+				.Where(n => n != null && active.Contains(n.UserId))
+				.GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).Select(g => g.First())
+				.OrderBy(n => n.LastName, StringComparer.CurrentCultureIgnoreCase).ThenBy(n => n.FirstName, StringComparer.CurrentCultureIgnoreCase)
+				.ToList();
+		}
+
 		public async Task<List<IdentityUser>> GetAllAdminsForDepartmentAsync(int departmentId)
 		{
+			// department.Members carries every membership row, removed ones included, and removal (DeleteUserAsync) leaves
+			// IsAdmin set: a removed or disabled member is not an admin of anything.
 			var department = await GetDepartmentByIdAsync(departmentId);
-			return department.Members.Where(x => x.IsAdmin.GetValueOrDefault() || x.UserId == department.ManagingUserId).Select(y => new IdentityUser() { UserId = y.UserId }).ToList();
+			return (department?.Members ?? Enumerable.Empty<DepartmentMember>())
+				.Where(x => (x.IsAdmin.GetValueOrDefault() || x.UserId == department.ManagingUserId) && DepartmentMemberStateHelper.IsCurrentMember(x, departmentId))
+				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
+				.Select(g => new IdentityUser() { UserId = g.First().UserId }).ToList();
+		}
+
+		public async Task<List<IdentityUser>> GetActiveAdminsForDepartmentAsync(int departmentId)
+		{
+			var department = await GetDepartmentByIdAsync(departmentId);
+			return (department?.Members ?? Enumerable.Empty<DepartmentMember>())
+				.Where(x => (x.IsAdmin.GetValueOrDefault() || x.UserId == department.ManagingUserId) && DepartmentMemberStateHelper.IsActiveMember(x, departmentId))
+				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
+				.Select(g => new IdentityUser() { UserId = g.First().UserId }).ToList();
 		}
 
 		public async Task<List<DepartmentMember>> GetAllMembersForDepartmentAsync(int departmentId)
@@ -870,6 +917,22 @@ namespace Resgrid.Services
 					if (member?.UserId != null && candidates.Contains(member.UserId))
 						result.Add(member.UserId);
 				}
+			}
+
+			return result;
+		}
+
+		public async Task<HashSet<string>> GetActiveMemberUserIdsAsync(int departmentId)
+		{
+			var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var members = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
+			if (members == null)
+				return result;
+
+			foreach (var member in members)
+			{
+				if (DepartmentMemberStateHelper.IsActiveMember(member, departmentId))
+					result.Add(member.UserId);
 			}
 
 			return result;

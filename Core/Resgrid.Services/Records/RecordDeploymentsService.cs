@@ -91,6 +91,7 @@ namespace Resgrid.Services.Records
 			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.CreateRecord)) throw new UnauthorizedAccessException("Creating a deployment is not authorized.");
 			if (input.ArtifactData != null && input.ArtifactData.Length > 25 * 1024 * 1024) throw new ArgumentException("The order artifact exceeds 25 MB.", nameof(input));
 			if (!string.IsNullOrWhiteSpace(input.CurrencyCode) && !RmsCurrencies.IsSupported(input.CurrencyCode)) throw new ArgumentException($"'{input.CurrencyCode}' is not a supported currency.", nameof(input));
+			foreach (var fill in input.Fills ?? new List<RecordDeploymentFillInput>()) await RequireAssignableFillAsync(departmentId, fill);
 
 			var profileKey = input.ProfileKey.ToLowerInvariant();
 			var homeProfile = input.HomeProfileKey ?? (profileKey == RmsDeploymentProfiles.CrossBorder ? "us" : ProfileFor(profileKey));
@@ -213,6 +214,15 @@ namespace Resgrid.Services.Records
 			return Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps && string.IsNullOrEmpty(uri.Query) ? uri.ToString() : null;
 		}
 
+		/// <summary>A fill is only assigned to an active member of this department: not someone removed, disabled, hidden or foreign.</summary>
+		private async Task RequireAssignableFillAsync(int departmentId, RecordDeploymentFillInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.AssignedUserId)) return;
+			input.AssignedUserId = input.AssignedUserId.Trim();
+			if (!await _authorization.IsAssignableMemberAsync(input.AssignedUserId, departmentId))
+				throw new ArgumentException("The assigned member must be an active member of the department.", nameof(input));
+		}
+
 		private static RmsExternalOrderFill ToFill(RmsExternalOrder order, RecordDeploymentFillInput input, string userId, DateTime now)
 		{
 			if (string.IsNullOrWhiteSpace(input?.RequestNumber)) throw new ArgumentException("Every fill needs the external request number it answers.", nameof(input));
@@ -287,6 +297,7 @@ namespace Resgrid.Services.Records
 		public async Task<RmsExternalOrderFill> AddFillAsync(int departmentId, string userId, string orderId, RecordDeploymentFillInput input, CancellationToken cancellationToken = default)
 		{
 			var order = await RequireEditableAsync(departmentId, userId, orderId);
+			await RequireAssignableFillAsync(departmentId, input);
 			var fill = ToFill(order, input, userId, DateTime.UtcNow);
 			await InTransactionAsync(async () =>
 			{

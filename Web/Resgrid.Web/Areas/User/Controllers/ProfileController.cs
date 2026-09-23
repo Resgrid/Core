@@ -66,6 +66,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
+		private readonly ILimitsService _limitsService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> _profileLocalizer;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
@@ -76,7 +78,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
 			ISystemAuditsService systemAuditsService, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService,
-			IEventAggregator eventAggregator, IProtectedReadService protectedReadService, IBusinessOperationsAccessService businessOperationsAccess)
+			IEventAggregator eventAggregator, IProtectedReadService protectedReadService, IBusinessOperationsAccessService businessOperationsAccess,
+			ILimitsService limitsService, IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> profileLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -102,6 +105,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_protectedReadService = protectedReadService;
 			_businessOperationsAccess = businessOperationsAccess;
+			_limitsService = limitsService;
+			_profileLocalizer = profileLocalizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -1538,8 +1543,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (await _departmentsService.IsMemberOfDepartmentAsync(id, UserId))
 				return "You are already a member of this department and cannot join it again.";
 
+			if (!await _limitsService.CanDepartmentAddNewUserAsync(id, true))
+				return _profileLocalizer["JoinDepartmentFull"];
+
 			return null;
 		}
+
+		private const string JoinDepartmentErrorTempDataKey = "JoinDepartmentError"; // read by YourDepartments.cshtml
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
@@ -1558,7 +1568,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("YourDepartments");
 
 			if (!await _departmentsService.IsMemberOfDepartmentAsync(int.Parse(departmentId), UserId))
+			{
+				// Joining takes a personnel seat; the pre-check normally says so first, this covers a race or a direct post.
+				if (!await _limitsService.CanDepartmentAddNewUserAsync(int.Parse(departmentId), true))
+				{
+					TempData[JoinDepartmentErrorTempDataKey] = _profileLocalizer["JoinDepartmentFull"].Value;
+					return RedirectToAction("YourDepartments");
+				}
+
 				await _departmentsService.JoinDepartmentAsync(int.Parse(departmentId), UserId);
+			}
 
 			return RedirectToAction("YourDepartments");
 		}

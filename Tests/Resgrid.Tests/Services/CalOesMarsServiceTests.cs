@@ -131,6 +131,7 @@ namespace Resgrid.Tests.Services
 			_deployments.Setup(d => d.GetAttachmentsAsync("dep-1", DeptId)).ReturnsAsync(() => _attachments.ToList());
 			_deployments.Setup(d => d.GetAttachmentAsync(It.IsAny<int>(), DeptId, It.IsAny<bool>())).ReturnsAsync((int id, int _, bool __) => _attachments.FirstOrDefault(a => a.DeploymentAttachmentId == id));
 			_deployments.Setup(d => d.IsRosteredAsync("dep-1", DeptId, It.IsAny<string>())).ReturnsAsync((string _, int __, string user) => _deployment.Personnel.Any(p => p.UserId == user));
+			_deployments.Setup(d => d.CanFieldMemberSeeAsync("dep-1", DeptId, It.IsAny<string>())).ReturnsAsync((string _, int __, string user) => _deployment.Personnel.Any(p => p.UserId == user));
 			_deployments.Setup(d => d.GetCostRecoveryDeploymentsReleasedBeforeAsync(DeptId, It.IsAny<DateTime>())).ReturnsAsync(() => new List<Deployment> { _deployment });
 			var timeTracking = new Mock<ITimeTrackingService>();
 			timeTracking.Setup(t => t.GetTimeReportsAsync("dep-1", DeptId)).ReturnsAsync(() => _reports.ToList());
@@ -145,6 +146,7 @@ namespace Resgrid.Tests.Services
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = DeptId, Name = "Test", TimeZone = "UTC" });
 			departments.Setup(d => d.GetAllAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
+			departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
 			var events = new Mock<IEventAggregator>();
 			events.Setup(e => e.SendMessage(It.IsAny<AuditEvent>())).Callback<AuditEvent>(a => _audits.Add(a));
 			var communication = new Mock<ICommunicationService>();
@@ -299,6 +301,12 @@ namespace Resgrid.Tests.Services
 			(await _service.GetActionQueueAsync(DeptId, "alice", true)).Select(q => q.WorkItem.CalOesMarsWorkItemId).Should().Contain(revision.CalOesMarsWorkItemId);
 			(await _service.GetActionQueueAsync(DeptId, "alice", false)).Should().OnlyContain(q => q.IsMine);
 			(await _service.GetActionQueueAsync(DeptId, "stranger", false)).Should().BeEmpty();
+			// A member seated on the deployed unit (the Unit app's tablet) is not on the roster but opens the items; the queue lists them by the same rule.
+			_deployments.Setup(d => d.CanFieldMemberSeeAsync("dep-1", DeptId, "tablet")).ReturnsAsync(true);
+			(await _service.IsRosteredForWorkItemAsync(revision.CalOesMarsWorkItemId, DeptId, "tablet")).Should().BeTrue();
+			var tabletQueue = await _service.GetActionQueueAsync(DeptId, "tablet", false);
+			tabletQueue.Select(q => q.WorkItem.CalOesMarsWorkItemId).Should().Contain(revision.CalOesMarsWorkItemId);
+			tabletQueue.Should().OnlyContain(q => q.IsMine && q.WorkItem.RecordType != (int)CalOesMarsRecordTypes.GeneratedInvoice);
 			(await _service.IsRosteredForWorkItemAsync(revision.CalOesMarsWorkItemId, DeptId, "bob")).Should().BeTrue();
 			(await _service.IsRosteredForWorkItemAsync(revision.CalOesMarsWorkItemId, DeptId, "stranger")).Should().BeFalse();
 		}

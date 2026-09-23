@@ -13,7 +13,7 @@ namespace Resgrid.Model.Inventories
 	public static class InventoryWorkflowPayload
 	{
 		public const int CatalogVersion = 22;
-		public static readonly IReadOnlyList<int> Triggers = Array.AsReadOnly(new[] { 22, 58, 59, 60, 61, 62, 63, 64, 65, 66, 166 });
+		public static readonly IReadOnlyList<int> Triggers = Array.AsReadOnly(new[] { 22, 58, 59, 60, 61, 62, 63, 64, 65, 66, 166, 188 });
 		public static readonly (string Variable, string Property)[] Variables =
 		{
 			("transaction_id", "TransactionId"), ("item_id", "ItemId"), ("asset_id", "AssetId"), ("lot_id", "LotId"),
@@ -76,7 +76,7 @@ namespace Resgrid.Model.Inventories
 			foreach (var name in new[] { "TransactionType", "OldStatus", "NewStatus", "ReferenceType" }) CopyInteger(payload, safe, name);
 			CopyInteger(payload, safe, "UsageType", 3);
 			CopyInteger(payload, safe, "PurchaseOrderStatus", 4); CopyInteger(payload, safe, "LineCount", 100);
-			CopyInteger(payload, safe, "VarianceLineCount", 100); CopyInteger(payload, safe, "AlertType", 3); CopyTimestamp(payload, safe, "DueOn");
+			CopyInteger(payload, safe, "VarianceLineCount", 100); CopyInteger(payload, safe, "AlertType", 4); CopyTimestamp(payload, safe, "DueOn");
 			if (payload["CurrencyCode"]?.Type == JTokenType.String && payload.Value<string>("CurrencyCode") is { Length: 3 } currency && currency.All(c => c >= 'A' && c <= 'Z')) safe["CurrencyCode"] = currency;
 			foreach (var name in new[] { "Quantity", "FromQuantityBefore", "FromQuantityAfter", "ToQuantityBefore", "ToQuantityAfter" })
 			{

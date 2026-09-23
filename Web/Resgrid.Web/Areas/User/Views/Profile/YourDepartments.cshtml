@@ -29,6 +29,15 @@
   </div>
 </div>
 
+@if (TempData["JoinDepartmentError"] is string joinDepartmentError)
+{
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-danger" style="margin-top:15px;">@joinDepartmentError</div>
+    </div>
+  </div>
+}
+
 <div class="row">
   <div class="col-xs-12">
     <div class="wrapper wrapper-content">

@@ -96,7 +96,7 @@ namespace Resgrid.Tests.Services
 			{
 				case "quantity": SeedStock(item, location, 6); break;
 				case "stock-revision": var stock = _store.All<InventoryStock>().Single(); stock.Revision++; _store.Seed(stock); break;
-				case "new-position": SeedStock(item, Location(), 1); break;
+				case "new-position": SeedStock(Item(), location, 1); break;
 				case "item-revision": item.Revision++; _store.Seed(item); break;
 				case "location-revision": location.Revision++; _store.Seed(location); break;
 			}
@@ -105,6 +105,37 @@ namespace Resgrid.Tests.Services
 			JsonConvert.SerializeObject(_store.All<InventoryStock>()).Should().Be(before);
 			_store.All<InventoryTransaction>().Should().BeEmpty(); _store.All<InventoryOperation>().Should().BeEmpty(); _events.Should().BeEmpty();
 			(await _service.GetCountAsync(_actor, detail.Count.Id)).Count.Status.Should().Be((int)InventoryCountStatus.Draft);
+		}
+
+		[Test]
+		public async Task Location_counts_fence_only_their_own_positions_and_can_include_compartments_without_the_catalog()
+		{
+			// An apparatus (unit holder location) with one compartment; elsewhere in the department a station keeps its own stock.
+			var engine = Location(InventoryLocationType.Unit, 1); var compartment = Location(); compartment.ParentLocationId = engine.Id; _store.Seed(compartment);
+			var station = Location(); var hose = Item(); var gloves = Item(); var unrelated = Item();
+			SeedStock(hose, engine, 4); SeedStock(gloves, compartment, 10); SeedStock(unrelated, station, 7);
+
+			var detail = await _service.StartCountAsync(_actor, new InventoryCountInput { Id = Guid.NewGuid().ToString("D"), LocationId = engine.Id, Name = "Engine 1 check", IncludeCatalogItems = false, IncludeChildLocations = true });
+			detail.Lines.Select(l => (l.ItemId, l.LocationId)).Should().BeEquivalentTo(new[] { (hose.Id, engine.Id), (gloves.Id, compartment.Id) }, "the compartment is counted and the catalog is not padded in");
+			detail.Count.SnapshotFingerprint.Should().StartWith("L1:");
+
+			// Work at the station while the crew counts does not void the apparatus count.
+			SeedStock(unrelated, station, 3); unrelated.Revision++; _store.Seed(unrelated); SeedStock(Item(), Location(), 2);
+			var saved = await _service.SaveCountAsync(_actor, new InventoryCountUpdate { CountId = detail.Count.Id, Revision = detail.Count.Revision,
+				Lines = detail.Lines.Select(l => new InventoryCountObservation { Id = l.Id, Quantity = l.LocationId == compartment.Id ? 9 : 4 }).ToList() });
+			await _service.CompleteCountAsync(_actor, M5Completion(saved));
+			Stock(gloves, compartment).Should().Be(9); Stock(hose, engine).Should().Be(4); Stock(unrelated, station).Should().Be(3);
+
+			// A change inside the counted scope still does.
+			var again = await _service.StartCountAsync(_actor, new InventoryCountInput { Id = Guid.NewGuid().ToString("D"), LocationId = engine.Id, Name = "Engine 1 recheck", IncludeCatalogItems = false, IncludeChildLocations = true });
+			again = await _service.SaveCountAsync(_actor, M5Observations(again, 1));
+			SeedStock(gloves, compartment, 8);
+			await Fails(() => _service.CompleteCountAsync(_actor, M5Completion(again)), "CountSnapshotChanged", 409);
+
+			var access = await _service.GetFieldAccessAsync(_actor, 1);
+			access.UnitLocations.Select(l => (l.Id, l.IsRoot)).Should().BeEquivalentTo(new[] { (engine.Id, true), (compartment.Id, false) });
+			access.CanCount.Should().BeTrue();
+			(await _service.GetFieldAccessAsync(_actor, 99)).UnitLocations.Should().BeEmpty("a unit without an inventory holder location has nothing to count");
 		}
 
 		[Test]

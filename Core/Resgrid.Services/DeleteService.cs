@@ -7,6 +7,7 @@ using System.Transactions;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -15,6 +16,10 @@ namespace Resgrid.Services
 {
 	public class DeleteService : IDeleteService
 	{
+		// QueueItems.Data is nvarchar(255) on SQL Server (M0020 AsString()); a longer status message
+		// (an exception message) fails the whole update, losing the attempt count with it.
+		private const int QueueItemDataMaxLength = 255;
+
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICallsService _callsService;
@@ -44,6 +49,9 @@ namespace Resgrid.Services
 		private readonly IDepartmentMemberEmergencyContactService _emergencyContactService;
 		private readonly IInventoryStore _inventoryStore;
 		private readonly Resgrid.Model.Repositories.Queries.IUnitOfWork _inventoryUnitOfWork;
+		private readonly IDeploymentService _deploymentService;
+		private readonly IDeploymentPersonnelRepository _deploymentPersonnel;
+		private readonly IWorkforceService _workforceService;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -56,8 +64,12 @@ namespace Resgrid.Services
 			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService,
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IDepartmentMemberEmergencyContactService emergencyContactService,
-			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null)
+			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null,
+			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null)
 		{
+			_deploymentService = deploymentService;
+			_deploymentPersonnel = deploymentPersonnel;
+			_workforceService = workforceService;
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
 			_callsService = callsService;
@@ -106,7 +118,7 @@ namespace Resgrid.Services
 			{
 				// This is the user's only department: deactivate the whole account (same flow as the
 				// self-service "Delete My Account") so we don't strand a login with no departments.
-				return await DeactivateUserAccountCoreAsync(userIdToDelete, departmentId, null, null, cancellationToken);
+				return await DeactivateUserAccountCoreAsync(userIdToDelete, departmentId, null, null, authorizingUserId, cancellationToken);
 			}
 
 			// The user belongs to other departments: revoke this department's access and
@@ -126,6 +138,7 @@ namespace Resgrid.Services
 			await _departmentGroupsService.DeleteUserFromGroupsAsync(userId, departmentId, cancellationToken);
 			await _distributionListsService.RemoveUserFromAllListsInDepartmentAsync(userId, departmentId, cancellationToken);
 			await _scheduledTasksService.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId, cancellationToken);
+			await ReleaseOperationalAssignmentsAsync(userId, departmentId, revokingUserId ?? userId, cancellationToken);
 
 			// Department-scoped personal data goes with the membership (ADP plan 5.1). Before the
 			// relocation these values lived on the global profile and a revoked member simply stopped
@@ -155,15 +168,43 @@ namespace Resgrid.Services
 			return member != null && member.IsDeleted;
 		}
 
+		/// <summary>
+		/// Ends what would keep a removed member working in the department after the membership is gone: seats on open
+		/// deployments (a time report prefills a billable line for every active seat) and open workforce employment (the
+		/// current MARS salary-survey and pay-data counts). Seats are released through DeploymentService, which audits the
+		/// roster change and raises the roster workflow event; a closed deployment's roster is history and is left alone.
+		/// Employment is end-dated on the department's local removal day, never deleted, so past-period statutory data
+		/// (CRD pay data, MARS F-42 rosters, time reports) keeps the member. Runs before the membership is soft-deleted, so a
+		/// failure leaves the removal retryable.
+		/// </summary>
+		private async Task ReleaseOperationalAssignmentsAsync(string userId, int departmentId, string actingUserId, CancellationToken cancellationToken)
+		{
+			if (_deploymentPersonnel != null && _deploymentService != null)
+			{
+				foreach (var seat in (await _deploymentPersonnel.GetForUserAsync(departmentId, userId) ?? Enumerable.Empty<Resgrid.Model.Invoicing.DeploymentPersonnel>()).Where(p => p.IsActive).ToList())
+				{
+					try { await _deploymentService.RemovePersonnelAsync(seat.DeploymentPersonnelId, departmentId, actingUserId, null, null, cancellationToken); }
+					catch (InvalidOperationException ex) when (ex.Message is "deployments_closed" or "deployments_not_found") { }
+				}
+			}
+
+			if (_workforceService != null)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+				var removalDay = department == null ? DateTime.UtcNow.Date : DateTime.UtcNow.TimeConverter(department).Date;
+				await _workforceService.EndEmploymentsForMemberAsync(departmentId, userId, removalDay, actingUserId, cancellationToken);
+			}
+		}
+
 		public async Task<DeleteUserResults> DeleteUserAccountAsync(int departmentId, string authorizingUserId, string userIdToDelete, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (authorizingUserId != userIdToDelete)
 				return DeleteUserResults.UnAuthroized;
 
-			return await DeactivateUserAccountCoreAsync(userIdToDelete, departmentId, ipAddress, userAgent, cancellationToken);
+			return await DeactivateUserAccountCoreAsync(userIdToDelete, departmentId, ipAddress, userAgent, authorizingUserId, cancellationToken);
 		}
 
-		private async Task<DeleteUserResults> DeactivateUserAccountCoreAsync(string userIdToDelete, int departmentId, string ipAddress, string userAgent, CancellationToken cancellationToken)
+		private async Task<DeleteUserResults> DeactivateUserAccountCoreAsync(string userIdToDelete, int departmentId, string ipAddress, string userAgent, string actingUserId, CancellationToken cancellationToken)
 		{
 			var departments = await _departmentsService.GetAllDepartmentsForUserAsync(userIdToDelete);
 
@@ -194,6 +235,7 @@ namespace Resgrid.Services
 					// legacy Addresses rows.
 					await _memberSensitiveDataService.DeleteForMemberAsync(dm.DepartmentId, userIdToDelete, cancellationToken);
 					await _emergencyContactService.DeleteAllForMemberAsync(dm.DepartmentId, userIdToDelete, cancellationToken);
+					await ReleaseOperationalAssignmentsAsync(userIdToDelete, dm.DepartmentId, actingUserId ?? userIdToDelete, cancellationToken);
 				}
 			}
 
@@ -405,7 +447,7 @@ namespace Resgrid.Services
 					}
 					else
 					{
-						item.Data = $"Department deletion attempt {item.AttemptCount} failed: {e.Message}";
+						item.Data = $"Department deletion attempt {item.AttemptCount} failed: {e.Message}".Truncate(QueueItemDataMaxLength);
 
 						try
 						{
@@ -466,7 +508,7 @@ namespace Resgrid.Services
 			try
 			{
 				item.CompletedOn = DateTime.UtcNow;
-				item.Data = data;
+				item.Data = data.Truncate(QueueItemDataMaxLength);
 				await _queueService.UpdateQueueItem(item, cancellationToken);
 			}
 			catch (Exception ex)

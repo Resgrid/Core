@@ -55,6 +55,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>Same system-principal gate as the other Records controllers (registry section 4.4).</summary>
+		[NonAction]
 		public void OnActionExecuting(ActionExecutingContext context)
 		{
 			if (!RecordsSystemPrincipal.IsSystemPrincipal(User))
@@ -65,6 +66,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "This system principal has no configured Record grant for this department.", type: "record_grant_missing");
 		}
 
+		[NonAction]
 		public void OnActionExecuted(ActionExecutedContext context)
 		{
 		}

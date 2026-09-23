@@ -362,6 +362,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.User = _usersService.GetUserById(UserId);
 			model.Profile = new UserProfile();
 			model.SendAccountCreationNotification = true;
+			model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
 
 			ViewBag.Carriers = model.Carrier.ToSelectList();
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
@@ -609,7 +610,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Username", $"The username {model.Username} has already been taken, please try another.");
 			}
 
-			if (ModelState.IsValid)
+			// The plan's personnel limit is enforced here, not only by hiding the Add button (fresh counts: the cached ones live 14 days).
+			model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
+
+			if (ModelState.IsValid && !model.PersonnelLimitReached)
 			{
 				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString().ToUpper() };
 				var result = await _userManager.CreateAsync(user, model.NewPassword);
@@ -1839,81 +1843,164 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(role.Users?.Select(x => x.UserId).ToList() ?? new List<string>());
 		}
 
+		/// <summary>
+		/// Confirmation page for bringing a removed member back (AddPerson lands here when the e-mail matches one).
+		/// It changes nothing: the reactivation is the POST below. After that POST it shows the result once.
+		/// </summary>
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[Authorize(Policy = ResgridResources.Personnel_Create)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> ReactivateUser(string id, CancellationToken cancellationToken)
 		{
-			ViewPersonView model = new ViewPersonView();
-			model.Profile = await _userProfileService.GetProfileByUserIdAsync(id, true);
-			model.User = _usersService.GetUserById(id);
+			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
+				return Unauthorized();
 
 			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
-			if (member != null)
-				model.Department = await _departmentsService.GetDepartmentByIdAsync(member.DepartmentId);
-			else
-				model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			if (member == null || member.DepartmentId != DepartmentId)
+				return NotFound();
 
-			model.Group = await _departmentGroupsService.GetGroupForUserAsync(id, DepartmentId);
-			var roles = await _personnelRolesService.GetRolesForUserAsync(id, DepartmentId);
+			var justReactivated = string.Equals(TempData[ReactivatedUserTempDataKey] as string, id, StringComparison.OrdinalIgnoreCase);
+			if (!member.IsDeleted && !justReactivated)
+				return RedirectToAction("ViewPerson", "Personnel", new { area = "User", userId = id });
 
-			if (roles != null && roles.Count > 0)
-			{
-				foreach (var role in roles)
-				{
-					if (string.IsNullOrWhiteSpace(model.Roles))
-						model.Roles = role.Name;
-					else
-						model.Roles += string.Format(", {0}", role.Name);
-				}
-			}
-			else
-			{
-				model.Roles = "None";
-			}
-
-			StringBuilder sb = new StringBuilder();
-			if (member != null)
-			{
-				if (member.IsAdmin.HasValue && member.IsAdmin.Value ||
-						model.Department.ManagingUserId == id)
-					sb.Append("Admin");
-				else
-					sb.Append("Normal");
-
-				if (member.IsDisabled.HasValue && member.IsDisabled.Value)
-					sb.Append(sb.Length > 0 ? ", Disabled" : "Disabled");
-
-				if (member.IsHidden.HasValue && member.IsHidden.Value)
-					sb.Append(sb.Length > 0 ? ", Hidden" : "Hidden");
-
-				model.State = sb.ToString();
-			}
-
-			await _departmentsService.ReactivateUserAsync(DepartmentId, id, cancellationToken);
-
-			_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
-			_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
-			_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
-			_departmentsService.InvalidateDepartmentMembers();
-			_usersService.ClearCacheForDepartment(DepartmentId);
+			var model = await BuildMemberConfirmationViewAsync(id, member);
+			model.ConfirmationPending = member.IsDeleted;
+			if (model.ConfirmationPending)
+				model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
 
 			return View(model);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Personnel_Create)]
+		[RequiresRecentTwoFactor]
+		[ActionName("ReactivateUser")]
+		public async Task<IActionResult> ReactivateUserPost(string id, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
+				return Unauthorized();
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
+			if (member == null || member.DepartmentId != DepartmentId)
+				return NotFound();
+
+			// A second submit (double click, back button) finds the member already back and changes nothing.
+			if (member.IsDeleted)
+			{
+				// A returning member takes a personnel seat; at the plan's limit the confirmation page says so instead.
+				if (!await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true))
+					return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id });
+
+				await _departmentsService.ReactivateUserAsync(DepartmentId, id, UserId, cancellationToken);
+
+				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
+				_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
+				_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
+				_departmentsService.InvalidateDepartmentMembers();
+				_usersService.ClearCacheForDepartment(DepartmentId);
+			}
+
+			TempData[ReactivatedUserTempDataKey] = id;
+			return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id });
+		}
+
+		private const string ReactivatedUserTempDataKey = "ReactivatedUserId";
+		private const string AddedExistingUserTempDataKey = "AddedExistingUserId";
+
+		/// <summary>
+		/// Confirmation page for adding an account that already exists in another department (AddPerson lands here when
+		/// the e-mail matches one). It changes nothing: the add is the POST below. After that POST it shows the result once.
+		/// </summary>
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[Authorize(Policy = ResgridResources.Personnel_Create)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> AddExistingUser(string id, CancellationToken cancellationToken)
 		{
-			ViewPersonView model = new ViewPersonView();
-			model.Profile = await _userProfileService.GetProfileByUserIdAsync(id, true);
-			model.User = _usersService.GetUserById(id, true);
+			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
+				return Unauthorized();
+
+			if (string.IsNullOrWhiteSpace(id) || _usersService.GetUserById(id) == null)
+				return NotFound();
 
 			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
 			if (member != null)
-				model.Department = await _departmentsService.GetDepartmentByIdAsync(member.DepartmentId);
-			else
-				model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			{
+				// A removed member comes back through reactivation, never as a second membership row.
+				if (member.IsDeleted)
+					return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id });
+
+				var justAdded = string.Equals(TempData[AddedExistingUserTempDataKey] as string, id, StringComparison.OrdinalIgnoreCase);
+				if (!justAdded)
+					return RedirectToAction("ViewPerson", "Personnel", new { area = "User", userId = id });
+			}
+
+			var model = await BuildMemberConfirmationViewAsync(id, member);
+			model.ConfirmationPending = member == null;
+			if (model.ConfirmationPending)
+				model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Personnel_Create)]
+		[RequiresRecentTwoFactor]
+		[ActionName("AddExistingUser")]
+		public async Task<IActionResult> AddExistingUserPost(string id, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
+				return Unauthorized();
+
+			if (string.IsNullOrWhiteSpace(id) || _usersService.GetUserById(id) == null)
+				return NotFound();
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
+			if (member != null && member.IsDeleted)
+				return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id });
+
+			// A second submit (double click, back button) finds the member already in and changes nothing.
+			if (member == null)
+			{
+				// At the plan's personnel limit the confirmation page says so instead.
+				if (!await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true))
+					return RedirectToAction("AddExistingUser", "Personnel", new { area = "User", id });
+
+				var added = await _departmentsService.AddExistingUserAsync(DepartmentId, id, cancellationToken);
+
+				if (added != null)
+				{
+					var auditEvent = new AuditEvent();
+					auditEvent.DepartmentId = DepartmentId;
+					auditEvent.UserId = UserId;
+					auditEvent.Type = AuditLogTypes.UserAdded;
+					auditEvent.After = added.CloneJsonToString();
+					auditEvent.Successful = true;
+					auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+					auditEvent.ServerName = Environment.MachineName;
+					auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				}
+
+				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
+				_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
+				_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
+				_departmentsService.InvalidateDepartmentMembers();
+				_usersService.ClearCacheForDepartment(DepartmentId);
+			}
+
+			TempData[AddedExistingUserTempDataKey] = id;
+			return RedirectToAction("AddExistingUser", "Personnel", new { area = "User", id });
+		}
+
+		/// <summary>The ReactivateUser / AddExistingUser page model. <paramref name="member"/> is null for an account not yet in the department.</summary>
+		private async Task<ViewPersonView> BuildMemberConfirmationViewAsync(string id, DepartmentMember member)
+		{
+			ViewPersonView model = new ViewPersonView();
+			model.Profile = await _userProfileService.GetProfileByUserIdAsync(id, true);
+			model.User = _usersService.GetUserById(id);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			model.Group = await _departmentGroupsService.GetGroupForUserAsync(id, DepartmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(id, DepartmentId);
@@ -1951,15 +2038,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.State = sb.ToString();
 			}
 
-			await _departmentsService.AddExistingUserAsync(DepartmentId, id, cancellationToken);
-
-			_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
-			_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
-			_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
-			_departmentsService.InvalidateDepartmentMembers();
-			_usersService.ClearCacheForDepartment(DepartmentId);
-
-			return View(model);
+			return model;
 		}
 
 		[HttpGet]

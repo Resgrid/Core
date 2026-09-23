@@ -385,6 +385,7 @@ namespace Resgrid.Tests.Rms
 			Cutover.Setup(c => c.GetModuleStateAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync((int d, bool b) => new RecordsModuleState { DepartmentId = d, FlagEnabled = RecordsUsable, Activated = RecordsUsable, ActivatedOn = DateTime.UtcNow.AddDays(-30), CutoverState = RecordsUsable ? RmsDepartmentCutoverState.Active : (RmsDepartmentCutoverState?)null });
 			Flags.Setup(f => f.IsEnabledAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync((string key, int d, bool dv, IDictionary<string, string> ctx) => !DisabledFlags.Contains(key));
 			Authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), Dept)).ReturnsAsync((string u, int d) => u != Outsider);
+			Authorization.Setup(a => a.IsAssignableMemberAsync(It.IsAny<string>(), Dept)).ReturnsAsync((string u, int d) => u != Outsider);
 			Authorization.Setup(a => a.IsDepartmentAdminAsync(It.IsAny<string>(), Dept)).ReturnsAsync((string u, int d) => DepartmentAdmins.Contains(u));
 			Authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync((string u, int d, PermissionTypes p) =>
 				p == PermissionTypes.RecordsPreventionAdmin ? PreventionAdmins.Contains(u) : p == PermissionTypes.ViewRestrictedRecords ? RestrictedViewers.Contains(u) : p == PermissionTypes.ReviewRecords ? Reviewers.Contains(u) : DepartmentAdmins.Contains(u));

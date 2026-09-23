@@ -629,6 +629,7 @@
   <data name="M5AlertType1" xml:space="preserve"><value>Expiring soon</value></data>
   <data name="M5AlertType2" xml:space="preserve"><value>Expired</value></data>
   <data name="M5AlertType3" xml:space="preserve"><value>Overdue return</value></data>
+  <data name="M5AlertType4" xml:space="preserve"><value>Held by departed member</value></data>
   <data name="M5Open" xml:space="preserve"><value>Open</value></data>
   <data name="M5Resolved" xml:space="preserve"><value>Resolved</value></data>
   <data name="M5DueOn" xml:space="preserve"><value>Due at (UTC)</value></data>
@@ -699,6 +700,7 @@
   <data name="InventoryExpiring" xml:space="preserve"><value>Inventory expiring</value></data>
   <data name="InventoryCountCompleted" xml:space="preserve"><value>Inventory count completed</value></data>
   <data name="InventoryReturnOverdue" xml:space="preserve"><value>Inventory return overdue</value></data>
+  <data name="InventoryDepartedHolder" xml:space="preserve"><value>Inventory held by departed member</value></data>
   <data name="HolderHistoryRetained" xml:space="preserve"><value>This resource is referenced by inventory history and must be retained.</value></data>
   <data name="InventoryAdjusted" xml:space="preserve"><value>Inventory adjusted</value></data>
   <data name="InventoryTransferCompleted" xml:space="preserve"><value>Inventory transfer completed</value></data>

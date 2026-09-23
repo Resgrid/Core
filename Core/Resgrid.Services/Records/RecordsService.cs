@@ -679,6 +679,8 @@ namespace Resgrid.Services.Records
 		public async Task<RecordAggregate> ReassignDraftAsync(int departmentId, string userId, string recordId, string newOwnerUserId, string reason, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(newOwnerUserId)) throw new ArgumentException("A new owner is required.", nameof(newOwnerUserId));
+			if (!await _authorization.IsAssignableMemberAsync(newOwnerUserId, departmentId))
+				throw new ArgumentException("The new owner must be an active member of the department.", nameof(newOwnerUserId));
 			var record = await LoadRecordAsync(departmentId, recordId);
 			var state = (RmsRecordState)record.State;
 			if (RmsLifecycle.IsFinalizedFamily(state) && record.AmendsRevisionId == null || RmsLifecycle.IsTerminal(state))

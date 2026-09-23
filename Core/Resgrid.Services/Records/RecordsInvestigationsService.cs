@@ -329,6 +329,8 @@ namespace Resgrid.Services.Records
 			var (investigation, _) = await RequireMemberAsync(departmentId, userId, item.RmsInvestigationCaseId, RmsInvestigationRole.Lead, RmsInvestigationRole.Investigator);
 			RequireOpen(investigation);
 			if (string.IsNullOrWhiteSpace(toUserId) && string.IsNullOrWhiteSpace(toExternal) && resultingState != RmsEvidenceState.Destroyed) throw new ArgumentException("Name who receives the evidence.");
+			if (!string.IsNullOrWhiteSpace(toUserId) && !await _gate.IsAssignableAsync(departmentId, toUserId.Trim()))
+				throw new ArgumentException("The receiving custodian must be an active member of the department.");
 			if (item.State == (int)RmsEvidenceState.Destroyed) throw new InvalidOperationException("Destroyed evidence has no further custody.");
 			reason = RecordsPreventionGate.Require(reason, 1000, "A custody transfer needs a reason.");
 			var now = DateTime.UtcNow;

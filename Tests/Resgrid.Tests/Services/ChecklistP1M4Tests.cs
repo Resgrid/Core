@@ -25,9 +25,12 @@ namespace Resgrid.Tests.Services
 		private static readonly DateTime ReportMonth = new(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc);
 		private const string ReportAsset = "81366c6a-aaad-41be-9df1-9091a42d6073";
 		private static ChecklistReportQuery Month() => new() { FromUtc = ReportMonth, UntilUtc = ReportMonth.AddDays(30) };
+		private HashSet<string> _reportActiveMembers;
 		private async Task SeedReportMonth()
 		{
+			_reportActiveMembers = new() { "author", "person" };
 			_authorization.Setup(a => a.CanReadAsync(It.IsAny<ChecklistActor>(), It.IsAny<ChecklistCompletion>())).ReturnsAsync((ChecklistActor a, ChecklistCompletion c) => a.DepartmentId == c.DepartmentId && a.UserId == "author");
+			_authorization.Setup(a => a.ActiveMemberIdsAsync(77)).ReturnsAsync(() => new HashSet<string>(_reportActiveMembers));
 			foreach (var target in new[] { new ChecklistTarget { Type = ChecklistTargetType.Unit, Id = "1", Name = "Engine 1" }, new ChecklistTarget { Type = ChecklistTargetType.InventoryAsset, Id = ReportAsset, Name = "=SUM(1,2)" }, new ChecklistTarget { Type = ChecklistTargetType.Personnel, Id = "person", Name = "Synthetic person" } })
 			{
 				var definition = new ChecklistDefinition { DepartmentId = 77, Content = "{}" };
@@ -58,6 +61,16 @@ namespace Resgrid.Tests.Services
 			var history = await _service.GetEntityChecklistHistoryAsync(_actor, ChecklistTargetType.InventoryAsset, ReportAsset, ReportMonth, ReportMonth.AddDays(30));
 			history.Should().HaveCount(30); history.Should().OnlyContain(e => e.Version == 3 && e.Target.Id == ReportAsset);
 			JsonConvert.SerializeObject(report).Should().NotContain("SYNTHETIC-PHI-CANARY");
+		}
+		[Test]
+		public async Task P1M4_compliance_leaves_out_personnel_checks_of_removed_disabled_or_hidden_members_but_their_history_stays()
+		{
+			await SeedReportMonth(); _reportActiveMembers = new() { "author" };
+			var report = await _service.GetComplianceSummaryAsync(_actor, Month());
+			report.Groups.Select(g => g.Target.Type).Should().BeEquivalentTo(new[] { ChecklistTargetType.Unit, ChecklistTargetType.InventoryAsset });
+			report.Entries.Should().NotContain(e => e.Target.Type == ChecklistTargetType.Personnel);
+			report.Trend.Sum(d => d.Expected).Should().Be(50, "the departed member's checks leave the denominator too");
+			(await _service.GetEntityChecklistHistoryAsync(_actor, ChecklistTargetType.Personnel, "person", ReportMonth, ReportMonth.AddDays(30))).Should().HaveCount(30, "the record view keeps them on file");
 		}
 		[Test]
 		public async Task P1M4_reports_fail_closed_for_protected_data_disabled_flags_and_invalid_ranges_and_filter_other_members()

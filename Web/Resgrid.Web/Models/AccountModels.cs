@@ -89,6 +89,8 @@ namespace Resgrid.Web.Models
 	public class CompleteInviteModel
 	{
 		public Invite Invite { get; set; }
+		/// <summary>The inviting department is at its plan's personnel limit (or the plan could not be checked), so no account is created.</summary>
+		public bool DepartmentFull { get; set; }
 
 		public string DepartmentName { get; set; }
 

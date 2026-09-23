@@ -150,6 +150,8 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.CertificationCreditAdded).Should().Be(184);
 			((int)WorkflowTriggerEventType.TimeReportCreated).Should().Be(185);
 			((int)WorkflowTriggerEventType.DeploymentAttachmentAdded).Should().Be(187);
+			// The inventory departed-holder alert took 188 on 2026-09-22.
+			((int)WorkflowTriggerEventType.InventoryDepartedHolder).Should().Be(188);
 			foreach (var value in Enumerable.Range(177, 3))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for the Enhanced AI add-on");
 			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(Enumerable.Range(74, 13)).Except(Enumerable.Range(87, 7)).Except(new[] { 94, 95 }))

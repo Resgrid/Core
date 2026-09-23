@@ -55,7 +55,7 @@ namespace Resgrid.Tests.Rms
 		[TestCase("incident", RmsRecordKind.IncidentReport)]
 		public async Task Both_officer_record_kinds_offer_only_source_authorized_personnel(string id, RmsRecordKind kind)
 		{
-			_departments.Setup(d => d.GetAllPersonnelNamesForDepartmentAsync(9)).ReturnsAsync(new List<PersonName> {
+			_departments.Setup(d => d.GetSelectablePersonnelNamesAsync(9)).ReturnsAsync(new List<PersonName> {
 				new() { UserId = "visible", FirstName = "Visible", LastName = "Member" }, new() { UserId = "hidden", FirstName = "Sensitive", LastName = "Person" } });
 			_sourceAuth.Setup(a => a.CanUserViewPersonAsync("officer", "VISIBLE", 9)).ReturnsAsync(true);
 			var selection = await _service.GetAsync(9, "officer", id, kind, RmsEvidenceKind.CertificationSnapshot);

@@ -93,6 +93,13 @@ namespace Resgrid.Tests.Rms
 			await number.Should().ThrowAsync<ArgumentException>();
 			Func<Task> fill = () => _h.Deployments.CreateFromExternalOrderAsync(Dept, Admin, new RecordDeploymentCreateInput { ProfileKey = RmsDeploymentProfiles.Generic, OrderNumber = "L-1", IncidentName = "x", Fills = new List<RecordDeploymentFillInput> { new RecordDeploymentFillInput { ResourceKind = "person" } } });
 			await fill.Should().ThrowAsync<ArgumentException>().WithMessage("*request number*");
+			// A fill is never assigned to someone who is not an active member, on the order or added later.
+			_h.Authorization.Setup(a => a.IsAssignableMemberAsync("departed", Dept)).ReturnsAsync(false);
+			Func<Task> departed = () => _h.Deployments.CreateFromExternalOrderAsync(Dept, Admin, new RecordDeploymentCreateInput { ProfileKey = RmsDeploymentProfiles.Generic, OrderNumber = "L-3", IncidentName = "x", Fills = new List<RecordDeploymentFillInput> { new RecordDeploymentFillInput { RequestNumber = "O-1", ResourceKind = "person", AssignedUserId = "departed" } } });
+			await departed.Should().ThrowAsync<ArgumentException>().WithMessage("*active member*");
+			var open = await _h.Deployments.CreateFromExternalOrderAsync(Dept, Admin, new RecordDeploymentCreateInput { ProfileKey = RmsDeploymentProfiles.Generic, OrderNumber = "L-4", IncidentName = "x" });
+			Func<Task> addDeparted = () => _h.Deployments.AddFillAsync(Dept, Admin, open.Order.RmsExternalOrderId, new RecordDeploymentFillInput { RequestNumber = "O-2", AssignedUserId = "departed" });
+			await addDeparted.Should().ThrowAsync<ArgumentException>().WithMessage("*active member*");
 			_h.Authorization.Setup(a => a.HasPermissionAsync("viewer", Dept, PermissionTypes.CreateRecord)).ReturnsAsync(false);
 			Func<Task> denied = () => _h.Deployments.CreateFromExternalOrderAsync(Dept, "viewer", Iroc());
 			await denied.Should().ThrowAsync<UnauthorizedAccessException>();

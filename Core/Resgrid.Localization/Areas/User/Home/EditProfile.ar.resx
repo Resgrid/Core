@@ -26,6 +26,7 @@
   <data name="DepartmentAdminLabel" xml:space="preserve"><value>مدير القسم</value></data>
   <data name="DepartmentSettingsHeader" xml:space="preserve"><value>إعدادات القسم</value></data>
   <data name="DisableUserLabel" xml:space="preserve"><value>تعطيل المستخدم</value></data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve"><value>لا يمكن تفعيل هذا الشخص: فقد بلغ القسم الحد الأقصى لعدد الأفراد في خطته، أو تعذر التحقق من الخطة. لا يُحتسب الأعضاء المعطَّلون ضمن الحد. أزل شخصًا آخر أو عطّله، أو قم بترقية الخطة، ثم حاول مرة أخرى. لم يتم حفظ أي شيء في هذه الصفحة.</value></data>
   <data name="EditTitle" xml:space="preserve"><value>تعديل</value></data>
   <data name="EmailAddressHelper" xml:space="preserve"><value>يجب أن تكون عناوين البريد الإلكتروني فريدة</value></data>
   <data name="EmailAddressLabel" xml:space="preserve"><value>عنوان البريد الإلكتروني</value></data>

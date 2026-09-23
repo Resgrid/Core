@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -39,6 +40,30 @@ namespace Resgrid.Tests.Services
 			choices.Users.Should().Contain(u => u.Id == "a" && u.Name == "Zoe Taylor").And.Contain(u => u.Id == "b" && u.Name == "Alex Smith");
 			choices.Users.Should().Contain(u => u.Id == "missing" && u.Name == "fallback-login");
 			profiles.Verify(p => p.GetSelectedUserProfilesAsync(It.Is<List<string>>(ids => ids.Count == 3 && !ids.Contains("hidden"))), Times.Once);
+		}
+
+		[Test]
+		public async Task Hidden_members_are_labelled_but_not_offered_and_removed_or_disabled_members_are_neither()
+		{
+			var actor = new ChecklistActor { DepartmentId = 77, UserId = "manager" };
+			var departments = new Mock<IDepartmentsService>();
+			departments.Setup(d => d.GetDepartmentMemberAsync(actor.UserId, 77, true)).ReturnsAsync(new DepartmentMember { DepartmentId = 77, UserId = actor.UserId });
+			departments.Setup(d => d.GetAllMembersForDepartmentUnlimitedAsync(77, true)).ReturnsAsync(new List<DepartmentMember> {
+				new() { DepartmentId = 77, UserId = "a" }, new() { DepartmentId = 77, UserId = "quiet", IsHidden = true },
+				new() { DepartmentId = 77, UserId = "off", IsDisabled = true }, new() { DepartmentId = 77, UserId = "gone", IsDeleted = true }
+			});
+			var assignments = new Mock<IChecklistAssignmentService>();
+			assignments.Setup(a => a.ChoicesAsync(actor)).ReturnsAsync(new List<ChecklistAssignmentChoice> { new() { Type = 1, Id = "a", Name = "login-a" } });
+			var resources = new Mock<IAuthorizationService>();
+			resources.Setup(r => r.CanUserViewPersonAsync(actor.UserId, It.IsAny<string>(), 77)).ReturnsAsync(true);
+			var profiles = new Mock<IUserProfileService>();
+			profiles.Setup(p => p.GetSelectedUserProfilesAsync(It.IsAny<List<string>>())).ReturnsAsync((List<string> ids) => ids.Select(id => new UserProfile { UserId = id, FirstName = "Member", LastName = id }).ToList());
+			var service = new WorkOrderAuthorizationService(departments.Object, Mock.Of<IDepartmentGroupsService>(), Mock.Of<IPersonnelRolesService>(),
+				Mock.Of<IPermissionsService>(), Mock.Of<IUnitsService>(), resources.Object, assignments.Object, profiles.Object);
+			var choices = await service.ChoicesAsync(actor);
+			choices.Users.Should().ContainSingle().Which.Name.Should().Be("Member a");
+			choices.UserNames.Keys.Should().BeEquivalentTo(new[] { "a", "quiet" }, "a hidden member keeps a label for history and kept assignments");
+			choices.UserNames["quiet"].Should().Be("Member quiet");
 		}
 
 		[Test]

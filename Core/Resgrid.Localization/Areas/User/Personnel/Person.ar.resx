@@ -29,6 +29,10 @@
   <data name="EmailAddressPlaceholder" xml:space="preserve"><value>عنوان البريد الإلكتروني (يجب أن يكون فريداً)</value></data>
   <data name="ExistingUserHelp1" xml:space="preserve"><value>هذا المستخدم</value></data>
   <data name="ExistingUserHelp2" xml:space="preserve"><value>، بناءً على عنوان البريد الإلكتروني، كان لديه حساب Resgrid في قسم آخر. تمت إضافة حساب المستخدم &lt;b&gt;بإعدادات ملفه الشخصي السابقة (الاسم، أرقام الهاتف، التفضيلات، إلخ)&lt;/b&gt; إلى القسم. نظراً لكون المستخدم في أقسام متعددة، يجب عليه تفعيل هذا القسم لرؤية معلوماته من خلال خيار "عرض أقسامك" ضمن قائمة الملف الشخصي.</value></data>
+  <data name="AddExistingUserConfirmHeader" xml:space="preserve"><value>إضافة مستخدم موجود</value></data>
+  <data name="ExistingUserConfirmText" xml:space="preserve"><value>، بناءً على عنوان البريد الإلكتروني، لديه بالفعل حساب Resgrid في قسم آخر. تؤدي الإضافة إلى ضم هذا الحساب إلى هذا القسم بإعدادات ملفه الشخصي الحالية (الاسم وأرقام الهاتف والتفضيلات). ينضم المستخدم عضوًا عاديًا، ويرى هذا القسم بعد التبديل إليه من "أقسامك" في قائمة الملف الشخصي.</value></data>
+  <data name="AddExistingUserButton" xml:space="preserve"><value>إضافة إلى القسم</value></data>
+  <data name="PersonnelLimitReached" xml:space="preserve"><value>بلغ هذا القسم الحد الأقصى لعدد الأفراد في خطته، أو تعذر التحقق من الخطة الآن. أزل شخصًا لم يعد بحاجة إلى الوصول أو قم بترقية الخطة، ثم حاول مرة أخرى.</value></data>
   <data name="FirstNameLabel" xml:space="preserve"><value>الاسم الأول</value></data>
   <data name="FirstNamePlaceholder" xml:space="preserve"><value>الاسم الأول</value></data>
   <data name="GroupLabel" xml:space="preserve"><value>المجموعة</value></data>
@@ -69,6 +73,8 @@
   <data name="ReactivatePersonText1" xml:space="preserve"><value>هذا المستخدم</value></data>
   <data name="ReactivatePersonText2" xml:space="preserve"><value>بناءً على عنوان البريد الإلكتروني، كان لديه حساب في قسم</value></data>
   <data name="ReactivatePersonText3" xml:space="preserve"><value>لكنه حُذف سابقاً. تمت إعادة تفعيل حساب المستخدم داخل هذا القسم وسيظهر &lt;b&gt;بإعدادات ملفه الشخصي السابقة (الاسم، أرقام الهاتف، التفضيلات، إلخ)&lt;/b&gt; في القسم.</value></data>
+  <data name="ReactivatePersonConfirmText" xml:space="preserve"><value>لكنه أُزيل. تؤدي إعادة التنشيط إلى استعادة الحساب داخل هذه الإدارة بإعدادات ملفه الشخصي السابقة (الاسم وأرقام الهاتف والتفضيلات). يعود الشخص عضوًا عاديًا؛ امنحه صلاحيات المسؤول مرة أخرى بشكل منفصل إذا احتاج إليها.</value></data>
+  <data name="ReactivatePersonButton" xml:space="preserve"><value>إعادة التنشيط</value></data>
   <data name="RoleDeleteWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى حذف هذا الدور نهائياً. هل أنت متأكد من حذف الدور</value></data>
   <data name="RoleDescriptionPlaceholder" xml:space="preserve"><value>وصف الدور</value></data>
   <data name="RoleNamePlaceholder" xml:space="preserve"><value>اسم الدور</value></data>

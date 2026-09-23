@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -36,13 +37,15 @@ namespace Resgrid.Services.Workforce
 		private readonly IWorkforceAnnualPayFactRepository _annualFacts;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentsService _departments;
 		private readonly WorkforceProtectionSeam _seam;
 
 		public WorkforceService(IWorkforceEmployerProfileRepository employers, IWorkforceAffiliatedEntityRepository affiliates, IWorkforceEstablishmentRepository establishments,
 			IWorkforceLaborContractorRepository contractors, IWorkforceWorkerRepository workers, IWorkforceEmploymentRepository employments, IWorkforceJobAssignmentRepository assignments,
 			IWorkforceWorkEntryRepository workEntries, IWorkforceAnnualPayFactRepository annualFacts, IUserProfileService userProfileService, IEventAggregator eventAggregator,
-			Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null)
+			IDepartmentsService departments, Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null)
 		{
+			_departments = departments;
 			_employers = employers;
 			_affiliates = affiliates;
 			_establishments = establishments;
@@ -225,8 +228,20 @@ namespace Resgrid.Services.Workforce
 			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("A user id is required.", nameof(userId));
 			var existing = await _workers.GetByUserIdAsync(departmentId, userId);
 			if (existing != null) return existing;
+			await RequireCurrentMemberAsync(departmentId, userId);
 			var created = await _workers.SaveOrUpdateAsync(new WorkforceWorker { DepartmentId = departmentId, UserId = userId, AddedOn = DateTime.UtcNow, AddedByUserId = actorUserId }, cancellationToken);
 			return created;
+		}
+
+		/// <summary>
+		/// A worker row links only a current member of this department: not someone removed, disabled or from another
+		/// department. A hidden member may still hold (or self-report into) a worker row, so hidden is not refused.
+		/// </summary>
+		private async Task RequireCurrentMemberAsync(int departmentId, string userId)
+		{
+			var member = await _departments.GetDepartmentMemberAsync(userId, departmentId, true);
+			if (!DepartmentMemberStateHelper.IsCurrentMember(member, departmentId) || !string.Equals(member.UserId, userId, StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException("workforce_member_not_found");
 		}
 
 		public async Task<WorkforceWorker> SaveWorkerAsync(WorkforceWorker worker, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
@@ -236,6 +251,8 @@ namespace Resgrid.Services.Workforce
 			var existing = string.IsNullOrWhiteSpace(worker.WorkforceWorkerId) ? null : await _workers.GetByIdForDepartmentAsync(worker.WorkforceWorkerId, worker.DepartmentId);
 			if (existing != null && existing.IsDeleted) throw new InvalidOperationException("workforce_not_found");
 			if (existing == null && !string.IsNullOrWhiteSpace(worker.UserId) && await _workers.GetByUserIdAsync(worker.DepartmentId, worker.UserId) != null) throw new InvalidOperationException("workforce_worker_duplicate");
+			var linkedUser = Trim(worker.UserId);
+			if (linkedUser != null && !string.Equals(linkedUser, existing?.UserId, StringComparison.OrdinalIgnoreCase)) await RequireCurrentMemberAsync(worker.DepartmentId, linkedUser);
 			var before = existing == null ? null : Snapshot(existing);
 			var now = DateTime.UtcNow;
 			var target = existing ?? new WorkforceWorker { DepartmentId = worker.DepartmentId, AddedOn = now, AddedByUserId = userId };
@@ -307,6 +324,30 @@ namespace Resgrid.Services.Workforce
 			var saved = await _employments.SaveOrUpdateAsync(target, cancellationToken);
 			Audit(employment.DepartmentId, userId, AuditLogTypes.WorkforceEmploymentChanged, ipAddress, userAgent, before, saved);
 			return await GetEmploymentAsync(saved.WorkforceEmploymentId, employment.DepartmentId);
+		}
+
+		public async Task<int> EndEmploymentsForMemberAsync(int departmentId, string userId, DateTime endOn, string actorUserId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(userId)) return 0;
+			var worker = await _workers.GetByUserIdAsync(departmentId, userId);
+			if (worker == null || worker.IsDeleted) return 0;
+			var day = endOn.Date;
+			var now = DateTime.UtcNow;
+			var changed = 0;
+			foreach (var employment in ((await _employments.GetByWorkerAsync(worker.WorkforceWorkerId)) ?? Enumerable.Empty<WorkforceEmployment>())
+				.Where(e => e.DepartmentId == departmentId && !e.IsDeleted && (!e.EndOn.HasValue || e.EndOn.Value.Date > day)).ToList())
+			{
+				var before = Snapshot(employment);
+				// An employment that had not begun by the removal day never covered a pay period: it is withdrawn rather than
+				// given an end before its start. Everything else keeps its history and simply ends that day.
+				if (employment.StartOn.Date > day) employment.IsDeleted = true;
+				else employment.EndOn = day;
+				employment.RowVersion += 1; employment.EditedOn = now; employment.EditedByUserId = actorUserId;
+				var saved = await _employments.SaveOrUpdateAsync(employment, cancellationToken);
+				Audit(departmentId, actorUserId, AuditLogTypes.WorkforceEmploymentChanged, null, null, before, saved);
+				changed++;
+			}
+			return changed;
 		}
 
 		public Task<bool> DeleteEmploymentAsync(string id, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default) =>

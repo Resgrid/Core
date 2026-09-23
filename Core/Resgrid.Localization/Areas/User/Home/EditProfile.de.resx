@@ -131,6 +131,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Diese Person kann nicht aktiviert werden: Die Abteilung hat das Personallimit ihres Tarifs erreicht, oder der Tarif konnte nicht geprüft werden. Deaktivierte Mitglieder zählen nicht zum Limit. Entfernen oder deaktivieren Sie eine andere Person oder wechseln Sie in einen größeren Tarif und versuchen Sie es erneut. Auf dieser Seite wurde nichts gespeichert.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Bearbeiten</value>
   </data>

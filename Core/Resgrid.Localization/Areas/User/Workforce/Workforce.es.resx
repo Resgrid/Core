@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>La lectura de uso no es válida.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>La modalidad de trabajo no es válida.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>Ese miembro ya tiene un registro de trabajador.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Seleccione un miembro actual de este departamento.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>Un trabajador necesita un miembro o una clave externa.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>El tipo de trabajador no es válido.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>No se encontró el trabajador.</value></data>

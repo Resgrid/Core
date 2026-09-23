@@ -225,6 +225,9 @@
   <data name="JoinDepartmentInfo" xml:space="preserve">
     <value>Πρέπει να δώσετε το τρέχον Αναγνωριστικό και Κωδικό Τμήματος για το Τμήμα Resgrid στο οποίο θέλετε να συνδεθείτε.</value>
   </data>
+  <data name="JoinDepartmentFull" xml:space="preserve">
+    <value>Αυτό το τμήμα δεν μπορεί να δεχτεί νέα μέλη αυτή τη στιγμή: έχει φτάσει το όριο προσωπικού του πακέτου του ή δεν ήταν δυνατός ο έλεγχος του πακέτου. Επικοινωνήστε με έναν διαχειριστή του τμήματος.</value>
+  </data>
   <data name="NewPassword" xml:space="preserve">
     <value>Νέος Κωδικός Πρόσβασης</value>
   </data>

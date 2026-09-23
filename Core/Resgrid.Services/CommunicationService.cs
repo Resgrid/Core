@@ -653,7 +653,12 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title = "Notification", UserProfile profile = null, bool sendToICApp = false)
+		public Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title = "Notification", UserProfile profile = null, bool sendToICApp = false)
+		{
+			return SendNotificationAsync(userId, departmentId, message, departmentNumber, department, title, profile, sendToICApp, null);
+		}
+
+		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title, UserProfile profile, bool sendToICApp, string eventCode)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
@@ -699,6 +704,8 @@ namespace Resgrid.Services
 				spm.SubTitle = $"{title} {message}";
 				spm.DepartmentCode = department?.Code;
 				spm.DepartmentId = departmentId;
+				if (!string.IsNullOrWhiteSpace(eventCode))
+					spm.Id = eventCode;
 
 				try
 				{

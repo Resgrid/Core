@@ -50,7 +50,7 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> CanDepartmentAddNewUserAsync(int departmentId)
+		public async Task<bool> CanDepartmentAddNewUserAsync(int departmentId, bool bypassCache = false)
 		{
 			//int userCount = (await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId)).Count;
 
@@ -59,7 +59,7 @@ namespace Resgrid.Services
 
 			//return true;
 
-			var limits = await GetLimitsForEntityPlanWithFallbackAsync(departmentId);
+			var limits = await GetLimitsForEntityPlanWithFallbackAsync(departmentId, bypassCache);
 
 			if (limits.EntityTotal == 0 && limits.PersonnelCount >= limits.PersonnelLimit)
 				return false;

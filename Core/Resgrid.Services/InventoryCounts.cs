@@ -18,6 +18,59 @@ namespace Resgrid.Services
 			foreach (var line in await _store.RelatedAsync<InventoryCountItem>(actor.DepartmentId, "CountId", count.Id))
 				await LocationAsync(actor, line.LocationId, false, PermissionTypes.AdjustInventory, historical: historical);
 		}
+		// A location-scoped count carries this marker: its fence covers only the positions it counts (stock rows at its locations,
+		// assets at or listed on it, the items, lots and locations those touch), so work elsewhere in the department does not void
+		// a unit's count. Fingerprints without the marker (department-wide counts, and counts started before the scoped fence)
+		// keep the department fence.
+		private const string ScopedCountFingerprint = "L1:";
+		private async Task<string> ScopedCountFingerprintAsync(int departmentId, ICollection<string> locations, IEnumerable<InventoryCountItem> lines)
+		{
+			var listed = lines.ToList();
+			var allLocations = (await AllAsync<InventoryLocation>(departmentId)).ToDictionary(x => x.Id);
+			var allAssets = (await AllAsync<InventoryAsset>(departmentId)).ToDictionary(x => x.Id);
+			// The holder chain above the counted locations (parent locations, the kit assets that are containers and where those
+			// sit) is fenced too: losing the bag a counted container lives in, or re-homing a compartment, voids the count.
+			var fencedLocations = new HashSet<string>(locations, StringComparer.Ordinal);
+			var fencedAssets = listed.Where(l => l.AssetId != null).Select(l => l.AssetId).ToHashSet();
+			var pending = new Queue<string>(locations);
+			while (pending.Count > 0 && fencedLocations.Count < 512)
+			{
+				if (!allLocations.TryGetValue(pending.Dequeue(), out var location)) continue;
+				if (location.ParentLocationId != null && fencedLocations.Add(location.ParentLocationId)) pending.Enqueue(location.ParentLocationId);
+				if (location.ContainerAssetId != null && fencedAssets.Add(location.ContainerAssetId) && allAssets.TryGetValue(location.ContainerAssetId, out var holder) && holder.CurrentLocationId != null && fencedLocations.Add(holder.CurrentLocationId))
+					pending.Enqueue(holder.CurrentLocationId);
+			}
+			var stocks = (await AllAsync<InventoryStock>(departmentId)).Where(x => x.LocationId != null && locations.Contains(x.LocationId)).OrderBy(x => x.Id).ToList();
+			var assets = allAssets.Values.Where(x => x.CurrentLocationId != null && locations.Contains(x.CurrentLocationId) || fencedAssets.Contains(x.Id)).OrderBy(x => x.Id).ToList();
+			var items = listed.Select(l => l.ItemId).Concat(stocks.Select(s => s.ItemId)).Concat(assets.Select(a => a.ItemId)).ToHashSet();
+			var lots = listed.Select(l => l.LotId).Concat(stocks.Select(s => s.LotId)).Concat(assets.Select(a => a.LotId)).Where(x => x != null).ToHashSet();
+			return ScopedCountFingerprint + Fingerprint(new {
+				Items = (await AllAsync<InventoryItem>(departmentId)).Where(x => items.Contains(x.Id)).OrderBy(x => x.Id).Select(x => new { x.Id, x.Revision }),
+				Stocks = stocks.Select(x => new { x.Id, x.Revision, x.Quantity }),
+				Assets = assets.Select(x => new { x.Id, x.Revision }),
+				Lots = (await AllAsync<InventoryLot>(departmentId)).Where(x => lots.Contains(x.Id)).OrderBy(x => x.Id).Select(x => new { x.Id, x.Revision }),
+				Locations = allLocations.Values.Where(x => fencedLocations.Contains(x.Id)).OrderBy(x => x.Id).Select(x => new { x.Id, x.Revision })
+			});
+		}
+		/// <summary>The root location plus, when asked, every compartment (child location) and kit container inside it, recursively.</summary>
+		private async Task<HashSet<string>> CountLocationsAsync(int departmentId, string rootId, bool includeChildren)
+		{
+			var set = new HashSet<string>(StringComparer.Ordinal) { rootId };
+			if (!includeChildren) return set;
+			var locations = (await AllAsync<InventoryLocation>(departmentId)).Where(l => !l.IsDeleted).ToList();
+			var assets = (await AllAsync<InventoryAsset>(departmentId)).Where(a => !a.IsDeleted && a.Status is not (4 or 5 or 6)).ToDictionary(a => a.Id);
+			for (var grew = true; grew && set.Count < 256;)
+			{
+				grew = false;
+				foreach (var location in locations.Where(l => !set.Contains(l.Id)))
+				{
+					var inside = location.ParentLocationId != null && set.Contains(location.ParentLocationId)
+						|| location.ContainerAssetId != null && assets.TryGetValue(location.ContainerAssetId, out var holder) && holder.CurrentLocationId != null && set.Contains(holder.CurrentLocationId);
+					if (inside) grew = set.Add(location.Id) || grew;
+				}
+			}
+			return set;
+		}
 		// Conservative department fence also catches new positions, catalogue edits and rebuilds.
 		// Counts and observations themselves are excluded so independent counts do not invalidate each other.
 		private async Task<string> CountFingerprintAsync(int departmentId) => Fingerprint(new {
@@ -35,12 +88,13 @@ namespace Resgrid.Services
 			var count = New<InventoryCount>(actor); count.Id = input.Id; count.LocationId = input.LocationId;
 			await RequireCountAccessAsync(actor, count, false);
 			if (await _store.GetAsync<InventoryCount>(actor.DepartmentId, count.Id) != null) throw new InventoryException(409, "CountAlreadyExists");
-			count.SnapshotOn = Now; count.SnapshotFingerprint = await CountFingerprintAsync(actor.DepartmentId);
-			count.Content = JsonConvert.SerializeObject(new InventoryCountContent { Name = input.Name.Trim(), Note = input.Note });
+			var scope = input.LocationId == null ? null : await CountLocationsAsync(actor.DepartmentId, input.LocationId, input.IncludeChildLocations);
+			count.SnapshotOn = Now;
+			count.Content = JsonConvert.SerializeObject(new InventoryCountContent { Name = input.Name.Trim(), Note = input.Note, ScopeLocationIds = scope?.OrderBy(x => x, StringComparer.Ordinal).ToList() });
 			var lines = new List<InventoryCountItem>();
 			async Task Add(string itemId, string locationId, string lotId, string assetId, decimal quantity)
 			{
-				if (locationId == null || input.LocationId != null && locationId != input.LocationId) return;
+				if (locationId == null || scope != null && !scope.Contains(locationId)) return;
 				if (!await LiveAlertLocationAsync(actor.DepartmentId, locationId)) return;
 				await LocationAsync(actor, locationId, false, PermissionTypes.AdjustInventory);
 				var item = await GetAsync<InventoryItem>(actor, itemId);
@@ -55,9 +109,10 @@ namespace Resgrid.Services
 			}
 			foreach (var stock in await AllAsync<InventoryStock>(actor.DepartmentId)) if (!stock.IsDeleted) await Add(stock.ItemId, stock.LocationId, stock.LotId, null, stock.Quantity);
 			foreach (var asset in await AllAsync<InventoryAsset>(actor.DepartmentId)) if (!asset.IsDeleted && asset.Status is 0 or 1 or 2 or 3) await Add(asset.ItemId, asset.CurrentLocationId, asset.LotId, asset.Id, 1);
-			if (input.LocationId != null) foreach (var item in await AllAsync<InventoryItem>(actor.DepartmentId))
+			if (input.LocationId != null && (input.IncludeCatalogItems ?? true)) foreach (var item in await AllAsync<InventoryItem>(actor.DepartmentId))
 				if (!item.IsDeleted && item.IsActive && item.TrackingMode == 0 && !item.RequiresLotTracking && !lines.Any(l => l.ItemId == item.Id)) await Add(item.Id, input.LocationId, null, null, 0);
 			if (lines.Count == 0) throw new InventoryException(409, "CountEmpty");
+			count.SnapshotFingerprint = scope == null ? await CountFingerprintAsync(actor.DepartmentId) : await ScopedCountFingerprintAsync(actor.DepartmentId, scope, lines);
 			await SaveAsync(actor, count); foreach (var line in lines) await SaveAsync(actor, line);
 			await AuditAsync(actor, count, "InventoryCountStarted"); return await GetCountAsync(actor, count.Id);
 		});
@@ -82,6 +137,43 @@ namespace Resgrid.Services
 			}
 			await SaveAsync(actor, detail.Count, false); await AuditAsync(actor, detail.Count, "InventoryCountSaved"); return await GetCountAsync(actor, detail.Count.Id);
 		});
+		public async Task<InventoryFieldAccess> GetFieldAccessAsync(InventoryActor actor, int? unitId)
+		{
+			async Task<bool> Allowed(Func<Task> check)
+			{
+				try { await check(); return true; }
+				catch (InventoryException) { return false; }
+				catch (UnauthorizedAccessException) { return false; }
+			}
+			await _auth.RequireAsync(actor);
+			var access = new InventoryFieldAccess { Enabled = await _auth.IsEnabledAsync(actor.DepartmentId), Migrated = await _store.HasLegacyMigrationAsync(actor.DepartmentId) };
+			if (!unitId.HasValue)
+			{
+				access.CanCount = await Allowed(() => _auth.RequireAsync(actor, false, PermissionTypes.AdjustInventory));
+				access.CanIssue = await Allowed(() => _auth.RequireAsync(actor, false, PermissionTypes.IssueInventory));
+				access.CanTransfer = await Allowed(() => _auth.RequireAsync(actor, false, PermissionTypes.TransferInventory));
+				return access;
+			}
+			var all = (await AllAsync<InventoryLocation>(actor.DepartmentId)).Where(l => !l.IsDeleted).ToList();
+			var root = all.Where(l => l.LocationType == (int)InventoryLocationType.Unit && l.UnitId == unitId && l.ParentLocationId == null && l.ContainerAssetId == null).OrderBy(l => l.CreatedOn).FirstOrDefault();
+			if (root == null) return access;
+			foreach (var id in await CountLocationsAsync(actor.DepartmentId, root.Id, true))
+			{
+				var location = all.FirstOrDefault(l => l.Id == id);
+				if (location == null) continue;
+				try
+				{
+					await LocationAsync(actor, location.Id);
+					var revealed = await RevealAsync(actor, location);
+					access.UnitLocations.Add(new InventoryFieldLocation { Id = location.Id, Name = Decode<InventoryLabel>(revealed).Name, ParentLocationId = location.ParentLocationId, LocationType = location.LocationType, IsRoot = location.Id == root.Id });
+				}
+				catch (InventoryException ex) when (ex.StatusCode is 403 or 404 || ex.Code == "LocationUnavailable") { }
+			}
+			access.CanCount = await Allowed(() => LocationAsync(actor, root.Id, false, PermissionTypes.AdjustInventory));
+			access.CanIssue = await Allowed(() => LocationAsync(actor, root.Id, false, PermissionTypes.IssueInventory));
+			access.CanTransfer = await Allowed(() => LocationAsync(actor, root.Id, false, PermissionTypes.TransferInventory));
+			return access;
+		}
 		public Task CancelCountAsync(InventoryActor actor, string id, int revision) => TransactionAsync(actor, async events =>
 		{
 			var count = await GetAsync<InventoryCount>(actor, id);
@@ -91,7 +183,11 @@ namespace Resgrid.Services
 		private async Task<InventoryCommand> CountCommandAsync(InventoryActor actor, InventoryCountDetail detail, InventoryCountComplete input, bool witnessed)
 		{
 			if (detail.Count.Status != (witnessed ? 1 : 0) || detail.Count.Revision != input.Revision || detail.Lines.Any(l => !l.CountedQuantity.HasValue)) throw new InventoryException(409, "CountStateConflict");
-			if (detail.Count.SnapshotFingerprint != await CountFingerprintAsync(actor.DepartmentId)) throw new InventoryException(409, "CountSnapshotChanged");
+			var fence = detail.Count.SnapshotFingerprint?.StartsWith(ScopedCountFingerprint, StringComparison.Ordinal) == true
+				? await ScopedCountFingerprintAsync(actor.DepartmentId, Decode<InventoryCountContent>(detail.Count).ScopeLocationIds?.ToHashSet(StringComparer.Ordinal)
+					?? detail.Lines.Select(l => l.LocationId).Append(detail.Count.LocationId).Where(x => x != null).ToHashSet(StringComparer.Ordinal), detail.Lines)
+				: await CountFingerprintAsync(actor.DepartmentId);
+			if (detail.Count.SnapshotFingerprint != fence) throw new InventoryException(409, "CountSnapshotChanged");
 			var command = new InventoryCommand { RequestId = input.RequestId };
 			foreach (var row in detail.Lines.Where(l => l.CountedQuantity != l.ExpectedQuantity))
 			{

@@ -57,51 +57,23 @@ namespace Resgrid.Repositories.DataRepository
 								-- PushUris has no DepartmentId column; delete by membership while DepartmentMembers rows still exist
 								DELETE FROM [dbo].[PushUris] WHERE UserId IN (SELECT UserId FROM [dbo].[DepartmentMembers] WHERE DepartmentId = @DepartmentId)
 
-								OPEN db_cursor
-								FETCH NEXT FROM db_cursor INTO @UserId
+								-- Call child data (Calls rows deleted further down). Runs before the unit and member cursors:
+								-- CallUnits reference UnitStates and CallDispatches reference ActionLogs, both deleted there.
+								DELETE FROM [dbo].[CallAttachments] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallNotes] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallDispatches] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallDispatchGroups] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallDispatchRoles] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallDispatchUnits] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallUnits] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallProtocols] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallLogs] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[CallReferences] WHERE SourceCallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId) OR TargetCallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CheckInRecords] WHERE DepartmentId = @DepartmentId OR CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 
-								-- Clear all the users out in the department
-								WHILE @@FETCH_STATUS = 0
-								BEGIN
-									DELETE FROM [dbo].[ScheduledTasks] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-								    DELETE FROM [dbo].[UserStates] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-								    DELETE FROM [dbo].[Logs] WHERE LoggedByUserId = @UserId AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @UserId
-									DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @UserId
-									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE ReceivingUserId = @UserId)
-									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @UserId)
-									DELETE FROM [dbo].[Messages] WHERE SendingUserId = @UserId
-									DELETE FROM [dbo].[Messages] WHERE ReceivingUserId = @UserId
-									DELETE FROM [dbo].[PersonnelCertifications] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-								    DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[PushUris] WHERE UserId = @UserId
-									DELETE FROM [dbo].[UserStates] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[ActionLogs] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[DepartmentMembers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[DepartmentGroupMembers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[DistributionListMembers] WHERE UserId = @UserId
-									DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
-								    DELETE FROM [dbo].[UnitStateRoles] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
-									DELETE FROM [dbo].[CallDispatches] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
-
-									IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 0
-									BEGIN
-										-- The deleted membership was the user's last, so clear their account out as well
-										DELETE FROM [dbo].[ChatbotUserIdentities] WHERE UserId = @UserId
-										DELETE FROM [dbo].[ChatbotLinkingCodes] WHERE UserId = @UserId
-										DELETE FROM [dbo].[UserProfiles] WHERE UserId = @UserId
-										DELETE FROM [dbo].[AspNetUserClaims] WHERE UserId = @UserId
-										DELETE FROM [dbo].[AspNetUserLogins] WHERE UserId = @UserId
-										DELETE FROM [dbo].[AspNetUserRoles] WHERE UserId = @UserId
-										DELETE FROM [dbo].[AspNetUsersExt] WHERE UserId = @UserId
-										DELETE FROM [dbo].[AspNetUsers] WHERE Id = @UserId
-									END
-
-									FETCH NEXT FROM db_cursor INTO @UserId
-								END
-
-								CLOSE db_cursor
-								DEALLOCATE db_cursor
+								-- Tracking devices reference Units through a (UnitId, DepartmentId) key
+								DELETE FROM [dbo].[UnitTrackingCredentials] WHERE UnitTrackingDeviceId IN (SELECT UnitTrackingDeviceId FROM [dbo].[UnitTrackingDevices] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[UnitTrackingDevices] WHERE DepartmentId = @DepartmentId
 
 								OPEN unit_cursor
 								FETCH NEXT FROM unit_cursor INTO @UnitId
@@ -109,6 +81,7 @@ namespace Resgrid.Repositories.DataRepository
 								-- Clear all the unit out in the department
 								WHILE @@FETCH_STATUS = 0
 								BEGIN
+									DELETE FROM [dbo].[CallUnits] WHERE UnitId = @UnitId
 									DELETE FROM [dbo].[UnitLocations] WHERE UnitId = @UnitId
 									DELETE FROM [dbo].[UnitLogs] WHERE UnitId = @UnitId
 									DELETE FROM [dbo].[UnitActiveRoles] WHERE UnitId = @UnitId
@@ -125,17 +98,6 @@ namespace Resgrid.Repositories.DataRepository
 								DEALLOCATE unit_cursor
 
 								-- Delete all the department level data
-								-- Call child data (parents deleted further down)
-								DELETE FROM [dbo].[CallAttachments] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallNotes] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallDispatches] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallDispatchGroups] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallDispatchRoles] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallDispatchUnits] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallUnits] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallProtocols] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallLogs] WHERE DepartmentId = @DepartmentId
-
 								-- Command definitions reference CallTypes (CallTypeId), so their tree must go first
 								DELETE FROM [dbo].[CommandDefinitionRolePersonnelRoles] WHERE CommandDefinitionRoleId IN (SELECT CommandDefinitionRoleId FROM [dbo].[CommandDefinitionRoles] WHERE CommandDefinitionId IN (SELECT CommandDefinitionId FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId))
 								DELETE FROM [dbo].[CommandDefinitionRoleUnitTypes] WHERE CommandDefinitionRoleId IN (SELECT CommandDefinitionRoleId FROM [dbo].[CommandDefinitionRoles] WHERE CommandDefinitionId IN (SELECT CommandDefinitionId FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId))
@@ -161,6 +123,12 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[ShiftStaffingPersons] WHERE ShiftStaffingId IN (SELECT ShiftStaffingId FROM [dbo].[ShiftStaffings] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[ShiftStaffings] WHERE DepartmentId = @DepartmentId
 
+								-- Workshift tree
+								DELETE FROM [dbo].[WorkshiftFills] WHERE WorkshiftId IN (SELECT WorkshiftId FROM [dbo].[Workshifts] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[WorkshiftDays] WHERE WorkshiftId IN (SELECT WorkshiftId FROM [dbo].[Workshifts] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[WorkshiftEntities] WHERE WorkshiftId IN (SELECT WorkshiftId FROM [dbo].[Workshifts] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[Workshifts] WHERE DepartmentId = @DepartmentId
+
 								-- Training tree (Trainings row deleted further down)
 								DELETE FROM [dbo].[TrainingQuestionAnswers] WHERE TrainingQuestionId IN (SELECT TrainingQuestionId FROM [dbo].[TrainingQuestions] WHERE TrainingId IN (SELECT TrainingId FROM [dbo].[Trainings] WHERE DepartmentId = @DepartmentId))
 								DELETE FROM [dbo].[TrainingQuestions] WHERE TrainingId IN (SELECT TrainingId FROM [dbo].[Trainings] WHERE DepartmentId = @DepartmentId)
@@ -174,6 +142,7 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[DispatchProtocolTriggers] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId)
 
 								-- Calendar
+								DELETE FROM [dbo].[CalendarItemCheckIns] WHERE DepartmentId = @DepartmentId OR CalendarItemId IN (SELECT CalendarItemId FROM [dbo].[CalendarItems] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CalendarItemAttendees] WHERE CalendarItemId IN (SELECT CalendarItemId FROM [dbo].[CalendarItems] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CalendarItems] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CalendarItemTypes] WHERE DepartmentId = @DepartmentId
@@ -185,6 +154,33 @@ namespace Resgrid.Repositories.DataRepository
 								-- Mapping / POIs
 								DELETE FROM [dbo].[Pois] WHERE PoiTypeId IN (SELECT PoiTypeId FROM [dbo].[POITypes] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[POITypes] WHERE DepartmentId = @DepartmentId
+
+								-- Indoor / custom maps
+								DELETE FROM [dbo].[CustomMapTiles] WHERE CustomMapLayerId IN (SELECT IndoorMapFloorId FROM [dbo].[IndoorMapFloors] WHERE IndoorMapId IN (SELECT IndoorMapId FROM [dbo].[IndoorMaps] WHERE DepartmentId = @DepartmentId))
+								DELETE FROM [dbo].[IndoorMapZones] WHERE IndoorMapFloorId IN (SELECT IndoorMapFloorId FROM [dbo].[IndoorMapFloors] WHERE IndoorMapId IN (SELECT IndoorMapId FROM [dbo].[IndoorMaps] WHERE DepartmentId = @DepartmentId))
+								DELETE FROM [dbo].[CustomMapImports] WHERE CustomMapId IN (SELECT IndoorMapId FROM [dbo].[IndoorMaps] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[IndoorMapFloors] WHERE IndoorMapId IN (SELECT IndoorMapId FROM [dbo].[IndoorMaps] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[IndoorMaps] WHERE DepartmentId = @DepartmentId
+
+								-- Route planning
+								DELETE FROM [dbo].[RouteDeviations] WHERE RouteInstanceId IN (SELECT RouteInstanceId FROM [dbo].[RouteInstances] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[RouteInstanceStops] WHERE RouteInstanceId IN (SELECT RouteInstanceId FROM [dbo].[RouteInstances] WHERE DepartmentId = @DepartmentId) OR RouteStopId IN (SELECT RouteStopId FROM [dbo].[RouteStops] WHERE RoutePlanId IN (SELECT RoutePlanId FROM [dbo].[RoutePlans] WHERE DepartmentId = @DepartmentId))
+								DELETE FROM [dbo].[RouteInstances] WHERE DepartmentId = @DepartmentId OR RoutePlanId IN (SELECT RoutePlanId FROM [dbo].[RoutePlans] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[RouteSchedules] WHERE RoutePlanId IN (SELECT RoutePlanId FROM [dbo].[RoutePlans] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[RouteStops] WHERE RoutePlanId IN (SELECT RoutePlanId FROM [dbo].[RoutePlans] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[RoutePlans] WHERE DepartmentId = @DepartmentId
+
+								-- Contacts (module subtrees that reference Contacts were cleared by the cleanup helpers)
+								DELETE FROM [dbo].[ContactNotes] WHERE DepartmentId = @DepartmentId OR ContactId IN (SELECT ContactId FROM [dbo].[Contacts] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[ContactAssociations] WHERE DepartmentId = @DepartmentId OR SourceContactId IN (SELECT ContactId FROM [dbo].[Contacts] WHERE DepartmentId = @DepartmentId) OR TargetContactId IN (SELECT ContactId FROM [dbo].[Contacts] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallContacts] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[Contacts] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[ContactCategories] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[ContactNoteTypes] WHERE DepartmentId = @DepartmentId
+
+								-- Check-in timers
+								DELETE FROM [dbo].[CheckInTimerOverrides] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[CheckInTimerConfigs] WHERE DepartmentId = @DepartmentId
 
 								-- Resource orders (ResourceOrders row deleted further down)
 								DELETE FROM [dbo].[ResourceOrderFillUnits] WHERE ResourceOrderFillId IN (SELECT ResourceOrderFillId FROM [dbo].[ResourceOrderFills] WHERE DepartmentId = @DepartmentId OR ResourceOrderItemId IN (SELECT ResourceOrderItemId FROM [dbo].[ResourceOrderItems] WHERE ResourceOrderId IN (SELECT ResourceOrderId FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId)))
@@ -235,10 +231,12 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[GdprDataExportRequests] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[NotificationAlerts] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Permissions] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[DepartmentAudios] WHERE DepartmentId = @DepartmentId
+								-- Memberships (deleted with the accounts below) still reference ranks
+								UPDATE [dbo].[DepartmentMembers] SET RankId = NULL WHERE DepartmentId = @DepartmentId AND RankId IS NOT NULL
 								DELETE FROM [dbo].[Ranks] WHERE DepartmentId = @DepartmentId
 
-								-- Catch-alls for rows the per-user cursor missed (users removed from the
-								-- department before deletion, or rows with no surviving member)
+								-- Department-wide sweeps of per-member rows, including members who left before the deletion
 								DELETE FROM [dbo].[ScheduledTasks] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[UserStates] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelCertifications] WHERE DepartmentId = @DepartmentId
@@ -265,6 +263,7 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[PersonnelRoles] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[UnitTypes] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[FormAutomations] WHERE FormId IN (SELECT FormId FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PaymentAddons] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId
@@ -272,9 +271,59 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[DepartmentLinks] WHERE LinkedDepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentLinks] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentVoiceChannels] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[DepartmentVoiceUsers] WHERE DepartmentVoiceId IN (SELECT DepartmentVoiceId FROM [dbo].[DepartmentVoices] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[DepartmentVoices] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallQuickTemplates] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentCallPruning] WHERE DepartmentId = @DepartmentId
+
+								-- Clear the members' memberships and account-level rows. Runs after the department data so no
+								-- department row still references an account (CallQuickTemplates, ResourceOrderFills, Inventories).
+								OPEN db_cursor
+								FETCH NEXT FROM db_cursor INTO @UserId
+
+								WHILE @@FETCH_STATUS = 0
+								BEGIN
+									DELETE FROM [dbo].[ScheduledTasks] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+								    DELETE FROM [dbo].[UserStates] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+								    DELETE FROM [dbo].[Logs] WHERE LoggedByUserId = @UserId AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @UserId
+									DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @UserId
+									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE ReceivingUserId = @UserId)
+									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @UserId)
+									DELETE FROM [dbo].[Files] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @UserId OR ReceivingUserId = @UserId)
+									DELETE FROM [dbo].[Messages] WHERE SendingUserId = @UserId
+									DELETE FROM [dbo].[Messages] WHERE ReceivingUserId = @UserId
+									DELETE FROM [dbo].[PersonnelCertifications] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+								    DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[PushUris] WHERE UserId = @UserId
+									DELETE FROM [dbo].[UserStates] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[ActionLogs] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[DepartmentMembers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[DepartmentGroupMembers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[DistributionListMembers] WHERE UserId = @UserId
+									DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @UserId AND DepartmentId = @DepartmentId
+								    DELETE FROM [dbo].[UnitStateRoles] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
+									DELETE FROM [dbo].[CallDispatches] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
+
+									IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 0
+									BEGIN
+										-- The deleted membership was the user's last, so clear their account out as well
+										DELETE FROM [dbo].[ChatbotUserIdentities] WHERE UserId = @UserId
+										DELETE FROM [dbo].[ChatbotLinkingCodes] WHERE UserId = @UserId
+										DELETE FROM [dbo].[UserProfiles] WHERE UserId = @UserId
+										DELETE FROM [dbo].[AspNetUserClaims] WHERE UserId = @UserId
+										DELETE FROM [dbo].[AspNetUserLogins] WHERE UserId = @UserId
+										DELETE FROM [dbo].[AspNetUserRoles] WHERE UserId = @UserId
+										DELETE FROM [dbo].[AspNetUsersExt] WHERE UserId = @UserId
+										DELETE FROM [dbo].[AspNetUsers] WHERE Id = @UserId
+									END
+
+									FETCH NEXT FROM db_cursor INTO @UserId
+								END
+
+								CLOSE db_cursor
+								DEALLOCATE db_cursor
+
 								DELETE FROM [dbo].[Departments] WHERE DepartmentId = @DepartmentId
 
 								-- Remove only this department's managing membership. The same user may
@@ -289,6 +338,7 @@ namespace Resgrid.Repositories.DataRepository
 									DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @ManagingUserId
 									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE ReceivingUserId = @ManagingUserId)
 									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId)
+									DELETE FROM [dbo].[Files] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId OR ReceivingUserId = @ManagingUserId)
 									DELETE FROM [dbo].[Messages] WHERE ReceivingUserId = @ManagingUserId
 									DELETE FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId
 									DELETE FROM [dbo].[PersonnelCertifications] WHERE UserId = @ManagingUserId

@@ -78,6 +78,9 @@
   <data name="CompleteInviteText3" xml:space="preserve">
     <value>إذا واجهتك صعوبة في إكمال الدعوة أو صادفت مشكلات، يُرجى التواصل مع مسؤول القسم للحصول على المساعدة. يمكنه إضافة حسابك يدويًا إذا لزم الأمر.</value>
   </data>
+  <data name="CompleteInviteDepartmentFull" xml:space="preserve">
+    <value>لا يمكن لهذا القسم قبول أعضاء جدد الآن: فقد بلغ الحد الأقصى لعدد الأفراد في خطته، أو تعذر التحقق من الخطة. يرجى التواصل مع مسؤول القسم الذي دعاك.</value>
+  </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>تأكيد كلمة المرور</value>
   </data>

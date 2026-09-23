@@ -225,6 +225,9 @@
   <data name="JoinDepartmentInfo" xml:space="preserve">
     <value>Debe proporcionar la identificación y código del departamento actual para el departamento de regrid que desea unirse.</value>
   </data>
+  <data name="JoinDepartmentFull" xml:space="preserve">
+    <value>Este departamento no puede aceptar nuevos miembros en este momento: ha alcanzado el límite de personal de su plan o no se pudo comprobar el plan. Póngase en contacto con un administrador del departamento.</value>
+  </data>
   <data name="NewPassword" xml:space="preserve">
     <value>Nueva contraseña</value>
   </data>

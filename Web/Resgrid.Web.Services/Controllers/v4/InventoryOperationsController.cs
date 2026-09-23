@@ -13,6 +13,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private IInventoryOperationsService OperationsService => HttpContext.RequestServices.GetService<IInventoryOperationsService>()
 			?? throw new InventoryException(409, "OperationUnavailable");
+		/// <summary>Field apps: whether inventory is usable, whether the caller may count (AdjustInventory at the unit's holder location) and the unit's countable locations.</summary>
+		[HttpGet("GetAccess")]
+		public async Task<IActionResult> GetAccess(int? unitId = null) => Reply(await OperationsService.GetFieldAccessAsync(Actor, unitId is > 0 ? unitId : null));
 		[HttpGet("GetCounts")]
 		public Task<IActionResult> GetCounts(int page = 0, string locationId = null)
 			=> Query<InventoryCount>(new InventoryQuery { LocationId = locationId }, page);

@@ -133,7 +133,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await EnabledAsync()) return Failed<CalOesMarsWorkItemResult>("cost_recovery_disabled", StatusCodes.Status403Forbidden);
 			if (input == null || string.IsNullOrWhiteSpace(input.DeploymentId)) return Failed<CalOesMarsWorkItemResult>("calmars_deployment_required");
-			if (!CanManage && !await _deployments.IsRosteredAsync(input.DeploymentId, DepartmentId, UserId)) return Unauthorized();
+			if (!CanManage && !await _deployments.CanFieldMemberSeeAsync(input.DeploymentId, DepartmentId, UserId)) return Unauthorized();
 			try
 			{
 				var item = await _mars.BuildF42DraftAsync(input.DeploymentId, DepartmentId, input.RmsExternalOrderFillId, UserId, Ip, Agent);
@@ -150,7 +150,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await EnabledAsync()) return Failed<CalOesMarsWorkItemResult>("cost_recovery_disabled", StatusCodes.Status403Forbidden);
 			if (input == null || string.IsNullOrWhiteSpace(input.DeploymentId)) return Failed<CalOesMarsWorkItemResult>("calmars_deployment_required");
-			if (!CanManage && !await _deployments.IsRosteredAsync(input.DeploymentId, DepartmentId, UserId)) return Unauthorized();
+			if (!CanManage && !await _deployments.CanFieldMemberSeeAsync(input.DeploymentId, DepartmentId, UserId)) return Unauthorized();
 			try
 			{
 				var item = await _mars.BuildExpenseClaimDraftAsync(input.DeploymentId, DepartmentId, input.F42WorkItemId, UserId, Ip, Agent);

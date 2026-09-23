@@ -459,5 +459,85 @@ namespace Resgrid.Tests.Services
 			(await _service.GetDeploymentsByIdsAsync(DeptId, null)).Should().BeEmpty();
 			_deployments.Verify(r => r.GetByIdsAsync(DeptId, It.IsAny<IEnumerable<string>>()), Times.Once, "blank input never reaches the repository");
 		}
+
+		[Test]
+		public async Task Time_access_covers_own_row_rostered_crew_and_the_crew_seated_on_a_deployed_unit()
+		{
+			var deployment = new Deployment
+			{
+				DeploymentId = "dep-t", DepartmentId = DeptId,
+				Units = { new DeploymentUnit { DeploymentUnitId = "du-1", UnitId = 1 }, new DeploymentUnit { DeploymentUnitId = "du-2", UnitId = 2 }, new DeploymentUnit { DeploymentUnitId = "du-3", UnitId = 3, RemovedOn = DateTime.UtcNow } },
+				Personnel =
+				{
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-a", UserId = "alice", DeploymentUnitId = "du-1" },
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-b", UserId = "bob", DeploymentUnitId = "du-1", RemovedOn = DateTime.UtcNow },
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-c", UserId = "carol", DeploymentUnitId = "du-2" },
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-d", UserId = "dave" }
+				},
+				Equipment = { new DeploymentEquipment { DeploymentEquipmentId = "de-1", DeploymentUnitId = "du-2" } }
+			};
+			// The Engine 2 tablet signs in as "tablet", seated on unit 2 (and on unit 3, whose deployment row was released).
+			_unitsService.Setup(u => u.GetAllActiveRolesForUnitsByDepartmentIdAsync(DeptId)).ReturnsAsync(new List<UnitActiveRole>
+			{
+				new UnitActiveRole { UnitId = 2, UserId = "tablet", DepartmentId = DeptId }, new UnitActiveRole { UnitId = 3, UserId = "tablet", DepartmentId = DeptId }
+			});
+
+			var alice = await _service.GetTimeAccessAsync(deployment, "alice", false);
+			alice.PersonnelId.Should().Be("dp-a");
+			alice.CrewUnitIds.Should().Equal("du-1");
+			alice.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-a", "du-1", "dp-b" }, "a released crew member's time is still the crew's to report");
+
+			var dave = await _service.GetTimeAccessAsync(deployment, "dave", false);
+			dave.CrewUnitIds.Should().BeEmpty();
+			dave.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-d" });
+
+			var tablet = await _service.GetTimeAccessAsync(deployment, "tablet", false);
+			tablet.IsRostered.Should().BeFalse();
+			tablet.CanRead.Should().BeTrue();
+			tablet.CrewUnitIds.Should().Equal("du-2");
+			tablet.WritableSubjectIds.Should().BeEquivalentTo(new[] { "du-2", "dp-c", "de-1" });
+
+			var stranger = await _service.GetTimeAccessAsync(deployment, "eve", false);
+			stranger.CanRead.Should().BeFalse();
+			stranger.CanWrite.Should().BeFalse();
+			(await _service.GetTimeAccessAsync(deployment, "eve", true)).CanWrite.Should().BeTrue("a manager writes every subject");
+		}
+
+		[Test]
+		public async Task A_unit_seat_reaches_only_open_deployments_while_the_roster_keeps_closed_history()
+		{
+			// Engine 2 served on a deployment that has since completed (closing leaves its unit row active) and serves on an open one
+			// now. The tablet is seated on Engine 2 today; alice is too, and was on the closed deployment's roster.
+			_storedDeployments.Add(new Deployment { DeploymentId = "dep-open", DepartmentId = DeptId, Name = "Open", Status = (int)DeploymentStatuses.Active });
+			_storedDeployments.Add(new Deployment { DeploymentId = "dep-closed", DepartmentId = DeptId, Name = "Closed", Status = (int)DeploymentStatuses.Completed });
+			_storedUnits.Add(new DeploymentUnit { DeploymentUnitId = "du-open", DeploymentId = "dep-open", DepartmentId = DeptId, UnitId = 2 });
+			_storedUnits.Add(new DeploymentUnit { DeploymentUnitId = "du-closed", DeploymentId = "dep-closed", DepartmentId = DeptId, UnitId = 2 });
+			_storedPersonnel.Add(new DeploymentPersonnel { DeploymentPersonnelId = "dp-alice", DeploymentId = "dep-closed", DepartmentId = DeptId, UserId = "alice", DeploymentUnitId = "du-closed" });
+			_unitsService.Setup(u => u.GetAllActiveRolesForUnitsByDepartmentIdAsync(DeptId)).ReturnsAsync(new List<UnitActiveRole>
+			{
+				new UnitActiveRole { UnitId = 2, UserId = "tablet", DepartmentId = DeptId }, new UnitActiveRole { UnitId = 2, UserId = "alice", DepartmentId = DeptId }
+			});
+			_units.Setup(r => r.GetForUnitsAsync(DeptId, It.IsAny<IEnumerable<int>>())).ReturnsAsync((int _, IEnumerable<int> ids) => _storedUnits.Where(u => ids.Contains(u.UnitId)).ToList());
+			_personnel.Setup(r => r.GetForUserAsync(DeptId, It.IsAny<string>())).ReturnsAsync((int _, string user) => _storedPersonnel.Where(p => p.UserId == user).ToList());
+			_deployments.Setup(r => r.GetByIdsAsync(DeptId, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int _, IEnumerable<string> ids) => _storedDeployments.Where(x => ids.Contains(x.DeploymentId)).ToList());
+			var closed = new Deployment
+			{
+				DeploymentId = "dep-closed", DepartmentId = DeptId, Status = (int)DeploymentStatuses.Completed,
+				Units = { _storedUnits.Single(u => u.DeploymentUnitId == "du-closed") }, Personnel = { _storedPersonnel.Single() }
+			};
+
+			(await _service.GetDeploymentsForUserAsync(DeptId, "tablet", false)).Select(d => d.DeploymentId).Should().Equal(new[] { "dep-open" }, "today's seat is not a place in a finished deployment's history");
+			(await _service.CanFieldMemberSeeAsync("dep-open", DeptId, "tablet")).Should().BeTrue();
+			(await _service.CanFieldMemberSeeAsync("dep-closed", DeptId, "tablet")).Should().BeFalse();
+			var tablet = await _service.GetTimeAccessAsync(closed, "tablet", false);
+			tablet.CanRead.Should().BeFalse("the seat no longer opens the closed deployment's reports");
+			tablet.CanWrite.Should().BeFalse("nor lets it edit or sign them");
+
+			(await _service.GetDeploymentsForUserAsync(DeptId, "alice", false)).Select(d => d.DeploymentId).Should().BeEquivalentTo(new[] { "dep-open", "dep-closed" }, "a roster row keeps its history");
+			(await _service.CanFieldMemberSeeAsync("dep-closed", DeptId, "alice")).Should().BeTrue();
+			var alice = await _service.GetTimeAccessAsync(closed, "alice", false);
+			alice.CrewUnitIds.Should().Equal(new[] { "du-closed" }, "rostered crew still report for the unit they crewed");
+			alice.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-alice", "du-closed" });
+		}
 	}
 }

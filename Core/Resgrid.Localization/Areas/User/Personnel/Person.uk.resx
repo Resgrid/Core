@@ -140,6 +140,18 @@
   <data name="ExistingUserHelp2" xml:space="preserve">
     <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
   </data>
+  <data name="AddExistingUserConfirmHeader" xml:space="preserve">
+    <value>Додати наявного користувача</value>
+  </data>
+  <data name="ExistingUserConfirmText" xml:space="preserve">
+    <value>, за адресою електронної пошти, вже має обліковий запис Resgrid в іншому підрозділі. Додавання переносить цей обліковий запис до цього підрозділу з наявними налаштуваннями профілю (ім'я, номери телефонів, уподобання). Особа приєднується як звичайний член і побачить цей підрозділ, коли перейде до нього через "Ваші підрозділи" в меню профілю.</value>
+  </data>
+  <data name="AddExistingUserButton" xml:space="preserve">
+    <value>Додати до підрозділу</value>
+  </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Цей підрозділ досяг ліміту персоналу свого тарифного плану, або план зараз не вдалося перевірити. Видаліть когось, кому більше не потрібен доступ, або оновіть план і спробуйте ще раз.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Ім'я</value>
   </data>
@@ -247,6 +259,12 @@
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
     <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+  </data>
+  <data name="ReactivatePersonConfirmText" xml:space="preserve">
+    <value>підрозділі, але був видалений. Повторна активація повертає обліковий запис у цей підрозділ із попередніми налаштуваннями профілю (ім'я, номери телефонів, уподобання). Особа повертається як звичайний член; за потреби надайте права адміністратора окремо.</value>
+  </data>
+  <data name="ReactivatePersonButton" xml:space="preserve">
+    <value>Активувати повторно</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
     <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>

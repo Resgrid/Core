@@ -46,6 +46,8 @@ namespace Resgrid.Tests.Web.User
             _departments = new Mock<IDepartmentsService>(MockBehavior.Strict);
             _departments.Setup(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId))
                 .ReturnsAsync(new List<PersonName> { new PersonName { UserId = Subject, FirstName = "Alex", LastName = "Member" } });
+            _departments.Setup(x => x.GetSelectablePersonnelNamesAsync(DepartmentId))
+                .ReturnsAsync(new List<PersonName> { new PersonName { UserId = Subject, FirstName = "Alex", LastName = "Member" } });
             _departments.Setup(x => x.GetDepartmentMemberAsync(Subject, DepartmentId, true))
                 .ReturnsAsync(new DepartmentMember { DepartmentId = DepartmentId, UserId = Subject });
             _type = new DepartmentCertificationType { DepartmentCertificationTypeId = TypeId, DepartmentId = DepartmentId, Type = "EMT", IsActive = true };

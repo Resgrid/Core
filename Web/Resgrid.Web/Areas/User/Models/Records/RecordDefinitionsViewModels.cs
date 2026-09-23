@@ -412,7 +412,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int AttachmentClassification { get; set; } = 1;
 		public Department Department { get; set; }
 		public List<SelectListItem> Stations { get; set; } = new List<SelectListItem>();
+		/// <summary>Who a Person field may pick: active members only.</summary>
 		public List<SelectListItem> Personnel { get; set; } = new List<SelectListItem>();
+		/// <summary>Every member's name, inactive ones included: keeps a Person value already on the record selected and labelled.</summary>
+		public Dictionary<string, string> PersonnelLabels { get; set; } = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
 		public List<SelectListItem> AvailableUnits { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> Calls { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> Contacts { get; set; } = new List<SelectListItem>();

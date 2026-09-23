@@ -83,6 +83,9 @@
   <data name="CompleteInviteText3" xml:space="preserve">
     <value>If you are having trouble completing the invite or are running into issues, please reach out to the Administrator of the department for the invite you are trying to complete for assistance. They can manually add your account if necessary.</value>
   </data>
+  <data name="CompleteInviteDepartmentFull" xml:space="preserve">
+    <value>Ce département ne peut pas accueillir de nouveaux membres pour le moment : il a atteint la limite de personnel de son forfait, ou le forfait n'a pas pu être vérifié. Veuillez contacter l'administrateur du département qui vous a invité.</value>
+  </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Confirmer le mot de passe</value>
   </data>

@@ -967,7 +967,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				using var stream = new MemoryStream();
 				await logo.CopyToAsync(stream, cancellationToken);
 				await _departmentProfileMediaService.UploadLogoAsync(DepartmentId, UserId, Path.GetFileName(logo.FileName), logo.ContentType, stream.ToArray(), cancellationToken);
-				SendProfileAudit("logo", "uploaded " + Path.GetFileName(logo.FileName));
+				SendProfileAudit(null, JsonConvert.SerializeObject(new { Logo = "uploaded " + Path.GetFileName(logo.FileName) }));
 
 				result = await BuildProfileModelAsync();
 				result.Message = _departmentLocalizer["ProfileLogoSaved"];
@@ -990,7 +990,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			await _departmentProfileMediaService.RemoveLogoAsync(DepartmentId, UserId, cancellationToken);
-			SendProfileAudit("logo", "removed");
+			SendProfileAudit(null, JsonConvert.SerializeObject(new { Logo = "removed" }));
 
 			var result = await BuildProfileModelAsync();
 			result.Message = _departmentLocalizer["ProfileLogoRemoved"];
@@ -1006,7 +1006,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			await _departmentProfileMediaService.RegenerateMediaKeyAsync(DepartmentId, UserId, cancellationToken);
-			SendProfileAudit("mediaKey", "regenerated");
+			SendProfileAudit(null, JsonConvert.SerializeObject(new { MediaKey = "regenerated" }));
 
 			var result = await BuildProfileModelAsync();
 			result.Message = _departmentLocalizer["ProfileKeyRegenerated"];

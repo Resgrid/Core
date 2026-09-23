@@ -3,12 +3,13 @@
 @model Resgrid.Web.Areas.User.Models.Personnel.ViewPersonView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @{
-    ViewBag.Title = "Resgrid | " + @localizer["AddExistingUserHeader"];
+    var header = Model.ConfirmationPending ? localizer["AddExistingUserConfirmHeader"] : localizer["AddExistingUserHeader"];
+    ViewBag.Title = "Resgrid | " + header;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>@localizer["AddExistingUserHeader"]</h2>
+        <h2>@header</h2>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
@@ -17,7 +18,7 @@
                 <a asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["PersonnelModule"]</a>
             </li>
             <li class="active">
-                <strong>@localizer["AddExistingUserHeader"]</strong>
+                <strong>@header</strong>
             </li>
         </ol>
     </div>
@@ -33,14 +34,36 @@
     <div class="col-lg-12">
         <div class="ibox ">
             <div class="ibox-title">
-                <h5>@localizer["AddExistingUserHeader"]</h5>
+                <h5>@header</h5>
             </div>
             <div class="ibox-content">
                 <div class="row">
                     <div class="col-md-4 col-lg-4" align="center">
-                        <p>
-                            @localizer["ExistingUserHelp1"] (@Model.Profile.FullName.AsFirstNameLastName)@localizer["ExistingUserHelp2"]
-                        </p>
+                        @if (Model.ConfirmationPending)
+                        {
+                            <p>
+                                @localizer["ExistingUserHelp1"] (@Model.Profile.FullName.AsFirstNameLastName)@localizer["ExistingUserConfirmText"]
+                            </p>
+                            @if (Model.PersonnelLimitReached)
+                            {
+                                <div class="alert alert-danger">@localizer["PersonnelLimitReached"]</div>
+                                <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                            }
+                            else
+                            {
+                                <form method="post" asp-controller="Personnel" asp-action="AddExistingUser" asp-route-area="User" asp-route-id="@Model.User.Id">
+                                    @Html.AntiForgeryToken()
+                                    <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button type="submit" class="btn btn-primary">@localizer["AddExistingUserButton"]</button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <p>
+                                @localizer["ExistingUserHelp1"] (@Model.Profile.FullName.AsFirstNameLastName)@localizer["ExistingUserHelp2"]
+                            </p>
+                        }
                     </div>
                     <div class=" col-md-8 col-lg-8">
                         <table class="table table-user-information">
@@ -55,6 +78,9 @@
                                         <td>@localizer["Email"]:</td>
                                         <td><a href="mailto:@Model.User.Email">@Model.User.Email</a></td>
                                     </tr>
+                                    @* The phone numbers of someone not yet in the department are not shown before they join. *@
+                                    @if (!Model.ConfirmationPending)
+                                    {
                                     <tr>
                                         <td>@localizer["PhoneNumbers"]:</td>
                                         <td>
@@ -69,6 +95,7 @@
                                             }
                                         </td>
                                     </tr>
+                                    }
                                 }
                             </tbody>
                         </table>

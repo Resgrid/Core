@@ -402,7 +402,7 @@
                                     <input type="hidden" name="Casualties[@i].Guided" value="true" />
                                     <label class="checkbox-inline"><input type="checkbox" name="Casualties[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["CasualtiesAndRescues"] @(i + 1)</label>
                                     <label>@localizer["PersonnelMember"] <select class="form-control" name="Casualties[@i].PersonnelUserId"><option value=""></option>
-                                    @foreach (var person in Model.Personnel) { <option value="@person.Value" selected="@(person.Value == row.PersonnelUserId)">@person.Text</option> }
+                                    @foreach (var person in Model.Personnel) { <option value="@person.Value" selected="@(string.Equals(person.Value, row.PersonnelUserId, StringComparison.OrdinalIgnoreCase))">@person.Text</option> }
                                     </select></label>
                                     <label>@localizer["OccurredOn"] <input class="form-control" type="datetime-local" name="Casualties[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></label>
                                     <input type="hidden" name="Casualties[@i].DetailJson" value="@row.DetailJson" data-neris-schema="CasualtyRescuePayload" data-neris-root="/casualty_rescues/@i" />
@@ -518,7 +518,7 @@
 											<option value="">@localizer["PersonnelMember"]</option>
 											@foreach (var person in Model.Personnel)
 											{
-												<option value="@person.Value" selected="@(person.Value == row.PersonnelUserId)">@person.Text</option>
+												<option value="@person.Value" selected="@(string.Equals(person.Value, row.PersonnelUserId, StringComparison.OrdinalIgnoreCase))">@person.Text</option>
 											}
 										</select>
 									</div>

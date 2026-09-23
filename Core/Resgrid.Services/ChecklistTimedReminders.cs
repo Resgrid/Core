@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Checklists;
+using Resgrid.Model.Helpers;
 
 namespace Resgrid.Services
 {
@@ -33,6 +34,14 @@ namespace Resgrid.Services
 		private async Task<HashSet<string>> ShiftCrewAsync(Unit unit)
 		{
 			var crew = (await _units.GetActiveRolesForUnitAsync(unit.UnitId)).Where(r => r.DepartmentId == unit.DepartmentId && r.UnitId == unit.UnitId && !string.IsNullOrWhiteSpace(r.UserId)).Select(r => r.UserId).ToHashSet(StringComparer.Ordinal);
+			// A unit seat still held by a removed, disabled or hidden member counts as empty, the same way RecipientsAsync treats
+			// it: otherwise the station fallback never runs and the shift gets no reminder at all.
+			if (crew.Count > 0)
+			{
+				var active = (await _departments.GetAllMembersForDepartmentUnlimitedAsync(unit.DepartmentId, true))
+					.Where(m => DepartmentMemberStateHelper.IsActiveMember(m, unit.DepartmentId)).Select(m => m.UserId).ToHashSet(StringComparer.Ordinal);
+				crew.IntersectWith(active);
+			}
 			if (crew.Count == 0 && unit.StationGroupId.HasValue && (await _groups.GetGroupByIdAsync(unit.StationGroupId.Value, true))?.DepartmentId == unit.DepartmentId)
 				crew.UnionWith((await _groups.GetAllMembersForGroupAsync(unit.StationGroupId.Value)).Where(m => m.DepartmentId == unit.DepartmentId).Select(m => m.UserId));
 			return crew;

@@ -22,7 +22,11 @@ namespace Resgrid.Tests.Web.User
 	[TestFixture]
 	public class ContactEditPersistenceTests
 	{
-		private static string EditPostBody()
+		private static string EditPostBody() => PostBody("public async Task<IActionResult> Edit(EditContactView model", "Edit");
+
+		private static string AddPostBody() => PostBody("public async Task<IActionResult> Add(AddContactView model", "Add");
+
+		private static string PostBody(string signature, string action)
 		{
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (directory != null && !File.Exists(Path.Combine(directory.FullName, "Resgrid.sln")))
@@ -37,8 +41,8 @@ namespace Resgrid.Tests.Web.User
 			var source = File.ReadAllText(path);
 
 			// The POST overload takes the view model; slice from its signature to the next method.
-			var start = source.IndexOf("public async Task<IActionResult> Edit(EditContactView model", System.StringComparison.Ordinal);
-			start.Should().BeGreaterThan(0, "the Edit POST action should still exist");
+			var start = source.IndexOf(signature, System.StringComparison.Ordinal);
+			start.Should().BeGreaterThan(0, $"the {action} POST action should still exist");
 
 			var next = Regex.Match(source.Substring(start + 1),
 				@"(?:public|private|protected|internal)\s+(?:static\s+)?(?:async\s+)?Task<[^>]+>\s+\w+\s*\(");
@@ -94,6 +98,26 @@ namespace Resgrid.Tests.Web.User
 			body.Should().Contain("contact.LocationGpsCoordinates = ResolveCoordinates(model.LocationGpsLatitude");
 			body.Should().Contain("contact.EntranceGpsCoordinates = ResolveCoordinates(model.EntranceGpsLatitude");
 			body.Should().Contain("contact.ExitGpsCoordinates = ResolveCoordinates(model.ExitGpsLatitude");
+		}
+
+		/// <summary>
+		/// The Add form posts no ids, but the binder accepts any it is sent. Address ids are global integers, so a crafted
+		/// Contact.PhysicalAddressId linked a new contact to another department's (or a member's) address: the detail pages,
+		/// v4 GetContactById included, then read it and Edit rewrote it. A posted ContactId would update another
+		/// department's contact. The action discards all three before anything is saved.
+		/// </summary>
+		[Test]
+		public void The_add_action_discards_posted_ids_before_saving()
+		{
+			var body = AddPostBody();
+
+			foreach (var clear in new[] { "model.Contact.ContactId = null;", "model.Contact.PhysicalAddressId = null;", "model.Contact.MailingAddressId = null;" })
+			{
+				var at = body.IndexOf(clear, System.StringComparison.Ordinal);
+				at.Should().BeGreaterThan(0, $"the Add POST must reset `{clear}`");
+				at.Should().BeLessThan(body.IndexOf("SaveAddressAsync(physicalAddress", System.StringComparison.Ordinal), "the reset runs before the server links its own address rows");
+				at.Should().BeLessThan(body.IndexOf("SaveContactAsync(model.Contact,", System.StringComparison.Ordinal), "the reset runs before the contact is saved");
+			}
 		}
 	}
 }

@@ -162,7 +162,12 @@
 					var list = field.Type == RmsFieldType.Person ? Model.Personnel : field.Type == RmsFieldType.Unit ? Model.AvailableUnits : field.Type == RmsFieldType.Group ? Model.Stations : field.Type == RmsFieldType.Contact ? Model.Contacts : field.Type == RmsFieldType.CallReference ? Model.Calls : Model.Attachments;
 					sb.Append("<select class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceId\"").Append(disabled).Append("><option value=\"\"></option>");
 					if (!withheld)
+					{
+						// A person already on the record who is no longer offered (disabled or hidden since) stays selected instead of being cleared on save.
+						if (field.Type == RmsFieldType.Person && !string.IsNullOrWhiteSpace(Reference) && !list.Any(i => string.Equals(i.Value, Reference, StringComparison.OrdinalIgnoreCase)))
+							sb.Append("<option value=\"").Append(E(Reference)).Append("\" selected>").Append(E(Model.PersonnelLabels.TryGetValue(Reference, out var keptPerson) ? keptPerson : Reference)).Append("</option>");
 						foreach (var item in list) sb.Append("<option value=\"").Append(E(item.Value)).Append("\"").Append(string.Equals(item.Value, Reference, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(item.Text)).Append("</option>");
+					}
 					sb.Append("</select>");
 					break;
 				}

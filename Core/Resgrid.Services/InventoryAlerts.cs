@@ -63,7 +63,13 @@ namespace Resgrid.Services
 			row.AlertType = (int)type; row.DedupKey = key; row.ItemId = itemId; row.LocationId = locationId; row.LotId = lotId; row.AssetId = assetId; row.IssuanceId = issuanceId; row.OpenedOn = Now; row.DueOn = due; row.Quantity = quantity;
 			await _store.InsertAsync(row);
 			if (openAlerts != null) openAlerts[key] = row;
-			var trigger = type == InventoryAlertType.LowStock ? WorkflowTriggerEventType.InventoryLowStock : type == InventoryAlertType.OverdueReturn ? WorkflowTriggerEventType.InventoryReturnOverdue : WorkflowTriggerEventType.InventoryExpiring;
+			var trigger = type switch
+			{
+				InventoryAlertType.LowStock => WorkflowTriggerEventType.InventoryLowStock,
+				InventoryAlertType.OverdueReturn => WorkflowTriggerEventType.InventoryReturnOverdue,
+				InventoryAlertType.DepartedHolder => WorkflowTriggerEventType.InventoryDepartedHolder,
+				_ => WorkflowTriggerEventType.InventoryExpiring
+			};
 			var entry = await _outbox.EnqueueAsync(departmentId, "Inventory", new DomainEventEnvelope { EventName = trigger.ToString(), Trigger = trigger, SchemaVersion = 1,
 				AggregateType = "InventoryAlert", AggregateId = row.Id, OccurredOn = Now,
 				Payload = new { InventoryEvent = true, AlertId = row.Id, row.AlertType, row.ItemId, row.LocationId, row.LotId, row.AssetId, row.IssuanceId, row.Quantity, row.DueOn, OccurredOn = Now } });
@@ -158,7 +164,9 @@ namespace Resgrid.Services
 			var desired = new HashSet<string>();
 			var items = (await AllAsync<InventoryItem>(departmentId)).Where(i => !i.IsDeleted && i.IsActive).Select(i => i.Id).ToHashSet();
 			var lots = (await AllAsync<InventoryLot>(departmentId)).ToDictionary(l => l.Id);
-			async Task Add(InventoryAlertType type, string item, string location, string lot, string asset, string issuance, DateTime due, decimal quantity)
+			var stocks = await AllAsync<InventoryStock>(departmentId);
+			var assets = await AllAsync<InventoryAsset>(departmentId);
+			async Task Add(InventoryAlertType type, string item, string location, string lot, string asset, string issuance, DateTime? due, decimal quantity)
 			{
 				if (!items.Contains(item)) return;
 				if (location != null)
@@ -170,10 +178,10 @@ namespace Resgrid.Services
 				desired.Add(Fingerprint(new { type, itemId = item, locationId = location, lotId = lot, assetId = asset, issuanceId = issuance }));
 				await SetAlertAsync(departmentId, type, item, location, lot, asset, issuance, true, due, quantity, events);
 			}
-			foreach (var stock in await AllAsync<InventoryStock>(departmentId))
+			foreach (var stock in stocks)
 				if (!stock.IsDeleted && stock.Quantity > 0 && stock.LotId != null && lots.TryGetValue(stock.LotId, out var lot) && !lot.IsDeleted && lot.ExpiresOn <= Now.AddDays(30))
 					await Add(lot.ExpiresOn <= Now ? InventoryAlertType.Expired : InventoryAlertType.ExpiringSoon, stock.ItemId, stock.LocationId, stock.LotId, null, null, lot.ExpiresOn.Value, stock.Quantity);
-			foreach (var asset in await AllAsync<InventoryAsset>(departmentId))
+			foreach (var asset in assets)
 			{
 				var expiry = asset.ExpiresOn;
 				if (asset.LotId != null && lots.TryGetValue(asset.LotId, out var lot) && lot.ExpiresOn.HasValue && (!expiry.HasValue || lot.ExpiresOn < expiry)) expiry = lot.ExpiresOn;
@@ -183,8 +191,68 @@ namespace Resgrid.Services
 			foreach (var issuance in await AllAsync<InventoryIssuance>(departmentId))
 				if (!issuance.IsDeleted && issuance.Status is 0 or 2 && issuance.Quantity > issuance.ReturnedQuantity && issuance.ExpectedReturnOn < Now)
 					await Add(InventoryAlertType.OverdueReturn, issuance.ItemId, issuance.LocationId, issuance.LotId, issuance.AssetId, issuance.Id, issuance.ExpectedReturnOn.Value, issuance.Quantity - issuance.ReturnedQuantity);
+
+			// Equipment still held by a member who was removed, disabled or hidden: one recovery alert per item per holding
+			// location (bulk stock plus serialized assets), with nothing due. It resolves once the gear is moved off that
+			// location or the member is active again. The expiry and overdue alerts above keep running for the same gear.
+			var departed = new DepartedHolders(this, departmentId);
+			var held = new Dictionary<(string Item, string Location), decimal>();
+			foreach (var stock in stocks)
+				if (!stock.IsDeleted && stock.Quantity > 0 && await departed.HolderAsync(stock.LocationId) != null)
+					held[(stock.ItemId, stock.LocationId)] = held.GetValueOrDefault((stock.ItemId, stock.LocationId)) + stock.Quantity;
+			foreach (var asset in assets)
+				if (IsHeldAsset(asset) && await departed.HolderAsync(asset.CurrentLocationId) != null)
+					held[(asset.ItemId, asset.CurrentLocationId)] = held.GetValueOrDefault((asset.ItemId, asset.CurrentLocationId)) + 1;
+			foreach (var holding in held)
+				await Add(InventoryAlertType.DepartedHolder, holding.Key.Item, holding.Key.Location, null, null, null, null, holding.Value);
+
 			foreach (var alert in await AllOpenAlertsAsync(departmentId))
+			{
+				// Membership could not be read this pass: leave departed-holder alerts as they are rather than resolve and reopen them.
+				if (alert.AlertType == (int)InventoryAlertType.DepartedHolder && departed.Unknown) continue;
 				if (alert.Status == 0 && (!items.Contains(alert.ItemId) || alert.AlertType != 0 && !desired.Contains(alert.DedupKey))) { alert.Status = 1; alert.ResolvedOn = Now; await UpdateAlertMetadataAsync(alert); }
+			}
+		}
+		private static bool IsHeldAsset(InventoryAsset asset) => !asset.IsDeleted && asset.Status is 0 or 1 or 2 or 3 && asset.CurrentLocationId != null;
+		/// <summary>
+		/// Resolves, per location, the member who holds it (its effective holder through containers and parents) when that
+		/// member is no longer active. The active-member set is read once and only when a personnel holder is met, so a
+		/// department without personnel locations never reads membership. A null set leaves the answer unknown: no holder
+		/// counts as departed and <see cref="Unknown"/> is raised.
+		/// </summary>
+		private sealed class DepartedHolders
+		{
+			private readonly InventoryModernizationService _service; private readonly int _departmentId;
+			private readonly Dictionary<string, string> _holders = new(StringComparer.Ordinal);
+			private HashSet<string> _active; private bool _loaded;
+			public bool Unknown { get; private set; }
+			public DepartedHolders(InventoryModernizationService service, int departmentId) { _service = service; _departmentId = departmentId; }
+			public async Task<string> HolderAsync(string locationId)
+			{
+				if (locationId == null) return null;
+				if (_holders.TryGetValue(locationId, out var known)) return known;
+				string departed = null;
+				var location = await _service._store.GetAsync<InventoryLocation>(_departmentId, locationId);
+				if (location != null && !location.IsDeleted)
+				{
+					InventoryLocation holder = null;
+					try { holder = await _service.EffectiveLocationAsync(_departmentId, location); }
+					catch (InventoryException ex) when (ex.Code is "LocationUnavailable" or "InvalidLocationHierarchy") { }
+					if (holder != null && !holder.IsDeleted && !string.IsNullOrWhiteSpace(holder.UserId))
+					{
+						if (!_loaded) { _active = await _service._auth.ActiveMemberIdsAsync(_departmentId); _loaded = true; Unknown = _active == null; }
+						if (_active != null && !_active.Contains(holder.UserId)) departed = holder.UserId;
+					}
+				}
+				return _holders[locationId] = departed;
+			}
+		}
+		/// <summary>How much of an item a departed member still holds at one location; zero when the holder is active or unknown.</summary>
+		private async Task<decimal> DepartedHoldingAsync(int departmentId, string itemId, string locationId)
+		{
+			if (itemId == null || locationId == null || await new DepartedHolders(this, departmentId).HolderAsync(locationId) == null) return 0;
+			var quantity = (await _store.RelatedAsync<InventoryStock>(departmentId, "ItemId", itemId)).Where(s => !s.IsDeleted && s.LocationId == locationId && s.Quantity > 0).Sum(s => s.Quantity);
+			return quantity + (await _store.RelatedAsync<InventoryAsset>(departmentId, "ItemId", itemId)).Count(a => IsHeldAsset(a) && a.CurrentLocationId == locationId);
 		}
 		public async Task<bool> CanReceiveAlertAsync(int departmentId, string userId, string alertId)
 		{
@@ -211,6 +279,7 @@ namespace Resgrid.Services
 				else if (!(await _store.RelatedAsync<InventoryStock>(departmentId, "ItemId", alert.ItemId)).Any(s => !s.IsDeleted && s.LotId == alert.LotId && s.LocationId == alert.LocationId && s.Quantity > 0)) return false;
 				if (!expiry.HasValue || (alert.AlertType == 2 ? expiry > Now : expiry <= Now || expiry > Now.AddDays(30))) return false;
 			}
+			else if (alert.AlertType == (int)InventoryAlertType.DepartedHolder && await DepartedHoldingAsync(departmentId, alert.ItemId, alert.LocationId) <= 0) return false;
 			try { await RequireAlertAccessAsync(new InventoryActor { DepartmentId = departmentId, UserId = userId }, alert); return true; }
 			catch (InventoryException ex) when (ex.StatusCode is 403 or 404 || ex.Code == "LocationUnavailable") { return false; }
 		}

@@ -76,7 +76,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Reply(ChecklistRunData.From(await Checklists.GetRunAsync(Actor, id), UserId));
 		}
 		/// <summary>In-memory image transport for native clients, with the same size, scan, revision and ADP rules as multipart uploads.</summary>
-		[HttpPost("UploadChecklistRunFile"), Consumes("application/json"), RequestSizeLimit(15 * 1024 * 1024)]
+		/// <remarks>Shares the multipart action's path (the Responder and Unit apps post JSON to it), so it is hidden from the OpenAPI
+		/// document: Swashbuckle rejects the whole document when two visible actions share a method and path (RESGRID-API-9F).</remarks>
+		[HttpPost("UploadChecklistRunFile"), Consumes("application/json"), RequestSizeLimit(15 * 1024 * 1024), ApiExplorerSettings(IgnoreApi = true)]
 		public async Task<IActionResult> UploadChecklistRunEvidence([FromBody] ChecklistEvidenceInput input)
 		{
 			Required(input); await Checklists.AddFileAtRevisionAsync(Actor, input.Id, input.ItemId, input.Revision, input.Name, input.ContentType, input.Data);

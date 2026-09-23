@@ -131,6 +131,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Den här personen kan inte aktiveras: avdelningen har nått personalgränsen för sin plan, eller så gick det inte att kontrollera planen. Inaktiverade medlemmar räknas inte mot gränsen. Ta bort eller inaktivera någon annan, eller uppgradera planen, och försök sedan igen. Inget på den här sidan sparades.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Redigera</value>
   </data>

@@ -28,9 +28,9 @@
     ViewData["Title"] = o.Number + " — " + o.Title;
     ViewData["CanWrite"] = d.CanWrite;
 
-    // Labor, activity and reporter rows carry user ids; show the member's name when the
-    // choice list still knows them, and fall back to the id for someone who has since left.
-    string UserName(string userId) => Model.Choices.Users.FirstOrDefault(x => x.Id == userId)?.Name ?? userId;
+    // Labor, activity and reporter rows carry user ids; show the member's name (hidden members included, from
+    // the label map), and fall back to the id for someone who has since left or been disabled.
+    string UserName(string userId) => userId != null && Model.Choices.UserNames.TryGetValue(userId, out var label) ? label : Model.Choices.Users.FirstOrDefault(x => x.Id == userId)?.Name ?? userId;
     string RoleName(int? roleId) => Model.Choices.Roles.FirstOrDefault(x => x.Id == roleId?.ToString())?.Name ?? roleId?.ToString();
 
     var assignees = o.AssignedToUserIds.Select(UserName).Concat(o.AssignedToRoleIds.Select(id => RoleName(id))).ToList();

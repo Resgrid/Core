@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Resgrid.Model.Invoicing
 {
@@ -84,6 +85,10 @@ namespace Resgrid.Model.Invoicing
 		public const string BreakRule = "break_rule";
 		public const string LongTravel = "long_travel";
 		public const string OutsideReportDate = "outside_report_date";
+		/// <summary>A crew or individual report carries a subject outside its unit's crew/equipment or its one person (M0227).</summary>
+		public const string SubjectOutsideScope = "subject_outside_report_scope";
+		/// <summary>The subject already has time on another live report for the same day, which would bill it twice (M0227).</summary>
+		public const string SubjectOnOtherReport = "subject_on_other_report";
 
 		public List<TimeReportIssue> Errors { get; set; } = new List<TimeReportIssue>();
 		public List<TimeReportIssue> Warnings { get; set; } = new List<TimeReportIssue>();
@@ -96,6 +101,43 @@ namespace Resgrid.Model.Invoicing
 		public string SubjectId { get; set; }
 		public string EntryId { get; set; }
 		public string Detail { get; set; }
+	}
+
+	/// <summary>
+	/// What one person may do with a deployment's time (M0227). Managers write every subject. Anyone else writes their own
+	/// roster row plus, for every deployed unit they crew (seated on that unit's deployment roster, or holding an active
+	/// unit role on the apparatus), the unit, its crew and its equipment — the Crew Time Report a crew boss or the unit's
+	/// tablet files. Reads follow <see cref="CanRead"/>; the server re-checks all of it on every write.
+	/// </summary>
+	public sealed class DeploymentTimeAccess
+	{
+		public bool CanManage { get; set; }
+		/// <summary>On the roster now or before (removed rows still see their history).</summary>
+		public bool IsRostered { get; set; }
+		/// <summary>The caller's active roster row, when they have one.</summary>
+		public string PersonnelId { get; set; }
+		/// <summary>Deployment unit ids the caller crews.</summary>
+		public List<string> CrewUnitIds { get; set; } = new List<string>();
+		/// <summary>Subject ids (personnel, unit, equipment) the caller may write; ignored for managers.</summary>
+		public HashSet<string> WritableSubjectIds { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+		public bool CanRead => CanManage || IsRostered || CrewUnitIds.Count > 0;
+		public bool CanWrite => CanManage || WritableSubjectIds.Count > 0;
+		public bool CanWriteSubject(string subjectId) => CanManage || (!string.IsNullOrWhiteSpace(subjectId) && WritableSubjectIds.Contains(subjectId));
+
+		/// <summary>Whether the caller may act on (write, sign, submit) the report as a whole: its scope must be theirs.</summary>
+		public bool CanActOn(DeploymentTimeReport report)
+		{
+			if (report == null) return false;
+			if (CanManage) return true;
+			return report.Scope switch
+			{
+				DeploymentTimeReportScopes.Individual => CanWriteSubject(report.DeploymentPersonnelId),
+				DeploymentTimeReportScopes.Crew => CrewUnitIds.Contains(report.DeploymentUnitId, StringComparer.OrdinalIgnoreCase),
+				// A deployment-wide report touches every crew; only a caller who may write every entry on it acts on it whole.
+				_ => report.Entries != null && report.Entries.Count > 0 && report.Entries.TrueForAll(e => CanWriteSubject(e.SubjectId))
+			};
+		}
 	}
 
 	/// <summary>A saved time report plus the validation that ran on it.</summary>

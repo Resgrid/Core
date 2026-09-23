@@ -255,7 +255,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try { aggregate = await _deployments.GetAsync(DepartmentId, UserId, id); }
 			catch (UnauthorizedAccessException) { return null; }
 			if (aggregate == null) return null;
+			// Existing fills are labelled from every member's name; the new-fill picker offers active members only.
 			var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
+			var selectable = await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>();
 			var units = await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			return new RecordDeploymentDetailsView
 			{
@@ -263,7 +265,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				PersonnelNames = names.GroupBy(n => n.UserId).ToDictionary(g => g.Key, g => g.First().Name), CanEdit = ClaimsAuthorizationHelper.CanCreateRecord() && aggregate.Order.Status != (int)RmsExternalOrderStatus.ClosedOut,
 				ProvenanceStatement = _localizer["DeploymentsIntro"].Value,
 				OperationalDeploymentId = (await _operations.GetDeploymentByExternalOrderIdAsync(id, DepartmentId))?.DeploymentId,
-				Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList(),
+				Personnel = selectable.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList(),
 				AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList()
 			};
 		}
@@ -274,7 +276,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Profiles = RmsDeploymentProfiles.All.Select(p => new SelectListItem { Value = p, Text = p }).ToList();
 			var groups = await _groups.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
 			model.Stations = groups.OrderBy(g => g.Name).Select(g => new SelectListItem { Value = g.DepartmentGroupId.ToString(), Text = g.Name }).ToList();
-			var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
+			var names = await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>();
 			model.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
 			var units = await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			model.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();

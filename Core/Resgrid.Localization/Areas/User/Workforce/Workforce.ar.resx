@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>قراءة الاستخدام غير صالحة.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>نمط العمل غير صالح.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>هذا العضو لديه سجل عامل بالفعل.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>اختر عضوًا حاليًا في هذه الإدارة.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>يحتاج العامل إلى عضو أو مفتاح خارجي.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>نوع العامل غير صالح.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>لم يتم العثور على العامل.</value></data>

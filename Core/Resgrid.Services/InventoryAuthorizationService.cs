@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Inventories;
@@ -19,6 +20,8 @@ namespace Resgrid.Services
 			IAuthorizationService resources, IPermissionsService permissions, IPersonnelRolesService roles, IDepartmentSettingsService settings)
 		{ _departments = departments; _groups = groups; _units = units; _resources = resources; _permissions = permissions; _roles = roles; _settings = settings; }
 		public async Task<bool> IsEnabledAsync(int departmentId) => departmentId > 0 && (await _settings.GetDepartmentModuleSettingsAsync(departmentId, true))?.InventoryDisabled != true;
+		public async Task<HashSet<string>> ActiveMemberIdsAsync(int departmentId)
+			=> await _departments.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		public async Task RequireAsync(InventoryActor actor, bool write = false, PermissionTypes? permission = null, int? groupId = null)
 		{
 			if (actor == null || actor.DepartmentId <= 0 || string.IsNullOrWhiteSpace(actor.UserId)) throw new InventoryException(403, "MembershipRequired");

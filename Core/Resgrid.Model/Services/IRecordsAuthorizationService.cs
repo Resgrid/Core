@@ -13,6 +13,12 @@ namespace Resgrid.Model.Services
 	public interface IRecordsAuthorizationService
 	{
 		Task<bool> IsActiveMemberAsync(string userId, int departmentId);
+		/// <summary>
+		/// Whether Records work may be handed to this person (an owner, inspector, assignee or custodian): a member of the
+		/// department who is not removed, disabled or hidden. Stricter than <see cref="IsActiveMemberAsync"/>, which gates who
+		/// may still read and act, and which a hidden member passes.
+		/// </summary>
+		Task<bool> IsAssignableMemberAsync(string userId, int departmentId);
 		Task<bool> IsDepartmentAdminAsync(string userId, int departmentId);
 		Task<bool> HasPermissionAsync(string userId, int departmentId, PermissionTypes permissionType);
 		Task<bool> CanReadSourceCallAsync(string userId, int departmentId, Call call);

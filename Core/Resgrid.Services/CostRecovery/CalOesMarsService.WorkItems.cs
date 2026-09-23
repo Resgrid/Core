@@ -33,17 +33,24 @@ namespace Resgrid.Services.CostRecovery
 			var items = (await _workItems.GetActionQueueAsync(departmentId))?.ToList() ?? new List<CalOesMarsWorkItem>();
 			var deploymentIds = items.Where(i => !string.IsNullOrWhiteSpace(i.DeploymentId)).Select(i => i.DeploymentId).Distinct().ToList();
 			var deployments = new Dictionary<string, Deployment>(StringComparer.OrdinalIgnoreCase);
+			// "Mine" is the same rule IsRosteredForWorkItemAsync opens the item with (roster, or a seat on a deployed unit),
+			// answered once per deployment, so a field user finds in the queue every item they can open.
+			var visible = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var id in deploymentIds)
 			{
 				var deployment = await _deploymentService.GetDeploymentByIdAsync(id, departmentId);
-				if (deployment != null) deployments[id] = deployment;
+				if (deployment == null) continue;
+				deployments[id] = deployment;
+				if (string.IsNullOrWhiteSpace(userId)) continue;
+				// The roster is already loaded; only a member it does not name costs the seat lookup.
+				if (deployment.Personnel.Any(p => string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase)) || await _deploymentService.CanFieldMemberSeeAsync(id, departmentId, userId)) visible.Add(id);
 			}
 			var result = new List<CalOesMarsQueueItem>();
 			var now = DateTime.UtcNow;
 			foreach (var item in items)
 			{
 				deployments.TryGetValue(item.DeploymentId ?? string.Empty, out var deployment);
-				var mine = deployment != null && !string.IsNullOrWhiteSpace(userId) && deployment.Personnel.Any(p => p.IsActive && string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase));
+				var mine = deployment != null && visible.Contains(item.DeploymentId);
 				// Field users see only their own incident-bound F-42 / expense drafts; managers see the department queue.
 				if (!managerScope && (!mine || item.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice)) continue;
 				var validation = Deserialize<CalOesMarsValidationResult>(item.ValidationSummaryJson);
@@ -79,7 +86,7 @@ namespace Resgrid.Services.CostRecovery
 			var item = await _workItems.GetByIdForDepartmentAsync(workItemId, departmentId);
 			if (item == null || item.IsDeleted || string.IsNullOrWhiteSpace(item.DeploymentId) || string.IsNullOrWhiteSpace(userId)) return false;
 			if (item.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice) return false;
-			return await _deploymentService.IsRosteredAsync(item.DeploymentId, departmentId, userId);
+			return await _deploymentService.CanFieldMemberSeeAsync(item.DeploymentId, departmentId, userId);
 		}
 
 		#endregion
@@ -894,7 +901,7 @@ namespace Resgrid.Services.CostRecovery
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 				var number = _departmentSettings?.Value == null ? null : await _departmentSettings.Value.GetTextToCallNumberForDepartmentAsync(departmentId);
 				// Permission 79 defaults to department administrators; the digest goes to them (a narrower role assignment still includes admins).
-				foreach (var admin in await _departmentsService.GetAllAdminsForDepartmentAsync(departmentId))
+				foreach (var admin in await _departmentsService.GetActiveAdminsForDepartmentAsync(departmentId))
 					await _communication.Value.SendNotificationAsync(admin.UserId, departmentId, message, number, department, "Cal OES MARS");
 			}
 			catch (Exception ex) { Logging.LogException(ex, $"Cal OES MARS digest could not be sent for department {departmentId}."); }

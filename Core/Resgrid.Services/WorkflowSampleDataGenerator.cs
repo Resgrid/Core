@@ -293,6 +293,7 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.InventoryExpiring:
 				case WorkflowTriggerEventType.InventoryCountCompleted:
 				case WorkflowTriggerEventType.InventoryReturnOverdue:
+				case WorkflowTriggerEventType.InventoryDepartedHolder:
 				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
 					AddInventorySamples(obj, eventType);
 					break;
@@ -748,11 +749,12 @@ namespace Resgrid.Services
 			if (eventType == WorkflowTriggerEventType.InventoryCountCompleted)
 				payload = new Dictionary<string, object> { ["CountId"] = "dddddddd-dddd-dddd-dddd-dddddddddddd", ["LocationId"] = sourceId,
 					["LineCount"] = 12, ["VarianceLineCount"] = 2, ["VarianceValue"] = ProtectedDataEnvelope.RedactionValue, ["OccurredOn"] = occurred };
-			if (eventType is WorkflowTriggerEventType.InventoryLowStock or WorkflowTriggerEventType.InventoryExpiring or WorkflowTriggerEventType.InventoryReturnOverdue)
+			if (eventType is WorkflowTriggerEventType.InventoryLowStock or WorkflowTriggerEventType.InventoryExpiring or WorkflowTriggerEventType.InventoryReturnOverdue or WorkflowTriggerEventType.InventoryDepartedHolder)
 				payload = new Dictionary<string, object> { ["AlertId"] = "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", ["ItemId"] = itemId,
-					["AlertType"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? 0 : eventType == WorkflowTriggerEventType.InventoryExpiring ? 1 : 3,
+					["AlertType"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? 0 : eventType == WorkflowTriggerEventType.InventoryExpiring ? 1 : eventType == WorkflowTriggerEventType.InventoryDepartedHolder ? 4 : 3,
 					["LocationId"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? null : sourceId, ["Quantity"] = 2m,
-					["IssuanceId"] = eventType == WorkflowTriggerEventType.InventoryReturnOverdue ? issuanceId : null, ["DueOn"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? null : occurred, ["OccurredOn"] = occurred };
+					["IssuanceId"] = eventType == WorkflowTriggerEventType.InventoryReturnOverdue ? issuanceId : null,
+					["DueOn"] = eventType is WorkflowTriggerEventType.InventoryLowStock or WorkflowTriggerEventType.InventoryDepartedHolder ? null : occurred, ["OccurredOn"] = occurred };
 			var inventory = new ScriptObject();
 			foreach (var pair in InventoryWorkflowPayload.Variables) inventory[pair.Variable] = payload.TryGetValue(pair.Property, out var value) ? value : null;
 			if (eventType == WorkflowTriggerEventType.InventoryAdjusted)

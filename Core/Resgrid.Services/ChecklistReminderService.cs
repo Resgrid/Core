@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Resgrid.Localization;
 using Resgrid.Model;
 using Resgrid.Model.Checklists;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
@@ -132,8 +133,10 @@ namespace Resgrid.Services
 			}
 			var department = await _departments.GetDepartmentByIdAsync(row.DepartmentId, true);
 			if (department == null) return new HashSet<string>();
+			// Reminders and escalations reach active members only: removed, disabled and hidden members (admins included) are
+			// never recipients, whatever routed them here.
 			var members = (await _departments.GetAllMembersForDepartmentUnlimitedAsync(row.DepartmentId, true))
-				.Where(m => m.DepartmentId == row.DepartmentId && !m.IsDeleted && m.IsDisabled != true && !string.IsNullOrWhiteSpace(m.UserId)).ToList();
+				.Where(m => DepartmentMemberStateHelper.IsActiveMember(m, row.DepartmentId)).ToList();
 			var allowed = members.Select(m => m.UserId).ToHashSet(StringComparer.Ordinal);
 			var admins = members.Where(m => m.IsAdmin == true || m.UserId == department.ManagingUserId).Select(m => m.UserId).ToHashSet(StringComparer.Ordinal);
 			var users = new HashSet<string>(StringComparer.Ordinal);

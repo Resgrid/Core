@@ -35,6 +35,12 @@ namespace Resgrid.Model.Services
 		/// <summary>Validates that a worker's periods never overlap.</summary>
 		Task<WorkforceEmployment> SaveEmploymentAsync(WorkforceEmployment employment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<bool> DeleteEmploymentAsync(string id, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// A member left the department: every open employment of their worker row is end-dated on <paramref name="endOn"/>
+		/// (never deleted, so past-period statutory data keeps them); one that had not started by then is withdrawn. Audited;
+		/// returns how many rows changed. A member with no worker row is a no-op.
+		/// </summary>
+		Task<int> EndEmploymentsForMemberAsync(int departmentId, string userId, DateTime endOn, string actorUserId, CancellationToken cancellationToken = default);
 		/// <summary>Validates that an employment's assignments never overlap and that the establishment is the department's.</summary>
 		Task<WorkforceJobAssignment> SaveJobAssignmentAsync(WorkforceJobAssignment assignment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		Task<bool> DeleteJobAssignmentAsync(string id, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);

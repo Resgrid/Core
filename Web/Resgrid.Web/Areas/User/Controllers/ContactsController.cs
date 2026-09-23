@@ -337,6 +337,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Address physicalAddress = new Address();
 			Address mailingAddress = new Address();
 
+			// A new contact carries no server-assigned ids. The form posts none, but the binder would accept them: a posted
+			// ContactId would overwrite (and move) another department's contact, and address ids are global integers, so a
+			// posted PhysicalAddressId/MailingAddressId would let the detail pages read, and Edit rewrite, any address row.
+			model.Contact.ContactId = null;
+			model.Contact.PhysicalAddressId = null;
+			model.Contact.MailingAddressId = null;
+
 			if (ModelState.IsValid)
 			{
 				var auditEvent = new AuditEvent();

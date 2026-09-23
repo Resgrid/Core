@@ -38,9 +38,31 @@
             <div class="ibox-content">
                 <div class="row">
                     <div class="col-md-4 col-lg-4" align="center">
-                        <p>
-                            @localizer["ReactivatePersonText1"] (@Model.Profile.FullName.AsFirstNameLastName), @localizer["ReactivatePersonText2"] @Model.Department.Name @localizer["ReactivatePersonText3"]
-                        </p>
+                        @if (Model.ConfirmationPending)
+                        {
+                            <p>
+                                @localizer["ReactivatePersonText1"] (@Model.Profile.FullName.AsFirstNameLastName), @localizer["ReactivatePersonText2"] @Model.Department.Name @localizer["ReactivatePersonConfirmText"]
+                            </p>
+                            @if (Model.PersonnelLimitReached)
+                            {
+                                <div class="alert alert-danger">@localizer["PersonnelLimitReached"]</div>
+                                <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                            }
+                            else
+                            {
+                                <form method="post" asp-controller="Personnel" asp-action="ReactivateUser" asp-route-area="User" asp-route-id="@Model.User.Id">
+                                    @Html.AntiForgeryToken()
+                                    <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button type="submit" class="btn btn-primary">@localizer["ReactivatePersonButton"]</button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <p>
+                                @localizer["ReactivatePersonText1"] (@Model.Profile.FullName.AsFirstNameLastName), @localizer["ReactivatePersonText2"] @Model.Department.Name @localizer["ReactivatePersonText3"]
+                            </p>
+                        }
                     </div>
                     <div class=" col-md-8 col-lg-8">
                         <table class="table table-user-information">

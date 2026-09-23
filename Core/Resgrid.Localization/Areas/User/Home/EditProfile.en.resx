@@ -180,6 +180,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>This person cannot be enabled: the department has reached the personnel limit of its plan, or the plan could not be checked. Disabled members do not count against the limit. Remove or disable someone else, or upgrade the plan, then try again. Nothing on this page was saved.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Edit</value>
   </data>

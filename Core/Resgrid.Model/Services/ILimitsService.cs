@@ -18,8 +18,10 @@ namespace Resgrid.Model.Services
 		/// Determines whether this instance [can department add new user asynchronous] the specified department identifier.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="bypassCache">Read the plan and current counts fresh (the cached limits live 14 days). Pass true when
+		/// the answer gates a write, such as actually adding a person.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> CanDepartmentAddNewUserAsync(int departmentId);
+		Task<bool> CanDepartmentAddNewUserAsync(int departmentId, bool bypassCache = false);
 
 		/// <summary>
 		/// Determines whether this instance [can department add new group] the specified department identifier.

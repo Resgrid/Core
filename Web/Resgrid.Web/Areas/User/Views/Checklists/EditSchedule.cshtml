@@ -44,6 +44,11 @@
                             <label asp-for="Input.TargetId">@localizer["Target"]</label>
                             <select asp-for="Input.TargetId" class="form-control" required>
                                 <option value="">@localizer["SelectTarget"]</option>
+                                @if (!string.IsNullOrEmpty(Model.Input.TargetId) && !Model.Targets.Any(t => t.Id == Model.Input.TargetId))
+                                {
+                                    @* The saved target is no longer offered (for example a member who has since been hidden); keep it rather than silently clear it. *@
+                                    <option value="@Model.Input.TargetId" selected>@localizer["TargetUnavailable"]</option>
+                                }
                                 @foreach (var target in Model.Targets)
                                 {
                                     <option value="@target.Id">@target.Name</option>

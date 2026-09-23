@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Añadir miembro</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>El miembro no cumple los requisitos del puesto. Marque «Asignar aunque falle un requisito» para forzarlo.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Nuevo parte de horas</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Un parte por día; las entradas se rellenan desde la dotación.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Un parte por día para cada tripulación o persona; las entradas se rellenan desde la dotación.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Aún no hay partes de horas.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Fecha del parte</value></data>
   <data name="Submitted" xml:space="preserve"><value>Enviado</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Todos los recursos deben regresar a su base antes de finalizar el despliegue.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Ver manifiesto</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Exportar recursos CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Cubre</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Todo el despliegue</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Tripulación: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Persona: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Una entrada de tiempo corresponde a alguien ajeno a la tripulación o persona de este parte</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Este sujeto ya tiene horas en otro parte del mismo día</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Esa tripulación o persona no está activa en este despliegue.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Esa tripulación o persona ya tiene horas en otro parte de este día.</value></data>
 </root>

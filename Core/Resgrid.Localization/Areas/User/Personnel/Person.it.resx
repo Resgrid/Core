@@ -140,6 +140,18 @@
   <data name="ExistingUserHelp2" xml:space="preserve">
     <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
   </data>
+  <data name="AddExistingUserConfirmHeader" xml:space="preserve">
+    <value>Aggiungi utente esistente</value>
+  </data>
+  <data name="ExistingUserConfirmText" xml:space="preserve">
+    <value>, in base all'indirizzo e-mail, ha già un account Resgrid in un altro dipartimento. L'aggiunta porta quell'account in questo dipartimento con le impostazioni del profilo esistenti (nome, numeri di telefono, preferenze). Entra come membro normale e vede questo dipartimento dopo esservi passato da "I tuoi dipartimenti" nel menu del profilo.</value>
+  </data>
+  <data name="AddExistingUserButton" xml:space="preserve">
+    <value>Aggiungi al dipartimento</value>
+  </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Questo dipartimento ha raggiunto il limite di personale del suo piano, oppure non è stato possibile verificare il piano in questo momento. Rimuovi qualcuno che non ha più bisogno di accesso o aggiorna il piano, quindi riprova.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Nome</value>
   </data>
@@ -247,6 +259,12 @@
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
     <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+  </data>
+  <data name="ReactivatePersonConfirmText" xml:space="preserve">
+    <value>dipartimento, ma è stato rimosso. La riattivazione riporta l'account in questo dipartimento con le precedenti impostazioni del profilo (nome, numeri di telefono, preferenze). La persona rientra come membro normale; concedere di nuovo i diritti di amministratore separatamente se necessario.</value>
+  </data>
+  <data name="ReactivatePersonButton" xml:space="preserve">
+    <value>Riattiva</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
     <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>

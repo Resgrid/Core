@@ -35,6 +35,8 @@ namespace Resgrid.Model.Services
 		Task ValidateAssignmentAsync(ChecklistActor actor, WorkOrder row, string userId, int? roleId);
 		Task<WorkOrderChoices> ChoicesAsync(ChecklistActor actor);
 		Task<List<string>> RecipientsAsync(int departmentId, WorkOrder row);
+		/// <summary>The department's active members (removed, disabled and hidden excluded): who automation may assign work to.</summary>
+		Task<HashSet<string>> ActiveMemberIdsAsync(int departmentId);
 	}
 }
 
@@ -147,7 +149,14 @@ namespace Resgrid.Model.WorkOrders
 	public sealed class WorkOrderChoices
 	{
 		public string Currency { get; set; } = "USD";
+		/// <summary>Who may be picked: active members only.</summary>
 		public List<WorkOrderChoice> Users { get; set; } = new List<WorkOrderChoice>();
+		/// <summary>
+		/// Display names for every current member the actor may view, hidden ones included (removed and disabled members are
+		/// not): labels history rows and keeps an existing hidden assignee on an edit form after they stop being offered in
+		/// <see cref="Users"/>.
+		/// </summary>
+		public Dictionary<string, string> UserNames { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public List<WorkOrderChoice> Roles { get; set; } = new List<WorkOrderChoice>();
 		public List<WorkOrderChoice> Units { get; set; } = new List<WorkOrderChoice>();
 		public List<WorkOrderChoice> Groups { get; set; } = new List<WorkOrderChoice>();

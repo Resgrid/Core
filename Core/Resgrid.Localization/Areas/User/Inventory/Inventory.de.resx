@@ -570,6 +570,7 @@
   <data name="M5AlertType1" xml:space="preserve"><value>Läuft bald ab</value></data>
   <data name="M5AlertType2" xml:space="preserve"><value>Abgelaufen</value></data>
   <data name="M5AlertType3" xml:space="preserve"><value>Überfällige Rückgabe</value></data>
+  <data name="M5AlertType4" xml:space="preserve"><value>Bei ausgeschiedenem Mitglied</value></data>
   <data name="M5Open" xml:space="preserve"><value>Offen</value></data>
   <data name="M5Resolved" xml:space="preserve"><value>Erledigt</value></data>
   <data name="M5DueOn" xml:space="preserve"><value>Fällig am (UTC)</value></data>
@@ -640,6 +641,7 @@
   <data name="InventoryExpiring" xml:space="preserve"><value>Inventar läuft ab</value></data>
   <data name="InventoryCountCompleted" xml:space="preserve"><value>Inventurzählung abgeschlossen</value></data>
   <data name="InventoryReturnOverdue" xml:space="preserve"><value>Inventarrückgabe überfällig</value></data>
+  <data name="InventoryDepartedHolder" xml:space="preserve"><value>Inventar bei ausgeschiedenem Mitglied</value></data>
   <data name="HolderHistoryRetained" xml:space="preserve"><value>Diese Ressource wird im Bestandsverlauf referenziert und muss erhalten bleiben.</value></data>
   <data name="InventoryAdjusted" xml:space="preserve"><value>Bestand angepasst</value></data>
   <data name="InventoryTransferCompleted" xml:space="preserve"><value>Bestandsübertragung abgeschlossen</value></data>

@@ -129,14 +129,28 @@ namespace Resgrid.Services.Invoicing
 
 		#region Reports
 
-		public async Task<DeploymentTimeReport> CreateTimeReportAsync(string deploymentId, int departmentId, DateTime reportDate, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		public Task<DeploymentTimeReport> CreateTimeReportAsync(string deploymentId, int departmentId, DateTime reportDate, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default) =>
+			CreateTimeReportAsync(deploymentId, departmentId, reportDate, null, null, userId, ipAddress, userAgent, cancellationToken);
+
+		public async Task<DeploymentTimeReport> CreateTimeReportAsync(string deploymentId, int departmentId, DateTime reportDate, string deploymentUnitId, string deploymentPersonnelId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
 			var deployment = await _deploymentService.GetDeploymentByIdAsync(deploymentId, departmentId);
 			if (deployment == null) throw new InvalidOperationException("deployments_not_found");
 			if (!deployment.IsOpen) throw new InvalidOperationException("deployments_closed");
+			deploymentUnitId = Trim(deploymentUnitId);
+			deploymentPersonnelId = Trim(deploymentPersonnelId);
+			if (deploymentUnitId != null && deploymentPersonnelId != null) throw new InvalidOperationException("timereports_scope_invalid");
+			if (deploymentUnitId != null && !deployment.Units.Any(u => u.IsActive && Same(u.DeploymentUnitId, deploymentUnitId))) throw new InvalidOperationException("timereports_scope_invalid");
+			if (deploymentPersonnelId != null && !deployment.Personnel.Any(p => p.IsActive && Same(p.DeploymentPersonnelId, deploymentPersonnelId))) throw new InvalidOperationException("timereports_scope_invalid");
+
 			var day = reportDate.Date;
-			var existing = await _reports.GetByDeploymentAndDateAsync(deploymentId, day);
-			if (existing != null) throw new InvalidOperationException("timereports_date_exists");
+			var sameDay = await LiveReportsOnAsync(deploymentId, departmentId, day);
+			if (sameDay.Any(r => Same(r.DeploymentUnitId, deploymentUnitId) && Same(r.DeploymentPersonnelId, deploymentPersonnelId))) throw new InvalidOperationException("timereports_date_exists");
+			// A subject bills once a day: whoever is already on another live report for this day is not prefilled again, and a crew
+			// or person whose own time is already on one cannot open a second report for it.
+			var covered = await CoveredSubjectsAsync(deploymentId, departmentId, sameDay, null);
+			if ((deploymentUnitId != null && covered.Contains(deploymentUnitId)) || (deploymentPersonnelId != null && covered.Contains(deploymentPersonnelId)))
+				throw new InvalidOperationException("timereports_subject_covered");
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			var timeZone = string.IsNullOrWhiteSpace(deployment.LocalTimeZoneId) ? department?.TimeZone : deployment.LocalTimeZoneId;
 
@@ -145,24 +159,28 @@ namespace Resgrid.Services.Invoicing
 				var report = new DeploymentTimeReport
 				{
 					DeploymentId = deploymentId, DepartmentId = departmentId, ReportNumber = await _sequence.GetNextNumberAsync(departmentId, cancellationToken), ReportDate = day,
+					DeploymentUnitId = deploymentUnitId, DeploymentPersonnelId = deploymentPersonnelId,
 					Status = (int)DeploymentTimeReportStatuses.Draft, IncidentNumber = deployment.IncidentNumber, ResourceOrderNumber = deployment.ResourceOrderNumber,
 					RequestNumber = deployment.RequestNumber, CostCode = deployment.CostCode, PointOfHire = deployment.PointOfHire,
 					AddedOn = DateTime.UtcNow, AddedByUserId = userId
 				};
 				var saved = await _reports.SaveOrUpdateAsync(report, cancellationToken);
 
-				// Prefill: one Deployment entry per active roster subject, copying the previous report's span for the same subject when there is one.
-				var previous = (await _reports.GetByDeploymentAsync(deploymentId))?.Where(r => r.ReportDate < day && r.Status != (int)DeploymentTimeReportStatuses.Void).OrderByDescending(r => r.ReportDate).FirstOrDefault();
-				var previousEntries = previous == null ? new List<DeploymentTimeEntry>() : (await _entries.GetByReportAsync(previous.DeploymentTimeReportId))?.ToList() ?? new List<DeploymentTimeEntry>();
+				// Prefill: one Deployment entry per active subject in the report's scope, copying the most recent earlier span for the same subject when there is one.
+				var earlier = (await _reports.GetByDeploymentAsync(deploymentId))?.Where(r => r.ReportDate < day && r.Status != (int)DeploymentTimeReportStatuses.Void && !r.IsDeleted).ToDictionary(r => r.DeploymentTimeReportId, StringComparer.OrdinalIgnoreCase)
+					?? new Dictionary<string, DeploymentTimeReport>(StringComparer.OrdinalIgnoreCase);
+				var previousEntries = earlier.Count == 0 ? new List<DeploymentTimeEntry>()
+					: ((await _entries.GetByDeploymentAsync(deploymentId)) ?? Enumerable.Empty<DeploymentTimeEntry>()).Where(e => e.DeploymentTimeReportId != null && earlier.ContainsKey(e.DeploymentTimeReportId))
+						.OrderByDescending(e => earlier[e.DeploymentTimeReportId].ReportDate).ToList();
 				var defaultStart = ToUtc(day.AddHours(DefaultStartHour), timeZone);
 				var defaultEnd = ToUtc(day.AddHours(DefaultEndHour), timeZone);
 				var sort = 0;
-				var subjects = deployment.Personnel.Where(p => p.IsActive).Select(p => (Type: DeploymentTimeSubjectTypes.Personnel, Id: p.DeploymentPersonnelId, Cert: p.CertificationCode, Unit: p.DeploymentUnitId))
-					.Concat(deployment.Units.Where(u => u.IsActive).Select(u => (Type: DeploymentTimeSubjectTypes.Unit, Id: u.DeploymentUnitId, Cert: (string)null, Unit: u.DeploymentUnitId)))
-					.Concat(deployment.Equipment.Where(e => e.IsActive).Select(e => (Type: DeploymentTimeSubjectTypes.Equipment, Id: e.DeploymentEquipmentId, Cert: (string)null, Unit: e.DeploymentUnitId)));
+				var subjects = ScopeSubjects(deployment, deploymentUnitId, deploymentPersonnelId).Where(s => !covered.Contains(s.Id));
 				foreach (var subject in subjects)
 				{
-					var prior = previousEntries.Where(e => e.SubjectId == subject.Id && e.EntryType == (int)DeploymentTimeEntryTypes.Deployment).OrderBy(e => e.StartTime).FirstOrDefault();
+					// Latest earlier day that has this subject, then its first Deployment span of that day.
+					var priorDay = previousEntries.FirstOrDefault(e => e.SubjectId == subject.Id && e.EntryType == (int)DeploymentTimeEntryTypes.Deployment)?.DeploymentTimeReportId;
+					var prior = priorDay == null ? null : previousEntries.Where(e => e.DeploymentTimeReportId == priorDay && e.SubjectId == subject.Id && e.EntryType == (int)DeploymentTimeEntryTypes.Deployment).OrderBy(e => e.StartTime).FirstOrDefault();
 					var start = prior == null ? defaultStart : day.Add(ToLocal(prior.StartTime, timeZone).TimeOfDay);
 					var end = prior == null ? defaultEnd : day.Add(ToLocal(prior.EndTime, timeZone).TimeOfDay);
 					if (prior != null) { start = ToUtc(start, timeZone); end = ToUtc(end, timeZone); if (end <= start) end = end.AddDays(1); }
@@ -209,7 +227,10 @@ namespace Resgrid.Services.Invoicing
 			return await GetTimeReportByIdAsync(saved.DeploymentTimeReportId, report.DepartmentId);
 		}
 
-		public async Task<TimeReportSaveResult> SaveTimeEntriesAsync(string deploymentTimeReportId, int departmentId, List<DeploymentTimeEntry> entries, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+		public Task<TimeReportSaveResult> SaveTimeEntriesAsync(string deploymentTimeReportId, int departmentId, List<DeploymentTimeEntry> entries, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default) =>
+			SaveTimeEntriesAsync(deploymentTimeReportId, departmentId, entries, null, userId, ipAddress, userAgent, cancellationToken);
+
+		public async Task<TimeReportSaveResult> SaveTimeEntriesAsync(string deploymentTimeReportId, int departmentId, List<DeploymentTimeEntry> entries, DeploymentTimeAccess access, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 		{
 			var report = await _reports.GetByIdForDepartmentAsync(deploymentTimeReportId, departmentId);
 			if (report == null || report.IsDeleted) throw new InvalidOperationException("timereports_not_found");
@@ -231,7 +252,20 @@ namespace Resgrid.Services.Invoicing
 				entry.Notes = Trim(entry.Notes);
 				entry.CertificationCode = Trim(entry.CertificationCode);
 			}
-			var validation = Validate(report, incoming, roster.Keys);
+
+			// A scoped writer (a crew member, the unit tablet, one person) replaces only the subjects they may write; every other
+			// subject's entries stay exactly as stored, so two crews saving the same deployment-wide report never erase each other.
+			var current = (await _entries.GetByReportAsync(deploymentTimeReportId))?.ToList() ?? new List<DeploymentTimeEntry>();
+			var restricted = access != null && !access.CanManage;
+			var preserved = new List<DeploymentTimeEntry>();
+			if (restricted)
+			{
+				incoming = incoming.Where(e => access.CanWriteSubject(e.SubjectId)).ToList();
+				preserved = current.Where(e => !access.CanWriteSubject(e.SubjectId)).ToList();
+			}
+
+			var validation = Validate(report, incoming.Concat(preserved).ToList(), roster.Keys);
+			await ValidateScopeAsync(validation, report, deployment, incoming);
 			var result = new TimeReportSaveResult { Validation = validation };
 			if (!validation.IsValid)
 			{
@@ -244,14 +278,16 @@ namespace Resgrid.Services.Invoicing
 			{
 				// Entries keep their ids across a save: the catalog-28 envelope on an entry's notes is bound to the entry's row key,
 				// so an untouched entry (REDACTED posted back) is updated in place and a stale one deleted, never re-inserted.
-				var current = (await _entries.GetByReportAsync(deploymentTimeReportId))?.ToDictionary(e => e.DeploymentTimeEntryId, StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, DeploymentTimeEntry>(StringComparer.OrdinalIgnoreCase);
-				var kept = new HashSet<string>(incoming.Where(e => !string.IsNullOrWhiteSpace(e.DeploymentTimeEntryId) && current.ContainsKey(e.DeploymentTimeEntryId)).Select(e => e.DeploymentTimeEntryId), StringComparer.OrdinalIgnoreCase);
-				foreach (var stale in current.Values.Where(e => !kept.Contains(e.DeploymentTimeEntryId)))
+				var byId = current.Where(e => !string.IsNullOrWhiteSpace(e.DeploymentTimeEntryId)).ToDictionary(e => e.DeploymentTimeEntryId, StringComparer.OrdinalIgnoreCase);
+				var preservedIds = new HashSet<string>(preserved.Select(e => e.DeploymentTimeEntryId), StringComparer.OrdinalIgnoreCase);
+				var kept = new HashSet<string>(incoming.Where(e => !string.IsNullOrWhiteSpace(e.DeploymentTimeEntryId) && byId.ContainsKey(e.DeploymentTimeEntryId) && !preservedIds.Contains(e.DeploymentTimeEntryId)).Select(e => e.DeploymentTimeEntryId), StringComparer.OrdinalIgnoreCase);
+				foreach (var stale in current.Where(e => !kept.Contains(e.DeploymentTimeEntryId) && !preservedIds.Contains(e.DeploymentTimeEntryId)))
 					await _entries.DeleteAsync(stale, cancellationToken);
-				var sort = 0;
+				// A scoped save appends after the entries it did not touch; an unrestricted save renumbers the whole report.
+				var sort = preserved.Count == 0 ? 0 : preserved.Max(e => e.SortOrder) + 1;
 				foreach (var entry in incoming.OrderBy(e => e.SortOrder).ThenBy(e => e.StartTime))
 				{
-					var existingEntry = !string.IsNullOrWhiteSpace(entry.DeploymentTimeEntryId) && current.TryGetValue(entry.DeploymentTimeEntryId, out var found) ? found : null;
+					var existingEntry = !string.IsNullOrWhiteSpace(entry.DeploymentTimeEntryId) && byId.TryGetValue(entry.DeploymentTimeEntryId, out var found) && !preservedIds.Contains(entry.DeploymentTimeEntryId) ? found : null;
 					if (existingEntry == null)
 					{
 						entry.DeploymentTimeEntryId = null;
@@ -273,6 +309,70 @@ namespace Resgrid.Services.Invoicing
 			result.Report = await GetTimeReportByIdAsync(deploymentTimeReportId, departmentId);
 			return result;
 		}
+
+		/// <summary>
+		/// M0227 rules on top of <see cref="Validate"/>: a crew or individual report carries only its own subjects, and a subject
+		/// already on another live report for the same day is refused (it would bill twice).
+		/// </summary>
+		private async Task ValidateScopeAsync(TimeReportValidation validation, DeploymentTimeReport report, Deployment deployment, IReadOnlyList<DeploymentTimeEntry> entries)
+		{
+			var scope = ScopeSubjectIds(deployment, report);
+			var sameDay = await LiveReportsOnAsync(report.DeploymentId, report.DepartmentId, report.ReportDate.Date);
+			var covered = await CoveredSubjectsAsync(report.DeploymentId, report.DepartmentId, sameDay, report.DeploymentTimeReportId);
+			foreach (var entry in entries)
+			{
+				var subject = entry.SubjectId;
+				if (string.IsNullOrWhiteSpace(subject)) continue;
+				if (scope != null && !scope.Contains(subject))
+					validation.Errors.Add(new TimeReportIssue { Code = TimeReportValidation.SubjectOutsideScope, SubjectId = subject, EntryId = entry.DeploymentTimeEntryId });
+				else if (covered.Contains(subject))
+					validation.Errors.Add(new TimeReportIssue { Code = TimeReportValidation.SubjectOnOtherReport, SubjectId = subject, EntryId = entry.DeploymentTimeEntryId });
+			}
+		}
+
+		/// <summary>Live (not deleted, not void) reports of the deployment on one calendar day.</summary>
+		private async Task<List<DeploymentTimeReport>> LiveReportsOnAsync(string deploymentId, int departmentId, DateTime day) =>
+			(await _reports.GetByDeploymentAsync(deploymentId))?.Where(r => r.DepartmentId == departmentId && r.IsLive && r.ReportDate.Date == day.Date).ToList() ?? new List<DeploymentTimeReport>();
+
+		/// <summary>Subjects with time on any of <paramref name="reports"/> other than <paramref name="excludingReportId"/>.</summary>
+		private async Task<HashSet<string>> CoveredSubjectsAsync(string deploymentId, int departmentId, IReadOnlyCollection<DeploymentTimeReport> reports, string excludingReportId)
+		{
+			var others = new HashSet<string>(reports.Where(r => !Same(r.DeploymentTimeReportId, excludingReportId)).Select(r => r.DeploymentTimeReportId), StringComparer.OrdinalIgnoreCase);
+			if (others.Count == 0) return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var entries = (await _entries.GetByDeploymentAsync(deploymentId)) ?? Enumerable.Empty<DeploymentTimeEntry>();
+			return new HashSet<string>(entries.Where(e => e.DepartmentId == departmentId && e.DeploymentTimeReportId != null && others.Contains(e.DeploymentTimeReportId) && !string.IsNullOrWhiteSpace(e.SubjectId)).Select(e => e.SubjectId), StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <summary>Active subjects a new report prefills: the whole roster, one unit with its crew and equipment, or one person.</summary>
+		private static List<(DeploymentTimeSubjectTypes Type, string Id, string Cert)> ScopeSubjects(Deployment deployment, string deploymentUnitId, string deploymentPersonnelId)
+		{
+			if (deploymentPersonnelId != null)
+				return deployment.Personnel.Where(p => p.IsActive && Same(p.DeploymentPersonnelId, deploymentPersonnelId)).Select(p => (DeploymentTimeSubjectTypes.Personnel, p.DeploymentPersonnelId, p.CertificationCode)).ToList();
+			bool InScope(string unitId) => deploymentUnitId == null || Same(unitId, deploymentUnitId);
+			return deployment.Personnel.Where(p => p.IsActive && InScope(p.DeploymentUnitId)).Select(p => (DeploymentTimeSubjectTypes.Personnel, p.DeploymentPersonnelId, p.CertificationCode))
+				.Concat(deployment.Units.Where(u => u.IsActive && InScope(u.DeploymentUnitId)).Select(u => (DeploymentTimeSubjectTypes.Unit, u.DeploymentUnitId, (string)null)))
+				.Concat(deployment.Equipment.Where(e => e.IsActive && InScope(e.DeploymentUnitId)).Select(e => (DeploymentTimeSubjectTypes.Equipment, e.DeploymentEquipmentId, (string)null)))
+				.ToList();
+		}
+
+		/// <summary>Every subject (active or since removed) a scoped report may carry; null for a deployment-wide report (the roster check covers it).</summary>
+		private static HashSet<string> ScopeSubjectIds(Deployment deployment, DeploymentTimeReport report)
+		{
+			switch (report.Scope)
+			{
+				case DeploymentTimeReportScopes.Individual:
+					return new HashSet<string>(new[] { report.DeploymentPersonnelId }, StringComparer.OrdinalIgnoreCase);
+				case DeploymentTimeReportScopes.Crew:
+					var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { report.DeploymentUnitId };
+					foreach (var p in deployment.Personnel.Where(p => Same(p.DeploymentUnitId, report.DeploymentUnitId))) ids.Add(p.DeploymentPersonnelId);
+					foreach (var e in deployment.Equipment.Where(e => Same(e.DeploymentUnitId, report.DeploymentUnitId))) ids.Add(e.DeploymentEquipmentId);
+					return ids;
+				default:
+					return null;
+			}
+		}
+
+		private static bool Same(string a, string b) => string.Equals(string.IsNullOrWhiteSpace(a) ? null : a, string.IsNullOrWhiteSpace(b) ? null : b, StringComparison.OrdinalIgnoreCase);
 
 		public TimeReportValidation Validate(DeploymentTimeReport report, IReadOnlyList<DeploymentTimeEntry> entries, IReadOnlyCollection<string> rosterSubjectIds)
 		{
@@ -318,6 +418,7 @@ namespace Resgrid.Services.Invoicing
 			if (deployment == null) throw new InvalidOperationException("deployments_not_found");
 			var entries = (await _entries.GetByReportAsync(deploymentTimeReportId))?.ToList() ?? new List<DeploymentTimeEntry>();
 			var validation = Validate(report, entries, RosterSubjects(deployment).Keys);
+			await ValidateScopeAsync(validation, report, deployment, entries);
 			var result = new TimeReportSaveResult { Validation = validation };
 			if (!validation.IsValid) { result.Report = await GetTimeReportByIdAsync(deploymentTimeReportId, departmentId); return result; }
 
@@ -458,8 +559,13 @@ namespace Resgrid.Services.Invoicing
 			string D(DateTime? value) => value.HasValue ? (department == null ? value.Value.ToString("yyyy-MM-dd HH:mm") : value.Value.TimeConverter(department).ToString("yyyy-MM-dd HH:mm")) : "—";
 			var sb = new StringBuilder();
 			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | Daily Time Report</title><style>body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#222;margin:24px}h1{font-size:18px;margin:0 0 4px}h2{font-size:13px;margin:16px 0 6px;border-bottom:1px solid #999;padding-bottom:2px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:4px 6px;text-align:left;vertical-align:top}th{background:#eee}.meta td{border:none;padding:2px 12px 2px 0}.muted{color:#666}.num{text-align:right}.sig td{border:none;padding-top:28px;border-top:1px solid #444}</style></head><body>");
-			sb.Append("<h1>").Append(E(department?.Name)).Append(" — Daily Time Report #").Append(report.ReportNumber).Append("</h1>");
-			sb.Append("<div class=\"muted\">").Append(E(deployment?.Name)).Append(" · ").Append(report.ReportDate.ToString("yyyy-MM-dd")).Append(" · ").Append(E(((DeploymentTimeReportStatuses)report.Status).ToString())).Append("</div>");
+			string Named(string id) => id != null && subjectNames != null && subjectNames.TryGetValue(id, out var n) ? n : id;
+			var title = report.Scope switch { DeploymentTimeReportScopes.Crew => "Crew Time Report", DeploymentTimeReportScopes.Individual => "Individual Time Report", _ => "Daily Time Report" };
+			sb.Append("<h1>").Append(E(department?.Name)).Append(" — ").Append(title).Append(" #").Append(report.ReportNumber).Append("</h1>");
+			sb.Append("<div class=\"muted\">").Append(E(deployment?.Name)).Append(" · ").Append(report.ReportDate.ToString("yyyy-MM-dd")).Append(" · ").Append(E(((DeploymentTimeReportStatuses)report.Status).ToString()));
+			if (report.Scope == DeploymentTimeReportScopes.Crew) sb.Append(" · Crew: ").Append(E(Named(report.DeploymentUnitId)));
+			if (report.Scope == DeploymentTimeReportScopes.Individual) sb.Append(" · Resource: ").Append(E(Named(report.DeploymentPersonnelId)));
+			sb.Append("</div>");
 			sb.Append("<table class=\"meta\"><tr><td><strong>Incident #</strong> ").Append(E(report.IncidentNumber)).Append("</td><td><strong>Resource order #</strong> ").Append(E(report.ResourceOrderNumber)).Append("</td><td><strong>Request #</strong> ").Append(E(report.RequestNumber)).Append("</td></tr>");
 			sb.Append("<tr><td><strong>Cost code</strong> ").Append(E(report.CostCode)).Append("</td><td><strong>Point of hire</strong> ").Append(E(report.PointOfHire)).Append("</td><td>");
 			if (report.NoClear8) sb.Append("<strong>No clear 8</strong> ");

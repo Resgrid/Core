@@ -37,7 +37,9 @@ namespace Resgrid.Providers.Migrations.Migrations
 			{
 				bounds.Transaction = transaction;
 				bounds.CommandTimeout = 300;
-				bounds.CommandText = $"SELECT MIN([{key}]), MAX([{key}]) FROM [{table}] WHERE [DestinationId] > 0 AND [DestinationSource] IS NULL";
+				// Unfiltered: the key bounds come off the clustered index, while the filtered form scans the table (no index covers
+				// DestinationSource) on every run; each range update applies the filter.
+				bounds.CommandText = $"SELECT MIN([{key}]), MAX([{key}]) FROM [{table}]";
 				using var reader = bounds.ExecuteReader();
 				if (!reader.Read() || reader.IsDBNull(0))
 					return;

@@ -35,8 +35,15 @@ var resgrid;
                     searchField: 'Name',
                     options: [],
                     create: false,
+                    // Keep the "Not Occupied" option (empty value) as a real choice so an assigned seat can be
+                    // cleared; without this Selectize drops it and only uses its text as the placeholder.
+                    allowEmptyOption: true,
                     render: {
                         option: function (item, escape) {
+                            if (!item.UserId) {
+                                return '<div><span class="title"><span class="name text-muted">' + escape(item.Name) + '</span></span></div>';
+                            }
+
                             return '<div>' +
                                 '<span class="title">' +
                                 '<span class="name">' + escape(item.Name) + '</span>' +

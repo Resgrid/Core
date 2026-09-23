@@ -354,6 +354,8 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCallDispatchesForCallsInRangeQuery { get; set; }
 		public string SelectCallDispatchGroupsForCallsInRangeQuery { get; set; }
 		public string SelectCallDispatchRolesForCallsInRangeQuery { get; set; }
+		public string SelectUnitDispatchWindowsQuery { get; set; }
+		public string SelectPersonnelDispatchWindowsQuery { get; set; }
 		public string SelectAllCallRoleDispsByCallIdQuery { get; set; }
 		public string SelectCallYearsByDeptQuery { get; set; }
 		public string SelectAllClosedCallsByDidYearQuery { get; set; }

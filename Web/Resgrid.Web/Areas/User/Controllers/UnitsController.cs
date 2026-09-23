@@ -1127,7 +1127,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				eventRecords.Add(eventRecord);
 			}
 
-			var calls = await AddReferencedCallsAsync(activeCalls, eventRecords
+			var calls = await ReferencedCallsHelper.AddReferencedCallsAsync(_callsService, DepartmentId, activeCalls, eventRecords
 				.Where(x => x.DestinationId.HasValue && (!x.DestinationType.HasValue || x.DestinationType == (int)DestinationEntityTypes.Call))
 				.Select(x => x.DestinationId.Value));
 
@@ -1157,27 +1157,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View("~/Areas/User/Views/Reports/UnitEventsReport.cshtml", model);
-		}
-
-		/// <summary>
-		/// Adds the department's closed calls that the given status rows point at to the active call list, so an
-		/// events report still names the call a status was set against after the call closed.
-		/// </summary>
-		private async Task<List<Call>> AddReferencedCallsAsync(List<Call> calls, IEnumerable<int> destinationCallIds)
-		{
-			var result = calls != null ? new List<Call>(calls) : new List<Call>();
-
-			foreach (var callId in destinationCallIds.Where(x => x > 0).Distinct())
-			{
-				if (result.Any(x => x.CallId == callId))
-					continue;
-
-				var call = await _callsService.GetCallByIdAsync(callId);
-				if (call != null && call.DepartmentId == DepartmentId)
-					result.Add(call);
-			}
-
-			return result;
 		}
 
 		[HttpPost]
@@ -1427,7 +1406,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						unitJson.StateId = state.State;
 						unitJson.State = "Unknown";
 						unitJson.StateColor = "#d1dade";
-						unitJson.TextColor = "5E5E5E";
+						unitJson.TextColor = "#5E5E5E";
 						unitJson.Timestamp = state.Timestamp.TimeConverterToString(department);
 					}
 				}

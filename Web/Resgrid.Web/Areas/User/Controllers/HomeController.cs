@@ -1195,12 +1195,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> UserRespondingToStation(int stationId)
 		{
-			// Only a station of this department is recorded as the destination, typed so it can never be read as a call.
-			var station = stationId > 0 ? await _departmentGroupsService.GetGroupByIdAsync(stationId) : null;
+			if (stationId > 0)
+			{
+				// Only a station group of this department is recorded as the destination, typed so it can never be read as a
+				// call. A named station that doesn't resolve is refused rather than saved without one, which would let call
+				// attribution link the status to a call the member never picked.
+				var station = await _departmentGroupsService.GetGroupByIdAsync(stationId);
 
-			if (station != null && station.DepartmentId == DepartmentId)
+				if (station == null || station.DepartmentId != DepartmentId || station.Type != (int)DepartmentGroupTypes.Station)
+					return Unauthorized();
+
 				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToStation, null,
 											 station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
+			}
 			else
 				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToStation, null);
 
@@ -1210,12 +1217,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> UserRespondingToCall(int callId)
 		{
-			// Only a call of this department is recorded as the destination.
-			var call = callId > 0 ? await _callsService.GetCallByIdAsync(callId) : null;
+			if (callId > 0)
+			{
+				// Only a call of this department is recorded as the destination. A named call that doesn't resolve is refused
+				// rather than saved without one, which would let call attribution link the status to a different call.
+				var call = await _callsService.GetCallByIdAsync(callId);
 
-			if (call != null && call.DepartmentId == DepartmentId)
+				if (call == null || call.DepartmentId != DepartmentId)
+					return Unauthorized();
+
 				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null,
 											 call.CallId, (int)DestinationEntityTypes.Call);
+			}
 			else
 				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null);
 

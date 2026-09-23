@@ -12,14 +12,16 @@ namespace Resgrid.Model.Services
 	{
 		/// <summary>
 		/// Before a unit state is saved: marks a sent destination as explicit, or links the state to the previous state's
-		/// still-open call or to the one open call the unit is dispatched to. Never throws; a failure saves the state as sent.
+		/// still-open call or to the one open call the unit is dispatched to; a state replayed from an offline queue is left
+		/// unlinked for the read-time walk. Never throws; a failure saves the state as sent.
 		/// </summary>
 		Task AttributeUnitStateAsync(UnitState state, UnitState previousState, int departmentId);
 
 		/// <summary>
 		/// Before a personnel status is saved: marks a sent destination as explicit, or links the status to the call of the
 		/// unit state that placed the person on a unit, the previous status's still-open call, or the one open call the
-		/// person is dispatched to. Never throws; a failure saves the status as sent.
+		/// person is dispatched to; a status replayed from an offline queue is only linked through its unit state. Never
+		/// throws; a failure saves the status as sent.
 		/// </summary>
 		Task AttributeActionLogAsync(ActionLog actionLog, ActionLog previousActionLog);
 

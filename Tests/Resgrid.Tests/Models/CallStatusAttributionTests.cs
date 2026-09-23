@@ -82,6 +82,96 @@ namespace Resgrid.Tests.Models
 		}
 
 		[Test]
+		public void inference_skips_statuses_another_calls_walk_takes_too()
+		{
+			// The unit was also dispatched to call 99, open from minute 20 to minute 40.
+			var otherDispatches = new[] { new CallDispatchSpan(99, T0.AddMinutes(20), T0.AddMinutes(40), false) };
+
+			var nothingLinkedYet = new List<UnitState>
+			{
+				State(1, 25, UnitStateTypes.OnScene),   // ambiguous: skipped
+				State(2, 45, UnitStateTypes.Staging),   // after call 99 closed: inferred
+				State(3, 50, UnitStateTypes.Available)  // inferred, clearing: stop
+			};
+			CallStatusAttribution.InferUnitStates(CallId, T0, T0.AddHours(1), nothingLinkedYet, Clearing, null, otherDispatches)
+				.Select(x => x.UnitStateId).Should().Equal(2, 3);
+
+			var followsThisCall = new List<UnitState>
+			{
+				State(1, 10, UnitStateTypes.Responding, CallId, (int)DestinationEntityTypes.Call),
+				State(2, 25, UnitStateTypes.OnScene)    // follows a status on this call's record: carried forward
+			};
+			CallStatusAttribution.InferUnitStates(CallId, T0, T0.AddHours(1), followsThisCall, Clearing, null, otherDispatches)
+				.Select(x => x.UnitStateId).Should().Equal(2);
+
+			var ambiguousClear = new List<UnitState>
+			{
+				State(1, 25, UnitStateTypes.Available), // cleared something, can't tell which call: the walk ends
+				State(2, 45, UnitStateTypes.Responding)
+			};
+			CallStatusAttribution.InferUnitStates(CallId, T0, T0.AddHours(1), ambiguousClear, Clearing, null, otherDispatches).Should().BeEmpty();
+		}
+
+		[Test]
+		public void a_call_left_open_after_the_unit_cleared_it_does_not_make_later_statuses_ambiguous()
+		{
+			// Call 77 was dispatched two hours earlier and never closed, but the unit cleared it before this dispatch.
+			var otherDispatches = new[] { new CallDispatchSpan(77, T0.AddHours(-2), T0.AddHours(3), false) };
+			var states = new List<UnitState>
+			{
+				State(1, -110, UnitStateTypes.Responding),
+				State(2, -100, UnitStateTypes.Available),
+				State(3, 10, UnitStateTypes.OnScene)
+			};
+
+			CallStatusAttribution.InferUnitStates(CallId, T0, T0.AddHours(1), states, Clearing, null, otherDispatches)
+				.Select(x => x.UnitStateId).Should().Equal(3);
+		}
+
+		[Test]
+		public void an_untyped_legacy_station_destination_equal_to_the_call_id_ends_the_walk()
+		{
+			var stationOnly = new CustomStateDetail { CustomStateDetailId = (int)UnitStateTypes.Returning, DetailType = (int)CustomStateDetailTypes.Stations };
+			var lookup = new Dictionary<int, CustomStateDetail> { [stationOnly.CustomStateDetailId] = stationOnly };
+			var states = new List<UnitState>
+			{
+				State(1, 5, UnitStateTypes.OnScene),
+				State(2, 10, UnitStateTypes.Returning, CallId),  // legacy row: station 42, not call 42
+				State(3, 20, UnitStateTypes.Committed)
+			};
+
+			CallStatusAttribution.InferUnitStates(CallId, T0, T0.AddHours(1), states, s => false, lookup).Select(x => x.UnitStateId).Should().Equal(1);
+			CallStatusAttribution.InferUnitStates(CallId, T0, T0.AddHours(1), states, s => false).Select(x => x.UnitStateId).Should().Equal(new[] { 1, 3 }, "without the status lookup the legacy row reads as the call");
+		}
+
+		[Test]
+		public void dispatch_spans_mirror_each_calls_own_walk()
+		{
+			var now = T0.AddHours(5);
+			var spans = CallStatusAttribution.DispatchSpans(new[]
+			{
+				new CallDispatchWindow { CallId = 1, DispatchedOn = T0.AddMinutes(10), LoggedOn = T0.AddMinutes(-1), ClosedOn = T0.AddHours(1), Paged = true },
+				new CallDispatchWindow { CallId = 1, DispatchedOn = T0, LoggedOn = T0.AddMinutes(-1), ClosedOn = T0.AddHours(1) },
+				new CallDispatchWindow { CallId = 2, LoggedOn = T0, Paged = true },
+				null
+			}, now);
+
+			spans.Should().Equal(
+				new CallDispatchSpan(1, T0, T0.AddHours(1), false),  // earliest dispatch; paged and direct counts as direct
+				new CallDispatchSpan(2, T0, now, true));              // no dispatch time: from the logging; open: to now
+		}
+
+		[Test]
+		public void only_a_status_set_now_is_live()
+		{
+			var now = T0;
+			CallStatusAttribution.IsLiveStatus(now, now).Should().BeTrue();
+			CallStatusAttribution.IsLiveStatus(now.AddMinutes(-4), now).Should().BeTrue();
+			CallStatusAttribution.IsLiveStatus(now.AddMinutes(3), now).Should().BeTrue("device clocks run ahead");
+			CallStatusAttribution.IsLiveStatus(now.AddMinutes(-6), now).Should().BeFalse("replayed from an offline queue");
+		}
+
+		[Test]
 		public void inference_ends_at_the_call_close()
 		{
 			var states = new List<UnitState> { State(1, 5, UnitStateTypes.OnScene), State(2, 90, UnitStateTypes.Committed) };

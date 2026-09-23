@@ -439,9 +439,15 @@
                                 $('#Call_Type').val(data.CallType);
                             }
 
-                            if (data.CallPriority && data.CallPriority >= 0) {
+                            // Priority 0 is a real value (the default Low priority), so test the
+                            // type rather than truthiness.
+                            if (typeof data.CallPriority === 'number' && data.CallPriority >= 0) {
                                 $('#CallPriority').val(data.CallPriority);
                             }
+
+                            // .val() raises no change event, so re-run the type/priority
+                            // handler for the template's values.
+                            checkForProtocols();
                         }
                     });
                 }

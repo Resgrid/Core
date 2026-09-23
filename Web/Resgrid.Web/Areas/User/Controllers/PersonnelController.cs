@@ -2383,27 +2383,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("ViewEvents", new { userId = model.UserId });
 		}
 
-		/// <summary>
-		/// Adds the department's closed calls that the given status rows point at to the active call list, so an
-		/// events report still names the call a status was set against after the call closed.
-		/// </summary>
-		private async Task<List<Call>> AddReferencedCallsAsync(List<Call> calls, IEnumerable<int> destinationCallIds)
-		{
-			var result = calls != null ? new List<Call>(calls) : new List<Call>();
-
-			foreach (var callId in destinationCallIds.Where(x => x > 0).Distinct())
-			{
-				if (result.Any(x => x.CallId == callId))
-					continue;
-
-				var call = await _callsService.GetCallByIdAsync(callId);
-				if (call != null && call.DepartmentId == DepartmentId)
-					result.Add(call);
-			}
-
-			return result;
-		}
-
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> GeneratePersonnelEventsReport(IFormCollection form)
@@ -2443,7 +2422,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				actionLogs.Add(actionLog);
 			}
 
-			var calls = await AddReferencedCallsAsync(activeCalls, actionLogs
+			var calls = await ReferencedCallsHelper.AddReferencedCallsAsync(_callsService, DepartmentId, activeCalls, actionLogs
 				.Where(x => x.DestinationId.HasValue && x.GetEffectiveDestinationType() != DestinationEntityTypes.Station && x.GetEffectiveDestinationType() != DestinationEntityTypes.Poi)
 				.Select(x => x.DestinationId.Value));
 

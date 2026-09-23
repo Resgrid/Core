@@ -2028,7 +2028,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);

@@ -61,6 +61,10 @@ namespace Resgrid.Services
 
 			try
 			{
+				// Carry-forward and dispatch read the unit's state now; a replayed offline state is placed by the read-time walk.
+				if (!CallStatusAttribution.IsLiveStatus(state.Timestamp, DateTime.UtcNow))
+					return;
+
 				var baseTypes = await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit);
 				var previous = previousState != null && previousState.UnitId == state.UnitId ? previousState : null;
 				var previousCallId = previous != null ? CallStatusLinkage.LinkedCallId(previous.DestinationId, previous.DestinationType) : null;
@@ -114,6 +118,10 @@ namespace Resgrid.Services
 					}
 				}
 
+				// Carry-forward and dispatch read the person's state now; a replayed offline status is placed by the read-time walk.
+				if (!CallStatusAttribution.IsLiveStatus(actionLog.Timestamp, DateTime.UtcNow))
+					return;
+
 				var departmentId = actionLog.DepartmentId;
 				var baseTypes = await GetBaseTypesAsync(departmentId, CustomStateTypes.Personnel);
 				var previous = previousActionLog != null && previousActionLog.UserId == actionLog.UserId && previousActionLog.DepartmentId == departmentId
@@ -158,17 +166,22 @@ namespace Resgrid.Services
 				return inferred;
 
 			var end = CallEnd(call);
-			var baseTypes = await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit);
+			var subjects = EarliestPerUnit(dispatches).Select(x => (x.UnitId, Start: DispatchStart(x.DispatchedOn, call))).Where(x => x.Start <= end).ToList();
+			if (subjects.Count == 0)
+				return inferred;
 
-			foreach (var dispatch in EarliestPerUnit(dispatches))
+			var (statusLookup, baseTypes) = await GetStatusRulesAsync(departmentId, CustomStateTypes.Unit);
+			var windowsByUnit = await GetUnitDispatchWindowsAsync(departmentId, subjects.Min(x => x.Start), end);
+
+			foreach (var subject in subjects)
 			{
-				var start = DispatchStart(dispatch.DispatchedOn, call);
-				if (start > end)
-					continue;
+				// Another dispatch that overlaps this one is walked from its own start, so the states are read from there.
+				var others = OtherDispatches(windowsByUnit, subject.UnitId, call.CallId, subject.Start);
+				var from = others != null ? Earliest(subject.Start, others.Min(x => x.Start)) : subject.Start;
 
-				var states = await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(dispatch.UnitId, start, end);
-				inferred.AddRange(CallStatusAttribution.InferUnitStates(call.CallId, start, end, states,
-					s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes)));
+				var states = await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(subject.UnitId, from, end);
+				inferred.AddRange(CallStatusAttribution.InferUnitStates(call.CallId, subject.Start, end, states,
+					s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, others));
 			}
 
 			await PopulateUnitsAsync(departmentId, inferred);
@@ -200,10 +213,12 @@ namespace Resgrid.Services
 			if (windowStart > end)
 				return new List<ActionLog>();
 
-			var baseTypes = await GetBaseTypesAsync(departmentId, CustomStateTypes.Personnel);
-			var logsByUser = GroupByUser(departmentId, await _actionLogsRepository.GetAllActionLogsInDateRangeAsync(departmentId, windowStart, end));
+			var (statusLookup, baseTypes) = await GetStatusRulesAsync(departmentId, CustomStateTypes.Personnel);
+			var windowsByUser = await GetPersonnelDispatchWindowsAsync(departmentId, windowStart, end);
+			var logsFrom = Earliest(windowStart, EarliestDispatch(windowsByUser, subjects.Keys));
+			var logsByUser = GroupByUser(departmentId, await _actionLogsRepository.GetAllActionLogsInDateRangeAsync(departmentId, logsFrom, end));
 
-			return InferPersonnel(call.CallId, end, subjects, logsByUser, baseTypes);
+			return InferPersonnel(call.CallId, end, subjects, logsByUser, baseTypes, statusLookup, windowsByUser);
 		}
 
 		public async Task<Dictionary<int, List<ActionLog>>> GetActionLogsForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls)
@@ -237,11 +252,11 @@ namespace Resgrid.Services
 			var windowStart = loggedFrom;
 			var windowEnd = departmentCalls.Max(CallEnd).AddDays(1);
 
-			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
-			var statusLookup = CallStatusLinkage.BuildStatusLookup(_customStateService.GetDefaultPersonStatuses(), customStates, CustomStateTypes.Personnel);
-			var baseTypes = CallStatusLinkage.BuildBaseTypeMap(customStates, CustomStateTypes.Personnel);
+			var (statusLookup, baseTypes) = await GetStatusRulesAsync(departmentId, CustomStateTypes.Personnel);
+			var windowsByUser = await GetPersonnelDispatchWindowsAsync(departmentId, windowStart, windowEnd);
+			var logsFrom = Earliest(windowStart, EarliestDispatch(windowsByUser, windowsByUser.Keys));
 
-			var logs = ((await _actionLogsRepository.GetAllActionLogsInDateRangeAsync(departmentId, windowStart, windowEnd)) ?? Enumerable.Empty<ActionLog>())
+			var logs = ((await _actionLogsRepository.GetAllActionLogsInDateRangeAsync(departmentId, logsFrom, windowEnd)) ?? Enumerable.Empty<ActionLog>())
 				.Where(x => x != null && x.DepartmentId == departmentId).ToList();
 
 			foreach (var log in logs)
@@ -259,7 +274,7 @@ namespace Resgrid.Services
 				if (subjects.Count == 0)
 					continue;
 
-				result[call.CallId].AddRange(InferPersonnel(call.CallId, CallEnd(call), subjects, logsByUser, baseTypes));
+				result[call.CallId].AddRange(InferPersonnel(call.CallId, CallEnd(call), subjects, logsByUser, baseTypes, statusLookup, windowsByUser));
 			}
 
 			return result;
@@ -301,14 +316,14 @@ namespace Resgrid.Services
 			var windowStart = departmentCalls.Min(x => x.LoggedOn);
 			var windowEnd = departmentCalls.Max(CallEnd).AddDays(1);
 
-			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
-			var statusLookup = CallStatusLinkage.BuildStatusLookup(_customStateService.GetDefaultUnitStatuses(), customStates, CustomStateTypes.Unit);
-			var baseTypes = CallStatusLinkage.BuildBaseTypeMap(customStates, CustomStateTypes.Unit);
+			var (statusLookup, baseTypes) = await GetStatusRulesAsync(departmentId, CustomStateTypes.Unit);
+			var windowsByUnit = await GetUnitDispatchWindowsAsync(departmentId, windowStart, windowEnd);
 
 			var statesByUnit = new Dictionary<int, List<UnitState>>();
 			foreach (var unit in units)
 			{
-				var states = (await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(unit.UnitId, windowStart, windowEnd))?.Where(x => x != null).ToList() ?? new List<UnitState>();
+				var statesFrom = Earliest(windowStart, EarliestDispatch(windowsByUnit, new[] { unit.UnitId }));
+				var states = (await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(unit.UnitId, statesFrom, windowEnd))?.Where(x => x != null).ToList() ?? new List<UnitState>();
 				foreach (var state in states)
 					state.Unit ??= unit;
 
@@ -336,7 +351,7 @@ namespace Resgrid.Services
 						continue;
 
 					result[call.CallId].AddRange(CallStatusAttribution.InferUnitStates(call.CallId, start, end, states,
-						s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes)));
+						s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, OtherDispatches(windowsByUnit, dispatch.UnitId, call.CallId, start)));
 				}
 			}
 
@@ -384,7 +399,8 @@ namespace Resgrid.Services
 		}
 
 		private static List<ActionLog> InferPersonnel(int callId, DateTime end, Dictionary<string, (DateTime Start, bool RequireEngagement)> subjects,
-			IReadOnlyDictionary<string, List<ActionLog>> logsByUser, IReadOnlyDictionary<int, int> baseTypes)
+			IReadOnlyDictionary<string, List<ActionLog>> logsByUser, IReadOnlyDictionary<int, int> baseTypes,
+			IReadOnlyDictionary<int, CustomStateDetail> statusLookup, Dictionary<string, List<CallDispatchWindow>> windowsByUser)
 		{
 			var inferred = new List<ActionLog>();
 			foreach (var subject in subjects)
@@ -393,7 +409,8 @@ namespace Resgrid.Services
 					continue;
 
 				inferred.AddRange(CallStatusAttribution.InferActionLogs(callId, subject.Value.Start, end, subject.Value.RequireEngagement, logs,
-					l => CallStatusLinkage.IsClearingPersonnelStatus(l.ActionTypeId, baseTypes)));
+					l => CallStatusLinkage.IsClearingPersonnelStatus(l.ActionTypeId, baseTypes), statusLookup,
+					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start)));
 			}
 
 			return inferred;
@@ -436,6 +453,80 @@ namespace Resgrid.Services
 			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
 
 			return CallStatusLinkage.BuildBaseTypeMap(customStates, type);
+		}
+
+		/// <summary>
+		/// One status kind's raw-status lookup (built-in and custom statuses, for <see cref="CallStatusLinkage.BelongsToCall(int?, CustomStateDetail)"/>)
+		/// and custom base-type map (for the clearing rules).
+		/// </summary>
+		private async Task<(Dictionary<int, CustomStateDetail> StatusLookup, Dictionary<int, int> BaseTypes)> GetStatusRulesAsync(int departmentId, CustomStateTypes type)
+		{
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+			var builtIn = type == CustomStateTypes.Unit ? _customStateService.GetDefaultUnitStatuses() : _customStateService.GetDefaultPersonStatuses();
+
+			return (CallStatusLinkage.BuildStatusLookup(builtIn, customStates, type), CallStatusLinkage.BuildBaseTypeMap(customStates, type));
+		}
+
+		/// <summary>
+		/// Each unit's dispatches made from <see cref="CallStatusAttribution.OverlapLookback"/> before <paramref name="from"/>
+		/// to <paramref name="to"/>, the ones that can overlap a dispatch in that window.
+		/// </summary>
+		private async Task<Dictionary<int, List<CallDispatchWindow>>> GetUnitDispatchWindowsAsync(int departmentId, DateTime from, DateTime to)
+		{
+			var dispatchedFrom = from.Subtract(CallStatusAttribution.OverlapLookback);
+			var windows = await _callDispatchUnitRepository.GetUnitDispatchWindowsAsync(departmentId, dispatchedFrom, to,
+				dispatchedFrom.Subtract(CallStatusAttribution.MaxOverlapCallAge));
+
+			return (windows ?? Enumerable.Empty<CallDispatchWindow>()).Where(x => x != null)
+				.GroupBy(x => x.UnitId).ToDictionary(g => g.Key, g => g.ToList());
+		}
+
+		/// <summary>The personnel equivalent of <see cref="GetUnitDispatchWindowsAsync"/>, by user.</summary>
+		private async Task<Dictionary<string, List<CallDispatchWindow>>> GetPersonnelDispatchWindowsAsync(int departmentId, DateTime from, DateTime to)
+		{
+			var dispatchedFrom = from.Subtract(CallStatusAttribution.OverlapLookback);
+			var windows = await _callDispatchesRepository.GetPersonnelDispatchWindowsAsync(departmentId, dispatchedFrom, to,
+				dispatchedFrom.Subtract(CallStatusAttribution.MaxOverlapCallAge));
+
+			return (windows ?? Enumerable.Empty<CallDispatchWindow>()).Where(x => x != null && !string.IsNullOrWhiteSpace(x.UserId))
+				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <summary>
+		/// The unit's/person's dispatches to calls other than this one, made from <see cref="CallStatusAttribution.OverlapLookback"/>
+		/// before their dispatch to it (<paramref name="start"/>); null when there are none.
+		/// </summary>
+		private static List<CallDispatchSpan> OtherDispatches<TKey>(Dictionary<TKey, List<CallDispatchWindow>> windows, TKey key, int callId, DateTime start)
+		{
+			if (!windows.TryGetValue(key, out var subjectWindows))
+				return null;
+
+			var from = start.Subtract(CallStatusAttribution.OverlapLookback);
+			var others = CallStatusAttribution.DispatchSpans(subjectWindows.Where(x => x.CallId != callId), DateTime.UtcNow)
+				.Where(x => x.Start >= from).ToList();
+
+			return others.Count > 0 ? others : null;
+		}
+
+		/// <summary>The earliest dispatch among the given units'/people's windows, or null when they have none.</summary>
+		private static DateTime? EarliestDispatch<TKey>(Dictionary<TKey, List<CallDispatchWindow>> windows, IEnumerable<TKey> keys)
+		{
+			DateTime? earliest = null;
+			foreach (var key in keys)
+			{
+				if (!windows.TryGetValue(key, out var subjectWindows))
+					continue;
+
+				foreach (var span in CallStatusAttribution.DispatchSpans(subjectWindows, DateTime.UtcNow))
+					earliest = earliest.HasValue && earliest.Value <= span.Start ? earliest : span.Start;
+			}
+
+			return earliest;
+		}
+
+		private static DateTime Earliest(DateTime value, DateTime? other)
+		{
+			return other.HasValue && other.Value < value ? other.Value : value;
 		}
 
 		private async Task<bool> IsOpenCallAsync(int departmentId, int callId)

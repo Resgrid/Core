@@ -27,5 +27,11 @@ namespace Resgrid.Model.Repositories
 		/// Gets the unit dispatches of every department call logged in the range (UTC, inclusive).
 		/// </summary>
 		Task<IEnumerable<CallDispatchUnit>> GetCallUnitDispatchesForCallsInRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
+
+		/// <summary>
+		/// Gets the unit dispatches made in the range (UTC, inclusive), with each call's logged and closed times, on department
+		/// calls logged from <paramref name="loggedFrom"/>.
+		/// </summary>
+		Task<IEnumerable<CallDispatchWindow>> GetUnitDispatchWindowsAsync(int departmentId, DateTime startDate, DateTime endDate, DateTime loggedFrom);
 	}
 }

@@ -1264,6 +1264,32 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cr.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %STARTDATE% AND c.[LoggedOn] <= %ENDDATE%";
+			SelectUnitDispatchWindowsQuery = @"
+					SELECT cdu.[CallId], cdu.[UnitId], cdu.[DispatchedOn], c.[LoggedOn], c.[ClosedOn]
+					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cdu.[CallId]
+					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
+						AND cdu.[DispatchedOn] >= %STARTDATE% AND cdu.[DispatchedOn] <= %ENDDATE%";
+			SelectPersonnelDispatchWindowsQuery = @"
+					SELECT cd.[CallId], cd.[UserId], cd.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(0 AS bit) AS [Paged]
+					FROM %SCHEMA%.%CALLDISPATCHESTABLE% cd
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cd.[CallId]
+					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
+						AND cd.[DispatchedOn] >= %STARTDATE% AND cd.[DispatchedOn] <= %ENDDATE%
+					UNION ALL
+					SELECT cg.[CallId], gm.[UserId], cg.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(1 AS bit)
+					FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cg.[CallId]
+					INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.[DepartmentGroupId] = cg.[DepartmentGroupId]
+					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
+						AND cg.[DispatchedOn] >= %STARTDATE% AND cg.[DispatchedOn] <= %ENDDATE%
+					UNION ALL
+					SELECT cr.[CallId], ru.[UserId], cr.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(1 AS bit)
+					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cr.[CallId]
+					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.[PersonnelRoleId] = cr.[RoleId]
+					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
+						AND cr.[DispatchedOn] >= %STARTDATE% AND cr.[DispatchedOn] <= %ENDDATE%";
 			SelectAllCallRoleDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
 			SelectCallNotesByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
 			CallVideoFeedsTable = "CallVideoFeeds";

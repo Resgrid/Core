@@ -36,5 +36,12 @@ namespace Resgrid.Model.Repositories
 		/// Gets the personnel dispatches of every department call logged in the range (UTC, inclusive).
 		/// </summary>
 		Task<IEnumerable<CallDispatch>> GetCallDispatchesForCallsInRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
+
+		/// <summary>
+		/// Gets the personnel dispatches made in the range (UTC, inclusive) — direct, or through a dispatched group the user
+		/// belongs to or a dispatched role they hold — with each call's logged and closed times, on department calls logged
+		/// from <paramref name="loggedFrom"/>.
+		/// </summary>
+		Task<IEnumerable<CallDispatchWindow>> GetPersonnelDispatchWindowsAsync(int departmentId, DateTime startDate, DateTime endDate, DateTime loggedFrom);
 	}
 }

@@ -67,7 +67,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task a_sent_destination_is_kept_and_marked_explicit()
 		{
-			var state = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.OnScene, DestinationId = 3, DestinationType = (int)DestinationEntityTypes.Station };
+			var state = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.OnScene, DestinationId = 3, DestinationType = (int)DestinationEntityTypes.Station };
 
 			await _service.AttributeUnitStateAsync(state, Previous(UnitStateTypes.Responding, 42), DepartmentId);
 
@@ -79,7 +79,7 @@ namespace Resgrid.Tests.Services
 		public async Task on_scene_without_a_call_keeps_the_open_call_of_the_previous_responding_status()
 		{
 			Call(42);
-			var state = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.OnScene };
+			var state = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.OnScene };
 
 			await _service.AttributeUnitStateAsync(state, Previous(UnitStateTypes.Responding, 42), DepartmentId);
 
@@ -92,7 +92,7 @@ namespace Resgrid.Tests.Services
 		public async Task the_clearing_status_that_ends_the_call_is_still_carried_forward()
 		{
 			Call(42);
-			var state = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.Available };
+			var state = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.Available };
 
 			await _service.AttributeUnitStateAsync(state, Previous(UnitStateTypes.OnScene, 42), DepartmentId);
 
@@ -104,7 +104,7 @@ namespace Resgrid.Tests.Services
 		{
 			Call(42, CallStates.Closed);
 			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(new[] { 43 });
-			var state = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.Responding };
+			var state = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.Responding };
 
 			await _service.AttributeUnitStateAsync(state, Previous(UnitStateTypes.OnScene, 42), DepartmentId);
 
@@ -117,13 +117,13 @@ namespace Resgrid.Tests.Services
 		{
 			Call(42);
 			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(new[] { 42 });
-			var afterClearing = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.Responding };
+			var afterClearing = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.Responding };
 
 			await _service.AttributeUnitStateAsync(afterClearing, Previous(UnitStateTypes.Available, 42), DepartmentId);
 			afterClearing.DestinationId.Should().BeNull();
 
 			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(new[] { 43, 44 });
-			var ambiguous = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.Responding };
+			var ambiguous = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.Responding };
 
 			await _service.AttributeUnitStateAsync(ambiguous, Previous(UnitStateTypes.Available, null), DepartmentId);
 			ambiguous.DestinationId.Should().BeNull();
@@ -132,7 +132,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task a_clearing_status_is_never_linked_by_the_dispatch_rule()
 		{
-			var state = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.OutOfService };
+			var state = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.OutOfService };
 
 			await _service.AttributeUnitStateAsync(state, Previous(UnitStateTypes.Available, null), DepartmentId);
 
@@ -141,10 +141,27 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_replayed_offline_status_is_left_for_the_read_time_walk()
+		{
+			Call(42);
+			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(new[] { 43 });
+			_dispatches.Setup(x => x.GetOpenCallIdsForUserAsync(DepartmentId, UserId)).ReturnsAsync(new[] { 43 });
+			var replayedState = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow.AddHours(-2), State = (int)UnitStateTypes.OnScene };
+			var replayedLog = new ActionLog { UserId = UserId, DepartmentId = DepartmentId, ActionTypeId = (int)ActionTypes.OnScene, Timestamp = DateTime.UtcNow.AddHours(-2) };
+
+			await _service.AttributeUnitStateAsync(replayedState, Previous(UnitStateTypes.Responding, 42), DepartmentId);
+			await _service.AttributeActionLogAsync(replayedLog, new ActionLog { UserId = UserId, DepartmentId = DepartmentId, ActionTypeId = (int)ActionTypes.Responding, DestinationId = 42, DestinationType = (int)DestinationEntityTypes.Call });
+
+			replayedState.DestinationId.Should().BeNull("the current open calls say nothing about where the unit was two hours ago");
+			replayedLog.DestinationId.Should().BeNull();
+			_unitDispatches.Verify(x => x.GetOpenCallIdsForUnitAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
 		public async Task attribution_failures_never_block_the_status()
 		{
 			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new TimeoutException());
-			var state = new UnitState { UnitId = UnitId, State = (int)UnitStateTypes.Responding };
+			var state = new UnitState { UnitId = UnitId, Timestamp = DateTime.UtcNow, State = (int)UnitStateTypes.Responding };
 
 			await _service.Awaiting(s => s.AttributeUnitStateAsync(state, null, DepartmentId)).Should().NotThrowAsync();
 			state.DestinationId.Should().BeNull();
@@ -168,7 +185,7 @@ namespace Resgrid.Tests.Services
 			Call(42);
 			_dispatches.Setup(x => x.GetOpenCallIdsForUserAsync(DepartmentId, UserId)).ReturnsAsync(new[] { 43 });
 			var otherDepartment = new ActionLog { UserId = UserId, DepartmentId = 99, ActionTypeId = (int)ActionTypes.OnScene, DestinationId = 42, DestinationType = (int)DestinationEntityTypes.Call };
-			var log = new ActionLog { UserId = UserId, DepartmentId = DepartmentId, ActionTypeId = (int)ActionTypes.Responding };
+			var log = new ActionLog { UserId = UserId, DepartmentId = DepartmentId, ActionTypeId = (int)ActionTypes.Responding, Timestamp = DateTime.UtcNow };
 
 			await _service.AttributeActionLogAsync(log, otherDepartment);
 
@@ -193,6 +210,41 @@ namespace Resgrid.Tests.Services
 			inferred[0].UnitStateId.Should().Be(2);
 			inferred[0].DestinationSource.Should().Be((int)StatusDestinationSources.Inferred);
 			inferred[0].Unit.Should().NotBeNull("call views read the unit name");
+		}
+
+		[Test]
+		public async Task a_unit_also_dispatched_to_an_overlapping_call_is_not_inferred_onto_both()
+		{
+			Call(42, CallStates.Closed, closedOn: T0.AddHours(2));
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(42)).ReturnsAsync(new[] { new CallDispatchUnit { CallId = 42, UnitId = UnitId, DispatchedOn = T0 } });
+			var windows = new[]
+			{
+				new CallDispatchWindow { CallId = 42, UnitId = UnitId, DispatchedOn = T0, LoggedOn = T0, ClosedOn = T0.AddHours(2) },
+				new CallDispatchWindow { CallId = 43, UnitId = UnitId, DispatchedOn = T0.AddMinutes(20), LoggedOn = T0.AddMinutes(20), ClosedOn = T0.AddMinutes(40) }
+			};
+			_unitDispatches.Setup(x => x.GetUnitDispatchWindowsAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(windows);
+			_unitStates.Setup(x => x.GetAllUnitStatesForUnitInDateRangeAsync(UnitId, T0, T0.AddHours(2))).ReturnsAsync(new[]
+			{
+				new UnitState { UnitStateId = 1, UnitId = UnitId, State = (int)UnitStateTypes.Responding, Timestamp = T0.AddMinutes(5) },
+				new UnitState { UnitStateId = 2, UnitId = UnitId, State = (int)UnitStateTypes.OnScene, Timestamp = T0.AddMinutes(25) },
+				new UnitState { UnitStateId = 3, UnitId = UnitId, State = (int)UnitStateTypes.Staging, Timestamp = T0.AddMinutes(50) }
+			});
+
+			var inferred = await _service.GetInferredUnitStatesForCallAsync(DepartmentId, 42);
+
+			inferred.Select(x => x.UnitStateId).Should().Equal(new[] { 1, 2, 3 }, "each status follows one already on call 42, as write-time carry-forward would have linked it");
+
+			// Call 42's walk takes the on-scene status too, and call 43 has nothing of its own before it: nothing is inferred there.
+			// The states are read from call 42's dispatch so that walk can be followed.
+			_calls.Setup(x => x.GetByIdAsync(43)).ReturnsAsync(new Call { CallId = 43, DepartmentId = DepartmentId, State = (int)CallStates.Closed, LoggedOn = T0.AddMinutes(20), ClosedOn = T0.AddMinutes(40) });
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(43)).ReturnsAsync(new[] { new CallDispatchUnit { CallId = 43, UnitId = UnitId, DispatchedOn = T0.AddMinutes(20) } });
+			_unitStates.Setup(x => x.GetAllUnitStatesForUnitInDateRangeAsync(UnitId, T0, T0.AddMinutes(40))).ReturnsAsync(new[]
+			{
+				new UnitState { UnitStateId = 1, UnitId = UnitId, State = (int)UnitStateTypes.Responding, Timestamp = T0.AddMinutes(5) },
+				new UnitState { UnitStateId = 2, UnitId = UnitId, State = (int)UnitStateTypes.OnScene, Timestamp = T0.AddMinutes(25) }
+			});
+
+			(await _service.GetInferredUnitStatesForCallAsync(DepartmentId, 43)).Should().BeEmpty();
 		}
 
 		[Test]

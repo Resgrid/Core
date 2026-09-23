@@ -339,11 +339,19 @@ var resgrid;
                                     $('#Call_Type').val(data.CallType);
                                 }
 
-                                if (data.CallPriority && data.CallPriority >= 0) {
+                                // Priority 0 is a real value (the default Low priority), so test the
+                                // type rather than truthiness.
+                                if (typeof data.CallPriority === 'number' && data.CallPriority >= 0) {
                                     $('#CallPriority').val(data.CallPriority);
                                 }
 
                                 $('input[name="Call.CheckInTimersEnabled"]').prop('checked', !!data.CheckInTimersEnabled);
+
+                                // .val() raises no change event, so the type/priority handlers never
+                                // ran for a template. Re-run them here so the template's run card and
+                                // protocols show up (and pre-check resources) as if picked by hand.
+                                checkForProtocols();
+                                newcall.checkForRecommendations();
                             }
                         });
                     }

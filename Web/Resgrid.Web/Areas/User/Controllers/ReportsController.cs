@@ -594,7 +594,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (callId.HasValue && callId.Value > 0 && !await _authorizationService.CanUserViewCallAsync(UserId, callId.Value))
 				return Unauthorized();
 
-			return View(await CallUnitTimesReportModel(DepartmentId, start, end, callId));
+			var model = await CallUnitTimesReportModel(DepartmentId, start, end, callId);
+			if (model == null)
+				return NotFound();
+
+			return View(model);
 		}
 
 		[HttpGet]
@@ -605,6 +609,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var model = await CallUnitTimesReportModel(DepartmentId, start, end, callId);
+			if (model == null)
+				return NotFound();
 
 			string Time(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(model.Department) : string.Empty;
 
@@ -1803,6 +1809,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return result;
 		}
 
+		/// <summary>
+		/// The unit times report for a period or (callId) one call; null when that call is deleted or not the department's.
+		/// </summary>
 		private async Task<CallUnitTimesView> CallUnitTimesReportModel(int departmentId, DateTime? start, DateTime? end, int? callId)
 		{
 			var model = new CallUnitTimesView();
@@ -1815,12 +1824,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CallId = callId.Value;
 				var call = await _callsService.GetCallByIdAsync(callId.Value);
 
-				if (call != null && call.DepartmentId == departmentId && !call.IsDeleted)
-				{
-					calls.Add(call);
-					model.Start = call.LoggedOn.TimeConverter(model.Department);
-					model.End = (call.ClosedOn ?? DateTime.UtcNow).TimeConverter(model.Department);
-				}
+				// A deleted call has no report (the caller answers NotFound).
+				if (call == null || call.DepartmentId != departmentId || call.IsDeleted)
+					return null;
+
+				calls.Add(call);
+				model.Start = call.LoggedOn.TimeConverter(model.Department);
+				model.End = (call.ClosedOn ?? DateTime.UtcNow).TimeConverter(model.Department);
 			}
 			else
 			{

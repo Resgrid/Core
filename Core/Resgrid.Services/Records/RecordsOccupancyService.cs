@@ -40,6 +40,7 @@ namespace Resgrid.Services.Records
 		private readonly IContactsRepository _contacts;
 		private readonly IAddressRepository _addresses;
 		private readonly IPoisRepository _pois;
+		private readonly IPoiTypesRepository _poiTypes;
 		private readonly IProtectedReadService _protectedReads;
 		private readonly IProtectedGrantContext _grant;
 		private readonly IRecordsProtectionService _protection;
@@ -49,7 +50,7 @@ namespace Resgrid.Services.Records
 			IRmsOccupancyHazardsRepository hazards, IRmsOccupancyCrosswalksRepository crosswalks, IRmsOccupancyFieldProvenancesRepository provenance,
 			IRmsOccupancyOwnershipsRepository ownerships, IRmsViolationsRepository violations, IRmsHydrantsRepository hydrants,
 			IContactPreplanRepository contactPreplans, IContactPreplanHazardRepository contactHazards, IContactsRepository contacts, IAddressRepository addresses,
-			IPoisRepository pois, IProtectedReadService protectedReads, IProtectedGrantContext grant, IRecordsProtectionService protection, IUnitOfWork unitOfWork)
+			IPoisRepository pois, IPoiTypesRepository poiTypes, IProtectedReadService protectedReads, IProtectedGrantContext grant, IRecordsProtectionService protection, IUnitOfWork unitOfWork)
 		{
 			_gate = gate;
 			_occupancies = occupancies;
@@ -65,6 +66,7 @@ namespace Resgrid.Services.Records
 			_contacts = contacts;
 			_addresses = addresses;
 			_pois = pois;
+			_poiTypes = poiTypes;
 			_protectedReads = protectedReads;
 			_grant = grant;
 			_protection = protection;
@@ -490,7 +492,9 @@ namespace Resgrid.Services.Records
 				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Contact, SourceId = contact.ContactId, ContactId = contact.ContactId, DisplayName = contact.Name,
 					NormalizedAddress = address, Latitude = point.HasValue ? (decimal?)(decimal)point.Value.Latitude : null, Longitude = point.HasValue ? (decimal?)(decimal)point.Value.Longitude : null });
 			}
-			foreach (var poi in (await _pois.GetAllByDepartmentIdAsync(departmentId)) ?? Enumerable.Empty<Poi>())
+			// Pois carry no DepartmentId column; a department owns its POIs through their POI type.
+			var poiTypes = (await _poiTypes.GetPoiTypesByDepartmentIdAsync(departmentId)) ?? Enumerable.Empty<PoiType>();
+			foreach (var poi in poiTypes.Where(t => t?.Pois != null).SelectMany(t => t.Pois).Where(p => p != null))
 			{
 				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Poi, SourceId = poi.PoiId.ToString(), DisplayName = poi.Name, NormalizedAddress = AddressNormalizer.Normalize(poi.Address),
 					Latitude = poi.Latitude == 0 && poi.Longitude == 0 ? (decimal?)null : (decimal)poi.Latitude, Longitude = poi.Latitude == 0 && poi.Longitude == 0 ? (decimal?)null : (decimal)poi.Longitude });

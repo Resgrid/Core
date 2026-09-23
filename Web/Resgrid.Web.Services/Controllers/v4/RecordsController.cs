@@ -79,6 +79,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// A user principal is untouched. Mutating actions need no further guard: their policies are never
 		/// issued to a system principal, so the claim check has already refused them.
 		/// </summary>
+		[NonAction]
 		public void OnActionExecuting(ActionExecutingContext context)
 		{
 			var gate = SystemPrincipalGate();
@@ -86,6 +87,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				context.Result = gate;
 		}
 
+		[NonAction]
 		public void OnActionExecuted(ActionExecutedContext context)
 		{
 		}

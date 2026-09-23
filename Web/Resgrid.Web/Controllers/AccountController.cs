@@ -58,6 +58,7 @@ namespace Resgrid.Web.Controllers
 		private readonly IUserSessionService _userSessionService;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IPasswordRecoveryService _passwordRecoveryService;
+		private readonly ILimitsService _limitsService;
 
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
@@ -67,7 +68,7 @@ namespace Resgrid.Web.Controllers
 						IDepartmentSsoService departmentSsoService,
 						IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
 						IUserSessionService userSessionService, IExternalIdentityLinkService externalIdentityLinkService,
-						IPasswordRecoveryService passwordRecoveryService)
+						IPasswordRecoveryService passwordRecoveryService, ILimitsService limitsService)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -87,6 +88,7 @@ namespace Resgrid.Web.Controllers
 			_userSessionService = userSessionService;
 			_externalIdentityLinkService = externalIdentityLinkService;
 			_passwordRecoveryService = passwordRecoveryService;
+			_limitsService = limitsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -997,6 +999,7 @@ namespace Resgrid.Web.Controllers
 			model.DepartmentName = department.Name;
 			model.Email = model.Invite.EmailAddress;
 			model.Code = inviteCode.ToString();
+			model.DepartmentFull = !await _limitsService.CanDepartmentAddNewUserAsync(department.DepartmentId, true);
 
 			return View(model);
 		}
@@ -1006,7 +1009,18 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CompleteInvite(CompleteInviteModel model, CancellationToken cancellationToken)
 		{
-			model.Invite = await _invitesService.GetInviteByCodeAsync(Guid.Parse(model.Code));
+			if (!Guid.TryParse(model.Code, out var code))
+				return RedirectToAction("MissingInvite");
+
+			model.Invite = await _invitesService.GetInviteByCodeAsync(code);
+
+			if (model.Invite == null)
+				return RedirectToAction("MissingInvite");
+
+			if (model.Invite.CompletedOn.HasValue)
+				return RedirectToAction("CompletedInvite");
+
+			model.DepartmentName = (await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId, true))?.Name;
 			model.Email = model.Invite.EmailAddress;
 
 			if (!StringHelpers.ValidateEmail(model.Email))
@@ -1020,7 +1034,10 @@ namespace Resgrid.Web.Controllers
 				ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department on another. Email address can only be used once per account in the system. Use the account recovery form to recover your username and password.", model.Email));
 			}
 
-			if (ModelState.IsValid)
+			// The new member would take a personnel seat: at the plan's limit no account is created (fresh counts, not the 14-day cache).
+			model.DepartmentFull = !await _limitsService.CanDepartmentAddNewUserAsync(model.Invite.DepartmentId, true);
+
+			if (ModelState.IsValid && !model.DepartmentFull)
 			{
 				var user = new IdentityUser { UserName = model.UserName, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
 				var result = await _userManager.CreateAsync(user, model.Password);

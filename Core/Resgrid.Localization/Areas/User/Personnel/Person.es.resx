@@ -198,6 +198,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Agregar al departamento</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Este departamento ha alcanzado el límite de personal de su plan, o no se pudo comprobar el plan en este momento. Elimine a alguien que ya no necesite acceso o mejore el plan y vuelva a intentarlo.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Nombre de pila</value>
   </data>

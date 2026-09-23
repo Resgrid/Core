@@ -19,5 +19,7 @@ namespace Resgrid.Web.Areas.User.Models.Personnel
 		public string State { get; set; }
 		/// <summary>ReactivateUser / AddExistingUser: nothing has changed yet and the page asks for confirmation (false once done).</summary>
 		public bool ConfirmationPending { get; set; }
+		/// <summary>The department is at its plan's personnel limit (or the plan could not be checked), so the confirmation cannot proceed.</summary>
+		public bool PersonnelLimitReached { get; set; }
 	}
 }

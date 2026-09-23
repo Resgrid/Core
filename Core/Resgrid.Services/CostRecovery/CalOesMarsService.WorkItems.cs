@@ -33,17 +33,24 @@ namespace Resgrid.Services.CostRecovery
 			var items = (await _workItems.GetActionQueueAsync(departmentId))?.ToList() ?? new List<CalOesMarsWorkItem>();
 			var deploymentIds = items.Where(i => !string.IsNullOrWhiteSpace(i.DeploymentId)).Select(i => i.DeploymentId).Distinct().ToList();
 			var deployments = new Dictionary<string, Deployment>(StringComparer.OrdinalIgnoreCase);
+			// "Mine" is the same rule IsRosteredForWorkItemAsync opens the item with (roster, or a seat on a deployed unit),
+			// answered once per deployment, so a field user finds in the queue every item they can open.
+			var visible = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var id in deploymentIds)
 			{
 				var deployment = await _deploymentService.GetDeploymentByIdAsync(id, departmentId);
-				if (deployment != null) deployments[id] = deployment;
+				if (deployment == null) continue;
+				deployments[id] = deployment;
+				if (string.IsNullOrWhiteSpace(userId)) continue;
+				// The roster is already loaded; only a member it does not name costs the seat lookup.
+				if (deployment.Personnel.Any(p => string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase)) || await _deploymentService.CanFieldMemberSeeAsync(id, departmentId, userId)) visible.Add(id);
 			}
 			var result = new List<CalOesMarsQueueItem>();
 			var now = DateTime.UtcNow;
 			foreach (var item in items)
 			{
 				deployments.TryGetValue(item.DeploymentId ?? string.Empty, out var deployment);
-				var mine = deployment != null && !string.IsNullOrWhiteSpace(userId) && deployment.Personnel.Any(p => p.IsActive && string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase));
+				var mine = deployment != null && visible.Contains(item.DeploymentId);
 				// Field users see only their own incident-bound F-42 / expense drafts; managers see the department queue.
 				if (!managerScope && (!mine || item.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice)) continue;
 				var validation = Deserialize<CalOesMarsValidationResult>(item.ValidationSummaryJson);

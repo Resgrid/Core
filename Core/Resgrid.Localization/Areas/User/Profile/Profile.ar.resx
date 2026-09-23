@@ -45,6 +45,7 @@
   <data name="JoinDepartment" xml:space="preserve"><value>الانضمام لقسم</value></data>
   <data name="JoinDepartmentHeader" xml:space="preserve"><value>الانضمام لقسم</value></data>
   <data name="JoinDepartmentInfo" xml:space="preserve"><value>يجب عليك تقديم معرف القسم ورمزه الحالي للقسم الذي تريد الانضمام إليه في Resgrid.</value></data>
+  <data name="JoinDepartmentFull" xml:space="preserve"><value>لا يمكن لهذا القسم قبول أعضاء جدد الآن: فقد بلغ الحد الأقصى لعدد الأفراد في خطته، أو تعذر التحقق من الخطة. يرجى التواصل مع أحد مسؤولي القسم.</value></data>
   <data name="NewPassword" xml:space="preserve"><value>كلمة المرور الجديدة</value></data>
   <data name="NewPasswordPlaceholder" xml:space="preserve"><value>كلمة المرور الجديدة لهذا المستخدم</value></data>
   <data name="NewPasswordReq" xml:space="preserve"><value>يجب أن تتكون كلمة المرور من 8 أحرف أو أكثر وتتضمن رقماً وحرفاً كبيراً وحرفاً صغيراً</value></data>

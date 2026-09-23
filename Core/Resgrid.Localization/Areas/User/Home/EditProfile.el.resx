@@ -180,6 +180,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Απενεργοποίηση Χρήστη</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Αυτό το άτομο δεν μπορεί να ενεργοποιηθεί: το τμήμα έχει φτάσει το όριο προσωπικού του πακέτου του ή δεν ήταν δυνατός ο έλεγχος του πακέτου. Τα απενεργοποιημένα μέλη δεν μετρούν στο όριο. Αφαιρέστε ή απενεργοποιήστε κάποιον άλλον ή αναβαθμίστε το πακέτο και δοκιμάστε ξανά. Τίποτα σε αυτή τη σελίδα δεν αποθηκεύτηκε.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Επεξεργασία</value>
   </data>

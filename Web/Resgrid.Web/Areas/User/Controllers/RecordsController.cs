@@ -1165,12 +1165,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _departmentSettingsService.SetRecordsSearchConfigAsync(DepartmentId, searchConfig, cancellationToken);
 
 			// Setting 77 (plan section 4.9): the statutory clock is bounded, the profile must be one the disclosure
-			// workflow knows, and the release approver must be a current member so a departed user is never the gate.
+			// workflow knows, and a newly chosen release approver must be a current member so a departed user is never made the gate.
 			var disclosure = await _departmentSettingsService.GetRecordsDisclosureConfigAsync(DepartmentId, true) ?? new RecordsDisclosureConfig();
 			disclosure.StatutoryClockDays = Math.Max(1, Math.Min(365, model.DisclosureStatutoryClockDays));
 			disclosure.DefaultRedactionProfile = RmsRedactionProfiles.IsKnown(model.DisclosureDefaultRedactionProfile) ? model.DisclosureDefaultRedactionProfile : RmsRedactionProfiles.Standard;
 			var approver = string.IsNullOrWhiteSpace(model.DisclosureReleaseApproverUserId) ? null : model.DisclosureReleaseApproverUserId.Trim();
-			if (approver != null && !await _recordsAuthorizationService.IsActiveMemberAsync(approver, DepartmentId))
+			// Only a newly chosen approver is checked. The saved one comes back selected even after going inactive (see
+			// BuildSettingsAsync), and saving an unrelated setting must not quietly turn the gate into "any admin".
+			var unchanged = approver != null && string.Equals(approver, disclosure.ReleaseApproverUserId, StringComparison.OrdinalIgnoreCase);
+			if (approver != null && !unchanged && !await _recordsAuthorizationService.IsActiveMemberAsync(approver, DepartmentId))
 				approver = null;
 			disclosure.ReleaseApproverUserId = approver;
 			await _departmentSettingsService.SetRecordsDisclosureConfigAsync(DepartmentId, disclosure, cancellationToken);

@@ -130,7 +130,8 @@ namespace Resgrid.Services.Invoicing
 		public async Task<List<Deployment>> GetDeploymentsForUserAsync(int departmentId, string userId, bool openOnly)
 		{
 			var rows = (await _personnel.GetForUserAsync(departmentId, userId))?.ToList() ?? new List<DeploymentPersonnel>();
-			var ids = rows.Select(r => r.DeploymentId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			var rostered = rows.Select(r => r.DeploymentId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			var ids = new HashSet<string>(rostered, StringComparer.OrdinalIgnoreCase);
 			// The crew seated on an apparatus (active unit roles) works that unit's deployments too, whether or not the
 			// deployment roster names them: that is how the Unit app's tablet reaches its Crew Time Report.
 			var seated = await SeatedUnitIdsAsync(departmentId, userId);
@@ -139,6 +140,8 @@ namespace Resgrid.Services.Invoicing
 					ids.Add(unit.DeploymentId);
 			if (ids.Count == 0) return new List<Deployment>();
 			var deployments = (await _deployments.GetByIdsAsync(departmentId, ids.ToList()))?.ToList() ?? new List<Deployment>();
+			// A seat is today's apparatus, not a place in the deployment's history: it reaches only open deployments. The roster keeps closed ones.
+			deployments = deployments.Where(d => d.IsOpen || rostered.Contains(d.DeploymentId)).ToList();
 			await ResolveDeploymentsAsync(deployments, departmentId);
 			return openOnly ? deployments.Where(d => d.IsOpen).ToList() : deployments;
 		}
@@ -147,6 +150,8 @@ namespace Resgrid.Services.Invoicing
 		{
 			if (string.IsNullOrWhiteSpace(deploymentId) || string.IsNullOrWhiteSpace(userId)) return false;
 			if (await IsRosteredAsync(deploymentId, departmentId, userId)) return true;
+			var deployment = await _deployments.GetByIdForDepartmentAsync(deploymentId, departmentId);
+			if (deployment == null || deployment.IsDeleted || !deployment.IsOpen) return false;
 			var seated = await SeatedUnitIdsAsync(departmentId, userId);
 			if (seated.Count == 0) return false;
 			var units = await _units.GetByDeploymentAsync(deploymentId);
@@ -167,7 +172,8 @@ namespace Resgrid.Services.Invoicing
 			var activeUnits = deployment.Units.Where(u => u.IsActive).ToList();
 			if (activeUnits.Count == 0) return access;
 			var crewed = own.Where(p => !string.IsNullOrWhiteSpace(p.DeploymentUnitId)).Select(p => p.DeploymentUnitId).ToHashSet(StringComparer.OrdinalIgnoreCase);
-			var seated = await SeatedUnitIdsAsync(deployment.DepartmentId, userId);
+			// Seat-derived crew access ends with the deployment; the roster rows above still write their own history.
+			var seated = deployment.IsOpen ? await SeatedUnitIdsAsync(deployment.DepartmentId, userId) : new HashSet<int>();
 			foreach (var unit in activeUnits.Where(u => crewed.Contains(u.DeploymentUnitId) || seated.Contains(u.UnitId)))
 			{
 				access.CrewUnitIds.Add(unit.DeploymentUnitId);

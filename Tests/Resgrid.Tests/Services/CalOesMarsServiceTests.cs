@@ -301,6 +301,12 @@ namespace Resgrid.Tests.Services
 			(await _service.GetActionQueueAsync(DeptId, "alice", true)).Select(q => q.WorkItem.CalOesMarsWorkItemId).Should().Contain(revision.CalOesMarsWorkItemId);
 			(await _service.GetActionQueueAsync(DeptId, "alice", false)).Should().OnlyContain(q => q.IsMine);
 			(await _service.GetActionQueueAsync(DeptId, "stranger", false)).Should().BeEmpty();
+			// A member seated on the deployed unit (the Unit app's tablet) is not on the roster but opens the items; the queue lists them by the same rule.
+			_deployments.Setup(d => d.CanFieldMemberSeeAsync("dep-1", DeptId, "tablet")).ReturnsAsync(true);
+			(await _service.IsRosteredForWorkItemAsync(revision.CalOesMarsWorkItemId, DeptId, "tablet")).Should().BeTrue();
+			var tabletQueue = await _service.GetActionQueueAsync(DeptId, "tablet", false);
+			tabletQueue.Select(q => q.WorkItem.CalOesMarsWorkItemId).Should().Contain(revision.CalOesMarsWorkItemId);
+			tabletQueue.Should().OnlyContain(q => q.IsMine && q.WorkItem.RecordType != (int)CalOesMarsRecordTypes.GeneratedInvoice);
 			(await _service.IsRosteredForWorkItemAsync(revision.CalOesMarsWorkItemId, DeptId, "bob")).Should().BeTrue();
 			(await _service.IsRosteredForWorkItemAsync(revision.CalOesMarsWorkItemId, DeptId, "stranger")).Should().BeFalse();
 		}

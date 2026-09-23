@@ -149,6 +149,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Aggiungi al dipartimento</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Questo dipartimento ha raggiunto il limite di personale del suo piano, oppure non è stato possibile verificare il piano in questo momento. Rimuovi qualcuno che non ha più bisogno di accesso o aggiorna il piano, quindi riprova.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Nome</value>
   </data>

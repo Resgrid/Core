@@ -131,6 +131,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Questa persona non può essere abilitata: il dipartimento ha raggiunto il limite di personale del suo piano, oppure non è stato possibile verificare il piano. I membri disabilitati non contano nel limite. Rimuovi o disabilita qualcun altro, oppure aggiorna il piano, quindi riprova. Nulla in questa pagina è stato salvato.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Modifica</value>
   </data>

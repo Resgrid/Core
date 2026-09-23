@@ -40,6 +40,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>A system principal with no configured Record grant for the resolved department is refused before any action runs.</summary>
+		[NonAction]
 		public void OnActionExecuting(ActionExecutingContext context)
 		{
 			if (IsSystemPrincipal && SystemGrant == null)
@@ -47,6 +48,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "This system principal has no configured Record grant for this department.", type: "record_grant_missing");
 		}
 
+		[NonAction]
 		public void OnActionExecuted(ActionExecutedContext context)
 		{
 		}

@@ -83,6 +83,9 @@
   <data name="CompleteInviteText3" xml:space="preserve">
     <value>If you are having trouble completing the invite or are running into issues, please reach out to the Administrator of the department for the invite you are trying to complete for assistance. They can manually add your account if necessary.</value>
   </data>
+  <data name="CompleteInviteDepartmentFull" xml:space="preserve">
+    <value>Ten oddział nie może teraz przyjąć nowych członków: osiągnął limit personelu swojego planu albo nie można było sprawdzić planu. Skontaktuj się z administratorem oddziału, który Cię zaprosił.</value>
+  </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Potwierdź hasło</value>
   </data>

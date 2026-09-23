@@ -82,6 +82,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> _editProfileLocalizer;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -96,7 +97,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
 			IDepartmentMemberEmergencyContactService emergencyContactService, IProtectedReadService protectedReadService,
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
-			IDepartmentDataProtectionService dataProtectionService)
+			IDepartmentDataProtectionService dataProtectionService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> editProfileLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -134,6 +136,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_protectedReadService = protectedReadService;
 			_memberSensitiveDataService = memberSensitiveDataService;
 			_dataProtectionService = dataProtectionService;
+			_editProfileLocalizer = editProfileLocalizer;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -796,6 +799,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else if (SecurityPinUtility.IsWeak(model.SecurityPin))
 						ModelState.AddModelError("SecurityPin", "That security PIN is too easy to guess. Avoid repeated digits (like 0000) and sequences (like 1234 or 4321).");
 				}
+			}
+
+			// Disabled members do not count against the plan's personnel limit, so enabling one takes a seat. Checked
+			// before anything is saved, with fresh counts (the cached limits live 14 days). Only a department admin's
+			// change to the flag is applied (see the member save below), so only that is checked.
+			if (callerIsDepartmentAdmin && !model.IsDisabled && targetDepartmentMember is { IsDisabled: true, IsDeleted: false } &&
+				!await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true))
+			{
+				ModelState.AddModelError(nameof(model.IsDisabled), _editProfileLocalizer["EnableUserPersonnelLimitReached"]);
 			}
 
 			if (ModelState.IsValid)

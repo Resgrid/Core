@@ -35,6 +35,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IUserSessionService _userSessionService;
+		private readonly ILimitsService _limitsService;
 
 		public ScimController(
 			IDepartmentSsoService ssoService,
@@ -43,7 +44,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ISystemAuditsService systemAuditsService,
 			UserManager<Model.Identity.IdentityUser> userManager,
 			IExternalIdentityLinkService externalIdentityLinkService,
-			IUserSessionService userSessionService)
+			IUserSessionService userSessionService,
+			ILimitsService limitsService)
 		{
 			_ssoService = ssoService;
 			_departmentsService = departmentsService;
@@ -52,6 +54,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_userManager = userManager;
 			_externalIdentityLinkService = externalIdentityLinkService;
 			_userSessionService = userSessionService;
+			_limitsService = limitsService;
 		}
 
 		// -- GET /scim/v2/Users ------------------------------------------------
@@ -132,6 +135,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		public async Task<IActionResult> CreateUser(
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			[FromBody] ScimUserResource resource,
@@ -146,6 +150,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserCreated,
 					successful: false, data: "Rejected: userName is required");
 				return ScimBadRequest("userName is required.");
+			}
+
+			// A new member takes a personnel seat: refuse before any account is created.
+			if (!await _limitsService.CanDepartmentAddNewUserAsync(departmentId, true))
+			{
+				await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserCreated,
+					successful: false, data: $"Rejected: personnel limit reached userName={resource.UserName}");
+				return ScimPersonnelLimitReached();
 			}
 
 			var email = resource.Emails?.FirstOrDefault()?.Value ?? resource.UserName;
@@ -223,6 +235,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		public async Task<IActionResult> ReplaceUser(
 			string id,
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
@@ -259,6 +272,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var member = await _departmentsService.GetDepartmentMemberAsync(id, departmentId);
 				if (member is { IsDisabled: true })
 				{
+					// Disabled members do not count against the plan; enabling one takes a seat. Refuse the whole PUT.
+					if (!member.IsDeleted && !await _limitsService.CanDepartmentAddNewUserAsync(departmentId, true))
+					{
+						await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserReactivated,
+							successful: false, data: "Rejected: personnel limit reached (active=true via PUT)");
+						return ScimPersonnelLimitReached();
+					}
+
 					member.IsDisabled = false;
 					await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
 					await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserReactivated,
@@ -286,6 +307,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		public async Task<IActionResult> PatchUser(
 			string id,
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
@@ -313,6 +335,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var member = await _departmentsService.GetDepartmentMemberAsync(id, departmentId);
 					if (member != null)
 					{
+						// Disabled members do not count against the plan; enabling one takes a seat.
+						if (active && member.IsDisabled == true && !member.IsDeleted &&
+							!await _limitsService.CanDepartmentAddNewUserAsync(departmentId, true))
+						{
+							await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserReactivated,
+								successful: false, data: $"Rejected: personnel limit reached (active=true op={op.Op})");
+							return ScimPersonnelLimitReached();
+						}
+
 						member.IsDisabled = !active;
 						if (!active) member.IsDeleted = false; // deactivate without hard-delete
 						await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
@@ -538,6 +569,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				schemas = new[] { "urn:ietf:params:scim:api:messages:2.0:Error" },
 				status = "404",
 				detail = $"User {id} not found."
+			});
+
+		// 403: the department's plan has no personnel seat left (or the plan could not be checked).
+		private IActionResult ScimPersonnelLimitReached() =>
+			StatusCode(StatusCodes.Status403Forbidden, new
+			{
+				schemas = new[] { "urn:ietf:params:scim:api:messages:2.0:Error" },
+				status = "403",
+				detail = "The department has reached the personnel limit of its plan, or the plan could not be checked. Remove or disable a member, or upgrade the plan, then retry."
 			});
 
 		private IActionResult ScimBadRequest(string detail) =>

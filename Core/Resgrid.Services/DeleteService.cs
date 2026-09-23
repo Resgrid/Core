@@ -16,6 +16,10 @@ namespace Resgrid.Services
 {
 	public class DeleteService : IDeleteService
 	{
+		// QueueItems.Data is nvarchar(255) on SQL Server (M0020 AsString()); a longer status message
+		// (an exception message) fails the whole update, losing the attempt count with it.
+		private const int QueueItemDataMaxLength = 255;
+
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICallsService _callsService;
@@ -443,7 +447,7 @@ namespace Resgrid.Services
 					}
 					else
 					{
-						item.Data = $"Department deletion attempt {item.AttemptCount} failed: {e.Message}";
+						item.Data = $"Department deletion attempt {item.AttemptCount} failed: {e.Message}".Truncate(QueueItemDataMaxLength);
 
 						try
 						{
@@ -504,7 +508,7 @@ namespace Resgrid.Services
 			try
 			{
 				item.CompletedOn = DateTime.UtcNow;
-				item.Data = data;
+				item.Data = data.Truncate(QueueItemDataMaxLength);
 				await _queueService.UpdateQueueItem(item, cancellationToken);
 			}
 			catch (Exception ex)

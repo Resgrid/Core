@@ -149,6 +149,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Lägg till i avdelningen</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Den här avdelningen har nått personalgränsen för sin plan, eller så gick det inte att kontrollera planen just nu. Ta bort någon som inte längre behöver åtkomst eller uppgradera planen och försök sedan igen.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Förnamn</value>
   </data>

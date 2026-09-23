@@ -25,12 +25,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Cutover = cutover;
 		}
 
+		[NonAction]
 		public void OnActionExecuting(ActionExecutingContext context)
 		{
 			if (RecordsSystemPrincipal.IsSystemPrincipal(User))
 				context.Result = Problem(statusCode: StatusCodes.Status403Forbidden, title: "Prevention and investigation endpoints accept member principals only.", type: "record_prevention_member_only");
 		}
 
+		[NonAction]
 		public void OnActionExecuted(ActionExecutedContext context)
 		{
 		}

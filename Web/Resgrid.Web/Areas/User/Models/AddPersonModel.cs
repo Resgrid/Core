@@ -23,6 +23,8 @@ namespace Resgrid.Web.Areas.User.Models
 		public string GroupName { get; set; }
 		public bool GroupAdmin { get; set; }
 		public bool IsGroupAdminAdding { get; set; }
+		/// <summary>The department is at its plan's personnel limit (or the plan could not be checked), so nobody can be added.</summary>
+		public bool PersonnelLimitReached { get; set; }
 
 		[Required]
 		[MaxLength(50)]

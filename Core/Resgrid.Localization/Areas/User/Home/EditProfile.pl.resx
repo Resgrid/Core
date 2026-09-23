@@ -131,6 +131,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Nie można włączyć tej osoby: oddział osiągnął limit personelu swojego planu albo nie można było sprawdzić planu. Wyłączeni członkowie nie wliczają się do limitu. Usuń lub wyłącz inną osobę albo zmień plan na wyższy, a następnie spróbuj ponownie. Nic na tej stronie nie zostało zapisane.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Edytuj</value>
   </data>

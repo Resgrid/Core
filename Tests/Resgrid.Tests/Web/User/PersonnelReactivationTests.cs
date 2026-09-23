@@ -37,6 +37,7 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IUsersService> _users;
 		private Mock<IUserProfileService> _profiles;
 		private Mock<Resgrid.Model.Services.IAuthorizationService> _authorization;
+		private Mock<ILimitsService> _limits;
 		private DepartmentMember _member;
 		private PersonnelController _controller;
 
@@ -69,12 +70,14 @@ namespace Resgrid.Tests.Web.User
 			_profiles.Setup(x => x.GetProfileByUserIdAsync(Returning, true)).ReturnsAsync(new UserProfile { UserId = Returning, FirstName = "Alex", LastName = "Returning" });
 			_authorization = new Mock<Resgrid.Model.Services.IAuthorizationService>();
 			_authorization.Setup(x => x.CanUserAddNewUserAsync(DepartmentId, Manager)).ReturnsAsync(true);
+			_limits = new Mock<ILimitsService>();
+			_limits.Setup(x => x.CanDepartmentAddNewUserAsync(DepartmentId, true)).ReturnsAsync(true);
 			var groups = new Mock<IDepartmentGroupsService>();
 			var roles = new Mock<IPersonnelRolesService>();
 			roles.Setup(x => x.GetRolesForUserAsync(Returning, DepartmentId)).ReturnsAsync(new List<PersonnelRole>());
 
 			_controller = new PersonnelController(_departments.Object, _users.Object, null, null, _profiles.Object, null, _authorization.Object,
-				null, roles.Object, groups.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+				_limits.Object, roles.Object, groups.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())
@@ -91,6 +94,7 @@ namespace Resgrid.Tests.Web.User
 
 			var model = result.Should().BeOfType<ViewResult>().Subject.Model.Should().BeOfType<ViewPersonView>().Subject;
 			model.ConfirmationPending.Should().BeTrue();
+			model.PersonnelLimitReached.Should().BeFalse();
 			model.User.Id.Should().Be(Returning);
 			_member.IsDeleted.Should().BeTrue();
 			_departments.Verify(x => x.ReactivateUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -116,6 +120,24 @@ namespace Resgrid.Tests.Web.User
 			var model = shown.Should().BeOfType<ViewResult>().Subject.Model.Should().BeOfType<ViewPersonView>().Subject;
 			model.ConfirmationPending.Should().BeFalse();
 			model.State.Should().StartWith("Normal", "a returning member never comes back as the admin they once were");
+		}
+
+		[Test]
+		public async Task at_the_personnel_limit_the_page_says_so_and_the_post_changes_nothing()
+		{
+			_limits.Setup(x => x.CanDepartmentAddNewUserAsync(DepartmentId, true)).ReturnsAsync(false);
+
+			var post = await _controller.ReactivateUserPost(Returning, CancellationToken.None);
+
+			post.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("ReactivateUser");
+			_departments.Verify(x => x.ReactivateUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_member.IsDeleted.Should().BeTrue();
+
+			var get = await _controller.ReactivateUser(Returning, CancellationToken.None);
+
+			var model = get.Should().BeOfType<ViewResult>().Subject.Model.Should().BeOfType<ViewPersonView>().Subject;
+			model.ConfirmationPending.Should().BeTrue("nothing happened, so the page still asks");
+			model.PersonnelLimitReached.Should().BeTrue();
 		}
 
 		[Test]

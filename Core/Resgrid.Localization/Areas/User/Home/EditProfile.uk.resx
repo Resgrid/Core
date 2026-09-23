@@ -131,6 +131,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Цю особу неможливо ввімкнути: підрозділ досяг ліміту персоналу свого тарифного плану, або план не вдалося перевірити. Вимкнені члени не враховуються в ліміті. Видаліть або вимкніть когось іншого чи оновіть план і спробуйте ще раз. Нічого на цій сторінці не збережено.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Редагувати</value>
   </data>

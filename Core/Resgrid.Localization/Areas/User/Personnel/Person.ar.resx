@@ -32,6 +32,7 @@
   <data name="AddExistingUserConfirmHeader" xml:space="preserve"><value>إضافة مستخدم موجود</value></data>
   <data name="ExistingUserConfirmText" xml:space="preserve"><value>، بناءً على عنوان البريد الإلكتروني، لديه بالفعل حساب Resgrid في قسم آخر. تؤدي الإضافة إلى ضم هذا الحساب إلى هذا القسم بإعدادات ملفه الشخصي الحالية (الاسم وأرقام الهاتف والتفضيلات). ينضم المستخدم عضوًا عاديًا، ويرى هذا القسم بعد التبديل إليه من "أقسامك" في قائمة الملف الشخصي.</value></data>
   <data name="AddExistingUserButton" xml:space="preserve"><value>إضافة إلى القسم</value></data>
+  <data name="PersonnelLimitReached" xml:space="preserve"><value>بلغ هذا القسم الحد الأقصى لعدد الأفراد في خطته، أو تعذر التحقق من الخطة الآن. أزل شخصًا لم يعد بحاجة إلى الوصول أو قم بترقية الخطة، ثم حاول مرة أخرى.</value></data>
   <data name="FirstNameLabel" xml:space="preserve"><value>الاسم الأول</value></data>
   <data name="FirstNamePlaceholder" xml:space="preserve"><value>الاسم الأول</value></data>
   <data name="GroupLabel" xml:space="preserve"><value>المجموعة</value></data>

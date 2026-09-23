@@ -36,6 +36,10 @@
 
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger"></div>
+            @if (Model.PersonnelLimitReached)
+            {
+              <div class="alert alert-danger">@localizer["PersonnelLimitReached"]</div>
+            }
 
             <h3>
               @localizer["AccountInformationHeader"]
@@ -206,7 +210,7 @@
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
                 <a class="btn btn-white" asp-controller="Personnel" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
-                <button class="btn btn-primary" type="submit">@localizer["AddPersonHeader"]</button>
+                <button class="btn btn-primary" type="submit" disabled="@Model.PersonnelLimitReached">@localizer["AddPersonHeader"]</button>
               </div>
             </div>
           </form>

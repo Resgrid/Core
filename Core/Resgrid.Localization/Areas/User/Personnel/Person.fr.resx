@@ -149,6 +149,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Ajouter au département</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Ce département a atteint la limite de personnel de son forfait, ou le forfait n'a pas pu être vérifié pour le moment. Retirez une personne qui n'a plus besoin d'accès ou passez à un forfait supérieur, puis réessayez.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Prénom</value>
   </data>

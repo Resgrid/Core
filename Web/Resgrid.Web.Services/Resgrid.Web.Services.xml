@@ -1197,6 +1197,8 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.UploadChecklistRunEvidence(Resgrid.Web.Services.Models.v4.Checklists.ChecklistEvidenceInput)">
             <summary>In-memory image transport for native clients, with the same size, scan, revision and ADP rules as multipart uploads.</summary>
+            <remarks>Shares the multipart action's path (the Responder and Unit apps post JSON to it), so it is hidden from the OpenAPI
+            document: Swashbuckle rejects the whole document when two visible actions share a method and path (RESGRID-API-9F).</remarks>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommandsController">
             <summary>
@@ -16065,6 +16067,12 @@
             <summary>
             Returns the TTS audio URL for the given text, generating it if necessary.
             Respects the provided cancellation token for timeout control.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.ServicesCore.Startup.ConfigureSwagger(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
+            <summary>
+            The v4 OpenAPI document settings. Shared with SwaggerDocumentTests, which generates the whole document,
+            so a conflicting method/path pair fails the test suite instead of /swagger/v4/swagger.json in production.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Helpers.DispatchListHelper">

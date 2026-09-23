@@ -362,6 +362,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.User = _usersService.GetUserById(UserId);
 			model.Profile = new UserProfile();
 			model.SendAccountCreationNotification = true;
+			model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
 
 			ViewBag.Carriers = model.Carrier.ToSelectList();
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
@@ -609,7 +610,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Username", $"The username {model.Username} has already been taken, please try another.");
 			}
 
-			if (ModelState.IsValid)
+			// The plan's personnel limit is enforced here, not only by hiding the Add button (fresh counts: the cached ones live 14 days).
+			model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
+
+			if (ModelState.IsValid && !model.PersonnelLimitReached)
 			{
 				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString().ToUpper() };
 				var result = await _userManager.CreateAsync(user, model.NewPassword);
@@ -1861,6 +1865,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = await BuildMemberConfirmationViewAsync(id, member);
 			model.ConfirmationPending = member.IsDeleted;
+			if (model.ConfirmationPending)
+				model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
 
 			return View(model);
 		}
@@ -1882,6 +1888,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// A second submit (double click, back button) finds the member already back and changes nothing.
 			if (member.IsDeleted)
 			{
+				// A returning member takes a personnel seat; at the plan's limit the confirmation page says so instead.
+				if (!await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true))
+					return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id });
+
 				await _departmentsService.ReactivateUserAsync(DepartmentId, id, UserId, cancellationToken);
 
 				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
@@ -1927,6 +1937,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = await BuildMemberConfirmationViewAsync(id, member);
 			model.ConfirmationPending = member == null;
+			if (model.ConfirmationPending)
+				model.PersonnelLimitReached = !await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true);
 
 			return View(model);
 		}
@@ -1951,6 +1963,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// A second submit (double click, back button) finds the member already in and changes nothing.
 			if (member == null)
 			{
+				// At the plan's personnel limit the confirmation page says so instead.
+				if (!await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId, true))
+					return RedirectToAction("AddExistingUser", "Personnel", new { area = "User", id });
+
 				var added = await _departmentsService.AddExistingUserAsync(DepartmentId, id, cancellationToken);
 
 				if (added != null)

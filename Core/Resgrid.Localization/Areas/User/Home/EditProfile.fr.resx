@@ -131,6 +131,9 @@
   <data name="DisableUserLabel" xml:space="preserve">
     <value>Disable User</value>
   </data>
+  <data name="EnableUserPersonnelLimitReached" xml:space="preserve">
+    <value>Cette personne ne peut pas être réactivée : le département a atteint la limite de personnel de son forfait, ou le forfait n'a pas pu être vérifié. Les membres désactivés ne comptent pas dans la limite. Retirez ou désactivez quelqu'un d'autre, ou passez à un forfait supérieur, puis réessayez. Rien sur cette page n'a été enregistré.</value>
+  </data>
   <data name="EditTitle" xml:space="preserve">
     <value>Modifier</value>
   </data>

@@ -149,6 +149,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Додати до підрозділу</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Цей підрозділ досяг ліміту персоналу свого тарифного плану, або план зараз не вдалося перевірити. Видаліть когось, кому більше не потрібен доступ, або оновіть план і спробуйте ще раз.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Ім'я</value>
   </data>

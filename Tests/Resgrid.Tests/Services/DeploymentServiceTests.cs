@@ -502,5 +502,42 @@ namespace Resgrid.Tests.Services
 			stranger.CanWrite.Should().BeFalse();
 			(await _service.GetTimeAccessAsync(deployment, "eve", true)).CanWrite.Should().BeTrue("a manager writes every subject");
 		}
+
+		[Test]
+		public async Task A_unit_seat_reaches_only_open_deployments_while_the_roster_keeps_closed_history()
+		{
+			// Engine 2 served on a deployment that has since completed (closing leaves its unit row active) and serves on an open one
+			// now. The tablet is seated on Engine 2 today; alice is too, and was on the closed deployment's roster.
+			_storedDeployments.Add(new Deployment { DeploymentId = "dep-open", DepartmentId = DeptId, Name = "Open", Status = (int)DeploymentStatuses.Active });
+			_storedDeployments.Add(new Deployment { DeploymentId = "dep-closed", DepartmentId = DeptId, Name = "Closed", Status = (int)DeploymentStatuses.Completed });
+			_storedUnits.Add(new DeploymentUnit { DeploymentUnitId = "du-open", DeploymentId = "dep-open", DepartmentId = DeptId, UnitId = 2 });
+			_storedUnits.Add(new DeploymentUnit { DeploymentUnitId = "du-closed", DeploymentId = "dep-closed", DepartmentId = DeptId, UnitId = 2 });
+			_storedPersonnel.Add(new DeploymentPersonnel { DeploymentPersonnelId = "dp-alice", DeploymentId = "dep-closed", DepartmentId = DeptId, UserId = "alice", DeploymentUnitId = "du-closed" });
+			_unitsService.Setup(u => u.GetAllActiveRolesForUnitsByDepartmentIdAsync(DeptId)).ReturnsAsync(new List<UnitActiveRole>
+			{
+				new UnitActiveRole { UnitId = 2, UserId = "tablet", DepartmentId = DeptId }, new UnitActiveRole { UnitId = 2, UserId = "alice", DepartmentId = DeptId }
+			});
+			_units.Setup(r => r.GetForUnitsAsync(DeptId, It.IsAny<IEnumerable<int>>())).ReturnsAsync((int _, IEnumerable<int> ids) => _storedUnits.Where(u => ids.Contains(u.UnitId)).ToList());
+			_personnel.Setup(r => r.GetForUserAsync(DeptId, It.IsAny<string>())).ReturnsAsync((int _, string user) => _storedPersonnel.Where(p => p.UserId == user).ToList());
+			_deployments.Setup(r => r.GetByIdsAsync(DeptId, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int _, IEnumerable<string> ids) => _storedDeployments.Where(x => ids.Contains(x.DeploymentId)).ToList());
+			var closed = new Deployment
+			{
+				DeploymentId = "dep-closed", DepartmentId = DeptId, Status = (int)DeploymentStatuses.Completed,
+				Units = { _storedUnits.Single(u => u.DeploymentUnitId == "du-closed") }, Personnel = { _storedPersonnel.Single() }
+			};
+
+			(await _service.GetDeploymentsForUserAsync(DeptId, "tablet", false)).Select(d => d.DeploymentId).Should().Equal(new[] { "dep-open" }, "today's seat is not a place in a finished deployment's history");
+			(await _service.CanFieldMemberSeeAsync("dep-open", DeptId, "tablet")).Should().BeTrue();
+			(await _service.CanFieldMemberSeeAsync("dep-closed", DeptId, "tablet")).Should().BeFalse();
+			var tablet = await _service.GetTimeAccessAsync(closed, "tablet", false);
+			tablet.CanRead.Should().BeFalse("the seat no longer opens the closed deployment's reports");
+			tablet.CanWrite.Should().BeFalse("nor lets it edit or sign them");
+
+			(await _service.GetDeploymentsForUserAsync(DeptId, "alice", false)).Select(d => d.DeploymentId).Should().BeEquivalentTo(new[] { "dep-open", "dep-closed" }, "a roster row keeps its history");
+			(await _service.CanFieldMemberSeeAsync("dep-closed", DeptId, "alice")).Should().BeTrue();
+			var alice = await _service.GetTimeAccessAsync(closed, "alice", false);
+			alice.CrewUnitIds.Should().Equal(new[] { "du-closed" }, "rostered crew still report for the unit they crewed");
+			alice.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-alice", "du-closed" });
+		}
 	}
 }

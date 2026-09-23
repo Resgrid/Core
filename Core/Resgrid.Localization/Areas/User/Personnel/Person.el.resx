@@ -198,6 +198,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Προσθήκη στο τμήμα</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Αυτό το τμήμα έχει φτάσει το όριο προσωπικού του πακέτου του ή δεν ήταν δυνατός ο έλεγχος του πακέτου αυτή τη στιγμή. Αφαιρέστε κάποιον που δεν χρειάζεται πλέον πρόσβαση ή αναβαθμίστε το πακέτο και δοκιμάστε ξανά.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Όνομα</value>
   </data>

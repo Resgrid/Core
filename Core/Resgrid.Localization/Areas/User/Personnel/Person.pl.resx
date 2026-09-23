@@ -149,6 +149,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Dodaj do oddziału</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Ten oddział osiągnął limit personelu swojego planu albo nie można teraz sprawdzić planu. Usuń osobę, która nie potrzebuje już dostępu, lub zmień plan na wyższy, a następnie spróbuj ponownie.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Imię</value>
   </data>

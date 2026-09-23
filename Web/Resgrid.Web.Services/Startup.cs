@@ -25,6 +25,7 @@ using CommonServiceLocator;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json.Serialization;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -216,48 +217,7 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddSwaggerGen();
 			services.AddSwaggerGenNewtonsoftSupport();
-			services.ConfigureSwaggerGen(options =>
-			{
-				options.CustomSchemaIds(type => type.ToString());
-
-				// add JWT Authentication
-				var securityScheme = new OpenApiSecurityScheme
-				{
-					Name = "JWT Authentication",
-					Description = "Enter JWT Bearer token **_only_**",
-					In = ParameterLocation.Header,
-					Type = SecuritySchemeType.Http,
-					Scheme = "bearer", // must be lower case
-					BearerFormat = "JWT",
-					Reference = new OpenApiReference
-					{
-						Id = JwtBearerDefaults.AuthenticationScheme,
-						Type = ReferenceType.SecurityScheme
-					}
-				};
-
-				options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-				{
-					{securityScheme, new string[] { }}
-				});
-
-				options.SwaggerDoc("v4",
-
-					new OpenApiInfo
-					{
-						Title = "Resgrid API",
-						Version = "v4",
-						Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
-						Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
-						TermsOfService = new Uri("https://resgrid.com/Public/Terms")
-					}
-				);
-
-				var filePath = Path.Combine(AppContext.BaseDirectory, "Resgrid.Web.Services.xml");
-				options.IncludeXmlComments(filePath);
-				//options.DescribeAllEnumsAsStrings();
-			});
+			services.ConfigureSwaggerGen(ConfigureSwagger);
 
 			services.AddSignalR(hubOptions =>
 			{
@@ -706,6 +666,53 @@ namespace Resgrid.Web.ServicesCore
 
 			//	services.AddApplicationInsightsTelemetry(aiOptions);
 			//}
+		}
+
+		/// <summary>
+		/// The v4 OpenAPI document settings. Shared with SwaggerDocumentTests, which generates the whole document,
+		/// so a conflicting method/path pair fails the test suite instead of /swagger/v4/swagger.json in production.
+		/// </summary>
+		public static void ConfigureSwagger(SwaggerGenOptions options)
+		{
+			options.CustomSchemaIds(type => type.ToString());
+
+			// add JWT Authentication
+			var securityScheme = new OpenApiSecurityScheme
+			{
+				Name = "JWT Authentication",
+				Description = "Enter JWT Bearer token **_only_**",
+				In = ParameterLocation.Header,
+				Type = SecuritySchemeType.Http,
+				Scheme = "bearer", // must be lower case
+				BearerFormat = "JWT",
+				Reference = new OpenApiReference
+				{
+					Id = JwtBearerDefaults.AuthenticationScheme,
+					Type = ReferenceType.SecurityScheme
+				}
+			};
+
+			options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+			options.AddSecurityRequirement(new OpenApiSecurityRequirement
+			{
+				{securityScheme, new string[] { }}
+			});
+
+			options.SwaggerDoc("v4",
+
+				new OpenApiInfo
+				{
+					Title = "Resgrid API",
+					Version = "v4",
+					Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
+					Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
+					TermsOfService = new Uri("https://resgrid.com/Public/Terms")
+				}
+			);
+
+			var filePath = Path.Combine(AppContext.BaseDirectory, "Resgrid.Web.Services.xml");
+			options.IncludeXmlComments(filePath);
+			//options.DescribeAllEnumsAsStrings();
 		}
 
 		public void ConfigureContainer(ContainerBuilder builder)

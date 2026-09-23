@@ -132,6 +132,9 @@
   <data name="CompleteInviteText3" xml:space="preserve">
     <value>Si tiene problemas para completar la invitación o tiene problemas, comuníquese con el administrador del departamento de la invitación que está tratando de completar para obtener ayuda. Pueden agregar manualmente su cuenta si es necesario.</value>
   </data>
+  <data name="CompleteInviteDepartmentFull" xml:space="preserve">
+    <value>Este departamento no puede aceptar nuevos miembros en este momento: ha alcanzado el límite de personal de su plan o no se pudo comprobar el plan. Póngase en contacto con el administrador del departamento que le invitó.</value>
+  </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>confirmar Contraseña</value>
   </data>

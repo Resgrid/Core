@@ -49,7 +49,7 @@ namespace Resgrid.Workers.Framework.Logic
 						return Tuple.Create(true, "Report subscriber is not an active department member.");
 					}
 				}
-				catch (Exception ex) { Logging.LogException(ex); return Tuple.Create(false, "Report subscriber membership could not be verified."); }
+				catch (Exception ex) { Logging.LogException(ex, $"Report subscriber membership could not be verified for scheduled task {item.ScheduledTask.ScheduledTaskId} in department {item.ScheduledTask.DepartmentId}."); return Tuple.Create(false, "Report subscriber membership could not be verified."); }
 			}
 
 			if (item?.ScheduledTask?.Data is "6" or "7" or "8" or "9" or "10" or "11" or "12" or "13")

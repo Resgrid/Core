@@ -42,6 +42,7 @@ namespace Resgrid.Services
 		private readonly IEncryptionService _encryptionService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly ILimitsService _limitsService;
 
 		public DepartmentSsoService(
 			IDepartmentSsoConfigRepository ssoConfigRepository,
@@ -51,7 +52,8 @@ namespace Resgrid.Services
 			IUserProfileService userProfileService,
 			IEncryptionService encryptionService,
 			ICacheProvider cacheProvider,
-			IExternalIdentityLinkService externalIdentityLinkService)
+			IExternalIdentityLinkService externalIdentityLinkService,
+			ILimitsService limitsService)
 		{
 			_ssoConfigRepository = ssoConfigRepository;
 			_securityPolicyRepository = securityPolicyRepository;
@@ -61,6 +63,7 @@ namespace Resgrid.Services
 			_encryptionService = encryptionService;
 			_cacheProvider = cacheProvider;
 			_externalIdentityLinkService = externalIdentityLinkService;
+			_limitsService = limitsService;
 		}
 
 		// ── SSO Config CRUD ───────────────────────────────────────────────────
@@ -242,6 +245,13 @@ namespace Resgrid.Services
 
 			if (!config.AutoProvisionUsers || string.IsNullOrWhiteSpace(email))
 				return null;
+
+			// A provisioned member takes a personnel seat. Linking an existing member (above) never does.
+			if (!await _limitsService.CanDepartmentAddNewUserAsync(departmentId, true))
+			{
+				Logging.LogInfo($"DepartmentSsoService: auto-provision refused for dept={departmentId}: personnel limit reached or the plan could not be checked.");
+				return null;
+			}
 
 			var provisionedUser = await ProvisionNewUserAsync(departmentId, email, firstName, lastName,
 				externalSubject, config, departmentCode, cancellationToken);

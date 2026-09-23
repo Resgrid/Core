@@ -297,6 +297,8 @@ namespace Resgrid.Services
 			InvalidateDepartmentUsersInCache(departmentId);
 			InvalidateDepartmentMemberInCache(userId, departmentId);
 			SendMembershipVisibilityRefresh(departmentId);
+			// The returning member takes a personnel seat again, so the cached plan counts are stale.
+			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
 
 			return saved;
 		}

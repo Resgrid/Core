@@ -49,7 +49,8 @@ namespace Resgrid.Tests.Services
 				new Mock<IUserProfileService>().Object,
 				_encryptionService.Object,
 				_cacheProvider.Object,
-				new Mock<IExternalIdentityLinkService>().Object);
+				new Mock<IExternalIdentityLinkService>().Object,
+				new Mock<ILimitsService>().Object);
 		}
 
 		[Test]

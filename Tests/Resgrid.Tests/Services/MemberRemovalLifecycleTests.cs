@@ -28,13 +28,13 @@ namespace Resgrid.Tests.Services
 
 		#region Admin standing
 
-		private static DepartmentsService Departments(Mock<IDepartmentMembersRepository> members, List<AuditEvent> audits)
+		private static DepartmentsService Departments(Mock<IDepartmentMembersRepository> members, List<AuditEvent> audits, Mock<ILimitsService> limits = null)
 		{
 			var events = new Mock<IEventAggregator>();
 			events.Setup(e => e.SendMessage<AuditEvent>(It.IsAny<AuditEvent>())).Callback<AuditEvent>(audits.Add);
 			return new DepartmentsService(Mock.Of<IDepartmentsRepository>(), members.Object, Mock.Of<ISubscriptionsService>(), Mock.Of<IDepartmentCallEmailsRepository>(),
 				Mock.Of<IDepartmentCallPruningRepository>(), Mock.Of<ICacheProvider>(), Mock.Of<IUsersService>(), Mock.Of<IDepartmentSettingsService>(),
-				Mock.Of<IUserProfileService>(), Mock.Of<ILimitsService>(), events.Object, Mock.Of<IIdentityRepository>(), Mock.Of<IDepartmentCallPruningRepository>());
+				Mock.Of<IUserProfileService>(), (limits ?? new Mock<ILimitsService>()).Object, events.Object, Mock.Of<IIdentityRepository>(), Mock.Of<IDepartmentCallPruningRepository>());
 		}
 
 		private static Mock<IDepartmentMembersRepository> Members(DepartmentMember row)
@@ -80,6 +80,22 @@ namespace Resgrid.Tests.Services
 			(await service.ReactivateUserAsync(Dept, "nobody", "chief")).Should().BeNull("there is no membership row to bring back");
 		}
 
+		[Test]
+		public async Task Removal_and_reactivation_refresh_the_cached_plan_counts()
+		{
+			// Both change how many personnel seats are used; the 14-day cached counts drive the Personnel index's Add button.
+			// (Removal clears them through InvalidateAllDepartmentsCache.)
+			var row = new DepartmentMember { DepartmentMemberId = 9, DepartmentId = Dept, UserId = "seat-holder" };
+			var limits = new Mock<ILimitsService>();
+			var service = Departments(Members(row), new List<AuditEvent>(), limits);
+
+			await service.DeleteUserAsync(Dept, "seat-holder", "chief");
+			limits.Verify(l => l.InvalidateDepartmentsEntityLimitsCache(Dept), Times.Once);
+
+			await service.ReactivateUserAsync(Dept, "seat-holder", "chief");
+			limits.Verify(l => l.InvalidateDepartmentsEntityLimitsCache(Dept), Times.Exactly(2));
+		}
+
 		#endregion
 
 		#region Deployment seats and employment
@@ -88,9 +104,9 @@ namespace Resgrid.Tests.Services
 		{
 			public readonly List<string> Calls = new List<string>();
 			public readonly List<DeploymentPersonnel> Seats = new List<DeploymentPersonnel>();
-			public Mock<IDeploymentService> Deployments = new Mock<IDeploymentService>();
-			public Mock<IWorkforceService> Workforce = new Mock<IWorkforceService>();
-			public Mock<IDepartmentsService> Departments = new Mock<IDepartmentsService>();
+			public readonly Mock<IDeploymentService> Deployments = new Mock<IDeploymentService>();
+			public readonly Mock<IWorkforceService> Workforce = new Mock<IWorkforceService>();
+			public readonly Mock<IDepartmentsService> Departments = new Mock<IDepartmentsService>();
 			public DeleteService Service;
 		}
 

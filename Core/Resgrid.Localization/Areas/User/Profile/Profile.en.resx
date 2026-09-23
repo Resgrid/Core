@@ -225,6 +225,9 @@
   <data name="JoinDepartmentInfo" xml:space="preserve">
     <value>You need to supply the current Department Id and Code for the Resgrid Department you wish to join.</value>
   </data>
+  <data name="JoinDepartmentFull" xml:space="preserve">
+    <value>This department cannot take new members right now: it has reached the personnel limit of its plan, or the plan could not be checked. Please contact an administrator of the department.</value>
+  </data>
   <data name="NewPassword" xml:space="preserve">
     <value>New Password</value>
   </data>

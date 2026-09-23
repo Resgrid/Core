@@ -149,6 +149,9 @@
   <data name="AddExistingUserButton" xml:space="preserve">
     <value>Zur Abteilung hinzufügen</value>
   </data>
+  <data name="PersonnelLimitReached" xml:space="preserve">
+    <value>Diese Abteilung hat das Personallimit ihres Tarifs erreicht, oder der Tarif konnte gerade nicht geprüft werden. Entfernen Sie eine Person, die keinen Zugang mehr braucht, oder wechseln Sie in einen größeren Tarif und versuchen Sie es erneut.</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Vorname</value>
   </data>

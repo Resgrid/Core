@@ -176,6 +176,9 @@
   <data name="JoinDepartmentInfo" xml:space="preserve">
     <value>You need to supply the current Department Id and Code for the Resgrid Department you wish to join.</value>
   </data>
+  <data name="JoinDepartmentFull" xml:space="preserve">
+    <value>Questo dipartimento non può accettare nuovi membri in questo momento: ha raggiunto il limite di personale del suo piano, oppure non è stato possibile verificare il piano. Contatta un amministratore del dipartimento.</value>
+  </data>
   <data name="NewPassword" xml:space="preserve">
     <value>New Password</value>
   </data>

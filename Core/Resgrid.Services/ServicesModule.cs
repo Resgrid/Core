@@ -135,6 +135,7 @@ namespace Resgrid.Services
 			builder.RegisterType<FeatureToggleService>().As<IFeatureToggleService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistAccessMutationObserver>().As<IFeatureFlagMutationObserver>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchStatusService>().As<ICallDispatchStatusService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallStatusAttributionService>().As<ICallStatusAttributionService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelRolesService>().As<IPersonnelRolesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ScheduledTasksService>().As<IScheduledTasksService>().InstancePerLifetimeScope();
 			builder.RegisterType<DistributionListsService>().As<IDistributionListsService>().InstancePerLifetimeScope();

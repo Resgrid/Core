@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>فتح الانتشار</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>جدول الأسعار الافتراضي</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>فوترة المقاول: يُستخدم لعروض هذا العميل وعمليات انتشاره عندما لا يحدد أي عقد جدولًا.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>وقت الموقع مرتبط تلقائيًا</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>أُرسلت حالة «في الموقع» للوحدة (أو الحالة التي أنهتها) دون بلاغ، وربطها Resgrid بهذا البلاغ استنادًا إلى الحالة السابقة للوحدة أو إرسالها. تحقّق من الوقت قبل الإرسال.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>وقت الموقع مستنتج</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>حدّدت الوحدة حالة «في الموقع» (أو الحالة التي أنهتها) دون وجهة أثناء إرسالها إلى هذا البلاغ، واستنتج Resgrid أنها تخص هذا البلاغ. تحقّق من الوقت قبل الإرسال.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>لا توجد حالة في الموقع: مدة البلاغ</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>لم تُبلغ الوحدة عن حالة «في الموقع» في هذا البلاغ، لذا يحتسب البند الوقت من تسجيل البلاغ حتى إغلاقه. تحقّق من الكمية قبل الإرسال.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>وقت الموقع من حالة الوحدة</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>ربطت الوحدة بنفسها حالة «في الموقع» والحالة التي أنهتها بهذا البلاغ.</value></data>
 </root>

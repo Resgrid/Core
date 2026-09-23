@@ -28,6 +28,12 @@ namespace Resgrid.Model.Invoicing
 
 		/// <summary>Phase C provenance (M0219): the approved daily time report this line was generated from.</summary>
 		public string DeploymentTimeReportId { get; set; }
+
+		/// <summary>
+		/// M0230: where a generated hourly unit line's on-scene time came from (<see cref="InvoiceLineTimeSources"/>), so the
+		/// clerk can see when the billed time rests on a status Resgrid linked or inferred. Null for other lines.
+		/// </summary>
+		public int? TimeSource { get; set; }
 		public int SortOrder { get; set; }
 
 		[NotMapped]

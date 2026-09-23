@@ -309,4 +309,55 @@
   <data name="TotalTimeLabel" xml:space="preserve">
     <value>Temps total</value>
   </data>
+  <data name="CallUnitTimesReportName" xml:space="preserve">
+    <value>Horaires des unités par appel</value>
+  </data>
+  <data name="CallUnitTimesReportDescription" xml:space="preserve">
+    <value>Quand chaque unité a été envoyée, en route, sur les lieux, en attente et libérée pour chaque appel d'une période, d'après les statuts des unités. Téléchargeable en CSV.</value>
+  </data>
+  <data name="CallUnitTimesUnitHeader" xml:space="preserve">
+    <value>Unité</value>
+  </data>
+  <data name="CallUnitTimesDispatchedHeader" xml:space="preserve">
+    <value>Envoyée</value>
+  </data>
+  <data name="CallUnitTimesEnRouteHeader" xml:space="preserve">
+    <value>En route</value>
+  </data>
+  <data name="CallUnitTimesOnSceneHeader" xml:space="preserve">
+    <value>Sur les lieux</value>
+  </data>
+  <data name="CallUnitTimesStagingHeader" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="CallUnitTimesClearedHeader" xml:space="preserve">
+    <value>Libérée</value>
+  </data>
+  <data name="CallUnitTimesSourceHeader" xml:space="preserve">
+    <value>Lié par</value>
+  </data>
+  <data name="CallUnitTimesSourceExplicit" xml:space="preserve">
+    <value>Statut de l'unité</value>
+  </data>
+  <data name="CallUnitTimesSourceAuto" xml:space="preserve">
+    <value>Lié automatiquement</value>
+  </data>
+  <data name="CallUnitTimesSourceInferred" xml:space="preserve">
+    <value>Déduit</value>
+  </data>
+  <data name="CallUnitTimesSourceDispatchOnly" xml:space="preserve">
+    <value>Envoi seulement</value>
+  </data>
+  <data name="CallUnitTimesDownloadCsv" xml:space="preserve">
+    <value>Télécharger CSV</value>
+  </data>
+  <data name="CallUnitTimesNoCalls" xml:space="preserve">
+    <value>Aucun appel sur cette période.</value>
+  </data>
+  <data name="CallUnitTimesNoUnits" xml:space="preserve">
+    <value>Aucune unité n'a été envoyée sur cet appel ni n'y a signalé de statut.</value>
+  </data>
+  <data name="CallUnitTimesLegend" xml:space="preserve">
+    <value>Lié automatiquement : un statut envoyé sans appel que Resgrid a lié d'après le statut précédent de l'unité ou son envoi. Déduit : un statut défini sans destination par l'unité alors qu'elle était envoyée sur l'appel. Envoi seulement : l'unité a été envoyée mais n'a signalé aucun statut sur l'appel.</value>
+  </data>
 </root>

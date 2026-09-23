@@ -32,6 +32,9 @@ namespace Resgrid.Model
 
 		public int? DestinationType { get; set; }
 
+		/// <summary>How the destination was decided (<see cref="StatusDestinationSources"/>); null on rows before M0228.</summary>
+		public int? DestinationSource { get; set; }
+
 		public DateTime? LocalTimestamp { get; set; }
 
 		public string Note { get; set; }

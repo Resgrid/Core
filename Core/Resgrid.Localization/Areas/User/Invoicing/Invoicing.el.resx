@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Άνοιγμα ανάπτυξης</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Προεπιλεγμένος τιμοκατάλογος</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Χρέωση εργολάβου: χρησιμοποιείται για προσφορές και αναπτύξεις του πελάτη όταν καμία σύμβαση δεν ορίζει κατάλογο.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>χρόνος στο σημείο με αυτόματη σύνδεση</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Η κατάσταση «Στο σημείο» της μονάδας (ή η κατάσταση που την τερμάτισε) στάλθηκε χωρίς κλήση· το Resgrid τη συνέδεσε με αυτή την κλήση βάσει της προηγούμενης κατάστασης της μονάδας ή της αποστολής της. Ελέγξτε τον χρόνο πριν από την αποστολή.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>χρόνος στο σημείο συναγόμενος</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>Η μονάδα όρισε την κατάσταση «Στο σημείο» (ή την κατάσταση που την τερμάτισε) χωρίς προορισμό ενώ είχε σταλεί σε αυτή την κλήση· το Resgrid συνήγαγε ότι ανήκει σε αυτή την κλήση. Ελέγξτε τον χρόνο πριν από την αποστολή.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>χωρίς κατάσταση στο σημείο: διάρκεια κλήσης</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Η μονάδα δεν ανέφερε ποτέ «Στο σημείο» σε αυτή την κλήση, οπότε η γραμμή χρεώνει τον χρόνο από την καταγραφή της κλήσης έως το κλείσιμό της. Ελέγξτε την ποσότητα πριν από την αποστολή.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>χρόνος στο σημείο από την κατάσταση μονάδας</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Η μονάδα συνέδεσε η ίδια την κατάσταση «Στο σημείο» και την κατάσταση που την τερμάτισε με αυτή την κλήση.</value></data>
 </root>

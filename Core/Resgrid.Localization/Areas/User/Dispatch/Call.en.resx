@@ -772,4 +772,22 @@
   <data name="SiteFiles" xml:space="preserve">
     <value>Site Files</value>
   </data>
+  <data name="StatusLinkAuto" xml:space="preserve">
+    <value>auto-linked</value>
+  </data>
+  <data name="StatusLinkInferred" xml:space="preserve">
+    <value>inferred</value>
+  </data>
+  <data name="StatusLinkAutoHelp" xml:space="preserve">
+    <value>Sent without a call. Resgrid linked it to this call from the previous status or the dispatch.</value>
+  </data>
+  <data name="StatusLinkInferredHelp" xml:space="preserve">
+    <value>Set with no destination by a unit or person dispatched to this call while working it.</value>
+  </data>
+  <data name="StatusLinkLegend" xml:space="preserve">
+    <value>Auto-linked: sent without a call; Resgrid linked it from the previous status or the dispatch. Inferred: set with no destination by a unit or person dispatched to this call while working it.</value>
+  </data>
+  <data name="UnitTimes" xml:space="preserve">
+    <value>Unit Times</value>
+  </data>
 </root>

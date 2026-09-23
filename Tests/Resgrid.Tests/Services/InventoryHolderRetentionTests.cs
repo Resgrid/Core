@@ -92,7 +92,7 @@ namespace Resgrid.Tests.Services
 				events.Object, Mock.Of<ICustomStateService>(), new Lazy<IMongoRepository<UnitsLocation>>(() => Mock.Of<IMongoRepository<UnitsLocation>>()),
 				Mock.Of<IUnitLocationsDocRepository>(), new Lazy<IUnitLocationsMongoRepository>(() => Mock.Of<IUnitLocationsMongoRepository>()),
 				activeRoles.Object, Mock.Of<IDepartmentGroupsService>(), limits.Object, Mock.Of<IPersonnelRolesService>(),
-				new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()), new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()), store.Object, work.Object);
+				new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()), new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()), Mock.Of<ICallStatusAttributionService>(), store.Object, work.Object);
 
 			var error = (await ((Func<Task>)(async () => await service.DeleteUnitAsync(501))).Should().ThrowAsync<InventoryException>()).Which;
 			error.Code.Should().Be("HolderHistoryRetained"); error.StatusCode.Should().Be(409);

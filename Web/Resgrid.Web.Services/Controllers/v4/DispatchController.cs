@@ -347,70 +347,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			else
 			{
-				var customStateResult = new CustomStatusResultData();
-				customStateResult.Id = "0";
-				customStateResult.Type = 0;
-				customStateResult.StateId = "0";
-				customStateResult.Text = "Available";
-				customStateResult.BColor = "#FFFFFF";
-				customStateResult.Color = "#000000";
-				customStateResult.Gps = false;
-				customStateResult.Note = 0;
-				customStateResult.Detail = 0;
+				// Units without a custom status set use the same built-in statuses (and destination settings) that
+				// /Statuses/GetAllUnitStatuses serves as the "0" group, so Responding / On Scene / Staging prompt for
+				// a call here too. Id, Type and StateId all carry the UnitStateTypes value, as before.
+				foreach (var defaultStatus in _customStateService.GetDefaultUnitStatuses())
+				{
+					var customStateResult = new CustomStatusResultData();
+					customStateResult.Id = defaultStatus.CustomStateDetailId.ToString();
+					customStateResult.Type = defaultStatus.CustomStateDetailId;
+					customStateResult.StateId = defaultStatus.CustomStateDetailId.ToString();
+					customStateResult.Text = defaultStatus.ButtonText;
+					customStateResult.BColor = defaultStatus.ButtonColor;
+					customStateResult.Color = defaultStatus.TextColor;
+					customStateResult.Gps = defaultStatus.GpsRequired;
+					customStateResult.Note = defaultStatus.NoteType;
+					customStateResult.Detail = defaultStatus.DetailType;
 
-				result.Data.Statuses.Add(customStateResult);
-
-				var customStateResult2 = new CustomStatusResultData();
-				customStateResult2.Id = "3";
-				customStateResult2.Type = 3;
-				customStateResult2.StateId = "3";
-				customStateResult2.Text = "Committed";
-				customStateResult2.BColor = "#FFFFFF";
-				customStateResult2.Color = "#000000";
-				customStateResult2.Gps = false;
-				customStateResult2.Note = 0;
-				customStateResult2.Detail = 0;
-
-				result.Data.Statuses.Add(customStateResult2);
-
-				var customStateResult3 = new CustomStatusResultData();
-				customStateResult3.Id = "1";
-				customStateResult3.Type = 1;
-				customStateResult3.StateId = "1";
-				customStateResult3.Text = "Delayed";
-				customStateResult3.BColor = "#FFFFFF";
-				customStateResult3.Color = "#000000";
-				customStateResult3.Gps = false;
-				customStateResult3.Note = 0;
-				customStateResult3.Detail = 0;
-
-				result.Data.Statuses.Add(customStateResult3);
-
-				var customStateResult4 = new CustomStatusResultData();
-				customStateResult4.Id = "4";
-				customStateResult4.Type = 4;
-				customStateResult4.StateId = "4";
-				customStateResult4.Text = "Out Of Service";
-				customStateResult4.BColor = "#FFFFFF";
-				customStateResult4.Color = "#000000";
-				customStateResult4.Gps = false;
-				customStateResult4.Note = 0;
-				customStateResult4.Detail = 0;
-
-				result.Data.Statuses.Add(customStateResult4);
-
-				var customStateResult5 = new CustomStatusResultData();
-				customStateResult5.Id = "2";
-				customStateResult5.Type = 2;
-				customStateResult5.StateId = "2";
-				customStateResult5.Text = "Unavailable";
-				customStateResult5.BColor = "#FFFFFF";
-				customStateResult5.Color = "#000000";
-				customStateResult5.Gps = false;
-				customStateResult5.Note = 0;
-				customStateResult5.Detail = 0;
-
-				result.Data.Statuses.Add(customStateResult5);
+					result.Data.Statuses.Add(customStateResult);
+				}
 			}
 
 			result.PageSize = 1;

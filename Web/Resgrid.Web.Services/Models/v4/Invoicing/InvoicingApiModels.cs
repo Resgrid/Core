@@ -91,6 +91,12 @@ namespace Resgrid.Web.Services.Models.v4.Invoicing
 		public decimal Amount { get; set; }
 		public bool Taxable { get; set; }
 		public int SortOrder { get; set; }
+
+		/// <summary>
+		/// Generated hourly unit lines: where the on-scene time came from (InvoiceLineTimeSources: 1 the unit's own status,
+		/// 2 a status Resgrid auto-linked to the call, 3 a status inferred for the call, 4 the call window). Null otherwise.
+		/// </summary>
+		public int? TimeSource { get; set; }
 	}
 
 	public class InvoicePaymentData

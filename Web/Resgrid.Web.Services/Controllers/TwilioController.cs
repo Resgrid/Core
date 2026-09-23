@@ -944,7 +944,7 @@ namespace Resgrid.Web.Services.Controllers
 
 			if (twilioRequest?.Digits == "1")
 			{
-				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId);
+				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId, (int)DestinationEntityTypes.Call);
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToScene, call.DepartmentId);
 				response.Hangup();
 				return CreateVoiceContentResult(response);
@@ -961,7 +961,7 @@ namespace Resgrid.Web.Services.Controllers
 
 					if (station != null)
 					{
-						await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null, station.DepartmentGroupId);
+						await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null, station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToStation(station.Name), call.DepartmentId);
 						response.Hangup();
 						return CreateVoiceContentResult(response);

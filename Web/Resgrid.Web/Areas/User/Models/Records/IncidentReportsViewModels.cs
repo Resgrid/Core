@@ -229,6 +229,11 @@ namespace Resgrid.Web.Areas.User.Models.Records
 				return null;
 			if (fact.CorrectedOn.HasValue)
 				return "Corrected";
+			// Unit times taken from a status Resgrid linked to the call (IncidentReportsService.UnitTimeProvenance).
+			if (fact.SourceKind == (int)RmsSourceKind.Derived && fact.SourceSystem == "UnitStates (inferred)")
+				return "Inferred";
+			if (fact.SourceKind == (int)RmsSourceKind.Derived && fact.SourceSystem == "UnitStates (auto-linked)")
+				return "AutoLinked";
 			return ((RmsSourceKind)fact.SourceKind).ToString();
 		}
 	}

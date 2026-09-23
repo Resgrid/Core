@@ -309,4 +309,55 @@
   <data name="TotalTimeLabel" xml:space="preserve">
     <value>Загальний час</value>
   </data>
+  <data name="CallUnitTimesReportName" xml:space="preserve">
+    <value>Час підрозділів за викликами</value>
+  </data>
+  <data name="CallUnitTimesReportDescription" xml:space="preserve">
+    <value>Коли кожен підрозділ було направлено, коли він був у дорозі, на місці, в резерві та звільнився на кожному виклику за період, за статусами підрозділів. Можна завантажити як CSV.</value>
+  </data>
+  <data name="CallUnitTimesUnitHeader" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="CallUnitTimesDispatchedHeader" xml:space="preserve">
+    <value>Направлено</value>
+  </data>
+  <data name="CallUnitTimesEnRouteHeader" xml:space="preserve">
+    <value>У дорозі</value>
+  </data>
+  <data name="CallUnitTimesOnSceneHeader" xml:space="preserve">
+    <value>На місці</value>
+  </data>
+  <data name="CallUnitTimesStagingHeader" xml:space="preserve">
+    <value>Резерв</value>
+  </data>
+  <data name="CallUnitTimesClearedHeader" xml:space="preserve">
+    <value>Звільнено</value>
+  </data>
+  <data name="CallUnitTimesSourceHeader" xml:space="preserve">
+    <value>Пов’язано через</value>
+  </data>
+  <data name="CallUnitTimesSourceExplicit" xml:space="preserve">
+    <value>Статус підрозділу</value>
+  </data>
+  <data name="CallUnitTimesSourceAuto" xml:space="preserve">
+    <value>Пов’язано автоматично</value>
+  </data>
+  <data name="CallUnitTimesSourceInferred" xml:space="preserve">
+    <value>Виведено</value>
+  </data>
+  <data name="CallUnitTimesSourceDispatchOnly" xml:space="preserve">
+    <value>Лише направлення</value>
+  </data>
+  <data name="CallUnitTimesDownloadCsv" xml:space="preserve">
+    <value>Завантажити CSV</value>
+  </data>
+  <data name="CallUnitTimesNoCalls" xml:space="preserve">
+    <value>Немає викликів за цей період.</value>
+  </data>
+  <data name="CallUnitTimesNoUnits" xml:space="preserve">
+    <value>Жоден підрозділ не було направлено на цей виклик, і жоден не повідомив на ньому статус.</value>
+  </data>
+  <data name="CallUnitTimesLegend" xml:space="preserve">
+    <value>Пов’язано автоматично: статус, надісланий без виклику, який Resgrid пов’язав за попереднім статусом підрозділу або його направленням. Виведено: статус, який підрозділ встановив без пункту призначення, будучи направленим на виклик. Лише направлення: підрозділ було направлено, але він не повідомив жодного статусу на виклику.</value>
+  </data>
 </root>

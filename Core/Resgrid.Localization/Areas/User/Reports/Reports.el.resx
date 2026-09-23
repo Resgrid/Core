@@ -740,4 +740,55 @@
   <data name="TotalTimeLabel" xml:space="preserve">
     <value>Συνολικός Χρόνος</value>
   </data>
+  <data name="CallUnitTimesReportName" xml:space="preserve">
+    <value>Χρόνοι μονάδων ανά κλήση</value>
+  </data>
+  <data name="CallUnitTimesReportDescription" xml:space="preserve">
+    <value>Πότε κάθε μονάδα στάλθηκε, ήταν καθ' οδόν, στο σημείο, σε αναμονή και ελευθερώθηκε σε κάθε κλήση μιας περιόδου, από τις καταστάσεις των μονάδων. Διαθέσιμο για λήψη ως CSV.</value>
+  </data>
+  <data name="CallUnitTimesUnitHeader" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="CallUnitTimesDispatchedHeader" xml:space="preserve">
+    <value>Στάλθηκε</value>
+  </data>
+  <data name="CallUnitTimesEnRouteHeader" xml:space="preserve">
+    <value>Καθ' οδόν</value>
+  </data>
+  <data name="CallUnitTimesOnSceneHeader" xml:space="preserve">
+    <value>Στο σημείο</value>
+  </data>
+  <data name="CallUnitTimesStagingHeader" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="CallUnitTimesClearedHeader" xml:space="preserve">
+    <value>Ελευθερώθηκε</value>
+  </data>
+  <data name="CallUnitTimesSourceHeader" xml:space="preserve">
+    <value>Σύνδεση μέσω</value>
+  </data>
+  <data name="CallUnitTimesSourceExplicit" xml:space="preserve">
+    <value>Κατάσταση μονάδας</value>
+  </data>
+  <data name="CallUnitTimesSourceAuto" xml:space="preserve">
+    <value>Αυτόματη σύνδεση</value>
+  </data>
+  <data name="CallUnitTimesSourceInferred" xml:space="preserve">
+    <value>Συναγόμενο</value>
+  </data>
+  <data name="CallUnitTimesSourceDispatchOnly" xml:space="preserve">
+    <value>Μόνο αποστολή</value>
+  </data>
+  <data name="CallUnitTimesDownloadCsv" xml:space="preserve">
+    <value>Λήψη CSV</value>
+  </data>
+  <data name="CallUnitTimesNoCalls" xml:space="preserve">
+    <value>Δεν υπάρχουν κλήσεις σε αυτή την περίοδο.</value>
+  </data>
+  <data name="CallUnitTimesNoUnits" xml:space="preserve">
+    <value>Καμία μονάδα δεν στάλθηκε σε αυτή την κλήση ούτε ανέφερε κατάσταση σε αυτή.</value>
+  </data>
+  <data name="CallUnitTimesLegend" xml:space="preserve">
+    <value>Αυτόματη σύνδεση: κατάσταση που στάλθηκε χωρίς κλήση και το Resgrid τη συνέδεσε βάσει της προηγούμενης κατάστασης της μονάδας ή της αποστολής της. Συναγόμενο: κατάσταση που όρισε η μονάδα χωρίς προορισμό ενώ είχε σταλεί στην κλήση. Μόνο αποστολή: η μονάδα στάλθηκε αλλά δεν ανέφερε καμία κατάσταση στην κλήση.</value>
+  </data>
 </root>

@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Ouvrir le déploiement</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Grille tarifaire par défaut</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Facturation contractant : utilisée pour les offres et déploiements de ce client quand aucun contrat ne désigne de grille.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>temps sur les lieux lié automatiquement</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Le statut Sur les lieux de l'unité (ou le statut qui l'a terminé) a été envoyé sans appel ; Resgrid l'a lié à cet appel d'après le statut précédent de l'unité ou son envoi. Vérifiez le temps avant l'envoi.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>temps sur les lieux déduit</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>L'unité a défini son statut Sur les lieux (ou le statut qui l'a terminé) sans destination alors qu'elle était envoyée sur cet appel ; Resgrid en a déduit qu'il appartient à cet appel. Vérifiez le temps avant l'envoi.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>pas de statut sur les lieux : durée de l'appel</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>L'unité n'a jamais signalé Sur les lieux pour cet appel ; la ligne facture donc le temps entre l'enregistrement de l'appel et sa clôture. Vérifiez la quantité avant l'envoi.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>temps sur les lieux d'après le statut de l'unité</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>L'unité a elle-même lié son statut Sur les lieux, et le statut qui l'a terminé, à cet appel.</value></data>
 </root>

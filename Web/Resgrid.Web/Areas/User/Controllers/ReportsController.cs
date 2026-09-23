@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Reporting;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
@@ -61,6 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// totals reconcile across the Records cutover (RMS plan section 4.10).
 		private readonly IRecordsReportingService _recordsReporting;
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
+		private readonly ICallStatusAttributionService _callStatusAttributionService;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
 			IActionLogsService actionLogsService,
@@ -74,7 +76,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IUnitsService unitsService, IUnitStatesService unitStatesService,
 			ICalendarService calendarService, IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting,
-			IBusinessOperationsAccessService businessOperationsAccess)
+			IBusinessOperationsAccessService businessOperationsAccess, ICallStatusAttributionService callStatusAttributionService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -99,6 +101,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_calendarService = calendarService;
 			_recordsReporting = recordsReporting;
 			_businessOperationsAccess = businessOperationsAccess;
+			_callStatusAttributionService = callStatusAttributionService;
 		}
 
 		#endregion Private Members and Constructors
@@ -557,6 +560,73 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> CallSummaryReportParams(PersonnelHoursReportParams model)
 		{
 			return RedirectToAction("CallSummaryReport", new { start = model.Start, end = model.End });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CallUnitTimesReportParams()
+		{
+			var model = new PersonnelHoursReportParams();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var today = DateTime.UtcNow.TimeConverter(department).Date;
+
+			model.Start = today.AddDays(-7);
+			model.End = today.AddDays(1).AddSeconds(-1);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CallUnitTimesReportParams(PersonnelHoursReportParams model)
+		{
+			return RedirectToAction("CallUnitTimesReport", new { start = model.Start, end = model.End });
+		}
+
+		/// <summary>
+		/// Dispatched / en route / on scene / staging / cleared per unit per call, for a period or (callId) one call.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CallUnitTimesReport(DateTime? start, DateTime? end, int? callId)
+		{
+			if (callId.HasValue && callId.Value > 0 && !await _authorizationService.CanUserViewCallAsync(UserId, callId.Value))
+				return Unauthorized();
+
+			return View(await CallUnitTimesReportModel(DepartmentId, start, end, callId));
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CallUnitTimesReportCsv(DateTime? start, DateTime? end, int? callId)
+		{
+			if (callId.HasValue && callId.Value > 0 && !await _authorizationService.CanUserViewCallAsync(UserId, callId.Value))
+				return Unauthorized();
+
+			var model = await CallUnitTimesReportModel(DepartmentId, start, end, callId);
+
+			string Time(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(model.Department) : string.Empty;
+
+			var csv = new StringBuilder();
+			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Group",
+				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "Linked By" }.Select(CsvCell)));
+
+			foreach (var call in model.Calls)
+			{
+				foreach (var unit in call.Units)
+				{
+					csv.AppendLine(string.Join(",", new[]
+					{
+						call.Number, call.Name, call.Type, Time(call.LoggedOn), Time(call.ClosedOn), unit.UnitName, unit.Group,
+						Time(unit.Times.DispatchedOn), Time(unit.Times.EnrouteOn), Time(unit.Times.OnSceneOn), Time(unit.Times.StagingOn),
+						Time(unit.Times.ClearedOn), unit.Times.Source.ToString()
+					}.Select(CsvCell)));
+				}
+			}
+
+			var fileName = callId.HasValue && callId.Value > 0 ? $"call-unit-times-{callId.Value}.csv" : "call-unit-times.csv";
+			return File(new UTF8Encoding(true).GetBytes(csv.ToString()), "text/csv", fileName);
 		}
 
 		[HttpGet]
@@ -1602,9 +1672,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
 			}
 
-			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, start.Value, end.Value);
-			var logs = await _logService.GetAllLogsByDepartmentDateRangeAsync(departmentId, LogTypes.Run, model.Start,
-				model.End);
+			// The range is picked in department-local time; the call and log timestamps are UTC.
+			var startUtc = model.Start.DepartmentLocalToUtc(model.Department);
+			var endUtc = model.End.DepartmentLocalToUtc(model.Department);
+
+			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(departmentId, startUtc, endUtc);
+			var logs = await _logService.GetAllLogsByDepartmentDateRangeAsync(departmentId, LogTypes.Run, startUtc,
+				endUtc);
 
 			model.TotalCalls = calls.Count;
 			model.CallTypeCount = new List<Tuple<string, int>>();
@@ -1631,6 +1705,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.CallCloseCount.Add(new Tuple<string, int>("Total", calls.Count));
+
+			// Calls without a run log (most departments never write one, and none can once Records is active) take
+			// their unit/personnel counts and first on-scene time from the status history linked to the call.
+			var callsWithoutLogs = calls.Where(c => !logs.Any(l => l.CallId == c.CallId)).ToList();
+			var statusActivity = callsWithoutLogs.Count > 0
+				? await GetCallStatusActivityAsync(departmentId, callsWithoutLogs, startUtc, endUtc)
+				: new Dictionary<int, (int Units, int Personnel, DateTime? FirstOnScene)>();
 
 			foreach (var call in calls)
 			{
@@ -1668,6 +1749,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					summary.FirstOnSceneTime = onSceneTime;
 				}
+				else if (statusActivity.TryGetValue(call.CallId, out var activity))
+				{
+					summary.FirstOnSceneTime = activity.FirstOnScene;
+					summary.UnitsCount = activity.Units;
+					summary.PersonnelCount = activity.Personnel;
+				}
 				else
 				{
 					summary.FirstOnSceneTime = null;
@@ -1679,6 +1766,125 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return model;
+		}
+
+		/// <summary>
+		/// Per call: distinct units and personnel with a status on the call's record (linked or inferred, see
+		/// CallStatusAttribution), and the first unit on-scene time (custom statuses count through their base type). Status
+		/// history is read once for the report window rather than once per call.
+		/// </summary>
+		private async Task<Dictionary<int, (int Units, int Personnel, DateTime? FirstOnScene)>> GetCallStatusActivityAsync(int departmentId,
+			List<Call> calls, DateTime startUtc, DateTime endUtc)
+		{
+			var callIds = calls.Select(c => c.CallId).ToHashSet();
+			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
+			var unitBaseTypes = CallStatusLinkage.BuildUnitBaseTypeMap(customStates);
+
+			var statesByCall = await _callStatusAttributionService.GetUnitStatesForCallsAsync(departmentId, calls);
+			var logsByCall = await _callStatusAttributionService.GetActionLogsForCallsAsync(departmentId, calls);
+
+			var result = new Dictionary<int, (int Units, int Personnel, DateTime? FirstOnScene)>();
+			foreach (var callId in callIds)
+			{
+				var callUnitStates = statesByCall.TryGetValue(callId, out var callStates) ? callStates : new List<UnitState>();
+				var firstOnScene = callUnitStates
+					.Where(s => CallStatusLinkage.ResolveUnitStateKind(s.State, unitBaseTypes) == UnitStateTypes.OnScene)
+					.Select(s => (DateTime?)s.Timestamp)
+					.OrderBy(t => t)
+					.FirstOrDefault();
+
+				var callLogs = logsByCall.TryGetValue(callId, out var logs) ? logs : new List<ActionLog>();
+
+				result[callId] = (callUnitStates.Select(s => s.UnitId).Distinct().Count(),
+					callLogs.Select(a => a.UserId).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
+					firstOnScene);
+			}
+
+			return result;
+		}
+
+		private async Task<CallUnitTimesView> CallUnitTimesReportModel(int departmentId, DateTime? start, DateTime? end, int? callId)
+		{
+			var model = new CallUnitTimesView();
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+
+			var calls = new List<Call>();
+			if (callId.HasValue && callId.Value > 0)
+			{
+				model.CallId = callId.Value;
+				var call = await _callsService.GetCallByIdAsync(callId.Value);
+
+				if (call != null && call.DepartmentId == departmentId && !call.IsDeleted)
+				{
+					calls.Add(call);
+					model.Start = call.LoggedOn.TimeConverter(model.Department);
+					model.End = (call.ClosedOn ?? DateTime.UtcNow).TimeConverter(model.Department);
+				}
+			}
+			else
+			{
+				var today = DateTime.UtcNow.TimeConverter(model.Department).Date;
+				model.Start = start ?? today.AddDays(-7);
+				model.End = end ?? today.AddDays(1).AddSeconds(-1);
+
+				// The range is picked in department-local time; call timestamps are UTC.
+				calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(departmentId,
+					model.Start.DepartmentLocalToUtc(model.Department), model.End.DepartmentLocalToUtc(model.Department))) ?? new List<Call>();
+			}
+
+			if (calls.Count == 0)
+				return model;
+
+			var statesByCall = await _callStatusAttributionService.GetUnitStatesForCallsAsync(departmentId, calls);
+			var dispatchesByCall = await _callStatusAttributionService.GetUnitDispatchesForCallsAsync(departmentId, calls);
+			var customBaseTypes = await _unitsService.GetCustomUnitStateBaseTypesAsync(departmentId);
+			var units = (await _unitsService.GetUnitsForDepartmentAsync(departmentId) ?? new List<Unit>()).ToDictionary(x => x.UnitId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>();
+
+			foreach (var call in calls.OrderBy(x => x.LoggedOn))
+			{
+				var callModel = new CallUnitTimesCall
+				{
+					CallId = call.CallId,
+					Number = call.Number,
+					Name = ProtectedDataEnvelope.SafeDisplay(call.Name),
+					Type = ProtectedDataEnvelope.SafeDisplay(call.Type),
+					LoggedOn = call.LoggedOn,
+					ClosedOn = call.ClosedOn
+				};
+
+				statesByCall.TryGetValue(call.CallId, out var states);
+				dispatchesByCall.TryGetValue(call.CallId, out var dispatches);
+
+				foreach (var row in CallUnitTimesCalculator.Compute(dispatches, states, customBaseTypes))
+				{
+					units.TryGetValue(row.UnitId, out var unit);
+					var group = unit?.StationGroupId != null ? groups.FirstOrDefault(g => g.DepartmentGroupId == unit.StationGroupId.Value) : null;
+
+					callModel.Units.Add(new CallUnitTimesUnit { UnitName = unit?.Name ?? $"#{row.UnitId}", Group = group?.Name, Times = row });
+
+					model.AnyAutoLinked |= row.Source == CallUnitTimesSources.AutoLinked;
+					model.AnyInferred |= row.Source == CallUnitTimesSources.Inferred;
+				}
+
+				callModel.Units = callModel.Units.OrderBy(x => x.Times.DispatchedOn ?? x.Times.EnrouteOn ?? x.Times.OnSceneOn ?? DateTime.MaxValue).ThenBy(x => x.UnitName).ToList();
+				model.Calls.Add(callModel);
+			}
+
+			return model;
+		}
+
+		/// <summary>Quotes a CSV cell and neutralises spreadsheet formula prefixes in user-entered text.</summary>
+		private static string CsvCell(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+				return string.Empty;
+
+			if ("=+-@\t\r".Contains(value[0]))
+				value = "'" + value;
+
+			return "\"" + value.Replace("\"", "\"\"") + "\"";
 		}
 
 		private async Task<PersonnelStatusHistoryView> PersonnelStatusHistoryReportModel(int departmentId,
@@ -1704,34 +1910,47 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await ApplyMemberIdentificationNumbersAsync(departmentId, profiles?.Values);
 			var groups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(departmentId);
 
+			// The range is picked in department-local time; action log timestamps are UTC.
+			var startUtc = model.Start.DepartmentLocalToUtc(model.Department);
+			var endUtc = model.End.DepartmentLocalToUtc(model.Department);
+
 			var statuses = new List<ActionLog>();
 
 			if (groupSelect && groupId > 0)
 			{
 				var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
-				var usersInGroup = group.Members.Select(x => x.UserId);
 
-				foreach (var user in usersInGroup)
+				if (group != null && group.DepartmentId == departmentId && group.Members != null)
 				{
-					statuses.AddRange(
-						await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(user, model.Start, model.End));
+					var usersInGroup = group.Members.Select(x => x.UserId);
+
+					foreach (var user in usersInGroup)
+					{
+						statuses.AddRange(
+							await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(user, startUtc, endUtc));
+					}
 				}
 			}
 			else
 			{
 				if (!String.IsNullOrWhiteSpace(userId))
 				{
-					statuses.AddRange(
-						await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(userId, model.Start,
-							model.End));
+					// Only a member of this department can be reported on.
+					if (await _departmentsService.GetDepartmentMemberAsync(userId, departmentId) != null)
+						statuses.AddRange(
+							await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(userId, startUtc,
+								endUtc));
 				}
 				else
 				{
 					statuses.AddRange(
-						await _actionLogsService.GetAllActionLogsInDateRangeAsync(DepartmentId, model.Start,
-							model.End));
+						await _actionLogsService.GetAllActionLogsInDateRangeAsync(departmentId, startUtc,
+							endUtc));
 				}
 			}
+
+			// A member of several departments has statuses in each; only this department's belong here.
+			statuses = statuses.Where(x => x != null && x.DepartmentId == departmentId).ToList();
 
 			var groupedStates = from s in statuses
 				group s by s.UserId
@@ -1808,16 +2027,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId);
 
+			// The range is picked in department-local time; unit state timestamps are UTC.
+			var startUtc = model.Start.DepartmentLocalToUtc(model.Department);
+			var endUtc = model.End.DepartmentLocalToUtc(model.Department);
+
 			var statuses = new List<UnitState>();
 
 			if (groupSelect && groupId > 0)
 			{
-				var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
-				var unitsInGroup = await _unitsService.GetAllUnitsForGroupAsync(groupId);
+				// Only this department's units are reported on, whatever group or unit id was posted.
+				var unitsInGroup = (units ?? new List<Unit>()).Where(x => x.StationGroupId == groupId);
 
 				foreach (var unit in unitsInGroup)
 				{
-					var groupUnitStates = await _unitStatesService.GetAllStatesForUnitInDateRangeAsync(unit.UnitId, model.Start, model.End);
+					var groupUnitStates = await _unitStatesService.GetAllStatesForUnitInDateRangeAsync(unit.UnitId, startUtc, endUtc);
 
 					if (groupUnitStates != null)
 						statuses.AddRange(groupUnitStates);
@@ -1827,16 +2050,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (unitId > 0)
 				{
-					var perUnitStates = await _unitStatesService.GetAllStatesForUnitInDateRangeAsync(unitId, model.Start, model.End);
+					if (units != null && units.Any(x => x.UnitId == unitId))
+					{
+						var perUnitStates = await _unitStatesService.GetAllStatesForUnitInDateRangeAsync(unitId, startUtc, endUtc);
 
-					if (perUnitStates != null)
-						statuses.AddRange(perUnitStates);
+						if (perUnitStates != null)
+							statuses.AddRange(perUnitStates);
+					}
 				}
 				else
 				{
 					foreach (var unit in units)
 					{
-						var unitStates = await _unitStatesService.GetAllStatesForUnitInDateRangeAsync(unit.UnitId, model.Start, model.End);
+						var unitStates = await _unitStatesService.GetAllStatesForUnitInDateRangeAsync(unit.UnitId, startUtc, endUtc);
 
 						if (unitStates != null)
 							statuses.AddRange(unitStates);

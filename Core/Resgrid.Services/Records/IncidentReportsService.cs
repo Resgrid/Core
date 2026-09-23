@@ -987,6 +987,9 @@ namespace Resgrid.Services.Records
 				return result;
 
 			var states = (await _unitsService.GetUnitStatesForCallAsync(report.DepartmentId, call.CallId) ?? new List<UnitState>()).OrderBy(s => s.Timestamp).ToList();
+			// A department's custom unit statuses store their detail id, not a UnitStateTypes value; they resolve
+			// through the status's base type so custom-status departments still get enroute/on-scene/clear times.
+			var customBaseTypes = await _unitsService.GetCustomUnitStateBaseTypesAsync(report.DepartmentId);
 			var ordinal = 0;
 			foreach (var dispatch in dispatches)
 			{
@@ -995,9 +998,19 @@ namespace Resgrid.Services.Records
 					continue;
 
 				var unitStates = states.Where(s => s.UnitId == dispatch.UnitId).ToList();
-				DateTime? At(params UnitStateTypes[] kinds) => unitStates.FirstOrDefault(s => kinds.Contains((UnitStateTypes)s.State))?.Timestamp;
-				var onScene = At(UnitStateTypes.OnScene);
-				var cleared = unitStates.Where(s => onScene.HasValue && s.Timestamp >= onScene.Value && ((UnitStateTypes)s.State == UnitStateTypes.Released || (UnitStateTypes)s.State == UnitStateTypes.Returning || (UnitStateTypes)s.State == UnitStateTypes.Available)).Select(s => (DateTime?)s.Timestamp).FirstOrDefault();
+				UnitStateTypes? KindOf(UnitState s) => CallStatusLinkage.ResolveUnitStateKind(s.State, customBaseTypes);
+				UnitState First(params UnitStateTypes[] kinds) => unitStates.FirstOrDefault(s => KindOf(s) is UnitStateTypes kind && kinds.Contains(kind));
+				var enrouteState = First(UnitStateTypes.Responding, UnitStateTypes.Enroute);
+				var onSceneState = First(UnitStateTypes.OnScene);
+				var stagingState = First(UnitStateTypes.Staging);
+				var canceledState = onSceneState != null ? null : First(UnitStateTypes.Cancelled);
+				var onScene = onSceneState?.Timestamp;
+				var clearedState = unitStates.FirstOrDefault(s => onScene.HasValue && s.Timestamp >= onScene.Value && (KindOf(s) == UnitStateTypes.Released || KindOf(s) == UnitStateTypes.Returning || KindOf(s) == UnitStateTypes.Available));
+				var cleared = clearedState?.Timestamp;
+				// A time taken from a status Resgrid linked to the call (auto-linked on save, or inferred for a dispatched unit)
+				// is Derived provenance, so the reviewer sees it was not the unit naming the call.
+				var timeStates = new[] { enrouteState, onSceneState, stagingState, canceledState, clearedState };
+				var anyServerLinked = timeStates.Any(s => s != null && (CallStatusAttribution.IsAutoLinked(s.DestinationSource) || CallStatusAttribution.IsInferred(s.DestinationSource)));
 
 				var response = new RmsUnitResponse
 				{
@@ -1010,13 +1023,13 @@ namespace Resgrid.Services.Records
 					UnitTypeSnapshot = unit.Type,
 					StationGroupIdSnapshot = unit.StationGroupId,
 					DispatchedOn = dispatch.DispatchedOn,
-					EnrouteOn = At(UnitStateTypes.Responding, UnitStateTypes.Enroute),
+					EnrouteOn = enrouteState?.Timestamp,
 					OnSceneOn = onScene,
-					StagingOn = At(UnitStateTypes.Staging),
-					CanceledEnrouteOn = onScene.HasValue ? null : At(UnitStateTypes.Cancelled),
+					StagingOn = stagingState?.Timestamp,
+					CanceledEnrouteOn = canceledState?.Timestamp,
 					ClearedOn = cleared,
 					ResponseMode = "EMERGENT",
-					TimesSourceKind = (int)RmsSourceKind.App,
+					TimesSourceKind = anyServerLinked ? (int)RmsSourceKind.Derived : (int)RmsSourceKind.App,
 					Ordinal = ordinal++,
 					CreatedOn = now,
 					ModifiedOn = now,
@@ -1025,14 +1038,32 @@ namespace Resgrid.Services.Records
 				result.Add(response);
 
 				facts.Add(Fact(report, NerisFactKeys.UnitTime(unit.UnitId, "dispatch"), RmsSourceKind.Dispatch, "Calls", "CallDispatchUnit", dispatch.CallDispatchUnitId.ToString(), Iso(dispatch.DispatchedOn), dispatch.DispatchedOn, now));
-				foreach (var (field, value) in new[] { ("enroute_to_scene", response.EnrouteOn), ("on_scene", response.OnSceneOn), ("staging", response.StagingOn), ("canceled_enroute", response.CanceledEnrouteOn), ("unit_clear", response.ClearedOn) })
+				foreach (var (field, state) in new[] { ("enroute_to_scene", enrouteState), ("on_scene", onSceneState), ("staging", stagingState), ("canceled_enroute", canceledState), ("unit_clear", clearedState) })
 				{
-					if (value.HasValue)
-						facts.Add(Fact(report, NerisFactKeys.UnitTime(unit.UnitId, field), RmsSourceKind.App, "UnitStates", "Unit", unit.UnitId.ToString(), Iso(value), value, now));
+					if (state == null)
+						continue;
+
+					var (kind, system) = UnitTimeProvenance(state);
+					facts.Add(Fact(report, NerisFactKeys.UnitTime(unit.UnitId, field), kind, system, "Unit", unit.UnitId.ToString(), Iso(state.Timestamp), state.Timestamp, now));
 				}
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Provenance of a unit time taken from a unit state: App when the unit linked the status to the call itself, Derived
+		/// (with the reason in the source system) when Resgrid auto-linked it on save or inferred it for a dispatched unit.
+		/// </summary>
+		private static (RmsSourceKind Kind, string System) UnitTimeProvenance(UnitState state)
+		{
+			if (CallStatusAttribution.IsInferred(state.DestinationSource))
+				return (RmsSourceKind.Derived, "UnitStates (inferred)");
+
+			if (CallStatusAttribution.IsAutoLinked(state.DestinationSource))
+				return (RmsSourceKind.Derived, "UnitStates (auto-linked)");
+
+			return (RmsSourceKind.App, "UnitStates");
 		}
 
 		private static RmsSourceFact Fact(RmsIncidentReport report, string key, RmsSourceKind kind, string system, string entityType, string entityId, string value, DateTime? sourceTime, DateTime now)
@@ -1192,8 +1223,11 @@ namespace Resgrid.Services.Records
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "staging"), Iso(row.StagingOn), userId, now);
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "canceled_enroute"), Iso(row.CanceledEnrouteOn), userId, now);
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "unit_clear"), Iso(row.ClearedOn), userId, now);
-					// Provenance survives an edit: the fact keeps its App/Dispatch origin, the row shows the source that still applies.
-					row.TimesSourceKind = facts.Any(f => f.FactKey.StartsWith($"unit.{unit.UnitId}.", StringComparison.Ordinal) && f.CorrectedOn == null) ? (int)RmsSourceKind.App : (int)RmsSourceKind.None;
+					// Provenance survives an edit: the fact keeps its App/Dispatch/Derived origin, the row shows the source that still
+					// applies (Derived while any uncorrected time rests on a status Resgrid linked to the call).
+					var uncorrected = facts.Where(f => f.FactKey.StartsWith($"unit.{unit.UnitId}.", StringComparison.Ordinal) && f.CorrectedOn == null).ToList();
+					row.TimesSourceKind = uncorrected.Count == 0 ? (int)RmsSourceKind.None
+						: uncorrected.Any(f => f.SourceKind == (int)RmsSourceKind.Derived) ? (int)RmsSourceKind.Derived : (int)RmsSourceKind.App;
 				}
 				await _units.InsertAsync(row, cancellationToken, true);
 				result.Add(row);

@@ -249,7 +249,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<IEnumerable<UnitState>> GetAllStatesByCallIdAsync(int callId)
+		public async Task<IEnumerable<UnitState>> GetAllStatesByCallIdAsync(int departmentId, int callId)
 		{
 			try
 			{
@@ -257,6 +257,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CallId", callId);
+					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectUnitStatesByCallIdQuery>();
 

@@ -848,4 +848,22 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Insatsrapport</value>
   </data>
+  <data name="StatusLinkAuto" xml:space="preserve">
+    <value>automatiskt kopplad</value>
+  </data>
+  <data name="StatusLinkInferred" xml:space="preserve">
+    <value>härledd</value>
+  </data>
+  <data name="StatusLinkAutoHelp" xml:space="preserve">
+    <value>Skickad utan larm. Resgrid kopplade den till detta larm utifrån föregående status eller utlarmningen.</value>
+  </data>
+  <data name="StatusLinkInferredHelp" xml:space="preserve">
+    <value>Satt utan destination av en enhet eller person som larmats till detta larm medan den arbetade med det.</value>
+  </data>
+  <data name="StatusLinkLegend" xml:space="preserve">
+    <value>Automatiskt kopplad: skickad utan larm; Resgrid kopplade den utifrån föregående status eller utlarmningen. Härledd: satt utan destination av en enhet eller person som larmats till detta larm medan den arbetade med det.</value>
+  </data>
+  <data name="UnitTimes" xml:space="preserve">
+    <value>Enhetstider</value>
+  </data>
 </root>

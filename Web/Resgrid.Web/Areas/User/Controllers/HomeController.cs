@@ -1195,8 +1195,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> UserRespondingToStation(int stationId)
 		{
-			await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-											 (int)ActionTypes.RespondingToStation, null, stationId);
+			// Only a station of this department is recorded as the destination, typed so it can never be read as a call.
+			var station = stationId > 0 ? await _departmentGroupsService.GetGroupByIdAsync(stationId) : null;
+
+			if (station != null && station.DepartmentId == DepartmentId)
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToStation, null,
+											 station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
+			else
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToStation, null);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -1204,12 +1210,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> UserRespondingToCall(int callId)
 		{
-			if (callId > 0)
-				await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-											 (int)ActionTypes.RespondingToScene, null, callId);
+			// Only a call of this department is recorded as the destination.
+			var call = callId > 0 ? await _callsService.GetCallByIdAsync(callId) : null;
+
+			if (call != null && call.DepartmentId == DepartmentId)
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null,
+											 call.CallId, (int)DestinationEntityTypes.Call);
 			else
-				await _actionLogsService.SetUserActionAsync(UserId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-											 (int)ActionTypes.RespondingToScene, null);
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -1225,7 +1233,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetActionForUser(string userId, int actionType)
 		{
-			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, actionType);
+			// Same rule as SetCustomUserAction: members of this department only, and only an admin sets someone else's status.
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+			if (member == null)
+				return Unauthorized();
+
+			if (userId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			await _actionLogsService.SetUserActionAsync(userId, DepartmentId, actionType);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}

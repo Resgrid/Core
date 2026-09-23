@@ -88,7 +88,10 @@ namespace Resgrid.Services.Records
 			Add(f, "C", "IncidentTypeCode", true, mappedType == null ? call.Type : call.Type + " → " + mappedType, mappedType == null ? Calls : Crosswalk, NerisFactKeys.IncidentType, "incident_types",
 				report != null ? report.Types.Count > 0 : (bool?)null, mappedType == null ? NfirsLegacyFieldStatus.Missing : NfirsLegacyFieldStatus.Populated);
 			Add(f, "E1", "AlarmDateTime", true, Utc(call.LoggedOn), Calls, NerisFactKeys.CallCreate, "dispatch", FactPopulated(report, NerisFactKeys.CallCreate));
-			Add(f, "E1", "ArrivalDateTime", false, Utc(firstOnScene?.Timestamp), UnitStates, firstOnScene == null ? null : NerisFactKeys.UnitTime(firstOnScene.UnitId, "on_scene"), "unit_responses",
+			// The arrival source says when the on-scene status reached the call through Resgrid rather than the unit naming it.
+			var arrivalSource = CallStatusAttribution.IsInferred(firstOnScene?.DestinationSource) ? UnitStates + " (inferred)"
+				: CallStatusAttribution.IsAutoLinked(firstOnScene?.DestinationSource) ? UnitStates + " (auto-linked)" : UnitStates;
+			Add(f, "E1", "ArrivalDateTime", false, Utc(firstOnScene?.Timestamp), arrivalSource, firstOnScene == null ? null : NerisFactKeys.UnitTime(firstOnScene.UnitId, "on_scene"), "unit_responses",
 				report != null ? report.Units.Any(u => u.OnSceneOn.HasValue) : (bool?)null);
 			Add(f, "E1", "ControlledDateTime", false, Utc(times?.LastBenchmarkCompletedOn), IncidentCommand, NerisFactKeys.CommandLastBenchmark, "dispatch", FactPopulated(report, NerisFactKeys.CommandLastBenchmark));
 			Add(f, "E1", "LastUnitClearedDateTime", false, Utc(call.ClosedOn ?? times?.CommandClosedOn), call.ClosedOn.HasValue ? Calls : IncidentCommand, NerisFactKeys.IncidentClear, "dispatch", FactPopulated(report, NerisFactKeys.IncidentClear));
@@ -145,7 +148,9 @@ namespace Resgrid.Services.Records
 			try
 			{
 				var states = await _units.GetUnitStatesForCallAsync(departmentId, callId) ?? new List<UnitState>();
-				return states.Where(s => s != null && s.State == (int)UnitStateTypes.OnScene).OrderBy(s => s.Timestamp).FirstOrDefault();
+				// Custom unit statuses resolve through their base type (see CallStatusLinkage.ResolveUnitStateKind).
+				var customBaseTypes = await _units.GetCustomUnitStateBaseTypesAsync(departmentId);
+				return states.Where(s => s != null && CallStatusLinkage.ResolveUnitStateKind(s.State, customBaseTypes) == UnitStateTypes.OnScene).OrderBy(s => s.Timestamp).FirstOrDefault();
 			}
 			catch (Exception ex)
 			{

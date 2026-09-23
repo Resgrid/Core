@@ -181,7 +181,7 @@ namespace Resgrid.Tests.Services
 					});
 
 				_actionLogsService = Resolve<IActionLogsService>();
-				_actionLogsServiceMocked = new ActionLogsService(_actionLogsRepositoryMock.Object, _usersServiceMock.Object, _departmentMembersRepositoryMock.Object, _departmentGroupsServiceMock.Object, _departmentsServiceMock.Object, _departmentSettingsServiceMock.Object, _eventAggregatorMock.Object, _geoServiceMock.Object, _customStateServiceMock.Object, _cacheProviderMock.Object);
+				_actionLogsServiceMocked = new ActionLogsService(_actionLogsRepositoryMock.Object, _usersServiceMock.Object, _departmentMembersRepositoryMock.Object, _departmentGroupsServiceMock.Object, _departmentsServiceMock.Object, _departmentSettingsServiceMock.Object, _eventAggregatorMock.Object, _geoServiceMock.Object, _customStateServiceMock.Object, _cacheProviderMock.Object, Mock.Of<ICallStatusAttributionService>());
 			}
 		}
 

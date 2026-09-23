@@ -34,11 +34,14 @@ namespace Resgrid.Model.Repositories
 		Task<UnitState> GetLastUnitStateBeforeIdAsync(int unitId, int unitStateId);
 
 		/// <summary>
-		/// Gets all states by call identifier asynchronous.
+		/// Gets every state of the department's units whose destination is the call: rows explicitly typed as a
+		/// call destination plus legacy rows with no destination type. The caller decides how to treat the
+		/// untyped rows.
 		/// </summary>
+		/// <param name="departmentId">The department that owns the call.</param>
 		/// <param name="callId">The call identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;UnitState&gt;&gt;.</returns>
-		Task<IEnumerable<UnitState>> GetAllStatesByCallIdAsync(int callId);
+		Task<IEnumerable<UnitState>> GetAllStatesByCallIdAsync(int departmentId, int callId);
 
 		/// <summary>
 		/// Gets the latest unit states for department asynchronous.

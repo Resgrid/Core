@@ -26,8 +26,9 @@
 	{
 		var p = Model.ProvenanceFor(key);
 		if (p == null) return Html.Raw(string.Empty);
-		var css = p == "Corrected" ? "label-warning" : p == "Derived" ? "label-default" : "label-info";
-		return Html.Raw($"<span class=\"label {css}\" title=\"{localizer["Provenance"]}\">{localizer["Source" + p]}</span>");
+		var css = p == "Corrected" || p == "Inferred" ? "label-warning" : p == "Derived" || p == "AutoLinked" ? "label-default" : "label-info";
+		var title = p == "Inferred" || p == "AutoLinked" ? localizer["UnitTimesDerivedHint"] : localizer["Provenance"];
+		return Html.Raw($"<span class=\"label {css}\" title=\"{title}\">{localizer["Source" + p]}</span>");
 	};
 }
 

@@ -269,11 +269,15 @@
 								<tbody>
 									@foreach (var u in a.Units.OrderBy(u => u.Ordinal))
 									{
-										<tr><td>@u.UnitNameSnapshot</td><td>@(u.UnitNerisId ?? "-")</td><td>@When(u.DispatchedOn)</td><td>@When(u.EnrouteOn)</td><td>@When(u.OnSceneOn)</td><td>@When(u.StagingOn)</td><td>@When(u.ClearedOn)</td><td>@(u.ResponseMode ?? "-")</td><td>@Source(u.TimesSourceKind)</td></tr>
+										<tr><td>@u.UnitNameSnapshot</td><td>@(u.UnitNerisId ?? "-")</td><td>@When(u.DispatchedOn)</td><td>@When(u.EnrouteOn)</td><td>@When(u.OnSceneOn)</td><td>@When(u.StagingOn)</td><td>@When(u.ClearedOn)</td><td>@(u.ResponseMode ?? "-")</td><td>@if (u.TimesSourceKind == (int)RmsSourceKind.Derived) { <span class="label label-warning" title="@localizer["UnitTimesDerivedHint"]">@Source(u.TimesSourceKind)</span> } else { @Source(u.TimesSourceKind) }</td></tr>
 									}
 								</tbody>
 							</table>
 						</div>
+						@if (a.Units.Any(u => u.TimesSourceKind == (int)RmsSourceKind.Derived))
+						{
+							<p class="small text-muted">@localizer["UnitTimesDerivedHint"]</p>
+						}
 					}
 				</div>
 			</div>

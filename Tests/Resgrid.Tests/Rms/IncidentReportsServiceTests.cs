@@ -149,6 +149,55 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Start_from_call_reads_unit_times_from_custom_statuses_through_their_base_type()
+		{
+			_units.Setup(u => u.GetUnitStatesForCallAsync(Dept, CallId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = 5, State = 901, Timestamp = LoggedOn.AddMinutes(3) },
+				new UnitState { UnitId = 5, State = 902, Timestamp = LoggedOn.AddMinutes(11) },
+				new UnitState { UnitId = 5, State = 903, Timestamp = LoggedOn.AddMinutes(55) }
+			});
+			_units.Setup(u => u.GetCustomUnitStateBaseTypesAsync(Dept)).ReturnsAsync(new Dictionary<int, int>
+			{
+				[901] = (int)ActionBaseTypes.Responding,
+				[902] = (int)ActionBaseTypes.OnScene,
+				[903] = (int)ActionBaseTypes.Cleared
+			});
+
+			var aggregate = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			var unit = aggregate.Units.Should().ContainSingle().Subject;
+			unit.EnrouteOn.Should().Be(LoggedOn.AddMinutes(3));
+			unit.OnSceneOn.Should().Be(LoggedOn.AddMinutes(11));
+			unit.ClearedOn.Should().Be(LoggedOn.AddMinutes(55));
+		}
+
+		[Test]
+		public async Task Start_from_call_marks_unit_times_from_auto_linked_or_inferred_statuses_as_derived()
+		{
+			_units.Setup(u => u.GetUnitStatesForCallAsync(Dept, CallId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = 5, State = (int)UnitStateTypes.Responding, Timestamp = LoggedOn.AddMinutes(2), DestinationSource = (int)StatusDestinationSources.Explicit },
+				new UnitState { UnitId = 5, State = (int)UnitStateTypes.OnScene, Timestamp = LoggedOn.AddMinutes(10), DestinationSource = (int)StatusDestinationSources.CarryForward },
+				new UnitState { UnitId = 5, State = (int)UnitStateTypes.Available, Timestamp = LoggedOn.AddMinutes(60), DestinationSource = (int)StatusDestinationSources.Inferred }
+			});
+
+			var aggregate = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			aggregate.Units.Single().TimesSourceKind.Should().Be((int)RmsSourceKind.Derived);
+			var facts = aggregate.Facts;
+			var enroute = facts.Single(f => f.FactKey == NerisFactKeys.UnitTime(5, "enroute_to_scene"));
+			enroute.SourceKind.Should().Be((int)RmsSourceKind.App);
+			enroute.SourceSystem.Should().Be("UnitStates");
+			var onScene = facts.Single(f => f.FactKey == NerisFactKeys.UnitTime(5, "on_scene"));
+			onScene.SourceKind.Should().Be((int)RmsSourceKind.Derived);
+			onScene.SourceSystem.Should().Be("UnitStates (auto-linked)");
+			var clear = facts.Single(f => f.FactKey == NerisFactKeys.UnitTime(5, "unit_clear"));
+			clear.SourceKind.Should().Be((int)RmsSourceKind.Derived);
+			clear.SourceSystem.Should().Be("UnitStates (inferred)");
+		}
+
+		[Test]
 		public async Task Start_from_call_prefills_dispatch_facts_with_provenance()
 		{
 			var aggregate = await _service.StartFromCallAsync(Dept, "author", CallId);

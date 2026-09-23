@@ -152,9 +152,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!String.IsNullOrWhiteSpace(input.Latitude) && !String.IsNullOrWhiteSpace(input.Longitude))
 					geolocation = $"{input.Latitude},{input.Longitude}";
 
+				if (!int.TryParse(input.Type, out var statusType))
+					return BadRequest();
+
 				ActionLog log = null;
 				if (String.IsNullOrWhiteSpace(input.RespondingTo) || input.RespondingTo == "0")
-					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, cancellationToken);
+					log = await SavePersonStatusAsync(input.UserId, statusType, geolocation, null, null, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
 				else
 				{
 					if (!int.TryParse(input.RespondingTo, out var destinationId))
@@ -165,7 +168,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!await IsValidDestinationAsync(destinationId, destinationType))
 						return BadRequest();
 
-					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, destinationId, destinationType, input.Note, cancellationToken);
+					log = await SavePersonStatusAsync(input.UserId, statusType, geolocation, destinationId, destinationType, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
 
 					// Entity-need response: a member that command requested answering the call lands on the
 					// incident log. Best-effort — never blocks the status save.
@@ -218,6 +221,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && input.UserIds.Any(x => x != UserId))
 				return Unauthorized();
 
+			if (!int.TryParse(input.Type, out var statusType))
+				return BadRequest();
+
 			List<string> logIds = new List<string>();
 			foreach (var userId in input.UserIds)
 			{
@@ -241,7 +247,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				ActionLog log = null;
 				if (String.IsNullOrWhiteSpace(input.RespondingTo) || input.RespondingTo == "0")
-					log = await _actionLogsService.SetUserActionAsync(userId, DepartmentId, int.Parse(input.Type), geolocation, cancellationToken);
+					log = await SavePersonStatusAsync(userId, statusType, geolocation, null, null, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
 				else
 				{
 					if (!int.TryParse(input.RespondingTo, out var destinationId))
@@ -252,7 +258,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!await IsValidDestinationAsync(destinationId, destinationType))
 						continue;
 
-					log = await _actionLogsService.SetUserActionAsync(userId, DepartmentId, int.Parse(input.Type), geolocation, destinationId, destinationType, input.Note, cancellationToken);
+					log = await SavePersonStatusAsync(userId, statusType, geolocation, destinationId, destinationType, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
 				}
 
 				logIds.Add(log.ActionLogId.ToString());
@@ -301,6 +307,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return statusResult;
+		}
+
+		/// <summary>
+		/// Writes a personnel status. The note is kept whether or not a destination was picked, and the status is
+		/// stamped with the time the member set it (so an offline-queued status replayed later keeps its real
+		/// time), falling back to now when the client time is missing or implausible.
+		/// </summary>
+		private async Task<ActionLog> SavePersonStatusAsync(string userId, int statusType, string geolocation, int? destinationId, int? destinationType,
+			string note, DateTime? timestampUtc, DateTime? timestamp, CancellationToken cancellationToken)
+		{
+			var log = new ActionLog
+			{
+				UserId = userId,
+				DepartmentId = DepartmentId,
+				ActionTypeId = statusType,
+				GeoLocationData = geolocation,
+				DestinationId = destinationId,
+				DestinationType = destinationType,
+				Note = note,
+				Timestamp = StatusTimestampHelper.ResolveStatusTimeUtc(timestampUtc, timestamp, DateTime.UtcNow)
+			};
+
+			return await _actionLogsService.SaveActionLogAsync(log, cancellationToken);
 		}
 
 		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)

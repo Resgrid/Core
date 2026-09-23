@@ -294,6 +294,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Quantity = l.Quantity,
 					UnitRate = l.UnitRate,
 					Taxable = l.Taxable,
+					TimeSource = l.TimeSource,
 					SortOrder = order++
 				}).ToList();
 				var saved = await _invoicing.SaveDraftAsync(invoice, lineItems, UserId, Ip, UserAgent, cancellationToken);
@@ -532,7 +533,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				var lines = await _invoicing.GenerateLineItemsFromCallAsync(callId, rateCardId, DepartmentId);
-				return Json(lines.Select(l => new { callId = l.CallId, rateCardItemId = l.RateCardItemId, description = l.Description, quantity = l.Quantity, unitRate = l.UnitRate, taxable = l.Taxable }));
+				return Json(lines.Select(l => new { callId = l.CallId, rateCardItemId = l.RateCardItemId, description = l.Description, quantity = l.Quantity, unitRate = l.UnitRate, taxable = l.Taxable, timeSource = l.TimeSource }));
 			}
 			catch (Exception ex) when (IsInvoicingError(ex))
 			{

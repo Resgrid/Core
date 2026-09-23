@@ -180,6 +180,11 @@ namespace Resgrid.Services
 		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _customStateDetailRepository.SaveOrUpdateAsync(customStateDetail, cancellationToken);
+
+			// Details are served from the department's cached custom states; without this an edited status keeps its
+			// old text, colour and destination setting in the apps and call records for up to the 7 day cache length.
+			await _cacheProvider.RemoveAsync(string.Format(CacheKey, departmentId));
+
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = departmentId });
 
 			return saved;
@@ -251,7 +256,7 @@ namespace Resgrid.Services
 
 			if (states != null && states.Count > 0)
 			{
-				var detail = states.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == detailId)).FirstOrDefault(detail => detail != null);
+				var detail = states.Where(state => state.Details != null).Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == detailId)).FirstOrDefault(detail => detail != null);
 				return detail;
 			}
 

@@ -55,5 +55,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Text describing the history event
 		/// </summary>
 		public string Info { get; set; }
+
+		/// <summary>
+		/// For status events: how the status came to be on this call (see DispatchedEventResultData.DestinationSource).
+		/// </summary>
+		public int? DestinationSource { get; set; }
 	}
 }

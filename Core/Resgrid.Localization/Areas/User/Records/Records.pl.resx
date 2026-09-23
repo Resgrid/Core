@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Włącz JavaScript, aby wyszukać i wybrać zgłoszenie.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Podaj prawidłowy zakres dat, w którym początek nie jest późniejszy niż koniec.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Wybierz dostępne zgłoszenie z listy lub wyczyść wybór.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Wywnioskowane</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Powiązane automatycznie</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Niektóre czasy jednostek pochodzą ze statusów, których jednostka sama nie powiązała z tym zgłoszeniem: Resgrid powiązał je automatycznie (na podstawie poprzedniego statusu jednostki lub jej zadysponowania) albo je wywnioskował (ustawione bez celu, gdy jednostka była tu zadysponowana). Sprawdź je przed zatwierdzeniem.</value></data>
 </root>

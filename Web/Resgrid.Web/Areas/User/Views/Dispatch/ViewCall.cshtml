@@ -39,7 +39,7 @@
             <div class="buttons-actions">
                 @if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
                 {
-                    <button class="btn btn-danger" onclick="resgrid.dispatch.viewcall.reOpenCall();">@localizer["ReopenCall"]</button>
+                    <button class="btn btn-danger" id="reOpenCallButton" disabled>@localizer["ReopenCall"]</button>
                 }
                 @if (ClaimsAuthorizationHelper.CanCreateCall())
                 {
@@ -96,6 +96,7 @@
                         <div class="col-lg-12">
                             <div class="m-b-md">
                                 <a asp-controller="Dispatch" asp-action="CallExport" asp-route-area="User" asp-route-callId="@Model.Call.CallId" class="btn btn-info btn-xs pull-right">@localizer["PrintExportView"]</a>
+                                <a asp-controller="Reports" asp-action="CallUnitTimesReport" asp-route-area="User" asp-route-callId="@Model.Call.CallId" target="_blank" class="btn btn-default btn-xs pull-right" style="margin-right: 5px;">@localizer["UnitTimes"]</a>
                                 <h2><span data-adp-field="calls.name">@Model.Call.Name</span></h2>
                             </div>
                             <dl class="dl-horizontal" style="margin-bottom: 0px;">
@@ -381,7 +382,8 @@
                                                 <tbody>
                                                     @foreach (var al in Model.ActionLogs)
                                                     {
-                                                        var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
+                                                        var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al) ?? CustomStatesHelper.UnknownState(commonLocalizer["Unknown"]);
+                                                        var linkSource = al.DestinationSource;
                                                         var userInfo = Model.UserGroupRoles.FirstOrDefault(x => x.UserId == al.UserId);
 
                                                         <tr>
@@ -389,13 +391,21 @@
                                                                 @al.Timestamp.TimeConverterToString(Model.Department)
                                                             </td>
                                                             <td>
-                                                                @if (al.ActionTypeId <= 25)
+                                                                @if (!CustomStatesHelper.IsHexColor(customState.ButtonColor))
                                                                 {
                                                                     <span class='label @customState.ButtonColor'>@customState.ButtonText</span>
                                                                 }
                                                                 else
                                                                 {
                                                                     <span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+                                                                }
+                                                                @if (Resgrid.Model.CallStatusAttribution.IsInferred(linkSource))
+                                                                {
+                                                                    <span class="label label-warning" title="@localizer["StatusLinkInferredHelp"]">@localizer["StatusLinkInferred"]</span>
+                                                                }
+                                                                else if (Resgrid.Model.CallStatusAttribution.IsAutoLinked(linkSource))
+                                                                {
+                                                                    <span class="label label-info" title="@localizer["StatusLinkAutoHelp"]">@localizer["StatusLinkAuto"]</span>
                                                                 }
                                                             </td>
                                                             <td>
@@ -427,6 +437,10 @@
                                                     }
                                                 </tbody>
                                             </table>
+                                            @if (Model.ActionLogs.Any(x => Resgrid.Model.CallStatusAttribution.IsInferred(x.DestinationSource) || Resgrid.Model.CallStatusAttribution.IsAutoLinked(x.DestinationSource)))
+                                            {
+                                                <p class="small text-muted">@localizer["StatusLinkLegend"]</p>
+                                            }
                                         </div>
                                         <div class="tab-pane" id="tab-4">
                                             <table class="table table-striped">
@@ -442,18 +456,27 @@
                                                 <tbody>
                                                     @foreach (var us in Model.UnitStates)
                                                     {
-                                                        var customState = await CustomStatesHelper.GetCustomUnitState(us);
+                                                        var customState = await CustomStatesHelper.GetCustomUnitState(us) ?? CustomStatesHelper.UnknownState(commonLocalizer["Unknown"]);
+                                                        var linkSource = us.DestinationSource;
 
                                                         <tr>
                                                             <td>@us.Timestamp.TimeConverterToString(Model.Department)</td>
                                                             <td>
-                                                                @if (us.State <= 25)
+                                                                @if (!CustomStatesHelper.IsHexColor(customState.ButtonColor))
                                                                 {
                                                                     <span class='label @customState.ButtonColor'>@customState.ButtonText</span>
                                                                 }
                                                                 else
                                                                 {
                                                                     <span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>
+                                                                }
+                                                                @if (Resgrid.Model.CallStatusAttribution.IsInferred(linkSource))
+                                                                {
+                                                                    <span class="label label-warning" title="@localizer["StatusLinkInferredHelp"]">@localizer["StatusLinkInferred"]</span>
+                                                                }
+                                                                else if (Resgrid.Model.CallStatusAttribution.IsAutoLinked(linkSource))
+                                                                {
+                                                                    <span class="label label-info" title="@localizer["StatusLinkAutoHelp"]">@localizer["StatusLinkAuto"]</span>
                                                                 }
                                                             </td>
                                                             <td>@us.Unit.Name</td>
@@ -472,6 +495,10 @@
                                                     }
                                                 </tbody>
                                             </table>
+                                            @if (Model.UnitStates.Any(x => Resgrid.Model.CallStatusAttribution.IsInferred(x.DestinationSource) || Resgrid.Model.CallStatusAttribution.IsAutoLinked(x.DestinationSource)))
+                                            {
+                                                <p class="small text-muted">@localizer["StatusLinkLegend"]</p>
+                                            }
                                         </div>
                                         <div class="tab-pane" id="tab-7">
                                             <table class="table table-striped">
@@ -592,7 +619,7 @@
                                                         </div>
 
                                                         <span class="input-group-btn">
-                                                            <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote1()" id="note-box-submit1">@localizer["AddNote"]</button>
+                                                            <button class="btn btn-success btn-small" type="button" id="note-box-submit1" disabled>@localizer["AddNote"]</button>
                                                         </span>
                                                     </span>
                                                 </div>
@@ -938,7 +965,7 @@
                                     <span class="input-box input-group">
                                         <input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box" id="note-box" />
                                         <span class="input-group-btn">
-                                            <button class="btn btn-success btn-small" type="button" onclick="resgrid.dispatch.viewcall.addCallNote()" id="note-box-submit">@localizer["AddNote"]</button>
+                                            <button class="btn btn-success btn-small" type="button" id="note-box-submit" disabled>@localizer["AddNote"]</button>
                                         </span>
                                     </span>
                                 </div>

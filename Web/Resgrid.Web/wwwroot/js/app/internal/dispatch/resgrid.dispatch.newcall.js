@@ -350,6 +350,14 @@ var resgrid;
                 }
                 newcall.fillCallTemplate = fillCallTemplate;
 
+                // Bound here rather than with inline handlers: the page is clickable while this
+                // script is still loading, and an inline call into resgrid.dispatch.newcall would
+                // throw until it has run (RESGRID-WEB-1MA). The button renders disabled until now.
+                $('#setCallTemplateButton').on('click', fillCallTemplate).prop('disabled', false);
+                $(document).on('change', '.check-all-units', function () {
+                    checkAllUnits($(this).attr('data-unit-grid'), this);
+                });
+
                 $('#personnelGrid').on('click', '#checkAllPersonnel', function () {
                     $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked);
                 });

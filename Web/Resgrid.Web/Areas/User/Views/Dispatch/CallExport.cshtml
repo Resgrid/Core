@@ -456,17 +456,18 @@
                     <tbody>
                         @foreach (var us in Model.UnitStates)
                         {
-                            var customState = await CustomStatesHelper.GetCustomUnitState(us);
+                            var customState = await CustomStatesHelper.GetCustomUnitState(us) ?? CustomStatesHelper.UnknownState(commonLocalizer["Unknown"]);
+                            var linkSource = us.DestinationSource;
                             <tr>
                                 <td>@us.Unit.Name</td>
 
-                                @if (us.State <= 25)
+                                @if (!CustomStatesHelper.IsHexColor(customState.ButtonColor))
                                 {
-                                    <td><span class='label @customState.ButtonColor'>@customState.ButtonText</span></td>
+                                    <td><span class='label @customState.ButtonColor'>@customState.ButtonText</span>@if (Resgrid.Model.CallStatusAttribution.IsInferred(linkSource)) {<text> <small title="@localizer["StatusLinkInferredHelp"]">(@localizer["StatusLinkInferred"])</small></text>} else if (Resgrid.Model.CallStatusAttribution.IsAutoLinked(linkSource)) {<text> <small title="@localizer["StatusLinkAutoHelp"]">(@localizer["StatusLinkAuto"])</small></text>}</td>
                                 }
                                 else
                                 {
-                                    <td><span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span></td>
+                                    <td><span class='label label-default' style="color: @customState.TextColor; background-color: @customState.ButtonColor;">@customState.ButtonText</span>@if (Resgrid.Model.CallStatusAttribution.IsInferred(linkSource)) {<text> <small title="@localizer["StatusLinkInferredHelp"]">(@localizer["StatusLinkInferred"])</small></text>} else if (Resgrid.Model.CallStatusAttribution.IsAutoLinked(linkSource)) {<text> <small title="@localizer["StatusLinkAutoHelp"]">(@localizer["StatusLinkAuto"])</small></text>}</td>
                                 }
                                 <td>@us.Timestamp.TimeConverterToString(Model.Department)</td>
                                 <td>@us.Note</td>
@@ -491,17 +492,18 @@
                     <tbody>
                         @foreach (var al in Model.ActionLogs)
                         {
-                            var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al);
+                            var customState = await CustomStatesHelper.GetCustomPersonnelStatus(Model.Department.DepartmentId, al) ?? CustomStatesHelper.UnknownState(commonLocalizer["Unknown"]);
+                            var linkSource = al.DestinationSource;
                             <tr>
                                 <td>@(await UserHelper.GetFullNameForUser(al.UserId))</td>
 
-                                @if (al.ActionTypeId <= 25)
+                                @if (!CustomStatesHelper.IsHexColor(customState.ButtonColor))
                                 {
-                                    <td><span class='label @customState.ButtonColor'>@customState.ButtonText</span></td>
+                                    <td><span class='label @customState.ButtonColor'>@customState.ButtonText</span>@if (Resgrid.Model.CallStatusAttribution.IsInferred(linkSource)) {<text> <small title="@localizer["StatusLinkInferredHelp"]">(@localizer["StatusLinkInferred"])</small></text>} else if (Resgrid.Model.CallStatusAttribution.IsAutoLinked(linkSource)) {<text> <small title="@localizer["StatusLinkAutoHelp"]">(@localizer["StatusLinkAuto"])</small></text>}</td>
                                 }
                                 else
                                 {
-                                    <td><span class='label label-default' style="color:@customState.TextColor;background-color:@customState.ButtonColor;">@customState.ButtonText</span></td>
+                                    <td><span class='label label-default' style="color:@customState.TextColor;background-color:@customState.ButtonColor;">@customState.ButtonText</span>@if (Resgrid.Model.CallStatusAttribution.IsInferred(linkSource)) {<text> <small title="@localizer["StatusLinkInferredHelp"]">(@localizer["StatusLinkInferred"])</small></text>} else if (Resgrid.Model.CallStatusAttribution.IsAutoLinked(linkSource)) {<text> <small title="@localizer["StatusLinkAutoHelp"]">(@localizer["StatusLinkAuto"])</small></text>}</td>
                                 }
                                 <td>@al.Timestamp.TimeConverterToString(Model.Department)</td>
                                 <td>@al.Note</td>
@@ -509,6 +511,14 @@
                         }
                     </tbody>
                 </table>
+                @{
+                    var anyAutoLinked = Model.UnitStates.Any(x => Resgrid.Model.CallStatusAttribution.IsInferred(x.DestinationSource) || Resgrid.Model.CallStatusAttribution.IsAutoLinked(x.DestinationSource))
+                        || Model.ActionLogs.Any(x => Resgrid.Model.CallStatusAttribution.IsInferred(x.DestinationSource) || Resgrid.Model.CallStatusAttribution.IsAutoLinked(x.DestinationSource));
+                }
+                @if (anyAutoLinked)
+                {
+                    <p class="small text-muted">@localizer["StatusLinkLegend"]</p>
+                }
             </div>
         </div>
         @if (Model.Call.CheckInTimersEnabled && Model.TimerConfigs != null && Model.TimerConfigs.Any())

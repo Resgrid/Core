@@ -740,4 +740,55 @@
   <data name="TotalTimeLabel" xml:space="preserve">
     <value>Total Time</value>
   </data>
+  <data name="CallUnitTimesReportName" xml:space="preserve">
+    <value>Call Unit Times</value>
+  </data>
+  <data name="CallUnitTimesReportDescription" xml:space="preserve">
+    <value>When each unit was dispatched, en route, on scene, staged and cleared on each call in a period, from unit statuses. Downloadable as CSV.</value>
+  </data>
+  <data name="CallUnitTimesUnitHeader" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="CallUnitTimesDispatchedHeader" xml:space="preserve">
+    <value>Dispatched</value>
+  </data>
+  <data name="CallUnitTimesEnRouteHeader" xml:space="preserve">
+    <value>En Route</value>
+  </data>
+  <data name="CallUnitTimesOnSceneHeader" xml:space="preserve">
+    <value>On Scene</value>
+  </data>
+  <data name="CallUnitTimesStagingHeader" xml:space="preserve">
+    <value>Staging</value>
+  </data>
+  <data name="CallUnitTimesClearedHeader" xml:space="preserve">
+    <value>Cleared</value>
+  </data>
+  <data name="CallUnitTimesSourceHeader" xml:space="preserve">
+    <value>Linked By</value>
+  </data>
+  <data name="CallUnitTimesSourceExplicit" xml:space="preserve">
+    <value>Unit status</value>
+  </data>
+  <data name="CallUnitTimesSourceAuto" xml:space="preserve">
+    <value>Auto-linked</value>
+  </data>
+  <data name="CallUnitTimesSourceInferred" xml:space="preserve">
+    <value>Inferred</value>
+  </data>
+  <data name="CallUnitTimesSourceDispatchOnly" xml:space="preserve">
+    <value>Dispatch only</value>
+  </data>
+  <data name="CallUnitTimesDownloadCsv" xml:space="preserve">
+    <value>Download CSV</value>
+  </data>
+  <data name="CallUnitTimesNoCalls" xml:space="preserve">
+    <value>No calls in this period.</value>
+  </data>
+  <data name="CallUnitTimesNoUnits" xml:space="preserve">
+    <value>No unit was dispatched to this call or reported a status on it.</value>
+  </data>
+  <data name="CallUnitTimesLegend" xml:space="preserve">
+    <value>Auto-linked: a status sent without a call that Resgrid linked from the unit's previous status or its dispatch. Inferred: a status the unit set with no destination while dispatched to the call. Dispatch only: the unit was dispatched but reported no status on the call.</value>
+  </data>
 </root>

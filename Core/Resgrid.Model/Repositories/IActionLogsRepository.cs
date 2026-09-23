@@ -62,11 +62,14 @@ namespace Resgrid.Model.Repositories
 		Task<ActionLog> GetLastActionLogsForUserAsync(string userId, bool disableAutoAvailable, DateTime timeStamp);
 
 		/// <summary>
-		/// Gets the last action logs for user asynchronous.
+		/// Gets every action log in the department whose destination is the call: rows explicitly typed as a
+		/// call destination plus legacy rows with no destination type. The caller decides how to treat the
+		/// untyped rows.
 		/// </summary>
+		/// <param name="departmentId">The department that owns the call.</param>
 		/// <param name="callId">The call identifier.</param>
-		/// <returns>Task&lt;ActionLog&gt;.</returns>
-		Task<IEnumerable<ActionLog>> GetActionLogsForCallAsync(int callId);
+		/// <returns>Task&lt;IEnumerable&lt;ActionLog&gt;&gt;.</returns>
+		Task<IEnumerable<ActionLog>> GetActionLogsForCallAsync(int departmentId, int callId);
 
 		/// <summary>
 		/// Gets the previous action log asynchronous.
@@ -82,14 +85,6 @@ namespace Resgrid.Model.Repositories
 		/// <param name="userId">The user identifier.</param>
 		/// <returns>Task&lt;ActionLog&gt;.</returns>
 		Task<ActionLog> GetLastActionLogForUserAsync(string userId);
-
-		/// <summary>
-		/// Gets the action logs for call and types asynchronous.
-		/// </summary>
-		/// <param name="destinationId">The destination identifier.</param>
-		/// <param name="types">The types.</param>
-		/// <returns>Task&lt;IEnumerable&lt;ActionLog&gt;&gt;.</returns>
-		Task<IEnumerable<ActionLog>> GetActionLogsForCallAndTypesAsync(int destinationId, List<int> types);
 
 		Task<IEnumerable<ActionLog>> GetAllActionLogsInDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 	}

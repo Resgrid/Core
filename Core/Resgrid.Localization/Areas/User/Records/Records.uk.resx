@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Увімкніть JavaScript для пошуку та вибору виклику.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Укажіть правильний діапазон дат: початок має бути не пізніше за кінець.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Виберіть доступний виклик зі списку або очистьте вибір.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Виведено</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Пов’язано автоматично</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Деякі часи підрозділів узято зі статусів, які підрозділ сам не пов’язав із цим викликом: Resgrid пов’язав їх автоматично (за попереднім статусом підрозділу або його направленням) або вивів (встановлені без пункту призначення, коли підрозділ був направлений сюди). Перевірте їх перед завершенням.</value></data>
 </root>

@@ -57,6 +57,10 @@ namespace Resgrid.Model
 		[ProtoMember(13)]
 		public string UnitName { get; set; }
 
+		/// <summary>How the destination was decided (<see cref="StatusDestinationSources"/>); null on rows before M0228.</summary>
+		[ProtoMember(14)]
+		public int? DestinationSource { get; set; }
+
 		[NotMapped]
 		[ProtoMember(10)]
 		public double Eta { get; set; }

@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Apri intervento</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Listino predefinito</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Fatturazione appaltatore: usato per offerte e interventi di questo cliente quando nessun contratto indica un listino.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>tempo sul posto collegato automaticamente</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Lo stato Sul posto dell'unità (o lo stato che lo ha concluso) è stato inviato senza chiamata; Resgrid lo ha collegato a questa chiamata in base allo stato precedente dell'unità o al suo invio. Verificare il tempo prima dell'invio.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>tempo sul posto dedotto</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>L'unità ha impostato lo stato Sul posto (o lo stato che lo ha concluso) senza destinazione mentre era inviata a questa chiamata; Resgrid ha dedotto che appartiene a questa chiamata. Verificare il tempo prima dell'invio.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>nessuno stato sul posto: durata della chiamata</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>L'unità non ha mai segnalato Sul posto in questa chiamata, quindi la riga fattura il tempo dalla registrazione della chiamata alla sua chiusura. Verificare la quantità prima dell'invio.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>tempo sul posto dallo stato dell'unità</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>L'unità ha collegato essa stessa lo stato Sul posto, e lo stato che lo ha concluso, a questa chiamata.</value></data>
 </root>

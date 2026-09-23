@@ -566,15 +566,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
-			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
+			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
 			var priority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(call.DepartmentId);
 
 			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId);
 			var defaultUnitStatuses = _customStateService.GetDefaultUnitStatuses();
-			var defaultUserStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(call.DepartmentId);
+			var defaultUserStatuses = _customStateService.GetDefaultPersonStatuses();
 
 			if (priority != null)
 			{
@@ -607,29 +607,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.StatusId = actionLog.ActionTypeId;
 				eventResult.Location = actionLog.GeoLocationData;
 				eventResult.Note = actionLog.Note;
+				eventResult.DestinationSource = actionLog.DestinationSource;
 
-				if (actionLog.ActionTypeId <= 25)
+				var personnelStatus = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates);
+				if (personnelStatus != null)
 				{
-					var state = defaultUserStatuses.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId);
-
-					if (state != null)
-					{
-						eventResult.StatusText = state.ButtonText;
-						eventResult.StatusColor = state.ButtonColor;
-					}
+					eventResult.StatusText = personnelStatus.ButtonText;
+					eventResult.StatusColor = personnelStatus.ButtonColor;
 				}
-				else
+				else if (actionLog.ActionTypeId <= CallStatusLinkage.MaxBuiltInStatusId)
 				{
-					if (customStates != null && customStates.Count > 0)
-					{
-						var state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId)).FirstOrDefault(detail => detail != null);
-
-						if (state != null)
-						{
-							eventResult.StatusText = state.ButtonText;
-							eventResult.StatusColor = state.ButtonColor;
-						}
-					}
+					eventResult.StatusText = actionLog.GetActionText();
 				}
 
 				if (String.IsNullOrWhiteSpace(eventResult.StatusText))
@@ -659,29 +647,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.StatusId = unitLog.State;
 				eventResult.Location = unitLog.GeoLocationData;
 				eventResult.Note = unitLog.Note;
+				eventResult.DestinationSource = unitLog.DestinationSource;
 
-				if (unitLog.UnitStateId <= 12)
+				var unitStatus = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates);
+				if (unitStatus != null)
 				{
-					var state = defaultUnitStatuses.FirstOrDefault(x => x.CustomStateDetailId == unitLog.UnitStateId);
-
-					if (state != null)
-					{
-						eventResult.StatusText = state.ButtonText;
-						eventResult.StatusColor = state.ButtonColor;
-					}
+					eventResult.StatusText = unitStatus.ButtonText;
+					eventResult.StatusColor = unitStatus.ButtonColor;
 				}
-				else
+				else if (unitLog.State <= CallStatusLinkage.MaxBuiltInStatusId)
 				{
-					if (customStates != null && customStates.Count > 0)
-					{
-						var state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == unitLog.State)).FirstOrDefault(detail => detail != null);
-
-						if (state != null)
-						{
-							eventResult.StatusText = state.ButtonText;
-							eventResult.StatusColor = state.ButtonColor;
-						}
-					}
+					eventResult.StatusText = unitLog.GetStatusText();
 				}
 
 				if (String.IsNullOrWhiteSpace(eventResult.StatusText))
@@ -2052,6 +2028,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 			// Attended protected read (plan 7.1): the history entries below embed note text —
@@ -2082,32 +2061,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
-			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
-			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
+			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
+			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
 			var priority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(call.DepartmentId);
 
 			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId);
 			var defaultUnitStatuses = _customStateService.GetDefaultUnitStatuses();
-			var defaultUserStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(call.DepartmentId);
+			var defaultUserStatuses = _customStateService.GetDefaultPersonStatuses();
 
 
 			foreach (var actionLog in actionLogs)
 			{
 				var nameInfo = names.FirstOrDefault(x => x.UserId == actionLog.UserId);
-				CustomStateDetail state = null;
-				if (actionLog.ActionTypeId <= 25)
-				{
-					state = defaultUserStatuses.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId);
-				}
-				else
-				{
-					if (customStates != null && customStates.Count > 0)
-					{
-						state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == actionLog.ActionTypeId)).FirstOrDefault(detail => detail != null);
-					}
-				}
+				var state = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates);
+				var statusText = state?.ButtonText ?? (actionLog.ActionTypeId <= CallStatusLinkage.MaxBuiltInStatusId ? actionLog.GetActionText() : "Unknown");
 
 				if (nameInfo != null)
 				{
@@ -2117,25 +2086,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 						TimestampUtc = actionLog.Timestamp,
 						Timestamp = actionLog.Timestamp.TimeConverter(department),
 						Type = 2,
-						Info = $"{nameInfo.LastName},{nameInfo.FirstName} set status to {state.ButtonText} at {actionLog.GeoLocationData}"
+						Info = $"{nameInfo.LastName},{nameInfo.FirstName} set status to {statusText} at {actionLog.GeoLocationData}{LinkSuffix(actionLog.DestinationSource)}",
+						DestinationSource = actionLog.DestinationSource
 					});
 				}
 			}
 
 			foreach (var unitLog in unitStates)
 			{
-				CustomStateDetail state = null;
-				if (unitLog.UnitStateId <= 12)
-				{
-					state = defaultUnitStatuses.FirstOrDefault(x => x.CustomStateDetailId == unitLog.UnitStateId);
-				}
-				else
-				{
-					if (customStates != null && customStates.Count > 0)
-					{
-						state = customStates.Select(state => state.Details.FirstOrDefault(x => x.CustomStateDetailId == unitLog.State)).FirstOrDefault(detail => detail != null);
-					}
-				}
+				var state = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates);
+				var statusText = state?.ButtonText ?? (unitLog.State <= CallStatusLinkage.MaxBuiltInStatusId ? unitLog.GetStatusText() : "Unknown");
+				var unitName = unitLog.Unit?.Name ?? units?.FirstOrDefault(x => x.UnitId == unitLog.UnitId)?.Name ?? "Unknown Unit";
 
 				result.Data.Add(new CallHistoryResultData()
 				{
@@ -2143,7 +2104,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					TimestampUtc = unitLog.Timestamp,
 					Timestamp = unitLog.Timestamp.TimeConverter(department),
 					Type = 3,
-					Info = $"{unitLog.Unit.Name} set status to {state.ButtonText} at {unitLog.GeoLocationData}"
+					Info = $"{unitName} set status to {statusText} at {unitLog.GeoLocationData}{LinkSuffix(unitLog.DestinationSource)}",
+					DestinationSource = unitLog.DestinationSource
 				});
 			}
 
@@ -2486,6 +2448,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private static string FirstNonEmpty(params string[] values)
 		{
 			return values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+		}
+
+		/// <summary>
+		/// Marks history text for statuses that reached the call without the sender naming it.
+		/// </summary>
+		private static string LinkSuffix(int? destinationSource)
+		{
+			if (CallStatusAttribution.IsInferred(destinationSource))
+				return " (inferred)";
+
+			if (CallStatusAttribution.IsAutoLinked(destinationSource))
+				return " (auto-linked)";
+
+			return string.Empty;
+		}
+
+		/// <summary>
+		/// Resolves a raw unit state / personnel action type (built-in value or custom status detail id) to its
+		/// status detail for labelling. Returns null when the status can't be resolved (e.g. a built-in value with
+		/// no default button, or a custom detail from another department).
+		/// </summary>
+		private static CustomStateDetail ResolveStatusDetail(int rawStatus, List<CustomStateDetail> builtInStatuses, List<CustomState> customStates)
+		{
+			if (rawStatus <= CallStatusLinkage.MaxBuiltInStatusId)
+				return builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
+
+			return customStates?.Where(x => x?.Details != null).SelectMany(x => x.Details).FirstOrDefault(x => x != null && x.CustomStateDetailId == rawStatus);
 		}
 
 		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId, int? departmentIdOverride = null)

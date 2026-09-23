@@ -144,7 +144,8 @@ namespace Resgrid.Web.Mcp.Tools
 					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
 					["unitId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "The unique identifier of the unit" },
 					["statusType"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Status type code (1=Available, 2=Delayed, 3=Unavailable, 4=Committed, 5=Out Of Service, 6=Responding, 7=On Scene, 8=Staging, 9=Returning, 10=Cancelled, 11=Released, 12=Manual, 13=Enroute)" },
-					["note"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional note about the status change" }
+					["note"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional note about the status change" },
+					["callId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Optional id of the call the unit is working, so the status appears on that call's record" }
 				},
 				new[] { "accessToken", "unitId", "statusType" }
 			);
@@ -176,15 +177,20 @@ namespace Resgrid.Web.Mcp.Tools
 
 						_logger.LogInformation("Setting status for unit {UnitId}", args.UnitId);
 
+						// The tool numbers statuses from 1; UnitStateTypes starts at 0 (Available). The v4 endpoint is
+						// SaveUnitStatus and takes the unit as Id, the status as a string Type and the call as RespondingTo.
 						var statusData = new
 						{
-							unitId = args.UnitId,
-							type = args.StatusType,
-							note = args.Note
+							Id = args.UnitId.ToString(),
+							Type = (args.StatusType - 1).ToString(),
+							Note = args.Note,
+							RespondingTo = args.CallId.HasValue && args.CallId.Value > 0 ? args.CallId.Value.ToString() : "0",
+							RespondingToType = args.CallId.HasValue && args.CallId.Value > 0 ? (int?)2 : null,
+							Timestamp = DateTime.UtcNow
 						};
 
 						var result = await _apiClient.PostAsync<object, object>(
-							"/api/v4/UnitStatus/SetUnitStatus",
+							"/api/v4/UnitStatus/SaveUnitStatus",
 							statusData,
 							args.AccessToken
 						);
@@ -277,6 +283,9 @@ namespace Resgrid.Web.Mcp.Tools
 
 			[JsonProperty("note")]
 			public string Note { get; set; }
+
+			[JsonProperty("callId")]
+			public int? CallId { get; set; }
 		}
 	}
 }

@@ -304,7 +304,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<IEnumerable<ActionLog>> GetActionLogsForCallAsync(int callId)
+		public async Task<IEnumerable<ActionLog>> GetActionLogsForCallAsync(int departmentId, int callId)
 		{
 			try
 			{
@@ -312,55 +312,9 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("CallId", callId);
+					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectActionLogsByCallIdQuery>();
-
-					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
-						param: dynamicParameters,
-						transaction: _unitOfWork.Transaction,
-						map: (up, u) => { up.User = u; return up; }/*,
-						splitOn: "Id"*/);
-				});
-
-				DbConnection conn = null;
-				if (_unitOfWork?.Connection == null)
-				{
-					using (conn = _connectionProvider.Create())
-					{
-						await conn.OpenAsync();
-
-						return await selectFunction(conn);
-					}
-				}
-				else
-				{
-					conn = _unitOfWork.CreateOrGetConnection();
-
-					return await selectFunction(conn);
-				}
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-
-				throw;
-			}
-		}
-
-		public async Task<IEnumerable<ActionLog>> GetActionLogsForCallAndTypesAsync(int destinationId, List<int> types)
-		{
-			try
-			{
-				var selectFunction = new Func<DbConnection, Task<IEnumerable<ActionLog>>>(async x =>
-				{
-					var dynamicParameters = new DynamicParametersExtension();
-					dynamicParameters.Add("CallId", destinationId);
-
-					var usersToQuery = String.Join(",", types.Select(p => $"{p.ToString()}").ToArray());
-					//dynamicParameters.Add("Types", usersToQuery);
-
-					var query = _queryFactory.GetQuery<SelectActionLogsByCallIdTypeQuery>();
-					query = query.Replace("%TYPES%", usersToQuery, StringComparison.InvariantCultureIgnoreCase);
 
 					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
 						param: dynamicParameters,

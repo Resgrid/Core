@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Einsatz öffnen</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Standard-Tarifplan</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Auftragnehmer-Abrechnung: gilt für Angebote und Einsätze dieses Kunden, wenn kein Vertrag einen Plan nennt.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>Einsatzortzeit automatisch verknüpft</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Der Status „Am Einsatzort“ der Einheit (oder der Status, der ihn beendete) wurde ohne Einsatz gesendet; Resgrid hat ihn anhand des vorherigen Status oder der Alarmierung der Einheit mit diesem Einsatz verknüpft. Prüfen Sie die Zeit vor dem Versand.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>Einsatzortzeit abgeleitet</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>Die Einheit hat ihren Status „Am Einsatzort“ (oder den Status, der ihn beendete) ohne Ziel gesetzt, während sie zu diesem Einsatz alarmiert war; Resgrid hat abgeleitet, dass er zu diesem Einsatz gehört. Prüfen Sie die Zeit vor dem Versand.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>kein Einsatzortstatus: Einsatzdauer</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Die Einheit hat bei diesem Einsatz nie „Am Einsatzort“ gemeldet, daher berechnet die Position die Zeit von der Erfassung des Einsatzes bis zu seinem Abschluss. Prüfen Sie die Menge vor dem Versand.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>Einsatzortzeit aus Einheitenstatus</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Die Einheit hat ihren Status „Am Einsatzort“ und den Status, der ihn beendete, selbst mit diesem Einsatz verknüpft.</value></data>
 </root>

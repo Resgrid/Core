@@ -365,4 +365,12 @@
   <data name="OpenDeployment" xml:space="preserve"><value>Öppna insats</value></data>
   <data name="DefaultRateSchedule" xml:space="preserve"><value>Standardprislista</value></data>
   <data name="DefaultRateScheduleHelp" xml:space="preserve"><value>Entreprenörsfakturering: används för kundens anbud och insatser när inget avtal anger prislista.</value></data>
+  <data name="TimeSourceAutoLinked" xml:space="preserve"><value>tid på plats automatiskt kopplad</value></data>
+  <data name="TimeSourceAutoLinkedHelp" xml:space="preserve"><value>Enhetens status På plats (eller statusen som avslutade den) skickades utan larm; Resgrid kopplade den till detta larm utifrån enhetens föregående status eller dess utlarmning. Kontrollera tiden innan du skickar.</value></data>
+  <data name="TimeSourceInferred" xml:space="preserve"><value>tid på plats härledd</value></data>
+  <data name="TimeSourceInferredHelp" xml:space="preserve"><value>Enheten satte sin status På plats (eller statusen som avslutade den) utan destination medan den var larmad till detta larm; Resgrid härledde att den hör till detta larm. Kontrollera tiden innan du skickar.</value></data>
+  <data name="TimeSourceCallWindow" xml:space="preserve"><value>ingen status på plats: larmets längd</value></data>
+  <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Enheten rapporterade aldrig På plats på detta larm, så raden fakturerar tiden från att larmet registrerades till att det stängdes. Kontrollera antalet innan du skickar.</value></data>
+  <data name="TimeSourceUnitStatus" xml:space="preserve"><value>tid på plats från enhetsstatus</value></data>
+  <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Enheten kopplade själv sin status På plats, och statusen som avslutade den, till detta larm.</value></data>
 </root>

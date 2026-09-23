@@ -1098,8 +1098,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (key.ToString().StartsWith("selectEvent_"))
 				{
-					var eventId = int.Parse(key.ToString().Replace("selectEvent_", ""));
-					eventIds.Add(eventId);
+					var suffix = key.ToString().Replace("selectEvent_", "");
+					if (int.TryParse(suffix, out var eventId))
+						eventIds.Add(eventId);
 				}
 			}
 
@@ -1109,20 +1110,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
+			// Only this department's unit states, and only for units the member may view.
+			var eventRecords = new List<UnitState>();
 			foreach (var eventId in eventIds)
 			{
-				var eventJson = new UnitEventJson();
 				var eventRecord = await _unitsService.GetUnitStateByIdAsync(eventId);
 
-				model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+				if (eventRecord?.Unit == null || eventRecord.Unit.DepartmentId != DepartmentId)
+					continue;
+
+				if (!await _authorizationService.CanUserViewUnitAsync(UserId, eventRecord.UnitId))
+					continue;
+
+				eventRecords.Add(eventRecord);
+			}
+
+			var calls = await AddReferencedCallsAsync(activeCalls, eventRecords
+				.Where(x => x.DestinationId.HasValue && (!x.DestinationType.HasValue || x.DestinationType == (int)DestinationEntityTypes.Call))
+				.Select(x => x.DestinationId.Value));
+
+			foreach (var eventRecord in eventRecords)
+			{
+				var eventJson = new UnitEventJson();
 
 				eventJson.UnitName = eventRecord.Unit.Name;
-				eventJson.State = StringHelpers.GetDescription(((UnitStateTypes)eventRecord.State));
+				var customState = await _customStateService.GetCustomUnitStateAsync(eventRecord);
+				// Custom statuses store their detail id, which has no UnitStateTypes description.
+				eventJson.State = customState?.ButtonText ?? StringHelpers.GetDescription(((UnitStateTypes)eventRecord.State));
 				eventJson.Timestamp = eventRecord.Timestamp.TimeConverterToString(model.Department).ToString();
 				eventJson.Note = eventRecord.Note;
-				var customState = await _customStateService.GetCustomUnitStateAsync(eventRecord);
-				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, activeCalls, stations, pois, _localizer);
+				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, calls, stations, pois, _localizer);
 				eventJson.DestinationName = destination.Name;
 
 				if (eventRecord.LocalTimestamp.HasValue)
@@ -1138,6 +1157,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View("~/Areas/User/Views/Reports/UnitEventsReport.cshtml", model);
+		}
+
+		/// <summary>
+		/// Adds the department's closed calls that the given status rows point at to the active call list, so an
+		/// events report still names the call a status was set against after the call closed.
+		/// </summary>
+		private async Task<List<Call>> AddReferencedCallsAsync(List<Call> calls, IEnumerable<int> destinationCallIds)
+		{
+			var result = calls != null ? new List<Call>(calls) : new List<Call>();
+
+			foreach (var callId in destinationCallIds.Where(x => x > 0).Distinct())
+			{
+				if (result.Any(x => x.CallId == callId))
+					continue;
+
+				var call = await _callsService.GetCallByIdAsync(callId);
+				if (call != null && call.DepartmentId == DepartmentId)
+					result.Add(call);
+			}
+
+			return result;
 		}
 
 		[HttpPost]

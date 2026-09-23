@@ -65,6 +65,23 @@ namespace Resgrid.Web.Helpers
 			}
 		}
 
+		/// <summary>
+		/// Placeholder for a status row whose status can no longer be resolved (e.g. a deleted custom status), so call
+		/// views and exports still list the row instead of failing to render.
+		/// </summary>
+		public static CustomStateDetail UnknownState(string text)
+		{
+			return new CustomStateDetail { ButtonText = text, ButtonColor = "label-default" };
+		}
+
+		/// <summary>
+		/// Built-in statuses carry either a CSS label class or a hex colour; custom statuses carry a hex colour.
+		/// </summary>
+		public static bool IsHexColor(string color)
+		{
+			return !string.IsNullOrWhiteSpace(color) && color.TrimStart().StartsWith("#");
+		}
+
 		public static async Task<CustomStateDetail> GetCustomUnitState(UnitState state)
 		{
 			if (state.State <= 25)

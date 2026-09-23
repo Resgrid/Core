@@ -301,6 +301,14 @@ namespace Resgrid.Model.Services
 		Task<List<UnitState>> GetUnitStatesForCallAsync(int departmentId, int callId);
 
 		/// <summary>
+		/// Gets the department's custom unit status detail id to <see cref="CustomStateDetail.BaseType"/> map, deleted
+		/// details included, for resolving raw unit states with <see cref="CallStatusLinkage.ResolveUnitStateKind"/>.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;Dictionary&lt;System.Int32, System.Int32&gt;&gt;.</returns>
+		Task<Dictionary<int, int>> GetCustomUnitStateBaseTypesAsync(int departmentId);
+
+		/// <summary>
 		/// Adds the unit location asynchronous.
 		/// </summary>
 		/// <param name="location">The location.</param>

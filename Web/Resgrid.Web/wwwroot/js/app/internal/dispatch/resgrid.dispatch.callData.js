@@ -24,6 +24,9 @@ var resgrid;
                 });
             }
             callData.addCallNote = addCallNote;
+            // Bound here rather than inline: the button renders disabled until this script has
+            // run, so an early click can't call into an undefined namespace (RESGRID-WEB-1MA).
+            $('#note-box-submit').on('click', addCallNote).prop('disabled', false);
             function getCallNotes() {
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCallNotes?callId=' + callId,

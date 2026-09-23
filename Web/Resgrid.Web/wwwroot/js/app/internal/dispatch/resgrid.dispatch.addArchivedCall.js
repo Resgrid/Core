@@ -447,6 +447,9 @@
                 }
             }
             addArchivedCall.fillCallTemplate = fillCallTemplate;
+            // Bound here rather than inline: the button renders disabled until this script has
+            // run, so an early click can't call into an undefined namespace (RESGRID-WEB-1MA).
+            $('#setCallTemplateButton').on('click', fillCallTemplate).prop('disabled', false);
 
             function checkForProtocols() {
                 var callPriorityVal = $('#CallPriority').val();

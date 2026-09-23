@@ -2383,6 +2383,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("ViewEvents", new { userId = model.UserId });
 		}
 
+		/// <summary>
+		/// Adds the department's closed calls that the given status rows point at to the active call list, so an
+		/// events report still names the call a status was set against after the call closed.
+		/// </summary>
+		private async Task<List<Call>> AddReferencedCallsAsync(List<Call> calls, IEnumerable<int> destinationCallIds)
+		{
+			var result = calls != null ? new List<Call>(calls) : new List<Call>();
+
+			foreach (var callId in destinationCallIds.Where(x => x > 0).Distinct())
+			{
+				if (result.Any(x => x.CallId == callId))
+					continue;
+
+				var call = await _callsService.GetCallByIdAsync(callId);
+				if (call != null && call.DepartmentId == DepartmentId)
+					result.Add(call);
+			}
+
+			return result;
+		}
+
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> GeneratePersonnelEventsReport(IFormCollection form)
@@ -2406,6 +2427,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
+			var actionLogs = new List<ActionLog>();
 			foreach (var eventId in eventIds)
 			{
 				var actionLog = await _actionLogsService.GetActionLogByIdAsync(eventId);
@@ -2418,6 +2440,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!await _authorizationService.CanUserViewPersonAsync(UserId, actionLog.UserId, DepartmentId))
 					continue;
 
+				actionLogs.Add(actionLog);
+			}
+
+			var calls = await AddReferencedCallsAsync(activeCalls, actionLogs
+				.Where(x => x.DestinationId.HasValue && x.GetEffectiveDestinationType() != DestinationEntityTypes.Station && x.GetEffectiveDestinationType() != DestinationEntityTypes.Poi)
+				.Select(x => x.DestinationId.Value));
+
+			foreach (var actionLog in actionLogs)
+			{
 				var personnelEvent = new PersonnelEventJson();
 				personnelEvent.EventId = actionLog.ActionLogId;
 				personnelEvent.UserId = actionLog.UserId;
@@ -2430,7 +2461,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(model.Department);
 				personnelEvent.Note = actionLog.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, calls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();

@@ -3,35 +3,37 @@ using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
 
-namespace Resgrid.Repositories.DataRepository.Queries.ActionLogs
+namespace Resgrid.Repositories.DataRepository.Queries.Calls
 {
-	public class SelectActionLogsByCallIdTypeQuery : ISelectQuery
+	public class SelectOpenCallIdsForUnitQuery : ISelectQuery
 	{
 		private readonly SqlConfiguration _sqlConfiguration;
-		public SelectActionLogsByCallIdTypeQuery(SqlConfiguration sqlConfiguration)
+		public SelectOpenCallIdsForUnitQuery(SqlConfiguration sqlConfiguration)
 		{
 			_sqlConfiguration = sqlConfiguration;
 		}
 
 		public string GetQuery()
 		{
-			var query = _sqlConfiguration.SelectActionLogsByCallIdTypeQuery
+			var query = _sqlConfiguration.SelectOpenCallIdsForUnitQuery
 				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
-						"%CALLID%"
+						"%DID%",
+						"%UNITID%"
 					},
 					new string[] {
-						"CallId"
+						"DepartmentId",
+						"UnitId"
 					},
 					new string[] {
-						"%ACTIONLOGSTABLE%",
-						"%ASPNETUSERSTABLE%"
+						"%CALLSTABLE%",
+						"%CALLDISPATCHUNITSTABLE%"
 					},
 					new string[] {
-						_sqlConfiguration.ActionLogsTable,
-						_sqlConfiguration.UserTable
+						_sqlConfiguration.CallsTable,
+						_sqlConfiguration.CallDispatchUnitsTable
 					}
 				);
 

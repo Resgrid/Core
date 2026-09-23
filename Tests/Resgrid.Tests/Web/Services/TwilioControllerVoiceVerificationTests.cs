@@ -355,14 +355,14 @@ namespace Resgrid.Tests.Web.Services
 			_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, true)).ReturnsAsync(call);
 			_departmentGroupsServiceMock.Setup(x => x.GetAllStationGroupsForDepartmentAsync(7)).ReturnsAsync(stations);
 			_actionLogsServiceMock
-				.Setup(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.RespondingToStation, null, selectedStation.DepartmentGroupId, It.IsAny<CancellationToken>()))
+				.Setup(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.RespondingToStation, null, selectedStation.DepartmentGroupId, (int)DestinationEntityTypes.Station, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new ActionLog());
 
 			var result = await BuildController().VoiceCallRespond("user1", 42, new VoiceRequest { Digits = "13" });
 
 			var content = ((ContentResult)result).Content;
 			content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.RespondingToStation(selectedStation.Name)));
-			_actionLogsServiceMock.Verify(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.RespondingToStation, null, selectedStation.DepartmentGroupId, It.IsAny<CancellationToken>()), Times.Once);
+			_actionLogsServiceMock.Verify(x => x.SetUserActionAsync("user1", 7, (int)ActionTypes.RespondingToStation, null, selectedStation.DepartmentGroupId, (int)DestinationEntityTypes.Station, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

@@ -462,6 +462,16 @@ namespace Resgrid.Services.Invoicing
 				{
 					var existingLine = !string.IsNullOrWhiteSpace(line.InvoiceLineItemId) && current.TryGetValue(line.InvoiceLineItemId, out var found) ? found : null;
 					if (existingLine == null) line.InvoiceLineItemId = null;
+					// Provenance is the server's, not the editor's: an existing line keeps what it was generated with.
+					if (existingLine != null)
+					{
+						line.TimeSource = existingLine.TimeSource;
+						line.DeploymentTimeReportId ??= existingLine.DeploymentTimeReportId;
+					}
+					else if (line.TimeSource.HasValue && !Enum.IsDefined(typeof(InvoiceLineTimeSources), line.TimeSource.Value))
+					{
+						line.TimeSource = null;
+					}
 					line.InvoiceId = invoiceId;
 					line.DepartmentId = departmentId;
 					line.Amount = RoundMoney(line.Quantity * line.UnitRate);
@@ -495,6 +505,7 @@ namespace Resgrid.Services.Invoicing
 			var lines = new List<InvoiceLineItem>();
 			var callLabel = string.IsNullOrWhiteSpace(call.Number) ? call.CallId.ToString() : call.Number;
 			var states = (await _unitsService.GetUnitStatesForCallAsync(departmentId, callId))?.Where(x => x != null).OrderBy(x => x.Timestamp).ToList() ?? new List<UnitState>();
+			var customBaseTypes = await _unitsService.GetCustomUnitStateBaseTypesAsync(departmentId);
 			var fallbackEnd = call.ClosedOn ?? DateTime.UtcNow;
 
 			foreach (var item in card.Items.Where(x => x.Active && !x.IsDeleted).OrderBy(x => x.SortOrder))
@@ -507,7 +518,8 @@ namespace Resgrid.Services.Invoicing
 							var unit = await _unitsService.GetUnitByIdAsync(group.Key);
 							if (unit == null) continue;
 							if (!string.IsNullOrWhiteSpace(item.UnitTypeFilter) && !string.Equals(unit.Type, item.UnitTypeFilter, StringComparison.OrdinalIgnoreCase)) continue;
-							var minutes = OnSceneMinutes(group.ToList(), call.LoggedOn, fallbackEnd);
+							var window = OnSceneWindow(group.ToList(), call.LoggedOn, fallbackEnd, customBaseTypes);
+							var minutes = window.Minutes;
 							if (minutes <= 0) continue;
 							var billable = ApplyRounding(minutes, item);
 							lines.Add(new InvoiceLineItem
@@ -518,7 +530,8 @@ namespace Resgrid.Services.Invoicing
 								Quantity = billable,
 								UnitRate = item.Rate,
 								Amount = Math.Max(RoundMoney(billable * item.Rate), item.MinimumCharge.HasValue ? RoundMoney(item.MinimumCharge.Value) : 0m),
-								Taxable = item.Taxable
+								Taxable = item.Taxable,
+								TimeSource = (int)window.Source
 							});
 						}
 						break;
@@ -914,25 +927,43 @@ namespace Resgrid.Services.Invoicing
 			return invoice.DueOn.HasValue && invoice.DueOn.Value < now ? (int)InvoiceStatus.Overdue : (int)InvoiceStatus.Sent;
 		}
 
-		/// <summary>Minutes between the unit's first OnScene state on the call and its next state; falls back to the call window when the unit never reported OnScene (plan decision 9).</summary>
-		public static int OnSceneMinutes(IReadOnlyList<UnitState> unitStates, DateTime callLoggedOn, DateTime fallbackEnd)
+		/// <summary>Minutes between the unit's first OnScene state on the call and its next state; falls back to the call window when the unit never reported OnScene (plan decision 9). Custom unit statuses count as OnScene through their base type.</summary>
+		public static int OnSceneMinutes(IReadOnlyList<UnitState> unitStates, DateTime callLoggedOn, DateTime fallbackEnd, IReadOnlyDictionary<int, int> customBaseTypes = null)
 		{
+			return OnSceneWindow(unitStates, callLoggedOn, fallbackEnd, customBaseTypes).Minutes;
+		}
+
+		/// <summary>
+		/// <see cref="OnSceneMinutes"/> plus where the time came from: the unit's own statuses, statuses Resgrid linked to the
+		/// call or inferred for it (the least certain of the start and end status wins), or the call window.
+		/// </summary>
+		public static (int Minutes, InvoiceLineTimeSources Source) OnSceneWindow(IReadOnlyList<UnitState> unitStates, DateTime callLoggedOn, DateTime fallbackEnd, IReadOnlyDictionary<int, int> customBaseTypes = null)
+		{
+			bool IsOnScene(UnitState state) => CallStatusLinkage.ResolveUnitStateKind(state.State, customBaseTypes) == UnitStateTypes.OnScene;
+
 			var ordered = unitStates.OrderBy(x => x.Timestamp).ToList();
-			var onScene = ordered.FirstOrDefault(x => x.State == (int)UnitStateTypes.OnScene);
+			var onScene = ordered.FirstOrDefault(IsOnScene);
 			DateTime start, end;
+			InvoiceLineTimeSources source;
 			if (onScene != null)
 			{
 				start = onScene.Timestamp;
-				var next = ordered.FirstOrDefault(x => x.Timestamp > onScene.Timestamp && x.State != (int)UnitStateTypes.OnScene);
+				var next = ordered.FirstOrDefault(x => x.Timestamp > onScene.Timestamp && !IsOnScene(x));
 				end = next?.Timestamp ?? fallbackEnd;
+
+				var used = next != null ? new[] { onScene, next } : new[] { onScene };
+				source = used.Any(x => CallStatusAttribution.IsInferred(x.DestinationSource)) ? InvoiceLineTimeSources.InferredStatus
+					: used.Any(x => CallStatusAttribution.IsAutoLinked(x.DestinationSource)) ? InvoiceLineTimeSources.AutoLinkedStatus
+					: InvoiceLineTimeSources.UnitStatus;
 			}
 			else
 			{
 				start = callLoggedOn;
 				end = fallbackEnd;
+				source = InvoiceLineTimeSources.CallWindow;
 			}
 			var minutes = (int)Math.Ceiling((end - start).TotalMinutes);
-			return minutes < 0 ? 0 : minutes;
+			return (minutes < 0 ? 0 : minutes, source);
 		}
 
 		/// <summary>Billable hours after the item's minimum and rounding increment (plan decision 9).</summary>

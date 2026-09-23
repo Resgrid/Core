@@ -116,7 +116,11 @@
                                 @foreach (var line in lines)
                                 {
                                     <tr>
-                                        <td><span>@line.Description</span> @if (line.CallId.HasValue) { <small class="text-muted">(Call @line.CallId)</small> } @if (!string.IsNullOrWhiteSpace(line.DeploymentTimeReportId)) { <a asp-controller="Deployments" asp-action="TimeReport" asp-route-area="User" asp-route-id="@line.DeploymentTimeReportId" class="label label-default" title="@localizer["TimeReportProvenance"]"><i class="fa fa-clock-o"></i> DTR</a> }</td>
+                                        <td><span>@line.Description</span> @if (line.CallId.HasValue) { <small class="text-muted">(Call @line.CallId)</small> } @if (!string.IsNullOrWhiteSpace(line.DeploymentTimeReportId)) { <a asp-controller="Deployments" asp-action="TimeReport" asp-route-area="User" asp-route-id="@line.DeploymentTimeReportId" class="label label-default" title="@localizer["TimeReportProvenance"]"><i class="fa fa-clock-o"></i> DTR</a> }
+                                            @if (line.TimeSource == (int)InvoiceLineTimeSources.UnitStatus) { <span class="label label-success" title="@localizer["TimeSourceUnitStatusHelp"]">@localizer["TimeSourceUnitStatus"]</span> }
+                                            else if (line.TimeSource == (int)InvoiceLineTimeSources.AutoLinkedStatus) { <span class="label label-info" title="@localizer["TimeSourceAutoLinkedHelp"]">@localizer["TimeSourceAutoLinked"]</span> }
+                                            else if (line.TimeSource == (int)InvoiceLineTimeSources.InferredStatus) { <span class="label label-warning" title="@localizer["TimeSourceInferredHelp"]">@localizer["TimeSourceInferred"]</span> }
+                                            else if (line.TimeSource == (int)InvoiceLineTimeSources.CallWindow) { <span class="label label-default" title="@localizer["TimeSourceCallWindowHelp"]">@localizer["TimeSourceCallWindow"]</span> }</td>
                                         <td class="text-right">@line.Quantity.ToString("0.##")</td>
                                         <td class="text-right">@line.UnitRate.ToString("N2")</td>
                                         <td class="text-center">@(line.Taxable ? "✓" : "")</td>

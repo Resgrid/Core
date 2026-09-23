@@ -2156,4 +2156,7 @@
   <data name="CallPickerRequiresScript" xml:space="preserve"><value>Aktivieren Sie JavaScript, um einen Einsatz zu suchen und auszuwählen.</value></data>
   <data name="CallPickerDates" xml:space="preserve"><value>Geben Sie einen gültigen Zeitraum ein. Der Beginn darf nicht nach dem Ende liegen.</value></data>
   <data name="CallPickerUnavailable" xml:space="preserve"><value>Wählen Sie einen verfügbaren Einsatz aus der Liste oder löschen Sie die Auswahl.</value></data>
+  <data name="SourceInferred" xml:space="preserve"><value>Erschlossen</value></data>
+  <data name="SourceAutoLinked" xml:space="preserve"><value>Automatisch verknüpft</value></data>
+  <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Einige Einheitenzeiten stammen aus Status, die die Einheit nicht selbst mit diesem Einsatz verknüpft hat: Resgrid hat sie automatisch verknüpft (aus dem vorherigen Status oder der Alarmierung der Einheit) oder abgeleitet (ohne Ziel gesetzt, während die Einheit hierher alarmiert war). Prüfen Sie sie vor dem Abschluss.</value></data>
 </root>

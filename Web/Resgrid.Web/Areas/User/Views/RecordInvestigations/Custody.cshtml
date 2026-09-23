@@ -38,7 +38,7 @@
 				<h4>@L["TransferCustody"]</h4>
 				<form method="post" asp-controller="RecordInvestigations" asp-action="TransferCustody" asp-route-area="User">
 					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.CaseId" /><input type="hidden" name="evidenceId" value="@e.RmsInvestigationEvidenceId" />
-					<div class="form-group"><label>@L["TransferTo"]</label><select class="form-control" name="toUserId"><option value="">-</option>@foreach (var u in Model.UserNames.OrderBy(u => u.Value)) { <option value="@u.Key">@u.Value</option> }</select></div>
+					<div class="form-group"><label>@L["TransferTo"]</label><select class="form-control" name="toUserId"><option value="">-</option>@foreach (var u in Model.Custodians.OrderBy(u => u.Value)) { <option value="@u.Key">@u.Value</option> }</select></div>
 					<div class="form-group"><label>@L["TransferToExternal"]</label><input class="form-control" name="toExternal" maxlength="200" /></div>
 					<div class="form-group"><label>@L["ResultingState"]</label><select class="form-control" name="resultingState">@foreach (var s in RmsEnumDisplay.Items<RmsEvidenceState>(includeZero: false)) { <option value="@s.Value">@s.Text</option> }</select></div>
 					<div class="form-group"><label>@L["ReasonText"]</label><input class="form-control" name="reason" maxlength="1000" required /></div>

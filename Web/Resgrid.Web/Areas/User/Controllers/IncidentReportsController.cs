@@ -933,7 +933,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ExposureItemTypes = Codes("exposure_item");
 			model.ExposureDamageTypes = Codes("exposure_damage");
 			model.DisplacementCauseCodes = Codes("displace_cause");
-			model.Personnel = (await PersonnelNamesAsync()).OrderBy(kvp => kvp.Value).Select(kvp => new SelectListItem { Value = kvp.Key, Text = kvp.Value }).ToList();
+			// The member pickers offer active members only. A member already named on this report who has since gone inactive
+			// stays in the list (under their stored id, so the row keeps its selection) rather than being cleared on save.
+			var pickable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var person in await _departmentsService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>())
+				if (!string.IsNullOrWhiteSpace(person.UserId)) pickable[person.UserId] = person.Name;
+			var labels = await PersonnelNamesAsync();
+			var options = pickable.Select(kvp => new SelectListItem { Value = kvp.Key, Text = kvp.Value }).ToList();
+			foreach (var kept in (model.Casualties ?? new List<IncidentCasualtyRow>()).Select(c => c.PersonnelUserId).Where(id => !string.IsNullOrWhiteSpace(id) && !pickable.ContainsKey(id)).Distinct(StringComparer.OrdinalIgnoreCase))
+				options.Add(new SelectListItem { Value = kept, Text = labels.TryGetValue(kept, out var keptName) ? keptName : kept });
+			model.Personnel = options.OrderBy(o => o.Text).ToList();
 			model.ApplyProtection(aggregate.Protection);
 			return model;
 		}

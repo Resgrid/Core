@@ -85,6 +85,7 @@ namespace Resgrid.Tests.Rms
 			_evidence = new Mock<IRecordsEvidenceService>();
 			_authorization = new Mock<IRecordsAuthorizationService>();
             _authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+            _authorization.Setup(a => a.IsAssignableMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
 			_authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
 			_authorization.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);
 			_authorization.Setup(a => a.CanReadSourceCallAsync(It.IsAny<string>(), Dept, It.IsAny<Call>())).ReturnsAsync(true);
@@ -721,6 +722,16 @@ namespace Resgrid.Tests.Rms
 			reassigned.Record.OwnerUserId.Should().Be("successor");
 			reassigned.Record.AuthorUserId.Should().Be("author");
 			_store.Audits.Should().ContainSingle(a => a.Action == (int)RmsAccessAuditAction.Admin && a.Purpose == "Reassign draft");
+		}
+
+		[Test]
+		public async Task A_draft_is_never_reassigned_to_someone_who_is_not_an_active_member()
+		{
+			var created = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			_authorization.Setup(a => a.IsAssignableMemberAsync("departed", Dept)).ReturnsAsync(false);
+			Func<Task> reassign = () => _service.ReassignDraftAsync(Dept, "chief", created.Record.RmsOperationalRecordId, "departed", "left department");
+			await reassign.Should().ThrowAsync<ArgumentException>();
+			_store.Audits.Should().NotContain(a => a.Purpose == "Reassign draft");
 		}
 
 		[Test]

@@ -127,7 +127,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (view.CanWrite && tab == "Locations")
 				foreach (var group in await _groups.GetAllGroupsForDepartmentAsync(DepartmentId))
 					if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 1, GroupId = group.DepartmentGroupId })) view.Groups.Add(new() { Id = group.DepartmentGroupId.ToString(), Name = group.Name });
-			foreach (var person in await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId))
+			foreach (var person in await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new())
 				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 3, UserId = person.UserId })) view.People.Add(new() { Id = person.UserId, Name = person.Name });
 			return View("Workspace", view);
 		}

@@ -387,7 +387,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> BuildF42(string deploymentId, string fillId) => GuardedAsync(async () =>
 		{
-			if (!IsManager && !await _deployments.IsRosteredAsync(deploymentId, DepartmentId, UserId)) return Unauthorized();
+			if (!IsManager && !await _deployments.CanFieldMemberSeeAsync(deploymentId, DepartmentId, UserId)) return Unauthorized();
 			var item = await _mars.BuildF42DraftAsync(deploymentId, DepartmentId, fillId, UserId, Ip, Agent);
 			return Saved("WorkItem", new { id = item.CalOesMarsWorkItemId });
 		}, "Queue");
@@ -395,7 +395,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> BuildExpense(string deploymentId, string f42Id) => GuardedAsync(async () =>
 		{
-			if (!IsManager && !await _deployments.IsRosteredAsync(deploymentId, DepartmentId, UserId)) return Unauthorized();
+			if (!IsManager && !await _deployments.CanFieldMemberSeeAsync(deploymentId, DepartmentId, UserId)) return Unauthorized();
 			var item = await _mars.BuildExpenseClaimDraftAsync(deploymentId, DepartmentId, f42Id, UserId, Ip, Agent);
 			return Saved("WorkItem", new { id = item.CalOesMarsWorkItemId });
 		}, "Queue");

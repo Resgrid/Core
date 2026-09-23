@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Додати учасника</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Учасник не відповідає вимогам місця. Позначте «Призначити навіть якщо вимога не виконана», щоб обійти.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Новий звіт про час</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Один звіт на день; записи заповнюються зі складу.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Один звіт на день для кожного екіпажу або особи; записи заповнюються зі складу.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Звітів про час поки немає.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Дата звіту</value></data>
   <data name="Submitted" xml:space="preserve"><value>Подано</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Усі ресурси мають повернутися на базу, перш ніж розгортання можна буде завершити.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Переглянути маніфест</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Експортувати ресурси CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Охоплює</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Усе розгортання</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Екіпаж: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Індивідуальний: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Запис часу стосується когось поза екіпажем або особою цього звіту</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Цей суб'єкт уже має час в іншому звіті за той самий день</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Цей екіпаж або особа не активні в цьому розгортанні.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Цей екіпаж або особа вже мають час в іншому звіті за цей день.</value></data>
 </root>

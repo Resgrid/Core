@@ -11,6 +11,8 @@ namespace Resgrid.Model.Services
 		Task<InventoryCountDetail> SaveCountAsync(InventoryActor actor, InventoryCountUpdate input);
 		Task<InventoryResult> CompleteCountAsync(InventoryActor actor, InventoryCountComplete input);
 		Task CancelCountAsync(InventoryActor actor, string id, int revision);
+		/// <summary>Never throws for a member: whether inventory is usable and what the caller may do, plus the unit's countable locations.</summary>
+		Task<InventoryFieldAccess> GetFieldAccessAsync(InventoryActor actor, int? unitId);
 		Task RefreshAlertsAsync(InventoryActor actor);
 		Task<InventoryReport> BuildReportAsync(InventoryActor actor, InventoryReportInput input);
 	}

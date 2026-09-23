@@ -570,6 +570,7 @@
   <data name="M5AlertType1" xml:space="preserve"><value>Péremption prochaine</value></data>
   <data name="M5AlertType2" xml:space="preserve"><value>Périmé</value></data>
   <data name="M5AlertType3" xml:space="preserve"><value>Retour en retard</value></data>
+  <data name="M5AlertType4" xml:space="preserve"><value>Détenu par un membre parti</value></data>
   <data name="M5Open" xml:space="preserve"><value>Ouverte</value></data>
   <data name="M5Resolved" xml:space="preserve"><value>Résolue</value></data>
   <data name="M5DueOn" xml:space="preserve"><value>Échéance (UTC)</value></data>
@@ -640,6 +641,7 @@
   <data name="InventoryExpiring" xml:space="preserve"><value>Expiration prochaine du stock</value></data>
   <data name="InventoryCountCompleted" xml:space="preserve"><value>Inventaire terminé</value></data>
   <data name="InventoryReturnOverdue" xml:space="preserve"><value>Retour de matériel en retard</value></data>
+  <data name="InventoryDepartedHolder" xml:space="preserve"><value>Matériel détenu par un membre parti</value></data>
   <data name="HolderHistoryRetained" xml:space="preserve"><value>Cette ressource est référencée dans l’historique du stock et doit être conservée.</value></data>
   <data name="InventoryAdjusted" xml:space="preserve"><value>Stock ajusté</value></data>
   <data name="InventoryTransferCompleted" xml:space="preserve"><value>Transfert de stock terminé</value></data>

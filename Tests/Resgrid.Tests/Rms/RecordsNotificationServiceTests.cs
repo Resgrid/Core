@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -19,6 +20,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<ICommunicationService> _communication;
 		private Mock<IUserProfileService> _profiles;
 		private RecordsNotificationService _service;
+		private HashSet<string> _activeMembers;
 
 		[SetUp]
 		public void SetUp()
@@ -33,6 +35,8 @@ namespace Resgrid.Tests.Rms
 
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, Name = "Test FD" });
+			_activeMembers = new HashSet<string> { "author", "chief", "owner" };
+			departments.Setup(d => d.GetActiveMemberUserIdsAsync(Dept)).ReturnsAsync(() => new HashSet<string>(_activeMembers));
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetTextToCallNumberForDepartmentAsync(Dept)).ReturnsAsync("+15555550100");
 
@@ -95,6 +99,35 @@ namespace Resgrid.Tests.Rms
 			message.Should().NotContain(" by ");
 			message.Should().Contain(new string('x', 200) + "…").And.NotContain(new string('x', 201));
 			message.Should().EndWith("/User/Records/Details/rec-1");
+		}
+
+		[Test]
+		public async Task A_returned_record_whose_author_has_left_goes_to_its_owner_and_nobody_inactive_is_ever_notified()
+		{
+			var record = Returned(); record.OwnerUserId = "owner";
+			_records.Setup(r => r.GetByIdForDepartmentAsync(Dept, "rec-1")).ReturnsAsync(record);
+			_activeMembers.Remove("author");
+
+			(await _service.NotifyReturnedForCorrectionAsync(Dept, "rec-1")).Should().BeTrue();
+			_communication.Verify(c => c.SendNotificationAsync("owner", Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), RecordsNotificationService.ReturnedForCorrectionTitle, It.IsAny<UserProfile>(), false), Times.Once);
+
+			_activeMembers.Remove("owner");
+			(await _service.NotifyReturnedForCorrectionAsync(Dept, "rec-1")).Should().BeFalse("a removed, disabled or hidden author or owner is never a recipient");
+			_communication.Verify(c => c.SendNotificationAsync(It.Is<string>(u => u == "author" || u == "owner"), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task An_overdue_review_passes_over_an_inactive_reviewer_to_the_owner()
+		{
+			var record = Returned(); record.State = (int)RmsRecordState.ReadyForReview; record.OwnerUserId = "owner";
+			_records.Setup(r => r.GetByIdForDepartmentAsync(Dept, "rec-1")).ReturnsAsync(record);
+
+			(await _service.NotifyObligationOverdueAsync(Dept, "rec-1", RmsRecordObligation.Review)).Should().BeTrue();
+			_communication.Verify(c => c.SendNotificationAsync("chief", Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), RecordsNotificationService.ObligationOverdueTitle, It.IsAny<UserProfile>(), false), Times.Once);
+
+			_activeMembers.Remove("chief");
+			(await _service.NotifyObligationOverdueAsync(Dept, "rec-1", RmsRecordObligation.Review)).Should().BeTrue();
+			_communication.Verify(c => c.SendNotificationAsync("owner", Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), RecordsNotificationService.ObligationOverdueTitle, It.IsAny<UserProfile>(), false), Times.Once);
 		}
 
 		[Test]

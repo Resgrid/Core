@@ -29,11 +29,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserProfileService _profiles;
 		private readonly ICallsService _calls;
 		private readonly IRecordsAuthorizationService _authorization;
+		private readonly IDepartmentsService _departments;
 
 		public RecordInvestigationsController(IRecordsInvestigationsService investigations, IRecordsOccupancyService occupancies, IUserProfileService profiles,
 			IRecordsCutoverService cutover, IFeatureToggleService featureToggles, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
-			ICallsService calls, IRecordsAuthorizationService authorization) : base(cutover, featureToggles, localizer)
+			ICallsService calls, IRecordsAuthorizationService authorization, IDepartmentsService departments) : base(cutover, featureToggles, localizer)
 		{
+			_departments = departments;
 			_investigations = investigations;
 			_occupancies = occupancies;
 			_profiles = profiles;
@@ -63,7 +65,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var model = Prepare(new RecordInvestigationDetailsView { Aggregate = aggregate });
 				var profiles = await _profiles.GetAllProfilesForDepartmentAsync(DepartmentId) ?? new Dictionary<string, UserProfile>();
 				model.UserNames = profiles.ToDictionary(p => p.Key, p => (p.Value.FirstName + " " + p.Value.LastName).Trim(), StringComparer.Ordinal);
-				model.DepartmentUsers = profiles.OrderBy(p => p.Value.LastName).ThenBy(p => p.Value.FirstName).Select(p => new SelectListItem { Value = p.Key, Text = (p.Value.FirstName + " " + p.Value.LastName).Trim() }).ToList();
+				// Adding a case member offers active members only; UserNames still labels everyone already on the case.
+				var active = await _departments.GetActiveMemberUserIdsAsync(DepartmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				model.DepartmentUsers = profiles.Where(p => active.Contains(p.Key)).OrderBy(p => p.Value.LastName).ThenBy(p => p.Value.FirstName).Select(p => new SelectListItem { Value = p.Key, Text = (p.Value.FirstName + " " + p.Value.LastName).Trim() }).ToList();
 				model.Members = aggregate.Members.Where(m => m.IsActive).Select(m => new SelectListItem { Value = m.UserId, Text = model.UserName(m.UserId) }).ToList();
 				if (model.IsLead) model.Audit = await _investigations.GetAccessAuditAsync(DepartmentId, UserId, id, 50);
 				return View(model);
@@ -202,6 +206,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var model = Prepare(new RecordInvestigationCustodyView { CaseId = id, Evidence = evidence, Chain = await _investigations.GetCustodyChainAsync(DepartmentId, UserId, evidenceId) });
 				var profiles = await _profiles.GetAllProfilesForDepartmentAsync(DepartmentId) ?? new Dictionary<string, UserProfile>();
 				model.UserNames = profiles.ToDictionary(p => p.Key, p => (p.Value.FirstName + " " + p.Value.LastName).Trim(), StringComparer.Ordinal);
+				var active = await _departments.GetActiveMemberUserIdsAsync(DepartmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				model.Custodians = model.UserNames.Where(u => active.Contains(u.Key)).ToDictionary(u => u.Key, u => u.Value, StringComparer.Ordinal);
 				return View(model);
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }

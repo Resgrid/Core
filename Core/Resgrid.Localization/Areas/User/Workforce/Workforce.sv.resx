@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>Användningsavläsningen är ogiltig.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Arbetsformen är ogiltig.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>Den medlemmen har redan en arbetstagarpost.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Välj en nuvarande medlem i den här avdelningen.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>En arbetstagare behöver en medlem eller en extern nyckel.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Typen av arbetstagare är ogiltig.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Arbetstagaren hittades inte.</value></data>

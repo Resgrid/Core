@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -57,6 +58,13 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(userId)) return false;
 			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, true);
 			return member != null && !member.IsDeleted && !member.IsDisabled.GetValueOrDefault();
+		}
+
+		public async Task<bool> IsAssignableMemberAsync(string userId, int departmentId)
+		{
+			if (string.IsNullOrWhiteSpace(userId)) return false;
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, true);
+			return DepartmentMemberStateHelper.IsActiveMember(member, departmentId);
 		}
 
 		public async Task<bool> IsDepartmentAdminAsync(string userId, int departmentId)

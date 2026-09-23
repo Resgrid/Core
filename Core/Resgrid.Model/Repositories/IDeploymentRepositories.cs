@@ -32,6 +32,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<DeploymentUnit>> GetByDeploymentAsync(string deploymentId);
 		/// <summary>Units seated on another open deployment overlapping the window (wizard conflict detection).</summary>
 		Task<IEnumerable<DeploymentUnit>> GetActiveAssignmentsForUnitsAsync(int departmentId, IEnumerable<int> unitIds, DateTime windowStart, DateTime windowEnd, string excludingDeploymentId);
+		/// <summary>Every roster row (active or removed) for these department units; the seated crew's "my deployments" scope (M0227).</summary>
+		Task<IEnumerable<DeploymentUnit>> GetForUnitsAsync(int departmentId, IEnumerable<int> unitIds);
 	}
 
 	public interface IDeploymentPersonnelRepository : IRepository<DeploymentPersonnel>

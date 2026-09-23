@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>Odczyt wykorzystania jest nieprawidłowy.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Tryb pracy jest nieprawidłowy.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>Ten członek ma już rekord pracownika.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Wybierz obecnego członka tej jednostki.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>Pracownik wymaga członka lub klucza zewnętrznego.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Rodzaj pracownika jest nieprawidłowy.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Nie znaleziono pracownika.</value></data>

@@ -242,7 +242,10 @@ RecordPermitExpiring = 163,
 		CertificationCreditAdded = 184,
 		TimeReportCreated = 185,
 		TimeReportVoided = 186,
-		DeploymentAttachmentAdded = 187
+		DeploymentAttachmentAdded = 187,
+
+		// Inventory held by a removed, disabled or hidden member (registry 188, 2026-09-22): raised with the DepartedHolder alert.
+		InventoryDepartedHolder = 188
 	}
 
 	public static class WorkflowTriggerEventTypes

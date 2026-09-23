@@ -143,5 +143,6 @@
   "CertificationCreditAdded": 184,
   "TimeReportCreated": 185,
   "TimeReportVoided": 186,
-  "DeploymentAttachmentAdded": 187
+  "DeploymentAttachmentAdded": 187,
+  "InventoryDepartedHolder": 188
 }

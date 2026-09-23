@@ -54,6 +54,10 @@ namespace Resgrid.Services.Records
 				throw new UnauthorizedAccessException("Records access is required.");
 		}
 
+		/// <summary>Whether prevention or investigations work (an inspector, an evidence custodian) may be handed to this person: not removed, disabled, hidden or foreign.</summary>
+		public async Task<bool> IsAssignableAsync(int departmentId, string userId)
+			=> !string.IsNullOrWhiteSpace(userId) && await _authorization.IsAssignableMemberAsync(userId, departmentId);
+
 		/// <summary>Changing prevention data needs the PreventionAdmin permission (registry value 69; department admins by default).</summary>
 		public async Task RequireAdminAsync(int departmentId, string userId)
 		{

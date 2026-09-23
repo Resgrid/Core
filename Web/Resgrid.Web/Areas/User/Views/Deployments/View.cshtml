@@ -260,6 +260,21 @@
                     <form method="post" asp-action="NewTimeReport" asp-route-id="@d.DeploymentId" class="form-inline m-b-md">
                         @Html.AntiForgeryToken()
                         <input type="date" name="reportDate" class="form-control input-sm" value="@departmentTime.Today.ToString("yyyy-MM-dd")" required />
+                        @{
+                            // Who the new report covers: managers pick any scope, a member their own crews and themselves (M0227).
+                            var scopeOptions = new List<(string Value, string Label)>();
+                            if (Model.CanManage) scopeOptions.Add(("", localizer["ScopeDeployment"].Value));
+                            foreach (var u in d.Units.Where(u => u.IsActive && (Model.CanManage || (Model.TimeAccess?.CrewUnitIds.Contains(u.DeploymentUnitId) ?? false))))
+                                scopeOptions.Add(("crew:" + u.DeploymentUnitId, string.Format(localizer["ScopeCrew"].Value, u.UnitName ?? u.UnitId.ToString())));
+                            foreach (var p in d.Personnel.Where(p => p.IsActive && (Model.CanManage || (Model.TimeAccess?.CanWriteSubject(p.DeploymentPersonnelId) ?? false))))
+                                scopeOptions.Add(("person:" + p.DeploymentPersonnelId, string.Format(localizer["ScopeIndividual"].Value, p.DisplayName ?? p.UserId)));
+                        }
+                        @if (scopeOptions.Count > 0)
+                        {
+                            <select name="scope" class="form-control input-sm" aria-label="@localizer["TimeReportScope"]">
+                                @foreach (var o in scopeOptions) { <option value="@o.Value">@o.Label</option> }
+                            </select>
+                        }
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> @localizer["NewTimeReport"]</button>
                         <span class="help-block" style="display:inline">@localizer["NewTimeReportHelp"]</span>
                     </form>
@@ -268,12 +283,19 @@
                 else
                 {
                     <table class="table table-striped table-hover">
-                        <thead><tr><th>#</th><th>@localizer["ReportDate"]</th><th>@localizer["Status"]</th><th>@localizer["Submitted"]</th><th>@localizer["Approved"]</th><th>@localizer["Invoice"]</th><th></th></tr></thead>
+                        <thead><tr><th>#</th><th>@localizer["ReportDate"]</th><th>@localizer["TimeReportScope"]</th><th>@localizer["Status"]</th><th>@localizer["Submitted"]</th><th>@localizer["Approved"]</th><th>@localizer["Invoice"]</th><th></th></tr></thead>
                         <tbody>
                             @foreach (var r in Model.TimeReports.OrderByDescending(r => r.ReportDate))
                             {
                                 <tr>
-                                    <td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId">@r.ReportNumber</a></td><td>@r.ReportDate.ToString("yyyy-MM-dd")</td><td>@await Html.PartialAsync("_ReportStatusBadge", r.Status)</td>
+                                    <td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId">@r.ReportNumber</a></td><td>@r.ReportDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@(r.Scope switch
+                                    {
+                                        Resgrid.Model.Invoicing.DeploymentTimeReportScopes.Crew => string.Format(localizer["ScopeCrew"].Value, d.Units.FirstOrDefault(u => u.DeploymentUnitId == r.DeploymentUnitId)?.UnitName ?? r.DeploymentUnitId),
+                                        Resgrid.Model.Invoicing.DeploymentTimeReportScopes.Individual => string.Format(localizer["ScopeIndividual"].Value, d.Personnel.FirstOrDefault(p => p.DeploymentPersonnelId == r.DeploymentPersonnelId)?.DisplayName ?? r.DeploymentPersonnelId),
+                                        _ => localizer["ScopeDeployment"].Value
+                                    })</td>
+                                    <td>@await Html.PartialAsync("_ReportStatusBadge", r.Status)</td>
                                     <td>@(r.SubmittedOn.HasValue ? $"{UserName(r.SubmittedByUserId)} · {Local(r.SubmittedOn)}" : "—")</td><td>@(r.ApprovedOn.HasValue ? $"{UserName(r.ApprovedByUserId)} · {Local(r.ApprovedOn)}" : "—")</td>
                                     <td>@if (!string.IsNullOrWhiteSpace(r.InvoiceId)) { <a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@r.InvoiceId"><i class="fa fa-file-text-o"></i></a> }</td>
                                     <td class="text-right"><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["Open"]</a> <a asp-action="TimeReportPdf" asp-route-id="@r.DeploymentTimeReportId" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>

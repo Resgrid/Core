@@ -303,7 +303,7 @@
 								<label>@localizer["ReassignTo"]</label>
 								<select class="form-control" name="newOwnerUserId" required>
 									<option value=""></option>
-									@foreach (var person in Model.PersonnelNames.Where(p => p.Key != record.OwnerUserId).OrderBy(p => p.Value))
+									@foreach (var person in Model.ReassignCandidates.Where(p => !string.Equals(p.Key, record.OwnerUserId, StringComparison.OrdinalIgnoreCase)).OrderBy(p => p.Value))
 									{
 										<option value="@person.Key">@person.Value</option>
 									}

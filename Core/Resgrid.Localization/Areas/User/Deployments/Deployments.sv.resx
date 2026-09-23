@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Lägg till medlem</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Medlemmen uppfyller inte platsens krav. Markera ”Bemanna även om ett krav inte uppfylls” för att åsidosätta.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Ny tidrapport</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>En rapport per dag; posterna förifylls från bemanningen.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>En rapport per dag för varje besättning eller person; posterna förifylls från bemanningen.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Inga tidrapporter ännu.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Rapportdatum</value></data>
   <data name="Submitted" xml:space="preserve"><value>Inskickad</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Alla resurser måste ha återvänt till basen innan insatsen kan avslutas.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Visa manifest</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Exportera resurser som CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Omfattar</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Hela insatsen</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Besättning: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Individuell: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>En tidspost gäller någon utanför rapportens besättning eller person</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Detta objekt har redan tid på en annan rapport för samma dag</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Den besättningen eller personen är inte aktiv i denna insats.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Den besättningen eller personen har redan tid på en annan rapport för denna dag.</value></data>
 </root>

@@ -839,6 +839,7 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.InventoryExpiring:
 				case WorkflowTriggerEventType.InventoryCountCompleted:
 				case WorkflowTriggerEventType.InventoryReturnOverdue:
+				case WorkflowTriggerEventType.InventoryDepartedHolder:
 				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
 					foreach (var pair in Inventories.InventoryWorkflowPayload.Variables)
 					{

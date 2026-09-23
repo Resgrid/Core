@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>Показник використання недійсний.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Режим роботи недійсний.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>Цей член уже має запис працівника.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Виберіть чинного члена цього підрозділу.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>Працівник потребує члена або зовнішнього ключа.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Тип працівника недійсний.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Працівника не знайдено.</value></data>

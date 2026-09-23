@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>Le relevé d'utilisation n'est pas valide.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>Le mode de travail n'est pas valide.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>Ce membre a déjà une fiche travailleur.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Sélectionnez un membre actuel de ce service.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>Un travailleur a besoin d'un membre ou d'une clé externe.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>Le type de travailleur n'est pas valide.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>Le travailleur est introuvable.</value></data>

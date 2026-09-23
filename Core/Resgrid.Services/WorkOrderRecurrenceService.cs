@@ -332,6 +332,16 @@ namespace Resgrid.Services
                                 order.DueOn = due; order.OriginalDueOn = original; order.EscalateAfterMinutes = row.EscalateAfterMinutes; order.EscalationRoleId = row.EscalationRoleId;
                                 order.AssignedToUserId = row.AssignedToUserId; order.AssignedToRoleId = row.AssignedToRoleId;
                                 order.AssignedToUserIds = row.AssignedToUserIds; order.AssignedToRoleIds = row.AssignedToRoleIds;
+                                // A preventive order is never auto-assigned to a removed, disabled or hidden member. Those assignees are
+                                // dropped (the order keeps its roles, or opens unassigned for the managers) instead of failing the schedule
+                                // on every sweep; the schedule itself keeps them until someone edits it.
+                                if (order.AssignedToUserIds.Count != 0)
+                                {
+                                    var active = await _authorization.ActiveMemberIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                                    var assignable = order.AssignedToUserIds.Where(active.Contains).ToList();
+                                    if (order.AssignedToUserId != null && !active.Contains(order.AssignedToUserId)) order.AssignedToUserId = null;
+                                    order.AssignedToUserIds = assignable;
+                                }
                                 order.Status = order.AssignedToUserIds.Count != 0 || order.AssignedToRoleIds.Count != 0 ? (int)WorkOrderStatus.Assigned : (int)WorkOrderStatus.Accepted;
                                 if (order.Status == 2) { await ValidateRecurrenceAssigneesAsync(owner, order, order.AssignedToUserIds, order.AssignedToRoleIds); order.AssignedOn = Now; }
                                 await PinSlaAsync(order); if (order.Status == (int)WorkOrderStatus.Accepted) order.ResponseOn = Now;

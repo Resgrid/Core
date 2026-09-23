@@ -164,6 +164,11 @@
                         <div class="form-group">
                             <label asp-for="Input.AssignedToUserIds">@localizer["Users"]</label>
                             <select asp-for="Input.AssignedToUserIds" multiple size="6" class="form-control" aria-describedby="maintenance-assignees-hint">
+                                @* A hidden member is no longer offered but may keep an existing assignment: stay selected rather than be dropped on save. *@
+                                @foreach (var kept in (Model.Input?.AssignedToUserIds ?? new List<string>()).Where(id => !string.IsNullOrEmpty(id) && Model.Choices.UserNames.ContainsKey(id) && !Model.Choices.Users.Any(u => string.Equals(u.Id, id, StringComparison.OrdinalIgnoreCase))).Distinct(StringComparer.OrdinalIgnoreCase))
+                                {
+                                    <option value="@kept" selected>@Model.Choices.UserNames[kept]</option>
+                                }
                                 @foreach (var x in Model.Choices.Users)
                                 {
                                     <option value="@x.Id">@x.Name</option>

@@ -245,6 +245,40 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task should_not_test_disabled_or_hidden_members()
+			{
+				var testId = Guid.NewGuid();
+				_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+				{
+					CommunicationTestId = testId,
+					DepartmentId = 1,
+					TestEmail = true,
+					ResponseWindowMinutes = 60,
+					Active = true
+				});
+
+				_departmentsServiceMock.Setup(x => x.GetAllMembersForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentMember>
+				{
+					new DepartmentMember { UserId = TestData.Users.TestUser1Id, DepartmentId = 1 },
+					new DepartmentMember { UserId = TestData.Users.TestUser2Id, DepartmentId = 1, IsDisabled = true },
+					new DepartmentMember { UserId = "hidden-member", DepartmentId = 1, IsHidden = true }
+				});
+				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(1, false)).ReturnsAsync(new Dictionary<string, UserProfile>
+				{
+					{ TestData.Users.TestUser1Id, new UserProfile { UserId = TestData.Users.TestUser1Id, MembershipEmail = "user1@test.com", EmailVerified = true } }
+				});
+
+				SetupRunAndResultPersistence();
+
+				var run = await StartAndBuildAsync(testId, 1, TestData.Users.TestUser1Id);
+
+				run.TotalUsersTested.Should().Be(1);
+				_communicationTestResultRepoMock.Verify(
+					x => x.SaveOrUpdateAsync(It.Is<CommunicationTestResult>(r => r.UserId != TestData.Users.TestUser1Id), It.IsAny<CancellationToken>(), true),
+					Times.Never);
+			}
+
+			[Test]
 			public async Task should_hand_the_run_to_the_worker_instead_of_building_or_sending_inline()
 			{
 				var testId = Guid.NewGuid();

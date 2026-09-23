@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Mitglied hinzufügen</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Das Mitglied erfüllt die Anforderungen des Platzes nicht. Aktivieren Sie „Auch bei nicht erfüllter Anforderung einteilen“, um dies zu übergehen.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Neuer Zeitbericht</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Ein Bericht je Tag; die Einträge werden aus der Besetzung vorbelegt.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Ein Bericht je Tag für jede Besatzung oder Person; die Einträge werden aus der Besetzung vorbelegt.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Noch keine Zeitberichte.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Berichtsdatum</value></data>
   <data name="Submitted" xml:space="preserve"><value>Eingereicht</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Alle Ressourcen müssen zurückgekehrt sein, bevor der Einsatz abgeschlossen werden kann.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Manifest anzeigen</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Ressourcen als CSV exportieren</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Gilt für</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Gesamter Einsatz</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Besatzung: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Einzelperson: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Ein Zeiteintrag betrifft jemanden außerhalb der Besatzung oder Person dieses Berichts</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Für diesen Eintrag ist am selben Tag bereits Zeit in einem anderen Bericht erfasst</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Diese Besatzung oder Person ist in diesem Einsatz nicht aktiv.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Für diese Besatzung oder Person ist an diesem Tag bereits Zeit in einem anderen Bericht erfasst.</value></data>
 </root>

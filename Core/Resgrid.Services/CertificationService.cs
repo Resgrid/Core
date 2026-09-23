@@ -842,7 +842,11 @@ namespace Resgrid.Services
 			var leadDays = (await GetCertificationSettingsAsync(departmentId)).GetNotifyLeadDays();
 			var horizon = leadDays.Count > 0 ? leadDays.Max() : 60;
 
-			var people = (await GetCertificationsForDepartmentAsync(departmentId)).Where(r => r.IsTyped && byType.ContainsKey(r.DepartmentCertificationTypeId.Value)).ToList();
+			// Deleted, disabled and hidden members stay out of the matrix, its totals and everything built on it (the
+			// dashboard, its CSV, the compliance report and its scheduled delivery); their records remain on file.
+			var activeMembers = await ActiveMemberUserIdsAsync(departmentId);
+			var people = (await GetCertificationsForDepartmentAsync(departmentId))
+				.Where(r => r.IsTyped && byType.ContainsKey(r.DepartmentCertificationTypeId.Value) && r.UserId != null && activeMembers.Contains(r.UserId)).ToList();
 			// One cached department name list instead of a profile read per member; a member missing from it (a fresh
 			// account, a stale list) still resolves through the profile.
 			var departmentNames = (await _departments.Value.GetAllPersonnelNamesForDepartmentAsync(departmentId) ?? new List<PersonName>())
@@ -891,6 +895,13 @@ namespace Resgrid.Services
 		#endregion
 
 		#region Helpers
+
+		/// <summary>The department's active members (deleted, disabled and hidden excluded), case-insensitive; empty when none resolve.</summary>
+		private async Task<HashSet<string>> ActiveMemberUserIdsAsync(int departmentId)
+		{
+			var ids = await _departments.Value.GetActiveMemberUserIdsAsync(departmentId);
+			return ids == null ? new HashSet<string>(StringComparer.OrdinalIgnoreCase) : new HashSet<string>(ids, StringComparer.OrdinalIgnoreCase);
+		}
 
 		private async Task<string> DisplayNameAsync(string userId)
 		{

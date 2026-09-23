@@ -1130,7 +1130,7 @@ namespace Resgrid.Services.Invoicing
 		{
 			try
 			{
-				foreach (var admin in await _departmentsService.GetAllAdminsForDepartmentAsync(departmentId) ?? new List<Model.Identity.IdentityUser>())
+				foreach (var admin in await _departmentsService.GetActiveAdminsForDepartmentAsync(departmentId) ?? new List<Model.Identity.IdentityUser>())
 					await _emailService.SendNotificationAsync(admin.Id, message, departmentId);
 			}
 			catch (Exception ex)

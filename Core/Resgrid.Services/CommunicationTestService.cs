@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Resgrid.Framework;
 using CommunicationTestMessages = Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTestMessageCatalog;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -415,7 +416,10 @@ namespace Resgrid.Services
 			var communicationTestId = run.CommunicationTestId;
 			var departmentId = run.DepartmentId;
 
-			var members = await _departmentsService.GetAllMembersForDepartmentAsync(departmentId);
+			// Disabled and hidden members are not tested: nobody is paged on their account and the report does not count them
+			// (the member list already leaves removed members out).
+			var members = (await _departmentsService.GetAllMembersForDepartmentAsync(departmentId) ?? new List<DepartmentMember>())
+				.Where(m => DepartmentMemberStateHelper.IsActiveMember(m, departmentId)).ToList();
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
 
 			// A targeted test only covers the audience snapshotted when the run started, so editing

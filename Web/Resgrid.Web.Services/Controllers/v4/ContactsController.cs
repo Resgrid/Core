@@ -38,6 +38,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
+		private readonly IAddressService _addressService;
 
 		public ContactsController(
 			IContactsService contactsService,
@@ -47,9 +48,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IEventAggregator eventAggregator,
 			IUserDefinedFieldsService userDefinedFieldsService,
 			IProtectedReadService protectedReadService,
-			IProtectedWriteService protectedWriteService
+			IProtectedWriteService protectedWriteService,
+			IAddressService addressService
 			)
 		{
+			_addressService = addressService;
 			_protectedReadService = protectedReadService;
 			_protectedWriteService = protectedWriteService;
 			_contactsService = contactsService;
@@ -122,6 +125,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// without a valid grant, cataloged fields read as REDACTED — never envelopes.
 				var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
 					contacts.ToList(), Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+				var categories = (await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId) ?? new List<ContactCategory>())
+					.GroupBy(c => c.ContactCategoryId).ToDictionary(g => g.Key, g => g.First());
 
 				foreach (var contact in contacts)
 				{
@@ -132,6 +137,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						editedPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
 
 					var contactData = ConvertContactData(contact, department, addedOnPerson, editedPerson);
+					if (contact.ContactCategoryId != null && categories.TryGetValue(contact.ContactCategoryId, out var listCategory)) { contactData.CategoryName = listCategory.Name; contactData.CategoryColor = listCategory.Color; }
 					contactData.IsProtected = protectedRead.IsProtected;
 					contactData.ProtectedReason = protectedRead.ProtectedReason;
 
@@ -190,6 +196,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.ProtectedReason = protectedRead.ProtectedReason;
 				result.Data.RedactedFields = protectedRead.RedactedFields;
 
+				if (!String.IsNullOrWhiteSpace(contact.ContactCategoryId))
+				{
+					var category = await _contactsService.GetContactCategoryByIdAsync(contact.ContactCategoryId);
+					if (category != null && category.DepartmentId == DepartmentId) { result.Data.CategoryName = category.Name; result.Data.CategoryColor = category.Color; }
+				}
+				// Field apps show the address and hand it to a maps app; the web detail reads the same rows.
+				if (contact.PhysicalAddressId.HasValue)
+					result.Data.PhysicalAddress = ConvertAddress(await _addressService.GetAddressByIdAsync(contact.PhysicalAddressId.Value));
+				if (contact.MailingAddressId.HasValue && contact.MailingAddressId != contact.PhysicalAddressId)
+					result.Data.MailingAddress = ConvertAddress(await _addressService.GetAddressByIdAsync(contact.MailingAddressId.Value));
+
 				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, contactId);
 				if (udfValues != null && udfValues.Any())
 				{
@@ -197,6 +214,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 					bool isGroupAdmin = IsCallerGroupAdmin();
 					var visibleFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact, isDeptAdmin, isGroupAdmin);
 					var visibleFieldIds = visibleFields.Select(f => f.UdfFieldId).ToHashSet();
+
+					var mobileFields = visibleFields.Where(f => f.IsVisibleOnMobile && f.IsEnabled).ToDictionary(f => f.UdfFieldId);
+					result.Data.CustomFields = udfValues
+						.Where(v => !String.IsNullOrWhiteSpace(v.Value) && mobileFields.ContainsKey(v.UdfFieldId))
+						.Select(v => new ContactCustomFieldData
+						{
+							UdfFieldId = v.UdfFieldId, Label = mobileFields[v.UdfFieldId].Label ?? mobileFields[v.UdfFieldId].Name, Value = v.Value,
+							FieldDataType = mobileFields[v.UdfFieldId].FieldDataType, GroupName = mobileFields[v.UdfFieldId].GroupName, SortOrder = mobileFields[v.UdfFieldId].SortOrder
+						})
+						.OrderBy(f => f.GroupName).ThenBy(f => f.SortOrder).ToList();
 
 					result.Data.UdfValues = udfValues
 						.Where(v => visibleFieldIds.Contains(v.UdfFieldId))
@@ -686,6 +713,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				cat.EditedByUserName = editedProfile.FullName.AsFirstNameLastName;
 
 			return cat;
+		}
+
+		private static ContactAddressData ConvertAddress(Address address)
+		{
+			if (address == null) return null;
+			var parts = new[] { address.Address1, address.City, address.State, address.PostalCode, address.Country }.Where(p => !String.IsNullOrWhiteSpace(p)).Select(p => p.Trim());
+			return new ContactAddressData { Address1 = address.Address1, City = address.City, State = address.State, PostalCode = address.PostalCode, Country = address.Country, Formatted = String.Join(", ", parts) };
 		}
 
 		public static ContactResultData ConvertContactData(Contact contact, Department department, UserProfile addedProfile, UserProfile editedProfile)

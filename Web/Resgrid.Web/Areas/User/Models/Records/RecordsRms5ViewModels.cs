@@ -352,6 +352,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public string CaseId { get; set; }
 		public List<RmsInvestigationCustody> Chain { get; set; } = new List<RmsInvestigationCustody>();
 		public Dictionary<string, string> UserNames { get; set; } = new Dictionary<string, string>();
+		/// <summary>Who evidence may be handed to: active members only (UserNames still labels the chain).</summary>
+		public Dictionary<string, string> Custodians { get; set; } = new Dictionary<string, string>();
 		public string UserName(string id) => string.IsNullOrWhiteSpace(id) ? "" : UserNames.TryGetValue(id, out var n) ? n : id;
 	}
 

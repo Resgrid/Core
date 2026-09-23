@@ -49,6 +49,20 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 
 		public virtual ContactCategory Category { get; set; }
 
+		/// <summary>The contact category's display name and color (the Category entity itself is never sent).</summary>
+		public string CategoryName { get; set; }
+
+		public string CategoryColor { get; set; }
+
+		/// <summary>Resolved physical address (contact detail only; null on list rows or when none is set).</summary>
+		public ContactAddressData PhysicalAddress { get; set; }
+
+		/// <summary>Resolved mailing address when it differs from the physical one (contact detail only).</summary>
+		public ContactAddressData MailingAddress { get; set; }
+
+		/// <summary>Mobile-visible custom field values with their labels, in form order (contact detail only).</summary>
+		public List<ContactCustomFieldData> CustomFields { get; set; } = new List<ContactCustomFieldData>();
+
 		public string FirstName { get; set; }
 
 		public string MiddleName { get; set; }
@@ -135,5 +149,26 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 		/// User Defined Field values for this contact
 		/// </summary>
 		public List<UdfFieldValueResultData> UdfValues { get; set; }
+	}
+
+	public class ContactAddressData
+	{
+		public string Address1 { get; set; }
+		public string City { get; set; }
+		public string State { get; set; }
+		public string PostalCode { get; set; }
+		public string Country { get; set; }
+		/// <summary>One-line form for display and for handing to a maps app.</summary>
+		public string Formatted { get; set; }
+	}
+
+	public class ContactCustomFieldData
+	{
+		public string UdfFieldId { get; set; }
+		public string Label { get; set; }
+		public string Value { get; set; }
+		public int FieldDataType { get; set; }
+		public string GroupName { get; set; }
+		public int SortOrder { get; set; }
 	}
 }

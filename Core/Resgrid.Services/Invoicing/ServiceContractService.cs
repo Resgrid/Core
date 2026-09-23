@@ -413,7 +413,7 @@ namespace Resgrid.Services.Invoicing
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 				var number = _departmentSettings?.Value == null ? null : await _departmentSettings.Value.GetTextToCallNumberForDepartmentAsync(departmentId);
-				foreach (var admin in await _departmentsService.GetAllAdminsForDepartmentAsync(departmentId))
+				foreach (var admin in await _departmentsService.GetActiveAdminsForDepartmentAsync(departmentId))
 					await _communication.Value.SendNotificationAsync(admin.UserId, departmentId, message, number, department, "Compliance documents");
 			}
 			catch (Exception ex) { Logging.LogException(ex, $"Compliance document notification for department {departmentId} failed."); }

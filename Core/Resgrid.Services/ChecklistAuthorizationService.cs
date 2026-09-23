@@ -26,6 +26,8 @@ namespace Resgrid.Services
 			var member = await _departments.GetDepartmentMemberAsync(actor.UserId, actor.DepartmentId, true);
 			if (member == null || member.IsDeleted || member.IsDisabled.GetValueOrDefault()) throw new ChecklistException(403, "Active department membership is required.");
 		}
+		public async Task<HashSet<string>> ActiveMemberIdsAsync(int departmentId)
+			=> await _departments.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		private async Task<bool> AllowedAsync(ChecklistActor actor, PermissionTypes type, PermissionActions fallback, int? targetGroup = null)
 			=> (await PermissionFilterAsync(actor, type, fallback))(targetGroup);
 		private async Task<Func<int?, bool>> PermissionFilterAsync(ChecklistActor actor, PermissionTypes type, PermissionActions fallback)
@@ -103,7 +105,9 @@ namespace Resgrid.Services
 				case ChecklistTargetType.Department: ids = new[] { actor.DepartmentId.ToString() }; break;
 				case ChecklistTargetType.Unit: ids = (await _units.GetUnitsForDepartmentAsync(actor.DepartmentId)).Select(u => u.UnitId.ToString()); break;
 				case ChecklistTargetType.Group: ids = (await _groups.GetAllGroupsForDepartmentAsync(actor.DepartmentId)).Select(g => g.DepartmentGroupId.ToString()); break;
-				case ChecklistTargetType.Personnel: ids = (await _departments.GetAllMembersForDepartmentAsync(actor.DepartmentId)).Where(m => !m.IsDeleted && !m.IsDisabled.GetValueOrDefault()).Select(m => m.UserId); break;
+				// The picker offers active members from the unlimited roster; a schedule already aimed at someone who has since
+				// gone hidden still validates through TargetAsync and keeps its value on the edit form.
+				case ChecklistTargetType.Personnel: ids = await _departments.GetActiveMemberUserIdsAsync(actor.DepartmentId) ?? new HashSet<string>(); break;
 				case ChecklistTargetType.InventoryAsset:
 					if (_assets == null || !await _assets.IsAvailableAsync(actor.DepartmentId)) return new List<ChecklistTarget>();
 					ids = (await _assets.ListAsync(actor)).Where(a => a.DepartmentId == actor.DepartmentId).Select(a => a.Id); break;

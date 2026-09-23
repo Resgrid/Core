@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
@@ -18,10 +20,12 @@ using Resgrid.Web.ServicesCore.Helpers;
 namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
-	/// Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file
-	/// DTRs from the field: a rostered member may create, edit, sign and submit reports and expenses on their own
-	/// deployments without any new claim; approval and void need TimeReports_Approve. Receipts upload as base64 and
-	/// are stored as Receipt attachments; DTOs carry UpdatedOn for delta-sync.
+	/// Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file from the
+	/// field without any new claim: a member writes their own roster row (individual report) and, for every deployed unit they
+	/// crew (on the deployment roster for that unit, or seated on the apparatus through an active unit role), that unit's Crew
+	/// Time Report — the unit, its crew and its equipment (M0227). Entries of subjects a caller may not write are kept as stored.
+	/// Approval and void need TimeReports_Approve. Entry times travel as UTC instants plus department-local wall clock
+	/// (StartLocal/EndLocal) so field apps never do zone math. Receipts upload as base64; DTOs carry UpdatedOn for delta-sync.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -29,21 +33,34 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Authorize]
 	public class TimeReportsController : V4AuthenticatedApiControllerbase
 	{
+		private const string LocalClockFormat = "yyyy-MM-dd'T'HH:mm";
+		private static readonly string[] LocalClockFormats = { "yyyy-MM-dd'T'HH:mm", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.FFFFFFF", "yyyy-MM-dd HH:mm" };
+
 		private readonly ITimeTrackingService _timeTracking;
 		private readonly IDeploymentService _deployments;
 		private readonly IFeatureToggleService _flags;
+		private readonly IDepartmentsService _departments;
 
-		public TimeReportsController(ITimeTrackingService timeTracking, IDeploymentService deployments, IFeatureToggleService flags)
+		public TimeReportsController(ITimeTrackingService timeTracking, IDeploymentService deployments, IFeatureToggleService flags, IDepartmentsService departments)
 		{
 			_timeTracking = timeTracking;
 			_deployments = deployments;
 			_flags = flags;
+			_departments = departments;
 		}
 
 		private Task<bool> EnabledAsync() => _flags.IsEnabledAsync(FeatureFlagKeys.Deployments, DepartmentId);
 		private static bool CanApprove() => ClaimsAuthorizationHelper.CanApproveTimeReports() || ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
-		private async Task<bool> CanTouchAsync(string deploymentId) => DeploymentsController.CanManage() || await _deployments.IsRosteredAsync(deploymentId, DepartmentId, UserId);
-		private async Task<bool> CanSeeAsync(string deploymentId) => DeploymentsController.CanView() || await _deployments.IsRosteredAsync(deploymentId, DepartmentId, UserId);
+
+		/// <summary>The deployment and the caller's time scope on it; both null when the deployment is not in this department.</summary>
+		private async Task<(Deployment Deployment, DeploymentTimeAccess Access)> AccessAsync(string deploymentId)
+		{
+			var deployment = await _deployments.GetDeploymentByIdAsync(deploymentId, DepartmentId);
+			if (deployment == null) return (null, null);
+			return (deployment, await _deployments.GetTimeAccessAsync(deployment, UserId, DeploymentsController.CanManage()));
+		}
+
+		private static bool CanSee(DeploymentTimeAccess access) => DeploymentsController.CanView() || (access?.CanRead ?? false);
 
 		private string Ip => IpAddressHelper.GetRequestIP(Request, true);
 		private string Agent => $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
@@ -65,9 +82,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<TimeReportsResult>> GetTimeReports(string deploymentId)
 		{
 			if (!await EnabledAsync()) return Failed<TimeReportsResult>("deployments_disabled", StatusCodes.Status403Forbidden);
-			if (!await CanSeeAsync(deploymentId)) return Unauthorized();
-			var reports = await _timeTracking.GetTimeReportsAsync(deploymentId, DepartmentId);
-			var result = new TimeReportsResult { Data = reports.Select(r => Map(r)).ToList(), PageSize = reports.Count, Status = ResponseHelper.Success };
+			var (deployment, access) = await AccessAsync(deploymentId);
+			if (deployment == null) return NotFound();
+			if (!CanSee(access)) return Unauthorized();
+			// With entries: the field apps open a day's report straight from this list (two reads for the whole deployment).
+			var reports = await _timeTracking.GetTimeReportsWithEntriesAsync(deploymentId, DepartmentId);
+			var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+			var result = new TimeReportsResult { Data = reports.Select(r => Map(r, department, access)).ToList(), PageSize = reports.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
@@ -79,8 +100,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<TimeReportResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			var report = await _timeTracking.GetTimeReportByIdAsync(id, DepartmentId);
 			if (report == null) return NotFound();
-			if (!await CanSeeAsync(report.DeploymentId)) return Unauthorized();
-			return Ok(report);
+			var (_, access) = await AccessAsync(report.DeploymentId);
+			if (!CanSee(access)) return Unauthorized();
+			return await OkAsync(report, access);
 		}
 
 		[HttpPost("NewTimeReport")]
@@ -89,8 +111,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await EnabledAsync()) return Failed<TimeReportResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			if (input == null || string.IsNullOrWhiteSpace(input.DeploymentId)) return BadRequest();
-			if (!await CanTouchAsync(input.DeploymentId)) return Unauthorized();
-			try { return Ok(await _timeTracking.CreateTimeReportAsync(input.DeploymentId, DepartmentId, input.ReportDate, UserId, Ip, Agent, cancellationToken)); }
+			var (deployment, access) = await AccessAsync(input.DeploymentId);
+			if (deployment == null) return NotFound();
+			// Managers open any scope; a crew member opens their unit's crew report; anyone opens their own individual report
+			// (and a crew boss one for a member of the crew). The deployment-wide DTR stays a manager's paper.
+			var allowed = access.CanManage
+				|| (!string.IsNullOrWhiteSpace(input.DeploymentUnitId) && string.IsNullOrWhiteSpace(input.DeploymentPersonnelId) && access.CrewUnitIds.Contains(input.DeploymentUnitId, StringComparer.OrdinalIgnoreCase))
+				|| (!string.IsNullOrWhiteSpace(input.DeploymentPersonnelId) && string.IsNullOrWhiteSpace(input.DeploymentUnitId) && access.CanWriteSubject(input.DeploymentPersonnelId));
+			if (!allowed) return Unauthorized();
+			try { return await OkAsync(await _timeTracking.CreateTimeReportAsync(input.DeploymentId, DepartmentId, input.ReportDate, input.DeploymentUnitId, input.DeploymentPersonnelId, UserId, Ip, Agent, cancellationToken), access); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
 
@@ -102,14 +131,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null) return BadRequest();
 			var report = await _timeTracking.GetTimeReportByIdAsync(input.Id, DepartmentId);
 			if (report == null) return NotFound();
-			if (!await CanTouchAsync(report.DeploymentId)) return Unauthorized();
+			var (_, access) = await AccessAsync(report.DeploymentId);
+			if (access == null || !access.CanActOn(report)) return Unauthorized();
 			report.IncidentNumber = input.IncidentNumber; report.ResourceOrderNumber = input.ResourceOrderNumber; report.RequestNumber = input.RequestNumber; report.CostCode = input.CostCode; report.PointOfHire = input.PointOfHire;
 			report.NoClear8 = input.NoClear8; report.UnsafeConditionsStandDown = input.UnsafeConditionsStandDown; report.Notes = input.Notes; report.RmsExternalOrderFillId = input.RmsExternalOrderFillId;
-			try { return Ok(await _timeTracking.UpdateTimeReportAsync(report, UserId, Ip, Agent, cancellationToken)); }
+			try { return await OkAsync(await _timeTracking.UpdateTimeReportAsync(report, UserId, Ip, Agent, cancellationToken), access); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
 
-		/// <summary>Replaces the report's entries as a batch. Validation errors come back with the unchanged report and status Failure.</summary>
+		/// <summary>
+		/// Replaces the entries of the subjects the caller may write (every subject for a manager); other subjects' entries stay as
+		/// stored. StartLocal/EndLocal, when sent, are department-local wall clock and win over StartTime/EndTime. Validation
+		/// errors come back with the unchanged report and status Failure.
+		/// </summary>
 		[HttpPost("SaveTimeEntries")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<TimeReportResult>> SaveTimeEntries([FromBody] SaveTimeEntriesInput input, CancellationToken cancellationToken)
@@ -118,17 +152,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null) return BadRequest();
 			var report = await _timeTracking.GetTimeReportByIdAsync(input.TimeReportId, DepartmentId);
 			if (report == null) return NotFound();
-			if (!await CanTouchAsync(report.DeploymentId)) return Unauthorized();
+			var (_, access) = await AccessAsync(report.DeploymentId);
+			if (access == null || !access.CanWrite) return Unauthorized();
+			// A scoped report belongs to its crew or person; nobody else writes into it even for their own subjects.
+			if (report.Scope != DeploymentTimeReportScopes.Deployment && !access.CanActOn(report)) return Unauthorized();
+			var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
 			try
 			{
-				var entries = (input.Entries ?? new List<TimeEntryData>()).Select(e => new DeploymentTimeEntry
+				var entries = new List<DeploymentTimeEntry>();
+				foreach (var e in input.Entries ?? new List<TimeEntryData>())
 				{
-					DeploymentTimeEntryId = string.IsNullOrWhiteSpace(e.Id) ? null : e.Id,
-					DeploymentPersonnelId = e.DeploymentPersonnelId, DeploymentUnitId = e.DeploymentUnitId, DeploymentEquipmentId = e.DeploymentEquipmentId, EntryType = e.EntryType, StartTime = e.StartTime, EndTime = e.EndTime,
-					PaidBreakMinutes = e.PaidBreakMinutes, UnpaidBreakMinutes = e.UnpaidBreakMinutes, CrewSizeSnapshot = e.CrewSizeSnapshot, CertificationCode = e.CertificationCode, MileageKm = e.MileageKm, FuelDeductionLitres = e.FuelDeductionLitres,
-					AgencySuppliedMeals = e.AgencySuppliedMeals, AgencySuppliedAccommodation = e.AgencySuppliedAccommodation, Notes = e.Notes, SortOrder = e.SortOrder
-				}).ToList();
-				return Ok(await _timeTracking.SaveTimeEntriesAsync(input.TimeReportId, DepartmentId, entries, UserId, Ip, Agent, cancellationToken));
+					if (e == null) continue;
+					if (!TryResolve(e.StartLocal, e.StartTime, department, out var start) || !TryResolve(e.EndLocal, e.EndTime, department, out var end)) return Failed<TimeReportResult>("timereports_time_invalid");
+					entries.Add(new DeploymentTimeEntry
+					{
+						DeploymentTimeEntryId = string.IsNullOrWhiteSpace(e.Id) ? null : e.Id,
+						DeploymentPersonnelId = e.DeploymentPersonnelId, DeploymentUnitId = e.DeploymentUnitId, DeploymentEquipmentId = e.DeploymentEquipmentId, EntryType = e.EntryType, StartTime = start, EndTime = end,
+						PaidBreakMinutes = e.PaidBreakMinutes, UnpaidBreakMinutes = e.UnpaidBreakMinutes, CrewSizeSnapshot = e.CrewSizeSnapshot, CertificationCode = e.CertificationCode, MileageKm = e.MileageKm, FuelDeductionLitres = e.FuelDeductionLitres,
+						AgencySuppliedMeals = e.AgencySuppliedMeals, AgencySuppliedAccommodation = e.AgencySuppliedAccommodation, Notes = e.Notes, SortOrder = e.SortOrder
+					});
+				}
+				return await OkAsync(await _timeTracking.SaveTimeEntriesAsync(input.TimeReportId, DepartmentId, entries, access, UserId, Ip, Agent, cancellationToken), access, department);
 			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
@@ -141,8 +185,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null) return BadRequest();
 			var report = await _timeTracking.GetTimeReportByIdAsync(input.Id, DepartmentId);
 			if (report == null) return NotFound();
-			if (!await CanTouchAsync(report.DeploymentId)) return Unauthorized();
-			try { return Ok(await _timeTracking.SubmitTimeReportAsync(input.Id, DepartmentId, UserId, Ip, Agent, cancellationToken)); }
+			var (_, access) = await AccessAsync(report.DeploymentId);
+			if (access == null || !access.CanActOn(report)) return Unauthorized();
+			try { return await OkAsync(await _timeTracking.SubmitTimeReportAsync(input.Id, DepartmentId, UserId, Ip, Agent, cancellationToken), access); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
 
@@ -153,7 +198,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await EnabledAsync()) return Failed<TimeReportResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			if (input == null) return BadRequest();
-			try { return Ok(await _timeTracking.ApproveTimeReportAsync(input.Id, DepartmentId, UserId, Ip, Agent, cancellationToken)); }
+			try
+			{
+				var approved = await _timeTracking.ApproveTimeReportAsync(input.Id, DepartmentId, UserId, Ip, Agent, cancellationToken);
+				var (_, access) = await AccessAsync(approved.DeploymentId);
+				return await OkAsync(approved, access);
+			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
 
@@ -164,10 +214,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<TimeReportResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			if (input == null) return BadRequest();
 			if (!CanApprove()) return Unauthorized();
-			try { return Ok(await _timeTracking.VoidTimeReportAsync(input.Id, DepartmentId, input.Reason, UserId, Ip, Agent, cancellationToken)); }
+			try
+			{
+				var voided = await _timeTracking.VoidTimeReportAsync(input.Id, DepartmentId, input.Reason, UserId, Ip, Agent, cancellationToken);
+				var (_, access) = await AccessAsync(voided.DeploymentId);
+				return await OkAsync(voided, access);
+			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
 
+		/// <summary>Crew boss / contractor signature (the acting user) and/or the customer signer's typed name.</summary>
 		[HttpPost("SignTimeReport")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<TimeReportResult>> SignTimeReport([FromBody] SignTimeReportInput input, CancellationToken cancellationToken)
@@ -176,8 +232,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null) return BadRequest();
 			var report = await _timeTracking.GetTimeReportByIdAsync(input.Id, DepartmentId);
 			if (report == null) return NotFound();
-			if (!await CanTouchAsync(report.DeploymentId)) return Unauthorized();
-			try { return Ok(await _timeTracking.SignTimeReportAsync(input.Id, DepartmentId, input.ContractorSigned, input.CustomerSignerName, UserId, Ip, Agent, cancellationToken)); }
+			var (_, access) = await AccessAsync(report.DeploymentId);
+			if (access == null || !access.CanActOn(report)) return Unauthorized();
+			try { return await OkAsync(await _timeTracking.SignTimeReportAsync(input.Id, DepartmentId, input.ContractorSigned, input.CustomerSignerName, UserId, Ip, Agent, cancellationToken), access); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Failed<TimeReportResult>(ex.Message); }
 		}
 
@@ -188,7 +245,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return StatusCode(StatusCodes.Status403Forbidden);
 			var report = await _timeTracking.GetTimeReportByIdAsync(id, DepartmentId);
 			if (report == null) return NotFound();
-			if (!await CanSeeAsync(report.DeploymentId)) return Unauthorized();
+			var (_, access) = await AccessAsync(report.DeploymentId);
+			if (!CanSee(access)) return Unauthorized();
 			try
 			{
 				var pdf = await _timeTracking.GetTimeReportPdfAsync(id, DepartmentId);
@@ -206,20 +264,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<ExpensesResult>> GetExpenses(string deploymentId)
 		{
 			if (!await EnabledAsync()) return Failed<ExpensesResult>("deployments_disabled", StatusCodes.Status403Forbidden);
-			if (!await CanSeeAsync(deploymentId)) return Unauthorized();
+			var (deployment, access) = await AccessAsync(deploymentId);
+			if (deployment == null) return NotFound();
+			if (!CanSee(access)) return Unauthorized();
 			var rows = await _timeTracking.GetExpensesAsync(deploymentId, DepartmentId);
 			var result = new ExpensesResult { Data = rows.Select(MapExpense).ToList(), PageSize = rows.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
 
+		/// <summary>A field member adds expenses on a deployment they may write time for and edits only the ones they added; managers edit any.</summary>
 		[HttpPost("SaveExpense")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<ExpenseResult>> SaveExpense([FromBody] SaveExpenseInput input, CancellationToken cancellationToken)
 		{
 			if (!await EnabledAsync()) return Failed<ExpenseResult>("deployments_disabled", StatusCodes.Status403Forbidden);
 			if (input == null || string.IsNullOrWhiteSpace(input.DeploymentId)) return BadRequest();
-			if (!await CanTouchAsync(input.DeploymentId)) return Unauthorized();
+			var (deployment, access) = await AccessAsync(input.DeploymentId);
+			if (deployment == null) return NotFound();
+			if (!access.CanWrite) return Unauthorized();
+			if (!access.CanManage)
+			{
+				if (!string.IsNullOrWhiteSpace(input.Id))
+				{
+					var existing = await _timeTracking.GetExpenseByIdAsync(input.Id, DepartmentId);
+					if (existing == null) return NotFound();
+					if (!string.Equals(existing.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase)) return Unauthorized();
+				}
+				if (!string.IsNullOrWhiteSpace(input.TimeReportId))
+				{
+					var linked = await _timeTracking.GetTimeReportByIdAsync(input.TimeReportId, DepartmentId);
+					if (linked == null) return NotFound();
+					if (!access.CanActOn(linked)) return Unauthorized();
+				}
+			}
 			byte[] receipt = null;
 			if (!string.IsNullOrWhiteSpace(input.ReceiptData))
 			{
@@ -251,7 +329,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await EnabledAsync()) return Failed<StandardApiResponseV4Base>("deployments_disabled", StatusCodes.Status403Forbidden);
 			var expense = await _timeTracking.GetExpenseByIdAsync(id, DepartmentId);
 			if (expense == null) return NotFound();
-			if (!await CanTouchAsync(expense.DeploymentId)) return Unauthorized();
+			var (_, access) = await AccessAsync(expense.DeploymentId);
+			if (access == null || !access.CanWrite) return Unauthorized();
+			if (!access.CanManage && !string.Equals(expense.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase)) return Unauthorized();
 			try
 			{
 				await _timeTracking.DeleteExpenseAsync(id, DepartmentId, UserId, Ip, Agent, cancellationToken);
@@ -266,18 +346,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		#region Mapping
 
-		private ActionResult<TimeReportResult> Ok(DeploymentTimeReport report)
+		/// <summary>A department-local wall clock wins when sent; otherwise the UTC instant (the converter already normalised it).</summary>
+		private static bool TryResolve(string local, DateTime utc, Department department, out DateTime value)
 		{
-			var result = new TimeReportResult { Data = Map(report), PageSize = 1, Status = ResponseHelper.Success };
+			value = utc;
+			if (string.IsNullOrWhiteSpace(local)) return utc != default;
+			if (!DateTime.TryParseExact(local.Trim(), LocalClockFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)) return false;
+			value = DateTime.SpecifyKind(parsed, DateTimeKind.Unspecified).DepartmentLocalToUtc(department);
+			return true;
+		}
+
+		private static string LocalClock(DateTime utc, Department department) => utc.TimeConverter(department ?? new Department()).ToString(LocalClockFormat, CultureInfo.InvariantCulture);
+
+		private async Task<ActionResult<TimeReportResult>> OkAsync(DeploymentTimeReport report, DeploymentTimeAccess access)
+		{
+			var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+			var result = new TimeReportResult { Data = Map(report, department, access), PageSize = 1, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
 
-		private ActionResult<TimeReportResult> Ok(TimeReportSaveResult save)
+		private async Task<ActionResult<TimeReportResult>> OkAsync(TimeReportSaveResult save, DeploymentTimeAccess access, Department department = null)
 		{
+			department ??= await _departments.GetDepartmentByIdAsync(DepartmentId);
 			var result = new TimeReportResult
 			{
-				Data = save.Report == null ? null : Map(save.Report),
+				Data = save.Report == null ? null : Map(save.Report, department, access),
 				Errors = save.Validation.Errors.Select(MapIssue).ToList(),
 				Warnings = save.Validation.Warnings.Select(MapIssue).ToList(),
 				PageSize = 1,
@@ -288,16 +382,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
-		internal static TimeReportData Map(DeploymentTimeReport r) => new TimeReportData
+		internal static TimeReportData Map(DeploymentTimeReport r, Department department = null, DeploymentTimeAccess access = null) => new TimeReportData
 		{
-			Id = r.DeploymentTimeReportId, DeploymentId = r.DeploymentId, ReportNumber = r.ReportNumber, ReportDate = r.ReportDate, Status = r.Status, IncidentNumber = r.IncidentNumber, ResourceOrderNumber = r.ResourceOrderNumber,
+			Id = r.DeploymentTimeReportId, DeploymentId = r.DeploymentId, ReportNumber = r.ReportNumber, ReportDate = r.ReportDate, Scope = (int)r.Scope, DeploymentUnitId = r.DeploymentUnitId, DeploymentPersonnelId = r.DeploymentPersonnelId,
+			CanAct = access?.CanActOn(r) ?? false, Status = r.Status, IncidentNumber = r.IncidentNumber, ResourceOrderNumber = r.ResourceOrderNumber,
 			RequestNumber = r.RequestNumber, CostCode = r.CostCode, PointOfHire = r.PointOfHire, NoClear8 = r.NoClear8, UnsafeConditionsStandDown = r.UnsafeConditionsStandDown, ContractorSignedByUserId = r.ContractorSignedByUserId,
 			ContractorSignedOn = r.ContractorSignedOn, CustomerSignerName = r.CustomerSignerName, CustomerSignedOn = r.CustomerSignedOn, SubmittedByUserId = r.SubmittedByUserId, SubmittedOn = r.SubmittedOn,
 			ApprovedByUserId = r.ApprovedByUserId, ApprovedOn = r.ApprovedOn, InvoiceId = r.InvoiceId, RmsExternalOrderFillId = r.RmsExternalOrderFillId, Notes = r.Notes, AddedOn = r.AddedOn, UpdatedOn = r.EditedOn ?? r.AddedOn,
-			Entries = r.Entries.Select(e => new TimeEntryData
+			Entries = (r.Entries ?? new List<DeploymentTimeEntry>()).Select(e => new TimeEntryData
 			{
 				Id = e.DeploymentTimeEntryId, SubjectType = e.SubjectType, DeploymentPersonnelId = e.DeploymentPersonnelId, DeploymentUnitId = e.DeploymentUnitId, DeploymentEquipmentId = e.DeploymentEquipmentId, EntryType = e.EntryType,
-				StartTime = e.StartTime, EndTime = e.EndTime, PaidBreakMinutes = e.PaidBreakMinutes, UnpaidBreakMinutes = e.UnpaidBreakMinutes, CrewSizeSnapshot = e.CrewSizeSnapshot, CertificationCode = e.CertificationCode, MileageKm = e.MileageKm,
+				StartTime = e.StartTime, EndTime = e.EndTime, StartLocal = LocalClock(e.StartTime, department), EndLocal = LocalClock(e.EndTime, department),
+				PaidBreakMinutes = e.PaidBreakMinutes, UnpaidBreakMinutes = e.UnpaidBreakMinutes, CrewSizeSnapshot = e.CrewSizeSnapshot, CertificationCode = e.CertificationCode, MileageKm = e.MileageKm,
 				FuelDeductionLitres = e.FuelDeductionLitres, AgencySuppliedMeals = e.AgencySuppliedMeals, AgencySuppliedAccommodation = e.AgencySuppliedAccommodation, Notes = e.Notes, SortOrder = e.SortOrder, Hours = e.Hours
 			}).ToList()
 		};
@@ -308,7 +404,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			Id = e.DeploymentExpenseId, DeploymentId = e.DeploymentId, TimeReportId = e.DeploymentTimeReportId, ExpenseDate = e.ExpenseDate, ExpenseType = e.ExpenseType, MealCode = e.MealCode, City = e.City,
 			Description = e.Description, Amount = e.Amount, Currency = e.Currency, PreApproved = e.PreApproved, Billable = e.Billable, ReceiptAttachmentId = e.ReceiptAttachmentId,
-			AddedOn = e.AddedOn, UpdatedOn = e.EditedOn ?? e.AddedOn
+			AddedByUserId = e.AddedByUserId, AddedOn = e.AddedOn, UpdatedOn = e.EditedOn ?? e.AddedOn
 		};
 
 		#endregion

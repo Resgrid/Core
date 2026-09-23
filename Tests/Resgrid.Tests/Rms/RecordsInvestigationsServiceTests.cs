@@ -84,6 +84,9 @@ namespace Resgrid.Tests.Rms
 			(await _h.InvestigationsService.GetCustodyChainAsync(Dept, Admin, evidence.RmsInvestigationEvidenceId)).Should().HaveCount(2);
 			Func<Task> noReason = () => _h.InvestigationsService.TransferCustodyAsync(Dept, Investigator, evidence.RmsInvestigationEvidenceId, Admin, null, "", RmsEvidenceState.InStorage);
 			await noReason.Should().ThrowAsync<ArgumentException>();
+			Func<Task> toOutsider = () => _h.InvestigationsService.TransferCustodyAsync(Dept, Investigator, evidence.RmsInvestigationEvidenceId, Outsider, null, "Hand-off", RmsEvidenceState.InStorage);
+			await toOutsider.Should().ThrowAsync<ArgumentException>("evidence is only handed to an active member");
+			(await _h.InvestigationsService.GetCustodyChainAsync(Dept, Admin, evidence.RmsInvestigationEvidenceId)).Should().HaveCount(2, "the refused hand-off left no link in the chain");
 
 			var referral = await _h.InvestigationsService.AddReferralAsync(Dept, Admin, caseId, "County Sheriff", "Possible incendiary", "SO-26-118");
 			await _h.InvestigationsService.UpdateReferralStateAsync(Dept, Investigator, referral.RmsInvestigationReferralId, RmsReferralState.Acknowledged);

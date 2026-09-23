@@ -43,7 +43,11 @@ namespace Resgrid.Model.Services
 
 		Task<string> GetUserIdForDeletedUserInDepartmentAsync(int departmentId, string email);
 
-		Task<DepartmentMember> ReactivateUserAsync(int departmentId, string userId,
+		/// <summary>
+		/// Brings a removed membership back: not deleted, disabled or hidden, and never an admin (admin standing is granted
+		/// again deliberately, not restored from the removed row). Audited as UserReactivated; null when there is no row.
+		/// </summary>
+		Task<DepartmentMember> ReactivateUserAsync(int departmentId, string userId, string reactivatingUserId,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<DepartmentMember> AddExistingUserAsync(int departmentId, string userId,
@@ -97,7 +101,21 @@ namespace Resgrid.Model.Services
 
 		Task<List<PersonName>> GetAllPersonnelNamesForDepartmentAsync(int departmentId);
 
+		/// <summary>
+		/// The names a person picker may offer: active members only (removed, disabled and hidden excluded), taken from the
+		/// unlimited roster and ordered by name. <see cref="GetAllPersonnelNamesForDepartmentAsync"/> still labels historical
+		/// rows and the value already stored on an edit form, which may belong to someone who has since gone inactive.
+		/// </summary>
+		Task<List<PersonName>> GetSelectablePersonnelNamesAsync(int departmentId);
+
+		/// <summary>The department's admins and managing user; removed and disabled memberships are excluded.</summary>
 		Task<List<IdentityUser>> GetAllAdminsForDepartmentAsync(int departmentId);
+
+		/// <summary>
+		/// <see cref="GetAllAdminsForDepartmentAsync"/> without hidden memberships either: the recipients of automated admin
+		/// digests and sweep notices (certifications, compliance documents, finance and MARS reminders, pay-data readiness).
+		/// </summary>
+		Task<List<IdentityUser>> GetActiveAdminsForDepartmentAsync(int departmentId);
 
 		Task<List<DepartmentMember>> GetAllMembersForDepartmentAsync(int departmentId);
 
@@ -144,6 +162,14 @@ namespace Resgrid.Model.Services
 		/// (no per-user round trips). Use to batch-validate membership before bulk operations.
 		/// </summary>
 		Task<HashSet<string>> GetMemberUserIdsInDepartmentAsync(int departmentId, IEnumerable<string> userIds);
+
+		/// <summary>
+		/// The user ids of the department's active members: deleted, disabled and hidden memberships are excluded.
+		/// Unlimited (never truncated to the plan's personnel limit) and read in one query, uncached. This is the set
+		/// automated sweeps, digests, notifications and personnel reports address; a stored user id (an assignee, a
+		/// certificate holder, a report subject) outside it belongs to someone who has left or been switched off.
+		/// </summary>
+		Task<HashSet<string>> GetActiveMemberUserIdsAsync(int departmentId);
 
 		Task<List<string>> GetAllDepartmentNamesAsync();
 

@@ -69,7 +69,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CanViewRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords),
 				PersonnelNames = await PersonnelNamesAsync()
 			};
-			model.Personnel = model.PersonnelNames.OrderBy(kvp => kvp.Value).Select(kvp => new SelectListItem { Value = kvp.Key, Text = kvp.Value }).ToList();
+			// The new-request assignee picker offers active members only; PersonnelNames still labels existing requests.
+			model.Personnel = (await _departmentsService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>()).Where(n => !string.IsNullOrWhiteSpace(n.UserId))
+				.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
 
 			if (moduleState.RecordsUsable)
 				model.Requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, 0, 200);

@@ -130,11 +130,70 @@ namespace Resgrid.Services.Invoicing
 		public async Task<List<Deployment>> GetDeploymentsForUserAsync(int departmentId, string userId, bool openOnly)
 		{
 			var rows = (await _personnel.GetForUserAsync(departmentId, userId))?.ToList() ?? new List<DeploymentPersonnel>();
-			if (rows.Count == 0) return new List<Deployment>();
-			var ids = rows.Select(r => r.DeploymentId).Distinct().ToList();
-			var deployments = (await _deployments.GetByIdsAsync(departmentId, ids))?.ToList() ?? new List<Deployment>();
+			var ids = rows.Select(r => r.DeploymentId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			// The crew seated on an apparatus (active unit roles) works that unit's deployments too, whether or not the
+			// deployment roster names them: that is how the Unit app's tablet reaches its Crew Time Report.
+			var seated = await SeatedUnitIdsAsync(departmentId, userId);
+			if (seated.Count > 0)
+				foreach (var unit in (await _units.GetForUnitsAsync(departmentId, seated))?.Where(u => u.IsActive) ?? Enumerable.Empty<DeploymentUnit>())
+					ids.Add(unit.DeploymentId);
+			if (ids.Count == 0) return new List<Deployment>();
+			var deployments = (await _deployments.GetByIdsAsync(departmentId, ids.ToList()))?.ToList() ?? new List<Deployment>();
 			await ResolveDeploymentsAsync(deployments, departmentId);
 			return openOnly ? deployments.Where(d => d.IsOpen).ToList() : deployments;
+		}
+
+		public async Task<bool> CanFieldMemberSeeAsync(string deploymentId, int departmentId, string userId)
+		{
+			if (string.IsNullOrWhiteSpace(deploymentId) || string.IsNullOrWhiteSpace(userId)) return false;
+			if (await IsRosteredAsync(deploymentId, departmentId, userId)) return true;
+			var seated = await SeatedUnitIdsAsync(departmentId, userId);
+			if (seated.Count == 0) return false;
+			var units = await _units.GetByDeploymentAsync(deploymentId);
+			return units != null && units.Any(u => u.DepartmentId == departmentId && u.IsActive && seated.Contains(u.UnitId));
+		}
+
+		public async Task<DeploymentTimeAccess> GetTimeAccessAsync(Deployment deployment, string userId, bool canManage)
+		{
+			var access = new DeploymentTimeAccess { CanManage = canManage };
+			if (deployment == null || string.IsNullOrWhiteSpace(userId)) return access;
+			bool Mine(DeploymentPersonnel p) => string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase);
+
+			access.IsRostered = deployment.Personnel.Any(Mine);
+			var own = deployment.Personnel.Where(p => p.IsActive && Mine(p)).ToList();
+			access.PersonnelId = own.FirstOrDefault()?.DeploymentPersonnelId;
+			foreach (var row in own) access.WritableSubjectIds.Add(row.DeploymentPersonnelId);
+
+			var activeUnits = deployment.Units.Where(u => u.IsActive).ToList();
+			if (activeUnits.Count == 0) return access;
+			var crewed = own.Where(p => !string.IsNullOrWhiteSpace(p.DeploymentUnitId)).Select(p => p.DeploymentUnitId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			var seated = await SeatedUnitIdsAsync(deployment.DepartmentId, userId);
+			foreach (var unit in activeUnits.Where(u => crewed.Contains(u.DeploymentUnitId) || seated.Contains(u.UnitId)))
+			{
+				access.CrewUnitIds.Add(unit.DeploymentUnitId);
+				access.WritableSubjectIds.Add(unit.DeploymentUnitId);
+				// Removed crew stay writable for the crew report: a member released mid-shift still worked the first half of it.
+				foreach (var member in deployment.Personnel.Where(p => string.Equals(p.DeploymentUnitId, unit.DeploymentUnitId, StringComparison.OrdinalIgnoreCase)))
+					access.WritableSubjectIds.Add(member.DeploymentPersonnelId);
+				foreach (var item in deployment.Equipment.Where(e => string.Equals(e.DeploymentUnitId, unit.DeploymentUnitId, StringComparison.OrdinalIgnoreCase)))
+					access.WritableSubjectIds.Add(item.DeploymentEquipmentId);
+			}
+			return access;
+		}
+
+		/// <summary>Units the member is seated on right now (active unit roles). A lookup failure seats them nowhere rather than failing the read.</summary>
+		private async Task<HashSet<int>> SeatedUnitIdsAsync(int departmentId, string userId)
+		{
+			try
+			{
+				var roles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(departmentId);
+				return roles?.Where(r => r != null && string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase)).Select(r => r.UnitId).ToHashSet() ?? new HashSet<int>();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return new HashSet<int>();
+			}
 		}
 
 		public async Task<List<Deployment>> GetCostRecoveryDeploymentsReleasedBeforeAsync(int departmentId, DateTime releasedOnOrBeforeUtc)

@@ -140,6 +140,15 @@
   <data name="ExistingUserHelp2" xml:space="preserve">
     <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
   </data>
+  <data name="AddExistingUserConfirmHeader" xml:space="preserve">
+    <value>Dodaj istniejącego użytkownika</value>
+  </data>
+  <data name="ExistingUserConfirmText" xml:space="preserve">
+    <value>, na podstawie adresu e-mail, ma już konto Resgrid w innym oddziale. Dodanie przenosi to konto do tego oddziału z istniejącymi ustawieniami profilu (imię i nazwisko, numery telefonów, preferencje). Osoba dołącza jako zwykły członek i zobaczy ten oddział po przełączeniu się na niego przez "Twoje oddziały" w menu profilu.</value>
+  </data>
+  <data name="AddExistingUserButton" xml:space="preserve">
+    <value>Dodaj do oddziału</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Imię</value>
   </data>
@@ -247,6 +256,12 @@
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
     <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+  </data>
+  <data name="ReactivatePersonConfirmText" xml:space="preserve">
+    <value>oddziale, ale został usunięty. Ponowna aktywacja przywraca konto w tym oddziale z poprzednimi ustawieniami profilu (imię i nazwisko, numery telefonów, preferencje). Osoba wraca jako zwykły członek; w razie potrzeby uprawnienia administratora należy nadać ponownie osobno.</value>
+  </data>
+  <data name="ReactivatePersonButton" xml:space="preserve">
+    <value>Aktywuj ponownie</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
     <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>

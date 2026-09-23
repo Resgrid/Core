@@ -629,6 +629,7 @@
   <data name="M5AlertType1" xml:space="preserve"><value>Λήγει σύντομα</value></data>
   <data name="M5AlertType2" xml:space="preserve"><value>Έχει λήξει</value></data>
   <data name="M5AlertType3" xml:space="preserve"><value>Εκπρόθεσμη επιστροφή</value></data>
+  <data name="M5AlertType4" xml:space="preserve"><value>Σε κατοχή μέλους που αποχώρησε</value></data>
   <data name="M5Open" xml:space="preserve"><value>Ανοιχτή</value></data>
   <data name="M5Resolved" xml:space="preserve"><value>Επιλύθηκε</value></data>
   <data name="M5DueOn" xml:space="preserve"><value>Προθεσμία (UTC)</value></data>
@@ -699,6 +700,7 @@
   <data name="InventoryExpiring" xml:space="preserve"><value>Λήξη αποθέματος σύντομα</value></data>
   <data name="InventoryCountCompleted" xml:space="preserve"><value>Ολοκλήρωση απογραφής</value></data>
   <data name="InventoryReturnOverdue" xml:space="preserve"><value>Εκπρόθεσμη επιστροφή εξοπλισμού</value></data>
+  <data name="InventoryDepartedHolder" xml:space="preserve"><value>Εξοπλισμός σε κατοχή μέλους που αποχώρησε</value></data>
   <data name="HolderHistoryRetained" xml:space="preserve"><value>Αυτός ο πόρος αναφέρεται στο ιστορικό αποθέματος και πρέπει να διατηρηθεί.</value></data>
   <data name="InventoryAdjusted" xml:space="preserve"><value>Το απόθεμα προσαρμόστηκε</value></data>
   <data name="InventoryTransferCompleted" xml:space="preserve"><value>Η μεταφορά αποθέματος ολοκληρώθηκε</value></data>

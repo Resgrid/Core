@@ -29,6 +29,10 @@ namespace Resgrid.Model.Services
 		/// <summary>Header rows for the ids (no roster), for a batched existence / ownership check such as search authorization.</summary>
 		Task<List<Deployment>> GetDeploymentsByIdsAsync(int departmentId, IEnumerable<string> deploymentIds);
 		Task<bool> IsRosteredAsync(string deploymentId, int departmentId, string userId);
+		/// <summary>The field member's read scope: rostered (now or before), or seated on a unit (active unit role) that is actively deployed on it.</summary>
+		Task<bool> CanFieldMemberSeeAsync(string deploymentId, int departmentId, string userId);
+		/// <summary>What the member may do with the deployment's time (M0227): own roster row, crewed units and the subjects they may write. Managers write everything.</summary>
+		Task<DeploymentTimeAccess> GetTimeAccessAsync(Deployment deployment, string userId, bool canManage);
 
 		Task<Deployment> SaveDeploymentAsync(Deployment deployment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Planned→Standby→Active→Demobilizing→Completed, Cancelled from any open state; Completed/Cancelled are terminal.</summary>

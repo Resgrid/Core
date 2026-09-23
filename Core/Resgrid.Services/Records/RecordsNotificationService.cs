@@ -48,11 +48,16 @@ namespace Resgrid.Services.Records
 			if (record == null || record.State != (int)RmsRecordState.Returned || string.IsNullOrWhiteSpace(record.AuthorUserId))
 				return false;
 
+			// The author, or the owner the record was handed to once the author left.
+			var targetUserId = await FirstActiveMemberAsync(departmentId, record.AuthorUserId, record.OwnerUserId);
+			if (targetUserId == null)
+				return false;
+
 			cancellationToken.ThrowIfCancellationRequested();
 
 			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
 			var departmentNumber = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(departmentId);
-			var author = await _profiles.GetProfileByUserIdAsync(record.AuthorUserId, false);
+			var author = await _profiles.GetProfileByUserIdAsync(targetUserId, false);
 			var reviewer = string.IsNullOrWhiteSpace(record.ReviewerUserId) ? null : await _profiles.GetProfileByUserIdAsync(record.ReviewerUserId, false);
 			var reviewerName = reviewer == null ? null : $"{reviewer.FirstName} {reviewer.LastName}".Trim();
 
@@ -60,7 +65,7 @@ namespace Resgrid.Services.Records
 
 			try
 			{
-				return await _communication.SendNotificationAsync(record.AuthorUserId, departmentId, message, departmentNumber, department, ReturnedForCorrectionTitle, author);
+				return await _communication.SendNotificationAsync(targetUserId, departmentId, message, departmentNumber, department, ReturnedForCorrectionTitle, author);
 			}
 			catch (Exception ex)
 			{
@@ -78,15 +83,19 @@ namespace Resgrid.Services.Records
 			if (report == null || report.State != (int)RmsRecordState.Rejected || string.IsNullOrWhiteSpace(report.AuthorUserId))
 				return false;
 
+			var targetUserId = await FirstActiveMemberAsync(departmentId, report.AuthorUserId, report.OwnerUserId);
+			if (targetUserId == null)
+				return false;
+
 			cancellationToken.ThrowIfCancellationRequested();
 			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
 			var departmentNumber = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(departmentId);
-			var author = await _profiles.GetProfileByUserIdAsync(report.AuthorUserId, false);
+			var author = await _profiles.GetProfileByUserIdAsync(targetUserId, false);
 			var message = BuildSubmissionRejectedMessage(report);
 
 			try
 			{
-				return await _communication.SendNotificationAsync(report.AuthorUserId, departmentId, message, departmentNumber, department, SubmissionRejectedTitle, author);
+				return await _communication.SendNotificationAsync(targetUserId, departmentId, message, departmentNumber, department, SubmissionRejectedTitle, author);
 			}
 			catch (Exception ex)
 			{
@@ -109,7 +118,7 @@ namespace Resgrid.Services.Records
 			{
 				reference = string.IsNullOrWhiteSpace(record.RecordNumber) ? record.DraftReference : record.RecordNumber;
 				dueOn = record.ReviewDueOn;
-				targetUserId = ResponsibleFor(obligation, record.ReviewerUserId, record.OwnerUserId, record.AuthorUserId);
+				targetUserId = await ResponsibleForAsync(departmentId, obligation, record.ReviewerUserId, record.OwnerUserId, record.AuthorUserId);
 				detailPath = "/User/Records/Details/";
 			}
 			else
@@ -120,7 +129,7 @@ namespace Resgrid.Services.Records
 
 				reference = string.IsNullOrWhiteSpace(report.RecordNumber) ? report.DraftReference : report.RecordNumber;
 				dueOn = report.ReviewDueOn;
-				targetUserId = ResponsibleFor(obligation, report.ReviewerUserId, report.OwnerUserId, report.AuthorUserId);
+				targetUserId = await ResponsibleForAsync(departmentId, obligation, report.ReviewerUserId, report.OwnerUserId, report.AuthorUserId);
 				detailPath = "/User/IncidentReports/Details/";
 			}
 
@@ -144,13 +153,30 @@ namespace Resgrid.Services.Records
 			}
 		}
 
-		/// <summary>A review rests with the reviewer; a correction or a resubmission rests with the owner, else the author.</summary>
-		private static string ResponsibleFor(RmsRecordObligation obligation, string reviewerUserId, string ownerUserId, string authorUserId)
-		{
-			if (obligation == RmsRecordObligation.Review && !string.IsNullOrWhiteSpace(reviewerUserId))
-				return reviewerUserId;
+		/// <summary>
+		/// A review rests with the reviewer; a correction or a resubmission rests with the owner, else the author. Whoever of
+		/// them has been removed, disabled or hidden is passed over for the next in line, so an obligation left with someone
+		/// who has gone still reaches the record's remaining owner or author rather than disappearing at delivery.
+		/// </summary>
+		private Task<string> ResponsibleForAsync(int departmentId, RmsRecordObligation obligation, string reviewerUserId, string ownerUserId, string authorUserId)
+			=> obligation == RmsRecordObligation.Review
+				? FirstActiveMemberAsync(departmentId, reviewerUserId, ownerUserId, authorUserId)
+				: FirstActiveMemberAsync(departmentId, ownerUserId, authorUserId);
 
-			return string.IsNullOrWhiteSpace(ownerUserId) ? authorUserId : ownerUserId;
+		/// <summary>The first candidate who is an active member of the department (removed, disabled and hidden members are never notified); null when none is.</summary>
+		private async Task<string> FirstActiveMemberAsync(int departmentId, params string[] candidates)
+		{
+			var active = await _departments.GetActiveMemberUserIdsAsync(departmentId);
+			if (active == null)
+				return null;
+
+			foreach (var candidate in candidates)
+			{
+				if (!string.IsNullOrWhiteSpace(candidate) && active.Contains(candidate))
+					return candidate;
+			}
+
+			return null;
 		}
 
 		public static string BuildObligationOverdueMessage(string reference, RmsRecordObligation obligation, DateTime? dueOn, string detailPath)

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Localization;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Inventories;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -36,7 +37,8 @@ namespace Resgrid.Services
 		{
 			ct.ThrowIfCancellationRequested();
 			var members = await _departments.GetAllMembersForDepartmentUnlimitedAsync(departmentId, true);
-			var users = members.Where(m => m.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true && !string.IsNullOrWhiteSpace(m.UserId))
+			// Alert pushes reach active members only; removed, disabled and hidden members are never claimed for.
+			var users = members.Where(m => DepartmentMemberStateHelper.IsActiveMember(m, departmentId))
 				.Select(m => m.UserId).Distinct(StringComparer.Ordinal).OrderBy(id => id, StringComparer.Ordinal).ToList();
 			var handedOff = 0; var failed = false;
 			foreach (var user in users)

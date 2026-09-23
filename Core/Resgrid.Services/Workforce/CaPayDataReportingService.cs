@@ -622,7 +622,7 @@ namespace Resgrid.Services.Workforce
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 				var number = _departmentSettings?.Value == null ? null : await _departmentSettings.Value.GetTextToCallNumberForDepartmentAsync(departmentId);
 				// Permission 77 defaults to department administrators; the digest goes to them (a narrower assignment still includes admins).
-				foreach (var admin in await _departmentsService.GetAllAdminsForDepartmentAsync(departmentId))
+				foreach (var admin in await _departmentsService.GetActiveAdminsForDepartmentAsync(departmentId))
 					await _communication.Value.SendNotificationAsync(admin.UserId, departmentId, message, number, department, "Pay Data Reporting");
 			}
 			catch (Exception ex) { Logging.LogException(ex, $"Pay data readiness digest could not be sent for department {departmentId}."); }

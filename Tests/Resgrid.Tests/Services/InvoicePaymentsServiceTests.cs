@@ -94,6 +94,7 @@ namespace Resgrid.Tests.Services
 			_access.Setup(a => a.CanUseInvoicingAsync(Dept)).ReturnsAsync(true);
 			_departments = new Mock<IDepartmentsService>();
 			_departments.Setup(d => d.GetAllAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<Model.Identity.IdentityUser> { new Model.Identity.IdentityUser { Id = "admin", UserName = "chief", Email = "chief@example.test" } });
+			_departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<Model.Identity.IdentityUser> { new Model.Identity.IdentityUser { Id = "admin", UserName = "chief", Email = "chief@example.test" } });
 			_departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, Name = "Test Fire" });
 			_email = new Mock<IEmailService>();
 			_email.Setup(e => e.SendNotificationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<UserProfile>())).ReturnsAsync(true);

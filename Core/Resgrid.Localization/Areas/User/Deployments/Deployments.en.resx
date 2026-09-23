@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Add member</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>The member does not meet the seat's requirements. Tick "Seat even when a requirement fails" to override.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>New time report</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>One report per day; entries are prefilled from the roster.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>One report per day for each crew or person; entries are prefilled from the roster.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>No time reports yet.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Report date</value></data>
   <data name="Submitted" xml:space="preserve"><value>Submitted</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Every resource must return home before the deployment can be completed.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>View manifest</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Export resource CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Covers</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Whole deployment</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Crew: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Individual: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>A time entry is for someone outside this report's crew or person</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>This subject already has time on another report for the same day</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>That crew or person is not active on this deployment.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>That crew or person already has time on another report for this day.</value></data>
 </root>

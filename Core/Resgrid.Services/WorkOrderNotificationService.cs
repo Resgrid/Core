@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Localization;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
@@ -27,6 +28,13 @@ namespace Resgrid.Services
 		public WorkOrderNotificationService(IWorkOrderRepository orders, IWorkOrderAuthorizationService authorization, IReadinessAccessService access, IUnitOfWork uow,
 			ICommunicationService communication, IDepartmentsService departments, IDepartmentSettingsService settings, IUserProfileService profiles)
 		{ _orders = orders; _authorization = authorization; _access = access; _uow = uow; _communication = communication; _departments = departments; _settings = settings; _profiles = profiles; }
+		/// <summary>
+		/// Push event code that opens the work order when the Responder app's notification is tapped. The
+		/// leading "N" keeps it on the notifications channel/category (not calls), and app builds that predate
+		/// work orders read the unmapped "n" prefix as an ordinary notification instead of misrouting it. The
+		/// id is routing metadata only: the app loads the order through the authorized v4 read.
+		/// </summary>
+		public static string PushEventCode(string workOrderId) => "NWO:" + workOrderId;
 		private async Task<T> TransactionAsync<T>(int departmentId, Func<Task<T>> action)
 		{
 			if (_uow.Transaction != null) throw new InvalidOperationException("Work-order notification claims own their transaction.");
@@ -60,7 +68,7 @@ namespace Resgrid.Services
 					var workOrderNumber = FormattableString.Invariant($"WO-{current.NumberYear}-{current.NumberSequence:D6}");
 					var handedOff = await _communication.SendNotificationAsync(user, entry.DepartmentId,
 						workOrderNumber + ": " + Strings.GetString("NotificationMessage", culture),
-						number, department, Strings.GetString("NotificationTitle", culture), profile);
+						number, department, Strings.GetString("NotificationTitle", culture), profile, false, PushEventCode(current.Id));
 					await FinishAsync(notice, handedOff ? 2 : 3);
 				}
 				catch (Exception ex)
@@ -76,7 +84,8 @@ namespace Resgrid.Services
 		private async Task<bool> IsRecipientAsync(int departmentId, WorkOrder row, string user, bool managerNotice = false)
 		{
 			var member = await _departments.GetDepartmentMemberAsync(user, departmentId, true);
-			if (member?.DepartmentId != departmentId || member.IsDeleted || member.IsDisabled == true) return false;
+			// Removed, disabled and hidden members are never notified, whatever their assignment or role.
+			if (!DepartmentMemberStateHelper.IsActiveMember(member, departmentId)) return false;
 			if (row.CreatedBy == user) return true;
 			var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = departmentId, UserId = user };
 			if ((managerNotice || row.Status is 0 or 1) && await _authorization.CanManageAsync(actor, row.TargetGroupId)) return true;
@@ -91,7 +100,7 @@ namespace Resgrid.Services
             if (row.EscalatedOn.HasValue && row.EscalationRoleId.HasValue)
                 result.UnionWith(await _authorization.RecipientsAsync(departmentId, new WorkOrder { DepartmentId = departmentId, AssignedToRoleId = row.EscalationRoleId }));
             var members = await _departments.GetAllMembersForDepartmentUnlimitedAsync(departmentId, true);
-            foreach (var member in members.Where(m => m.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true))
+            foreach (var member in members.Where(m => DepartmentMemberStateHelper.IsActiveMember(m, departmentId)))
             {
                 var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = departmentId, UserId = member.UserId };
                 if (member.UserId == row.CreatedBy || (managerNotice || row.Status is 0 or 1) && await _authorization.CanManageAsync(actor, row.TargetGroupId))

@@ -21,7 +21,10 @@ namespace Resgrid.Services
 			await RequireWriteAsync(actor); ReportRange(query);
 			var asOf = _clock.GetUtcNow().UtcDateTime;
 			var summary = new ChecklistComplianceSummary { FromUtc = query.FromUtc, UntilUtc = query.UntilUtc, AsOfUtc = asOf, TargetType = query.TargetType, TargetId = query.TargetId };
-			summary.Entries = await ReportEntriesAsync(actor, query, asOf, summary.UnavailableSources);
+			// Personnel checks of deleted, disabled or hidden members are not counted or listed (the compliance report, its CSV and
+			// scheduled delivery, and the readiness dashboard all read this summary). The entity history keeps them on file.
+			var activePersonnel = await _authorization.ActiveMemberIdsAsync(actor.DepartmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			summary.Entries = await ReportEntriesAsync(actor, query, asOf, summary.UnavailableSources, activePersonnel: activePersonnel);
 			summary.Groups = summary.Entries.GroupBy(e => (e.Target.Type, e.Target.Id)).Select(g => new ChecklistComplianceGroup
 			{
 				Target = g.Last().Target, Expected = g.Count(e => e.Expected), Completed = g.Count(e => e.Expected && e.Completed),
@@ -40,7 +43,7 @@ namespace Resgrid.Services
 			return await ReportEntriesAsync(actor, query, _clock.GetUtcNow().UtcDateTime, new List<string>());
 		}
 		private async Task<List<ChecklistReportEntry>> ReportEntriesAsync(ChecklistActor actor, ChecklistReportQuery query, DateTime asOf, List<string> unavailable,
-			HashSet<(ChecklistTargetType, string)> targets = null)
+			HashSet<(ChecklistTargetType, string)> targets = null, HashSet<string> activePersonnel = null)
 		{
 			var result = new List<ChecklistReportEntry>();
 			var versions = new Dictionary<string, ChecklistDefinitionVersion>();
@@ -53,7 +56,8 @@ namespace Resgrid.Services
 				{
 					var type = (ChecklistTargetType)occurrence.TargetType;
 					if (occurrence.DepartmentId != actor.DepartmentId || query.TargetType.HasValue && query.TargetType != type || query.TargetId != null && query.TargetId != occurrence.TargetId
-						|| targets != null && !targets.Contains((type, occurrence.TargetId))) continue;
+						|| targets != null && !targets.Contains((type, occurrence.TargetId))
+						|| activePersonnel != null && type == ChecklistTargetType.Personnel && (occurrence.TargetId == null || !activePersonnel.Contains(occurrence.TargetId))) continue;
 					var completion = occurrence.CompletionId == null ? null : await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, occurrence.CompletionId);
 					ChecklistSchedule schedule = null;
 					if (occurrence.ScheduleId != null && !schedules.TryGetValue(occurrence.ScheduleId, out schedule))

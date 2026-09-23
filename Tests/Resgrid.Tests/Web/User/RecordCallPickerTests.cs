@@ -162,7 +162,7 @@ namespace Resgrid.Tests.Web.User
 			var localizer = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records>>();
 			localizer.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 			return new RecordInvestigationsController(investigations, occupancies.Object, Mock.Of<IUserProfileService>(), _cutover.Object,
-				flags.Object, localizer.Object, _calls.Object, _authorization.Object) { ControllerContext = new ControllerContext { HttpContext = _http }, TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>()) };
+				flags.Object, localizer.Object, _calls.Object, _authorization.Object, Mock.Of<IDepartmentsService>()) { ControllerContext = new ControllerContext { HttpContext = _http }, TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>()) };
 		}
 
 		[TestCase(false)] [TestCase(true)]

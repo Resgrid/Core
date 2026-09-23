@@ -68,6 +68,9 @@ namespace Resgrid.Services.Records
 			if (request == null) throw new ArgumentNullException(nameof(request));
 			if (string.IsNullOrWhiteSpace(request.RequesterName))
 				throw new ArgumentException("A requester is required.", nameof(request));
+			request.AssignedToUserId = Blank(request.AssignedToUserId);
+			if (request.AssignedToUserId != null && !await _authorization.IsAssignableMemberAsync(request.AssignedToUserId, departmentId))
+				throw new ArgumentException("The assignee must be an active member of the department.", nameof(request));
 
 			var config = await SafeConfigAsync(departmentId);
 			var now = DateTime.UtcNow;

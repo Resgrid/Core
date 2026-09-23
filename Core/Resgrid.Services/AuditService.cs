@@ -248,6 +248,8 @@ namespace Resgrid.Services
 				return "Moderation Request Completed";
 			case AuditLogTypes.ModerationEvidenceDownloaded:
 				return "Moderation Evidence Downloaded";
+			case AuditLogTypes.UserReactivated:
+				return "User Reactivated";
 		}
 
 			return $"Unknown ({logType})";

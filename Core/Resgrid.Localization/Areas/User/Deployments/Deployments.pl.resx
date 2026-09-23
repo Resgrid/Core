@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Dodaj członka</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Członek nie spełnia wymagań stanowiska. Zaznacz „Przydziel nawet gdy wymaganie nie jest spełnione”, aby wymusić.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Nowy raport czasu</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Jeden raport dziennie; wpisy są wypełniane z obsady.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Jeden raport dziennie dla każdej załogi lub osoby; wpisy są wstępnie wypełniane ze składu.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Brak raportów czasu.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Data raportu</value></data>
   <data name="Submitted" xml:space="preserve"><value>Przesłano</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Wszystkie zasoby muszą wrócić do bazy przed zakończeniem działań.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Wyświetl wykaz</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Eksportuj zasoby CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Obejmuje</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Całe rozmieszczenie</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Załoga: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Indywidualny: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Wpis czasu dotyczy kogoś spoza załogi lub osoby tego raportu</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Ten podmiot ma już czas w innym raporcie z tego samego dnia</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Ta załoga lub osoba nie jest aktywna w tym rozmieszczeniu.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Ta załoga lub osoba ma już czas w innym raporcie z tego dnia.</value></data>
 </root>

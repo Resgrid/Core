@@ -24,10 +24,22 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Allocates the next report number, copies the deployment's agency identifiers and prefills one Deployment entry per active roster subject (prior report's times when one exists).</summary>
 		Task<DeploymentTimeReport> CreateTimeReportAsync(string deploymentId, int departmentId, DateTime reportDate, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// A scoped report (M0227): <paramref name="deploymentUnitId"/> makes it that unit's Crew Time Report (the unit, its crew and its
+		/// equipment), <paramref name="deploymentPersonnelId"/> one person's own report; both null is the deployment-wide DTR. One live
+		/// report per scope per day; subjects already on another live report that day are not prefilled (timereports_subject_covered
+		/// when the scope's own unit or person is).
+		/// </summary>
+		Task<DeploymentTimeReport> CreateTimeReportAsync(string deploymentId, int departmentId, DateTime reportDate, string deploymentUnitId, string deploymentPersonnelId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Header fields only (flags, notes, identifiers); entries go through <see cref="SaveTimeEntriesAsync"/>.</summary>
 		Task<DeploymentTimeReport> UpdateTimeReportAsync(DeploymentTimeReport report, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Replaces the report's entries as a batch after validation; errors leave the stored entries untouched.</summary>
 		Task<TimeReportSaveResult> SaveTimeEntriesAsync(string deploymentTimeReportId, int departmentId, List<DeploymentTimeEntry> entries, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// The scoped save: for a caller who does not manage deployments only the subjects in <paramref name="access"/> are replaced;
+		/// every other subject's stored entries are kept untouched (never deleted), so concurrent crews cannot erase each other.
+		/// </summary>
+		Task<TimeReportSaveResult> SaveTimeEntriesAsync(string deploymentTimeReportId, int departmentId, List<DeploymentTimeEntry> entries, DeploymentTimeAccess access, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		TimeReportValidation Validate(DeploymentTimeReport report, IReadOnlyList<DeploymentTimeEntry> entries, IReadOnlyCollection<string> rosterSubjectIds);
 
 		Task<TimeReportSaveResult> SubmitTimeReportAsync(string deploymentTimeReportId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);

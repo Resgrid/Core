@@ -33,6 +33,33 @@ namespace Resgrid.Tests.Services
             return (input, clock);
         }
         [Test]
+        public async Task A_schedule_assigned_to_a_member_who_has_left_is_held_suspended_and_resumes_without_back_filled_misses()
+        {
+            var clock = new ScheduleClock(); var departed = false;
+            var assignments = new Mock<IChecklistAssignmentService>();
+            assignments.Setup(a => a.ValidateAsync(77, (int)ChecklistAssignmentType.User, "assignee"))
+                .Returns(() => departed ? Task.FromException(new ChecklistException(400, "AssignmentUnavailable")) : Task.CompletedTask);
+            _service = new ChecklistsService(_store, _authorization.Object, _access.Object, _uow.Object, _audits.Object, _outbox.Object,
+                new Lazy<IProtectedReadService>(() => _read.Object), new Lazy<IProtectedWriteService>(() => _write.Object), _scanner.Object, clock, assignments.Object);
+            var definition = await _service.SaveDefinitionAsync(_actor, null, 0, Form());
+            await _service.PublishAsync(_actor, definition, 1);
+            await _service.SaveScheduleAsync(_actor, new ChecklistScheduleInput { DefinitionId = definition, Name = "Personal check", TargetId = "77", StartDate = clock.Now.Date,
+                AssignmentType = (int)ChecklistAssignmentType.User, AssignmentId = "assignee" });
+
+            departed = true;
+            (await _service.SweepSchedulesAsync(clock.Now.UtcDateTime)).Generated.Should().Be(0);
+            (await _store.ListAsync<ChecklistSchedule>(77)).Single().IsSuspended.Should().BeTrue("nobody can perform a check assigned to someone who has left");
+            clock.Now = clock.Now.AddDays(3);
+            var held = await _service.SweepSchedulesAsync(clock.Now.UtcDateTime);
+            held.Generated.Should().Be(0); held.Missed.Should().Be(0);
+            _events.Should().NotContain(e => e.Trigger == WorkflowTriggerEventType.ChecklistMissed);
+
+            departed = false;
+            var resumed = await _service.SweepSchedulesAsync(clock.Now.UtcDateTime);
+            resumed.Generated.Should().BeGreaterThan(0); resumed.Missed.Should().Be(0, "the suspended days are not back-filled as missed");
+            (await _store.ListAsync<ChecklistSchedule>(77)).Single().IsSuspended.Should().BeFalse();
+        }
+        [Test]
         public async Task Scheduling_pins_versions_and_generates_once_without_decrypting_or_copying_content()
         {
             var setup = await Scheduled();

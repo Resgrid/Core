@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Ajouter un membre</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Le membre ne remplit pas les exigences du poste. Cochez « Affecter même si une exigence échoue » pour passer outre.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Nouveau rapport de temps</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Un rapport par jour ; les entrées sont pré-remplies depuis l'effectif.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Un rapport par jour pour chaque équipage ou personne ; les entrées sont pré-remplies depuis l'effectif.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Aucun rapport de temps pour l'instant.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Date du rapport</value></data>
   <data name="Submitted" xml:space="preserve"><value>Soumis</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Toutes les ressources doivent être rentrées à leur base avant de terminer le déploiement.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Voir le manifeste</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Exporter les ressources CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Couvre</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Tout le déploiement</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Équipage : {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Individuel : {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Une entrée de temps concerne quelqu'un hors de l'équipage ou de la personne de ce rapport</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Ce sujet a déjà du temps sur un autre rapport pour la même journée</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Cet équipage ou cette personne n'est pas actif sur ce déploiement.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Cet équipage ou cette personne a déjà du temps sur un autre rapport pour cette journée.</value></data>
 </root>

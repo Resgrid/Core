@@ -20,6 +20,7 @@ namespace Resgrid.Workers.Framework.Logic
 		private IPdfProvider _pdfProvider;
 		private IChecklistScheduledReportService _checklistReports;
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
+		private readonly IDepartmentsService _departments;
 
 		public ReportDeliveryLogic()
 		{
@@ -28,12 +29,29 @@ namespace Resgrid.Workers.Framework.Logic
 			_pdfProvider = Bootstrapper.GetKernel().Resolve<IPdfProvider>();
 			_checklistReports = Bootstrapper.GetKernel().Resolve<IChecklistScheduledReportService>();
 			_businessOperationsAccess = Bootstrapper.GetKernel().Resolve<IBusinessOperationsAccessService>();
+			_departments = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 		}
-		public ReportDeliveryLogic(IScheduledTasksService tasks, IEmailService email, IPdfProvider pdf, IChecklistScheduledReportService checklistReports, IBusinessOperationsAccessService businessOperationsAccess)
-		{ _scheduledTasksService = tasks; _emailService = email; _pdfProvider = pdf; _checklistReports = checklistReports; _businessOperationsAccess = businessOperationsAccess; }
+		public ReportDeliveryLogic(IScheduledTasksService tasks, IEmailService email, IPdfProvider pdf, IChecklistScheduledReportService checklistReports, IBusinessOperationsAccessService businessOperationsAccess, IDepartmentsService departments = null)
+		{ _scheduledTasksService = tasks; _emailService = email; _pdfProvider = pdf; _checklistReports = checklistReports; _businessOperationsAccess = businessOperationsAccess; _departments = departments; }
 
 		public async Task<Tuple<bool, string>> Process(ReportDeliveryQueueItem item)
 		{
+			// A scheduled report is department data mailed to its subscriber. A subscriber who has been removed, disabled or
+			// hidden no longer receives it, whatever the report type; the occurrence is logged so it is not retried.
+			if (item?.ScheduledTask != null && _departments != null)
+			{
+				try
+				{
+					var member = string.IsNullOrWhiteSpace(item.ScheduledTask.UserId) ? null : await _departments.GetDepartmentMemberAsync(item.ScheduledTask.UserId, item.ScheduledTask.DepartmentId, true);
+					if (!DepartmentMemberStateHelper.IsActiveMember(member, item.ScheduledTask.DepartmentId))
+					{
+						await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
+						return Tuple.Create(true, "Report subscriber is not an active department member.");
+					}
+				}
+				catch (Exception ex) { Logging.LogException(ex); return Tuple.Create(false, "Report subscriber membership could not be verified."); }
+			}
+
 			if (item?.ScheduledTask?.Data is "6" or "7" or "8" or "9" or "10" or "11" or "12" or "13")
 			{
 				try

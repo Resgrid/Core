@@ -68,6 +68,23 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public List<DeploymentUnitData> Units { get; set; } = new List<DeploymentUnitData>();
 		public List<DeploymentPersonnelData> Personnel { get; set; } = new List<DeploymentPersonnelData>();
 		public List<DeploymentEquipmentData> Equipment { get; set; } = new List<DeploymentEquipmentData>();
+		/// <summary>What the caller may do with this deployment's time (detail reads only; null on list rows).</summary>
+		public DeploymentTimeAccessData TimeAccess { get; set; }
+	}
+
+	/// <summary>
+	/// The caller's time scope on one deployment (M0227), computed by the server so a field app never infers it: their own
+	/// roster row (individual report), the deployed units they crew (crew time report) and every subject id they may write.
+	/// </summary>
+	public class DeploymentTimeAccessData
+	{
+		public bool CanManage { get; set; }
+		public bool CanApprove { get; set; }
+		public string PersonnelId { get; set; }
+		public List<string> CrewUnitIds { get; set; } = new List<string>();
+		public List<string> WritableSubjectIds { get; set; } = new List<string>();
+		/// <summary>The department zone time entries are written and shown in (StartLocal/EndLocal).</summary>
+		public string TimeZone { get; set; }
 	}
 
 	public class DeploymentUnitData
@@ -252,6 +269,14 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public string DeploymentId { get; set; }
 		public int ReportNumber { get; set; }
 		public DateTime ReportDate { get; set; }
+		/// <summary>DeploymentTimeReportScopes value: 0 deployment-wide DTR, 1 crew time report, 2 individual.</summary>
+		public int Scope { get; set; }
+		/// <summary>Crew time report: the deployment unit whose crew it covers.</summary>
+		public string DeploymentUnitId { get; set; }
+		/// <summary>Individual report: the roster row it covers.</summary>
+		public string DeploymentPersonnelId { get; set; }
+		/// <summary>Whether the caller may write, sign and submit this report (its scope is theirs); the server re-checks.</summary>
+		public bool CanAct { get; set; }
 		/// <summary>DeploymentTimeReportStatuses value.</summary>
 		public int Status { get; set; }
 		public string IncidentNumber { get; set; }
@@ -287,8 +312,19 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public string DeploymentEquipmentId { get; set; }
 		/// <summary>DeploymentTimeEntryTypes value.</summary>
 		public int EntryType { get; set; }
+		/// <summary>UTC instant ("Z").</summary>
+		[Newtonsoft.Json.JsonConverter(typeof(Resgrid.Web.Services.Helpers.UtcDateTimeConverter))]
 		public DateTime StartTime { get; set; }
+		/// <summary>UTC instant ("Z").</summary>
+		[Newtonsoft.Json.JsonConverter(typeof(Resgrid.Web.Services.Helpers.UtcDateTimeConverter))]
 		public DateTime EndTime { get; set; }
+		/// <summary>
+		/// Department-local wall clock "yyyy-MM-ddTHH:mm" — what the crew writes on a paper time report. On save a non-empty
+		/// value wins over <see cref="StartTime"/> and is converted in the department's zone, so a field app never does zone math.
+		/// </summary>
+		public string StartLocal { get; set; }
+		/// <summary>Department-local wall clock end; see <see cref="StartLocal"/>.</summary>
+		public string EndLocal { get; set; }
 		public int PaidBreakMinutes { get; set; }
 		public int UnpaidBreakMinutes { get; set; }
 		public int? CrewSizeSnapshot { get; set; }
@@ -314,6 +350,10 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 	{
 		public string DeploymentId { get; set; }
 		public DateTime ReportDate { get; set; }
+		/// <summary>Crew time report for this deployment unit (the unit, its crew and equipment).</summary>
+		public string DeploymentUnitId { get; set; }
+		/// <summary>Individual time report for this roster row.</summary>
+		public string DeploymentPersonnelId { get; set; }
 	}
 
 	public class UpdateTimeReportInput
@@ -375,6 +415,7 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public bool PreApproved { get; set; }
 		public bool Billable { get; set; }
 		public int? ReceiptAttachmentId { get; set; }
+		public string AddedByUserId { get; set; }
 		public DateTime AddedOn { get; set; }
 		public DateTime? UpdatedOn { get; set; }
 	}

@@ -340,6 +340,9 @@ ChecklistReminderSettingsUpdated,
 		ResourceCostProfileChanged,
 		ResourceUsageChanged,
 		FieldCostRunCreated,
-		FieldCostRunFrozen
+		FieldCostRunFrozen,
+
+		// Member removal lifecycle (2026-09-22): a removed membership brought back; it returns without its old admin standing. Append-only.
+		UserReactivated
 	}
 }

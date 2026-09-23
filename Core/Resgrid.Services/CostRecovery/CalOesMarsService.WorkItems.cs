@@ -79,7 +79,7 @@ namespace Resgrid.Services.CostRecovery
 			var item = await _workItems.GetByIdForDepartmentAsync(workItemId, departmentId);
 			if (item == null || item.IsDeleted || string.IsNullOrWhiteSpace(item.DeploymentId) || string.IsNullOrWhiteSpace(userId)) return false;
 			if (item.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice) return false;
-			return await _deploymentService.IsRosteredAsync(item.DeploymentId, departmentId, userId);
+			return await _deploymentService.CanFieldMemberSeeAsync(item.DeploymentId, departmentId, userId);
 		}
 
 		#endregion
@@ -894,7 +894,7 @@ namespace Resgrid.Services.CostRecovery
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 				var number = _departmentSettings?.Value == null ? null : await _departmentSettings.Value.GetTextToCallNumberForDepartmentAsync(departmentId);
 				// Permission 79 defaults to department administrators; the digest goes to them (a narrower role assignment still includes admins).
-				foreach (var admin in await _departmentsService.GetAllAdminsForDepartmentAsync(departmentId))
+				foreach (var admin in await _departmentsService.GetActiveAdminsForDepartmentAsync(departmentId))
 					await _communication.Value.SendNotificationAsync(admin.UserId, departmentId, message, number, department, "Cal OES MARS");
 			}
 			catch (Exception ex) { Logging.LogException(ex, $"Cal OES MARS digest could not be sent for department {departmentId}."); }

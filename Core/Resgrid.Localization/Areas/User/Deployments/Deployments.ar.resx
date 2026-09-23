@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>إضافة عضو</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>لا يستوفي العضو متطلبات المقعد. حدد «التعيين حتى لو لم يتحقق أحد المتطلبات» للتجاوز.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>تقرير وقت جديد</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>تقرير واحد لكل يوم؛ تُعبأ الإدخالات مسبقًا من التشكيل.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>تقرير واحد يوميًا لكل طاقم أو شخص؛ تُملأ القيود مسبقًا من قائمة الأفراد.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>لا توجد تقارير وقت بعد.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>تاريخ التقرير</value></data>
   <data name="Submitted" xml:space="preserve"><value>تم الإرسال</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>يجب عودة جميع الموارد إلى القاعدة قبل إكمال الانتشار.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>عرض كشف الموارد</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>تصدير الموارد بصيغة CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>يشمل</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>عملية النشر بالكامل</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>الطاقم: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>فردي: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>قيد وقت يخص شخصًا خارج طاقم هذا التقرير أو الشخص المعني</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>لهذا البند وقت مسجل بالفعل في تقرير آخر لنفس اليوم</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>هذا الطاقم أو الشخص غير نشط في عملية النشر هذه.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>لهذا الطاقم أو الشخص وقت مسجل بالفعل في تقرير آخر لهذا اليوم.</value></data>
 </root>

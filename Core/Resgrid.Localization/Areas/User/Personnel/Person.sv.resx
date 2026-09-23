@@ -140,6 +140,15 @@
   <data name="ExistingUserHelp2" xml:space="preserve">
     <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
   </data>
+  <data name="AddExistingUserConfirmHeader" xml:space="preserve">
+    <value>Lägg till befintlig användare</value>
+  </data>
+  <data name="ExistingUserConfirmText" xml:space="preserve">
+    <value>, baserat på e-postadressen, har redan ett Resgrid-konto i en annan avdelning. När du lägger till personen förs kontot in i den här avdelningen med sina befintliga profilinställningar (namn, telefonnummer, inställningar). Personen går med som vanlig medlem och ser avdelningen när hen byter till den via "Dina avdelningar" i profilmenyn.</value>
+  </data>
+  <data name="AddExistingUserButton" xml:space="preserve">
+    <value>Lägg till i avdelningen</value>
+  </data>
   <data name="FirstNameLabel" xml:space="preserve">
     <value>Förnamn</value>
   </data>
@@ -247,6 +256,12 @@
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
     <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+  </data>
+  <data name="ReactivatePersonConfirmText" xml:space="preserve">
+    <value>avdelningen men har tagits bort. Återaktivering för tillbaka kontot i den här avdelningen med dess tidigare profilinställningar (namn, telefonnummer, inställningar). Personen återvänder som vanlig medlem; ge administratörsbehörighet på nytt separat om den behövs.</value>
+  </data>
+  <data name="ReactivatePersonButton" xml:space="preserve">
+    <value>Återaktivera</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
     <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>

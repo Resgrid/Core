@@ -133,6 +133,19 @@ namespace Resgrid.Tests.Services
 			harness.Communication.Invocations.Should().BeEmpty();
 		}
 		[Test]
+		public async Task Reminders_never_reach_a_hidden_member_whether_hidden_before_or_after_the_notice_was_queued()
+		{
+			var row = await ReminderOccurrence(); var harness = Reminders();
+			harness.BeforeClaim = () => harness.Members[0].IsHidden = true;
+			(await harness.Service.SweepAsync(row.PeriodStartUtc.Value)).Suppressed.Should().Be(1);
+			harness.Communication.Invocations.Should().BeEmpty();
+
+			harness = Reminders(); harness.Members[0].IsHidden = true;
+			(await harness.Service.SweepAsync(row.PeriodStartUtc.Value)).HandedOff.Should().Be(0);
+			harness.Notices.Should().BeEmpty("a hidden admin is not a recipient of the department check");
+			harness.Communication.Invocations.Should().BeEmpty();
+		}
+		[Test]
 		public async Task Reminder_provider_exception_retries_after_backoff_but_policy_suppression_does_not()
 		{
 			var row = await ReminderOccurrence(); var harness = Reminders(); var now = row.PeriodStartUtc.Value;

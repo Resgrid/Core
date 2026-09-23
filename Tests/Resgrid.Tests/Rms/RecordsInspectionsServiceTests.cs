@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -89,6 +90,22 @@ namespace Resgrid.Tests.Rms
 			aggregate.Violations.Should().BeEmpty();
 			await _h.InspectionsService.CloseAsync(Dept, Admin, inspection.RmsInspectionId);
 			inspection.State.Should().Be((int)RmsInspectionState.Closed);
+		}
+
+		[Test]
+		public async Task Inspections_are_only_assigned_to_active_members_and_a_reinspection_drops_an_inspector_who_has_left()
+		{
+			Func<Task> outsider = () => _h.InspectionsService.ScheduleAsync(Dept, Admin, _occupancy.RmsOccupancyId, _program.RmsInspectionProgramId, DateTime.UtcNow, Outsider);
+			await outsider.Should().ThrowAsync<ArgumentException>();
+
+			var inspection = await _h.InspectionsService.ScheduleAsync(Dept, Admin, _occupancy.RmsOccupancyId, _program.RmsInspectionProgramId, DateTime.UtcNow, Member);
+			inspection.InspectorUserId.Should().Be(Member);
+			await _h.InspectionsService.CompleteAsync(Dept, Admin, inspection.RmsInspectionId, new List<RmsInspectionItemResult> { new RmsInspectionItemResult { Key = "exits", Passed = false }, new RmsInspectionItemResult { Key = "ext", Passed = true } }, null, null);
+			(await _h.InspectionsService.ScheduleReinspectionAsync(Dept, Admin, inspection.RmsInspectionId, DateTime.UtcNow.AddDays(1))).InspectorUserId.Should().Be(Member);
+
+			_h.Authorization.Setup(a => a.IsAssignableMemberAsync(Member, Dept)).ReturnsAsync(false);
+			var child = await _h.InspectionsService.ScheduleReinspectionAsync(Dept, Admin, inspection.RmsInspectionId, DateTime.UtcNow.AddDays(2));
+			child.InspectorUserId.Should().BeNull("the parent's inspector is no longer an active member");
 		}
 
 		[Test]

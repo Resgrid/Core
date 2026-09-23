@@ -110,11 +110,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction(redirectAction, routeValues);
 		}
 
+		/// <summary>Every member's name, inactive ones included: labels records and history.</summary>
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()
-		{
-			var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			return (names ?? new List<PersonName>()).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
-		}
+			=> ToNameMap(await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId));
+
+		/// <summary>The members the Add form may pick: removed, disabled and hidden members are not offered.</summary>
+		private async Task<Dictionary<string, string>> SelectablePersonnelNamesAsync()
+			=> ToNameMap(await _departments.GetSelectablePersonnelNamesAsync(DepartmentId));
+
+		private static Dictionary<string, string> ToNameMap(List<PersonName> names)
+			=> (names ?? new List<PersonName>()).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// ADP reveal endpoint (plan 7.2) for the record and unit pages. The grant rides the X-Resgrid-Protected-Grant
@@ -180,7 +185,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Page(new CertificationAddView
 			{
 				Input = input,
-				Personnel = await PersonnelNamesAsync(),
+				Personnel = await SelectablePersonnelNamesAsync(),
 				Types = (await _certifications.GetAllCertificationTypesByDepartmentAsync(DepartmentId) ?? new List<DepartmentCertificationType>())
 					.Where(t => t.DepartmentId == DepartmentId && !t.IsDeleted && t.IsActive && !t.IsUnitScoped)
 					.OrderBy(t => t.Type).ToList()

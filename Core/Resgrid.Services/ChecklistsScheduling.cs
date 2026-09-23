@@ -176,6 +176,22 @@ namespace Resgrid.Services
 			if (result?.Success != true || result.IsProtected && !ProtectedDataEnvelope.HasEnvelopePrefix(audit.Data)) throw new InvalidOperationException("Checklist scheduling audit protection is unavailable.");
 			await _audit.UpdateAsync(audit, ct);
 		}
+		/// <summary>
+		/// A schedule addressed to one person (a Personnel target or a User assignment) is held suspended while that person is
+		/// removed or disabled: no occurrences, no missed marks, no ChecklistMissed events and no admin escalations for a check
+		/// nobody can perform. The suspended branch of the sweep resumes it without back-filled misses if the member returns.
+		/// </summary>
+		private async Task<bool> PersonSubjectsCurrentAsync(ChecklistSchedule schedule)
+		{
+			if (_assignments == null) return true;
+			try
+			{
+				if (schedule.TargetType == (int)ChecklistTargetType.Personnel) await _assignments.ValidateAsync(schedule.DepartmentId, (int)ChecklistAssignmentType.User, schedule.TargetId);
+				if (schedule.AssignmentType == (int)ChecklistAssignmentType.User) await _assignments.ValidateAsync(schedule.DepartmentId, (int)ChecklistAssignmentType.User, schedule.AssignmentId);
+				return true;
+			}
+			catch (ChecklistException) { return false; }
+		}
 		public async Task<ChecklistScheduleSweepResult> SweepSchedulesAsync(DateTime utcNow, CancellationToken ct = default)
 		{
 			var result = new ChecklistScheduleSweepResult(); var now = ChecklistRecurrence.Utc(utcNow); var afterDepartment = 0;
@@ -196,7 +212,8 @@ namespace Resgrid.Services
 								await _uow.CreateOrGetConnectionAsync(ct); await _store.LockDepartmentAsync(department, ct);
 								var schedule = await _store.GetAsync<ChecklistSchedule>(department, candidate.Id, ct);
 								if (!schedule.IsActive) { _uow.CommitChanges(); continue; }
-								var enabled = await _access.CanUseChecklistsAsync(department) && (schedule.TargetType != (int)ChecklistTargetType.InventoryAsset || _assets != null && await _assets.IsAvailableAsync(department));
+								var enabled = await _access.CanUseChecklistsAsync(department) && (schedule.TargetType != (int)ChecklistTargetType.InventoryAsset || _assets != null && await _assets.IsAvailableAsync(department))
+									&& await PersonSubjectsCurrentAsync(schedule);
 								if (!enabled)
 								{
 									schedule.IsSuspended = true; schedule.UpdatedOn = now; await WorkerWriteAsync(schedule, false, ct); _uow.CommitChanges(); continue;

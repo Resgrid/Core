@@ -570,6 +570,7 @@
   <data name="M5AlertType1" xml:space="preserve"><value>Wkrótce traci ważność</value></data>
   <data name="M5AlertType2" xml:space="preserve"><value>Przeterminowane</value></data>
   <data name="M5AlertType3" xml:space="preserve"><value>Zaległy zwrot</value></data>
+  <data name="M5AlertType4" xml:space="preserve"><value>U byłego członka</value></data>
   <data name="M5Open" xml:space="preserve"><value>Otwarty</value></data>
   <data name="M5Resolved" xml:space="preserve"><value>Rozwiązany</value></data>
   <data name="M5DueOn" xml:space="preserve"><value>Termin (UTC)</value></data>
@@ -640,6 +641,7 @@
   <data name="InventoryExpiring" xml:space="preserve"><value>Zbliżający się termin ważności zapasów</value></data>
   <data name="InventoryCountCompleted" xml:space="preserve"><value>Zakończono inwentaryzację</value></data>
   <data name="InventoryReturnOverdue" xml:space="preserve"><value>Zaległy zwrot wyposażenia</value></data>
+  <data name="InventoryDepartedHolder" xml:space="preserve"><value>Wyposażenie u byłego członka</value></data>
   <data name="HolderHistoryRetained" xml:space="preserve"><value>Ten zasób jest powiązany z historią magazynu i musi zostać zachowany.</value></data>
   <data name="InventoryAdjusted" xml:space="preserve"><value>Skorygowano stan magazynowy</value></data>
   <data name="InventoryTransferCompleted" xml:space="preserve"><value>Zakończono przesunięcie magazynowe</value></data>

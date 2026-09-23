@@ -705,6 +705,7 @@
   <data name="workforce_usage_invalid" xml:space="preserve"><value>The usage reading is not valid.</value></data>
   <data name="workforce_work_mode_invalid" xml:space="preserve"><value>The work mode is not valid.</value></data>
   <data name="workforce_worker_duplicate" xml:space="preserve"><value>That member already has a worker row.</value></data>
+  <data name="workforce_member_not_found" xml:space="preserve"><value>Select a current member of this department.</value></data>
   <data name="workforce_worker_identity_required" xml:space="preserve"><value>A worker needs a member or an external key.</value></data>
   <data name="workforce_worker_kind_invalid" xml:space="preserve"><value>The worker kind is not valid.</value></data>
   <data name="workforce_worker_not_found" xml:space="preserve"><value>The worker was not found.</value></data>

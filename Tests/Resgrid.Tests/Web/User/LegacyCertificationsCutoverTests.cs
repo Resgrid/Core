@@ -128,6 +128,35 @@ namespace Resgrid.Tests.Web.User
             (await Controller<ReportsController>(departments.Object, sensitive.Object).CertificationsReport()).Should().BeOfType<ViewResult>();
         }
         [Test]
+        public async Task Legacy_report_lists_only_active_members_and_only_this_departments_records()
+        {
+            _access.Setup(x => x.IsEnabledAsync(DepartmentId)).ReturnsAsync(false);
+            var department = new Department { DepartmentId = DepartmentId, TimeZone = "Pacific Standard Time" };
+            var departments = new Mock<IDepartmentsService>();
+            departments.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(department);
+            // The helper already drops removed and disabled members; a hidden one still comes back from it.
+            departments.Setup(x => x.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(DepartmentId, false)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new() { Id = "active" }, new() { Id = "hidden" } });
+            departments.Setup(x => x.GetActiveMemberUserIdsAsync(DepartmentId)).ReturnsAsync(new HashSet<string> { "active" });
+            // Strict: the hidden member is never even checked against the visibility matrix.
+            _authorization.Setup(x => x.CanUserViewPersonViaMatrixAsync("active", UserId, DepartmentId)).ReturnsAsync(true);
+            var certifications = new Mock<ICertificationService>();
+            certifications.Setup(x => x.GetCertificationsByUserIdAsync("active")).ReturnsAsync(new List<PersonnelCertification>
+            {
+                new PersonnelCertification { DepartmentId = DepartmentId, UserId = "active", Name = "Here" },
+                new PersonnelCertification { DepartmentId = 99, UserId = "active", Name = "Another department" }
+            });
+            var profiles = new Mock<IUserProfileService>();
+            profiles.Setup(x => x.GetProfileByUserIdAsync("active", false)).ReturnsAsync(new UserProfile { UserId = "active", FirstName = "Ada", LastName = "Active" });
+            var sensitive = new Mock<IDepartmentMemberSensitiveDataService>();
+            sensitive.Setup(x => x.GetResolvedForDepartmentAsync(DepartmentId, null, UserId)).ReturnsAsync(new Dictionary<string, DepartmentMemberSensitiveData>());
+
+            var view = (await Controller<ReportsController>(departments.Object, sensitive.Object, certifications.Object, profiles.Object).CertificationsReport()).Should().BeOfType<ViewResult>().Subject;
+            var model = (Resgrid.Web.Areas.User.Models.Reports.Certifications.CertificationsReportView)view.Model;
+            model.Rows.Should().ContainSingle();
+            model.Rows[0].SubRows.Select(s => s.Name).Should().Equal("Here");
+            certifications.Verify(x => x.GetCertificationsByUserIdAsync("hidden"), Times.Never);
+        }
+        [Test]
         public async Task Internal_report_checks_requested_department_after_authentication()
         {
             var oldToken = Resgrid.Config.SecurityConfig.InternalReportsToken;
@@ -197,6 +226,21 @@ namespace Resgrid.Tests.Web.User
             var worker = new ReportDeliveryLogic(tasks.Object, email.Object, pdf.Object, null, _access.Object);
             var result = await worker.Process(new ReportDeliveryQueueItem { Department = new Department { DepartmentId = DepartmentId }, ScheduledTask = task });
             result.Item1.Should().BeTrue(); tasks.Verify(x => x.CreateScheduleTaskLogAsync(task, CancellationToken.None), Times.Once);
+            email.VerifyNoOtherCalls(); pdf.VerifyNoOtherCalls();
+        }
+        [TestCase(true, null, null)] [TestCase(false, true, null)] [TestCase(false, null, true)]
+        public async Task Scheduled_reports_are_not_delivered_to_a_removed_disabled_or_hidden_subscriber(bool deleted, bool? disabled, bool? hidden)
+        {
+            var task = new ScheduledTask { DepartmentId = DepartmentId, UserId = UserId, Data = ((int)ReportTypes.CertificationCompliance).ToString() };
+            var tasks = new Mock<IScheduledTasksService>(MockBehavior.Strict);
+            tasks.Setup(x => x.CreateScheduleTaskLogAsync(task, CancellationToken.None)).ReturnsAsync(new ScheduledTaskLog());
+            var departments = new Mock<IDepartmentsService>(MockBehavior.Strict);
+            departments.Setup(x => x.GetDepartmentMemberAsync(UserId, DepartmentId, true)).ReturnsAsync(new DepartmentMember { DepartmentId = DepartmentId, UserId = UserId, IsDeleted = deleted, IsDisabled = disabled, IsHidden = hidden });
+            var email = new Mock<IEmailService>(MockBehavior.Strict); var pdf = new Mock<IPdfProvider>(MockBehavior.Strict);
+            var worker = new ReportDeliveryLogic(tasks.Object, email.Object, pdf.Object, null, _access.Object, departments.Object);
+            var result = await worker.Process(new ReportDeliveryQueueItem { Department = new Department { DepartmentId = DepartmentId }, ScheduledTask = task, Email = "former@example.test" });
+            result.Item1.Should().BeTrue("the skipped occurrence is logged so it is not retried");
+            tasks.Verify(x => x.CreateScheduleTaskLogAsync(task, CancellationToken.None), Times.Once);
             email.VerifyNoOtherCalls(); pdf.VerifyNoOtherCalls();
         }
         [TestCase(true)] [TestCase(false)]

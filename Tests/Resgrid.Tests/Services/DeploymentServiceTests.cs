@@ -459,5 +459,48 @@ namespace Resgrid.Tests.Services
 			(await _service.GetDeploymentsByIdsAsync(DeptId, null)).Should().BeEmpty();
 			_deployments.Verify(r => r.GetByIdsAsync(DeptId, It.IsAny<IEnumerable<string>>()), Times.Once, "blank input never reaches the repository");
 		}
+
+		[Test]
+		public async Task Time_access_covers_own_row_rostered_crew_and_the_crew_seated_on_a_deployed_unit()
+		{
+			var deployment = new Deployment
+			{
+				DeploymentId = "dep-t", DepartmentId = DeptId,
+				Units = { new DeploymentUnit { DeploymentUnitId = "du-1", UnitId = 1 }, new DeploymentUnit { DeploymentUnitId = "du-2", UnitId = 2 }, new DeploymentUnit { DeploymentUnitId = "du-3", UnitId = 3, RemovedOn = DateTime.UtcNow } },
+				Personnel =
+				{
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-a", UserId = "alice", DeploymentUnitId = "du-1" },
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-b", UserId = "bob", DeploymentUnitId = "du-1", RemovedOn = DateTime.UtcNow },
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-c", UserId = "carol", DeploymentUnitId = "du-2" },
+					new DeploymentPersonnel { DeploymentPersonnelId = "dp-d", UserId = "dave" }
+				},
+				Equipment = { new DeploymentEquipment { DeploymentEquipmentId = "de-1", DeploymentUnitId = "du-2" } }
+			};
+			// The Engine 2 tablet signs in as "tablet", seated on unit 2 (and on unit 3, whose deployment row was released).
+			_unitsService.Setup(u => u.GetAllActiveRolesForUnitsByDepartmentIdAsync(DeptId)).ReturnsAsync(new List<UnitActiveRole>
+			{
+				new UnitActiveRole { UnitId = 2, UserId = "tablet", DepartmentId = DeptId }, new UnitActiveRole { UnitId = 3, UserId = "tablet", DepartmentId = DeptId }
+			});
+
+			var alice = await _service.GetTimeAccessAsync(deployment, "alice", false);
+			alice.PersonnelId.Should().Be("dp-a");
+			alice.CrewUnitIds.Should().Equal("du-1");
+			alice.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-a", "du-1", "dp-b" }, "a released crew member's time is still the crew's to report");
+
+			var dave = await _service.GetTimeAccessAsync(deployment, "dave", false);
+			dave.CrewUnitIds.Should().BeEmpty();
+			dave.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-d" });
+
+			var tablet = await _service.GetTimeAccessAsync(deployment, "tablet", false);
+			tablet.IsRostered.Should().BeFalse();
+			tablet.CanRead.Should().BeTrue();
+			tablet.CrewUnitIds.Should().Equal("du-2");
+			tablet.WritableSubjectIds.Should().BeEquivalentTo(new[] { "du-2", "dp-c", "de-1" });
+
+			var stranger = await _service.GetTimeAccessAsync(deployment, "eve", false);
+			stranger.CanRead.Should().BeFalse();
+			stranger.CanWrite.Should().BeFalse();
+			(await _service.GetTimeAccessAsync(deployment, "eve", true)).CanWrite.Should().BeTrue("a manager writes every subject");
+		}
 	}
 }

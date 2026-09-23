@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Checklists;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Model.WorkOrders;
 
@@ -121,13 +122,24 @@ namespace Resgrid.Services
 				if (c.Type == 3 && (context.Group?.DepartmentGroupId.ToString() == c.Id || await AllowedAsync(context, PermissionTypes.ManageWorkOrders, int.Parse(c.Id)))) result.Groups.Add(choice);
 				if (c.Type == 4 && await _resources.CanUserViewUnitAsync(actor.UserId, int.Parse(c.Id))) result.Units.Add(choice);
 			}
-			var profiles = await _profiles.GetSelectedUserProfilesAsync(result.Users.Select(u => u.Id).ToList());
-			foreach (var user in result.Users)
+			// Labels also cover hidden members, who are no longer offered but can still hold and work an assignment, so their
+			// history and a kept assignment render by name. The same person-visibility rule applies to them.
+			var labelled = result.Users.Select(u => u.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			var fallbacks = result.Users.ToDictionary(u => u.Id, u => u.Name, StringComparer.OrdinalIgnoreCase);
+			foreach (var member in (await _departments.GetAllMembersForDepartmentUnlimitedAsync(actor.DepartmentId, true) ?? new List<DepartmentMember>())
+				.Where(m => DepartmentMemberStateHelper.IsCurrentMember(m, actor.DepartmentId) && !labelled.Contains(m.UserId)))
 			{
-				var profile = profiles?.FirstOrDefault(p => p.UserId == user.Id);
-				var name = string.Join(" ", new[] { profile?.FirstName, profile?.LastName }.Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Trim()));
-				if (!string.IsNullOrWhiteSpace(name)) user.Name = name;
+				if (!await _resources.CanUserViewPersonAsync(actor.UserId, member.UserId, actor.DepartmentId)) continue;
+				labelled.Add(member.UserId); fallbacks[member.UserId] = member.User?.UserName ?? member.UserId;
 			}
+			var profiles = await _profiles.GetSelectedUserProfilesAsync(labelled.ToList());
+			foreach (var id in labelled)
+			{
+				var profile = profiles?.FirstOrDefault(p => string.Equals(p.UserId, id, StringComparison.OrdinalIgnoreCase));
+				var name = string.Join(" ", new[] { profile?.FirstName, profile?.LastName }.Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Trim()));
+				result.UserNames[id] = string.IsNullOrWhiteSpace(name) ? fallbacks[id] : name;
+			}
+			foreach (var user in result.Users) user.Name = result.UserNames[user.Id];
 			result.Users = result.Users.OrderBy(u => u.Name, StringComparer.CurrentCultureIgnoreCase).ToList();
 			try
 			{
@@ -136,6 +148,8 @@ namespace Resgrid.Services
 			catch (ChecklistException ex) { throw new WorkOrderException(ex.StatusCode, ex.Message); }
 			return result;
 		}
+		public async Task<HashSet<string>> ActiveMemberIdsAsync(int departmentId)
+			=> await _departments.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		public async Task<List<string>> RecipientsAsync(int departmentId, WorkOrder row)
 		{
 			if (row?.DepartmentId != departmentId) return new List<string>();

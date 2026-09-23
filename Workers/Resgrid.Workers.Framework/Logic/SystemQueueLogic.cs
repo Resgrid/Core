@@ -270,11 +270,8 @@ namespace Resgrid.Workers.Framework.Logic
 							{
 								case AuditLogTypes.DepartmentSettingsChanged:
 									auditLog.Message = string.Format("{0} updated the department settings", profile.FullName.AsFirstNameLastName);
-									var compareLogic = new CompareLogic();
-									var departmentSettingsChangedBefore = JsonConvert.DeserializeObject<Department>(auditEvent.Before);
-									var departmentSettingsChangedAfter = JsonConvert.DeserializeObject<Department>(auditEvent.After);
-									ComparisonResult auditCompareResult = compareLogic.Compare(departmentSettingsChangedBefore, departmentSettingsChangedAfter);
-									auditLog.Data = auditCompareResult.DifferencesString;
+									// Not every producer sends a Department (or a Before); see AuditQueueLogic.
+									auditLog.Data = AuditQueueLogic.GetSettingsChangedAuditData(auditEvent.Before, auditEvent.After);
 									break;
 								case AuditLogTypes.UserAdded:
 									if (!String.IsNullOrWhiteSpace(auditEvent.After))

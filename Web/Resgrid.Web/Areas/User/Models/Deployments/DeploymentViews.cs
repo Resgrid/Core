@@ -135,7 +135,9 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 		public ContractorChargeSet Charges { get; set; }
 		public ContractComplianceResult Compliance { get; set; }
 		public List<Invoice> Invoices { get; set; } = new List<Invoice>();
-		public bool CanEditTime => CanManage || IsRostered;
+		/// <summary>The viewer's time scope (M0227); drives which reports they may open and which crews/people the new-report form offers.</summary>
+		public DeploymentTimeAccess TimeAccess { get; set; }
+		public bool CanEditTime => CanManage || (TimeAccess?.CanWrite ?? IsRostered);
 		public string Tab { get; set; } = "roster";
 		public decimal TotalHours { get; set; }
 		public decimal TotalExpenses { get; set; }
@@ -152,7 +154,14 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 		public List<DeploymentExpense> Expenses { get; set; } = new List<DeploymentExpense>();
 		public TimeReportValidation Validation { get; set; } = new TimeReportValidation();
 		public bool IsRostered { get; set; }
-		public bool CanEdit => (CanManage || IsRostered) && Report != null && Report.IsEditable;
+		/// <summary>The viewer's time scope (M0227). A scoped report is editable only by its crew/person; on a deployment-wide report a member edits their own subjects' rows.</summary>
+		public DeploymentTimeAccess Access { get; set; }
+		public bool CanEdit => Report != null && Report.IsEditable && (CanManage || (Access != null && (Access.CanActOn(Report) || (Report.Scope == DeploymentTimeReportScopes.Deployment && Access.CanWrite))));
+		/// <summary>Header fields, signatures and submit belong to whoever may act on the whole report.</summary>
+		public bool CanActOnReport => Report != null && (CanManage || (Access?.CanActOn(Report) ?? false));
+		public bool CanWriteSubject(string subjectId) => CanManage || (Access?.CanWriteSubject(subjectId) ?? false);
+		/// <summary>"Whole deployment", "Crew: Engine 1" or "Individual: A. Smith".</summary>
+		public string ScopeName { get; set; }
 		public string ContractorSignerName { get; set; }
 	}
 

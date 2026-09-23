@@ -102,7 +102,7 @@
   <data name="AddPersonnel" xml:space="preserve"><value>Προσθήκη μέλους</value></data>
   <data name="SeatBlocked" xml:space="preserve"><value>Το μέλος δεν πληροί τις απαιτήσεις της θέσης. Επιλέξτε «Τοποθέτηση ακόμη κι αν αποτύχει μια απαίτηση» για παράκαμψη.</value></data>
   <data name="NewTimeReport" xml:space="preserve"><value>Νέα αναφορά χρόνου</value></data>
-  <data name="NewTimeReportHelp" xml:space="preserve"><value>Μία αναφορά ανά ημέρα· οι καταχωρίσεις προσυμπληρώνονται από τη σύνθεση.</value></data>
+  <data name="NewTimeReportHelp" xml:space="preserve"><value>Μία αναφορά ανά ημέρα για κάθε πλήρωμα ή πρόσωπο· οι καταχωρίσεις συμπληρώνονται από τη σύνθεση.</value></data>
   <data name="NoTimeReports" xml:space="preserve"><value>Δεν υπάρχουν αναφορές χρόνου ακόμη.</value></data>
   <data name="ReportDate" xml:space="preserve"><value>Ημερομηνία αναφοράς</value></data>
   <data name="Submitted" xml:space="preserve"><value>Υποβλήθηκε</value></data>
@@ -275,4 +275,12 @@
   <data name="deployments_resources_not_returned" xml:space="preserve"><value>Όλοι οι πόροι πρέπει να επιστρέψουν στη βάση πριν ολοκληρωθεί η ανάπτυξη.</value></data>
   <data name="ViewManifest" xml:space="preserve"><value>Προβολή καταλόγου</value></data>
   <data name="ResourceExport" xml:space="preserve"><value>Εξαγωγή πόρων CSV</value></data>
+  <data name="TimeReportScope" xml:space="preserve"><value>Καλύπτει</value></data>
+  <data name="ScopeDeployment" xml:space="preserve"><value>Ολόκληρη η ανάπτυξη</value></data>
+  <data name="ScopeCrew" xml:space="preserve"><value>Πλήρωμα: {0}</value></data>
+  <data name="ScopeIndividual" xml:space="preserve"><value>Ατομικό: {0}</value></data>
+  <data name="Issuesubject_outside_report_scope" xml:space="preserve"><value>Μια καταχώριση χρόνου αφορά κάποιον εκτός του πληρώματος ή του προσώπου αυτής της αναφοράς</value></data>
+  <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Αυτό το αντικείμενο έχει ήδη χρόνο σε άλλη αναφορά για την ίδια ημέρα</value></data>
+  <data name="timereports_scope_invalid" xml:space="preserve"><value>Αυτό το πλήρωμα ή πρόσωπο δεν είναι ενεργό σε αυτή την ανάπτυξη.</value></data>
+  <data name="timereports_subject_covered" xml:space="preserve"><value>Αυτό το πλήρωμα ή πρόσωπο έχει ήδη χρόνο σε άλλη αναφορά για αυτή την ημέρα.</value></data>
 </root>

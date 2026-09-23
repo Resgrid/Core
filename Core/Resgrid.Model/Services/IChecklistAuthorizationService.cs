@@ -13,5 +13,7 @@ namespace Resgrid.Model.Services
 		Task<Func<ChecklistCompletion, Task<bool>>> ReadFilterAsync(ChecklistActor actor);
 		Task<ChecklistTarget> TargetAsync(ChecklistActor actor, ChecklistTargetType type, string id);
 		Task<List<ChecklistTarget>> TargetsAsync(ChecklistActor actor, ChecklistTargetType type);
+		/// <summary>The department's active members (deleted, disabled and hidden excluded): who reminders reach and whose personnel checks compliance reports count.</summary>
+		Task<HashSet<string>> ActiveMemberIdsAsync(int departmentId);
 	}
 }

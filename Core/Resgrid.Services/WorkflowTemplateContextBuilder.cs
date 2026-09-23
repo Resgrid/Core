@@ -260,6 +260,7 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.InventoryExpiring:
 				case WorkflowTriggerEventType.InventoryCountCompleted:
 				case WorkflowTriggerEventType.InventoryReturnOverdue:
+				case WorkflowTriggerEventType.InventoryDepartedHolder:
 				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
 				{
 					var modern = string.IsNullOrWhiteSpace(eventPayloadJson) ? null : JsonConvert.DeserializeObject<RecordsWorkflowEvent>(eventPayloadJson, new JsonSerializerSettings { FloatParseHandling = FloatParseHandling.Decimal });

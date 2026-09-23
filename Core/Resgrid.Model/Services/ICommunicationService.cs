@@ -72,6 +72,14 @@ namespace Resgrid.Model.Services
 			string title = "Notification", UserProfile profile = null, bool sendToICApp = false);
 
 		/// <summary>
+		/// Sends the notification with a push event code the app routes on when the push is tapped
+		/// (for example "NWO:{workOrderId}"). The code travels only in the push payload; SMS and email
+		/// carry the same text as the overload without it. A null or blank code keeps the default "N{id}".
+		/// </summary>
+		Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department,
+			string title, UserProfile profile, bool sendToICApp, string eventCode);
+
+		/// <summary>
 		/// Sends the chat.
 		/// </summary>
 		/// <param name="chatId">The chat identifier.</param>

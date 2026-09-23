@@ -247,6 +247,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool CanExport { get; set; }
 		public bool CanViewRestricted { get; set; }
 		public bool CanReassign { get; set; }
+		/// <summary>Who a draft may be reassigned to: active members only (PersonnelNames still labels everyone on the record).</summary>
+		public Dictionary<string, string> ReassignCandidates { get; set; } = new Dictionary<string, string>();
 		public RecordPrintProvenance Provenance { get; set; }
 		public RmsOperationalRecordType RecordType => (RmsOperationalRecordType)Aggregate.Record.RecordType.GetValueOrDefault();
 		public RmsRecordState State => (RmsRecordState)Aggregate.Record.State;

@@ -133,9 +133,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var deployment = await _deployments.GetDeploymentByIdAsync(deploymentId, DepartmentId);
 			if (deployment == null) return null;
-			if (CanView || deployment.Personnel.Any(p => p.UserId == UserId)) return deployment;
+			if (CanView || (await TimeAccessAsync(deployment)).CanRead) return deployment;
 			return null;
 		}
+
+		/// <summary>The caller's time scope on the deployment (M0227): own row, crewed units, writable subjects. Managers write everything.</summary>
+		private Task<DeploymentTimeAccess> TimeAccessAsync(Deployment deployment) => _deployments.GetTimeAccessAsync(deployment, UserId, CanManage);
 
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()
 		{
@@ -351,7 +354,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var deployment = await AccessibleAsync(id);
 			if (deployment == null) return NotFound();
-			var view = Page(new DeploymentDetailView { Deployment = deployment, Tab = tab ?? "roster", IsRostered = deployment.Personnel.Any(p => p.UserId == UserId) });
+			var access = await TimeAccessAsync(deployment);
+			var view = Page(new DeploymentDetailView { Deployment = deployment, Tab = tab ?? "roster", IsRostered = access.IsRostered, TimeAccess = access });
 			view.Department = await _departments.GetDepartmentByIdAsync(DepartmentId);
 			view.TimeReports = await _timeTracking.GetTimeReportsAsync(id, DepartmentId);
 			view.Expenses = await _timeTracking.GetExpensesAsync(id, DepartmentId);
@@ -370,7 +374,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (CanManage)
 			{
 				view.Units = (await _units.GetUnitsForDepartmentUnlimitedAsync(DepartmentId) ?? new List<Unit>()).OrderBy(u => u.Name).ToList();
-				view.Personnel = (await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>()).OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+				// The add-to-roster picker offers active members only; the roster itself is labelled from UserNames.
+				view.Personnel = (await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>()).OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
 				foreach (var unit in deployment.Units.Where(u => u.IsActive))
 				{
 					try { view.UnitRoles[unit.UnitId] = await _units.GetRolesForUnitAsync(unit.UnitId) ?? new List<UnitRole>(); }
@@ -507,7 +512,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var deployment = await AccessibleAsync(id);
 			if (deployment == null) return NotFound();
-			if (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId)) return Unauthorized();
+			if (!(await TimeAccessAsync(deployment)).CanWrite) return Unauthorized();
 			var upload = await ReadUploadAsync(file, cancellationToken);
 			if (upload.Error != null) return Refused(400, upload.Error, "View", new { id, tab = "files" });
 			if (upload.Data == null) return Refused(400, "deployments_attachment_empty", "View", new { id, tab = "files" });
@@ -567,14 +572,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Time reports
 
 		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> NewTimeReport(string id, DateTime reportDate, CancellationToken cancellationToken)
+		public async Task<IActionResult> NewTimeReport(string id, DateTime reportDate, string scope, CancellationToken cancellationToken)
 		{
 			var deployment = await AccessibleAsync(id);
 			if (deployment == null) return NotFound();
-			if (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId)) return Unauthorized();
+			var access = await TimeAccessAsync(deployment);
+			// "crew:{deploymentUnitId}" is that unit's Crew Time Report, "person:{deploymentPersonnelId}" one person's report and an
+			// empty scope the deployment-wide DTR, which only a manager opens. A member without a choice files their own time.
+			string unitId = null, personnelId = null;
+			if (!string.IsNullOrWhiteSpace(scope) && scope.StartsWith("crew:", StringComparison.Ordinal)) unitId = scope.Substring(5);
+			else if (!string.IsNullOrWhiteSpace(scope) && scope.StartsWith("person:", StringComparison.Ordinal)) personnelId = scope.Substring(7);
+			else if (!access.CanManage) { personnelId = access.PersonnelId; if (personnelId == null) unitId = access.CrewUnitIds.FirstOrDefault(); }
+			var allowed = access.CanManage || (unitId != null && access.CrewUnitIds.Contains(unitId, StringComparer.OrdinalIgnoreCase)) || (personnelId != null && access.CanWriteSubject(personnelId));
+			if (!allowed) return Unauthorized();
 			try
 			{
-				var report = await _timeTracking.CreateTimeReportAsync(id, DepartmentId, reportDate, UserId, Ip, Agent, cancellationToken);
+				var report = await _timeTracking.CreateTimeReportAsync(id, DepartmentId, reportDate, unitId, personnelId, UserId, Ip, Agent, cancellationToken);
 				return RedirectToAction("TimeReport", new { id = report.DeploymentTimeReportId });
 			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "View", new { id, tab = "time" }); }
@@ -596,12 +609,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task<TimeReportEditView> BuildTimeReportViewAsync(DeploymentTimeReport report, Deployment deployment)
 		{
-			var view = Page(new TimeReportEditView { Report = report, Deployment = deployment, IsRostered = deployment.Personnel.Any(p => p.UserId == UserId) });
+			var view = Page(new TimeReportEditView { Report = report, Deployment = deployment, IsRostered = deployment.Personnel.Any(p => p.UserId == UserId), Access = await TimeAccessAsync(deployment) });
 			view.Department = await _departments.GetDepartmentByIdAsync(DepartmentId);
 			view.TimeZone = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
 			foreach (var p in deployment.Personnel) { view.SubjectNames[p.DeploymentPersonnelId] = p.DisplayName ?? p.UserId; if (p.IsActive) view.Subjects.Add((p.DeploymentPersonnelId, (int)DeploymentTimeSubjectTypes.Personnel, p.DisplayName ?? p.UserId)); }
 			foreach (var u in deployment.Units) { view.SubjectNames[u.DeploymentUnitId] = u.UnitName ?? u.UnitId.ToString(); if (u.IsActive) view.Subjects.Add((u.DeploymentUnitId, (int)DeploymentTimeSubjectTypes.Unit, u.UnitName ?? u.UnitId.ToString())); }
 			foreach (var e in deployment.Equipment) { var n = e.FreeTextName ?? e.InventoryAssetId ?? e.InventoryItemId; view.SubjectNames[e.DeploymentEquipmentId] = n; if (e.IsActive) view.Subjects.Add((e.DeploymentEquipmentId, (int)DeploymentTimeSubjectTypes.Equipment, n)); }
+			// A crew report offers its unit, crew and equipment; an individual report its one person; and a member only the subjects they may write.
+			bool InScope(string subjectId) => report.Scope switch
+			{
+				DeploymentTimeReportScopes.Individual => string.Equals(subjectId, report.DeploymentPersonnelId, StringComparison.OrdinalIgnoreCase),
+				DeploymentTimeReportScopes.Crew => string.Equals(subjectId, report.DeploymentUnitId, StringComparison.OrdinalIgnoreCase)
+					|| deployment.Personnel.Any(p => p.DeploymentPersonnelId == subjectId && string.Equals(p.DeploymentUnitId, report.DeploymentUnitId, StringComparison.OrdinalIgnoreCase))
+					|| deployment.Equipment.Any(e => e.DeploymentEquipmentId == subjectId && string.Equals(e.DeploymentUnitId, report.DeploymentUnitId, StringComparison.OrdinalIgnoreCase)),
+				_ => true
+			};
+			view.Subjects = view.Subjects.Where(s => InScope(s.Id) && view.CanWriteSubject(s.Id)).ToList();
+			view.ScopeName = report.Scope switch
+			{
+				DeploymentTimeReportScopes.Crew => string.Format(_strings["ScopeCrew"].Value, view.SubjectNames.TryGetValue(report.DeploymentUnitId, out var unitName) ? unitName : report.DeploymentUnitId),
+				DeploymentTimeReportScopes.Individual => string.Format(_strings["ScopeIndividual"].Value, view.SubjectNames.TryGetValue(report.DeploymentPersonnelId, out var personName) ? personName : report.DeploymentPersonnelId),
+				_ => _strings["ScopeDeployment"].Value
+			};
 			view.Expenses = (await _timeTracking.GetExpensesAsync(deployment.DeploymentId, DepartmentId)).Where(e => e.DeploymentTimeReportId == report.DeploymentTimeReportId).ToList();
 			if (!string.IsNullOrWhiteSpace(report.ContractorSignedByUserId)) view.ContractorSignerName = (await _profiles.GetProfileByUserIdAsync(report.ContractorSignedByUserId))?.FullName.AsFirstNameLastName;
 			return view;
@@ -613,13 +642,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var report = await _timeTracking.GetTimeReportByIdAsync(id, DepartmentId);
 			if (report == null) return NotFound();
 			var deployment = await AccessibleAsync(report.DeploymentId);
-			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
+			if (deployment == null) return Unauthorized();
+			var access = await TimeAccessAsync(deployment);
+			var actsOnReport = access.CanActOn(report);
+			// A scoped report is its crew's or person's alone; on a deployment-wide report a member writes only their own subjects.
+			if (!access.CanWrite || (report.Scope != DeploymentTimeReportScopes.Deployment && !actsOnReport)) return Unauthorized();
 			var timeZone = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
 			try
 			{
-				report.IncidentNumber = incidentNumber; report.ResourceOrderNumber = resourceOrderNumber; report.RequestNumber = requestNumber; report.CostCode = costCode; report.PointOfHire = pointOfHire;
-				report.NoClear8 = noClear8; report.UnsafeConditionsStandDown = unsafeConditionsStandDown; report.Notes = notes;
-				await _timeTracking.UpdateTimeReportAsync(report, UserId, Ip, Agent, cancellationToken);
+				if (actsOnReport)
+				{
+					report.IncidentNumber = incidentNumber; report.ResourceOrderNumber = resourceOrderNumber; report.RequestNumber = requestNumber; report.CostCode = costCode; report.PointOfHire = pointOfHire;
+					report.NoClear8 = noClear8; report.UnsafeConditionsStandDown = unsafeConditionsStandDown; report.Notes = notes;
+					await _timeTracking.UpdateTimeReportAsync(report, UserId, Ip, Agent, cancellationToken);
+				}
 
 				var rows = (entries ?? new List<TimeEntryInput>()).Where(e => e != null && !string.IsNullOrWhiteSpace(e.SubjectId) && !string.IsNullOrWhiteSpace(e.Start) && !string.IsNullOrWhiteSpace(e.End)).ToList();
 				var mapped = new List<DeploymentTimeEntry>();
@@ -639,11 +675,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else entry.DeploymentEquipmentId = row.SubjectId;
 					mapped.Add(entry);
 				}
-				var result = await _timeTracking.SaveTimeEntriesAsync(id, DepartmentId, mapped, UserId, Ip, Agent, cancellationToken);
+				var result = await _timeTracking.SaveTimeEntriesAsync(id, DepartmentId, mapped, access, UserId, Ip, Agent, cancellationToken);
 				if (!result.Validation.IsValid) { RememberIssues(result.Validation); return RedirectToAction("TimeReport", new { id }); }
 
 				if (string.Equals(action, "submit", StringComparison.OrdinalIgnoreCase))
 				{
+					if (!access.CanActOn(result.Report)) return Unauthorized();
 					var submit = await _timeTracking.SubmitTimeReportAsync(id, DepartmentId, UserId, Ip, Agent, cancellationToken);
 					RememberIssues(submit.Validation);
 					if (!submit.Validation.IsValid) return RedirectToAction("TimeReport", new { id });
@@ -696,7 +733,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var report = await _timeTracking.GetTimeReportByIdAsync(id, DepartmentId);
 			if (report == null) return NotFound();
 			var deployment = await AccessibleAsync(report.DeploymentId);
-			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
+			if (deployment == null || !(await TimeAccessAsync(deployment)).CanActOn(report)) return Unauthorized();
 			try { await _timeTracking.SignTimeReportAsync(id, DepartmentId, contractorSigned, customerSignerName, UserId, Ip, Agent, cancellationToken); return Saved("TimeReport", new { id }); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "TimeReport", new { id }); }
 		}
@@ -717,7 +754,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var report = await _timeTracking.GetTimeReportByIdAsync(id, DepartmentId);
 			if (report == null) return NotFound();
 			var deployment = await AccessibleAsync(report.DeploymentId);
-			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
+			if (deployment == null || !(await TimeAccessAsync(deployment)).CanActOn(report)) return Unauthorized();
 			try { await _timeTracking.GenerateTimeReportPdfAsync(id, DepartmentId, UserId, Ip, Agent, cancellationToken); return Saved("TimeReport", new { id }); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "TimeReport", new { id }); }
 		}
@@ -731,7 +768,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.DeploymentId)) return BadRequest();
 			var deployment = await AccessibleAsync(input.DeploymentId);
-			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
+			if (deployment == null) return Unauthorized();
+			var access = await TimeAccessAsync(deployment);
+			if (!access.CanWrite) return Unauthorized();
+			// A member edits only the expenses they added and links them only to a report that is theirs; managers edit any.
+			if (!access.CanManage && !string.IsNullOrWhiteSpace(input.DeploymentExpenseId))
+			{
+				var existing = await _timeTracking.GetExpenseByIdAsync(input.DeploymentExpenseId, DepartmentId);
+				if (existing == null) return NotFound();
+				if (!string.Equals(existing.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase)) return Unauthorized();
+			}
+			if (!access.CanManage && !string.IsNullOrWhiteSpace(input.DeploymentTimeReportId))
+			{
+				var linked = await _timeTracking.GetTimeReportByIdAsync(input.DeploymentTimeReportId, DepartmentId);
+				if (linked == null) return NotFound();
+				if (!access.CanActOn(linked)) return Unauthorized();
+			}
 			var back = string.IsNullOrWhiteSpace(input.DeploymentTimeReportId) ? ("View", (object)new { id = input.DeploymentId, tab = "expenses" }) : ("TimeReport", new { id = input.DeploymentTimeReportId });
 			var upload = await ReadUploadAsync(receipt, cancellationToken);
 			if (upload.Error != null) return Refused(400, upload.Error, back.Item1, back.Item2);
@@ -756,7 +808,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var expense = await _timeTracking.GetExpenseByIdAsync(deploymentExpenseId, DepartmentId);
 			if (expense == null) return NotFound();
 			var deployment = await AccessibleAsync(expense.DeploymentId);
-			if (deployment == null || (!CanManage && !deployment.Personnel.Any(p => p.UserId == UserId))) return Unauthorized();
+			if (deployment == null) return Unauthorized();
+			var access = await TimeAccessAsync(deployment);
+			if (!access.CanWrite || (!access.CanManage && !string.Equals(expense.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase))) return Unauthorized();
 			var back = new { id = deployment.DeploymentId, tab = "expenses" };
 			try { await _timeTracking.DeleteExpenseAsync(deploymentExpenseId, DepartmentId, UserId, Ip, Agent, cancellationToken); return Saved("View", back); }
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return Refused(400, ex.Message, "View", back); }

@@ -438,6 +438,17 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task A_request_is_only_assigned_to_an_active_member()
+		{
+			_authorization.Setup(a => a.IsAssignableMemberAsync(It.IsAny<string>(), Dept)).ReturnsAsync((string user, int department) => user != "departed");
+			Func<Task> departed = () => _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "A. Reporter", JurisdictionProfile = "US-IL", ReceivedOn = DateTime.UtcNow, AssignedToUserId = "departed" });
+			await departed.Should().ThrowAsync<ArgumentException>();
+			_store.Outbox.Should().NotContain(o => o.EventName == "RecordDisclosureRequested");
+			(await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "A. Reporter", JurisdictionProfile = "US-IL", ReceivedOn = DateTime.UtcNow, AssignedToUserId = " clerk " }))
+				.AssignedToUserId.Should().Be("clerk");
+		}
+
+		[Test]
 		public async Task Logging_a_request_emits_record_disclosure_requested_without_the_requester()
 		{
 			var request = await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "A. Reporter", RequesterOrganization = "Local Paper", JurisdictionProfile = "US-IL", ReceivedOn = DateTime.UtcNow });

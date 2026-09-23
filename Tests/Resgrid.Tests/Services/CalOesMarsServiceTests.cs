@@ -131,6 +131,7 @@ namespace Resgrid.Tests.Services
 			_deployments.Setup(d => d.GetAttachmentsAsync("dep-1", DeptId)).ReturnsAsync(() => _attachments.ToList());
 			_deployments.Setup(d => d.GetAttachmentAsync(It.IsAny<int>(), DeptId, It.IsAny<bool>())).ReturnsAsync((int id, int _, bool __) => _attachments.FirstOrDefault(a => a.DeploymentAttachmentId == id));
 			_deployments.Setup(d => d.IsRosteredAsync("dep-1", DeptId, It.IsAny<string>())).ReturnsAsync((string _, int __, string user) => _deployment.Personnel.Any(p => p.UserId == user));
+			_deployments.Setup(d => d.CanFieldMemberSeeAsync("dep-1", DeptId, It.IsAny<string>())).ReturnsAsync((string _, int __, string user) => _deployment.Personnel.Any(p => p.UserId == user));
 			_deployments.Setup(d => d.GetCostRecoveryDeploymentsReleasedBeforeAsync(DeptId, It.IsAny<DateTime>())).ReturnsAsync(() => new List<Deployment> { _deployment });
 			var timeTracking = new Mock<ITimeTrackingService>();
 			timeTracking.Setup(t => t.GetTimeReportsAsync("dep-1", DeptId)).ReturnsAsync(() => _reports.ToList());
@@ -145,6 +146,7 @@ namespace Resgrid.Tests.Services
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = DeptId, Name = "Test", TimeZone = "UTC" });
 			departments.Setup(d => d.GetAllAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
+			departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
 			var events = new Mock<IEventAggregator>();
 			events.Setup(e => e.SendMessage(It.IsAny<AuditEvent>())).Callback<AuditEvent>(a => _audits.Add(a));
 			var communication = new Mock<ICommunicationService>();

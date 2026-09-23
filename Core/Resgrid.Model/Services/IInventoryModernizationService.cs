@@ -49,5 +49,7 @@ namespace Resgrid.Model.Services
 		Task<bool> CanLocationAsync(InventoryActor actor, InventoryLocation location);
 		Task ValidateHolderAsync(InventoryActor actor, InventoryLocation location);
 		Task<bool> IsEnabledAsync(int departmentId);
+		/// <summary>The department's active members (removed, disabled and hidden excluded): a personnel holder outside it has departed.</summary>
+		Task<HashSet<string>> ActiveMemberIdsAsync(int departmentId);
 	}
 }

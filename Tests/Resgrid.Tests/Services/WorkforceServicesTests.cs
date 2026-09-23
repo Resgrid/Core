@@ -40,6 +40,7 @@ namespace Resgrid.Tests.Services
 		private List<ResourceCostProfile> _resourceProfiles; private List<ResourceCostComponent> _resourceComponents; private List<ResourceUsageEntry> _usage; private List<FieldCostRun> _runs; private List<FieldCostLine> _lines;
 		private List<PayDataReportingDemographic> _demographics; private List<PayDataReportRun> _reportRuns; private List<PayDataReportEmployeeSnapshot> _snapshots; private List<PayDataReportRow> _rows; private List<PayDataExportArtifact> _artifacts;
 		private List<AuditEvent> _audits; private List<string> _notifications;
+		private Dictionary<string, DepartmentMember> _memberStates;
 		private List<Deployment> _deployments; private List<DeploymentPersonnel> _personnel; private List<DeploymentUnit> _units; private List<DeploymentTimeReport> _reports; private List<DeploymentTimeEntry> _entries; private List<DeploymentExpense> _expenses;
 		private List<CalOesMarsWorkItem> _marsItems;
 		private Mock<IUnitOfWork> _unitOfWork; private Mock<IEmployeePayComponentRepository> _payComponentRepository; private int _commits; private int _discards;
@@ -161,13 +162,17 @@ namespace Resgrid.Tests.Services
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = DeptId, Name = "Dept" });
 			departments.Setup(d => d.GetAllAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
+			departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin" } });
+			// Everyone is a current member of the department unless a test gives them another membership state (null = not a member).
+			_memberStates = new Dictionary<string, DepartmentMember>(StringComparer.OrdinalIgnoreCase);
+			departments.Setup(d => d.GetDepartmentMemberAsync(It.IsAny<string>(), DeptId, true)).ReturnsAsync((string id, int dept, bool _) => _memberStates.TryGetValue(id, out var state) ? state : new DepartmentMember { DepartmentId = dept, UserId = id });
 			var communication = new Mock<ICommunicationService>();
 			communication.Setup(c => c.SendNotificationAsync(It.IsAny<string>(), DeptId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>()))
 				.ReturnsAsync((string u, int d, string m, string n, Department dep, string t, UserProfile p, bool ic) => { _notifications.Add(m); return true; });
 			var events = new Mock<IEventAggregator>();
 			events.Setup(e => e.SendMessage<AuditEvent>(It.IsAny<AuditEvent>())).Callback<AuditEvent>(a => _audits.Add(a));
 
-			_workforce = new WorkforceService(employers.Object, affiliates.Object, establishments.Object, contractors.Object, workers.Object, employments.Object, assignments.Object, workEntries.Object, facts.Object, userProfiles.Object, events.Object);
+			_workforce = new WorkforceService(employers.Object, affiliates.Object, establishments.Object, contractors.Object, workers.Object, employments.Object, assignments.Object, workEntries.Object, facts.Object, userProfiles.Object, events.Object, departments.Object);
 			_payComponentRepository = payComponents;
 			_unitOfWork = TransactionalStores(_profiles, _payComponents, _costComponents);
 			_compensation = new CompensationCostService(profiles.Object, payComponents.Object, costComponents.Object, employments.Object, assignments.Object, events.Object, _unitOfWork.Object);
@@ -215,6 +220,55 @@ namespace Resgrid.Tests.Services
 			var employment = await _workforce.SaveEmploymentAsync(new WorkforceEmployment { DepartmentId = DeptId, WorkforceWorkerId = worker.WorkforceWorkerId, WorkerKind = (int)WorkerKinds.PayrollEmployee, StartOn = new DateTime(2024, 1, 1), EmploymentType = (int)EmploymentTypes.FullTime, ExemptionStatus = (int)ExemptionStatuses.NonExempt, CaliforniaEmployeeBasis = (int)CaliforniaEmployeeBases.Both, DefaultEstablishmentId = establishment.WorkforceEstablishmentId, PersonnelRoleId = roleId }, User, null, null);
 			await _workforce.SaveJobAssignmentAsync(new WorkforceJobAssignment { DepartmentId = DeptId, WorkforceEmploymentId = employment.WorkforceEmploymentId, EffectiveOn = new DateTime(2024, 1, 1), JobTitle = "Firefighter", JobCategoryCode = "10", WorkforceEstablishmentId = establishment.WorkforceEstablishmentId, WorkMode = (int)WorkModes.NonRemote, WorkCountry = "US", WorkSubdivision = "CA" }, User, null, null);
 			return (worker, employment, establishment);
+		}
+
+		[Test]
+		public async Task A_worker_row_links_only_a_current_member_of_the_department()
+		{
+			_memberStates["removed"] = new DepartmentMember { DepartmentId = DeptId, UserId = "removed", IsDeleted = true };
+			_memberStates["disabled"] = new DepartmentMember { DepartmentId = DeptId, UserId = "disabled", IsDisabled = true };
+			_memberStates["stranger"] = null;
+			_memberStates["hidden"] = new DepartmentMember { DepartmentId = DeptId, UserId = "hidden", IsHidden = true };
+			foreach (var refused in new[] { "removed", "disabled", "stranger" })
+			{
+				Func<Task> create = () => _workforce.GetOrCreateWorkerForUserAsync(DeptId, refused, User);
+				await create.Should().ThrowAsync<InvalidOperationException>().WithMessage("workforce_member_not_found");
+				Func<Task> link = () => _workforce.SaveWorkerAsync(new WorkforceWorker { DepartmentId = DeptId, UserId = refused }, User, null, null);
+				await link.Should().ThrowAsync<InvalidOperationException>().WithMessage("workforce_member_not_found");
+			}
+			_workers.Should().BeEmpty();
+			(await _workforce.GetOrCreateWorkerForUserAsync(DeptId, "hidden", User)).UserId.Should().Be("hidden", "a hidden member may still hold a worker row");
+
+			// An existing row keeps working after its member leaves; only a new link is checked.
+			var kept = await _workforce.GetOrCreateWorkerForUserAsync(DeptId, "u1", User);
+			_memberStates["u1"] = new DepartmentMember { DepartmentId = DeptId, UserId = "u1", IsDisabled = true };
+			(await _workforce.GetOrCreateWorkerForUserAsync(DeptId, "u1", User)).WorkforceWorkerId.Should().Be(kept.WorkforceWorkerId);
+		}
+
+		[Test]
+		public async Task A_departed_members_open_employment_ends_on_the_removal_day_and_leaves_the_current_counts()
+		{
+			var (worker, employment, _) = await SeedWorkerAsync("leaver");
+			var earlier = new WorkforceEmployment { WorkforceEmploymentId = "earlier", DepartmentId = DeptId, WorkforceWorkerId = worker.WorkforceWorkerId, WorkerKind = (int)WorkerKinds.PayrollEmployee, StartOn = new DateTime(2019, 1, 1), EndOn = new DateTime(2021, 12, 31) };
+			var removalDay = DateTime.UtcNow.Date;
+			var notStarted = new WorkforceEmployment { WorkforceEmploymentId = "not-started", DepartmentId = DeptId, WorkforceWorkerId = worker.WorkforceWorkerId, WorkerKind = (int)WorkerKinds.PayrollEmployee, StartOn = removalDay.AddDays(30) };
+			_employments.Add(earlier); _employments.Add(notStarted);
+			(await _demographicsService.GetCompletenessAsync(DeptId, removalDay.AddDays(1))).ActiveWorkers.Should().Be(1);
+			_audits.Clear();
+
+			(await _workforce.EndEmploymentsForMemberAsync(DeptId, "leaver", removalDay, "chief")).Should().Be(2);
+
+			_employments.Single(e => e.WorkforceEmploymentId == employment.WorkforceEmploymentId).EndOn.Should().Be(removalDay, "end-dated, never deleted: past periods keep the member");
+			_employments.Single(e => e.WorkforceEmploymentId == employment.WorkforceEmploymentId).IsDeleted.Should().BeFalse();
+			earlier.EndOn.Should().Be(new DateTime(2021, 12, 31), "an employment that already ended is left alone");
+			notStarted.IsDeleted.Should().BeTrue("an employment that had not begun is withdrawn rather than ended before its start");
+			_audits.Should().HaveCount(2).And.OnlyContain(a => a.Type == AuditLogTypes.WorkforceEmploymentChanged && a.UserId == "chief");
+			(await _demographicsService.GetCompletenessAsync(DeptId, removalDay)).ActiveWorkers.Should().Be(1, "the removal day itself is still worked");
+			(await _demographicsService.GetCompletenessAsync(DeptId, removalDay.AddDays(1))).ActiveWorkers.Should().Be(0, "current-as-of counts no longer include the member");
+			(await _demographicsService.GetCompletenessAsync(DeptId, new DateTime(2024, 6, 1))).ActiveWorkers.Should().Be(1, "a past period still counts them");
+
+			(await _workforce.EndEmploymentsForMemberAsync(DeptId, "leaver", removalDay, "chief")).Should().Be(0, "a second removal pass changes nothing");
+			(await _workforce.EndEmploymentsForMemberAsync(DeptId, "no-worker-row", removalDay, "chief")).Should().Be(0);
 		}
 
 		[Test]

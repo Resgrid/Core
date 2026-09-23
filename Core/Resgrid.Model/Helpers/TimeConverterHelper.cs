@@ -43,6 +43,21 @@ namespace Resgrid.Model.Helpers
 			}
 		}
 
+		/// <summary>
+		/// The inverse of <see cref="TimeConverter"/>: a department-local wall-clock value to its UTC instant, resolved in the same
+		/// zone (Pacific when the department has none). DST gaps and overlaps resolve leniently, like the MVC DepartmentTime input
+		/// path, so a typed 02:30 on the spring-forward day still saves. A value already marked UTC keeps its instant.
+		/// </summary>
+		public static DateTime DepartmentLocalToUtc(this DateTime local, Department department)
+		{
+			if (local.Kind == DateTimeKind.Utc) return local;
+			if (local.Kind == DateTimeKind.Local) return local.ToUniversalTime();
+			var timeZone = string.IsNullOrEmpty(department?.TimeZone) ? "Pacific Standard Time" : department.TimeZone;
+			var id = DateTimeHelpers.ConvertTimeZoneString(timeZone);
+			var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(id) ?? DateTimeZoneProviders.Tzdb[TZConvert.WindowsToIana(id)];
+			return LocalDateTime.FromDateTime(local).InZoneLeniently(zone).ToDateTimeUtc();
+		}
+
 		public static string TimeConverterToString(this DateTime timestamp, Department department)
         {
             department ??= new Department();

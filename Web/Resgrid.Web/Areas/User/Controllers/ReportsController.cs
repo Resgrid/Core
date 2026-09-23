@@ -870,7 +870,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new CertificationsReportView();
 			model.Rows = new List<CertificationsReportRow>();
 
-			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId);
+			// Active members only: deleted, disabled and hidden members are not reported.
+			var activeMembers = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>();
+			var users = (await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId) ?? new List<Resgrid.Model.Identity.IdentityUser>())
+				.Where(u => u?.UserId != null && activeMembers.Contains(u.UserId)).ToList();
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
 			// Department-scoped, protected identification number (plan 5.1) — never the global column.
@@ -886,7 +889,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var person = new CertificationsReportRow();
 				person.SubRows = new List<CertificationsReportSubRow>();
 
-				var certifications = await _certificationService.GetCertificationsByUserIdAsync(user.UserId);
+				// The holder's records across every department they belong to; this report is this department's only.
+				var certifications = (await _certificationService.GetCertificationsByUserIdAsync(user.UserId))?
+					.Where(c => c != null && c.DepartmentId == departmentId).ToList();
 
 				if (certifications != null && certifications.Count > 0)
 				{

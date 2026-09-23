@@ -22,6 +22,7 @@ namespace Resgrid.Tests.Services
         private sealed class MaintenanceClock : TimeProvider { public DateTime Utc = new(2026, 9, 9, 12, 0, 0, DateTimeKind.Utc); public override DateTimeOffset GetUtcNow() => new(Utc); }
         private MaintenanceClock _maintenanceClock;
         private Mock<IChecklistRepository> _maintenanceChecklists;
+        private HashSet<string> _inactiveMaintenanceMembers;
         private void Maintenance()
         {
             _maintenanceClock = new(); _maintenanceChecklists = new();
@@ -33,6 +34,9 @@ namespace Resgrid.Tests.Services
             var audit = new Mock<IAuditLogsRepository>();
             audit.Setup(a => a.InsertAsync(It.IsAny<AuditLog>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((AuditLog a, CancellationToken c, bool b) => { a.AuditLogId = 1; return a; });
             var units = new Mock<IUnitsService>(); units.Setup(u => u.GetUnitByIdAsync(10)).ReturnsAsync(new Unit { UnitId = 10, DepartmentId = 77 });
+            // Everyone a schedule names is an active member unless a test says otherwise.
+            _inactiveMaintenanceMembers = new HashSet<string>();
+            _auth.Setup(a => a.ActiveMemberIdsAsync(77)).ReturnsAsync(() => new HashSet<string>(_store.All<WorkOrderRecurrence>().SelectMany(r => r.AssignedToUserIds).Where(u => !_inactiveMaintenanceMembers.Contains(u))));
             _service = new WorkOrdersService(_store, _auth.Object, _access.Object, _uow.Object, audit.Object, _outbox.Object, new(() => _read.Object), new(() => _write.Object), _scanner.Object,
                 _maintenanceClock, _store, checklists: _maintenanceChecklists.Object, maintenanceUnits: units.Object);
         }

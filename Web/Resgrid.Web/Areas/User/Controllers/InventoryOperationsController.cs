@@ -62,7 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					foreach (var unit in await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new())
 						if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = (int)InventoryLocationType.Unit, UnitId = unit.UnitId }))
 							view.Units.Add(new InventoryChoice { Id = unit.UnitId.ToString(CultureInfo.InvariantCulture), Name = unit.Name });
-					foreach (var person in await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new())
+					foreach (var person in await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new())
 						if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = (int)InventoryLocationType.Personnel, UserId = person.UserId }))
 							view.People.Add(new InventoryChoice { Id = person.UserId, Name = person.Name });
 				}

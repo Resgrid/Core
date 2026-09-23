@@ -30,6 +30,8 @@ namespace Resgrid.Tests.Services
 		private List<PersonnelCertificationCredit> _credits;
 		private DepartmentCertificationSettings _settings;
 		private List<PersonnelRoleUser> _members;
+		/// <summary>The department's active members; anyone else stands for a removed, disabled or hidden member.</summary>
+		private HashSet<string> _activeMembers;
 		private readonly List<object> _published = new List<object>();
 		private readonly List<(string UserId, string Message)> _notified = new List<(string, string)>();
 		private Mock<IPersonnelRolesService> _roles;
@@ -55,6 +57,7 @@ namespace Resgrid.Tests.Services
 			_credits = new List<PersonnelCertificationCredit>();
 			_settings = null;
 			_members = new List<PersonnelRoleUser>();
+			_activeMembers = new HashSet<string> { "u1", "u2", "u3", "u4", "admin-1" };
 
 			var types = new Mock<IDepartmentCertificationTypeRepository>();
 			types.Setup(r => r.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(() => _types.ToList());
@@ -150,7 +153,8 @@ namespace Resgrid.Tests.Services
 			profiles.Setup(p => p.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync((string id, bool _) => new UserProfile { UserId = id, FirstName = "Member", LastName = id });
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, Name = "Test" });
-			departments.Setup(d => d.GetAllAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin-1" } });
+			departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin-1" } });
+			departments.Setup(d => d.GetActiveMemberUserIdsAsync(Dept)).ReturnsAsync(() => new HashSet<string>(_activeMembers));
 			var departmentSettings = new Mock<IDepartmentSettingsService>();
 			departmentSettings.Setup(d => d.GetTextToCallNumberForDepartmentAsync(Dept)).ReturnsAsync("+15555550100");
 			var communication = new Mock<ICommunicationService>();
@@ -461,6 +465,38 @@ namespace Resgrid.Tests.Services
 			_published.Clear();
 			(await _service.RunExpirySweepAsync(Dept, Today)).Removed.Should().Be(0);
 			(await _service.RunExpirySweepAsync(Dept, Today.AddDays(1))).Removed.Should().Be(1, "removal on day grace + 1");
+		}
+
+		[Test]
+		public async Task Removed_disabled_and_hidden_members_are_left_out_of_the_sweep_the_digest_and_the_dashboard()
+		{
+			// "removed-member", "disabled-member" and "hidden-member" are not in _activeMembers: the department service
+			// leaves them out of the active set whichever of the three flags put them there.
+			_settings = new DepartmentCertificationSettings { DepartmentId = Dept, NotifyLeadDaysCsv = "7", NotifyCertificationHolder = true, SendAdminDigest = true,
+				EnforcementMode = (int)CertificationEnforcementModes.Enforce, RoleRemovalGraceDays = 0 };
+			var kept = AddRecord(1, Today.AddDays(-1), "u1");
+			var removed = AddRecord(1, Today.AddDays(-1), "removed-member");
+			var disabled = AddRecord(1, Today.AddDays(7), "disabled-member");
+			var hidden = AddRecord(1, Today.AddDays(-40), "hidden-member", PersonnelCertificationStatuses.Expired);
+			_requirements.Add(new PersonnelRoleCertificationRequirement { PersonnelRoleCertificationRequirementId = 1, PersonnelRoleId = 12, DepartmentId = Dept, DepartmentCertificationTypeId = 1, IsMandatory = true, AddedOn = Today.AddYears(-1) });
+			_members.Add(new PersonnelRoleUser { PersonnelRoleUserId = 1, PersonnelRoleId = 12, DepartmentId = Dept, UserId = "hidden-member" });
+
+			var result = await _service.RunExpirySweepAsync(Dept, Today);
+
+			result.Expired.Should().Be(1); result.ExpiringNotified.Should().Be(0); result.Removed.Should().Be(0); result.InGrace.Should().Be(0);
+			kept.Status.Should().Be((int)PersonnelCertificationStatuses.Expired);
+			removed.Status.Should().Be((int)PersonnelCertificationStatuses.Active, "a departed member's record is not expired or announced");
+			disabled.Status.Should().Be((int)PersonnelCertificationStatuses.Active);
+			_published.OfType<CertificationExpiredEvent>().Should().ContainSingle().Which.Certification.UserId.Should().Be("u1");
+			_published.OfType<CertificationExpiringEvent>().Should().BeEmpty();
+			_published.OfType<CertificationRoleRemovedEvent>().Should().BeEmpty("enforcement leaves inactive members alone");
+			_members.Should().ContainSingle();
+			_notified.Should().OnlyContain(n => n.UserId == "admin-1", "no holder notice reaches an inactive member");
+			_notified.Should().ContainSingle().Which.Message.Should().Contain("1 expired, 0 expiring").And.NotContain("-member");
+
+			var dashboard = await _service.GetExpiryDashboardAsync(Dept, Today);
+			dashboard.PersonCells.Select(c => c.SubjectId).Should().Equal("u1");
+			dashboard.ExpiredCount.Should().Be(1);
 		}
 
 		[Test]

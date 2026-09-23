@@ -43,6 +43,10 @@ namespace Resgrid.Services
 			var leadDays = settings.GetNotifyLeadDays();
 			var horizon = today.AddDays(leadDays.Count > 0 ? leadDays.Max() : 60);
 			var types = (await GetAllCertificationTypesByDepartmentAsync(departmentId)).Where(t => !t.IsDeleted).ToDictionary(t => t.DepartmentCertificationTypeId);
+			// Deleted, disabled and hidden members are out of every pass: their records are neither expired nor announced,
+			// they are not notified, enforced against or named in the digest, and no admin among them receives it. The expire
+			// pass catches up on its own if a member is re-enabled (any live record past its date is expired on the next run).
+			var activeMembers = await ActiveMemberUserIdsAsync(departmentId);
 			var nameCache = new Dictionary<string, string>();
 			async Task<string> Name(string userId)
 			{
@@ -51,7 +55,8 @@ namespace Resgrid.Services
 			}
 
 			// ---- Pass 1 + 2: personnel records ---------------------------------------------------------------------
-			var records = (await _personnelCertificationRepository.GetExpiringAsync(departmentId, horizon.AddDays(1)))?.Where(r => r.IsTyped && types.ContainsKey(r.DepartmentCertificationTypeId.Value)).ToList() ?? new List<PersonnelCertification>();
+			var records = (await _personnelCertificationRepository.GetExpiringAsync(departmentId, horizon.AddDays(1)))?
+				.Where(r => r.IsTyped && types.ContainsKey(r.DepartmentCertificationTypeId.Value) && r.UserId != null && activeMembers.Contains(r.UserId)).ToList() ?? new List<PersonnelCertification>();
 			foreach (var record in records)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
@@ -135,7 +140,7 @@ namespace Resgrid.Services
 					cancellationToken.ThrowIfCancellationRequested();
 					var role = await _roles.Value.GetRoleByIdAsync(roleId);
 					if (role == null || role.DepartmentId != departmentId) continue;
-					var members = (await _roles.Value.GetAllMembersOfRoleAsync(roleId))?.ToList() ?? new List<PersonnelRoleUser>();
+					var members = (await _roles.Value.GetAllMembersOfRoleAsync(roleId))?.Where(m => m?.UserId != null && activeMembers.Contains(m.UserId)).ToList() ?? new List<PersonnelRoleUser>();
 					if (members.Count == 0) continue;
 					var roleRequirements = requirements.Where(r => r.PersonnelRoleId == roleId).ToList();
 					var memberIds = members.Select(m => m.UserId).Distinct().ToList();
@@ -186,7 +191,7 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					var admins = await _departments.Value.GetAllAdminsForDepartmentAsync(departmentId);
+					var admins = await _departments.Value.GetActiveAdminsForDepartmentAsync(departmentId);
 					var lines = new List<string> { $"Certification summary for {today:yyyy-MM-dd}: {result.Expired + result.UnitsExpired} expired, {result.ExpiringNotified + result.UnitsExpiringNotified} expiring, {result.InGrace} in grace, {result.Removed} removed from roles." };
 					if (result.ExpiredNames.Count > 0) lines.Add("Expired: " + string.Join("; ", result.ExpiredNames.Take(25)));
 					if (result.ExpiringNames.Count > 0) lines.Add("Expiring: " + string.Join("; ", result.ExpiringNames.Take(25)));

@@ -17,5 +17,7 @@ namespace Resgrid.Web.Areas.User.Models.Personnel
 		public ActionLog ActionLog { get; set; }
 		public Department Department { get; set; }
 		public string State { get; set; }
+		/// <summary>ReactivateUser / AddExistingUser: nothing has changed yet and the page asks for confirmation (false once done).</summary>
+		public bool ConfirmationPending { get; set; }
 	}
 }

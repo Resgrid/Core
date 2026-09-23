@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Model.Checklists;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -55,7 +56,8 @@ namespace Resgrid.Services
 		public async Task<List<ChecklistAssignmentChoice>> ChoicesAsync(ChecklistActor actor)
 		{
 			var choices = new List<ChecklistAssignmentChoice>();
-			foreach (var member in (await _departments.GetAllMembersForDepartmentUnlimitedAsync(actor.DepartmentId, true)).Where(m => m.DepartmentId == actor.DepartmentId && !m.IsDeleted && m.IsDisabled != true))
+			// Pickers offer active members only; hidden members can still perform what they are already assigned (MembersAsync).
+			foreach (var member in (await _departments.GetAllMembersForDepartmentUnlimitedAsync(actor.DepartmentId, true)).Where(m => DepartmentMemberStateHelper.IsActiveMember(m, actor.DepartmentId)))
 				choices.Add(new ChecklistAssignmentChoice { Type = 1, Id = member.UserId, Name = member.User?.UserName ?? member.UserId });
 			foreach (var role in (await _roles.GetRolesForDepartmentUnlimitedAsync(actor.DepartmentId)).Where(r => r.DepartmentId == actor.DepartmentId)) choices.Add(new ChecklistAssignmentChoice { Type = 2, Id = role.PersonnelRoleId.ToString(CultureInfo.InvariantCulture), Name = role.Name });
 			foreach (var group in (await _groups.GetAllGroupsForDepartmentUnlimitedThinAsync(actor.DepartmentId)).Where(g => g.DepartmentId == actor.DepartmentId)) choices.Add(new ChecklistAssignmentChoice { Type = 3, Id = group.DepartmentGroupId.ToString(CultureInfo.InvariantCulture), Name = group.Name });

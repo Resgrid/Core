@@ -167,6 +167,9 @@ namespace Resgrid.Services.Records
 				throw new UnauthorizedAccessException("Bulk assign-for-review requires the ReviewRecords permission.");
 			if (!await _authorization.IsActiveMemberAsync(request.ReviewerUserId, departmentId))
 				throw new ArgumentException("The reviewer is not an active member of this department.", nameof(request));
+			// Checked once here: the per-record check would otherwise reject every row for the same reviewer-level reason.
+			if (!await _authorization.HasPermissionAsync(request.ReviewerUserId, departmentId, PermissionTypes.ReviewRecords))
+				throw new ArgumentException("The chosen reviewer does not hold the ReviewRecords permission.", nameof(request));
 
 			var result = new RecordsBulkResult();
 			foreach (var id in ids)
@@ -179,7 +182,11 @@ namespace Resgrid.Services.Records
 				}
 				catch (RecordTransitionException) { Skip(result, id, "not_awaiting_review"); }
 				catch (UnauthorizedAccessException) { Skip(result, id, "not_visible"); }
-				catch (ArgumentException) { Skip(result, id, "not_found"); }
+				catch (KeyNotFoundException) { Skip(result, id, "not_found"); }
+				// Someone else wrote the row between load and save; skip it rather than abort the rows after it.
+				catch (RecordConcurrencyException) { Skip(result, id, "conflict"); }
+				// The reviewer lost ReviewRecords after the precheck; earlier rows are already committed, so keep the batch result.
+				catch (ArgumentException) { Skip(result, id, "reviewer_not_eligible"); }
 			}
 			return result;
 		}

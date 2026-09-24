@@ -235,7 +235,8 @@
 									@foreach (var r in Model.Records)
 									{
 										<tr>
-											@if (bulk) { <td><input type="checkbox" name="ids" value="@r.RmsRecordSearchProjectionId" class="records-bulk-row" /></td> }
+											@* Bulk assign and packets operate on operational Records only; Incident Reports have their own workflow. *@
+											@if (bulk) { <td>@if (r.RecordKind == (int)RmsRecordKind.Operational) { <input type="checkbox" name="ids" value="@r.RmsRecordSearchProjectionId" class="records-bulk-row" /> }</td> }
 											<td>
 												@if (!string.IsNullOrWhiteSpace(r.RecordNumber))
 												{

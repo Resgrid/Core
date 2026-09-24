@@ -1094,4 +1094,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Не вдалося зберегти профіль; перевірте виділені поля.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Групове диспетчеризування</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Обмежити диспетчеризування зонами груп</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Якщо ввімкнено, списки активних викликів, мапи та панель найближчих підрозділів кожного учасника показують лише його власну групу та підпорядковані їй групи: виклики в межах цих груп або направлені їм, а також будь-які виклики, про які учасник повідомив або на які його було направлено. Адміністратори відділу та ролі нижче зберігають перегляд усього відділу. Нічого не копіюється і не переміщується, тож передача диспетчеризування іншому пульту під час зміни — це лише зміна ролі.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Ролі диспетчеризування для всього відділу</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Учасники з будь-якою з цих ролей (наприклад, центральний диспетчерський центр) бачать усі зони, коли обмеження ввімкнено. Призначте або зніміть роль, щоб передати диспетчеризування; зміна діє з наступного завантаження сторінки.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Ролі персоналу ще не визначено.</value>
+  </data>
 </root>

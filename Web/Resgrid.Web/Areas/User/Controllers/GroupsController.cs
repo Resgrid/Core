@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
@@ -98,9 +99,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup { DepartmentGroupId = -1, Name = "None" });
-			groups.AddRange(model.Groups.Where(x => x.Type.HasValue && x.Type.Value == (int)DepartmentGroupTypes.Station));
+			groups.AddRange(model.Groups.Where(x => x.ParentDepartmentGroupId.HasValue == false));
 
 			model.StationGroups = new SelectList(groups, "DepartmentGroupId", "Name");
+
+			// Either group type can sit under a parent (e.g. stations under a service area),
+			// but only a group of this department.
+			if (model.NewGroup.ParentDepartmentGroupId.HasValue && model.NewGroup.ParentDepartmentGroupId.Value > 0
+				&& !DepartmentGroupHierarchy.IsValidParent(model.Groups, 0, model.NewGroup.ParentDepartmentGroupId.Value))
+				ModelState.AddModelError("NewGroup.ParentDepartmentGroupId", "The selected parent group is not valid.");
 
 			var groupAdmins = new List<string>();
 			var groupUsers = new List<string>();
@@ -423,8 +430,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			List<DepartmentGroup> groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup { DepartmentGroupId = -1, Name = "None" });
-			groups.AddRange(model.Groups.Where(x => x.Type.HasValue && x.Type.Value == (int)DepartmentGroupTypes.Station));
+			groups.AddRange(model.Groups.Where(x => x.ParentDepartmentGroupId.HasValue == false && x.DepartmentGroupId != model.EditGroup.DepartmentGroupId));
 			model.StationGroups = new SelectList(groups, "DepartmentGroupId", "Name");
+
+			// Not itself, not one of its own descendants (a cycle), and only a group of this department.
+			if (model.EditGroup.ParentDepartmentGroupId.HasValue && model.EditGroup.ParentDepartmentGroupId.Value > 0
+				&& !DepartmentGroupHierarchy.IsValidParent(model.Groups, model.EditGroup.DepartmentGroupId, model.EditGroup.ParentDepartmentGroupId.Value))
+				ModelState.AddModelError("EditGroup.ParentDepartmentGroupId", "The selected parent group is not valid.");
 
 			var group = await _departmentGroupsService.GetGroupByIdAsync(model.EditGroup.DepartmentGroupId);
 
@@ -550,9 +562,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (!String.IsNullOrWhiteSpace(model.What3Word))
 						group.What3Words = model.What3Word;
-
-					group.ParentDepartmentGroupId = null;
-					group.Parent = null;
 				}
 				else
 				{
@@ -607,6 +616,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Group.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// The save already required this; the editor itself did not.
+			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
+				return Unauthorized();
+
+			// Re-serialized from the parsed polygon, never echoed raw: the stored text is written into a
+			// script block, and ParseGeofence tolerates extra keys that could carry markup.
+			model.GeofenceJson = SerializeGeofence(GeoMath.ParseGeofence(model.Group.Geofence));
+
 			model.Coordinates = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(departmentGroupId)
 				?? new Coordinates { Latitude = 39.8283, Longitude = -98.5795 };
 
@@ -632,9 +649,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.DepartmentGroupId))
 				return Unauthorized();
 
-			// An empty fence clears the response area; anything else must parse as a
+			// An empty fence clears the boundary; anything else must parse as a
 			// polygon (>= 3 vertices) or downstream dispatch containment silently skips it.
-			if (!string.IsNullOrWhiteSpace(model.GeoFence) && GeoMath.ParseGeofence(model.GeoFence) == null)
+			var polygon = string.IsNullOrWhiteSpace(model.GeoFence) ? null : GeoMath.ParseGeofence(model.GeoFence);
+			if (!string.IsNullOrWhiteSpace(model.GeoFence) && polygon == null)
 			{
 				model.Success = false;
 				model.Message = "The geofence is not a valid polygon. Draw an area with at least three points and try again.";
@@ -642,14 +660,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Json(model);
 			}
 
-			group.GeofenceColor = model.Color;
-			group.Geofence = model.GeoFence;
+			// Both Station (response area) and Organizational (service area) groups can own a boundary.
+			// Stored in canonical form so nothing but coordinates is ever persisted.
+			group.GeofenceColor = !string.IsNullOrWhiteSpace(model.Color) && HexColorPattern.IsMatch(model.Color) ? model.Color : null;
+			group.Geofence = polygon == null ? null : SerializeGeofence(polygon);
 
 			await _departmentGroupsService.SaveAsync(group, cancellationToken);
 			model.Success = true;
-			model.Message = "Station response area geofence has been saved.";
+			model.Message = "The group boundary has been saved.";
 
 			return Json(model);
+		}
+
+		private static readonly System.Text.RegularExpressions.Regex HexColorPattern =
+			new System.Text.RegularExpressions.Regex("^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
+
+		private static string SerializeGeofence(List<GeoMath.GeoPoint> polygon)
+		{
+			if (polygon == null)
+				return "[]";
+
+			return JsonConvert.SerializeObject(polygon.Select(p => new { lat = p.Latitude, lng = p.Longitude }));
 		}
 
 

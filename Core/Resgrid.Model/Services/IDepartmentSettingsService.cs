@@ -353,6 +353,11 @@ namespace Resgrid.Model.Services
 
 		Task<DepartmentSetting> SetDispatchRecommendationConfigAsync(int departmentId, DispatchRecommendationConfig config, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Group-scoped dispatch switch and its department-wide roles. Never null; defaults to off. Cached on the security-setting window.</summary>
+		Task<GroupDispatchScopeConfig> GetGroupDispatchScopeConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetGroupDispatchScopeConfigAsync(int departmentId, GroupDispatchScopeConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

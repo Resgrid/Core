@@ -68,13 +68,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedDataGrantService _grantService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IProtectedWorkflowService _protectedWorkflows;
 
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IAdpSizingService sizingService,
 			IProtectedDataBrokerClient brokerClient, IDepartmentsService departmentsService,
 			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService,
-			ICacheProvider cacheProvider, IEventAggregator eventAggregator)
+			ICacheProvider cacheProvider, IEventAggregator eventAggregator, IProtectedWorkflowService protectedWorkflows)
 		{
+			_protectedWorkflows = protectedWorkflows;
 			_eventAggregator = eventAggregator;
 			_dataProtectionService = dataProtectionService;
 			_departmentLockService = departmentLockService;
@@ -117,6 +119,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.StepUpExemptClients = ((AdpStepUpExemptClients)(policy?.StepUpExemptClients ?? 0)).Sanitize();
+
+			// ADP > Egress: Protected Workflows (the service enforces every rule again on save).
+			model.ProtectedWorkflows = await _protectedWorkflows.GetDepartmentSettingsAsync(DepartmentId, bypassCache: true);
+			model.CanAdministerProtectedWorkflows = await _protectedWorkflows.CanAdministerAsync(DepartmentId, UserId);
 
 			model.DefaultWindowStart = Config.DataProtectionConfig.MigrationWindowDefaultStartLocal;
 			model.DefaultWindowEnd = Config.DataProtectionConfig.MigrationWindowDefaultEndLocal;

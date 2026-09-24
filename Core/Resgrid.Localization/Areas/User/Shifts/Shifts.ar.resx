@@ -172,4 +172,111 @@
   <data name="RemoveRole" xml:space="preserve"><value>إزالة الدور</value></data>
   <data name="RemoveRoleFromGroup" xml:space="preserve"><value>إزالة هذا الدور من المجموعة</value></data>
   <data name="RoleCountRequired" xml:space="preserve"><value>عدد الدور مطلوب</value></data>
+  <data name="ActiveNowBadge" xml:space="preserve"><value>نشطة الآن</value></data>
+  <data name="AddPersonButton" xml:space="preserve"><value>إضافة إلى اليوم</value></data>
+  <data name="AddPersonHeader" xml:space="preserve"><value>إضافة شخص إلى هذا اليوم</value></data>
+  <data name="AddPersonHelp" xml:space="preserve"><value>يضع الشخص في هذا اليوم فقط؛ ويبقى باقي الجدول دون تغيير.</value></data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve"><value>تتطلب موافقة</value></data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve"><value>تحتاج التسجيلات والتبادلات في هذه الوردية إلى موافقة المشرف.</value></data>
+  <data name="ApprovalsButton" xml:space="preserve"><value>الموافقات</value></data>
+  <data name="ApprovalsHeader" xml:space="preserve"><value>موافقات الورديات</value></data>
+  <data name="ApprovalsHelp" xml:space="preserve"><value>التسجيلات والتبادلات التي تنتظر الموافقة في المجموعات التي تشرف عليها. لا يصبح أحد في الخدمة بطلب معلق حتى تتم الموافقة عليه.</value></data>
+  <data name="ApproveButton" xml:space="preserve"><value>موافقة</value></data>
+  <data name="DenyButton" xml:space="preserve"><value>رفض</value></data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve"><value>المبادلة بهذا اليوم</value></data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve"><value>اكتمل هذا التبادل: {0} يعمل في هذا اليوم.</value></data>
+  <data name="FinishTradeDenied" xml:space="preserve"><value>رفض المشرف الاختيار الأخير لهذا التبادل. يمكنك اختيار عرض آخر.</value></data>
+  <data name="FinishTradePendingFormat" xml:space="preserve"><value>لقد اخترت {0}. التبادل بانتظار موافقة المشرف.</value></data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve"><value>اختر عرضاً لقبوله.</value></data>
+  <data name="FullyStaffed" xml:space="preserve"><value>مكتملة العدد</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="MyStatusNone" xml:space="preserve"><value>أنت غير مدرج في يوم الوردية هذا.</value></data>
+  <data name="MyStatusOnDuty" xml:space="preserve"><value>أنت مدرج في يوم الوردية هذا.</value></data>
+  <data name="MyStatusPending" xml:space="preserve"><value>تسجيلك بانتظار موافقة المشرف.</value></data>
+  <data name="MyStatusRemoved" xml:space="preserve"><value>لم يوافق المشرف على تسجيلك أو أزالك من هذا اليوم.</value></data>
+  <data name="NoGroup" xml:space="preserve"><value>بدون مجموعة</value></data>
+  <data name="NoPendingSignups" xml:space="preserve"><value>لا توجد تسجيلات بانتظار الموافقة.</value></data>
+  <data name="NoPendingTrades" xml:space="preserve"><value>لا توجد تبادلات بانتظار الموافقة.</value></data>
+  <data name="NoPersonnelOnDay" xml:space="preserve"><value>لا يوجد أحد في هذا اليوم بعد.</value></data>
+  <data name="NoShiftsOnDuty" xml:space="preserve"><value>لا توجد ورديات جارية الآن.</value></data>
+  <data name="NobodyOnDuty" xml:space="preserve"><value>لا أحد في الخدمة</value></data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve"><value>في الخدمة حتى {0}. يتم تحديث هذه الصفحة كل دقيقة.</value></data>
+  <data name="OnDutyButton" xml:space="preserve"><value>في الخدمة الآن</value></data>
+  <data name="OnDutyHeader" xml:space="preserve"><value>في الخدمة الآن</value></data>
+  <data name="OpenSlotsFormat" xml:space="preserve"><value>المقاعد الشاغرة: {0}</value></data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve"><value>ملاحظة (اختياري)</value></data>
+  <data name="OtherPersonnelHeader" xml:space="preserve"><value>أفراد آخرون</value></data>
+  <data name="PendingApprovalBadge" xml:space="preserve"><value>بانتظار الموافقة</value></data>
+  <data name="PendingSignupsHeader" xml:space="preserve"><value>تسجيلات بانتظار الموافقة</value></data>
+  <data name="PendingTradesHeader" xml:space="preserve"><value>تبادلات بانتظار الموافقة</value></data>
+  <data name="PersonAddedToDay" xml:space="preserve"><value>تمت إضافة الشخص إلى هذا اليوم.</value></data>
+  <data name="PersonLabel" xml:space="preserve"><value>الشخص</value></data>
+  <data name="PersonRemovedFromDay" xml:space="preserve"><value>تمت إزالة الشخص من هذا اليوم.</value></data>
+  <data name="RefreshButton" xml:space="preserve"><value>تحديث</value></data>
+  <data name="RemoveFromDayButton" xml:space="preserve"><value>إزالة من هذا اليوم</value></data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve"><value>هل تريد إزالة هذا الشخص من يوم الوردية هذا؟ يبقى باقي جدوله دون تغيير.</value></data>
+  <data name="RemovedDaysHeader" xml:space="preserve"><value>الأيام التي أُزلت منها</value></data>
+  <data name="RemovedDaysHelp" xml:space="preserve"><value>التسجيلات التي لم يوافق عليها المشرف والأيام التي أزالك منها المشرف.</value></data>
+  <data name="RequestedByColumn" xml:space="preserve"><value>مقدم الطلب</value></data>
+  <data name="RequireApprovalHelp" xml:space="preserve"><value>عند التحديد، لا يضع التسجيل أو التبادل أي شخص في الخدمة حتى يوافق عليه مشرف المجموعة.</value></data>
+  <data name="RequireApprovalLabel" xml:space="preserve"><value>تحتاج التسجيلات والتبادلات إلى موافقة المشرف</value></data>
+  <data name="ReviewNoteLabel" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="RosterHeader" xml:space="preserve"><value>قائمة المناوبين</value></data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve"><value>اختر التواريخ...</value></data>
+  <data name="SelectPersonToAdd" xml:space="preserve"><value>اختر شخصاً لإضافته.</value></data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve"><value>اختر المستخدمين...</value></data>
+  <data name="ShiftDeleted" xml:space="preserve"><value>تم حذف الوردية.</value></data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve"><value>هذا الشخص موجود بالفعل في هذا اليوم ضمن تلك المجموعة.</value></data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve"><value>أنت مسجل بالفعل في يوم الوردية هذا.</value></data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve"><value>انتهى يوم الوردية هذا.</value></data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve"><value>هذه المجموعة ليست جزءاً من هذه الوردية.</value></data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve"><value>لم يعد هذا العرض متاحاً.</value></data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve"><value>لا يمكن تنفيذ ذلك ليوم الوردية هذا.</value></data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve"><value>اختر شخصاً واحداً على الأقل.</value></data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve"><value>غير مسموح لك بذلك.</value></data>
+  <data name="ShiftErrorNotFound" xml:space="preserve"><value>تعذر العثور على يوم الوردية أو التسجيل أو التبادل.</value></data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve"><value>هذا الشخص غير مدرج في يوم الوردية هذا.</value></data>
+  <data name="ShiftErrorNotPending" xml:space="preserve"><value>لم يعد هذا الطلب بانتظار الموافقة.</value></data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve"><value>تم طلب تبادل لهذا اليوم بالفعل.</value></data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve"><value>يمكنك استخدام المجموعات التي تديرها فقط، ويجب أن تتضمن الوردية واحدة منها على الأقل.</value></data>
+  <data name="ShiftOnDateFormat" xml:space="preserve"><value>{0} في {1}</value></data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve"><value>تتم إضافة كل من تم اختيارهم ممن لا يعملون بالفعل في ذلك اليوم.</value></data>
+  <data name="ShiftStaffingSaved" xml:space="preserve"><value>تم حفظ التوزيع. عدد الأشخاص المضافين إلى اليوم: {0}.</value></data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve"><value>تم حفظ التوزيع. عدد الأشخاص المضافين إلى اليوم: {0}. تعذرت إضافة: {1}</value></data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve"><value>يجب اختيار يوم وردية صالح</value></data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve"><value>يجب اختيار وردية</value></data>
+  <data name="SignupApproved" xml:space="preserve"><value>تمت الموافقة على التسجيل.</value></data>
+  <data name="SignupDenied" xml:space="preserve"><value>تم رفض التسجيل.</value></data>
+  <data name="SignupForShift" xml:space="preserve"><value>التسجيل في هذه الوردية</value></data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve"><value>تم استلام تسجيلك وهو بانتظار موافقة المشرف. لن تكون في الخدمة في هذا اليوم حتى تتم الموافقة عليه.</value></data>
+  <data name="SignupTradeLocked" xml:space="preserve"><value>تم تبادل هذا اليوم أو أن هناك تبادلاً بانتظار الموافقة، لذا لا يمكن سحبه. اطلب من المشرف تغيير اليوم بدلاً من ذلك.</value></data>
+  <data name="SignupWithdrawn" xml:space="preserve"><value>تم سحب تسجيلك.</value></data>
+  <data name="SourceAssigned" xml:space="preserve"><value>معيّن</value></data>
+  <data name="SourceSignup" xml:space="preserve"><value>تسجيل</value></data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve"><value>أضافه المشرف</value></data>
+  <data name="SourceTradeFormat" xml:space="preserve"><value>تبادل (من {0})</value></data>
+  <data name="StaffingLabel" xml:space="preserve"><value>التوزيع</value></data>
+  <data name="SwapBackFormat" xml:space="preserve"><value>اليوم المقابل: {0}</value></data>
+  <data name="TradeAlreadyFilled" xml:space="preserve"><value>تم إكمال هذا التبادل بالفعل.</value></data>
+  <data name="TradeApproved" xml:space="preserve"><value>تمت الموافقة على التبادل.</value></data>
+  <data name="TradeCompleted" xml:space="preserve"><value>اكتمل التبادل.</value></data>
+  <data name="TradeDeclinedMessage" xml:space="preserve"><value>لقد رفضت طلب التبادل.</value></data>
+  <data name="TradeDenied" xml:space="preserve"><value>تم رفض التبادل.</value></data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve"><value>يجب الموافقة على التسجيل قبل أن يمكن تبادله.</value></data>
+  <data name="TradeRequested" xml:space="preserve"><value>تم إرسال طلب التبادل الخاص بك.</value></data>
+  <data name="TradeRequestedByFormat" xml:space="preserve"><value>مقدم الطلب: {0}</value></data>
+  <data name="TradeResponseSent" xml:space="preserve"><value>تم إرسال ردك.</value></data>
+  <data name="TradeStatusComplete" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="TradeStatusDenied" xml:space="preserve"><value>رفضه المشرف</value></data>
+  <data name="TradeStatusOpen" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve"><value>بانتظار موافقة المشرف</value></data>
+  <data name="TradeUsersRequired" xml:space="preserve"><value>يجب تحديد المستخدمين الذين تطلب منهم التبادل. تعرض القائمة المستخدمين المؤهلين فقط.</value></data>
+  <data name="TradeWaitingForApproval" xml:space="preserve"><value>تم حفظ اختيارك. التبادل بانتظار موافقة المشرف.</value></data>
+  <data name="TradedToYouFormat" xml:space="preserve"><value>تم تبادله معك من قبل {0}</value></data>
+  <data name="UnknownPerson" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="ViewShiftDayButton" xml:space="preserve"><value>عرض اليوم</value></data>
+  <data name="WithdrawButton" xml:space="preserve"><value>انسحاب</value></data>
+  <data name="WithdrawConfirm" xml:space="preserve"><value>هل تريد الانسحاب من يوم الوردية هذا؟</value></data>
+  <data name="YouBadge" xml:space="preserve"><value>أنت</value></data>
+  <data name="YourStatusHeader" xml:space="preserve"><value>حالتك</value></data>
 </root>

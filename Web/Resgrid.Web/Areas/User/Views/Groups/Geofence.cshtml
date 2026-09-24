@@ -76,18 +76,9 @@
 @section Scripts
 {
     <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
-    @if (Model.Group == null || String.IsNullOrWhiteSpace(Model.Group.Geofence))
-    {
-        <script type="text/javascript">
-            var polyCoordinates = [];
-        </script>
-    }
-    else
-    {
-        <script type="text/javascript">
-            var polyCoordinates = JSON.parse('@(Html.Raw(Model.Group.Geofence))');
-        </script>
-    }
+    <script type="text/javascript">
+        var polyCoordinates = @Html.Raw(Model.GeofenceJson ?? "[]");
+    </script>
 
     <script type="text/javascript">
         var latitude = '@(Model.Coordinates.Latitude)';

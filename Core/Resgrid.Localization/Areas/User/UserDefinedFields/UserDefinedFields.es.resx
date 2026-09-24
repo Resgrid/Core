@@ -113,4 +113,19 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>Informe de incidente NERIS</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Sensibilidad para flujos de trabajo protegidos</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Los campos restringidos y los de 42 CFR Part 2 necesitan una declaración adicional antes de que un flujo de trabajo protegido pueda autorizarlos. Cambiar este valor devuelve a aprobación toda autorización que use el campo.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Restringido</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>

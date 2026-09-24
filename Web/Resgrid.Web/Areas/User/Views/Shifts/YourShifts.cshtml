@@ -1,4 +1,4 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Shifts.YourShiftsView
@@ -7,9 +7,37 @@
 	ViewBag.Title = "Resgrid | " + localizer["YourShiftsHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
+@functions {
+	string PersonName(string userId)
+	{
+		return userId != null && Model.Names.TryGetValue(userId, out var name) && !String.IsNullOrWhiteSpace(name) ? name : localizer["UnknownPerson"].Value;
+	}
+
+	string GroupName(ShiftSignup signup)
+	{
+		if (signup?.Group != null)
+			return signup.Group.Name;
+
+		return signup?.DepartmentGroupId != null && Model.GroupNames.TryGetValue(signup.DepartmentGroupId.Value, out var name) ? name : "";
+	}
+
+	// Not started yet (department-local): the day can still be declined or traded.
+	bool IsAhead(ShiftSignup signup)
+	{
+		if (signup?.Shift == null)
+			return false;
+
+		return ShiftTimeWindow.GetWindow(signup.ShiftDay, signup.Shift.StartTime, signup.Shift.EndTime, signup.Shift.Hours).Start > Model.LocalNow;
+	}
+
+	string FormatTimestamp(DateTime timestamp)
+	{
+		return Model.Department != null ? timestamp.TimeConverterToString(Model.Department) : timestamp.ToString("g");
+	}
+}
 
 <div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-4">
+	<div class="col-sm-8">
 		<h2>@localizer["YourShiftsHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
@@ -23,11 +51,17 @@
 			</li>
 		</ol>
 	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-success top-button" asp-controller="Shifts" asp-action="OnDuty" asp-route-area="User">@localizer["OnDutyButton"]</a>
+		</div>
+	</div>
 </div>
 
 <div class="row">
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
+			<partial name="_ShiftsMessage" />
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
 					<h5>@localizer["YourShiftsHeader"]</h5>
@@ -49,14 +83,21 @@
 							<tbody>
 								@foreach (var s in Model.Signups)
 								{
+									var ownSignup = String.Equals(s.UserId, Model.UserId, StringComparison.OrdinalIgnoreCase);
+									var ahead = IsAhead(s);
+									var trade = s.Trade;
 									<tr>
 										<td>@s.Shift.Name</td>
-										<td>@s.Group.Name</td>
+										<td>@GroupName(s)</td>
 										<td>@s.ShiftDay.ToShortDateString()</td>
 										<td>
-											@if (s.Denied)
+											@if (!ownSignup)
 											{
-												<span>@localizer["ApprovedNo"]</span>
+												<span class="label label-info">@String.Format(localizer["TradedToYouFormat"].Value, PersonName(s.UserId))</span>
+											}
+											else if (s.ApprovalPending)
+											{
+												<span class="label label-warning">@localizer["PendingApprovalBadge"]</span>
 											}
 											else
 											{
@@ -64,32 +105,55 @@
 											}
 										</td>
 										<td>
-											@if (s.Trade != null && s.Trade.IsTradeComplete())
+											@if (!ownSignup)
 											{
 												<span class='label label-success'>@localizer["TradeComplete"]</span>
 											}
-											else if (s.Trade != null && !s.Trade.IsTradeComplete())
-											{
-												<span class='label label-warning'>@localizer["TradeInProgress"]</span>
-											}
-											else
+											else if (trade == null)
 											{
 												<span class="label label-primary">@localizer["Normal"]</span>
 											}
+											else if (trade.Denied)
+											{
+												<span class='label label-danger'>@localizer["TradeStatusDenied"]</span>
+												@if (!String.IsNullOrWhiteSpace(trade.ReviewNote))
+												{
+													<br /><small class="text-muted">@trade.ReviewNote</small>
+												}
+											}
+											else if (trade.ApprovalPending)
+											{
+												<span class='label label-warning'>@localizer["TradeStatusPendingApproval"]</span>
+											}
+											else if (trade.IsTradeComplete())
+											{
+												<span class='label label-success'>@localizer["TradeComplete"]</span>
+											}
+											else
+											{
+												<span class='label label-warning'>@localizer["TradeInProgress"]</span>
+											}
 										</td>
-										<td>@s.SignupTimestamp.TimeConverterToString(Model.Department)</td>
+										<td>@FormatTimestamp(s.SignupTimestamp)</td>
 										<td>
-											@if (s.ShiftDay > DateTime.UtcNow.TimeConverter(Model.Department) && s.Trade == null)
+											@if (Model.ShiftDayIds.TryGetValue(s.ShiftSignupId, out var shiftDayId))
 											{
-												<a type="button" href="@Url.Action("DeclineShiftDay", "Shifts", new {area = "User", shiftSignupId = s.ShiftSignupId})" data-confirm="@localizer["DeclineShiftDayWarning"] @s.Shift.Name @localizer["For"] @s.ShiftDay.ToShortDateString()?" rel="nofollow" class="btn btn-xs btn-danger"><i class='icon-trash'></i> @localizer["DeclineShiftDay"]</a>
+												<a class="btn btn-xs btn-white" asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@shiftDayId">@localizer["ViewShiftDayButton"]</a>
 											}
-											@if (s.ShiftDay > DateTime.UtcNow.TimeConverter(Model.Department) && s.Trade == null)
+											@if (ownSignup && ahead && trade == null)
 											{
-												<a type="button" href="@Url.Action("RequestTrade", "Shifts", new {area = "User", shiftSignupId = s.ShiftSignupId})" class="btn btn-xs btn-primary"><i class='icon-refresh'></i> @localizer["RequestTrade"]</a>
+												<form method="post" asp-controller="Shifts" asp-action="DeclineShiftDay" asp-route-area="User" style="display:inline;">
+													<input type="hidden" name="shiftSignupId" value="@s.ShiftSignupId" />
+													<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeclineShiftDayWarning"] @s.Shift.Name @localizer["For"] @s.ShiftDay.ToShortDateString()?"><i class='icon-trash'></i> @localizer["DeclineShiftDay"]</button>
+												</form>
 											}
-											@if (s.Trade != null && !s.Trade.IsTradeComplete())
+											@if (ownSignup && ahead && trade == null && s.IsActive())
 											{
-												<a type="button" href="@Url.Action("FinishTrade", "Shifts", new { area = "User", shiftSignupTradeId = s.Trade.ShiftSignupTradeId })" class="btn btn-xs btn-info"><i class='icon-ok'></i> @localizer["FinishTrade"]</a>
+												<a href="@Url.Action("RequestTrade", "Shifts", new {area = "User", shiftSignupId = s.ShiftSignupId})" class="btn btn-xs btn-primary"><i class='icon-refresh'></i> @localizer["RequestTrade"]</a>
+											}
+											@if (ownSignup && trade != null && trade.SourceShiftSignupId == s.ShiftSignupId && (!trade.HasSelection() || trade.Denied))
+											{
+												<a href="@Url.Action("FinishTrade", "Shifts", new { area = "User", shiftSignupTradeId = trade.ShiftSignupTradeId })" class="btn btn-xs btn-info"><i class='icon-ok'></i> @localizer["FinishTrade"]</a>
 											}
 										</td>
 									</tr>
@@ -99,13 +163,49 @@
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-xs-12">
-		<div class="wrapper wrapper-content">
+			@if (Model.RemovedSignups.Any())
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>@localizer["RemovedDaysHeader"]</h5>
+					</div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["RemovedDaysHelp"]</p>
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>@localizer["ShiftColumn"]</th>
+										<th>@localizer["GroupColumn"]</th>
+										<th>@localizer["DayColumn"]</th>
+										<th>@localizer["ReviewNoteLabel"]</th>
+										<th class='span1'></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var s in Model.RemovedSignups)
+									{
+										<tr>
+											<td>@s.Shift?.Name</td>
+											<td>@GroupName(s)</td>
+											<td>@s.ShiftDay.ToShortDateString()</td>
+											<td>@s.ReviewNote</td>
+											<td>
+												@if (Model.ShiftDayIds.TryGetValue(s.ShiftSignupId, out var removedDayId))
+												{
+													<a class="btn btn-xs btn-white" asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@removedDayId">@localizer["ViewShiftDayButton"]</a>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
 					<h5>@localizer["YourPendingTrades"]</h5>
@@ -119,37 +219,44 @@
 									<th>@localizer["GroupColumn"]</th>
 									<th>@localizer["DayColumn"]</th>
 									<th>@localizer["TimeColumn"]</th>
+									<th>@localizer["RequestedByColumn"]</th>
 									<th class='span1'></th>
 								</tr>
 							</thead>
 							<tbody>
 								@foreach (var t in Model.Trades)
 								{
+									var state = t.GetState(Model.UserId);
 									<tr>
 										<td>@t.SourceShiftSignup.Shift.Name</td>
-										<td>@t.SourceShiftSignup.Group.Name</td>
+										<td>@GroupName(t.SourceShiftSignup)</td>
 										<td>@t.SourceShiftSignup.ShiftDay.ToShortDateString()</td>
 										<td>@t.SourceShiftSignup.Shift.StartTime</td>
+										<td>@PersonName(t.SourceShiftSignup.UserId)</td>
 										<td>
-											@if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Open)
+											@switch (state)
 											{
-												<a type="button" href="@Url.Action("ProcessTrade", "Shifts", new {area = "User", shiftSignupTradeId = t.ShiftSignupTradeId})" class="btn btn-xs btn-primary"><i class='icon-check'></i> @localizer["ProcessTradeRequest"]</a>
-											}
-											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Declined)
-											{
-												<span class="label label-danger">@localizer["Declined"]</span>
-											}
-											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Accepted)
-											{
-												<span class="label label-success">@localizer["Accepted"]</span>
-											}
-											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Filled)
-											{
-												<span class="label label-info">@localizer["Filled"]</span>
-											}
-											else if (t.GetState(ClaimsAuthorizationHelper.GetUserId()) == ShiftSignupTradeStates.Proposed)
-											{
-												<span class="label label-info">@localizer["TradeOffered"]</span>
+												case ShiftSignupTradeStates.Open:
+													<a type="button" href="@Url.Action("ProcessTrade", "Shifts", new {area = "User", shiftSignupTradeId = t.ShiftSignupTradeId})" class="btn btn-xs btn-primary"><i class='icon-check'></i> @localizer["ProcessTradeRequest"]</a>
+													break;
+												case ShiftSignupTradeStates.Declined:
+													<span class="label label-danger">@localizer["Declined"]</span>
+													break;
+												case ShiftSignupTradeStates.Accepted:
+													<span class="label label-success">@localizer["Accepted"]</span>
+													break;
+												case ShiftSignupTradeStates.Filled:
+													<span class="label label-info">@localizer["Filled"]</span>
+													break;
+												case ShiftSignupTradeStates.Proposed:
+													<span class="label label-info">@localizer["TradeOffered"]</span>
+													break;
+												case ShiftSignupTradeStates.PendingApproval:
+													<span class="label label-warning">@localizer["TradeStatusPendingApproval"]</span>
+													break;
+												case ShiftSignupTradeStates.Denied:
+													<span class="label label-danger">@localizer["TradeStatusDenied"]</span>
+													break;
 											}
 										</td>
 									</tr>

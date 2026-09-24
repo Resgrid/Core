@@ -1,0 +1,862 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Skyddade arbetsflöden</value>
+  </data>
+  <data name="ListHeader" xml:space="preserve">
+    <value>Skyddade utlämnanden för arbetsflöden</value>
+  </data>
+  <data name="DisclosuresTitle" xml:space="preserve">
+    <value>Utlämnandelogg för skyddade arbetsflöden</value>
+  </data>
+  <data name="WorkflowsBreadcrumb" xml:space="preserve">
+    <value>Arbetsflöden</value>
+  </data>
+  <data name="DataProtectionBreadcrumb" xml:space="preserve">
+    <value>Dataskydd</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Skyddade arbetsflöden</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Arbetsflöden får som standard REDACTED-värden. Med skyddade arbetsflöden kan en administratör godkänna att ett specifikt arbetsflöde skickar utvalda skyddade fält till ett enda låst HTTPS-mål. Alla andra arbetsflöden fortsätter att få REDACTED-värden.</value>
+  </data>
+  <data name="EnableLabel" xml:space="preserve">
+    <value>Aktivera skyddade arbetsflöden</value>
+  </data>
+  <data name="SecondApproverLabel" xml:space="preserve">
+    <value>Kräv att en andra administratör godkänner skyddade arbetsflöden</value>
+  </data>
+  <data name="WarningTextHeader" xml:space="preserve">
+    <value>Varning</value>
+  </data>
+  <data name="WarningText" xml:space="preserve">
+    <value>Skyddade arbetsflöden skickar dekrypterade skyddade uppgifter, som kan innehålla skyddade hälsouppgifter, till externa system som du konfigurerar. Resgrid kan inte styra hur det mottagande systemet lagrar eller använder dessa uppgifter. Aktivera ett arbetsflöde endast om mottagaren är din organisation eller en part som omfattas av ett affärspartneravtal med din organisation, och lämna endast ut de fält som mottagaren behöver.</value>
+  </data>
+  <data name="WarningAckLabel" xml:space="preserve">
+    <value>Jag har läst och bekräftar denna varning (version {0}).</value>
+  </data>
+  <data name="WarningAcknowledgedOn" xml:space="preserve">
+    <value>Varningen bekräftades {0} (version {1}).</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Spara inställningar för skyddade arbetsflöden</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Inställningarna för skyddade arbetsflöden har sparats.</value>
+  </data>
+  <data name="AdpRequired" xml:space="preserve">
+    <value>Skyddade arbetsflöden är endast tillgängliga medan avancerat dataskydd är aktiverat för din organisation.</value>
+  </data>
+  <data name="NotAdmin" xml:space="preserve">
+    <value>Endast administratörer med behörigheten ”Konfigurera leverans av skyddade uppgifter” kan ändra dessa inställningar.</value>
+  </data>
+  <data name="ManageLink" xml:space="preserve">
+    <value>Hantera skyddade arbetsflöden</value>
+  </data>
+  <data name="StepUpNotice" xml:space="preserve">
+    <value>Att slå på eller av den här inställningen, samt att godkänna eller förnya ett utlämnande, kräver en färsk flerfaktorsverifiering.</value>
+  </data>
+  <data name="StepUpRequiredPrompt" xml:space="preserve">
+    <value>Den här åtgärden kräver en färsk flerfaktorsverifiering. Du skickas vidare för att verifiera dig och förs sedan tillbaka till den här sidan; upprepa därefter åtgärden.</value>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>Skyddat utlämnande</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Skicka utvalda skyddade fält från det här arbetsflödet till dess låsta HTTPS-mål. Endast de fält du markerar dekrypteras; alla andra skyddade värden förblir REDACTED.</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="State_None" xml:space="preserve">
+    <value>Inte skyddat</value>
+  </data>
+  <data name="State_Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="State_PendingApproval" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="State_Active" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="State_Suspended" xml:space="preserve">
+    <value>Spärrat</value>
+  </data>
+  <data name="State_Expired" xml:space="preserve">
+    <value>Utgånget</value>
+  </data>
+  <data name="State_Revoked" xml:space="preserve">
+    <value>Återkallat</value>
+  </data>
+  <data name="StateExpiring" xml:space="preserve">
+    <value>Går snart ut</value>
+  </data>
+  <data name="RenewalPending" xml:space="preserve">
+    <value>Förnyelse väntar på godkännande</value>
+  </data>
+  <data name="ProtectedBadge" xml:space="preserve">
+    <value>Skyddat: {0}</value>
+  </data>
+  <data name="Reason_config_changed" xml:space="preserve">
+    <value>konfigurationen ändrades</value>
+  </data>
+  <data name="Reason_department_disabled" xml:space="preserve">
+    <value>skyddade arbetsflöden avstängda</value>
+  </data>
+  <data name="Reason_adp_not_enabled" xml:space="preserve">
+    <value>avancerat dataskydd är inte aktiverat</value>
+  </data>
+  <data name="Reason_credential_changed" xml:space="preserve">
+    <value>autentiseringsuppgiften ändrades</value>
+  </data>
+  <data name="Reason_admin_suspended" xml:space="preserve">
+    <value>spärrat av en administratör</value>
+  </data>
+  <data name="Reason_admin_revoked" xml:space="preserve">
+    <value>återkallat av en administratör</value>
+  </data>
+  <data name="Reason_adp_offboarding" xml:space="preserve">
+    <value>avregistrering av avancerat dataskydd</value>
+  </data>
+  <data name="Reason_workflow_deleted" xml:space="preserve">
+    <value>arbetsflödet togs bort</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Fält att lämna ut</value>
+  </data>
+  <data name="FieldsHelp" xml:space="preserve">
+    <value>Inget är valt som standard. Referera till utlämnade fält i utdatamallen som protected.call.&lt;name&gt;; call.*-värden förblir REDACTED.</value>
+  </data>
+  <data name="FormParsedHelp" xml:space="preserve">
+    <value>Formulärdata finns även tillgängliga i tolkad form som protected.call.form.</value>
+  </data>
+  <data name="Field_calls_name" xml:space="preserve">
+    <value>Larmnamn</value>
+  </data>
+  <data name="Field_calls_type" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="Field_calls_natureofcall" xml:space="preserve">
+    <value>Larmets art</value>
+  </data>
+  <data name="Field_calls_notes" xml:space="preserve">
+    <value>Larmanteckningar</value>
+  </data>
+  <data name="Field_calls_completednotes" xml:space="preserve">
+    <value>Avslutsanteckningar</value>
+  </data>
+  <data name="Field_calls_address" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="Field_calls_geolocationdata" xml:space="preserve">
+    <value>Geografisk position</value>
+  </data>
+  <data name="Field_calls_w3w" xml:space="preserve">
+    <value>what3words-adress</value>
+  </data>
+  <data name="Field_calls_contactname" xml:space="preserve">
+    <value>Kontaktnamn</value>
+  </data>
+  <data name="Field_calls_contactnumber" xml:space="preserve">
+    <value>Kontaktnummer</value>
+  </data>
+  <data name="Field_calls_sourceidentifier" xml:space="preserve">
+    <value>Källidentifierare</value>
+  </data>
+  <data name="Field_calls_incidentnumber" xml:space="preserve">
+    <value>Insatsnummer</value>
+  </data>
+  <data name="Field_calls_externalidentifier" xml:space="preserve">
+    <value>Extern identifierare</value>
+  </data>
+  <data name="Field_calls_referencenumber" xml:space="preserve">
+    <value>Referensnummer</value>
+  </data>
+  <data name="Field_calls_callformdata" xml:space="preserve">
+    <value>Larmformulärdata</value>
+  </data>
+  <data name="Field_calls_deletedreason" xml:space="preserve">
+    <value>Orsak till borttagning</value>
+  </data>
+  <data name="DestinationHeader" xml:space="preserve">
+    <value>Mål</value>
+  </data>
+  <data name="DestinationHostLabel" xml:space="preserve">
+    <value>Låst värd</value>
+  </data>
+  <data name="CredentialLabel" xml:space="preserve">
+    <value>Låst autentiseringsuppgift</value>
+  </data>
+  <data name="TokenHostLabel" xml:space="preserve">
+    <value>Låst tokenvärd</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Inget giltigt mål ännu</value>
+  </data>
+  <data name="ValidationHeader" xml:space="preserve">
+    <value>Det här arbetsflödet kan inte skyddas ännu</value>
+  </data>
+  <data name="ValidationError_no_steps" xml:space="preserve">
+    <value>Lägg till minst ett aktiverat steg.</value>
+  </data>
+  <data name="ValidationError_action_not_allowed" xml:space="preserve">
+    <value>Skyddade arbetsflöden får bara innehålla API-steg med POST eller PUT.</value>
+  </data>
+  <data name="ValidationError_credential_required" xml:space="preserve">
+    <value>Varje steg behöver en autentiseringsuppgift.</value>
+  </data>
+  <data name="ValidationError_credential_mismatch" xml:space="preserve">
+    <value>Alla steg måste använda samma autentiseringsuppgift.</value>
+  </data>
+  <data name="ValidationError_credential_not_allowed" xml:space="preserve">
+    <value>Använd en autentiseringsuppgift av typen Bearer-token, API-nyckel eller OAuth2-klientautentiseringsuppgifter.</value>
+  </data>
+  <data name="ValidationError_credential_missing" xml:space="preserve">
+    <value>Ett steg använder en autentiseringsuppgift som inte längre finns.</value>
+  </data>
+  <data name="ValidationError_url_required" xml:space="preserve">
+    <value>Varje steg behöver en URL.</value>
+  </data>
+  <data name="ValidationError_scheme_not_https" xml:space="preserve">
+    <value>Varje stegs URL måste använda HTTPS.</value>
+  </data>
+  <data name="ValidationError_host_not_literal" xml:space="preserve">
+    <value>URL:ens värdnamn måste skrivas ut i klartext, inte byggas från en mall.</value>
+  </data>
+  <data name="ValidationError_host_mismatch" xml:space="preserve">
+    <value>Alla steg måste skicka till samma värd.</value>
+  </data>
+  <data name="ValidationError_protected_in_action_config" xml:space="preserve">
+    <value>protected.*-värden kan inte användas i en URL eller ett huvud.</value>
+  </data>
+  <data name="ValidationError_protected_in_condition" xml:space="preserve">
+    <value>protected.*-värden kan inte användas i ett stegvillkor.</value>
+  </data>
+  <data name="ValidationError_trigger_not_supported" xml:space="preserve">
+    <value>I den här versionen kan endast larmutlösare skyddas.</value>
+  </data>
+  <data name="ValidationError_token_url_invalid" xml:space="preserve">
+    <value>OAuth2-autentiseringsuppgiften behöver en HTTPS-token-URL.</value>
+  </data>
+  <data name="ValidationError_protected_reference_without_release" xml:space="preserve">
+    <value>Det här arbetsflödet har inget skyddat utlämnande, så protected.*-värden skulle bli tomma. Konfigurera först ett skyddat utlämnande.</value>
+  </data>
+  <data name="RecipientHeader" xml:space="preserve">
+    <value>Mottagare</value>
+  </data>
+  <data name="RecipientTypeLabel" xml:space="preserve">
+    <value>Mottagartyp</value>
+  </data>
+  <data name="RecipientType_CoveredEntity" xml:space="preserve">
+    <value>Omfattad aktör</value>
+  </data>
+  <data name="RecipientType_BusinessAssociate" xml:space="preserve">
+    <value>Affärspartner</value>
+  </data>
+  <data name="RecipientNameLabel" xml:space="preserve">
+    <value>Mottagarens namn</value>
+  </data>
+  <data name="RecipientNamePlaceholder" xml:space="preserve">
+    <value>Till exempel: länets DMH, ärendehantering i Dynamics 365</value>
+  </data>
+  <data name="PurposeLabel" xml:space="preserve">
+    <value>Syfte</value>
+  </data>
+  <data name="PurposePlaceholder" xml:space="preserve">
+    <value>Varför mottagaren behöver dessa fält</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Jag intygar att mottagaren är vår organisation eller en part som omfattas av ett affärspartneravtal med vår organisation, och att den endast behöver de fält som valts ovan (varningsversion {0}).</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Spara utkast</value>
+  </data>
+  <data name="ApproveAndActivate" xml:space="preserve">
+    <value>Godkänn och aktivera</value>
+  </data>
+  <data name="RequestApproval" xml:space="preserve">
+    <value>Begär godkännande</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Godkänn</value>
+  </data>
+  <data name="RenewButton" xml:space="preserve">
+    <value>Förnya</value>
+  </data>
+  <data name="SuspendButton" xml:space="preserve">
+    <value>Spärra</value>
+  </data>
+  <data name="RevokeButton" xml:space="preserve">
+    <value>Återkalla</value>
+  </data>
+  <data name="DiscardDraft" xml:space="preserve">
+    <value>Förkasta utkast</value>
+  </data>
+  <data name="SendTest" xml:space="preserve">
+    <value>Skicka test med exempeldata</value>
+  </data>
+  <data name="TestSucceeded" xml:space="preserve">
+    <value>Testet skickades med syntetiska data. Varje steg returnerade en lyckad status.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Testet lyckades inte helt. Kontrollera stegresultaten nedan och utlämnandeloggen.</value>
+  </data>
+  <data name="TestStepResult" xml:space="preserve">
+    <value>Steg {0}: {1} (HTTP {2})</value>
+  </data>
+  <data name="ConfirmRevoke" xml:space="preserve">
+    <value>Återkalla detta utlämnande? Det går inte att ångra. Arbetsflödet körs inte förrän ett nytt utlämnande har godkänts.</value>
+  </data>
+  <data name="ConfirmSuspend" xml:space="preserve">
+    <value>Spärra detta utlämnande? Arbetsflödet körs inte förrän en administratör godkänner det igen.</value>
+  </data>
+  <data name="ConfirmDiscard" xml:space="preserve">
+    <value>Förkasta detta utkast? Arbetsflödet kommer åter att köras med REDACTED-värden.</value>
+  </data>
+  <data name="FingerprintChanged" xml:space="preserve">
+    <value>Det här arbetsflödet har ändrats sedan det godkändes. Det skickar ingenting förrän en administratör godkänner den aktuella konfigurationen.</value>
+  </data>
+  <data name="RequestedOn" xml:space="preserve">
+    <value>Begärt {0}</value>
+  </data>
+  <data name="ApprovedOn" xml:space="preserve">
+    <value>Godkänt {0}</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Går ut {0}</value>
+  </data>
+  <data name="AwaitingSecondApprover" xml:space="preserve">
+    <value>Väntar på en andra administratör. Den som begärde utlämnandet kan inte godkänna det.</value>
+  </data>
+  <data name="ReadOnlyNotice" xml:space="preserve">
+    <value>Endast administratörer med behörigheten ”Konfigurera leverans av skyddade uppgifter” kan ändra det skyddade utlämnandet. Om du redigerar det här arbetsflödet spärras ett godkänt utlämnande tills det godkänns igen.</value>
+  </data>
+  <data name="SkippedNotice" xml:space="preserve">
+    <value>Så länge det här arbetsflödet har ett skyddat utlämnande som inte är aktivt hoppas dess körningar över. Det körs aldrig med REDACTED-värden i stället för de skyddade värdena.</value>
+  </data>
+  <data name="DepartmentOffNotice" xml:space="preserve">
+    <value>Skyddade arbetsflöden är avstängda för din organisation. Slå på dem under Dataskydd för att konfigurera ett skyddat utlämnande.</value>
+  </data>
+  <data name="Err_protected_access_denied" xml:space="preserve">
+    <value>Du har inte behörighet att göra detta.</value>
+  </data>
+  <data name="Err_step_up_required" xml:space="preserve">
+    <value>En färsk flerfaktorsverifiering krävs.</value>
+  </data>
+  <data name="Err_interactive_session_required" xml:space="preserve">
+    <value>Den här åtgärden måste utföras av en inloggad administratör, inte via en API-nyckel eller ett tjänstkonto.</value>
+  </data>
+  <data name="Err_attestation_required" xml:space="preserve">
+    <value>Markera intyget för att fortsätta.</value>
+  </data>
+  <data name="Err_ack_version_mismatch" xml:space="preserve">
+    <value>Varningstexten har ändrats. Läs in sidan igen, läs varningen och bekräfta den på nytt.</value>
+  </data>
+  <data name="Err_self_approval_not_allowed" xml:space="preserve">
+    <value>Du begärde detta utlämnande, så en annan administratör måste godkänna det.</value>
+  </data>
+  <data name="Err_invalid_state" xml:space="preserve">
+    <value>Det här utlämnandet kan inte utföra den åtgärden i sitt nuvarande tillstånd.</value>
+  </data>
+  <data name="Err_validation_failed" xml:space="preserve">
+    <value>Arbetsflödet uppfyller inte kraven för skydd. Åtgärda de listade problemen och försök igen.</value>
+  </data>
+  <data name="Err_not_found" xml:space="preserve">
+    <value>Arbetsflödet eller utlämnandet hittades inte.</value>
+  </data>
+  <data name="Err_trigger_not_supported" xml:space="preserve">
+    <value>I den här versionen kan endast larmutlösare skyddas.</value>
+  </data>
+  <data name="Err_too_many_fields" xml:space="preserve">
+    <value>För många fält är valda.</value>
+  </data>
+  <data name="Err_no_fields" xml:space="preserve">
+    <value>Välj minst ett fält att lämna ut.</value>
+  </data>
+  <data name="Err_unknown_field" xml:space="preserve">
+    <value>Ett okänt fält valdes.</value>
+  </data>
+  <data name="Err_recipient_required" xml:space="preserve">
+    <value>Ange mottagartyp och namn.</value>
+  </data>
+  <data name="Err_purpose_required" xml:space="preserve">
+    <value>Ange syftet med utlämnandet.</value>
+  </data>
+  <data name="Err_adp_not_enabled" xml:space="preserve">
+    <value>Avancerat dataskydd måste aktiveras först.</value>
+  </data>
+  <data name="Err_protected_workflows_disabled" xml:space="preserve">
+    <value>Skyddade arbetsflöden är avstängda för din organisation.</value>
+  </data>
+  <data name="Err_config_changed" xml:space="preserve">
+    <value>Arbetsflödet ändrades efter begäran. Begär godkännande igen för den aktuella konfigurationen.</value>
+  </data>
+  <data name="Err_http_failed" xml:space="preserve">
+    <value>Målet accepterade inte begäran.</value>
+  </data>
+  <data name="Err_command_failed" xml:space="preserve">
+    <value>Åtgärden kunde inte slutföras. Försök igen.</value>
+  </data>
+  <data name="ColWorkflow" xml:space="preserve">
+    <value>Arbetsflöde</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColFields" xml:space="preserve">
+    <value>Fält</value>
+  </data>
+  <data name="ColHost" xml:space="preserve">
+    <value>Värd</value>
+  </data>
+  <data name="ColRecipient" xml:space="preserve">
+    <value>Mottagare</value>
+  </data>
+  <data name="ColApprovedBy" xml:space="preserve">
+    <value>Godkänt av</value>
+  </data>
+  <data name="ColExpires" xml:space="preserve">
+    <value>Går ut</value>
+  </data>
+  <data name="ColSends30" xml:space="preserve">
+    <value>Sändningar (30 dagar)</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="NoReleases" xml:space="preserve">
+    <value>Inget arbetsflöde har ett skyddat utlämnande.</value>
+  </data>
+  <data name="OpenWorkflow" xml:space="preserve">
+    <value>Öppna arbetsflöde</value>
+  </data>
+  <data name="ViewDisclosures" xml:space="preserve">
+    <value>Utlämnandelogg</value>
+  </data>
+  <data name="ChainValid" xml:space="preserve">
+    <value>Granskningskedjan har verifierats ({0} poster).</value>
+  </data>
+  <data name="ChainInvalid" xml:space="preserve">
+    <value>Verifieringen av granskningskedjan misslyckades vid post {0}. Kontakta Resgrid-supporten.</value>
+  </data>
+  <data name="RenewFromEditor" xml:space="preserve">
+    <value>Förnya från arbetsflödesredigeraren, där intyget visas.</value>
+  </data>
+  <data name="FilterWorkflow" xml:space="preserve">
+    <value>Arbetsflöde</value>
+  </data>
+  <data name="FilterAllWorkflows" xml:space="preserve">
+    <value>Alla arbetsflöden</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Larm-ID</value>
+  </data>
+  <data name="FilterFrom" xml:space="preserve">
+    <value>Från (UTC)</value>
+  </data>
+  <data name="FilterTo" xml:space="preserve">
+    <value>Till (UTC)</value>
+  </data>
+  <data name="ApplyFilter" xml:space="preserve">
+    <value>Filtrera</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Exportera CSV</value>
+  </data>
+  <data name="MetadataOnly" xml:space="preserve">
+    <value>Endast metadata. Den här loggen innehåller aldrig fältvärden, nyttolaster eller svarsinnehåll.</value>
+  </data>
+  <data name="ColSequence" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ColOccurred" xml:space="preserve">
+    <value>Tidpunkt (UTC)</value>
+  </data>
+  <data name="ColType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="ColEvent" xml:space="preserve">
+    <value>Händelse eller resultat</value>
+  </data>
+  <data name="ColCall" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="ColHttp" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="ColBytes" xml:space="preserve">
+    <value>Byte</value>
+  </data>
+  <data name="ColActor" xml:space="preserve">
+    <value>Utförare</value>
+  </data>
+  <data name="ColDetail" xml:space="preserve">
+    <value>Detalj</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Inga poster matchar.</value>
+  </data>
+  <data name="TestBadge" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="RecordType_disclosure" xml:space="preserve">
+    <value>Utlämnande</value>
+  </data>
+  <data name="RecordType_admin_event" xml:space="preserve">
+    <value>Administrativ</value>
+  </data>
+  <data name="Outcome_sent" xml:space="preserve">
+    <value>Skickat</value>
+  </data>
+  <data name="Outcome_failed_http" xml:space="preserve">
+    <value>HTTP misslyckades</value>
+  </data>
+  <data name="Outcome_failed_broker" xml:space="preserve">
+    <value>Dekryptering misslyckades</value>
+  </data>
+  <data name="Outcome_blocked_host" xml:space="preserve">
+    <value>Blockerat: värd</value>
+  </data>
+  <data name="Outcome_blocked_release" xml:space="preserve">
+    <value>Blockerat: utlämnande</value>
+  </data>
+  <data name="Outcome_blocked_department" xml:space="preserve">
+    <value>Blockerat: organisation</value>
+  </data>
+  <data name="Outcome_blocked_guard" xml:space="preserve">
+    <value>Blockerat: chiffertext i nyttolast</value>
+  </data>
+  <data name="Outcome_failed_render" xml:space="preserve">
+    <value>Rendering misslyckades</value>
+  </data>
+  <data name="Event_department_enabled" xml:space="preserve">
+    <value>Skyddade arbetsflöden aktiverade</value>
+  </data>
+  <data name="Event_department_disabled" xml:space="preserve">
+    <value>Skyddade arbetsflöden inaktiverade</value>
+  </data>
+  <data name="Event_release_requested" xml:space="preserve">
+    <value>Utlämnande begärt</value>
+  </data>
+  <data name="Event_release_approved" xml:space="preserve">
+    <value>Utlämnande godkänt</value>
+  </data>
+  <data name="Event_release_suspended" xml:space="preserve">
+    <value>Utlämnande spärrat</value>
+  </data>
+  <data name="Event_release_revoked" xml:space="preserve">
+    <value>Utlämnande återkallat</value>
+  </data>
+  <data name="Event_release_expired" xml:space="preserve">
+    <value>Utlämnande har gått ut</value>
+  </data>
+  <data name="Event_credential_rotated" xml:space="preserve">
+    <value>Autentiseringsuppgift roterad</value>
+  </data>
+  <data name="NoticeExpiryTitle" xml:space="preserve">
+    <value>Skyddat arbetsflöde går snart ut</value>
+  </data>
+  <data name="NoticeExpiringBody" xml:space="preserve">
+    <value>Det skyddade utlämnandet för arbetsflödet ”{0}” går ut {1}. En administratör måste förnya det, annars slutar arbetsflödet att skicka.</value>
+  </data>
+  <data name="NoticeExpiredBody" xml:space="preserve">
+    <value>Det skyddade utlämnandet för arbetsflödet ”{0}” har gått ut och arbetsflödet har slutat skicka. En administratör kan förnya det från arbetsflödesredigeraren.</value>
+  </data>
+  <data name="NoticeFailureTitle" xml:space="preserve">
+    <value>Skyddat arbetsflöde misslyckades</value>
+  </data>
+  <data name="NoticeFailureBody" xml:space="preserve">
+    <value>Det skyddade arbetsflödet ”{0}” misslyckades vid sitt sista försök (körning {1}, fel {2}).</value>
+  </data>
+  <data name="Outcome_attempted" xml:space="preserve">
+    <value>Försök (registrerat före sändning)</value>
+  </data>
+  <data name="Event_second_approver_relax_requested" xml:space="preserve">
+    <value>Borttagning av andra godkännare begärd</value>
+  </data>
+  <data name="Event_second_approver_relaxed" xml:space="preserve">
+    <value>Andra godkännare krävs inte längre</value>
+  </data>
+  <data name="SecondApproverRelaxPending" xml:space="preserve">
+    <value>Den {0} begärde en administratör att en andra godkännare inte längre ska krävas. En annan administratör måste bekräfta det inom 7 dagar genom att avmarkera rutan och spara.</value>
+  </data>
+  <data name="SecondApproverRelaxRequested" xml:space="preserve">
+    <value>Din begäran om att sluta kräva en andra godkännare har registrerats. En annan administratör måste bekräfta den innan den börjar gälla.</value>
+  </data>
+  <data name="Err_concurrent_change" xml:space="preserve">
+    <value>Någon annan ändrade den här frisläppningen samtidigt. Ladda om sidan och försök igen.</value>
+  </data>
+  <data name="Err_disclosure_unavailable" xml:space="preserve">
+    <value>Utlämningsloggen kunde inte skrivas, så inget skickades. Försök igen.</value>
+  </data>
+  <data name="Err_release_not_active" xml:space="preserve">
+    <value>Det här arbetsflödet har ingen aktiv frisläppning.</value>
+  </data>
+  <data name="Err_release_expired" xml:space="preserve">
+    <value>Frisläppningen har gått ut. Förnya den för att återuppta sändningen.</value>
+  </data>
+  <data name="Err_action_not_allowed" xml:space="preserve">
+    <value>Endast steg av typen API-anrop (POST eller PUT) kan skicka skyddade data.</value>
+  </data>
+  <data name="Err_credential_not_allowed" xml:space="preserve">
+    <value>Stegets autentiseringsuppgift är inte den som godkänts för den här frisläppningen.</value>
+  </data>
+  <data name="Err_host_mismatch" xml:space="preserve">
+    <value>Målvärden är inte den som godkänts för den här frisläppningen.</value>
+  </data>
+  <data name="Err_scheme_not_https" xml:space="preserve">
+    <value>Målet måste använda HTTPS.</value>
+  </data>
+  <data name="Err_redirect_refused" xml:space="preserve">
+    <value>Målet svarade med en omdirigering. Omdirigeringar följs aldrig för skyddade data.</value>
+  </data>
+  <data name="Err_token_host_mismatch" xml:space="preserve">
+    <value>OAuth2-tokenvärden är inte den som godkänts för den här frisläppningen.</value>
+  </data>
+  <data name="Err_broker_failed" xml:space="preserve">
+    <value>De skyddade värdena kunde inte dekrypteras. Inget skickades.</value>
+  </data>
+  <data name="Err_entity_unavailable" xml:space="preserve">
+    <value>Larmet kunde inte läsas in för dekryptering. Inget skickades.</value>
+  </data>
+  <data name="Err_render_failed" xml:space="preserve">
+    <value>Mallen kunde inte återges. Inget skickades.</value>
+  </data>
+  <data name="Err_payload_too_large" xml:space="preserve">
+    <value>Det återgivna innehållet är för stort. Inget skickades.</value>
+  </data>
+  <data name="Err_envelope_in_payload" xml:space="preserve">
+    <value>Det återgivna innehållet innehöll krypterade data och blockerades.</value>
+  </data>
+  <data name="Err_http_timeout" xml:space="preserve">
+    <value>Målet svarade inte i tid.</value>
+  </data>
+  <data name="Err_protected_step_error" xml:space="preserve">
+    <value>Steget misslyckades. Orsaken registreras inte, så att skyddade värden hålls utanför loggarna.</value>
+  </data>
+  <data name="Field_calls_subjectidentifiers" xml:space="preserve">
+    <value>Personidentifierare (alla nycklar)</value>
+  </data>
+  <data name="Outcome_failed_validation" xml:space="preserve">
+    <value>Ogiltigt innehåll</value>
+  </data>
+  <data name="Outcome_failed_projection" xml:space="preserve">
+    <value>Projektionen misslyckades</value>
+  </data>
+  <data name="Outcome_failed_ack" xml:space="preserve">
+    <value>Avvisat av mottagaren</value>
+  </data>
+  <data name="Outcome_failed_response_too_large" xml:space="preserve">
+    <value>Svaret för stort</value>
+  </data>
+  <data name="Outcome_blocked_consent" xml:space="preserve">
+    <value>Blockerat: inget Part 2-samtycke</value>
+  </data>
+  <data name="Err_payload_invalid" xml:space="preserve">
+    <value>Det återgivna innehållet är inte giltigt för sin innehållstyp. Inget skickades.</value>
+  </data>
+  <data name="Err_projection_failed" xml:space="preserve">
+    <value>Larmets personidentifierare kunde inte läsas. Inget skickades.</value>
+  </data>
+  <data name="Err_ack_rejected" xml:space="preserve">
+    <value>Mottagaren tog emot begäran men avvisade den.</value>
+  </data>
+  <data name="Err_response_too_large" xml:space="preserve">
+    <value>Mottagarens svar var större än tillåtet och kunde därför inte kontrolleras.</value>
+  </data>
+  <data name="Err_part2_consent_missing" xml:space="preserve">
+    <value>Larmet har inget registrerat samtycke enligt 42 CFR Part 2, så dess Part 2-fält skickades inte.</value>
+  </data>
+  <data name="Err_capture_failed" xml:space="preserve">
+    <value>Begäran levererades, men värdena som mottagaren returnerade kunde inte sparas på larmet.</value>
+  </data>
+  <data name="Err_oauth_token_failed" xml:space="preserve">
+    <value>OAuth2-tokenslutpunkten utfärdade ingen token.</value>
+  </data>
+  <data name="Err_auth_method_mismatch" xml:space="preserve">
+    <value>Autentiseringsuppgiften autentiserar inte längre på det sätt som frisläppningen godkände.</value>
+  </data>
+  <data name="Err_signing_key_unavailable" xml:space="preserve">
+    <value>Autentiseringsuppgiften har ingen aktuell signeringsnyckel.</value>
+  </data>
+  <data name="Err_field_conflict" xml:space="preserve">
+    <value>Frisläpp antingen hela fältet med personidentifierare eller enskilda nycklar, inte båda.</value>
+  </data>
+  <data name="Err_restricted_attestation_required" xml:space="preserve">
+    <value>Ett valt fält är begränsat. Markera intyget för begränsade fält.</value>
+  </data>
+  <data name="Err_part2_attestation_required" xml:space="preserve">
+    <value>Ett valt fält innehåller information enligt 42 CFR Part 2. Markera Part 2-intyget.</value>
+  </data>
+  <data name="Err_capture_requires_subject_identifiers" xml:space="preserve">
+    <value>Ett steg sparar svarsvärden i personidentifierarna, så frisläppningen måste omfatta dem (hela fältet eller minst en nyckel).</value>
+  </data>
+  <data name="ValidationError_content_type_not_allowed" xml:space="preserve">
+    <value>Ett steg anger en innehållstyp som skyddade steg inte får använda.</value>
+  </data>
+  <data name="ValidationError_success_rule_invalid" xml:space="preserve">
+    <value>Ett stegs framgångsregel är ofullständig eller okänd.</value>
+  </data>
+  <data name="ValidationError_capture_invalid" xml:space="preserve">
+    <value>En svarsfångst i ett steg är ogiltig (källa, uttryck eller nyckel).</value>
+  </data>
+  <data name="ValidationError_capture_too_many" xml:space="preserve">
+    <value>Ett steg fångar fler svarsvärden än tillåtet.</value>
+  </data>
+  <data name="ValidationError_idempotency_header_invalid" xml:space="preserve">
+    <value>Ett stegs namn på idempotensrubrik är ogiltigt eller reserverat.</value>
+  </data>
+  <data name="ValidationError_if_none_exist_invalid" xml:space="preserve">
+    <value>Ett stegs If-None-Exist-värde är för långt eller innehåller en radbrytning.</value>
+  </data>
+  <data name="ValidationError_signing_key_missing" xml:space="preserve">
+    <value>OAuth2-autentiseringsuppgiften använder private_key_jwt men har ännu ingen signeringsnyckel. Spara autentiseringsuppgiften för att skapa en.</value>
+  </data>
+  <data name="Warning_unescaped_protected_value" xml:space="preserve">
+    <value>En mall placerar ett skyddat värde utan json_escape, xml_escape eller hl7_escape. Ett citattecken eller en radbrytning i värdet kan bryta innehållet, som då underkänns i valideringen i stället för att skickas.</value>
+  </data>
+  <data name="AuthMethodLabel" xml:space="preserve">
+    <value>Klientautentisering</value>
+  </data>
+  <data name="SubjectKeysHeader" xml:space="preserve">
+    <value>Nycklar för personidentifierare</value>
+  </data>
+  <data name="SubjectKeysHelp" xml:space="preserve">
+    <value>Frisläpp enskilda identifierare i stället för hela uppsättningen: endast markerade nycklar når protected.call.subject_ids.</value>
+  </data>
+  <data name="SubjectKeysOtherLabel" xml:space="preserve">
+    <value>Andra nycklar (kommaseparerade)</value>
+  </data>
+  <data name="CustomFieldsHeader" xml:space="preserve">
+    <value>Anpassade fält för larm</value>
+  </data>
+  <data name="CustomFieldsHelp" xml:space="preserve">
+    <value>Varje markerat anpassat fält dekrypteras för sig och återges som protected.call.udf.&lt;namn&gt;.</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Begränsat</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="RestrictedAttestationLabel" xml:space="preserve">
+    <value>Jag bekräftar att mottagaren har behörighet att ta emot begränsade fält ({0}).</value>
+  </data>
+  <data name="Part2AttestationText" xml:space="preserve">
+    <value>42 CFR Part 2: de valda fälten innehåller information om substansbrukssyndrom. För att lämna ut den vidare krävs patientens skriftliga samtycke eller annan grund som 42 CFR Part 2 tillåter, och mottagaren måste informeras om att ytterligare vidareutlämning är förbjuden.</value>
+  </data>
+  <data name="Part2AttestationLabel" xml:space="preserve">
+    <value>Jag intygar att avdelningen har det samtycke eller den annan grund enligt 42 CFR Part 2 som krävs för detta vidareutlämnande ({0}).</value>
+  </data>
+  <data name="Part2ConsentNotice" xml:space="preserve">
+    <value>Ett larm skickas endast när "Part 2-samtycke registrerat" är markerat på det; annars blockeras steget och registreras.</value>
+  </data>
+  <data name="StepOptionsHeader" xml:space="preserve">
+    <value>Alternativ för skyddad leverans</value>
+  </data>
+  <data name="StepOptionsHelp" xml:space="preserve">
+    <value>Hur mottagaren bekräftar mottagandet, vilka returnerade värden som sparas på larmet och hur omförsök känns igen. Varje alternativ ingår i godkännandet av frisläppningen.</value>
+  </data>
+  <data name="StepSuccessRule" xml:space="preserve">
+    <value>Framgångsregel</value>
+  </data>
+  <data name="StepRulePath" xml:space="preserve">
+    <value>Sökväg</value>
+  </data>
+  <data name="StepRuleExpected" xml:space="preserve">
+    <value>Förväntat värde</value>
+  </data>
+  <data name="StepCapture" xml:space="preserve">
+    <value>Spara svarsvärden</value>
+  </data>
+  <data name="StepCaptureHelp" xml:space="preserve">
+    <value>En per rad: källa | uttryck | nyckel. Källor: json_path, xpath, hl7_field, header, fhir_location_id. Värdena sparas krypterade i larmets personidentifierare.</value>
+  </data>
+  <data name="StepIdempotencyHeader" xml:space="preserve">
+    <value>Idempotensrubrik</value>
+  </data>
+  <data name="StepIfNoneExist" xml:space="preserve">
+    <value>FHIR If-None-Exist</value>
+  </data>
+  <data name="Rule_http_2xx" xml:space="preserve">
+    <value>Valfri 2xx-status</value>
+  </data>
+  <data name="Rule_json_path" xml:space="preserve">
+    <value>JSON-sökväg är lika med</value>
+  </data>
+  <data name="Rule_xpath" xml:space="preserve">
+    <value>XPath är lika med</value>
+  </data>
+  <data name="Rule_hl7_ack" xml:space="preserve">
+    <value>HL7-kvittens (AA / CA)</value>
+  </data>
+  <data name="Rule_fhir_operation_outcome" xml:space="preserve">
+    <value>Inget fel i FHIR OperationOutcome</value>
+  </data>
+  <data name="ColContentType" xml:space="preserve">
+    <value>Innehållstyp</value>
+  </data>
+  <data name="CapturedKeysLabel" xml:space="preserve">
+    <value>Sparade nycklar</value>
+  </data>
+</root>

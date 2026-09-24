@@ -255,16 +255,16 @@
     <value>سيؤدي تفعيل هذا الخيار إلى طباعة مكالمة على الطابعة المحددة عند إرفاق وحدة أو شخص من هذه المجموعة (إرساله) إلى مكالمة</value>
   </data>
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>السياج الجغرافي للمحطة</value>
+    <value>حدود المجموعة</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>السياج الجغرافي للمحطة</value>
+    <value>حدود المجموعة</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>السياج الجغرافي للمحطة</value>
+    <value>حدود المجموعة</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>أدناه يمكنك إنشاء سياج جغرافي لمحطتك. الحقول باللون الأزرق المائل مطلوبة. تتيح لك الأسيجة الجغرافية إنشاء حدود على الخريطة تمثل منطقة الاستجابة لهذه المحطة.</value>
+    <value>يمكنك أدناه رسم حدود هذه المجموعة: منطقة الاستجابة لمحطة أو منطقة الخدمة لمجموعة تنظيمية. تنتمي البلاغات الواقعة داخلها إلى هذه المجموعة لأغراض التوجيه حسب المجموعة والتوصيات المستندة إلى المحطات. لرسمها، انقر على الخريطة لوضع النقطة الأولى، ثم واصل النقر لإضافة خطوط حتى تُغلق المنطقة، ثم احفظ.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>لون المنطقة</value>

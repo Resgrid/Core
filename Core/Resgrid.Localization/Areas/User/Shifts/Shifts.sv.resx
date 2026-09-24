@@ -569,4 +569,325 @@
   <data name="RoleCountRequired" xml:space="preserve">
     <value>Antal roller krävs</value>
   </data>
+  <data name="ActiveNowBadge" xml:space="preserve">
+    <value>Pågår nu</value>
+  </data>
+  <data name="AddPersonButton" xml:space="preserve">
+    <value>Lägg till på dagen</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Lägg till en person på den här dagen</value>
+  </data>
+  <data name="AddPersonHelp" xml:space="preserve">
+    <value>Sätter personen på endast den här dagen; resten av schemat är oförändrat.</value>
+  </data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve">
+    <value>Kräver godkännande</value>
+  </data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve">
+    <value>Anmälningar och byten för det här skiftet måste godkännas av en arbetsledare.</value>
+  </data>
+  <data name="ApprovalsButton" xml:space="preserve">
+    <value>Godkännanden</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Skiftgodkännanden</value>
+  </data>
+  <data name="ApprovalsHelp" xml:space="preserve">
+    <value>Anmälningar och byten som väntar på godkännande i de grupper du leder. En väntande begäran sätter ingen i tjänst förrän den har godkänts.</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Godkänn</value>
+  </data>
+  <data name="DenyButton" xml:space="preserve">
+    <value>Neka</value>
+  </data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve">
+    <value>Byt mot den här dagen</value>
+  </data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve">
+    <value>Bytet är slutfört: {0} arbetar den dagen.</value>
+  </data>
+  <data name="FinishTradeDenied" xml:space="preserve">
+    <value>En arbetsledare nekade det senaste valet för bytet. Du kan välja ett annat erbjudande.</value>
+  </data>
+  <data name="FinishTradePendingFormat" xml:space="preserve">
+    <value>Du valde {0}. Bytet väntar på godkännande av en arbetsledare.</value>
+  </data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve">
+    <value>Välj ett erbjudande att acceptera.</value>
+  </data>
+  <data name="FullyStaffed" xml:space="preserve">
+    <value>Fullt bemannat</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="MyStatusNone" xml:space="preserve">
+    <value>Du är inte med på den här skiftdagen.</value>
+  </data>
+  <data name="MyStatusOnDuty" xml:space="preserve">
+    <value>Du är med på den här skiftdagen.</value>
+  </data>
+  <data name="MyStatusPending" xml:space="preserve">
+    <value>Din anmälan väntar på godkännande av en arbetsledare.</value>
+  </data>
+  <data name="MyStatusRemoved" xml:space="preserve">
+    <value>En arbetsledare godkände inte din anmälan eller tog bort dig från den här dagen.</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Ingen grupp</value>
+  </data>
+  <data name="NoPendingSignups" xml:space="preserve">
+    <value>Inga anmälningar väntar på godkännande.</value>
+  </data>
+  <data name="NoPendingTrades" xml:space="preserve">
+    <value>Inga byten väntar på godkännande.</value>
+  </data>
+  <data name="NoPersonnelOnDay" xml:space="preserve">
+    <value>Ingen är med på den här dagen än.</value>
+  </data>
+  <data name="NoShiftsOnDuty" xml:space="preserve">
+    <value>Inga skift pågår just nu.</value>
+  </data>
+  <data name="NobodyOnDuty" xml:space="preserve">
+    <value>Ingen i tjänst</value>
+  </data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve">
+    <value>I tjänst per {0}. Sidan uppdateras varje minut.</value>
+  </data>
+  <data name="OnDutyButton" xml:space="preserve">
+    <value>I tjänst nu</value>
+  </data>
+  <data name="OnDutyHeader" xml:space="preserve">
+    <value>I tjänst nu</value>
+  </data>
+  <data name="OpenSlotsFormat" xml:space="preserve">
+    <value>Lediga platser: {0}</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Notering (valfritt)</value>
+  </data>
+  <data name="OtherPersonnelHeader" xml:space="preserve">
+    <value>Övrig personal</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="PendingSignupsHeader" xml:space="preserve">
+    <value>Anmälningar som väntar på godkännande</value>
+  </data>
+  <data name="PendingTradesHeader" xml:space="preserve">
+    <value>Byten som väntar på godkännande</value>
+  </data>
+  <data name="PersonAddedToDay" xml:space="preserve">
+    <value>Personen lades till på den här dagen.</value>
+  </data>
+  <data name="PersonLabel" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="PersonRemovedFromDay" xml:space="preserve">
+    <value>Personen togs bort från den här dagen.</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>Uppdatera</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Ta bort från dagen</value>
+  </data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve">
+    <value>Ta bort personen från den här skiftdagen? Resten av personens schema är oförändrat.</value>
+  </data>
+  <data name="RemovedDaysHeader" xml:space="preserve">
+    <value>Dagar du togs bort från</value>
+  </data>
+  <data name="RemovedDaysHelp" xml:space="preserve">
+    <value>Anmälningar som en arbetsledare inte godkände och dagar som en arbetsledare tog bort dig från.</value>
+  </data>
+  <data name="RequestedByColumn" xml:space="preserve">
+    <value>Begärt av</value>
+  </data>
+  <data name="RequireApprovalHelp" xml:space="preserve">
+    <value>När rutan är markerad sätter en anmälan eller ett byte ingen i tjänst förrän en arbetsledare för gruppen har godkänt det.</value>
+  </data>
+  <data name="RequireApprovalLabel" xml:space="preserve">
+    <value>Anmälningar och byten kräver godkännande av en arbetsledare</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Notering</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve">
+    <value>Välj datum...</value>
+  </data>
+  <data name="SelectPersonToAdd" xml:space="preserve">
+    <value>Välj en person att lägga till.</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Välj användare...</value>
+  </data>
+  <data name="ShiftDeleted" xml:space="preserve">
+    <value>Skiftet togs bort.</value>
+  </data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve">
+    <value>Den personen är redan med den här dagen i den gruppen.</value>
+  </data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve">
+    <value>Du är redan anmäld till den här skiftdagen.</value>
+  </data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve">
+    <value>Den här skiftdagen är över.</value>
+  </data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve">
+    <value>Den gruppen ingår inte i det här skiftet.</value>
+  </data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve">
+    <value>Det erbjudandet är inte längre tillgängligt.</value>
+  </data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve">
+    <value>Det går inte att göra för den här skiftdagen.</value>
+  </data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve">
+    <value>Välj minst en person.</value>
+  </data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+  </data>
+  <data name="ShiftErrorNotFound" xml:space="preserve">
+    <value>Skiftdagen, anmälan eller bytet hittades inte.</value>
+  </data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve">
+    <value>Den personen är inte med på den här skiftdagen.</value>
+  </data>
+  <data name="ShiftErrorNotPending" xml:space="preserve">
+    <value>Den här begäran väntar inte längre på godkännande.</value>
+  </data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve">
+    <value>Ett byte har redan begärts för den här dagen.</value>
+  </data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve">
+    <value>Du kan bara använda grupper som du hanterar, och ett skift behöver minst en av dem.</value>
+  </data>
+  <data name="ShiftOnDateFormat" xml:space="preserve">
+    <value>{0} den {1}</value>
+  </data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve">
+    <value>Alla valda som inte redan arbetar den dagen läggs till.</value>
+  </data>
+  <data name="ShiftStaffingSaved" xml:space="preserve">
+    <value>Bemanningen sparades. Personer som lades till på dagen: {0}.</value>
+  </data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve">
+    <value>Bemanningen sparades. Personer som lades till på dagen: {0}. Kunde inte läggas till: {1}</value>
+  </data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve">
+    <value>Du måste välja en giltig skiftdag</value>
+  </data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve">
+    <value>Du måste välja ett skift</value>
+  </data>
+  <data name="SignupApproved" xml:space="preserve">
+    <value>Anmälan godkändes.</value>
+  </data>
+  <data name="SignupDenied" xml:space="preserve">
+    <value>Anmälan nekades.</value>
+  </data>
+  <data name="SignupForShift" xml:space="preserve">
+    <value>Anmäl dig till det här skiftet</value>
+  </data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve">
+    <value>Din anmälan har tagits emot och väntar på godkännande av en arbetsledare. Du är inte i tjänst den dagen förrän den har godkänts.</value>
+  </data>
+  <data name="SignupTradeLocked" xml:space="preserve">
+    <value>Den här dagen har bytts bort, eller så väntar ett byte på godkännande, så den kan inte dras tillbaka. Be en arbetsledare att ändra dagen i stället.</value>
+  </data>
+  <data name="SignupWithdrawn" xml:space="preserve">
+    <value>Din anmälan drogs tillbaka.</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Tilldelad</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Anmälan</value>
+  </data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve">
+    <value>Tillagd av arbetsledare</value>
+  </data>
+  <data name="SourceTradeFormat" xml:space="preserve">
+    <value>Byte (från {0})</value>
+  </data>
+  <data name="StaffingLabel" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="SwapBackFormat" xml:space="preserve">
+    <value>Dag i utbyte: {0}</value>
+  </data>
+  <data name="TradeAlreadyFilled" xml:space="preserve">
+    <value>Det här bytet är redan tillsatt.</value>
+  </data>
+  <data name="TradeApproved" xml:space="preserve">
+    <value>Bytet godkändes.</value>
+  </data>
+  <data name="TradeCompleted" xml:space="preserve">
+    <value>Bytet är slutfört.</value>
+  </data>
+  <data name="TradeDeclinedMessage" xml:space="preserve">
+    <value>Du avböjde bytesbegäran.</value>
+  </data>
+  <data name="TradeDenied" xml:space="preserve">
+    <value>Bytet nekades.</value>
+  </data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve">
+    <value>En anmälan måste godkännas innan den kan bytas.</value>
+  </data>
+  <data name="TradeRequested" xml:space="preserve">
+    <value>Din bytesbegäran har skickats.</value>
+  </data>
+  <data name="TradeRequestedByFormat" xml:space="preserve">
+    <value>Begärt av {0}</value>
+  </data>
+  <data name="TradeResponseSent" xml:space="preserve">
+    <value>Ditt svar har skickats.</value>
+  </data>
+  <data name="TradeStatusComplete" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="TradeStatusDenied" xml:space="preserve">
+    <value>Nekad av arbetsledare</value>
+  </data>
+  <data name="TradeStatusOpen" xml:space="preserve">
+    <value>Begärd</value>
+  </data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve">
+    <value>Väntar på godkännande av arbetsledare</value>
+  </data>
+  <data name="TradeUsersRequired" xml:space="preserve">
+    <value>Du måste ange användare att begära ett byte från. Listan visar bara behöriga användare.</value>
+  </data>
+  <data name="TradeWaitingForApproval" xml:space="preserve">
+    <value>Ditt val har sparats. Bytet väntar på godkännande av en arbetsledare.</value>
+  </data>
+  <data name="TradedToYouFormat" xml:space="preserve">
+    <value>Bytt till dig av {0}</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="ViewShiftDayButton" xml:space="preserve">
+    <value>Visa dag</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Dra tillbaka</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Dra dig ur den här skiftdagen?</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Du</value>
+  </data>
+  <data name="YourStatusHeader" xml:space="preserve">
+    <value>Din status</value>
+  </data>
 </root>

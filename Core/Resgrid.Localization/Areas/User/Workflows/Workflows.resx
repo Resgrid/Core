@@ -602,9 +602,6 @@
   <data name="RenderedOutput" xml:space="preserve">
     <value />
   </data>
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value />
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
     <value />
   </data>
@@ -638,5 +635,113 @@
   <data name="ExportTemplate" xml:space="preserve"><value>Records report export</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>None (send the rendered template only)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>Email steps attach the export; file-upload steps upload it under its file name instead of the rendered text. Exports are designed under Records &gt; Report exports.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>OAuth2 client credentials</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>Token URL</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>The HTTPS token endpoint, for example https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>Client ID</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>Client secret</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>Scope</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>For Microsoft Dataverse use https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>Audience (optional)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>Client authentication</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>Client secret</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>Private key JWT (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>Signing algorithm</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>Resgrid generates and keeps the key pair; the private key is encrypted and never shown. Register the JWKS URL (or upload the public key) with the token server.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>JWKS URL</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>Current key {0}, created {1}. Keys published: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>Download public JWK</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>Rotate key</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>Generate a new signing key? The current key stays published for the overlap period so the token server can move over.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>A new signing key was generated. The previous key stays published for the overlap period.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>The key pair is generated when you save. The JWKS URL and the public key download then appear here.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>Start from a template</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>Templates create a disabled workflow with placeholder destinations. Set the URL and credential on each step, then enable it.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>Use template</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>Protected Workflows</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>Workflow created from the template. It is disabled: set the destination and credential on each step, then enable it.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>Workflow created from the template with a draft protected release. Set the destination URL and credential on the step, choose the released fields, then request approval. It never sends until the release is approved.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>Workflow limit reached for your plan. Please upgrade to add more workflows.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Webhook: new call (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>Posts the call number, name, priority and address as JSON when a call is added, with an idempotency key.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>Email: call closed</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>Emails a short summary when a call is closed.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter and Observations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>When a call closes, sends a FHIR R4 transaction Bundle to the EHR: an Encounter (class FLD, finished, dispatch to close) for the patient in subject_ids.ehr_client_id and one Observation per released custom field. Uses conditional create and saves the new Encounter id as ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>HL7 v2.5.1 MDM^T02 encounter note</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>When a call closes, sends an MDM^T02 "Crisis Field Response" document to an interface engine over HTTPS: PID-3 is the EHR client id, MSH-10 the idempotency key, one OBX per released custom field. Succeeds only on an AA acknowledgement.</value>
+  </data>
 </root>
 

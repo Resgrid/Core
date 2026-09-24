@@ -100,41 +100,6 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<Workflow> GetByDepartmentAndEventTypeAsync(int departmentId, int triggerEventType)
-		{
-			try
-			{
-				var selectFunction = new Func<DbConnection, Task<Workflow>>(async x =>
-				{
-					var dynamicParameters = new DynamicParametersExtension();
-					dynamicParameters.Add("DepartmentId", departmentId);
-					dynamicParameters.Add("TriggerEventType", triggerEventType);
-					var query = _queryFactory.GetQuery<SelectWorkflowByDeptAndEventTypeQuery>();
-					return await x.QueryFirstOrDefaultAsync<Workflow>(sql: query, param: dynamicParameters, transaction: _unitOfWork.Transaction);
-				});
-
-				DbConnection conn = null;
-				if (_unitOfWork?.Connection == null)
-				{
-					using (conn = _connectionProvider.Create())
-					{
-						await conn.OpenAsync();
-						return await selectFunction(conn);
-					}
-				}
-				else
-				{
-					conn = _unitOfWork.CreateOrGetConnection();
-					return await selectFunction(conn);
-				}
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-				throw;
-			}
-		}
-
 		/// <inheritdoc />
 		public async Task DeleteWorkflowWithAllDependenciesAsync(string workflowId)
 		{

@@ -264,16 +264,16 @@
 
   <!-- Geofence page -->
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>Geofence Station</value>
+    <value>Group Boundary</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>GeoFence Station</value>
+    <value>Group Boundary</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>Geofence Station</value>
+    <value>Group Boundary</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>Below you can create a geofence for your station. Fields in blue italics are required. Geofences allow you to create a boundary on the map that is this stations response area. This will be used to automatically route calls and determine responses. To create the Geofence first click on the map to create your start point then click again to draw a line, keep drawing lines until you have encircled the response area.</value>
+    <value>Below you can draw the boundary for this group: a station's response area or an organizational group's service area. Calls located inside it belong to this group for group-scoped dispatch and station-based recommendations. To draw it, click on the map to place the first point, keep clicking to add lines until the area is enclosed, then save.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>District Color</value>

@@ -31,6 +31,14 @@
         {
             <span class="label label-default" style="font-size:10px;">Disabled</span>
         }
+        @if (ViewData["CallEntity"] as bool? == true && Model.Sensitivity == (int)UdfFieldSensitivity.Restricted)
+        {
+            <span class="label label-warning" style="font-size:10px;">@(localizer?["SensitivityRestricted"] ?? "Restricted")</span>
+        }
+        @if (ViewData["CallEntity"] as bool? == true && Model.Sensitivity == (int)UdfFieldSensitivity.Part2)
+        {
+            <span class="label label-danger" style="font-size:10px;">@(localizer?["SensitivityPart2"] ?? "42 CFR Part 2")</span>
+        }
 
         <div class="field-row-actions">
             <button type="button" class="btn btn-xs btn-default field-expand-btn">
@@ -54,6 +62,18 @@
                     <option value="1" selected="@(Model.RmsClassification != 0)">Restricted</option>
                     <option value="0" selected="@(Model.RmsClassification == 0)">Unrestricted</option>
                 </select>
+            </div>
+        }
+        @if (ViewData["CallEntity"] as bool? == true)
+        {
+            <div class="form-group">
+                <label>@(localizer?["ReleaseSensitivity"] ?? "Protected Workflows release sensitivity")</label>
+                <select class="form-control" name="@(prefix).Sensitivity">
+                    <option value="0" selected="@(Model.Sensitivity == (int)UdfFieldSensitivity.None)">@(localizer?["SensitivityNone"] ?? "None")</option>
+                    <option value="1" selected="@(Model.Sensitivity == (int)UdfFieldSensitivity.Restricted)">@(localizer?["SensitivityRestricted"] ?? "Restricted")</option>
+                    <option value="2" selected="@(Model.Sensitivity == (int)UdfFieldSensitivity.Part2)">@(localizer?["SensitivityPart2"] ?? "42 CFR Part 2")</option>
+                </select>
+                <p class="help-block small">@(localizer?["ReleaseSensitivityHelp"] ?? "Restricted and 42 CFR Part 2 fields need an extra attestation before a Protected Workflow can release them. Changing this sends every release that uses the field back for approval.")</p>
             </div>
         }
         <div class="row">

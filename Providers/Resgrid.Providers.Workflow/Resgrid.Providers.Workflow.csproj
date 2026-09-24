@@ -9,6 +9,10 @@
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
   <ItemGroup>
+    <!-- HttpApiExecutor's handler/URL-validator seam for the Protected Workflows egress tests. -->
+    <InternalsVisibleTo Include="Resgrid.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.414.5" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />

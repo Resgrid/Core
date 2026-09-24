@@ -10,16 +10,13 @@
 @{
     ViewData["Title"] = "Resgrid | " + localizer["NewWorkflowHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
-    var usedEventTypes = (IReadOnlyCollection<int>)(ViewBag.UsedEventTypes ?? new HashSet<int>());
     var recordsTriggersAvailable = (bool)(ViewBag.RecordsTriggersAvailable ?? false);
     var eventTypes = Enum.GetValues(typeof(Resgrid.Model.WorkflowTriggerEventType))
                         .Cast<Resgrid.Model.WorkflowTriggerEventType>()
-                        .Where(e => !usedEventTypes.Contains((int)e))
                         .Where(e => recordsTriggersAvailable || !Resgrid.Model.WorkflowTriggerEventTypes.IsRecordsTrigger(e))
                         .Where(e => !Resgrid.Model.Invoicing.DeploymentWorkflowPayload.IsReserved((int)e))
                         .Select(e => new SelectListItem { Value = ((int)e).ToString(), Text = Resgrid.Model.Invoicing.InvoiceWorkflowPayload.IsInvoice((int)e) ? invoicingStrings[e.ToString()].Value : Resgrid.Model.Invoicing.DeploymentWorkflowPayload.IsDeployment((int)e) ? deploymentStrings[e.ToString()].Value : Resgrid.Model.Invoicing.ContractorWorkflowPayload.IsContractor((int)e) ? contractorStrings[e.ToString()].Value : Resgrid.Model.Certifications.CertificationWorkflowTriggers.IsCertification((int)e) ? certificationStrings[e.ToString()].Value : Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory((int)e) ? inventoryStrings[e.ToString()].Value : Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.IsWorkOrder((int)e) ? workOrderStrings[e.ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)e) ? checklistStrings[e.ToString()].Value : e.ToString() })
                         .ToList();
-    var noEventTypesAvailable = !eventTypes.Any();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -34,6 +31,46 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
+    @{
+        var gallery = (IReadOnlyList<Resgrid.Services.WorkflowGalleryTemplate>)(ViewBag.GalleryTemplates ?? new List<Resgrid.Services.WorkflowGalleryTemplate>());
+    }
+    @if (gallery.Count > 0)
+    {
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-th-large"></i> @localizer["GalleryHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@localizer["GalleryHelp"]</p>
+                        @if (TempData["GalleryError"] is string galleryError)
+                        {
+                            <div class="alert alert-warning">@localizer[galleryError]</div>
+                        }
+                        <div class="row">
+                            @foreach (var template in gallery)
+                            {
+                                <div class="col-sm-6">
+                                    <div class="well well-sm" style="min-height: 150px;">
+                                        <strong>@localizer[template.NameKey]</strong>
+                                        @if (template.RequiresProtectedWorkflows)
+                                        {
+                                            <span class="label label-primary"><i class="fa fa-shield"></i> @localizer["GalleryProtected"]</span>
+                                        }
+                                        <p class="small" style="margin-top: 6px;">@localizer[template.DescriptionKey]</p>
+                                        <form asp-controller="Workflows" asp-action="CreateFromTemplate" asp-route-area="User" method="post" style="display:inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="templateKey" value="@template.Key" />
+                                            <button type="submit" class="btn btn-xs btn-primary">@localizer["GalleryUseTemplate"]</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2">
             <div class="ibox">
@@ -43,13 +80,6 @@
 
                         @Html.AntiForgeryToken()
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        @if (noEventTypesAvailable)
-                        {
-                            <div class="alert alert-warning">
-                                <i class="fa fa-info-circle"></i> @localizer["AllEventTypesUsed"]
-                            </div>
-                        }
 
                         <div class="form-group">
                             <label asp-for="Name">@localizer["Name"] <span class="text-danger">*</span></label>
@@ -62,14 +92,7 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="TriggerEventType">@localizer["TriggerEvent"] <span class="text-danger">*</span></label>
-                            @if (noEventTypesAvailable)
-                            {
-                                <select asp-for="TriggerEventType" asp-items="@eventTypes" class="form-control" disabled="disabled"></select>
-                            }
-                            else
-                            {
-                                <select asp-for="TriggerEventType" asp-items="@eventTypes" class="form-control"></select>
-                            }
+                            <select asp-for="TriggerEventType" asp-items="@eventTypes" class="form-control"></select>
                             <span class="help-block text-muted">@localizer["TriggerEventHelp"]</span>
                             @if (recordsTriggersAvailable)
                             {
@@ -92,14 +115,7 @@
                             </div>
                         </div>
 
-                        @if (noEventTypesAvailable)
-                        {
-                            <button type="submit" class="btn btn-primary" disabled="disabled">@localizer["CreateWorkflow"]</button>
-                        }
-                        else
-                        {
-                            <button type="submit" class="btn btn-primary">@localizer["CreateWorkflow"]</button>
-                        }
+                        <button type="submit" class="btn btn-primary">@localizer["CreateWorkflow"]</button>
                         <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
                     </form>
                 </div>

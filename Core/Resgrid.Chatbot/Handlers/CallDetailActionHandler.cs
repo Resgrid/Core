@@ -15,9 +15,12 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
-		public CallDetailActionHandler(ICallsService callsService, IDepartmentsService departmentsService, IAuthorizationService authorizationService)
+		public CallDetailActionHandler(ICallsService callsService, IDepartmentsService departmentsService, IAuthorizationService authorizationService,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_authorizationService = authorizationService;
@@ -42,7 +45,9 @@ namespace Resgrid.Chatbot.Handlers
 					return new ChatbotResponse { Text = ChatbotResources.Get("CallDetail_Specify", culture), Processed = false };
 				}
 
-				var call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference);
+				// Scoped so shorthand matches the user's own area rather than a call they'd be refused below.
+				var call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference,
+					_dispatchScopeService, session.UserId);
 				if (call == null)
 				{
 					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NoMatch", culture, reference), Processed = true };

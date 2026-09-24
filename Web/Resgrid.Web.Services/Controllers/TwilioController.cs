@@ -59,6 +59,7 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly IFeatureToggleService _featureToggleService;
 	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
 	private readonly IDispatchRecommendationService _dispatchRecommendationService;
+	private readonly IDispatchScopeService _dispatchScopeService;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -68,8 +69,9 @@ namespace Resgrid.Web.Services.Controllers
 		IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
 		IEncryptionService encryptionService, ITwilioVoiceResponseService twilioVoiceResponseService,
 		IFeatureToggleService featureToggleService, ITextDepartmentSwitchService textDepartmentSwitchService,
-		IDispatchRecommendationService dispatchRecommendationService)
+		IDispatchRecommendationService dispatchRecommendationService, IDispatchScopeService dispatchScopeService)
 	{
+		_dispatchScopeService = dispatchScopeService;
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
 		_limitsService = limitsService;
@@ -570,7 +572,9 @@ namespace Resgrid.Web.Services.Controllers
 								case TextCommandTypes.Calls:
 									messageEvent.Processed = true;
 
-									var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
+									// Group-scoped dispatch (off by default): only the calls in the texter's area or that they're on.
+									var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(department.DepartmentId, profile.UserId,
+										await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId));
 
 									var activeCallText = new StringBuilder();
 									activeCallText.Append($"Active Calls for {department.Name}" + Environment.NewLine);
@@ -944,6 +948,15 @@ namespace Resgrid.Web.Services.Controllers
 
 			if (twilioRequest?.Digits == "1")
 			{
+				// Group-scoped dispatch (off by default). Whoever this call-back reached was dispatched, so the call is
+				// in their scope; anything else is refused without recording a response.
+				if (!await _dispatchScopeService.CanUserAccessCallAsync(call.DepartmentId, userId, call))
+				{
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidSelection, call.DepartmentId);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
+				}
+
 				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId, (int)DestinationEntityTypes.Call);
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToScene, call.DepartmentId);
 				response.Hangup();
@@ -1155,7 +1168,9 @@ namespace Resgrid.Web.Services.Controllers
 			else if (twilioRequest.Digits == "1")
 			{
 				isDynamicListing = true;
-				var calls = await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
+				// Group-scoped dispatch (off by default): read out only the calls in the caller's area or that they're on.
+				var calls = await _dispatchScopeService.FilterCallsForUserAsync(department.DepartmentId, userId,
+					await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId));
 
 				if (calls != null && calls.Any())
 				{

@@ -41,72 +41,42 @@ namespace Resgrid.Workers.Console.Tasks
 
 				var logic = new ShiftNotifierLogic();
 
-				var shifts = await _shiftsService.GetShiftsStartingNextDayAsync(DateTime.UtcNow);
+				// Every shift day starting in the next 24 hours, each reminded once (the process log is keyed on the shift
+				// day, not the shift, so consecutive days each get their reminder), sent to the day's resolved roster.
+				var days = await _shiftsService.GetShiftDaysStartingWithinDayAsync(DateTime.UtcNow);
 
-				if (shifts != null && shifts.Any())
+				if (days != null && days.Any())
 				{
-					_logger.LogInformation("ShiftNotifer::Shifts to Notify: " + shifts.Count());
+					_logger.LogInformation("ShiftNotifer::Shift days to Notify: " + days.Count);
 
 					_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 					_logsService = Bootstrapper.GetKernel().Resolve<ILogService>();
 
-					foreach (var shift in shifts)
+					foreach (var schedule in days)
 					{
-						var qi = new ShiftNotifierQueueItem();
-
-						var processLog = await _logsService.GetProcessLogForTypeTimeAsync(ProcessLogTypes.ShiftNotifier, shift.ShiftId, shift.StartDay);
+						var processLog = await _logsService.GetProcessLogForTypeTimeAsync(ProcessLogTypes.ShiftDayNotifier, schedule.Day.ShiftDayId, schedule.Day.Day);
 
 						if (processLog != null)
-						{
-							await _logsService.SetProcessLogAsync(ProcessLogTypes.ShiftNotifier, shift.ShiftId, shift.StartDay);
+							continue;
 
-							if (shift.Personnel != null && shift.Personnel.Any())
-								qi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(shift.Personnel.Select(x => x.UserId).ToList());
+						await _logsService.SetProcessLogAsync(ProcessLogTypes.ShiftDayNotifier, schedule.Day.ShiftDayId, schedule.Day.Day);
 
-							qi.Day = shift.GetShiftDayforDateTime(DateTime.UtcNow.AddDays(1));
-							if (qi.Day != null)
-							{
-								if (qi.Profiles == null)
-									qi.Profiles = new List<UserProfile>();
+						var qi = new ShiftNotifierQueueItem();
+						qi.Shift = schedule.Shift;
+						qi.Day = schedule.Day;
+						qi.UserIds = schedule.Roster.Where(x => x.IsOnDuty()).Select(x => x.UserId).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+						qi.Profiles = qi.UserIds.Any()
+							? await _userProfileService.GetSelectedUserProfilesAsync(qi.UserIds)
+							: new List<UserProfile>();
 
-								qi.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(qi.Day.ShiftDayId);
+						_logger.LogInformation("ShiftNotifer::Processing Shift Notification: " + qi.Shift.ShiftId + " day " + qi.Day.ShiftDayId);
 
-								if (qi.Signups != null && qi.Signups.Any())
-								{
-									qi.Profiles.AddRange(await _userProfileService.GetSelectedUserProfilesAsync(qi.Signups.Select(x => x.UserId).ToList()));
+						var result = await logic.Process(qi);
 
-									var users = new List<string>();
-									foreach (var signup in qi.Signups)
-									{
-										if (signup.Trade != null)
-										{
-											if (!String.IsNullOrWhiteSpace(signup.Trade.UserId))
-												users.Add(signup.Trade.UserId);
-											else if (signup.Trade.TargetShiftSignup != null)
-												users.Add(signup.Trade.TargetShiftSignup.UserId);
-										}
-									}
-
-									if (users.Any())
-										qi.Profiles.AddRange(await _userProfileService.GetSelectedUserProfilesAsync(users));
-								}
-							}
-
-							qi.Shift = shift;
-
-							_logger.LogInformation("ShiftNotifer::Processing Shift Notification: " + qi.Shift.ShiftId);
-
-							var result = await logic.Process(qi);
-
-							if (result.Item1)
-							{
-								_logger.LogInformation($"ShiftNotifer::Processed Shift Notification {qi.Shift.ShiftId} successfully.");
-							}
-							else
-							{
-								_logger.LogInformation($"ShiftNotifer::Failed to Process shift notification {qi.Shift.ShiftId} error {result.Item2}");
-							}
-						}
+						if (result.Item1)
+							_logger.LogInformation($"ShiftNotifer::Processed Shift Notification {qi.Shift.ShiftId} successfully.");
+						else
+							_logger.LogInformation($"ShiftNotifer::Failed to Process shift notification {qi.Shift.ShiftId} error {result.Item2}");
 					}
 				}
 				//}, cancellationToken);

@@ -5,6 +5,7 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Models.v4.Forms;
 using Resgrid.Web.Services.Helpers;
@@ -51,6 +52,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ITemplatesService _templatesService;
 		private readonly IFormsService _formsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly INearestUnitService _nearestUnitService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IMappingService _mappingService;
 
 		public DispatchController(
@@ -70,9 +73,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ITemplatesService templatesService,
 			IFormsService formsService,
 			IMappingService mappingService,
-			Model.Services.IAuthorizationService authorizationService
+			Model.Services.IAuthorizationService authorizationService,
+			INearestUnitService nearestUnitService,
+			IDispatchScopeService dispatchScopeService
 			)
 		{
+			_nearestUnitService = nearestUnitService;
+			_dispatchScopeService = dispatchScopeService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -284,7 +291,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.Statuses = new List<CustomStatusResultData>();
 
 			var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
-			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			// Group-scoped dispatch (off by default): only offer calls in the caller's area or that they are on.
+			var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
@@ -524,6 +532,42 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			result.PageSize = result.Data.Count;
 			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Nearest available unit board for an incident location. Lists every unit (a team, an apparatus or an
+		/// individual set up as a unit) and every responder in the caller's dispatch scope, ranked available-first
+		/// then by ETA, with status, live position, crew shift coverage and role mix. Nothing is dispatched.
+		/// </summary>
+		/// <param name="latitude">Incident latitude</param>
+		/// <param name="longitude">Incident longitude</param>
+		/// <param name="useRoadEta">Look up drive times for the closest available units; omit to follow the department setting</param>
+		/// <param name="cancellationToken">Request cancellation</param>
+		/// <returns>GetNearestUnitsResult with the board</returns>
+		[HttpGet("GetNearestUnits")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetNearestUnitsResult>> GetNearestUnits(double latitude, double longitude, bool? useRoadEta = null, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var board = await _nearestUnitService.GetBoardAsync(new NearestUnitRequest
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Latitude = latitude,
+				Longitude = longitude,
+				UseRoadEta = useRoadEta
+			}, cancellationToken);
+
+			var result = new GetNearestUnitsResult
+			{
+				Data = board,
+				PageSize = board.Units.Count,
+				Status = ResponseHelper.Success
+			};
+
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);

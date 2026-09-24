@@ -241,6 +241,13 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserDeleteShiftSignupAsync(string userId, int departmentId, int shiftSignupId);
 
 		/// <summary>
+		/// Which department groups the user supervises shifts for: all of them for a department admin or a
+		/// department-wide shift manager (Create Shift permission set to Everyone, or to select roles the user holds),
+		/// otherwise the groups (and child groups) they are a group admin of.
+		/// </summary>
+		Task<ShiftManagementScope> GetShiftManagementScopeAsync(string userId, int departmentId);
+
+		/// <summary>
 		/// Determines whether this instance [can view unit location asynchronous] the specified user identifier.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>

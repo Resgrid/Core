@@ -113,4 +113,19 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>Звіт про інцидент NERIS</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Чутливість для захищених робочих процесів</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Обмежені поля та поля згідно з 42 CFR Part 2 потребують додаткового підтвердження, перш ніж захищений робочий процес зможе їх розкрити. Зміна цього значення повертає на затвердження кожен дозвіл, що використовує поле.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Обмежене</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>

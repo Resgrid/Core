@@ -769,4 +769,82 @@
   <data name="UnitTimes" xml:space="preserve">
     <value>Χρόνοι μονάδων</value>
   </data>
+  <data name="Part2ConsentLabel" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="Part2ConsentOnFile" xml:space="preserve">
+    <value>Υπάρχει συγκατάθεση Part 2</value>
+  </data>
+  <data name="Part2ConsentHelp" xml:space="preserve">
+    <value>Επιλέξτε το όταν το τμήμα έχει συγκατάθεση (ή άλλη βάση κατά 42 CFR Part 2) για την κοινοποίηση των πληροφοριών αυτής της κλήσης σχετικά με διαταραχές χρήσης ουσιών. Οι προστατευμένες ροές εργασιών στέλνουν πεδία Part 2 μόνο όταν είναι επιλεγμένο.</value>
+  </data>
+  <data name="SubjectIdentifiersLabel" xml:space="preserve">
+    <value>Αναγνωριστικά προσώπου</value>
+  </data>
+  <data name="NearestUnitsLabel" xml:space="preserve">
+    <value>Πλησιέστερες μονάδες</value>
+  </data>
+  <data name="NearestUnitsHint" xml:space="preserve">
+    <value>Μια μονάδα μπορεί να είναι ομάδα, όχημα ή μεμονωμένο άτομο.</value>
+  </data>
+  <data name="NearestUnitsUnit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="NearestUnitsCrewOnShift" xml:space="preserve">
+    <value>πλήρωμα σε βάρδια</value>
+  </data>
+  <data name="NearestUnitsStationShift" xml:space="preserve">
+    <value>βάρδια σταθμού</value>
+  </data>
+  <data name="NearestUnitsNoCrew" xml:space="preserve">
+    <value>Δεν έχει οριστεί πλήρωμα</value>
+  </data>
+  <data name="NearestUnitsScoped" xml:space="preserve">
+    <value>Εμφανίζονται μόνο οι μονάδες της περιοχής σας</value>
+  </data>
+  <data name="NearestUnitsStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="NearestUnitsEta" xml:space="preserve">
+    <value>Εκτιμ. άφιξη</value>
+  </data>
+  <data name="NearestUnitsPosition" xml:space="preserve">
+    <value>Θέση</value>
+  </data>
+  <data name="NearestUnitsShift" xml:space="preserve">
+    <value>Κάλυψη βάρδιας</value>
+  </data>
+  <data name="NearestUnitsRoleMix" xml:space="preserve">
+    <value>Σύνθεση ρόλων</value>
+  </data>
+  <data name="NearestUnitsInBoundary" xml:space="preserve">
+    <value>Εντός περιοχής</value>
+  </data>
+  <data name="NearestUnitsInParentBoundary" xml:space="preserve">
+    <value>Εντός περιοχής εξυπηρέτησης</value>
+  </data>
+  <data name="NearestUnitsIncidentInside" xml:space="preserve">
+    <value>Το συμβάν βρίσκεται εντός:</value>
+  </data>
+  <data name="NearestUnitsNoBoundary" xml:space="preserve">
+    <value>Το συμβάν δεν βρίσκεται εντός ορίων καμίας ομάδας.</value>
+  </data>
+  <data name="NearestUnitsEstimate" xml:space="preserve">
+    <value>εκτίμ.</value>
+  </data>
+  <data name="NearestUnitsMinutes" xml:space="preserve">
+    <value>λεπ.</value>
+  </data>
+  <data name="NearestUnitsLive" xml:space="preserve">
+    <value>Ζωντανό GPS</value>
+  </data>
+  <data name="NearestUnitsStation" xml:space="preserve">
+    <value>Τοποθεσία σταθμού</value>
+  </data>
+  <data name="NearestUnitsStale" xml:space="preserve">
+    <value>παλιά</value>
+  </data>
+  <data name="NearestUnitsNoPosition" xml:space="preserve">
+    <value>Χωρίς θέση</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,12 +23,15 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly ICallsService _callsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public CallDispatchedActionHandler(
 			ICallsService callsService,
 			IUserProfileService userProfileService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_userProfileService = userProfileService;
 			_authorizationService = authorizationService;
@@ -47,13 +51,16 @@ namespace Resgrid.Chatbot.Handlers
 				Call call;
 				if (!string.IsNullOrWhiteSpace(reference))
 				{
-					call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference);
+					call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference,
+						_dispatchScopeService, session.UserId);
 					if (call == null)
 						return new ChatbotResponse { Text = ChatbotResources.Get("Call_NoMatch", culture, reference), Processed = true };
 				}
 				else
 				{
-					var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(session.DepartmentId);
+					// "The" call means the only one in the user's area, not the only one in the department.
+					var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(session.DepartmentId, session.UserId,
+						await _callsService.GetActiveCallsByDepartmentAsync(session.DepartmentId) ?? new List<Call>());
 					if (activeCalls?.Count == 1)
 						call = activeCalls[0];
 					else

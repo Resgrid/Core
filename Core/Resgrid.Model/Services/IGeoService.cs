@@ -38,6 +38,13 @@ namespace Resgrid.Model.Services
 		Task<List<StationDistanceResult>> GetStationsContainingPointAsync(int departmentId, double latitude, double longitude);
 
 		/// <summary>
+		/// Groups of any type (Station or Organizational) whose boundary polygon contains the point.
+		/// Groups without a parseable boundary are skipped. Nested boundaries all match, so a point
+		/// inside a station's area under a service area returns both groups.
+		/// </summary>
+		Task<List<DepartmentGroup>> GetGroupsWithBoundaryContainingPointAsync(int departmentId, double latitude, double longitude);
+
+		/// <summary>
 		/// All station groups with resolvable coordinates ordered by straight-line
 		/// distance to the point (nearest first), with geofence containment flagged.
 		/// </summary>

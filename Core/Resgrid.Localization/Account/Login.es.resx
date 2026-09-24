@@ -190,7 +190,7 @@
     <value>Si su departamento aún no se ha registrado en Resgrid, puede crear una nueva cuenta que creará el departamento por usted.</value>
   </data>
   <data name="LoginMessage4" xml:space="preserve">
-    <value>El mantenimiento se realiza semanalmente los sábados a partir de las 2000 horas del Pacífico.</value>
+    <value>El mantenimiento programado se realiza en una ventana semanal fija, los martes de 10 p. m. a medianoche (hora del Pacífico), y se anuncia con antelación en la página de estado del SLA. Las ventanas extendidas ocasionales (de hasta 4 horas, no más de una vez por trimestre) se anuncian con al menos 5 días hábiles de antelación.</value>
   </data>
   <data name="LogOnHeader" xml:space="preserve">
     <value>Acceder</value>

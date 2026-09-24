@@ -255,16 +255,16 @@
     <value>Wenn diese Option aktiviert ist, wird ein Einsatz auf dem ausgewählten Drucker gedruckt, wenn eine Einheit oder Person dieser Gruppe einem Einsatz zugewiesen (disponiert) wird</value>
   </data>
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>Geofence-Station</value>
+    <value>Gruppengrenze</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>Geofence-Station</value>
+    <value>Gruppengrenze</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>Geofence-Station</value>
+    <value>Gruppengrenze</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>Unten können Sie einen Geofence für Ihre Station erstellen. Felder in blauer Kursivschrift sind Pflichtfelder. Geofences ermöglichen es Ihnen, eine Grenze auf der Karte zu erstellen, die das Einsatzgebiet dieser Station darstellt. Dies wird verwendet, um Einsätze automatisch zu leiten und Reaktionen zu bestimmen.</value>
+    <value>Unten können Sie die Grenze dieser Gruppe zeichnen: das Einsatzgebiet einer Station oder das Versorgungsgebiet einer Organisationsgruppe. Einsätze innerhalb dieser Grenze gehören für die gruppenbezogene Alarmierung und stationsbasierte Empfehlungen zu dieser Gruppe. Klicken Sie zum Zeichnen auf die Karte, um den ersten Punkt zu setzen, und klicken Sie weiter, um Linien hinzuzufügen, bis das Gebiet umschlossen ist. Speichern Sie anschließend.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>Bezirksfarbe</value>

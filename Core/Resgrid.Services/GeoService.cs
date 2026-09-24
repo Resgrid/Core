@@ -96,7 +96,9 @@ namespace Resgrid.Services
 
 			RouteInformation route = await _geoLocationProvider.GetRoute(start, destination);
 
-			if (route != null)
+			// A failed lookup comes back (and is cached) with Seconds = 0; reporting that as a
+			// zero-second ETA ranked the failure ahead of every real route.
+			if (route != null && route.Successful)
 			{
 				return route.Seconds;
 			}
@@ -130,6 +132,20 @@ namespace Resgrid.Services
 			var stations = await OrderStationsByDistanceAsync(departmentId, latitude, longitude);
 
 			return stations.Where(s => s.ContainsPoint).ToList();
+		}
+
+		public async Task<List<DepartmentGroup>> GetGroupsWithBoundaryContainingPointAsync(int departmentId, double latitude, double longitude)
+		{
+			// Any group type can own a boundary: a Station group's first-due area or an
+			// Organizational group's service area.
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
+
+			if (groups == null)
+				return new List<DepartmentGroup>();
+
+			return groups
+				.Where(g => g != null && GeoMath.IsPointInPolygon(latitude, longitude, GeoMath.ParseGeofence(g.Geofence)))
+				.ToList();
 		}
 
 		public async Task<List<StationDistanceResult>> OrderStationsByDistanceAsync(int departmentId, double latitude, double longitude)

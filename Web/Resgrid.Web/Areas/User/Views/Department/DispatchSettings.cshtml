@@ -69,6 +69,41 @@
                             <div class="col-sm-9">@Html.DropDownListFor(m => m.ShiftClearStatus, Model.StatusLevels, new { style = "width: 70%" })</div>
                         </div>
 
+                        <h4>@localizer["GroupDispatchScopeHeader"]</h4>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["GroupDispatchScopeEnabledLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="GroupDispatchScopeEnabled">
+                                        <span class="help-block m-b-none">@localizer["GroupDispatchScopeEnabledHelp"]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["GroupDispatchScopeRolesLabel"]</label>
+                            <div class="col-sm-9">
+                                @if (Model.PersonnelRoles == null || !Model.PersonnelRoles.Any())
+                                {
+                                    <p class="form-control-static text-muted">@localizer["GroupDispatchScopeNoRoles"]</p>
+                                }
+                                else
+                                {
+                                    foreach (var role in Model.PersonnelRoles)
+                                    {
+                                        <div class="checkbox" style="margin-top: 0;">
+                                            <label>
+                                                <input type="checkbox" name="GroupDispatchScopeRoleIds" value="@role.PersonnelRoleId" @(Model.GroupDispatchScopeRoleIds != null && Model.GroupDispatchScopeRoleIds.Contains(role.PersonnelRoleId) ? "checked" : "")>
+                                                @role.Name
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                <span class="help-block m-b-none">@localizer["GroupDispatchScopeRolesHelp"]</span>
+                            </div>
+                        </div>
+
                         <h3>@localizer["UnitDispatchSettingsHeader"]</h3>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToAssignedPersonnelLabel"]</label>

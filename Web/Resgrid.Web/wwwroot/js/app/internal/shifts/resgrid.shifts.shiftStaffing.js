@@ -11,9 +11,9 @@ var resgrid;
                 $("#shiftDayPicker").keypress(function (e) {
                     e.preventDefault();
                 });
-                $('#ShiftId').on("change", function (e) {
+                $('#ShiftId').on("change", function () {
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftDays?shiftId=' + e.val,
+                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftDays?shiftId=' + encodeURIComponent($(this).val()),
                         contentType: 'application/json; charset=utf-8',
                         type: 'GET'
                     }).done(function (data) {
@@ -46,12 +46,20 @@ var resgrid;
             shiftStaffing.compareDates = compareDates;
             function initDatePicker() {
                 var now = new Date();
+                $("#shiftDayPicker").val('');
+                if ($("#shiftDayPicker").data('xdsoft_datetimepicker')) {
+                    $("#shiftDayPicker").datetimepicker('destroy');
+                }
                 resgrid.shifts.shiftStaffing.datePicker = $("#shiftDayPicker").datetimepicker({
                     timepicker: false,
                     format: 'm/d/Y',
                     minDate: now,
                     scrollMonth: false,
                     scrollInput: false,
+                    // Start the pickers from who is on that day (single-day changes included), not the standing roster.
+                    onSelectDate: function () {
+                        resgrid.shifts.shiftStaffing.createGroupInputs();
+                    },
                     onGenerate: function(ct, input) {
                         // Disable days not in shiftDays
                         $(this).find('.xdsoft_date').each(function() {
@@ -72,6 +80,8 @@ var resgrid;
             shiftStaffing.initDatePicker = initDatePicker;
             function createGroupInputs() {
                 var html = "";
+                var day = $('#shiftDayPicker').val();
+                var dayQuery = day ? '&day=' + encodeURIComponent(day) : '';
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftGroups?shiftId=' + $('#ShiftId').val(),
                     contentType: 'application/json; charset=utf-8',
@@ -84,8 +94,8 @@ var resgrid;
                         html = '<div class="form-group"><label class="control-label">' + nonGroupLabel + '</label><div class="controls"><div class="col-xs-6"><select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select></div></div></div>';
                     }
                     for (var i = 0; i < data.length; i++) {
-                        if (isAdmin || data[i].Id == groupId) {
-                            var itemHtml = '<div class="form-group"><label class="control-label">' + data[i].Name + '</label><div class="controls"><div class="col-md-6">';
+                        if (isAdmin || data[i].CanManage) {
+                            var itemHtml = '<div class="form-group"><label class="control-label">' + $('<div>').text(data[i].Name || '').html() + '</label><div class="controls"><div class="col-md-6">';
 
                             itemHtml = itemHtml + '<div class="row"><div class="col-sm-10"><select id="groupPersonnel_' + data[i].Id + '" name="groupPersonnel_' + data[i].Id + '" class="groupPersonnelSelect" style="width: 100%;"></select></div></div>';
                             itemHtml = itemHtml + `<div id="groupUnits_${data[i].Id}"></div></div></div></div>`;
@@ -113,7 +123,7 @@ var resgrid;
                             }
                         });
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=0',
+                            url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=0' + dayQuery,
                             contentType: 'application/json', type: 'GET'
                         }).done(function (data) {
                             if (data) {
@@ -138,7 +148,7 @@ var resgrid;
                         });
                         var groupId = $(that).attr("name").replace('groupPersonnel_', '');
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=' + groupId,
+                            url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=' + groupId + dayQuery,
                             contentType: 'application/json', type: 'GET'
                         }).done(function (userData) {
                             if (userData) {

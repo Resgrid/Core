@@ -113,4 +113,19 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>NERIS-incidentrapport</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Känslighet för skyddade arbetsflöden</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Begränsade fält och fält enligt 42 CFR Part 2 kräver ett extra intyg innan ett skyddat arbetsflöde får frisläppa dem. En ändring här skickar tillbaka varje frisläppning som använder fältet för godkännande.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Begränsat</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>

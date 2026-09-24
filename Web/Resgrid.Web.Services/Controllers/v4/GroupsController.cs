@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Groups;
 using System;
+using System.Linq;
 using Resgrid.Model;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -237,6 +238,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (group.Address != null)
 				result.Address = group.Address.FormatAddress();
+
+			result.ParentGroupId = group.ParentDepartmentGroupId.HasValue ? group.ParentDepartmentGroupId.Value.ToString() : "";
+			result.Latitude = group.Latitude;
+			result.Longitude = group.Longitude;
+
+			// Re-serialized from the parsed polygon so only coordinates ever leave the API.
+			var boundary = GeoMath.ParseGeofence(group.Geofence);
+			result.Geofence = boundary == null ? "" : Newtonsoft.Json.JsonConvert.SerializeObject(boundary.Select(p => new { lat = p.Latitude, lng = p.Longitude }));
+			result.GeofenceColor = boundary == null ? "" : group.GeofenceColor;
 
 			return result;
 		}

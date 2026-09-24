@@ -1,0 +1,175 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.ApprovalsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["ApprovalsHeader"];
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@functions {
+	string FormatTime(DateTime value)
+	{
+		return Model.Department != null ? value.FormatForDepartment(Model.Department, true) : value.ToString("g");
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["ApprovalsHeader"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["ApprovalsHeader"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<partial name="_ShiftsMessage" />
+			<p class="text-muted">@localizer["ApprovalsHelp"]</p>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["PendingSignupsHeader"] <span class="badge">@Model.Signups.Count</span></h5>
+				</div>
+				<div class="ibox-content">
+					@if (!Model.Signups.Any())
+					{
+						<p class="text-muted">@localizer["NoPendingSignups"]</p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>@localizer["NameColumn"]</th>
+										<th>@localizer["ShiftColumn"]</th>
+										<th>@localizer["GroupColumn"]</th>
+										<th>@localizer["DayColumn"]</th>
+										<th>@localizer["TimestampColumn"]</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var signup in Model.Signups)
+									{
+										<tr>
+											<td>
+												@signup.UserName
+												@if (!String.IsNullOrWhiteSpace(signup.Roles))
+												{
+													<br /><small class="text-muted">@signup.Roles</small>
+												}
+											</td>
+											<td>@signup.ShiftName</td>
+											<td>@signup.GroupName</td>
+											<td>
+												@if (signup.ShiftDayId.HasValue)
+												{
+													<a asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@signup.ShiftDayId">@FormatTime(signup.Start)</a>
+												}
+												else
+												{
+													@FormatTime(signup.Start)
+												}
+												<br /><small class="text-muted">@localizer["EndLabel"] @FormatTime(signup.End)</small>
+											</td>
+											<td>@FormatTime(signup.SignupTimestamp)</td>
+											<td>
+												<form method="post" asp-controller="Shifts" asp-action="ReviewSignup" asp-route-area="User" class="form-inline">
+													<input type="hidden" name="shiftSignupId" value="@signup.ShiftSignupId" />
+													<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" />
+													<button type="submit" name="approve" value="true" class="btn btn-xs btn-primary">@localizer["ApproveButton"]</button>
+													<button type="submit" name="approve" value="false" class="btn btn-xs btn-danger">@localizer["DenyButton"]</button>
+												</form>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["PendingTradesHeader"] <span class="badge">@Model.Trades.Count</span></h5>
+				</div>
+				<div class="ibox-content">
+					@if (!Model.Trades.Any())
+					{
+						<p class="text-muted">@localizer["NoPendingTrades"]</p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>@localizer["TradeColumn"]</th>
+										<th>@localizer["ShiftColumn"]</th>
+										<th>@localizer["GroupColumn"]</th>
+										<th>@localizer["DayColumn"]</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var trade in Model.Trades)
+									{
+										<tr>
+											<td>
+												@trade.RequesterName <i class="fa fa-long-arrow-right"></i> @trade.TakerName
+												@if (!String.IsNullOrWhiteSpace(trade.TakerRoles))
+												{
+													<br /><small class="text-muted">@trade.TakerRoles</small>
+												}
+												@if (trade.SwapBackDay.HasValue)
+												{
+													<br /><small class="text-muted">@String.Format(localizer["SwapBackFormat"].Value, trade.SwapBackDay.Value.ToShortDateString() + (String.IsNullOrWhiteSpace(trade.SwapBackShiftName) ? "" : " (" + trade.SwapBackShiftName + ")"))</small>
+												}
+												@if (!String.IsNullOrWhiteSpace(trade.Note))
+												{
+													<br /><small class="text-muted">@trade.Note</small>
+												}
+											</td>
+											<td>@trade.ShiftName</td>
+											<td>@trade.GroupName</td>
+											<td>
+												@if (trade.ShiftDayId.HasValue)
+												{
+													<a asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@trade.ShiftDayId">@FormatTime(trade.Start)</a>
+												}
+												else
+												{
+													@FormatTime(trade.Start)
+												}
+												<br /><small class="text-muted">@localizer["EndLabel"] @FormatTime(trade.End)</small>
+											</td>
+											<td>
+												<form method="post" asp-controller="Shifts" asp-action="ReviewTrade" asp-route-area="User" class="form-inline">
+													<input type="hidden" name="shiftSignupTradeId" value="@trade.ShiftSignupTradeId" />
+													<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" />
+													<button type="submit" name="approve" value="true" class="btn btn-xs btn-primary">@localizer["ApproveButton"]</button>
+													<button type="submit" name="approve" value="false" class="btn btn-xs btn-danger">@localizer["DenyButton"]</button>
+												</form>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -25,13 +25,15 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
-		public RespondToCallHandler(ICallsService callsService, IActionLogsService actionLogsService,
+		public RespondToCallHandler(ICallsService callsService, IActionLogsService actionLogsService, IDispatchScopeService dispatchScopeService,
 			ICustomStateService customStateService = null, IDepartmentGroupsService departmentGroupsService = null,
 			IPersonnelRolesService personnelRolesService = null)
 		{
 			_callsService = callsService;
 			_actionLogsService = actionLogsService;
+			_dispatchScopeService = dispatchScopeService;
 			_customStateService = customStateService;
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
@@ -55,7 +57,10 @@ namespace Resgrid.Chatbot.Handlers
 					call = await ResolveMostRecentDispatchAsync(session.UserId, session.DepartmentId);
 				else
 				{
-					call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference);
+					// Group-scoped dispatch (off by default): only a call in the user's area, or one they're on, resolves.
+					// The no-reference path above only ever picks a call the user was dispatched to, which is always in scope.
+					call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference,
+						_dispatchScopeService, session.UserId);
 				}
 				if (call == null)
 				{

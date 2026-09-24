@@ -1173,4 +1173,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Το προφίλ δεν ήταν δυνατό να αποθηκευτεί· ελέγξτε τα επισημασμένα πεδία.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Διάθεση ανά ομάδα</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Περιορισμός διάθεσης στις περιοχές ομάδων</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργό, οι λίστες ενεργών κλήσεων, οι χάρτες και ο πίνακας πλησιέστερων μονάδων κάθε μέλους εμφανίζουν μόνο τη δική του ομάδα και τις ομάδες κάτω από αυτή: κλήσεις εντός των ορίων αυτών των ομάδων ή που τους έχουν ανατεθεί, καθώς και κάθε κλήση που το μέλος ανέφερε ή στην οποία διατέθηκε. Οι διαχειριστές του τμήματος και οι παρακάτω ρόλοι διατηρούν προβολή ολόκληρου του τμήματος. Τίποτα δεν αντιγράφεται ή μετακινείται, οπότε η παράδοση της διάθεσης σε άλλη θέση στην αλλαγή βάρδιας είναι απλώς αλλαγή ρόλου.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Ρόλοι διάθεσης για όλο το τμήμα</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Τα μέλη με οποιονδήποτε από αυτούς τους ρόλους (για παράδειγμα ένα κεντρικό κέντρο διάθεσης) βλέπουν όλες τις περιοχές όταν ο περιορισμός είναι ενεργός. Αναθέστε ή αφαιρέστε τον ρόλο για να παραδώσετε τη διάθεση· ισχύει από την επόμενη φόρτωση σελίδας.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Δεν έχουν οριστεί ακόμη ρόλοι προσωπικού.</value>
+  </data>
 </root>

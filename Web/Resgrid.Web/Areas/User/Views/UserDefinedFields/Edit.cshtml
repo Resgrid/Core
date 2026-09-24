@@ -4,6 +4,7 @@
     ViewData["Title"] = "Resgrid | " + string.Format(localizer["EditDefinitionHeader"].Value, Model.EntityTypeName);
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     ViewData["RmsExtension"] = Model.EntityType == Resgrid.Model.UdfEntityType.Record;
+    ViewData["CallEntity"] = Model.EntityType == Resgrid.Model.UdfEntityType.Call;
 
     var dataTypes = Enum.GetValues(typeof(Resgrid.Model.UdfFieldDataType))
         .Cast<Resgrid.Model.UdfFieldDataType>()
@@ -233,10 +234,11 @@
             }
 
             function updateValidationVisibility(row, dataType) {
-                // 0=Text,1=Number,2=Decimal,3=Boolean,4=Date,5=DateTime,6=Dropdown,7=MultiSelect,8=Email,9=Phone,10=Url
-                var textTypes    = [0, 8, 9, 10];
+                // 0=Text,1=Number,2=Decimal,3=Boolean,4=Date,5=DateTime,6=Dropdown,7=MultiSelect,8=Email,9=Phone,10=Url,11=ComboBox
+                // A combo box takes both: its options are suggestions and free text meets the text rules.
+                var textTypes    = [0, 8, 9, 10, 11];
                 var numericTypes = [1, 2];
-                var optionTypes  = [6, 7];
+                var optionTypes  = [6, 7, 11];
 
                 toggle(row, '.row-validation-text',    textTypes.indexOf(dataType)    >= 0);
                 toggle(row, '.row-validation-numeric', numericTypes.indexOf(dataType) >= 0);

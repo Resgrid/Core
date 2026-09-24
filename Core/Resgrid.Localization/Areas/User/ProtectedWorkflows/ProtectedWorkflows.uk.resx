@@ -1,0 +1,862 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Захищені робочі процеси</value>
+  </data>
+  <data name="ListHeader" xml:space="preserve">
+    <value>Дозволи на захищену передачу для робочих процесів</value>
+  </data>
+  <data name="DisclosuresTitle" xml:space="preserve">
+    <value>Журнал розкриття даних захищених робочих процесів</value>
+  </data>
+  <data name="WorkflowsBreadcrumb" xml:space="preserve">
+    <value>Робочі процеси</value>
+  </data>
+  <data name="DataProtectionBreadcrumb" xml:space="preserve">
+    <value>Захист даних</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Захищені робочі процеси</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>За замовчуванням робочі процеси отримують значення REDACTED. Захищені робочі процеси дають змогу адміністратору схвалити один конкретний робочий процес для надсилання вибраних захищених полів до одного закріпленого HTTPS-призначення. Усі інші робочі процеси й надалі отримують значення REDACTED.</value>
+  </data>
+  <data name="EnableLabel" xml:space="preserve">
+    <value>Увімкнути захищені робочі процеси</value>
+  </data>
+  <data name="SecondApproverLabel" xml:space="preserve">
+    <value>Вимагати схвалення захищених робочих процесів другим адміністратором</value>
+  </data>
+  <data name="WarningTextHeader" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="WarningText" xml:space="preserve">
+    <value>Захищені робочі процеси надсилають розшифровані захищені дані, які можуть містити захищену медичну інформацію, до налаштованих вами зовнішніх систем. Resgrid не може контролювати, як система-отримувач зберігає або використовує ці дані. Вмикайте робочий процес лише тоді, коли отримувачем є ваша організація або сторона, на яку поширюється угода з бізнес-партнером, укладена з вашою організацією, і передавайте лише ті поля, які потрібні отримувачу.</value>
+  </data>
+  <data name="WarningAckLabel" xml:space="preserve">
+    <value>Підтверджую ознайомлення з цим попередженням і беру його до відома (версія {0}).</value>
+  </data>
+  <data name="WarningAcknowledgedOn" xml:space="preserve">
+    <value>Попередження взято до відома {0} (версія {1}).</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Зберегти налаштування захищених робочих процесів</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Налаштування захищених робочих процесів збережено.</value>
+  </data>
+  <data name="AdpRequired" xml:space="preserve">
+    <value>Захищені робочі процеси доступні лише тоді, коли для вашого підрозділу ввімкнено розширений захист даних.</value>
+  </data>
+  <data name="NotAdmin" xml:space="preserve">
+    <value>Змінювати ці налаштування можуть лише адміністратори з правом «Налаштування передачі захищених даних».</value>
+  </data>
+  <data name="ManageLink" xml:space="preserve">
+    <value>Керувати захищеними робочими процесами</value>
+  </data>
+  <data name="StepUpNotice" xml:space="preserve">
+    <value>Для ввімкнення чи вимкнення цього налаштування, а також для схвалення чи поновлення дозволу на передачу потрібне свіже багатофакторне підтвердження.</value>
+  </data>
+  <data name="StepUpRequiredPrompt" xml:space="preserve">
+    <value>Для цієї дії потрібне свіже багатофакторне підтвердження. Вас буде перенаправлено на підтвердження, а потім повернуто на цю сторінку; після цього повторіть дію.</value>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>Дозвіл на захищену передачу</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Надсилайте вибрані захищені поля з цього робочого процесу до його закріпленого HTTPS-призначення. Розшифровуються лише позначені вами поля; усі інші захищені значення залишаються REDACTED.</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="State_None" xml:space="preserve">
+    <value>Не захищено</value>
+  </data>
+  <data name="State_Draft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="State_PendingApproval" xml:space="preserve">
+    <value>Очікує схвалення</value>
+  </data>
+  <data name="State_Active" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="State_Suspended" xml:space="preserve">
+    <value>Призупинений</value>
+  </data>
+  <data name="State_Expired" xml:space="preserve">
+    <value>Термін дії минув</value>
+  </data>
+  <data name="State_Revoked" xml:space="preserve">
+    <value>Відкликаний</value>
+  </data>
+  <data name="StateExpiring" xml:space="preserve">
+    <value>Термін дії спливає</value>
+  </data>
+  <data name="RenewalPending" xml:space="preserve">
+    <value>Поновлення очікує схвалення</value>
+  </data>
+  <data name="ProtectedBadge" xml:space="preserve">
+    <value>Захищено: {0}</value>
+  </data>
+  <data name="Reason_config_changed" xml:space="preserve">
+    <value>змінено конфігурацію</value>
+  </data>
+  <data name="Reason_department_disabled" xml:space="preserve">
+    <value>захищені робочі процеси вимкнено</value>
+  </data>
+  <data name="Reason_adp_not_enabled" xml:space="preserve">
+    <value>розширений захист даних не ввімкнено</value>
+  </data>
+  <data name="Reason_credential_changed" xml:space="preserve">
+    <value>змінено облікові дані</value>
+  </data>
+  <data name="Reason_admin_suspended" xml:space="preserve">
+    <value>призупинено адміністратором</value>
+  </data>
+  <data name="Reason_admin_revoked" xml:space="preserve">
+    <value>відкликано адміністратором</value>
+  </data>
+  <data name="Reason_adp_offboarding" xml:space="preserve">
+    <value>відключення розширеного захисту даних</value>
+  </data>
+  <data name="Reason_workflow_deleted" xml:space="preserve">
+    <value>робочий процес видалено</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Поля для передачі</value>
+  </data>
+  <data name="FieldsHelp" xml:space="preserve">
+    <value>За замовчуванням нічого не вибрано. У вихідному шаблоні посилайтеся на передані поля як protected.call.&lt;name&gt;; значення call.* залишаються REDACTED.</value>
+  </data>
+  <data name="FormParsedHelp" xml:space="preserve">
+    <value>Дані форми також доступні в розібраному вигляді як protected.call.form.</value>
+  </data>
+  <data name="Field_calls_name" xml:space="preserve">
+    <value>Назва виклику</value>
+  </data>
+  <data name="Field_calls_type" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="Field_calls_natureofcall" xml:space="preserve">
+    <value>Характер виклику</value>
+  </data>
+  <data name="Field_calls_notes" xml:space="preserve">
+    <value>Нотатки виклику</value>
+  </data>
+  <data name="Field_calls_completednotes" xml:space="preserve">
+    <value>Нотатки про завершення</value>
+  </data>
+  <data name="Field_calls_address" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="Field_calls_geolocationdata" xml:space="preserve">
+    <value>Геолокація</value>
+  </data>
+  <data name="Field_calls_w3w" xml:space="preserve">
+    <value>Адреса what3words</value>
+  </data>
+  <data name="Field_calls_contactname" xml:space="preserve">
+    <value>Ім'я контакту</value>
+  </data>
+  <data name="Field_calls_contactnumber" xml:space="preserve">
+    <value>Номер контакту</value>
+  </data>
+  <data name="Field_calls_sourceidentifier" xml:space="preserve">
+    <value>Ідентифікатор джерела</value>
+  </data>
+  <data name="Field_calls_incidentnumber" xml:space="preserve">
+    <value>Номер інциденту</value>
+  </data>
+  <data name="Field_calls_externalidentifier" xml:space="preserve">
+    <value>Зовнішній ідентифікатор</value>
+  </data>
+  <data name="Field_calls_referencenumber" xml:space="preserve">
+    <value>Довідковий номер</value>
+  </data>
+  <data name="Field_calls_callformdata" xml:space="preserve">
+    <value>Дані форми виклику</value>
+  </data>
+  <data name="Field_calls_deletedreason" xml:space="preserve">
+    <value>Причина видалення</value>
+  </data>
+  <data name="DestinationHeader" xml:space="preserve">
+    <value>Призначення</value>
+  </data>
+  <data name="DestinationHostLabel" xml:space="preserve">
+    <value>Закріплений хост</value>
+  </data>
+  <data name="CredentialLabel" xml:space="preserve">
+    <value>Закріплені облікові дані</value>
+  </data>
+  <data name="TokenHostLabel" xml:space="preserve">
+    <value>Закріплений хост токена</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Дійсного призначення ще немає</value>
+  </data>
+  <data name="ValidationHeader" xml:space="preserve">
+    <value>Цей робочий процес поки що не можна захистити</value>
+  </data>
+  <data name="ValidationError_no_steps" xml:space="preserve">
+    <value>Додайте принаймні один увімкнений крок.</value>
+  </data>
+  <data name="ValidationError_action_not_allowed" xml:space="preserve">
+    <value>Захищені робочі процеси можуть містити лише кроки API POST або PUT.</value>
+  </data>
+  <data name="ValidationError_credential_required" xml:space="preserve">
+    <value>Кожному кроку потрібні облікові дані.</value>
+  </data>
+  <data name="ValidationError_credential_mismatch" xml:space="preserve">
+    <value>Усі кроки мають використовувати ті самі облікові дані.</value>
+  </data>
+  <data name="ValidationError_credential_not_allowed" xml:space="preserve">
+    <value>Використовуйте облікові дані типу «токен Bearer», «ключ API» або «облікові дані клієнта OAuth2».</value>
+  </data>
+  <data name="ValidationError_credential_missing" xml:space="preserve">
+    <value>Один із кроків використовує облікові дані, яких більше не існує.</value>
+  </data>
+  <data name="ValidationError_url_required" xml:space="preserve">
+    <value>Кожному кроку потрібна URL-адреса.</value>
+  </data>
+  <data name="ValidationError_scheme_not_https" xml:space="preserve">
+    <value>URL-адреса кожного кроку має використовувати HTTPS.</value>
+  </data>
+  <data name="ValidationError_host_not_literal" xml:space="preserve">
+    <value>Хост в URL-адресі має бути записаний явно, а не сформований із шаблону.</value>
+  </data>
+  <data name="ValidationError_host_mismatch" xml:space="preserve">
+    <value>Усі кроки мають надсилати дані на той самий хост.</value>
+  </data>
+  <data name="ValidationError_protected_in_action_config" xml:space="preserve">
+    <value>Значення protected.* не можна використовувати в URL-адресі чи заголовку.</value>
+  </data>
+  <data name="ValidationError_protected_in_condition" xml:space="preserve">
+    <value>Значення protected.* не можна використовувати в умові кроку.</value>
+  </data>
+  <data name="ValidationError_trigger_not_supported" xml:space="preserve">
+    <value>У цій версії можна захищати лише тригери викликів.</value>
+  </data>
+  <data name="ValidationError_token_url_invalid" xml:space="preserve">
+    <value>Обліковим даним OAuth2 потрібна HTTPS-адреса токена.</value>
+  </data>
+  <data name="ValidationError_protected_reference_without_release" xml:space="preserve">
+    <value>Цей робочий процес не має дозволу на захищену передачу, тому значення protected.* будуть порожніми. Спочатку налаштуйте дозвіл на захищену передачу.</value>
+  </data>
+  <data name="RecipientHeader" xml:space="preserve">
+    <value>Отримувач</value>
+  </data>
+  <data name="RecipientTypeLabel" xml:space="preserve">
+    <value>Тип отримувача</value>
+  </data>
+  <data name="RecipientType_CoveredEntity" xml:space="preserve">
+    <value>Охоплений суб'єкт</value>
+  </data>
+  <data name="RecipientType_BusinessAssociate" xml:space="preserve">
+    <value>Бізнес-партнер</value>
+  </data>
+  <data name="RecipientNameLabel" xml:space="preserve">
+    <value>Назва отримувача</value>
+  </data>
+  <data name="RecipientNamePlaceholder" xml:space="preserve">
+    <value>Наприклад: DMH округу, ведення справ у Dynamics 365</value>
+  </data>
+  <data name="PurposeLabel" xml:space="preserve">
+    <value>Мета</value>
+  </data>
+  <data name="PurposePlaceholder" xml:space="preserve">
+    <value>Навіщо отримувачу потрібні ці поля</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Я засвідчую, що отримувачем є наша організація або сторона, на яку поширюється угода з бізнес-партнером, укладена з нашою організацією, і що йому потрібні лише вибрані вище поля (версія попередження {0}).</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Зберегти чернетку</value>
+  </data>
+  <data name="ApproveAndActivate" xml:space="preserve">
+    <value>Схвалити й активувати</value>
+  </data>
+  <data name="RequestApproval" xml:space="preserve">
+    <value>Запросити схвалення</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Схвалити</value>
+  </data>
+  <data name="RenewButton" xml:space="preserve">
+    <value>Поновити</value>
+  </data>
+  <data name="SuspendButton" xml:space="preserve">
+    <value>Призупинити</value>
+  </data>
+  <data name="RevokeButton" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="DiscardDraft" xml:space="preserve">
+    <value>Скасувати чернетку</value>
+  </data>
+  <data name="SendTest" xml:space="preserve">
+    <value>Надіслати тест зі зразковими даними</value>
+  </data>
+  <data name="TestSucceeded" xml:space="preserve">
+    <value>Тест надіслано із синтетичними даними. Кожен крок повернув статус успіху.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Тест не був повністю успішним. Перевірте результати кроків нижче та журнал розкриття даних.</value>
+  </data>
+  <data name="TestStepResult" xml:space="preserve">
+    <value>Крок {0}: {1} (HTTP {2})</value>
+  </data>
+  <data name="ConfirmRevoke" xml:space="preserve">
+    <value>Відкликати цей дозвіл? Цю дію неможливо скасувати. Робочий процес не запускатиметься, доки не буде схвалено новий дозвіл.</value>
+  </data>
+  <data name="ConfirmSuspend" xml:space="preserve">
+    <value>Призупинити цей дозвіл? Робочий процес не запускатиметься, доки адміністратор не схвалить його знову.</value>
+  </data>
+  <data name="ConfirmDiscard" xml:space="preserve">
+    <value>Скасувати цю чернетку? Робочий процес знову запускатиметься зі значеннями REDACTED.</value>
+  </data>
+  <data name="FingerprintChanged" xml:space="preserve">
+    <value>Цей робочий процес змінився після схвалення. Він нічого не надсилатиме, доки адміністратор не схвалить поточну конфігурацію.</value>
+  </data>
+  <data name="RequestedOn" xml:space="preserve">
+    <value>Запитано {0}</value>
+  </data>
+  <data name="ApprovedOn" xml:space="preserve">
+    <value>Схвалено {0}</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Діє до {0}</value>
+  </data>
+  <data name="AwaitingSecondApprover" xml:space="preserve">
+    <value>Очікується другий адміністратор. Особа, яка запросила дозвіл, не може його схвалити.</value>
+  </data>
+  <data name="ReadOnlyNotice" xml:space="preserve">
+    <value>Змінювати дозвіл на захищену передачу можуть лише адміністратори з правом «Налаштування передачі захищених даних». Редагування цього робочого процесу призупиняє схвалений дозвіл, доки його не буде схвалено знову.</value>
+  </data>
+  <data name="SkippedNotice" xml:space="preserve">
+    <value>Поки цей робочий процес має неактивний дозвіл на захищену передачу, його запуски пропускаються. Він ніколи не запускається зі значеннями REDACTED замість захищених.</value>
+  </data>
+  <data name="DepartmentOffNotice" xml:space="preserve">
+    <value>Захищені робочі процеси вимкнено для вашого підрозділу. Увімкніть їх у розділі «Захист даних», щоб налаштувати дозвіл на захищену передачу.</value>
+  </data>
+  <data name="Err_protected_access_denied" xml:space="preserve">
+    <value>У вас немає прав на цю дію.</value>
+  </data>
+  <data name="Err_step_up_required" xml:space="preserve">
+    <value>Потрібне свіже багатофакторне підтвердження.</value>
+  </data>
+  <data name="Err_interactive_session_required" xml:space="preserve">
+    <value>Цю дію має виконати адміністратор, який увійшов у систему, а не ключ API чи службовий обліковий запис.</value>
+  </data>
+  <data name="Err_attestation_required" xml:space="preserve">
+    <value>Позначте засвідчення, щоб продовжити.</value>
+  </data>
+  <data name="Err_ack_version_mismatch" xml:space="preserve">
+    <value>Текст попередження змінився. Перезавантажте сторінку, прочитайте його та знову візьміть до відома.</value>
+  </data>
+  <data name="Err_self_approval_not_allowed" xml:space="preserve">
+    <value>Цей дозвіл запросили ви, тому його має схвалити інший адміністратор.</value>
+  </data>
+  <data name="Err_invalid_state" xml:space="preserve">
+    <value>У поточному стані цього дозволу така дія неможлива.</value>
+  </data>
+  <data name="Err_validation_failed" xml:space="preserve">
+    <value>Робочий процес не відповідає вимогам для захисту. Виправте наведені проблеми та спробуйте ще раз.</value>
+  </data>
+  <data name="Err_not_found" xml:space="preserve">
+    <value>Робочий процес або дозвіл не знайдено.</value>
+  </data>
+  <data name="Err_trigger_not_supported" xml:space="preserve">
+    <value>У цій версії можна захищати лише тригери викликів.</value>
+  </data>
+  <data name="Err_too_many_fields" xml:space="preserve">
+    <value>Вибрано забагато полів.</value>
+  </data>
+  <data name="Err_no_fields" xml:space="preserve">
+    <value>Виберіть принаймні одне поле для передачі.</value>
+  </data>
+  <data name="Err_unknown_field" xml:space="preserve">
+    <value>Вибрано невідоме поле.</value>
+  </data>
+  <data name="Err_recipient_required" xml:space="preserve">
+    <value>Введіть тип і назву отримувача.</value>
+  </data>
+  <data name="Err_purpose_required" xml:space="preserve">
+    <value>Введіть мету розкриття даних.</value>
+  </data>
+  <data name="Err_adp_not_enabled" xml:space="preserve">
+    <value>Спочатку потрібно ввімкнути розширений захист даних.</value>
+  </data>
+  <data name="Err_protected_workflows_disabled" xml:space="preserve">
+    <value>Захищені робочі процеси вимкнено для вашого підрозділу.</value>
+  </data>
+  <data name="Err_config_changed" xml:space="preserve">
+    <value>Робочий процес змінився після запиту. Запросіть схвалення поточної конфігурації ще раз.</value>
+  </data>
+  <data name="Err_http_failed" xml:space="preserve">
+    <value>Призначення не прийняло запит.</value>
+  </data>
+  <data name="Err_command_failed" xml:space="preserve">
+    <value>Не вдалося виконати дію. Спробуйте ще раз.</value>
+  </data>
+  <data name="ColWorkflow" xml:space="preserve">
+    <value>Робочий процес</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="ColFields" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="ColHost" xml:space="preserve">
+    <value>Хост</value>
+  </data>
+  <data name="ColRecipient" xml:space="preserve">
+    <value>Отримувач</value>
+  </data>
+  <data name="ColApprovedBy" xml:space="preserve">
+    <value>Ким схвалено</value>
+  </data>
+  <data name="ColExpires" xml:space="preserve">
+    <value>Діє до</value>
+  </data>
+  <data name="ColSends30" xml:space="preserve">
+    <value>Надсилання (30 днів)</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="NoReleases" xml:space="preserve">
+    <value>Жоден робочий процес не має дозволу на захищену передачу.</value>
+  </data>
+  <data name="OpenWorkflow" xml:space="preserve">
+    <value>Відкрити робочий процес</value>
+  </data>
+  <data name="ViewDisclosures" xml:space="preserve">
+    <value>Журнал розкриття даних</value>
+  </data>
+  <data name="ChainValid" xml:space="preserve">
+    <value>Ланцюжок аудиту перевірено (записів: {0}).</value>
+  </data>
+  <data name="ChainInvalid" xml:space="preserve">
+    <value>Перевірка ланцюжка аудиту не пройшла на записі {0}. Зверніться до служби підтримки Resgrid.</value>
+  </data>
+  <data name="RenewFromEditor" xml:space="preserve">
+    <value>Поновіть дозвіл у редакторі робочого процесу, де показано засвідчення.</value>
+  </data>
+  <data name="FilterWorkflow" xml:space="preserve">
+    <value>Робочий процес</value>
+  </data>
+  <data name="FilterAllWorkflows" xml:space="preserve">
+    <value>Усі робочі процеси</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>ID виклику</value>
+  </data>
+  <data name="FilterFrom" xml:space="preserve">
+    <value>З (UTC)</value>
+  </data>
+  <data name="FilterTo" xml:space="preserve">
+    <value>По (UTC)</value>
+  </data>
+  <data name="ApplyFilter" xml:space="preserve">
+    <value>Фільтрувати</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Експортувати CSV</value>
+  </data>
+  <data name="MetadataOnly" xml:space="preserve">
+    <value>Лише метадані. Цей журнал ніколи не містить значень полів, корисних навантажень чи тіл відповідей.</value>
+  </data>
+  <data name="ColSequence" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ColOccurred" xml:space="preserve">
+    <value>Час події (UTC)</value>
+  </data>
+  <data name="ColType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="ColEvent" xml:space="preserve">
+    <value>Подія або результат</value>
+  </data>
+  <data name="ColCall" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="ColHttp" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="ColBytes" xml:space="preserve">
+    <value>Байти</value>
+  </data>
+  <data name="ColActor" xml:space="preserve">
+    <value>Виконавець</value>
+  </data>
+  <data name="ColDetail" xml:space="preserve">
+    <value>Подробиці</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Немає відповідних записів.</value>
+  </data>
+  <data name="TestBadge" xml:space="preserve">
+    <value>тест</value>
+  </data>
+  <data name="RecordType_disclosure" xml:space="preserve">
+    <value>Розкриття</value>
+  </data>
+  <data name="RecordType_admin_event" xml:space="preserve">
+    <value>Адміністративний</value>
+  </data>
+  <data name="Outcome_sent" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="Outcome_failed_http" xml:space="preserve">
+    <value>Помилка HTTP</value>
+  </data>
+  <data name="Outcome_failed_broker" xml:space="preserve">
+    <value>Помилка розшифрування</value>
+  </data>
+  <data name="Outcome_blocked_host" xml:space="preserve">
+    <value>Заблоковано: хост</value>
+  </data>
+  <data name="Outcome_blocked_release" xml:space="preserve">
+    <value>Заблоковано: дозвіл</value>
+  </data>
+  <data name="Outcome_blocked_department" xml:space="preserve">
+    <value>Заблоковано: підрозділ</value>
+  </data>
+  <data name="Outcome_blocked_guard" xml:space="preserve">
+    <value>Заблоковано: шифротекст у корисному навантаженні</value>
+  </data>
+  <data name="Outcome_failed_render" xml:space="preserve">
+    <value>Помилка формування</value>
+  </data>
+  <data name="Event_department_enabled" xml:space="preserve">
+    <value>Захищені робочі процеси ввімкнено</value>
+  </data>
+  <data name="Event_department_disabled" xml:space="preserve">
+    <value>Захищені робочі процеси вимкнено</value>
+  </data>
+  <data name="Event_release_requested" xml:space="preserve">
+    <value>Дозвіл запитано</value>
+  </data>
+  <data name="Event_release_approved" xml:space="preserve">
+    <value>Дозвіл схвалено</value>
+  </data>
+  <data name="Event_release_suspended" xml:space="preserve">
+    <value>Дозвіл призупинено</value>
+  </data>
+  <data name="Event_release_revoked" xml:space="preserve">
+    <value>Дозвіл відкликано</value>
+  </data>
+  <data name="Event_release_expired" xml:space="preserve">
+    <value>Термін дії дозволу минув</value>
+  </data>
+  <data name="Event_credential_rotated" xml:space="preserve">
+    <value>Облікові дані змінено</value>
+  </data>
+  <data name="NoticeExpiryTitle" xml:space="preserve">
+    <value>Термін дії захищеного робочого процесу спливає</value>
+  </data>
+  <data name="NoticeExpiringBody" xml:space="preserve">
+    <value>Термін дії дозволу на захищену передачу для робочого процесу «{0}» спливає {1}. Адміністратор має його поновити, інакше робочий процес припинить надсилання.</value>
+  </data>
+  <data name="NoticeExpiredBody" xml:space="preserve">
+    <value>Термін дії дозволу на захищену передачу для робочого процесу «{0}» минув, і робочий процес припинив надсилання. Адміністратор може поновити його в редакторі робочого процесу.</value>
+  </data>
+  <data name="NoticeFailureTitle" xml:space="preserve">
+    <value>Помилка захищеного робочого процесу</value>
+  </data>
+  <data name="NoticeFailureBody" xml:space="preserve">
+    <value>Захищений робочий процес «{0}» завершився помилкою під час останньої спроби (запуск {1}, помилка {2}).</value>
+  </data>
+  <data name="Outcome_attempted" xml:space="preserve">
+    <value>Спроба (записано перед надсиланням)</value>
+  </data>
+  <data name="Event_second_approver_relax_requested" xml:space="preserve">
+    <value>Запит на скасування другого затверджувача</value>
+  </data>
+  <data name="Event_second_approver_relaxed" xml:space="preserve">
+    <value>Другий затверджувач більше не потрібен</value>
+  </data>
+  <data name="SecondApproverRelaxPending" xml:space="preserve">
+    <value>{0} адміністратор попросив більше не вимагати другого затверджувача. Інший адміністратор має підтвердити це протягом 7 днів, знявши позначку та зберігши.</value>
+  </data>
+  <data name="SecondApproverRelaxRequested" xml:space="preserve">
+    <value>Ваш запит більше не вимагати другого затверджувача записано. Інший адміністратор має підтвердити його, перш ніж він набуде чинності.</value>
+  </data>
+  <data name="Err_concurrent_change" xml:space="preserve">
+    <value>Хтось інший змінив цей дозвіл одночасно з вами. Перезавантажте сторінку та спробуйте ще раз.</value>
+  </data>
+  <data name="Err_disclosure_unavailable" xml:space="preserve">
+    <value>Не вдалося записати журнал розкриттів, тому нічого не було надіслано. Спробуйте ще раз.</value>
+  </data>
+  <data name="Err_release_not_active" xml:space="preserve">
+    <value>Цей робочий процес не має активного дозволу.</value>
+  </data>
+  <data name="Err_release_expired" xml:space="preserve">
+    <value>Термін дії дозволу минув. Поновіть його, щоб відновити надсилання.</value>
+  </data>
+  <data name="Err_action_not_allowed" xml:space="preserve">
+    <value>Лише кроки виклику API (POST або PUT) можуть надсилати захищені дані.</value>
+  </data>
+  <data name="Err_credential_not_allowed" xml:space="preserve">
+    <value>Облікові дані кроку не є затвердженими для цього дозволу.</value>
+  </data>
+  <data name="Err_host_mismatch" xml:space="preserve">
+    <value>Цільовий хост не є затвердженим для цього дозволу.</value>
+  </data>
+  <data name="Err_scheme_not_https" xml:space="preserve">
+    <value>Призначення має використовувати HTTPS.</value>
+  </data>
+  <data name="Err_redirect_refused" xml:space="preserve">
+    <value>Призначення відповіло перенаправленням. Для захищених даних перенаправлення ніколи не виконуються.</value>
+  </data>
+  <data name="Err_token_host_mismatch" xml:space="preserve">
+    <value>Хост токенів OAuth2 не є затвердженим для цього дозволу.</value>
+  </data>
+  <data name="Err_broker_failed" xml:space="preserve">
+    <value>Не вдалося розшифрувати захищені значення. Нічого не надіслано.</value>
+  </data>
+  <data name="Err_entity_unavailable" xml:space="preserve">
+    <value>Не вдалося завантажити виклик для розшифрування. Нічого не надіслано.</value>
+  </data>
+  <data name="Err_render_failed" xml:space="preserve">
+    <value>Не вдалося сформувати шаблон. Нічого не надіслано.</value>
+  </data>
+  <data name="Err_payload_too_large" xml:space="preserve">
+    <value>Сформований вміст завеликий. Нічого не надіслано.</value>
+  </data>
+  <data name="Err_envelope_in_payload" xml:space="preserve">
+    <value>Сформований вміст містив зашифровані дані й був заблокований.</value>
+  </data>
+  <data name="Err_http_timeout" xml:space="preserve">
+    <value>Призначення не відповіло вчасно.</value>
+  </data>
+  <data name="Err_protected_step_error" xml:space="preserve">
+    <value>Крок завершився помилкою. Причина не записується, щоб захищені значення не потрапили до журналів.</value>
+  </data>
+  <data name="Field_calls_subjectidentifiers" xml:space="preserve">
+    <value>Ідентифікатори особи (усі ключі)</value>
+  </data>
+  <data name="Outcome_failed_validation" xml:space="preserve">
+    <value>Недійсний вміст</value>
+  </data>
+  <data name="Outcome_failed_projection" xml:space="preserve">
+    <value>Помилка проєкції</value>
+  </data>
+  <data name="Outcome_failed_ack" xml:space="preserve">
+    <value>Відхилено призначенням</value>
+  </data>
+  <data name="Outcome_failed_response_too_large" xml:space="preserve">
+    <value>Завелика відповідь</value>
+  </data>
+  <data name="Outcome_blocked_consent" xml:space="preserve">
+    <value>Заблоковано: немає згоди Part 2</value>
+  </data>
+  <data name="Err_payload_invalid" xml:space="preserve">
+    <value>Сформований вміст недійсний для свого типу вмісту. Нічого не надіслано.</value>
+  </data>
+  <data name="Err_projection_failed" xml:space="preserve">
+    <value>Не вдалося прочитати ідентифікатори особи виклику. Нічого не надіслано.</value>
+  </data>
+  <data name="Err_ack_rejected" xml:space="preserve">
+    <value>Призначення отримало запит, але відхилило його.</value>
+  </data>
+  <data name="Err_response_too_large" xml:space="preserve">
+    <value>Відповідь призначення перевищила допустимий розмір, тому її не вдалося перевірити.</value>
+  </data>
+  <data name="Err_part2_consent_missing" xml:space="preserve">
+    <value>Для виклику не зареєстровано згоди згідно з 42 CFR Part 2, тому його поля Part 2 не надіслано.</value>
+  </data>
+  <data name="Err_capture_failed" xml:space="preserve">
+    <value>Запит доставлено, але значення, повернуті призначенням, не вдалося зберегти у виклику.</value>
+  </data>
+  <data name="Err_oauth_token_failed" xml:space="preserve">
+    <value>Кінцева точка токенів OAuth2 не видала токен.</value>
+  </data>
+  <data name="Err_auth_method_mismatch" xml:space="preserve">
+    <value>Облікові дані більше не автентифікуються у спосіб, затверджений для цього дозволу.</value>
+  </data>
+  <data name="Err_signing_key_unavailable" xml:space="preserve">
+    <value>Облікові дані не мають чинного ключа підпису.</value>
+  </data>
+  <data name="Err_field_conflict" xml:space="preserve">
+    <value>Дозвольте або все поле ідентифікаторів особи, або окремі ключі, але не обидва варіанти.</value>
+  </data>
+  <data name="Err_restricted_attestation_required" xml:space="preserve">
+    <value>Вибране поле обмежене. Позначте підтвердження для обмежених полів.</value>
+  </data>
+  <data name="Err_part2_attestation_required" xml:space="preserve">
+    <value>Вибране поле містить інформацію згідно з 42 CFR Part 2. Позначте підтвердження Part 2.</value>
+  </data>
+  <data name="Err_capture_requires_subject_identifiers" xml:space="preserve">
+    <value>Крок зберігає значення з відповіді в ідентифікаторах особи, тому дозвіл має їх охоплювати (усе поле або принаймні один ключ).</value>
+  </data>
+  <data name="ValidationError_content_type_not_allowed" xml:space="preserve">
+    <value>Крок оголошує тип вмісту, який захищені кроки не можуть використовувати.</value>
+  </data>
+  <data name="ValidationError_success_rule_invalid" xml:space="preserve">
+    <value>Правило успіху кроку неповне або невідоме.</value>
+  </data>
+  <data name="ValidationError_capture_invalid" xml:space="preserve">
+    <value>Запис збереження відповіді в кроці недійсний (джерело, вираз або ключ).</value>
+  </data>
+  <data name="ValidationError_capture_too_many" xml:space="preserve">
+    <value>Крок зберігає більше значень відповіді, ніж дозволено.</value>
+  </data>
+  <data name="ValidationError_idempotency_header_invalid" xml:space="preserve">
+    <value>Назва заголовка ідемпотентності кроку недійсна або зарезервована.</value>
+  </data>
+  <data name="ValidationError_if_none_exist_invalid" xml:space="preserve">
+    <value>Значення If-None-Exist кроку задовге або містить розрив рядка.</value>
+  </data>
+  <data name="ValidationError_signing_key_missing" xml:space="preserve">
+    <value>Облікові дані OAuth2 використовують private_key_jwt, але ще не мають ключа підпису. Збережіть облікові дані, щоб його створити.</value>
+  </data>
+  <data name="Warning_unescaped_protected_value" xml:space="preserve">
+    <value>Шаблон вставляє захищене значення без json_escape, xml_escape або hl7_escape. Лапки чи розрив рядка у значенні можуть зламати вміст, який тоді не пройде перевірку замість надсилання.</value>
+  </data>
+  <data name="AuthMethodLabel" xml:space="preserve">
+    <value>Автентифікація клієнта</value>
+  </data>
+  <data name="SubjectKeysHeader" xml:space="preserve">
+    <value>Ключі ідентифікаторів особи</value>
+  </data>
+  <data name="SubjectKeysHelp" xml:space="preserve">
+    <value>Дозвольте окремі ідентифікатори замість усього набору: лише позначені ключі потрапляють до protected.call.subject_ids.</value>
+  </data>
+  <data name="SubjectKeysOtherLabel" xml:space="preserve">
+    <value>Інші ключі (через кому)</value>
+  </data>
+  <data name="CustomFieldsHeader" xml:space="preserve">
+    <value>Користувацькі поля виклику</value>
+  </data>
+  <data name="CustomFieldsHelp" xml:space="preserve">
+    <value>Кожне позначене користувацьке поле розшифровується окремо та відображається як protected.call.udf.&lt;назва&gt;.</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Обмежене</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="RestrictedAttestationLabel" xml:space="preserve">
+    <value>Підтверджую, що цей одержувач має право отримувати обмежені поля ({0}).</value>
+  </data>
+  <data name="Part2AttestationText" xml:space="preserve">
+    <value>42 CFR Part 2: вибрані поля містять інформацію про розлади, пов'язані з уживанням психоактивних речовин. Її повторне розкриття вимагає письмової згоди пацієнта або іншої підстави, дозволеної 42 CFR Part 2, а одержувача слід повідомити, що подальше розкриття заборонене.</value>
+  </data>
+  <data name="Part2AttestationLabel" xml:space="preserve">
+    <value>Засвідчую, що підрозділ має згоду або іншу підставу згідно з 42 CFR Part 2, необхідну для цього розкриття ({0}).</value>
+  </data>
+  <data name="Part2ConsentNotice" xml:space="preserve">
+    <value>Виклик надсилається лише тоді, коли для нього позначено «Згоду Part 2 зареєстровано»; інакше крок блокується та реєструється.</value>
+  </data>
+  <data name="StepOptionsHeader" xml:space="preserve">
+    <value>Параметри захищеної доставки</value>
+  </data>
+  <data name="StepOptionsHelp" xml:space="preserve">
+    <value>Як призначення підтверджує отримання, які повернуті значення зберігаються у виклику та як розпізнаються повторні спроби. Кожен параметр є частиною затвердження дозволу.</value>
+  </data>
+  <data name="StepSuccessRule" xml:space="preserve">
+    <value>Правило успіху</value>
+  </data>
+  <data name="StepRulePath" xml:space="preserve">
+    <value>Шлях</value>
+  </data>
+  <data name="StepRuleExpected" xml:space="preserve">
+    <value>Очікуване значення</value>
+  </data>
+  <data name="StepCapture" xml:space="preserve">
+    <value>Зберегти значення з відповіді</value>
+  </data>
+  <data name="StepCaptureHelp" xml:space="preserve">
+    <value>По одному в рядку: джерело | вираз | ключ. Джерела: json_path, xpath, hl7_field, header, fhir_location_id. Значення зберігаються зашифрованими в ідентифікаторах особи виклику.</value>
+  </data>
+  <data name="StepIdempotencyHeader" xml:space="preserve">
+    <value>Заголовок ідемпотентності</value>
+  </data>
+  <data name="StepIfNoneExist" xml:space="preserve">
+    <value>FHIR If-None-Exist</value>
+  </data>
+  <data name="Rule_http_2xx" xml:space="preserve">
+    <value>Будь-який статус 2xx</value>
+  </data>
+  <data name="Rule_json_path" xml:space="preserve">
+    <value>Шлях JSON дорівнює</value>
+  </data>
+  <data name="Rule_xpath" xml:space="preserve">
+    <value>XPath дорівнює</value>
+  </data>
+  <data name="Rule_hl7_ack" xml:space="preserve">
+    <value>Підтвердження HL7 (AA / CA)</value>
+  </data>
+  <data name="Rule_fhir_operation_outcome" xml:space="preserve">
+    <value>Немає помилки в OperationOutcome FHIR</value>
+  </data>
+  <data name="ColContentType" xml:space="preserve">
+    <value>Тип вмісту</value>
+  </data>
+  <data name="CapturedKeysLabel" xml:space="preserve">
+    <value>Збережені ключі</value>
+  </data>
+</root>

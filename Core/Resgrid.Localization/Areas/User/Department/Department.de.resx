@@ -1094,4 +1094,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Das Profil konnte nicht gespeichert werden; prüfen Sie die markierten Felder.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Gruppenbezogene Alarmierung</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Alarmierung auf Gruppengebiete beschränken</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Wenn aktiviert, zeigen die Listen aktiver Einsätze, die Karten und die Übersicht der nächsten Einheiten jedem Mitglied nur die eigene Gruppe und die darunterliegenden Gruppen: Einsätze innerhalb der Grenzen dieser Gruppen oder an sie alarmierte Einsätze sowie alle Einsätze, die das Mitglied gemeldet hat oder zu denen es alarmiert wurde. Abteilungsadministratoren und die unten gewählten Rollen behalten die abteilungsweite Ansicht. Es werden keine Daten kopiert oder verschoben – die Übergabe der Alarmierung an einen anderen Platz beim Schichtwechsel ist nur ein Rollenwechsel.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Abteilungsweite Alarmierungsrollen</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Mitglieder mit einer dieser Rollen (zum Beispiel eine zentrale Leitstelle) sehen bei aktivierter Beschränkung alle Gebiete. Weisen Sie die Rolle zu oder entfernen Sie sie, um die Alarmierung zu übergeben; die Änderung gilt ab dem nächsten Laden der Seite.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Es sind noch keine Personalrollen definiert.</value>
+  </data>
 </root>

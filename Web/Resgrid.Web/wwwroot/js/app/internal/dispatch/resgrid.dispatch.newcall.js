@@ -61,6 +61,7 @@ var resgrid;
 
                 $("#Latitude, #Longitude").change(function () {
                     newcall.checkForRecommendations();
+                    newcall.scheduleNearestUnits();
                 });
 
                 let noteQuillDescription = new Quill('#note-container', {
@@ -404,6 +405,10 @@ var resgrid;
             }
             newcall.noLocation = noLocation;
             function setMarkerLocation(lat, lng) {
+                // Every way of placing the call (map click, address or What3Words search,
+                // typed coordinates) ends here, so this is where the unit board refreshes.
+                scheduleNearestUnits(lat, lng);
+
                 if (callMarker) {
                     callMarker.setLatLng(new L.LatLng(lat, lng));
                 } else {
@@ -419,6 +424,7 @@ var resgrid;
                         //$("#What3Word").val('');
 
                         resgrid.dispatch.newcall.geocodeCoordinates(position.lat, position.lng);
+                        scheduleNearestUnits(position.lat, position.lng);
                     });
                 }
             }
@@ -652,8 +658,157 @@ var resgrid;
             }
             newcall.checkForRecommendations = checkForRecommendations;
 
+            // Nearest available unit board (a unit can be a team, an apparatus or an individual).
+            // Location changes come in bursts (a click, then a drag, then a geocode), so requests
+            // are debounced and only the latest response is drawn.
+            var nearestUnitsSequence = 0;
+            var nearestUnitsTimer = null;
+            function nearestText(key) {
+                return (typeof nearestUnitStrings !== 'undefined' && nearestUnitStrings && nearestUnitStrings[key]) || key;
+            }
+            function escapeHtml(text) {
+                return $('<span>').text(text === null || text === undefined ? '' : String(text)).html();
+            }
+            // Enums arrive as numbers or names depending on the serializer; accept both.
+            function isEnum(value, number, name) {
+                return value === number || value === name;
+            }
+            function formatEta(seconds, source) {
+                if (seconds === null || seconds === undefined) {
+                    return '&mdash;';
+                }
+                var text = escapeHtml(Math.max(1, Math.round(seconds / 60)) + ' ' + nearestText('minutes'));
+                if (isEnum(source, 1, 'Estimated')) {
+                    text += ' <small class="text-muted">(' + escapeHtml(nearestText('estimate')) + ')</small>';
+                }
+                return text;
+            }
+            function scheduleNearestUnits(lat, lng) {
+                if (nearestUnitsTimer) {
+                    clearTimeout(nearestUnitsTimer);
+                }
+                nearestUnitsTimer = setTimeout(function () { checkForNearestUnits(lat, lng); }, 400);
+            }
+            newcall.scheduleNearestUnits = scheduleNearestUnits;
+            function checkForNearestUnits(lat, lng) {
+                if (lat === undefined || lng === undefined) {
+                    lat = $('#Latitude').val();
+                    lng = $('#Longitude').val();
+                }
+                lat = parseFloat(lat);
+                lng = parseFloat(lng);
+
+                var row = $('#nearestUnitsRow');
+                var requestSequence = ++nearestUnitsSequence;
+
+                if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
+                    row.hide();
+                    return;
+                }
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetNearestUnits',
+                    data: { latitude: lat, longitude: lng },
+                    type: 'GET'
+                }).done(function (response) {
+                    if (requestSequence !== nearestUnitsSequence) {
+                        return;
+                    }
+                    var board = prop(response, 'board');
+                    if (!response || !prop(response, 'success') || !board) {
+                        row.hide();
+                        return;
+                    }
+                    renderNearestUnits(board);
+                    row.show();
+                }).fail(function () {
+                    if (requestSequence === nearestUnitsSequence) {
+                        row.hide();
+                    }
+                });
+            }
+            newcall.checkForNearestUnits = checkForNearestUnits;
+            function renderNearestUnits(board) {
+                var boundaries = prop(board, 'containingBoundaries') || [];
+                var header = boundaries.length
+                    ? escapeHtml(nearestText('incidentInside')) + ' <strong>' + boundaries.map(function (b) { return escapeHtml(prop(b, 'name')); }).join(', ') + '</strong>'
+                    : escapeHtml(nearestText('noBoundary'));
+                if (prop(board, 'isDepartmentWide') === false) {
+                    header += ' &middot; ' + escapeHtml(nearestText('scoped'));
+                }
+                $('#nearestUnitsBoundaries').html(header);
+
+                var rows = (prop(board, 'units') || []).map(function (unit) {
+                    var name = '<strong>' + escapeHtml(prop(unit, 'name')) + '</strong>';
+                    if (prop(unit, 'unitType')) {
+                        name += ' <small class="text-muted">' + escapeHtml(prop(unit, 'unitType')) + '</small>';
+                    }
+                    if (prop(unit, 'incidentInGroupBoundary')) {
+                        name += ' <span class="label label-info">' + escapeHtml(nearestText('inBoundary')) + '</span>';
+                    } else if (prop(unit, 'incidentInParentBoundary')) {
+                        name += ' <span class="label label-default">' + escapeHtml(nearestText('inParentBoundary')) + '</span>';
+                    }
+                    var place = [prop(unit, 'groupName'), prop(unit, 'parentGroupName')].filter(function (x) { return !!x; });
+                    if (place.length) {
+                        name += '<br/><small class="text-muted">' + place.map(escapeHtml).join(' &middot; ') + '</small>';
+                    }
+
+                    var statusHtml = '<span class="label ' + (prop(unit, 'isAvailable') ? 'label-primary' : 'label-warning') + '">' + escapeHtml(prop(unit, 'statusText')) + '</span>';
+
+                    var eta = formatEta(prop(unit, 'etaSeconds'), prop(unit, 'etaSource'));
+                    var distance = prop(unit, 'distanceMeters');
+                    if (distance !== null && distance !== undefined) {
+                        eta += '<br/><small class="text-muted">' + escapeHtml((distance / 1000).toFixed(1) + ' km') + '</small>';
+                    }
+
+                    var source = prop(unit, 'positionSource');
+                    var position = isEnum(source, 1, 'Live')
+                        ? escapeHtml(nearestText('live'))
+                        : isEnum(source, 2, 'Station') ? escapeHtml(nearestText('station')) : escapeHtml(nearestText('noPosition'));
+                    if (prop(unit, 'positionIsStale')) {
+                        position += ' <span class="label label-warning">' + escapeHtml(nearestText('stale')) + '</span>';
+                    }
+                    var latitude = prop(unit, 'latitude');
+                    var longitude = prop(unit, 'longitude');
+                    if (latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined) {
+                        position += '<br/><small class="text-muted">' + Number(latitude).toFixed(4) + ', ' + Number(longitude).toFixed(4) + '</small>';
+                    }
+
+                    var crewSource = prop(unit, 'crewSource');
+                    var shift;
+                    if (isEnum(crewSource, 0, 'None')) {
+                        shift = '<small class="text-muted">' + escapeHtml(nearestText('noCrew')) + '</small>';
+                    } else {
+                        shift = escapeHtml((prop(unit, 'onShiftCount') || 0) + '/' + (prop(unit, 'crewCount') || 0) + ' ' + nearestText('crewOnShift'));
+                        if (isEnum(crewSource, 2, 'StationShift')) {
+                            shift += ' <small class="text-muted">(' + escapeHtml(nearestText('stationShift')) + ')</small>';
+                        }
+                        var shiftNames = prop(unit, 'shiftNames') || [];
+                        if (shiftNames.length) {
+                            shift += '<br/><small class="text-muted">' + shiftNames.map(escapeHtml).join(', ') + '</small>';
+                        }
+                        var crew = prop(unit, 'crew') || [];
+                        if (crew.length) {
+                            shift += '<br/><small class="text-muted">' + crew.map(escapeHtml).join(', ') + '</small>';
+                        }
+                    }
+
+                    var roleMix = prop(unit, 'roleMix') || [];
+                    var roles = roleMix.length
+                        ? roleMix.map(function (r) { return escapeHtml(prop(r, 'name') + ' x' + prop(r, 'count')); }).join(', ')
+                        : '&mdash;';
+
+                    return '<tr><td>' + name + '</td><td>' + statusHtml + '</td><td>' + eta + '</td><td>' + position + '</td><td>' + shift + '</td><td>' + roles + '</td></tr>';
+                });
+                $('#nearestUnitsTable tbody').html(rows.join(''));
+
+                var notes = prop(board, 'notes') || [];
+                $('#nearestUnitsNotes').html(notes.map(escapeHtml).join('<br/>'));
+            }
+
             checkForProtocols();
             checkForRecommendations();
+            checkForNearestUnits();
         })(newcall = dispatch.newcall || (dispatch.newcall = {}));
     })(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

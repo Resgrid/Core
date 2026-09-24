@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using MongoDB.Driver;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -34,6 +35,7 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IContactsService _contactsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
@@ -53,7 +55,7 @@ namespace Resgrid.Services
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
 			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService,
 			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider, IContactsService contactsService,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator, IDispatchScopeService dispatchScopeService)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -75,6 +77,7 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 			_contactsService = contactsService;
 			_eventAggregator = eventAggregator;
+			_dispatchScopeService = dispatchScopeService;
 		}
 
 		/// <summary>
@@ -140,6 +143,10 @@ namespace Resgrid.Services
 				return false;
 
 			if (call.DepartmentId != department.DepartmentId)
+				return false;
+
+			// Group-scoped dispatch (off by default): outside the user's area and not on the call means no access.
+			if (!await _dispatchScopeService.CanUserAccessCallAsync(department.DepartmentId, userId, call))
 				return false;
 
 			return true;
@@ -645,6 +652,70 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<ShiftManagementScope> GetShiftManagementScopeAsync(string userId, int departmentId)
+		{
+			var scope = new ShiftManagementScope();
+
+			if (String.IsNullOrWhiteSpace(userId))
+				return scope;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return scope;
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
+
+			if (member == null || member.IsDeleted)
+				return scope;
+
+			if (department.IsUserAnAdmin(userId))
+			{
+				scope.AllGroups = true;
+				return scope;
+			}
+
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateShift);
+
+			if (permission != null)
+			{
+				if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					scope.AllGroups = true;
+					return scope;
+				}
+
+				if ((permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles ||
+				     permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles) &&
+				    !String.IsNullOrWhiteSpace(permission.Data))
+				{
+					var roleIds = permission.Data.Split(',')
+						.Select(x => int.TryParse(x.Trim(), out var id) ? id : (int?)null)
+						.Where(x => x.HasValue)
+						.Select(x => x.Value)
+						.ToList();
+
+					var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+					if (roles != null && roles.Any(x => roleIds.Contains(x.PersonnelRoleId)))
+					{
+						scope.AllGroups = true;
+						return scope;
+					}
+				}
+			}
+
+			// Group admins supervise their own teams (and any child groups) whatever the Create Shift permission says,
+			// the same way they could already remove signups in their group. This is how a contracted provider manages
+			// only its own groups while the department sees everything.
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new System.Collections.Generic.List<DepartmentGroup>();
+
+			foreach (var group in groups.Where(x => x != null && x.IsUserGroupAdmin(userId)))
+				scope.GroupIds.UnionWith(DepartmentGroupHierarchy.GetSelfAndDescendantIds(groups, group.DepartmentGroupId));
+
+			return scope;
+		}
+
 		public async Task<bool> CanUserViewUnitLocationAsync(string userId, int unitId, int departmentId)
 		{
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CanSeeUnitLocations);
@@ -965,6 +1036,9 @@ namespace Resgrid.Services
 					callGroupId = userGroupId;
 			}
 
+			if (!await _dispatchScopeService.CanUserAccessCallAsync(departmentId, userId, call))
+				return false;
+
 			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
@@ -1004,6 +1078,9 @@ namespace Resgrid.Services
 					callGroupId = userGroupId;
 			}
 
+			if (!await _dispatchScopeService.CanUserAccessCallAsync(departmentId, userId, call))
+				return false;
+
 			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
@@ -1042,6 +1119,9 @@ namespace Resgrid.Services
 				if (isUserGroupInDispatch)
 					callGroupId = userGroupId;
 			}
+
+			if (!await _dispatchScopeService.CanUserAccessCallAsync(departmentId, userId, call))
+				return false;
 
 			return _permissionsService.IsUserAllowed(permission, departmentId, callGroupId, userGroupId, department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}

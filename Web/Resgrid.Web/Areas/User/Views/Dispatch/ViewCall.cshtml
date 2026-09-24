@@ -167,6 +167,16 @@
                                 <dd><span data-adp-field="calls.externalidentifier">@Model.Call.ExternalIdentifier</span></dd>
                                 <dt>@localizer["ReferenceIdLabel"]:</dt>
                                 <dd><span data-adp-field="calls.referencenumber">@Model.Call.ReferenceNumber</span></dd>
+                                @if (!string.IsNullOrWhiteSpace(Model.Call.SubjectIdentifiers))
+                                {
+                                    <dt>@localizer["SubjectIdentifiersLabel"]:</dt>
+                                    <dd><span data-adp-field="calls.subjectidentifiers" style="word-break: break-all;">@Model.Call.SubjectIdentifiers</span></dd>
+                                }
+                                @if (Model.Call.Part2ConsentOnFile)
+                                {
+                                    <dt>@localizer["Part2ConsentLabel"]:</dt>
+                                    <dd><span class="label label-info">@localizer["Part2ConsentOnFile"]</span></dd>
+                                }
                                 <dt>@localizer["LoggedByLabel"]:</dt>
                                 <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
                                 <dt>@localizer["LoggedOnLabel"]:</dt>

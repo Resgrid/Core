@@ -11,10 +11,6 @@ Task<List<Workflow>> GetWorkflowsByDepartmentIdAsync(int departmentId, Cancellat
 Task<Workflow> SaveWorkflowAsync(Workflow workflow, CancellationToken cancellationToken = default);
 Task<bool> DeleteWorkflowAsync(string workflowId, CancellationToken cancellationToken = default);
 Task<List<Workflow>> GetActiveWorkflowsByDepartmentAndEventTypeAsync(int departmentId, int triggerEventType, CancellationToken cancellationToken = default);
-/// <summary>Returns true when a workflow already exists for the given trigger event type in the department.</summary>
-Task<bool> WorkflowExistsForEventTypeAsync(int departmentId, int triggerEventType, CancellationToken cancellationToken = default);
-/// <summary>Returns the set of <see cref="WorkflowTriggerEventType"/> integer values already claimed by a workflow in the department.</summary>
-Task<IReadOnlyCollection<int>> GetUsedEventTypesForDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 /// <summary>Returns true when the department is allowed to create an additional workflow (enforces plan-based caps).</summary>
 Task<bool> CanAddWorkflowAsync(int departmentId, bool isFreePlan, CancellationToken cancellationToken = default);
 /// <summary>Returns true when the workflow is allowed to have an additional step added (enforces plan-based caps).</summary>
@@ -33,6 +29,12 @@ Task<List<WorkflowCredential>> GetCredentialsByDepartmentIdAsync(int departmentI
 /// </summary>
 Task<WorkflowCredential> SaveCredentialAsync(WorkflowCredential credential, string departmentCode, CancellationToken cancellationToken = default);
 Task<bool> DeleteCredentialAsync(string credentialId, CancellationToken cancellationToken = default);
+/// <summary>
+/// OAuth2 private_key_jwt: generates a new signing key (new kid), retires the current one (it stays in the JWKS for
+/// DataProtectionConfig.WorkflowJwksOverlapDays) and records credential_rotated. Null when the credential is not a
+/// private_key_jwt credential of the department.
+/// </summary>
+Task<WorkflowCredential> RotateCredentialSigningKeyAsync(string credentialId, int departmentId, string departmentCode, string userId, CancellationToken cancellationToken = default);
 // ── Execution ─────────────────────────────────────────────────────────────────
 /// <summary>
 /// Executes all enabled steps of the workflow against the provided event payload.
@@ -48,5 +50,11 @@ Task<List<WorkflowRun>> GetPendingAndRunningRunsByDepartmentIdAsync(int departme
 Task<List<WorkflowRunLog>> GetLogsForRunAsync(string workflowRunId, CancellationToken cancellationToken = default);
 Task<WorkflowHealthSummary> GetWorkflowHealthAsync(string workflowId, CancellationToken cancellationToken = default);
 Task<bool> ClearPendingRunsAsync(int departmentId, CancellationToken cancellationToken = default);
+/// <summary>
+/// Protected Workflows "Send test with sample data": renders every enabled step with SYNTHETIC values in the protected.*
+/// namespace (nothing is decrypted), sends through the protected executor path to the workflow's pinned host, and
+/// records each attempt as a test disclosure. The caller authorizes the administrator.
+/// </summary>
+Task<ProtectedWorkflowTestResult> SendProtectedTestAsync(int departmentId, string departmentCode, string workflowId, CancellationToken cancellationToken = default);
 }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -13,6 +14,7 @@ using Resgrid.Providers.Claims;
 using Resgrid.Web.Helpers;
 using Resgrid.Web.Models;
 using Resgrid.WebCore.Models;
+using Resgrid.Services;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -30,13 +32,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 		private readonly IRecordsCutoverService _recordsCutoverService;
 		private readonly IRecordsExportService _recordsExportService;
+		private readonly IProtectedWorkflowService _protectedWorkflows;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> _localizer;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IAuditService auditService,
 			IEventAggregator eventAggregator, ISubscriptionsService subscriptionsService,
-			IWorkflowTemplateContextBuilder contextBuilder, IRecordsCutoverService recordsCutoverService, IRecordsExportService recordsExportService)
+			IWorkflowTemplateContextBuilder contextBuilder, IRecordsCutoverService recordsCutoverService, IRecordsExportService recordsExportService,
+			IProtectedWorkflowService protectedWorkflows,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer)
 		{
+			_localizer               = localizer;
+			_protectedWorkflows      = protectedWorkflows;
 			_recordsExportService    = recordsExportService;
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
@@ -60,6 +68,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Dashboard", "Home");
 
 			var workflows = await _workflowService.GetWorkflowsByDepartmentIdAsync(DepartmentId, ct);
+
+			// Protected Workflows status badges: each workflow's current (latest) release.
+			ViewBag.ProtectedReleases = (await _protectedWorkflows.GetReleasesForDepartmentAsync(DepartmentId))
+				.GroupBy(r => r.WorkflowId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.OrderByDescending(r => r.CreatedOn).First(), StringComparer.OrdinalIgnoreCase);
+			ViewBag.CanAdministerProtectedWorkflows = await _protectedWorkflows.CanAdministerAsync(DepartmentId, UserId);
+
 			return View(workflows);
 		}
 
@@ -72,11 +87,89 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await CanUserManageWorkflowsAsync())
 				return RedirectToAction("Dashboard", "Home");
 
-			var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
-			ViewBag.UsedEventTypes = usedEventTypes;
 			ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
+			ViewBag.GalleryTemplates = await GalleryTemplatesAsync();
 
 			return View(new Workflow { MaxRetryCount = 3, RetryBackoffBaseSeconds = 5, IsEnabled = true });
+		}
+
+		/// <summary>
+		/// Creates a workflow from a gallery template: disabled, with placeholder destinations and no credential, so nothing
+		/// runs until an administrator finishes it. The EHR samples also get a Draft Protected Workflows release (they read
+		/// protected values, so they only ever send once a release is approved).
+		/// </summary>
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Workflow_Create)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateFromTemplate(string templateKey, CancellationToken ct)
+		{
+			if (!await CanUserManageWorkflowsAsync())
+				return RedirectToAction("Dashboard", "Home");
+
+			var template = WorkflowTemplateGallery.Find(templateKey);
+			if (template == null || !(await GalleryTemplatesAsync()).Any(t => t.Key == template.Key))
+				return NotFound();
+
+			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+			if (!await _workflowService.CanAddWorkflowAsync(DepartmentId, plan?.IsFree ?? false, ct))
+			{
+				TempData["GalleryError"] = "WorkflowLimitReached";
+				return RedirectToAction("New");
+			}
+
+			var saved = await _workflowService.SaveWorkflowAsync(new Workflow
+			{
+				DepartmentId = DepartmentId,
+				Name = _localizer[template.NameKey].Value,
+				Description = _localizer[template.DescriptionKey].Value,
+				TriggerEventType = (int)template.Trigger,
+				IsEnabled = false,
+				MaxRetryCount = 3,
+				RetryBackoffBaseSeconds = 30,
+				CreatedByUserId = UserId
+			}, ct);
+
+			var order = 1;
+			foreach (var step in template.Steps)
+			{
+				await _workflowService.SaveWorkflowStepAsync(new WorkflowStep
+				{
+					WorkflowId = saved.WorkflowId,
+					ActionType = (int)step.ActionType,
+					ActionConfig = step.ActionConfig,
+					OutputTemplate = step.OutputTemplate,
+					ConditionExpression = step.ConditionExpression,
+					StepOrder = order++,
+					IsEnabled = true,
+					CreatedByUserId = UserId
+				}, ct);
+			}
+
+			if (template.RequiresProtectedWorkflows && await _protectedWorkflows.CanAdministerAsync(DepartmentId, UserId))
+				await _protectedWorkflows.SaveDraftAsync(DepartmentId, saved.WorkflowId, new ProtectedReleaseDraft { FieldIds = template.ReleaseFieldIds },
+					new ProtectedWorkflowActor { UserId = UserId }, ct);
+
+			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId       = UserId,
+				Type         = AuditLogTypes.WorkflowAdded,
+				After        = JsonSerializer.Serialize(new { saved.WorkflowId, saved.Name, saved.TriggerEventType, Template = template.Key }),
+				Successful   = true,
+				IpAddress    = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName   = Environment.MachineName,
+				UserAgent    = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			});
+
+			TempData["GalleryCreated"] = template.RequiresProtectedWorkflows ? "GalleryCreatedProtected" : "GalleryCreated";
+			return RedirectToAction("Edit", new { workflowId = saved.WorkflowId });
+		}
+
+		/// <summary>The gallery for this department: the EHR samples only when Protected Workflows are enabled.</summary>
+		private async Task<IReadOnlyList<WorkflowGalleryTemplate>> GalleryTemplatesAsync()
+		{
+			var settings = await _protectedWorkflows.GetDepartmentSettingsAsync(DepartmentId);
+			return WorkflowTemplateGallery.Available(settings.Enabled && settings.AdpActive);
 		}
 
 		[HttpPost]
@@ -101,32 +194,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!ModelState.IsValid)
 			{
-				var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
-				ViewBag.UsedEventTypes = usedEventTypes;
 				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
+				ViewBag.GalleryTemplates = await GalleryTemplatesAsync();
 				return View(model);
 			}
 
-			// Enforce one workflow per event type per department
-			if (await _workflowService.WorkflowExistsForEventTypeAsync(DepartmentId, model.TriggerEventType, ct))
-			{
-				ModelState.AddModelError(nameof(Workflow.TriggerEventType),
-					"A workflow already exists for this trigger event type. Only one workflow per event type is allowed.");
-				var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
-				ViewBag.UsedEventTypes = usedEventTypes;
-				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
-				return View(model);
-			}
+			// Any number of workflows may share a trigger: each one gets its own run for every event (only the plan's
+			// workflow count is capped).
 
 			// Enforce plan-based workflow count cap
 			var plan      = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
 			var isFreePlan = plan?.IsFree ?? false;
 			if (!await _workflowService.CanAddWorkflowAsync(DepartmentId, isFreePlan, ct))
 			{
-				ModelState.AddModelError(string.Empty, "Workflow limit reached for your plan. Please upgrade to add more workflows.");
-				var usedEventTypes2 = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
-				ViewBag.UsedEventTypes = usedEventTypes2;
+				ModelState.AddModelError(string.Empty, _localizer["WorkflowLimitReached"].Value);
 				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
+				ViewBag.GalleryTemplates = await GalleryTemplatesAsync();
 				return View(model);
 			}
 
@@ -172,6 +255,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)workflow.TriggerEventType).ToString();
 			ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 			await AddExportTemplatesAsync((WorkflowTriggerEventType)workflow.TriggerEventType);
+
+			// EHR delivery options (content type, success rule, capture, idempotency) belong to protected steps.
+			var protectedRelease = await _protectedWorkflows.GetCurrentReleaseAsync(workflowId);
+			ViewBag.IsProtectedWorkflow = protectedRelease != null && protectedRelease.ReleaseState != ProtectedReleaseState.Revoked;
 
 			return View(workflow);
 		}
@@ -296,6 +383,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				step.CreatedByUserId = UserId;
 			else
 				step.UpdatedByUserId = UserId;
+
+			// Protected Workflows: protected.* never in a condition, URL or header, and only in the output template of a
+			// workflow that has (or is being given) a protected release — otherwise it would silently render empty.
+			var protectedTemplateError = await _protectedWorkflows.ValidateStepTemplatesAsync(step, ct);
+			if (protectedTemplateError != null)
+				return BadRequest(Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflowsResources.Get(
+					"ValidationError_" + protectedTemplateError, System.Globalization.CultureInfo.CurrentUICulture.Name));
 
 			step = await _workflowService.SaveWorkflowStepAsync(step, ct);
 
@@ -545,8 +639,82 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Name                 = cred.Name,
 				CredentialType       = (WorkflowCredentialType)cred.CredentialType
 			};
+			ApplyPublishedKeys(vm, cred, includeMethod: true);
 
 			return View(vm);
+		}
+
+		/// <summary>The public signing key of a private_key_jwt credential, as a JWK file for an EHR that takes an uploaded key.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.WorkflowCredential_View)]
+		public async Task<IActionResult> CredentialJwk(string credentialId, CancellationToken ct)
+		{
+			if (!await CanUserManageWorkflowCredentialsAsync())
+				return RedirectToAction("Dashboard", "Home");
+
+			var cred = await _workflowService.GetCredentialByIdAsync(credentialId, ct);
+			if (cred == null || cred.DepartmentId != DepartmentId || cred.CredentialType != (int)WorkflowCredentialType.OAuth2ClientCredentials)
+				return NotFound();
+
+			var current = WorkflowJwtKeys.ReadPublicKeys(cred.PublicJwks).Where(k => !k.RetiredOn.HasValue).OrderByDescending(k => k.CreatedOn).FirstOrDefault();
+			if (current?.Jwk == null)
+				return NotFound();
+
+			return File(System.Text.Encoding.UTF8.GetBytes(current.Jwk.ToString(Newtonsoft.Json.Formatting.Indented)), "application/json",
+				$"resgrid-workflow-credential-{current.Kid}.jwk.json");
+		}
+
+		/// <summary>Rotates a private_key_jwt credential's signing key; the old key stays in the JWKS for the overlap window.</summary>
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.WorkflowCredential_Update)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RotateCredentialKey(string credentialId, CancellationToken ct)
+		{
+			if (!await CanUserManageWorkflowCredentialsAsync())
+				return RedirectToAction("Dashboard", "Home");
+
+			var existing = await _workflowService.GetCredentialByIdAsync(credentialId, ct);
+			if (existing == null || existing.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var rotated = await _workflowService.RotateCredentialSigningKeyAsync(credentialId, DepartmentId, department?.Code ?? string.Empty, UserId, ct);
+			if (rotated == null)
+				return BadRequest();
+
+			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId       = UserId,
+				Type         = AuditLogTypes.WorkflowCredentialEdited,
+				After        = JsonSerializer.Serialize(new { rotated.WorkflowCredentialId, rotated.Name, rotated.CredentialType, KeyRotated = true }),
+				Successful   = true,
+				IpAddress    = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName   = Environment.MachineName,
+				UserAgent    = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			});
+
+			TempData["CredentialKeyRotated"] = true;
+			return RedirectToAction("CredentialEdit", new { credentialId });
+		}
+
+		/// <param name="includeMethod">True on the first render of the edit page: the stored method and algorithm are shown.</param>
+		private static void ApplyPublishedKeys(WorkflowCredentialViewModel vm, WorkflowCredential cred, bool includeMethod)
+		{
+			if (cred.CredentialType != (int)WorkflowCredentialType.OAuth2ClientCredentials || string.IsNullOrWhiteSpace(cred.PublicJwks))
+				return;
+
+			var keys = WorkflowJwtKeys.ReadPublicKeys(cred.PublicJwks);
+			var current = keys.Where(k => !k.RetiredOn.HasValue).OrderByDescending(k => k.CreatedOn).FirstOrDefault();
+			if (includeMethod)
+			{
+				vm.OAuth2AuthMethod = WorkflowJwtKeys.PrivateKeyJwt;
+				vm.OAuth2SigningAlg = current?.Alg ?? WorkflowJwtKeys.Rs384;
+			}
+			vm.CurrentKeyId = current?.Kid;
+			vm.CurrentKeyCreatedOn = current?.CreatedOn;
+			vm.PublishedKeyCount = keys.Count(k => WorkflowJwtKeys.IsPublished(k.RetiredOn, DateTime.UtcNow, Config.DataProtectionConfig.WorkflowJwksOverlapDays));
+			vm.JwksUrl = $"{(Config.SystemBehaviorConfig.ResgridApiBaseUrl ?? string.Empty).TrimEnd('/')}/api/v4/workflow-credentials/{cred.WorkflowCredentialId}/jwks.json";
 		}
 
 		[HttpPost]
@@ -561,6 +729,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (existing == null || existing.DepartmentId != DepartmentId)
 				return NotFound();
 
+			ApplyPublishedKeys(model, existing, includeMethod: false);
 			if (!ModelState.IsValid)
 				return View(model);
 
@@ -731,6 +900,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				WorkflowCredentialType.Dropbox => AllBlank(vm.DropboxRefreshToken, vm.DropboxAppKey) ? null
 					: new { refreshToken = vm.DropboxRefreshToken, appKey = vm.DropboxAppKey, appSecret = vm.DropboxAppSecret },
+
+				WorkflowCredentialType.OAuth2ClientCredentials => AllBlank(vm.OAuth2TokenUrl, vm.OAuth2ClientId) ? null
+					: vm.IsPrivateKeyJwt
+						// The signing keys are generated and kept by WorkflowService; nothing secret is posted.
+						? new { tokenUrl = vm.OAuth2TokenUrl?.Trim(), clientId = vm.OAuth2ClientId?.Trim(), clientSecret = (string)null, scope = vm.OAuth2Scope?.Trim(), audience = vm.OAuth2Audience?.Trim(), authMethod = WorkflowJwtKeys.PrivateKeyJwt, signingAlg = WorkflowJwtKeys.NormalizeAlgorithm(vm.OAuth2SigningAlg) }
+						: (object)new { tokenUrl = vm.OAuth2TokenUrl?.Trim(), clientId = vm.OAuth2ClientId?.Trim(), clientSecret = vm.OAuth2ClientSecret, scope = vm.OAuth2Scope?.Trim(), audience = vm.OAuth2Audience?.Trim(), authMethod = WorkflowJwtKeys.ClientSecret, signingAlg = (string)null },
 
 				_ => null
 			};

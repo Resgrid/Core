@@ -96,6 +96,19 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ExternalId { get; set; }
 
 		/// <summary>
+		/// External subject and record identifiers, for example { "ehr_client_id": "123456" }. Keys match ^[a-z0-9_]{1,64}$,
+		/// values are at most 256 characters, at most 20 keys. Protected: encrypted at rest in an Advanced Data Protection
+		/// department. On an edit, omit it (null) to leave the stored identifiers unchanged; an empty object clears them.
+		/// </summary>
+		public Dictionary<string, string> SubjectIdentifiers { get; set; }
+
+		/// <summary>
+		/// The department has 42 CFR Part 2 consent (or another Part 2 basis) on file for this call. On an edit, omit it to leave
+		/// the stored value unchanged.
+		/// </summary>
+		public bool? Part2ConsentOnFile { get; set; }
+
+		/// <summary>
 		/// Incident Id
 		/// </summary>
 		public string IncidentId { get; set; }

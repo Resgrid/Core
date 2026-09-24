@@ -289,6 +289,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
 			// Workflow runs: the RMS-4 release telemetry counts them per department.
 			builder.RegisterType<WorkflowRunRepository>().As<IWorkflowRunRepository>().InstancePerLifetimeScope();
+			// Protected Workflows: WorkflowService's protected runtime resolves these.
+			builder.RegisterType<WorkflowProtectedReleaseRepository>().As<IWorkflowProtectedReleaseRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectedWorkflowDisclosureRepository>().As<IProtectedWorkflowDisclosureRepository>().InstancePerLifetimeScope();
 			// Contacts Phase A (M0183/M0184): the pre-plan, hazard and site-attachment repositories ContactsService now takes.
 			builder.RegisterType<ContactPreplanRepository>().As<IContactPreplanRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactPreplanHazardRepository>().As<IContactPreplanHazardRepository>().InstancePerLifetimeScope();

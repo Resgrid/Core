@@ -1094,4 +1094,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Profilen kunde inte sparas; kontrollera de markerade fälten.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Gruppbaserad utlarmning</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Begränsa utlarmning till gruppområden</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>När detta är på visar varje medlems listor över aktiva larm, kartor och tavla över närmaste enheter endast den egna gruppen och grupperna under den: larm inom de gruppernas gränser eller som larmats till dem, samt alla larm som medlemmen har rapporterat eller larmats till. Avdelningsadministratörer och rollerna nedan behåller en vy över hela avdelningen. Inget kopieras eller flyttas, så att lämna över utlarmningen till en annan plats vid skiftbyte är bara ett rollbyte.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Utlarmningsroller för hela avdelningen</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Medlemmar med någon av dessa roller (till exempel en central larmcentral) ser alla områden när begränsningen är på. Tilldela eller ta bort rollen för att lämna över utlarmningen; det gäller från nästa sidladdning.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Inga personalroller har definierats ännu.</value>
+  </data>
 </root>

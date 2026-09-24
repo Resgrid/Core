@@ -774,4 +774,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>The profile could not be saved; check the highlighted fields.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Group-Scoped Dispatch</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Scope Dispatch to Group Areas</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>When on, each member's active call lists, maps and nearest unit board show only their own group and the groups beneath it: calls inside those groups' boundaries or dispatched to them, plus any call the member reported or was dispatched to. Department admins and the roles below keep a department-wide view. Nothing is copied or moved, so handing dispatch to another desk at shift change is only a change of role.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Department-Wide Dispatch Roles</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Members holding any of these roles (for example a central dispatch center) see every area while scoping is on. Assign or remove the role to hand dispatch over; it takes effect on their next page load.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>No personnel roles are defined yet.</value>
+  </data>
 </root>

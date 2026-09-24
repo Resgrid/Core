@@ -34,5 +34,11 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<ShiftSignup>> GetAllShiftSignupsByShiftIdAndDateAsync(int shiftId, DateTime shiftDayDate);
 
 		Task<IEnumerable<ShiftSignup>> GetAllShiftSignupsByGroupIdAndDateAsync(int departmentGroupId, DateTime shiftDayDate);
+
+		/// <summary>
+		/// Gets every signup (including pending and denied ones) on any shift in the department whose shift day is in
+		/// [<paramref name="startDate"/>, <paramref name="endDate"/>).
+		/// </summary>
+		Task<IEnumerable<ShiftSignup>> GetShiftSignupsByDepartmentIdAndDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 	}
 }

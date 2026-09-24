@@ -7,17 +7,18 @@ var resgrid;
         (function (requesttrade) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Shifts - Request Trade');
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
                 var shiftSignupId = $('#Signup_ShiftSignupId').val();
                 var shiftDayId = $('#ShiftDayId').val();
                 $("#users").select2({
-                    placeholder: "Select users...",
+                    placeholder: i18n.selectUsers || "Select users...",
                     allowClear: true,
                     multiple: true,
                     ajax: {
-                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelNotOnShiftDay?shiftSignupId=' + shiftSignupId + '&shiftDayId=' + shiftDayId,
+                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelNotOnShiftDay?shiftSignupId=' + encodeURIComponent(shiftSignupId) + '&shiftDayId=' + encodeURIComponent(shiftDayId),
                         dataType: 'json',
                         processResults: function (data) {
-                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
+                            return { results: $.map(data || [], function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });

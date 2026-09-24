@@ -23,13 +23,16 @@ namespace Resgrid.Chatbot.Services
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IIncidentResourcesService _incidentResourcesService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public IncidentContextResolver(
 			ICallsService callsService,
 			IIncidentCommandService incidentCommandService,
 			IIncidentResourcesService incidentResourcesService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_incidentCommandService = incidentCommandService;
 			_incidentResourcesService = incidentResourcesService;
@@ -50,7 +53,8 @@ namespace Resgrid.Chatbot.Services
 			var reference = GetParameter(intent, "callRef") ?? GetParameter(intent, "callId");
 			if (!string.IsNullOrWhiteSpace(reference))
 			{
-				var referenced = await CallReferenceResolver.ResolveAsync(_callsService, departmentId, reference);
+				var referenced = await CallReferenceResolver.ResolveAsync(_callsService, departmentId, reference,
+					_dispatchScopeService, session.UserId);
 				if (referenced == null)
 					return context;
 

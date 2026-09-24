@@ -40,6 +40,24 @@ namespace Resgrid.Model
 
 		public virtual DepartmentGroup Group { get; set; }
 
+		/// <summary>
+		/// The shift requires approval and a supervisor has not yet approved or denied this signup. A pending
+		/// signup is shown on the day but does not put the person on duty or count toward the day's needs.
+		/// </summary>
+		public bool ApprovalPending { get; set; }
+
+		/// <summary>
+		/// Set when a supervisor put the person on this day (a single-day roster edit) rather than the person
+		/// signing up themselves. Null for self signups.
+		/// </summary>
+		public string AssignedByUserId { get; set; }
+
+		public string ReviewedByUserId { get; set; }
+
+		public DateTime? ReviewedOn { get; set; }
+
+		public string ReviewNote { get; set; }
+
 		[NotMapped]
 		public virtual ShiftSignupTrade Trade { get; set; }
 
@@ -71,6 +89,14 @@ namespace Resgrid.Model
 				return ShiftTradeTypes.Source;
 			
 			return ShiftTradeTypes.Target;
+		}
+
+		/// <summary>
+		/// The signup puts its person on the day: not denied and not waiting for a supervisor.
+		/// </summary>
+		public bool IsActive()
+		{
+			return !Denied && !ApprovalPending;
 		}
 	}
 }

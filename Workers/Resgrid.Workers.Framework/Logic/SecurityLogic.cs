@@ -114,7 +114,7 @@ namespace Resgrid.Workers.Framework.Logic
 							}
 						}
 						else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup)
-						{ // Department and group Admins (locked to group)
+						{ // Department admins plus admins of the owning group or any group above it (locked to group)
 							foreach (var unit in units)
 							{
 								List<string> users = new List<string>();
@@ -122,7 +122,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								if (unit.StationGroupId.HasValue)
 								{
-									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAsync(unit.StationGroupId.Value)).Select(x => x.UserId));
+									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAndAncestorsAsync(unit.StationGroupId.Value)).Select(x => x.UserId));
 								}
 
 								unitsPayload.Units.Add(unit.UnitId, users);
@@ -255,7 +255,7 @@ namespace Resgrid.Workers.Framework.Logic
 							}
 						}
 						else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup)
-						{ // Department and group Admins (locked to group)
+						{ // Department admins plus admins of the owning group or any group above it (locked to group)
 							foreach (var unit in units)
 							{
 								List<string> users = new List<string>();
@@ -263,7 +263,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								if (unit.StationGroupId.HasValue)
 								{
-									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAsync(unit.StationGroupId.Value)).Select(x => x.UserId));
+									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAndAncestorsAsync(unit.StationGroupId.Value)).Select(x => x.UserId));
 								}
 
 								unitsPayload.Units.Add(unit.UnitId, users);
@@ -396,7 +396,7 @@ namespace Resgrid.Workers.Framework.Logic
 							}
 						}
 						else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup)
-						{ // Department and group Admins (locked to group)
+						{ // Department admins plus admins of the owning group or any group above it (locked to group)
 							foreach (var user in allUsers)
 							{
 								List<string> users = new List<string>();
@@ -406,7 +406,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								if (group != null)
 								{
-									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAsync(group.DepartmentGroupId)).Select(x => x.UserId));
+									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAndAncestorsAsync(group.DepartmentGroupId)).Select(x => x.UserId));
 								}
 
 								usersPayload.Users.Add(user.UserId, users);
@@ -543,7 +543,7 @@ namespace Resgrid.Workers.Framework.Logic
 							}
 						}
 						else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup)
-						{ // Department and group Admins (locked to group)
+						{ // Department admins plus admins of the owning group or any group above it (locked to group)
 							foreach (var user in allUsers)
 							{
 								List<string> users = new List<string>();
@@ -553,7 +553,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 								if (group != null)
 								{
-									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAsync(group.DepartmentGroupId)).Select(x => x.UserId));
+									users.AddRange((await _departmentGroupsService.GetAllAdminsForGroupAndAncestorsAsync(group.DepartmentGroupId)).Select(x => x.UserId));
 								}
 
 								usersPayload.Users.Add(user.UserId, users);

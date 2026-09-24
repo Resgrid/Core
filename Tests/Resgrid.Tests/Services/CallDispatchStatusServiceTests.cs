@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -66,13 +67,10 @@ namespace Resgrid.Tests.Services
 			_departmentSettingsService.Setup(x => x.GetAutoSetStatusForShiftDispatchPersonnelAsync(7)).ReturnsAsync(true);
 			_departmentSettingsService.Setup(x => x.GetShiftCallDispatchPersonnelStatusToSetAsync(7)).ReturnsAsync(-1);
 			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusToSetAsync(7)).ReturnsAsync(-1);
+			// On duty at dispatch time (the call's logged time), from the resolved shift roster.
 			_shiftsService
-				.Setup(x => x.GetShiftSignupsByDepartmentGroupIdAndDayAsync(5, It.Is<DateTime>(d => d == new DateTime(2026, 1, 12))))
-				.ReturnsAsync(new List<ShiftSignup>
-				{
-					new ShiftSignup { UserId = "user1" },
-					new ShiftSignup { UserId = "user2" }
-				});
+				.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(7, It.Is<IEnumerable<int>>(g => g.Contains(5)), new DateTime(2026, 1, 12, 15, 0, 0, DateTimeKind.Utc)))
+				.ReturnsAsync(new Dictionary<int, List<string>> { { 5, new List<string> { "user1", "user2" } } });
 
 			await _service.ApplyDispatchStatusesAsync(call);
 
@@ -104,8 +102,8 @@ namespace Resgrid.Tests.Services
 			_departmentSettingsService.Setup(x => x.GetShiftCallReleasePersonnelStatusToSetAsync(7)).ReturnsAsync((int)ActionTypes.AvailableStation);
 			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Returning);
 			_shiftsService
-				.Setup(x => x.GetShiftSignupsByDepartmentGroupIdAndDayAsync(5, It.Is<DateTime>(d => d == new DateTime(2026, 2, 4))))
-				.ReturnsAsync(new List<ShiftSignup> { new ShiftSignup { UserId = "user1" } });
+				.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(7, It.Is<IEnumerable<int>>(g => g.Contains(5)), new DateTime(2026, 2, 4, 9, 30, 0, DateTimeKind.Utc)))
+				.ReturnsAsync(new Dictionary<int, List<string>> { { 5, new List<string> { "user1" } } });
 
 			await _service.ApplyReleaseStatusesAsync(call, new[] { 5 }, new[] { 11 });
 
@@ -137,7 +135,7 @@ namespace Resgrid.Tests.Services
 
 			await _service.ApplyDispatchStatusesAsync(call, new[] { 5 }, new[] { 11 });
 
-			_shiftsService.Verify(x => x.GetShiftSignupsByDepartmentGroupIdAndDayAsync(It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
+			_shiftsService.Verify(x => x.GetOnDutyUserIdsForGroupsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<DateTime>()), Times.Never);
 			_actionLogsService.Verify(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s =>

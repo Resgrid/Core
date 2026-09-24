@@ -1029,4 +1029,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>No se pudo guardar el perfil; revise los campos marcados.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Despacho por grupo</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Limitar el despacho a las áreas de grupo</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Si se activa, las listas de llamadas activas, los mapas y el panel de unidades más cercanas de cada miembro muestran solo su propio grupo y los grupos que dependen de él: llamadas dentro de los límites de esos grupos o despachadas a ellos, además de cualquier llamada que el miembro haya reportado o a la que haya sido despachado. Los administradores del departamento y los roles indicados abajo conservan la vista de todo el departamento. No se copia ni se mueve nada, por lo que traspasar el despacho a otra mesa en el cambio de turno es solo un cambio de rol.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Roles de despacho para todo el departamento</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Los miembros con cualquiera de estos roles (por ejemplo, un centro de despacho central) ven todas las áreas mientras la limitación está activa. Asigne o quite el rol para traspasar el despacho; se aplica en la siguiente carga de página.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Todavía no hay roles de personal definidos.</value>
+  </data>
 </root>

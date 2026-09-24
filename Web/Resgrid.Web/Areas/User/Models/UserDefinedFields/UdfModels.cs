@@ -49,6 +49,10 @@ namespace Resgrid.Web.Areas.User.Models.UserDefinedFields
 	public sealed class UdfFieldFormModel
 	{
 		public int? RmsClassification { get; set; } = 1;
+
+		/// <summary>Protected Workflows release sensitivity (UdfFieldSensitivity): call fields only.</summary>
+		public int Sensitivity { get; set; }
+
 		/// <summary>Existing field ID; empty for new fields.</summary>
 		public string UdfFieldId { get; set; } = string.Empty;
 		public string Name { get; set; } = string.Empty;

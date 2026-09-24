@@ -43,7 +43,8 @@ namespace Resgrid.Services
 				["calls.externalidentifier"] = (c => c.ExternalIdentifier, (c, v) => c.ExternalIdentifier = v),
 				["calls.referencenumber"] = (c => c.ReferenceNumber, (c, v) => c.ReferenceNumber = v),
 				["calls.callformdata"] = (c => c.CallFormData, (c, v) => c.CallFormData = v),
-				["calls.deletedreason"] = (c => c.DeletedReason, (c, v) => c.DeletedReason = v)
+				["calls.deletedreason"] = (c => c.DeletedReason, (c, v) => c.DeletedReason = v),
+				["calls.subjectidentifiers"] = (c => c.SubjectIdentifiers, (c, v) => c.SubjectIdentifiers = v)
 			};
 
 		/// <summary>CallNotes text columns (parity-pinned).</summary>

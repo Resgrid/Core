@@ -321,5 +321,20 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>NERIS incident report</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Protected Workflows release sensitivity</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Restricted and 42 CFR Part 2 fields need an extra attestation before a Protected Workflow can release them. Changing this sends every release that uses the field back for approval.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Restricted</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>
 

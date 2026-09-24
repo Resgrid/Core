@@ -16,12 +16,29 @@ var resgrid;
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     },
+                    // FullCalendar adds the visible range as start/end, so each view loads only its own days.
                     events: {
-                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftCalendarItemsForShift?shiftId=' + shiftCalendarId,
+                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftCalendarItemsForShift?shiftId=' + encodeURIComponent(shiftCalendarId),
                         method: 'GET',
                         failure: function () {
                             console.warn('Failed to load shift calendar items.');
                         }
+                    },
+                    // The site serializes JSON with PascalCase names, which FullCalendar does not read on its own.
+                    eventDataTransform: function (item) {
+                        return {
+                            id: item.CalendarItemId,
+                            title: item.Title,
+                            start: item.Start,
+                            end: item.End,
+                            allDay: item.IsAllDay,
+                            extendedProps: {
+                                calendarItemId: item.CalendarItemId,
+                                color: item.Color,
+                                filled: item.Filled,
+                                userSignedUp: item.UserSignedUp
+                            }
+                        };
                     },
                     eventClick: function (info) {
                         if (info.event.extendedProps && info.event.extendedProps.calendarItemId) {

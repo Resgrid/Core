@@ -57,10 +57,47 @@ namespace Resgrid.Config
 		/// separated (RMS plan section 5.9.4). Each purpose is an egress the department acknowledged in the
 		/// application before the caller reaches the broker: neris-submission (worker 41), records-export
 		/// (worker 45 / Workflow renders) and invoicing (invoice delivery, pay links and deployment finance: the
-		/// Workforce &amp; Business Operations plan's document renders and the DTR void-reason append). Empty
-		/// disables the lane; callers fail closed with workload_purpose_denied.
+		/// Workforce &amp; Business Operations plan's document renders and the DTR void-reason append) and
+		/// protected-workflow (an approved Protected Workflow release sending its allow-listed fields to its pinned
+		/// destination). Empty disables the lane; callers fail closed with workload_purpose_denied.
 		/// </summary>
-		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing,workforce-costing,pay-data-reporting";
+		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing,workforce-costing,pay-data-reporting,protected-workflow";
+
+		/// <summary>
+		/// Days an approved Protected Workflow release stays Active before it expires and must be renewed with a
+		/// fresh step-up and re-attestation. Expiry is checked at run time and by the daily sweep (worker 71).
+		/// </summary>
+		public static int ProtectedWorkflowReleaseLifetimeDays = 365;
+
+		/// <summary>Hard HTTP timeout, in seconds, for a protected workflow step's request (and its OAuth2 token request).</summary>
+		public static int ProtectedWorkflowHttpTimeoutSeconds = 30;
+
+		/// <summary>Ceiling on the number of catalog fields one Protected Workflow release may allow-list.</summary>
+		public static int ProtectedWorkflowMaxFieldsPerRelease = 16;
+
+		/// <summary>
+		/// How recent, in minutes, the approving administrator's step-up MFA must be for a release request, approval,
+		/// renewal or the department toggle. Older proofs are refused with step_up_required.
+		/// </summary>
+		public static int ProtectedWorkflowStepUpFreshnessMinutes = 10;
+
+		/// <summary>
+		/// Whether a protected step may authenticate with an HttpBasic credential. Off by default: Bearer, API key and
+		/// OAuth2 client credentials are allowed; Basic sends a long-lived password on every request.
+		/// </summary>
+		public static bool ProtectedWorkflowAllowHttpBasicCredentials = false;
+
+		/// <summary>Days before ExpiresOn at which department administrators are emailed an expiry notice, comma separated.</summary>
+		public static string ProtectedWorkflowExpiryNoticeDays = "30,7";
+
+		/// <summary>Largest response body a protected step reads for its success rule or capture (larger is failed_response_too_large).</summary>
+		public static int ProtectedWorkflowMaxResponseBytes = 1048576;
+
+		/// <summary>Most ResponseCapture entries one protected step may declare.</summary>
+		public static int ProtectedWorkflowMaxCaptureKeys = 5;
+
+		/// <summary>Days a rotated private_key_jwt signing key stays published in the credential's JWKS.</summary>
+		public static int WorkflowJwksOverlapDays = 7;
 
 		/// <summary>True on the broker host to run the ADP migration coordinator sweep there (the only
 		/// host with a real KMS adapter). Workers.Console keeps its sweep for liveness/offboarding

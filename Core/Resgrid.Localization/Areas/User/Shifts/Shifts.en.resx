@@ -633,4 +633,325 @@
   <data name="RoleCountRequired" xml:space="preserve">
     <value>Role count is required</value>
   </data>
+  <data name="ActiveNowBadge" xml:space="preserve">
+    <value>Active now</value>
+  </data>
+  <data name="AddPersonButton" xml:space="preserve">
+    <value>Add to day</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Add person to this day</value>
+  </data>
+  <data name="AddPersonHelp" xml:space="preserve">
+    <value>Puts the person on this day only; the rest of the schedule is unchanged.</value>
+  </data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve">
+    <value>Approval required</value>
+  </data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve">
+    <value>Sign-ups and trades on this shift need supervisor approval.</value>
+  </data>
+  <data name="ApprovalsButton" xml:space="preserve">
+    <value>Approvals</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Shift Approvals</value>
+  </data>
+  <data name="ApprovalsHelp" xml:space="preserve">
+    <value>Sign-ups and trades waiting for approval in the groups you supervise. Nobody is on duty for a pending request until it is approved.</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="DenyButton" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve">
+    <value>Swap for this day</value>
+  </data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve">
+    <value>This trade is complete: {0} is working the day.</value>
+  </data>
+  <data name="FinishTradeDenied" xml:space="preserve">
+    <value>A supervisor denied the last choice for this trade. You can pick another offer.</value>
+  </data>
+  <data name="FinishTradePendingFormat" xml:space="preserve">
+    <value>You picked {0}. The trade is waiting for supervisor approval.</value>
+  </data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve">
+    <value>Select an offer to accept.</value>
+  </data>
+  <data name="FullyStaffed" xml:space="preserve">
+    <value>Fully staffed</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="MyStatusNone" xml:space="preserve">
+    <value>You are not on this shift day.</value>
+  </data>
+  <data name="MyStatusOnDuty" xml:space="preserve">
+    <value>You are on this shift day.</value>
+  </data>
+  <data name="MyStatusPending" xml:space="preserve">
+    <value>Your sign-up is waiting for supervisor approval.</value>
+  </data>
+  <data name="MyStatusRemoved" xml:space="preserve">
+    <value>A supervisor did not approve your sign-up or took you off this day.</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>No group</value>
+  </data>
+  <data name="NoPendingSignups" xml:space="preserve">
+    <value>No sign-ups are waiting for approval.</value>
+  </data>
+  <data name="NoPendingTrades" xml:space="preserve">
+    <value>No trades are waiting for approval.</value>
+  </data>
+  <data name="NoPersonnelOnDay" xml:space="preserve">
+    <value>Nobody is on this day yet.</value>
+  </data>
+  <data name="NoShiftsOnDuty" xml:space="preserve">
+    <value>No shifts are running right now.</value>
+  </data>
+  <data name="NobodyOnDuty" xml:space="preserve">
+    <value>Nobody on duty</value>
+  </data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve">
+    <value>On duty as of {0}. This page refreshes every minute.</value>
+  </data>
+  <data name="OnDutyButton" xml:space="preserve">
+    <value>On Duty Now</value>
+  </data>
+  <data name="OnDutyHeader" xml:space="preserve">
+    <value>On Duty Now</value>
+  </data>
+  <data name="OpenSlotsFormat" xml:space="preserve">
+    <value>Open slots: {0}</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Note (optional)</value>
+  </data>
+  <data name="OtherPersonnelHeader" xml:space="preserve">
+    <value>Other personnel</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Pending approval</value>
+  </data>
+  <data name="PendingSignupsHeader" xml:space="preserve">
+    <value>Sign-ups waiting for approval</value>
+  </data>
+  <data name="PendingTradesHeader" xml:space="preserve">
+    <value>Trades waiting for approval</value>
+  </data>
+  <data name="PersonAddedToDay" xml:space="preserve">
+    <value>The person was added to this day.</value>
+  </data>
+  <data name="PersonLabel" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="PersonRemovedFromDay" xml:space="preserve">
+    <value>The person was taken off this day.</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Remove from this day</value>
+  </data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve">
+    <value>Take this person off this shift day? The rest of their schedule is unchanged.</value>
+  </data>
+  <data name="RemovedDaysHeader" xml:space="preserve">
+    <value>Days you were taken off</value>
+  </data>
+  <data name="RemovedDaysHelp" xml:space="preserve">
+    <value>Sign-ups a supervisor did not approve, and days a supervisor took you off.</value>
+  </data>
+  <data name="RequestedByColumn" xml:space="preserve">
+    <value>Requested By</value>
+  </data>
+  <data name="RequireApprovalHelp" xml:space="preserve">
+    <value>When checked, a sign-up or a trade does not put anyone on duty until a supervisor of the group approves it.</value>
+  </data>
+  <data name="RequireApprovalLabel" xml:space="preserve">
+    <value>Signups and trades need supervisor approval</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Roster</value>
+  </data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve">
+    <value>Select dates...</value>
+  </data>
+  <data name="SelectPersonToAdd" xml:space="preserve">
+    <value>Select a person to add.</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Select users...</value>
+  </data>
+  <data name="ShiftDeleted" xml:space="preserve">
+    <value>The shift was deleted.</value>
+  </data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve">
+    <value>That person is already on this day in that group.</value>
+  </data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve">
+    <value>You are already signed up for this shift day.</value>
+  </data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve">
+    <value>This shift day is over.</value>
+  </data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve">
+    <value>That group is not part of this shift.</value>
+  </data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve">
+    <value>That offer is no longer available.</value>
+  </data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve">
+    <value>That cannot be done for this shift day.</value>
+  </data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve">
+    <value>Select at least one person.</value>
+  </data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve">
+    <value>You are not allowed to do that.</value>
+  </data>
+  <data name="ShiftErrorNotFound" xml:space="preserve">
+    <value>The shift day, sign-up or trade could not be found.</value>
+  </data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve">
+    <value>That person is not on this shift day.</value>
+  </data>
+  <data name="ShiftErrorNotPending" xml:space="preserve">
+    <value>This request is no longer waiting for approval.</value>
+  </data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve">
+    <value>A trade has already been requested for this day.</value>
+  </data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve">
+    <value>You can only use the groups you manage, and a shift needs at least one of them.</value>
+  </data>
+  <data name="ShiftOnDateFormat" xml:space="preserve">
+    <value>{0} on {1}</value>
+  </data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve">
+    <value>Everyone selected who is not already working the day is added to it.</value>
+  </data>
+  <data name="ShiftStaffingSaved" xml:space="preserve">
+    <value>Staffing saved. People added to the day: {0}.</value>
+  </data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve">
+    <value>Staffing saved. People added to the day: {0}. Could not add: {1}</value>
+  </data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve">
+    <value>You must select a valid shift day</value>
+  </data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve">
+    <value>You must select a shift</value>
+  </data>
+  <data name="SignupApproved" xml:space="preserve">
+    <value>The sign-up was approved.</value>
+  </data>
+  <data name="SignupDenied" xml:space="preserve">
+    <value>The sign-up was denied.</value>
+  </data>
+  <data name="SignupForShift" xml:space="preserve">
+    <value>Sign up for this shift</value>
+  </data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve">
+    <value>Your sign-up was received and is waiting for supervisor approval. You are not on duty for this day until it is approved.</value>
+  </data>
+  <data name="SignupTradeLocked" xml:space="preserve">
+    <value>This day has been traded, or a trade is waiting for approval, so it cannot be withdrawn. Ask a supervisor to change the day instead.</value>
+  </data>
+  <data name="SignupWithdrawn" xml:space="preserve">
+    <value>Your sign-up was withdrawn.</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Sign-up</value>
+  </data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve">
+    <value>Added by supervisor</value>
+  </data>
+  <data name="SourceTradeFormat" xml:space="preserve">
+    <value>Trade (from {0})</value>
+  </data>
+  <data name="StaffingLabel" xml:space="preserve">
+    <value>Staffing</value>
+  </data>
+  <data name="SwapBackFormat" xml:space="preserve">
+    <value>Swap back: {0}</value>
+  </data>
+  <data name="TradeAlreadyFilled" xml:space="preserve">
+    <value>This trade has already been filled.</value>
+  </data>
+  <data name="TradeApproved" xml:space="preserve">
+    <value>The trade was approved.</value>
+  </data>
+  <data name="TradeCompleted" xml:space="preserve">
+    <value>The trade is complete.</value>
+  </data>
+  <data name="TradeDeclinedMessage" xml:space="preserve">
+    <value>You declined the trade request.</value>
+  </data>
+  <data name="TradeDenied" xml:space="preserve">
+    <value>The trade was denied.</value>
+  </data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve">
+    <value>A sign-up has to be approved before it can be traded.</value>
+  </data>
+  <data name="TradeRequested" xml:space="preserve">
+    <value>Your trade request was sent.</value>
+  </data>
+  <data name="TradeRequestedByFormat" xml:space="preserve">
+    <value>Requested by {0}</value>
+  </data>
+  <data name="TradeResponseSent" xml:space="preserve">
+    <value>Your response was sent.</value>
+  </data>
+  <data name="TradeStatusComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="TradeStatusDenied" xml:space="preserve">
+    <value>Denied by supervisor</value>
+  </data>
+  <data name="TradeStatusOpen" xml:space="preserve">
+    <value>Requested</value>
+  </data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve">
+    <value>Waiting for supervisor approval</value>
+  </data>
+  <data name="TradeUsersRequired" xml:space="preserve">
+    <value>You must specify users to request a trade from. Only qualified users will populate the list.</value>
+  </data>
+  <data name="TradeWaitingForApproval" xml:space="preserve">
+    <value>Your choice was saved. The trade is waiting for supervisor approval.</value>
+  </data>
+  <data name="TradedToYouFormat" xml:space="preserve">
+    <value>Traded to you by {0}</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ViewShiftDayButton" xml:space="preserve">
+    <value>View Day</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Withdraw</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Withdraw from this shift day?</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="YourStatusHeader" xml:space="preserve">
+    <value>Your Status</value>
+  </data>
 </root>

@@ -569,4 +569,325 @@
   <data name="RoleCountRequired" xml:space="preserve">
     <value>Кількість ролей є обов'язковою</value>
   </data>
+  <data name="ActiveNowBadge" xml:space="preserve">
+    <value>Триває зараз</value>
+  </data>
+  <data name="AddPersonButton" xml:space="preserve">
+    <value>Додати до дня</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Додати особу до цього дня</value>
+  </data>
+  <data name="AddPersonHelp" xml:space="preserve">
+    <value>Призначає особу лише на цей день; решта розкладу не змінюється.</value>
+  </data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve">
+    <value>Потрібне схвалення</value>
+  </data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve">
+    <value>Реєстрації та обміни на цій зміні потребують схвалення керівника.</value>
+  </data>
+  <data name="ApprovalsButton" xml:space="preserve">
+    <value>Схвалення</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Схвалення змін</value>
+  </data>
+  <data name="ApprovalsHelp" xml:space="preserve">
+    <value>Реєстрації та обміни, що очікують схвалення, у групах, якими ви керуєте. Запит, що очікує, нікого не ставить на чергування, доки його не схвалено.</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Схвалити</value>
+  </data>
+  <data name="DenyButton" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve">
+    <value>Обміняти на цей день</value>
+  </data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve">
+    <value>Цей обмін завершено: у цей день працює {0}.</value>
+  </data>
+  <data name="FinishTradeDenied" xml:space="preserve">
+    <value>Керівник відхилив останній вибір для цього обміну. Ви можете вибрати іншу пропозицію.</value>
+  </data>
+  <data name="FinishTradePendingFormat" xml:space="preserve">
+    <value>Ви вибрали {0}. Обмін очікує схвалення керівника.</value>
+  </data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve">
+    <value>Виберіть пропозицію, яку хочете прийняти.</value>
+  </data>
+  <data name="FullyStaffed" xml:space="preserve">
+    <value>Повністю укомплектовано</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="MyStatusNone" xml:space="preserve">
+    <value>Вас немає в цьому дні зміни.</value>
+  </data>
+  <data name="MyStatusOnDuty" xml:space="preserve">
+    <value>Ви в цьому дні зміни.</value>
+  </data>
+  <data name="MyStatusPending" xml:space="preserve">
+    <value>Ваша реєстрація очікує схвалення керівника.</value>
+  </data>
+  <data name="MyStatusRemoved" xml:space="preserve">
+    <value>Керівник не схвалив вашу реєстрацію або зняв вас із цього дня.</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Без групи</value>
+  </data>
+  <data name="NoPendingSignups" xml:space="preserve">
+    <value>Немає реєстрацій, що очікують схвалення.</value>
+  </data>
+  <data name="NoPendingTrades" xml:space="preserve">
+    <value>Немає обмінів, що очікують схвалення.</value>
+  </data>
+  <data name="NoPersonnelOnDay" xml:space="preserve">
+    <value>На цей день ще нікого немає.</value>
+  </data>
+  <data name="NoShiftsOnDuty" xml:space="preserve">
+    <value>Зараз немає жодної зміни.</value>
+  </data>
+  <data name="NobodyOnDuty" xml:space="preserve">
+    <value>Ніхто не чергує</value>
+  </data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve">
+    <value>На чергуванні станом на {0}. Сторінка оновлюється щохвилини.</value>
+  </data>
+  <data name="OnDutyButton" xml:space="preserve">
+    <value>Зараз на чергуванні</value>
+  </data>
+  <data name="OnDutyHeader" xml:space="preserve">
+    <value>Зараз на чергуванні</value>
+  </data>
+  <data name="OpenSlotsFormat" xml:space="preserve">
+    <value>Вільні місця: {0}</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Примітка (необов'язково)</value>
+  </data>
+  <data name="OtherPersonnelHeader" xml:space="preserve">
+    <value>Інший персонал</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Очікує схвалення</value>
+  </data>
+  <data name="PendingSignupsHeader" xml:space="preserve">
+    <value>Реєстрації, що очікують схвалення</value>
+  </data>
+  <data name="PendingTradesHeader" xml:space="preserve">
+    <value>Обміни, що очікують схвалення</value>
+  </data>
+  <data name="PersonAddedToDay" xml:space="preserve">
+    <value>Особу додано до цього дня.</value>
+  </data>
+  <data name="PersonLabel" xml:space="preserve">
+    <value>Особа</value>
+  </data>
+  <data name="PersonRemovedFromDay" xml:space="preserve">
+    <value>Особу знято з цього дня.</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Зняти з цього дня</value>
+  </data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve">
+    <value>Зняти цю особу з цього дня зміни? Решта її розкладу не зміниться.</value>
+  </data>
+  <data name="RemovedDaysHeader" xml:space="preserve">
+    <value>Дні, з яких вас знято</value>
+  </data>
+  <data name="RemovedDaysHelp" xml:space="preserve">
+    <value>Реєстрації, які керівник не схвалив, і дні, з яких керівник вас зняв.</value>
+  </data>
+  <data name="RequestedByColumn" xml:space="preserve">
+    <value>Запитав</value>
+  </data>
+  <data name="RequireApprovalHelp" xml:space="preserve">
+    <value>Якщо позначено, реєстрація чи обмін нікого не ставить на чергування, доки керівник групи їх не схвалить.</value>
+  </data>
+  <data name="RequireApprovalLabel" xml:space="preserve">
+    <value>Реєстрації та обміни потребують схвалення керівника</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Склад</value>
+  </data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve">
+    <value>Виберіть дати...</value>
+  </data>
+  <data name="SelectPersonToAdd" xml:space="preserve">
+    <value>Виберіть особу, яку потрібно додати.</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Виберіть користувачів...</value>
+  </data>
+  <data name="ShiftDeleted" xml:space="preserve">
+    <value>Зміну видалено.</value>
+  </data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve">
+    <value>Ця особа вже є в цьому дні в цій групі.</value>
+  </data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve">
+    <value>Ви вже зареєстровані на цей день зміни.</value>
+  </data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve">
+    <value>Цей день зміни вже минув.</value>
+  </data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve">
+    <value>Ця група не входить до цієї зміни.</value>
+  </data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve">
+    <value>Ця пропозиція вже недоступна.</value>
+  </data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve">
+    <value>Це неможливо зробити для цього дня зміни.</value>
+  </data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve">
+    <value>Виберіть принаймні одну особу.</value>
+  </data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve">
+    <value>Вам не дозволено це робити.</value>
+  </data>
+  <data name="ShiftErrorNotFound" xml:space="preserve">
+    <value>Не вдалося знайти день зміни, реєстрацію або обмін.</value>
+  </data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve">
+    <value>Цієї особи немає в цьому дні зміни.</value>
+  </data>
+  <data name="ShiftErrorNotPending" xml:space="preserve">
+    <value>Цей запит більше не очікує схвалення.</value>
+  </data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve">
+    <value>Для цього дня вже запитано обмін.</value>
+  </data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve">
+    <value>Ви можете використовувати лише групи, якими керуєте, і зміна повинна містити принаймні одну з них.</value>
+  </data>
+  <data name="ShiftOnDateFormat" xml:space="preserve">
+    <value>{0}, {1}</value>
+  </data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve">
+    <value>Усіх вибраних, хто ще не працює в цей день, буде додано до нього.</value>
+  </data>
+  <data name="ShiftStaffingSaved" xml:space="preserve">
+    <value>Укомплектування збережено. Осіб додано до дня: {0}.</value>
+  </data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve">
+    <value>Укомплектування збережено. Осіб додано до дня: {0}. Не вдалося додати: {1}</value>
+  </data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve">
+    <value>Потрібно вибрати дійсний день зміни</value>
+  </data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve">
+    <value>Потрібно вибрати зміну</value>
+  </data>
+  <data name="SignupApproved" xml:space="preserve">
+    <value>Реєстрацію схвалено.</value>
+  </data>
+  <data name="SignupDenied" xml:space="preserve">
+    <value>Реєстрацію відхилено.</value>
+  </data>
+  <data name="SignupForShift" xml:space="preserve">
+    <value>Зареєструватися на цю зміну</value>
+  </data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve">
+    <value>Вашу реєстрацію отримано, вона очікує схвалення керівника. Доки її не схвалено, ви не на чергуванні в цей день.</value>
+  </data>
+  <data name="SignupTradeLocked" xml:space="preserve">
+    <value>Цей день обміняно або обмін очікує схвалення, тому від нього не можна відмовитися. Натомість попросіть керівника змінити день.</value>
+  </data>
+  <data name="SignupWithdrawn" xml:space="preserve">
+    <value>Вашу реєстрацію скасовано.</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Призначено</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Реєстрація</value>
+  </data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve">
+    <value>Додано керівником</value>
+  </data>
+  <data name="SourceTradeFormat" xml:space="preserve">
+    <value>Обмін (від {0})</value>
+  </data>
+  <data name="StaffingLabel" xml:space="preserve">
+    <value>Укомплектування</value>
+  </data>
+  <data name="SwapBackFormat" xml:space="preserve">
+    <value>День навзаєм: {0}</value>
+  </data>
+  <data name="TradeAlreadyFilled" xml:space="preserve">
+    <value>Цей обмін уже виконано.</value>
+  </data>
+  <data name="TradeApproved" xml:space="preserve">
+    <value>Обмін схвалено.</value>
+  </data>
+  <data name="TradeCompleted" xml:space="preserve">
+    <value>Обмін завершено.</value>
+  </data>
+  <data name="TradeDeclinedMessage" xml:space="preserve">
+    <value>Ви відхилили запит на обмін.</value>
+  </data>
+  <data name="TradeDenied" xml:space="preserve">
+    <value>Обмін відхилено.</value>
+  </data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve">
+    <value>Реєстрацію потрібно схвалити, перш ніж її можна буде обміняти.</value>
+  </data>
+  <data name="TradeRequested" xml:space="preserve">
+    <value>Ваш запит на обмін надіслано.</value>
+  </data>
+  <data name="TradeRequestedByFormat" xml:space="preserve">
+    <value>Запитав(ла): {0}</value>
+  </data>
+  <data name="TradeResponseSent" xml:space="preserve">
+    <value>Вашу відповідь надіслано.</value>
+  </data>
+  <data name="TradeStatusComplete" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="TradeStatusDenied" xml:space="preserve">
+    <value>Відхилено керівником</value>
+  </data>
+  <data name="TradeStatusOpen" xml:space="preserve">
+    <value>Запитано</value>
+  </data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve">
+    <value>Очікує схвалення керівника</value>
+  </data>
+  <data name="TradeUsersRequired" xml:space="preserve">
+    <value>Потрібно вказати користувачів, у яких запитати обмін. У списку показано лише кваліфікованих користувачів.</value>
+  </data>
+  <data name="TradeWaitingForApproval" xml:space="preserve">
+    <value>Ваш вибір збережено. Обмін очікує схвалення керівника.</value>
+  </data>
+  <data name="TradedToYouFormat" xml:space="preserve">
+    <value>Передано вам від {0}</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Невідомо</value>
+  </data>
+  <data name="ViewShiftDayButton" xml:space="preserve">
+    <value>Переглянути день</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відмовитися</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Відмовитися від цього дня зміни?</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Ви</value>
+  </data>
+  <data name="YourStatusHeader" xml:space="preserve">
+    <value>Ваш статус</value>
+  </data>
 </root>

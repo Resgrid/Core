@@ -1,0 +1,17 @@
+@* The result of the last shift action (sign-up, approval, trade...), set by ShiftsController.SetMessage. *@
+@{
+	var shiftsMessage = TempData["ShiftsMessage"] as string;
+	var shiftsMessageType = TempData["ShiftsMessageType"] as string;
+
+	if (shiftsMessageType != "success" && shiftsMessageType != "info" && shiftsMessageType != "warning" && shiftsMessageType != "danger")
+	{
+		shiftsMessageType = "info";
+	}
+}
+@if (!String.IsNullOrWhiteSpace(shiftsMessage))
+{
+	<div class="alert alert-@shiftsMessageType alert-dismissable" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		@shiftsMessage
+	</div>
+}

@@ -86,5 +86,20 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		/// Days for the shift (this may be null)
 		/// </summary>
 		public List<ShiftDayResultData> Days { get; set; }
+
+		/// <summary>Start time as entered for the shift</summary>
+		public string StartTime { get; set; }
+
+		/// <summary>End time as entered for the shift</summary>
+		public string EndTime { get; set; }
+
+		/// <summary>Signups and trades on this shift need supervisor approval</summary>
+		public bool RequireApproval { get; set; }
+
+		/// <summary>The caller supervises at least one group on this shift</summary>
+		public bool CanManage { get; set; }
+
+		/// <summary>Groups (teams) on the shift with their role requirements</summary>
+		public List<ShiftGroupResultData> Groups { get; set; }
 	}
 }

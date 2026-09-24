@@ -196,7 +196,9 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 								new
 								{
 									type = "text",
-									text = JsonSerializer.Serialize(result)
+									// Newtonsoft, not System.Text.Json: tool results carry the JObject/JArray payloads
+									// ApiClient deserializes, which System.Text.Json writes out as nested empty arrays.
+									text = Newtonsoft.Json.JsonConvert.SerializeObject(result)
 								}
 							}
 						};

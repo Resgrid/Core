@@ -299,4 +299,82 @@
   <data name="UnitTimes" xml:space="preserve">
     <value>أوقات الوحدات</value>
   </data>
+  <data name="Part2ConsentLabel" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="Part2ConsentOnFile" xml:space="preserve">
+    <value>موافقة Part 2 مسجّلة</value>
+  </data>
+  <data name="Part2ConsentHelp" xml:space="preserve">
+    <value>حدّده عندما يكون لدى القسم موافقة (أو أساس آخر وفق 42 CFR Part 2) لمشاركة معلومات هذا البلاغ المتعلقة باضطرابات تعاطي المواد. لا يرسل سير العمل المحمي حقول Part 2 إلا عند تحديده.</value>
+  </data>
+  <data name="SubjectIdentifiersLabel" xml:space="preserve">
+    <value>معرّفات الشخص</value>
+  </data>
+  <data name="NearestUnitsLabel" xml:space="preserve">
+    <value>أقرب الوحدات</value>
+  </data>
+  <data name="NearestUnitsHint" xml:space="preserve">
+    <value>يمكن أن تكون الوحدة فريقًا أو مركبة أو فردًا.</value>
+  </data>
+  <data name="NearestUnitsUnit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="NearestUnitsCrewOnShift" xml:space="preserve">
+    <value>من الطاقم في المناوبة</value>
+  </data>
+  <data name="NearestUnitsStationShift" xml:space="preserve">
+    <value>مناوبة المحطة</value>
+  </data>
+  <data name="NearestUnitsNoCrew" xml:space="preserve">
+    <value>لم يتم تعيين طاقم</value>
+  </data>
+  <data name="NearestUnitsScoped" xml:space="preserve">
+    <value>يتم عرض وحدات منطقتك فقط</value>
+  </data>
+  <data name="NearestUnitsStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="NearestUnitsEta" xml:space="preserve">
+    <value>وقت الوصول المتوقع</value>
+  </data>
+  <data name="NearestUnitsPosition" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="NearestUnitsShift" xml:space="preserve">
+    <value>تغطية المناوبة</value>
+  </data>
+  <data name="NearestUnitsRoleMix" xml:space="preserve">
+    <value>مزيج الأدوار</value>
+  </data>
+  <data name="NearestUnitsInBoundary" xml:space="preserve">
+    <value>داخل المنطقة</value>
+  </data>
+  <data name="NearestUnitsInParentBoundary" xml:space="preserve">
+    <value>داخل منطقة الخدمة</value>
+  </data>
+  <data name="NearestUnitsIncidentInside" xml:space="preserve">
+    <value>الحادث داخل:</value>
+  </data>
+  <data name="NearestUnitsNoBoundary" xml:space="preserve">
+    <value>الحادث ليس داخل حدود أي مجموعة.</value>
+  </data>
+  <data name="NearestUnitsEstimate" xml:space="preserve">
+    <value>تقديري</value>
+  </data>
+  <data name="NearestUnitsMinutes" xml:space="preserve">
+    <value>دقيقة</value>
+  </data>
+  <data name="NearestUnitsLive" xml:space="preserve">
+    <value>GPS مباشر</value>
+  </data>
+  <data name="NearestUnitsStation" xml:space="preserve">
+    <value>موقع المحطة</value>
+  </data>
+  <data name="NearestUnitsStale" xml:space="preserve">
+    <value>قديم</value>
+  </data>
+  <data name="NearestUnitsNoPosition" xml:space="preserve">
+    <value>لا يوجد موقع</value>
+  </data>
 </root>

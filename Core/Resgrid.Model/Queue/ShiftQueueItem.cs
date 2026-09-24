@@ -23,6 +23,9 @@ namespace Resgrid.Model.Queue
 
 		[ProtoMember(6)]
 		public int ShiftId { get; set; }
+
+		[ProtoMember(7)]
+		public int ShiftSignupId { get; set; }
 	}
 
 	public enum ShiftQueueTypes
@@ -33,6 +36,12 @@ namespace Resgrid.Model.Queue
 		TradeRejected = 3,
 		ShiftCreated = 4,
 		ShiftUpdated = 5,
-		ShiftDaysAdded = 6
+		ShiftDaysAdded = 6,
+		SignupPendingApproval = 7,
+		SignupReviewed = 8,
+		TradePendingApproval = 9,
+		TradeReviewed = 10,
+		DayAssigned = 11,
+		DayRemoved = 12
 	}
 }

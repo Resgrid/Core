@@ -605,11 +605,8 @@
     <value>Αποδοθέν Αποτέλεσμα</value>
   </data>
   <!-- New workflow form -->
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value>Όλοι οι διαθέσιμοι τύποι συμβάντων ενεργοποίησης έχουν ήδη διαμορφωμένη ροή εργασίας. Διαγράψτε μια υπάρχουσα ροή εργασίας για να ελευθερώσετε τον τύπο συμβάντος της.</value>
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
-    <value>Κάθε τύπος συμβάντος μπορεί να έχει μόνο μία ροή εργασίας. Εμφανίζονται μόνο οι μη χρησιμοποιούμενοι τύποι συμβάντων.</value>
+    <value>Το συμβάν που ξεκινά αυτή τη ροή εργασιών. Πολλές ροές εργασιών μπορούν να χρησιμοποιούν το ίδιο συμβάν· καθεμία εκτελείται ξεχωριστά.</value>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>Λεπτομέρεια</value>
@@ -641,5 +638,113 @@
   <data name="ExportTemplate" xml:space="preserve"><value>Εξαγωγή αναφοράς εγγραφών</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>Καμία (αποστολή μόνο του αποδοθέντος προτύπου)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>Τα βήματα e-mail επισυνάπτουν την εξαγωγή· τα βήματα μεταφόρτωσης αρχείου τη μεταφορτώνουν με το όνομα αρχείου της αντί για το αποδοθέν κείμενο. Οι εξαγωγές σχεδιάζονται στο Εγγραφές &gt; Εξαγωγές αναφορών.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>Διαπιστευτήρια πελάτη OAuth2</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>URL διακριτικού</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>Το τελικό σημείο HTTPS του διακριτικού, για παράδειγμα https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>Αναγνωριστικό πελάτη</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>Μυστικό πελάτη</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>Εύρος</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>Για το Microsoft Dataverse χρησιμοποιήστε https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>Αποδέκτης (προαιρετικό)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>Πιστοποίηση πελάτη</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>Μυστικό πελάτη</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>JWT ιδιωτικού κλειδιού (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>Αλγόριθμος υπογραφής</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>Το Resgrid δημιουργεί και διατηρεί το ζεύγος κλειδιών· το ιδιωτικό κλειδί κρυπτογραφείται και δεν εμφανίζεται ποτέ. Καταχωρίστε το URL JWKS (ή ανεβάστε το δημόσιο κλειδί) στον διακομιστή διακριτικών.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>URL JWKS</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>Αντιγραφή</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>Τρέχον κλειδί {0}, δημιουργήθηκε στις {1}. Δημοσιευμένα κλειδιά: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>Λήψη δημόσιου JWK</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>Εναλλαγή κλειδιού</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>Να δημιουργηθεί νέο κλειδί υπογραφής; Το τρέχον κλειδί παραμένει δημοσιευμένο κατά την περίοδο επικάλυψης, ώστε ο διακομιστής διακριτικών να μεταβεί.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>Δημιουργήθηκε νέο κλειδί υπογραφής. Το προηγούμενο κλειδί παραμένει δημοσιευμένο κατά την περίοδο επικάλυψης.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>Το ζεύγος κλειδιών δημιουργείται κατά την αποθήκευση. Στη συνέχεια εμφανίζονται εδώ το URL JWKS και η λήψη του δημόσιου κλειδιού.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>Ξεκινήστε από πρότυπο</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>Τα πρότυπα δημιουργούν μια απενεργοποιημένη ροή εργασιών με ενδεικτικούς προορισμούς. Ορίστε το URL και τα διαπιστευτήρια σε κάθε βήμα και έπειτα ενεργοποιήστε τη.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>Χρήση προτύπου</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>Προστατευμένες ροές εργασιών</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>Η ροή εργασιών δημιουργήθηκε από το πρότυπο. Είναι απενεργοποιημένη: ορίστε τον προορισμό και τα διαπιστευτήρια σε κάθε βήμα και έπειτα ενεργοποιήστε τη.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>Η ροή εργασιών δημιουργήθηκε από το πρότυπο μαζί με πρόχειρη προστατευμένη έγκριση. Ορίστε το URL προορισμού και τα διαπιστευτήρια του βήματος, επιλέξτε τα πεδία προς κοινοποίηση και ζητήστε έγκριση. Δεν στέλνεται τίποτα πριν εγκριθεί.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>Συμπληρώθηκε το όριο ροών εργασιών του προγράμματός σας. Αναβαθμίστε για να προσθέσετε περισσότερες.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Webhook: νέα κλήση (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>Στέλνει σε JSON τον αριθμό, το όνομα, την προτεραιότητα και τη διεύθυνση της κλήσης όταν προστίθεται, με κλειδί idempotency.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>Email: κλείσιμο κλήσης</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>Στέλνει μια σύντομη περίληψη με email όταν κλείνει μια κλήση.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter και Observations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>Όταν κλείνει μια κλήση, στέλνει στον ηλεκτρονικό φάκελο υγείας ένα Bundle συναλλαγής FHIR R4: ένα Encounter (κατηγορία FLD, ολοκληρωμένο, από την αποστολή έως το κλείσιμο) για τον ασθενή του subject_ids.ehr_client_id και μία Observation για κάθε εγκεκριμένο προσαρμοσμένο πεδίο. Χρησιμοποιεί υπό όρους δημιουργία και αποθηκεύει το αναγνωριστικό του νέου Encounter ως ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>Σημείωμα επαφής HL7 v2.5.1 MDM^T02</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>Όταν κλείνει μια κλήση, στέλνει ένα έγγραφο MDM^T02 «Crisis Field Response» σε μηχανή διασύνδεσης μέσω HTTPS: το PID-3 είναι το αναγνωριστικό πελάτη του φακέλου υγείας, το MSH-10 το κλειδί idempotency, ένα OBX για κάθε εγκεκριμένο προσαρμοσμένο πεδίο. Επιτυγχάνει μόνο με επιβεβαίωση AA.</value>
+  </data>
 </root>
 

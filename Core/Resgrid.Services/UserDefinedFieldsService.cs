@@ -18,13 +18,16 @@ namespace Resgrid.Services
 		private readonly IUdfFieldRepository _fieldRepository;
 		private readonly IUdfFieldValueRepository _valueRepository;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IProtectedWorkflowService _protectedWorkflows;
 
 		public UserDefinedFieldsService(
 			IUdfDefinitionRepository definitionRepository,
 			IUdfFieldRepository fieldRepository,
 			IUdfFieldValueRepository valueRepository,
-			IUnitOfWork unitOfWork)
+			IUnitOfWork unitOfWork,
+			IProtectedWorkflowService protectedWorkflows = null)
 		{
+			_protectedWorkflows = protectedWorkflows;
 			_definitionRepository = definitionRepository;
 			_fieldRepository = fieldRepository;
 			_valueRepository = valueRepository;
@@ -80,6 +83,10 @@ namespace Resgrid.Services
 				var nameErrors = Resgrid.Model.Helpers.UdfValidationHelper.ValidateFieldNamesUnique(fields);
 				if (nameErrors.Count > 0)
 					throw new InvalidOperationException(string.Join(" | ", nameErrors));
+
+				var optionErrors = Resgrid.Model.Helpers.UdfValidationHelper.ValidateFieldOptions(fields);
+				if (optionErrors.Count > 0)
+					throw new InvalidOperationException(string.Join(" | ", optionErrors));
 			}
 
 			// Open a shared connection/transaction so the read, deactivation, and all inserts
@@ -130,6 +137,14 @@ namespace Resgrid.Services
 			{
 				_unitOfWork.DiscardChanges();
 				throw;
+			}
+
+			// A call custom field's Protected Workflows sensitivity tag (or the field itself) may have changed: every release
+			// that allow-lists a custom field is re-fingerprinted and goes back for approval when it moved.
+			if (entityType == (int)UdfEntityType.Call && _protectedWorkflows != null)
+			{
+				try { await _protectedWorkflows.OnCallCustomFieldsChangedAsync(departmentId, userId, cancellationToken); }
+				catch (Exception ex) { Logging.LogError($"Protected workflow custom field hook failed for department {departmentId}: {ex.GetType().FullName}."); }
 			}
 
 			return definition;
@@ -209,6 +224,15 @@ namespace Resgrid.Services
 				.GroupBy(v => v.UdfFieldId, StringComparer.Ordinal)
 				.Select(g => g.Last())
 				.ToList();
+
+			// A combo box entry naming an option is stored as the option's key, the way a dropdown
+			// stores its selection; free text is stored as typed.
+			var fieldsById = fields
+				.Where(f => !string.IsNullOrEmpty(f.UdfFieldId))
+				.ToDictionary(f => f.UdfFieldId, StringComparer.Ordinal);
+
+			foreach (var value in normalizedValues)
+				value.Value = UdfValidationHelper.NormalizeFieldValue(fieldsById[value.UdfFieldId], value.Value);
 
 			// REDACTED-sentinel restoration (ADP plan 5.2). udffieldvalues.value is cataloged, and
 			// the edit surfaces render it through SafeDisplay — so an editor without a grant sees
@@ -318,7 +342,9 @@ namespace Resgrid.Services
 					IsVisibleOnMobile = f.IsVisibleOnMobile,
 					IsVisibleOnReports = f.IsVisibleOnReports,
 					IsEnabled = f.IsEnabled,
-					Visibility = f.Visibility
+					Visibility = f.Visibility,
+					RmsClassification = f.RmsClassification,
+					Sensitivity = f.Sensitivity
 				}).ToList();
 
 			return await SaveDefinitionAsync(owningDefinition.DepartmentId, owningDefinition.EntityType,

@@ -6,6 +6,8 @@
 		Filled = 1,
 		Declined = 2,
 		Accepted = 3,
-		Proposed = 4
+		Proposed = 4,
+		PendingApproval = 5,
+		Denied = 6
 	}
 }

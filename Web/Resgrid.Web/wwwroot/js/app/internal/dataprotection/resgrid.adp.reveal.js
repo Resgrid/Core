@@ -284,17 +284,39 @@
 	// variant) hands the value to the control inside it.
 	function write($el, value) {
 		if ($el.is('input, textarea, select')) {
-			$el.val(value);
+			setControl($el, value);
 			return;
 		}
 
 		var $control = $el.find('input, textarea, select').first();
 		if ($control.length) {
-			$control.val(value);
+			setControl($control, value);
 			return;
 		}
 
 		$el.text(value);
+	}
+
+	// A multi-select UDF stores its keys comma-joined, but val() on a <select multiple> takes an
+	// array; handed the joined string it matches no option and selects nothing. A combo box stores
+	// an option's key but its input shows the option's label (free text shows as typed), so a
+	// revealed key is swapped for the label its suggestion list carries.
+	function setControl($control, value) {
+		if ($control.is('select[multiple]') && typeof value === 'string') {
+			$control.val($.map(value.split(','), function (key) { return $.trim(key); }));
+			return;
+		}
+
+		if ($control.is('input[list]') && typeof value === 'string') {
+			var list = document.getElementById($control.attr('list'));
+			var match = list ? $(list).find('option').filter(function () { return $(this).attr('data-key') === value; }) : $();
+			if (match.length) {
+				$control.val(match.first().attr('value'));
+				return;
+			}
+		}
+
+		$control.val(value);
 	}
 
 	function applyFields(values) {

@@ -74,6 +74,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
+		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly INearestUnitService _nearestUnitService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
@@ -91,7 +93,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICallDispatchStatusService callDispatchStatusService, IModerationService moderationService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
-			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService, IRecordsProtectionService recordsProtection)
+			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService, IRecordsProtectionService recordsProtection,
+			IDispatchScopeService dispatchScopeService, INearestUnitService nearestUnitService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -124,6 +127,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_dispatchLocalizer = dispatchLocalizer;
 			_commonLocalizer = commonLocalizer;
 			_dispatchRecommendationService = dispatchRecommendationService;
+			_dispatchScopeService = dispatchScopeService;
+			_nearestUnitService = nearestUnitService;
 			_featureToggleService = featureToggleService;
 			_protectedReadService = protectedReadService;
 			_recordsCutoverService = recordsCutoverService;
@@ -324,6 +329,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Check-in timers
 				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
 				model.Call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+
+				// 42 CFR Part 2 consent is a dispatcher-set flag; subject identifiers come only from integrations (v4 API),
+				// never from a posted form.
+				var part2ConsentValue = collection["Call.Part2ConsentOnFile"].FirstOrDefault();
+				model.Call.Part2ConsentOnFile = !string.IsNullOrEmpty(part2ConsentValue) && part2ConsentValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				model.Call.SubjectIdentifiers = null;
 
 				// Indoor map zone
 				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
@@ -664,6 +675,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// Nearest available unit board for the New Call page: every unit (a team, an apparatus or an
+		/// individual set up as a unit) and responder in the dispatcher's scope with status, live position,
+		/// ETA, crew shift coverage and role mix. Called by JS whenever the call location changes.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Create)]
+		public async Task<IActionResult> GetNearestUnits(double latitude, double longitude, CancellationToken cancellationToken)
+		{
+			var board = await _nearestUnitService.GetBoardAsync(new NearestUnitRequest
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Latitude = latitude,
+				Longitude = longitude
+			}, cancellationToken);
+
+			return Json(new { success = true, board });
+		}
+
+		/// <summary>
 		/// "Strike Next Alarm": escalates the call to its next alarm level, additively
 		/// dispatching that level's run card requirements and notifying only the newly
 		/// added resources via selective broadcast.
@@ -833,6 +864,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
 				call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+
+				var part2ConsentValue = collection["Call.Part2ConsentOnFile"].FirstOrDefault();
+				call.Part2ConsentOnFile = !string.IsNullOrEmpty(part2ConsentValue) && part2ConsentValue.Contains("true", StringComparison.OrdinalIgnoreCase);
 
 				// Indoor map zone
 				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
@@ -2523,7 +2557,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var calls = new List<CallJson>();
 
-			var activeCalls = (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId))
+			var activeCalls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
 				.Where(x => !x.DispatchOn.HasValue || x.DispatchOn.Value <= DateTime.UtcNow || x.HasBeenDispatched == true)
 				.OrderBy(x => x.LoggedOn);
 
@@ -2831,7 +2865,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<CallListJson> callsJson = new List<CallListJson>();
 
-			var calls = (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId))
+			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
 				.Where(x => !x.DispatchOn.HasValue || x.DispatchOn.Value <= DateTime.UtcNow || x.HasBeenDispatched == true)
 				.OrderByDescending(x => x.LoggedOn);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -3016,7 +3050,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> GetTopActiveCalls()
 		{
 			var model = new TopActiveCallsView();
-			model.Calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			model.Calls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			return PartialView("_ActiveTopCallsPartial", model);

@@ -866,4 +866,82 @@
   <data name="UnitTimes" xml:space="preserve">
     <value>Einheitenzeiten</value>
   </data>
+  <data name="Part2ConsentLabel" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="Part2ConsentOnFile" xml:space="preserve">
+    <value>Part-2-Einwilligung liegt vor</value>
+  </data>
+  <data name="Part2ConsentHelp" xml:space="preserve">
+    <value>Setzen, wenn der Abteilung eine Einwilligung (oder eine andere Grundlage nach 42 CFR Part 2) vorliegt, die Informationen dieses Einsatzes zu Substanzgebrauchsstörungen weiterzugeben. Geschützte Workflows senden Part-2-Felder nur, wenn dies gesetzt ist.</value>
+  </data>
+  <data name="SubjectIdentifiersLabel" xml:space="preserve">
+    <value>Personenkennungen</value>
+  </data>
+  <data name="NearestUnitsLabel" xml:space="preserve">
+    <value>Nächste Einheiten</value>
+  </data>
+  <data name="NearestUnitsHint" xml:space="preserve">
+    <value>Eine Einheit kann ein Team, ein Fahrzeug oder eine einzelne Person sein.</value>
+  </data>
+  <data name="NearestUnitsUnit" xml:space="preserve">
+    <value>Einheit</value>
+  </data>
+  <data name="NearestUnitsCrewOnShift" xml:space="preserve">
+    <value>Besatzung im Dienst</value>
+  </data>
+  <data name="NearestUnitsStationShift" xml:space="preserve">
+    <value>Wachschicht</value>
+  </data>
+  <data name="NearestUnitsNoCrew" xml:space="preserve">
+    <value>Keine Besatzung zugewiesen</value>
+  </data>
+  <data name="NearestUnitsScoped" xml:space="preserve">
+    <value>Nur die Einheiten Ihres Gebiets werden angezeigt</value>
+  </data>
+  <data name="NearestUnitsStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="NearestUnitsEta" xml:space="preserve">
+    <value>Ankunft (ETA)</value>
+  </data>
+  <data name="NearestUnitsPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="NearestUnitsShift" xml:space="preserve">
+    <value>Schichtbesetzung</value>
+  </data>
+  <data name="NearestUnitsRoleMix" xml:space="preserve">
+    <value>Rollenverteilung</value>
+  </data>
+  <data name="NearestUnitsInBoundary" xml:space="preserve">
+    <value>Im Gebiet</value>
+  </data>
+  <data name="NearestUnitsInParentBoundary" xml:space="preserve">
+    <value>Im Versorgungsgebiet</value>
+  </data>
+  <data name="NearestUnitsIncidentInside" xml:space="preserve">
+    <value>Einsatzort liegt in:</value>
+  </data>
+  <data name="NearestUnitsNoBoundary" xml:space="preserve">
+    <value>Der Einsatzort liegt in keiner Gruppengrenze.</value>
+  </data>
+  <data name="NearestUnitsEstimate" xml:space="preserve">
+    <value>geschätzt</value>
+  </data>
+  <data name="NearestUnitsMinutes" xml:space="preserve">
+    <value>Min.</value>
+  </data>
+  <data name="NearestUnitsLive" xml:space="preserve">
+    <value>Live-GPS</value>
+  </data>
+  <data name="NearestUnitsStation" xml:space="preserve">
+    <value>Standort der Wache</value>
+  </data>
+  <data name="NearestUnitsStale" xml:space="preserve">
+    <value>veraltet</value>
+  </data>
+  <data name="NearestUnitsNoPosition" xml:space="preserve">
+    <value>Keine Position</value>
+  </data>
 </root>

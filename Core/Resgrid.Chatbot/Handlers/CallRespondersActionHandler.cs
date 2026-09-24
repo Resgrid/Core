@@ -39,6 +39,7 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly ICustomStateService _customStateService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public CallRespondersActionHandler(
 			ICallsService callsService,
@@ -46,8 +47,10 @@ namespace Resgrid.Chatbot.Handlers
 			IUnitsService unitsService,
 			ICustomStateService customStateService,
 			IUserProfileService userProfileService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_actionLogsService = actionLogsService;
 			_unitsService = unitsService;
@@ -66,7 +69,7 @@ namespace Resgrid.Chatbot.Handlers
 				intent.Parameters.TryGetValue("mode", out var modeValue);
 				var mode = ParseResponderMode(modeValue);
 
-				var call = await ResolveCallAsync(intent, session.DepartmentId);
+				var call = await ResolveCallAsync(intent, session);
 				if (call == null)
 					return new ChatbotResponse { Text = ChatbotResources.Get("CallResp_Specify", culture), Processed = false };
 
@@ -166,8 +169,10 @@ namespace Resgrid.Chatbot.Handlers
 			}
 		}
 
-		private async Task<Call> ResolveCallAsync(ChatbotIntent intent, int departmentId)
+		private async Task<Call> ResolveCallAsync(ChatbotIntent intent, ChatbotSession session)
 		{
+			var departmentId = session.DepartmentId;
+
 			intent.Parameters.TryGetValue("callRef", out var reference);
 			if (string.IsNullOrWhiteSpace(reference))
 				intent.Parameters.TryGetValue("callId", out reference);
@@ -180,10 +185,12 @@ namespace Resgrid.Chatbot.Handlers
 				cleaned = null;
 
 			if (!string.IsNullOrWhiteSpace(cleaned))
-				return await Services.CallReferenceResolver.ResolveAsync(_callsService, departmentId, cleaned);
+				return await Services.CallReferenceResolver.ResolveAsync(_callsService, departmentId, cleaned,
+					_dispatchScopeService, session.UserId);
 
-			// No reference: when exactly one call is active it is unambiguous.
-			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(departmentId);
+			// No reference: when exactly one call is active in the user's area it is unambiguous.
+			var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(departmentId, session.UserId,
+				await _callsService.GetActiveCallsByDepartmentAsync(departmentId) ?? new List<Call>());
 			return activeCalls?.Count == 1 ? activeCalls[0] : null;
 		}
 

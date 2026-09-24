@@ -25,6 +25,13 @@ namespace Resgrid.Model.Services
 		/// Generates read-only HTML for display/detail pages (e.g. ViewCall).
 		/// </summary>
 		string GenerateReadOnlyHtml(UdfDefinition definition, List<UdfField> fields, List<UdfFieldValue> values);
+
+		/// <summary>
+		/// The text a person reads for a stored value: an option key becomes its label (Dropdown,
+		/// MultiSelect, ComboBox), a Boolean becomes Yes/No, and a sealed ADP envelope becomes the
+		/// REDACTED placeholder. Anything else is returned as stored.
+		/// </summary>
+		string FormatDisplayValue(UdfField field, string value);
 	}
 }
 

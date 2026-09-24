@@ -470,6 +470,19 @@ namespace Resgrid.Services
 			if (departmentGroup == null)
 				return null;
 
+			// A station saved by coordinates (or What3Words) has no Address, and an Organizational
+			// group's only location is its boundary; both used to open the map on the department.
+			var stored = GeoMath.ParseCoordinatePair(departmentGroup.Latitude, departmentGroup.Longitude);
+			if (stored.HasValue)
+				return new Coordinates { Latitude = stored.Value.Latitude, Longitude = stored.Value.Longitude };
+
+			var boundary = GeoMath.ParseGeofence(departmentGroup.Geofence);
+			if (boundary != null)
+			{
+				var centroid = GeoMath.Centroid(boundary);
+				return new Coordinates { Latitude = centroid.Latitude, Longitude = centroid.Longitude };
+			}
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
 
 			if (departmentGroup.Address != null)
@@ -572,6 +585,25 @@ namespace Resgrid.Services
 			var members = await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(groupId);
 
 			return members.Where(x => x.IsAdmin.Equals(true)).ToList();
+		}
+
+		public async Task<List<DepartmentGroupMember>> GetAllAdminsForGroupAndAncestorsAsync(int groupId)
+		{
+			var admins = new List<DepartmentGroupMember>();
+			var visited = new HashSet<int>();
+			int? currentId = groupId;
+
+			// Parent chains are short (a service area over its stations); the visited set stops a
+			// corrupt parent cycle from looping.
+			while (currentId.HasValue && visited.Add(currentId.Value))
+			{
+				admins.AddRange(await GetAllAdminsForGroupAsync(currentId.Value) ?? new List<DepartmentGroupMember>());
+
+				var group = await GetGroupByIdAsync(currentId.Value, false);
+				currentId = group?.ParentDepartmentGroupId;
+			}
+
+			return admins;
 		}
 
 		public async Task<DepartmentGroup> GetGroupByDispatchEmailCodeAsync(string code)

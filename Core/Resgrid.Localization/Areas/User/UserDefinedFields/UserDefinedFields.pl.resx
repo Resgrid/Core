@@ -113,4 +113,19 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>Raport o zdarzeniu NERIS</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Wrażliwość dla chronionych przepływów pracy</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Pola zastrzeżone i pola objęte 42 CFR Part 2 wymagają dodatkowego oświadczenia, zanim chroniony przepływ pracy będzie mógł je udostępnić. Zmiana tej wartości odsyła do ponownego zatwierdzenia każde zezwolenie, które używa tego pola.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Zastrzeżone</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>

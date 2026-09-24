@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Resgrid.Model;
 
@@ -15,6 +15,9 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public Dictionary<string, List<PersonnelRole>> PersonnelRoles { get; set; }
 		public Dictionary<string, UserProfile> UserProfiles { get; set; }
 		public Dictionary<int, bool> ShiftGroupSignups { get; set; }
+
+		/// <summary>The day page for <see cref="Signup"/>, when it can be found.</summary>
+		public int? ShiftDayId { get; set; }
 
 		public ShiftSignupView()
 		{

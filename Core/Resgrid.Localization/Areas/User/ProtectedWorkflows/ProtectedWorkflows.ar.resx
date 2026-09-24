@@ -1,0 +1,862 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>سير العمل المحمي</value>
+  </data>
+  <data name="ListHeader" xml:space="preserve">
+    <value>الإتاحات المحمية لسير العمل</value>
+  </data>
+  <data name="DisclosuresTitle" xml:space="preserve">
+    <value>سجل الإفصاح لسير العمل المحمي</value>
+  </data>
+  <data name="WorkflowsBreadcrumb" xml:space="preserve">
+    <value>سير العمل</value>
+  </data>
+  <data name="DataProtectionBreadcrumb" xml:space="preserve">
+    <value>حماية البيانات</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>سير العمل المحمي</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>يتلقى سير العمل قيم REDACTED افتراضيًا. تتيح ميزة سير العمل المحمي للمسؤول الموافقة على سير عمل محدد واحد لإرسال حقول محمية مختارة إلى وجهة HTTPS واحدة مثبّتة. ويستمر كل سير عمل آخر في تلقي قيم REDACTED.</value>
+  </data>
+  <data name="EnableLabel" xml:space="preserve">
+    <value>تفعيل سير العمل المحمي</value>
+  </data>
+  <data name="SecondApproverLabel" xml:space="preserve">
+    <value>اشتراط موافقة مسؤول ثانٍ على سير العمل المحمي</value>
+  </data>
+  <data name="WarningTextHeader" xml:space="preserve">
+    <value>تحذير</value>
+  </data>
+  <data name="WarningText" xml:space="preserve">
+    <value>يرسل سير العمل المحمي بيانات محمية مفكوكة التشفير، قد تتضمن معلومات صحية محمية، إلى أنظمة خارجية تقوم أنت بتهيئتها. لا يمكن لـ Resgrid التحكم في كيفية تخزين النظام المستلِم لهذه البيانات أو استخدامها. لا تفعّل سير عمل إلا إذا كان المستلِم هو مؤسستك أو طرفًا تشمله اتفاقية شريك أعمال مبرمة مع مؤسستك، ولا تُتح إلا الحقول التي يحتاجها المستلِم.</value>
+  </data>
+  <data name="WarningAckLabel" xml:space="preserve">
+    <value>لقد قرأت هذا التحذير وأُقرّ به (الإصدار {0}).</value>
+  </data>
+  <data name="WarningAcknowledgedOn" xml:space="preserve">
+    <value>تم الإقرار بالتحذير في {0} (الإصدار {1}).</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>حفظ إعدادات سير العمل المحمي</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات سير العمل المحمي.</value>
+  </data>
+  <data name="AdpRequired" xml:space="preserve">
+    <value>لا تتوفر ميزة سير العمل المحمي إلا أثناء تفعيل حماية البيانات المتقدمة لإدارتك.</value>
+  </data>
+  <data name="NotAdmin" xml:space="preserve">
+    <value>لا يمكن تغيير هذه الإعدادات إلا للمسؤولين الذين يملكون صلاحية «تهيئة إرسال البيانات المحمية».</value>
+  </data>
+  <data name="ManageLink" xml:space="preserve">
+    <value>إدارة سير العمل المحمي</value>
+  </data>
+  <data name="StepUpNotice" xml:space="preserve">
+    <value>يتطلب تشغيل هذا الإعداد أو إيقافه، وكذلك الموافقة على إتاحة أو تجديدها، تحققًا حديثًا متعدد العوامل.</value>
+  </data>
+  <data name="StepUpRequiredPrompt" xml:space="preserve">
+    <value>يتطلب هذا الإجراء تحققًا حديثًا متعدد العوامل. سيتم نقلك لإجراء التحقق ثم إعادتك إلى هذه الصفحة؛ كرّر الإجراء بعد ذلك.</value>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>الإتاحة المحمية</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>أرسل حقولًا محمية مختارة من سير العمل هذا إلى وجهة HTTPS المثبّتة الخاصة به. لا يُفك تشفير إلا الحقول التي تحددها؛ وتظل جميع القيم المحمية الأخرى على هيئة REDACTED.</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="State_None" xml:space="preserve">
+    <value>غير محمي</value>
+  </data>
+  <data name="State_Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="State_PendingApproval" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+  </data>
+  <data name="State_Active" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="State_Suspended" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="State_Expired" xml:space="preserve">
+    <value>منتهية الصلاحية</value>
+  </data>
+  <data name="State_Revoked" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="StateExpiring" xml:space="preserve">
+    <value>توشك على الانتهاء</value>
+  </data>
+  <data name="RenewalPending" xml:space="preserve">
+    <value>التجديد بانتظار الموافقة</value>
+  </data>
+  <data name="ProtectedBadge" xml:space="preserve">
+    <value>محمي: {0}</value>
+  </data>
+  <data name="Reason_config_changed" xml:space="preserve">
+    <value>تم تغيير التهيئة</value>
+  </data>
+  <data name="Reason_department_disabled" xml:space="preserve">
+    <value>تم إيقاف سير العمل المحمي</value>
+  </data>
+  <data name="Reason_adp_not_enabled" xml:space="preserve">
+    <value>حماية البيانات المتقدمة غير مفعّلة</value>
+  </data>
+  <data name="Reason_credential_changed" xml:space="preserve">
+    <value>تم تغيير بيانات الاعتماد</value>
+  </data>
+  <data name="Reason_admin_suspended" xml:space="preserve">
+    <value>علّقها أحد المسؤولين</value>
+  </data>
+  <data name="Reason_admin_revoked" xml:space="preserve">
+    <value>ألغاها أحد المسؤولين</value>
+  </data>
+  <data name="Reason_adp_offboarding" xml:space="preserve">
+    <value>إنهاء تفعيل حماية البيانات المتقدمة</value>
+  </data>
+  <data name="Reason_workflow_deleted" xml:space="preserve">
+    <value>تم حذف سير العمل</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>الحقول المراد إتاحتها</value>
+  </data>
+  <data name="FieldsHelp" xml:space="preserve">
+    <value>لا يوجد أي تحديد افتراضيًا. أشِر إلى الحقول المُتاحة في قالب الإخراج بالصيغة protected.call.&lt;name&gt;؛ وتظل قيم call.* على هيئة REDACTED.</value>
+  </data>
+  <data name="FormParsedHelp" xml:space="preserve">
+    <value>تتوفر بيانات النموذج أيضًا بصيغة محلَّلة عبر protected.call.form.</value>
+  </data>
+  <data name="Field_calls_name" xml:space="preserve">
+    <value>اسم البلاغ</value>
+  </data>
+  <data name="Field_calls_type" xml:space="preserve">
+    <value>نوع البلاغ</value>
+  </data>
+  <data name="Field_calls_natureofcall" xml:space="preserve">
+    <value>طبيعة البلاغ</value>
+  </data>
+  <data name="Field_calls_notes" xml:space="preserve">
+    <value>ملاحظات البلاغ</value>
+  </data>
+  <data name="Field_calls_completednotes" xml:space="preserve">
+    <value>ملاحظات الإغلاق</value>
+  </data>
+  <data name="Field_calls_address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Field_calls_geolocationdata" xml:space="preserve">
+    <value>الموقع الجغرافي</value>
+  </data>
+  <data name="Field_calls_w3w" xml:space="preserve">
+    <value>عنوان what3words</value>
+  </data>
+  <data name="Field_calls_contactname" xml:space="preserve">
+    <value>اسم جهة الاتصال</value>
+  </data>
+  <data name="Field_calls_contactnumber" xml:space="preserve">
+    <value>رقم جهة الاتصال</value>
+  </data>
+  <data name="Field_calls_sourceidentifier" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="Field_calls_incidentnumber" xml:space="preserve">
+    <value>رقم الحادث</value>
+  </data>
+  <data name="Field_calls_externalidentifier" xml:space="preserve">
+    <value>المعرّف الخارجي</value>
+  </data>
+  <data name="Field_calls_referencenumber" xml:space="preserve">
+    <value>الرقم المرجعي</value>
+  </data>
+  <data name="Field_calls_callformdata" xml:space="preserve">
+    <value>بيانات نموذج البلاغ</value>
+  </data>
+  <data name="Field_calls_deletedreason" xml:space="preserve">
+    <value>سبب الحذف</value>
+  </data>
+  <data name="DestinationHeader" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="DestinationHostLabel" xml:space="preserve">
+    <value>المضيف المثبّت</value>
+  </data>
+  <data name="CredentialLabel" xml:space="preserve">
+    <value>بيانات الاعتماد المثبّتة</value>
+  </data>
+  <data name="TokenHostLabel" xml:space="preserve">
+    <value>مضيف الرمز المميز المثبّت</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>لا توجد وجهة صالحة بعد</value>
+  </data>
+  <data name="ValidationHeader" xml:space="preserve">
+    <value>لا يمكن حماية سير العمل هذا بعد</value>
+  </data>
+  <data name="ValidationError_no_steps" xml:space="preserve">
+    <value>أضف خطوة مفعّلة واحدة على الأقل.</value>
+  </data>
+  <data name="ValidationError_action_not_allowed" xml:space="preserve">
+    <value>لا يمكن أن يحتوي سير العمل المحمي إلا على خطوات API من نوع POST أو PUT.</value>
+  </data>
+  <data name="ValidationError_credential_required" xml:space="preserve">
+    <value>تحتاج كل خطوة إلى بيانات اعتماد.</value>
+  </data>
+  <data name="ValidationError_credential_mismatch" xml:space="preserve">
+    <value>يجب أن تستخدم جميع الخطوات بيانات الاعتماد نفسها.</value>
+  </data>
+  <data name="ValidationError_credential_not_allowed" xml:space="preserve">
+    <value>استخدم بيانات اعتماد من نوع رمز Bearer أو مفتاح API أو بيانات اعتماد عميل OAuth2.</value>
+  </data>
+  <data name="ValidationError_credential_missing" xml:space="preserve">
+    <value>تستخدم إحدى الخطوات بيانات اعتماد لم تعد موجودة.</value>
+  </data>
+  <data name="ValidationError_url_required" xml:space="preserve">
+    <value>تحتاج كل خطوة إلى عنوان URL.</value>
+  </data>
+  <data name="ValidationError_scheme_not_https" xml:space="preserve">
+    <value>يجب أن يستخدم عنوان URL لكل خطوة بروتوكول HTTPS.</value>
+  </data>
+  <data name="ValidationError_host_not_literal" xml:space="preserve">
+    <value>يجب كتابة مضيف عنوان URL صراحةً، لا إنشاؤه من قالب.</value>
+  </data>
+  <data name="ValidationError_host_mismatch" xml:space="preserve">
+    <value>يجب أن ترسل جميع الخطوات إلى المضيف نفسه.</value>
+  </data>
+  <data name="ValidationError_protected_in_action_config" xml:space="preserve">
+    <value>لا يمكن استخدام قيم protected.* في عنوان URL أو في ترويسة.</value>
+  </data>
+  <data name="ValidationError_protected_in_condition" xml:space="preserve">
+    <value>لا يمكن استخدام قيم protected.* في شرط خطوة.</value>
+  </data>
+  <data name="ValidationError_trigger_not_supported" xml:space="preserve">
+    <value>في هذا الإصدار، لا يمكن حماية سوى مشغّلات البلاغات.</value>
+  </data>
+  <data name="ValidationError_token_url_invalid" xml:space="preserve">
+    <value>تحتاج بيانات اعتماد OAuth2 إلى عنوان URL للرمز المميز يستخدم HTTPS.</value>
+  </data>
+  <data name="ValidationError_protected_reference_without_release" xml:space="preserve">
+    <value>لا يحتوي سير العمل هذا على إتاحة محمية، لذا ستظهر قيم protected.* فارغة. قم أولًا بإعداد إتاحة محمية.</value>
+  </data>
+  <data name="RecipientHeader" xml:space="preserve">
+    <value>المستلِم</value>
+  </data>
+  <data name="RecipientTypeLabel" xml:space="preserve">
+    <value>نوع المستلِم</value>
+  </data>
+  <data name="RecipientType_CoveredEntity" xml:space="preserve">
+    <value>جهة مشمولة</value>
+  </data>
+  <data name="RecipientType_BusinessAssociate" xml:space="preserve">
+    <value>شريك أعمال</value>
+  </data>
+  <data name="RecipientNameLabel" xml:space="preserve">
+    <value>اسم المستلِم</value>
+  </data>
+  <data name="RecipientNamePlaceholder" xml:space="preserve">
+    <value>على سبيل المثال: DMH في المقاطعة، إدارة الحالات في Dynamics 365</value>
+  </data>
+  <data name="PurposeLabel" xml:space="preserve">
+    <value>الغرض</value>
+  </data>
+  <data name="PurposePlaceholder" xml:space="preserve">
+    <value>سبب حاجة المستلِم إلى هذه الحقول</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>أشهد بأن المستلِم هو مؤسستنا أو طرف تشمله اتفاقية شريك أعمال مبرمة مع مؤسستنا، وبأنه لا يحتاج إلا إلى الحقول المحددة أعلاه (إصدار التحذير {0}).</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>حفظ المسودة</value>
+  </data>
+  <data name="ApproveAndActivate" xml:space="preserve">
+    <value>الموافقة والتفعيل</value>
+  </data>
+  <data name="RequestApproval" xml:space="preserve">
+    <value>طلب الموافقة</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>موافقة</value>
+  </data>
+  <data name="RenewButton" xml:space="preserve">
+    <value>تجديد</value>
+  </data>
+  <data name="SuspendButton" xml:space="preserve">
+    <value>تعليق</value>
+  </data>
+  <data name="RevokeButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="DiscardDraft" xml:space="preserve">
+    <value>تجاهل المسودة</value>
+  </data>
+  <data name="SendTest" xml:space="preserve">
+    <value>إرسال اختبار ببيانات نموذجية</value>
+  </data>
+  <data name="TestSucceeded" xml:space="preserve">
+    <value>تم إرسال الاختبار ببيانات اصطناعية. أعادت كل خطوة حالة نجاح.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>لم ينجح الاختبار بالكامل. راجع نتائج الخطوات أدناه وسجل الإفصاح.</value>
+  </data>
+  <data name="TestStepResult" xml:space="preserve">
+    <value>الخطوة {0}: {1} (HTTP {2})</value>
+  </data>
+  <data name="ConfirmRevoke" xml:space="preserve">
+    <value>هل تريد إلغاء هذه الإتاحة؟ لا يمكن التراجع عن هذا الإجراء. لن يعمل سير العمل حتى تتم الموافقة على إتاحة جديدة.</value>
+  </data>
+  <data name="ConfirmSuspend" xml:space="preserve">
+    <value>هل تريد تعليق هذه الإتاحة؟ لن يعمل سير العمل حتى يوافق عليها أحد المسؤولين مجددًا.</value>
+  </data>
+  <data name="ConfirmDiscard" xml:space="preserve">
+    <value>هل تريد تجاهل هذه المسودة؟ سيعمل سير العمل مجددًا بقيم REDACTED.</value>
+  </data>
+  <data name="FingerprintChanged" xml:space="preserve">
+    <value>تغيّر سير العمل هذا منذ الموافقة عليه. لن يرسل أي شيء حتى يوافق أحد المسؤولين على التهيئة الحالية.</value>
+  </data>
+  <data name="RequestedOn" xml:space="preserve">
+    <value>تاريخ الطلب: {0}</value>
+  </data>
+  <data name="ApprovedOn" xml:space="preserve">
+    <value>تاريخ الموافقة: {0}</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>تاريخ الانتهاء: {0}</value>
+  </data>
+  <data name="AwaitingSecondApprover" xml:space="preserve">
+    <value>بانتظار مسؤول ثانٍ. لا يمكن للشخص الذي طلب الإتاحة الموافقة عليها.</value>
+  </data>
+  <data name="ReadOnlyNotice" xml:space="preserve">
+    <value>لا يمكن تغيير الإتاحة المحمية إلا للمسؤولين الذين يملكون صلاحية «تهيئة إرسال البيانات المحمية». يؤدي تعديل سير العمل هذا إلى تعليق الإتاحة المعتمدة حتى تتم الموافقة عليها مجددًا.</value>
+  </data>
+  <data name="SkippedNotice" xml:space="preserve">
+    <value>ما دام سير العمل هذا يملك إتاحة محمية غير نشطة، يتم تخطي عمليات تشغيله. ولا يعمل أبدًا بقيم REDACTED بدلًا من القيم المحمية.</value>
+  </data>
+  <data name="DepartmentOffNotice" xml:space="preserve">
+    <value>سير العمل المحمي متوقف لإدارتك. شغّله من قسم حماية البيانات لتهيئة إتاحة محمية.</value>
+  </data>
+  <data name="Err_protected_access_denied" xml:space="preserve">
+    <value>ليست لديك صلاحية للقيام بذلك.</value>
+  </data>
+  <data name="Err_step_up_required" xml:space="preserve">
+    <value>يلزم إجراء تحقق حديث متعدد العوامل.</value>
+  </data>
+  <data name="Err_interactive_session_required" xml:space="preserve">
+    <value>يجب أن ينفّذ هذا الإجراء مسؤول مسجّل الدخول، لا مفتاح API أو حساب خدمة.</value>
+  </data>
+  <data name="Err_attestation_required" xml:space="preserve">
+    <value>حدّد خانة الإشهاد للمتابعة.</value>
+  </data>
+  <data name="Err_ack_version_mismatch" xml:space="preserve">
+    <value>تغيّر نص التحذير. أعد تحميل الصفحة واقرأه ثم أقرّ به مجددًا.</value>
+  </data>
+  <data name="Err_self_approval_not_allowed" xml:space="preserve">
+    <value>أنت من طلب هذه الإتاحة، لذا يجب أن يوافق عليها مسؤول آخر.</value>
+  </data>
+  <data name="Err_invalid_state" xml:space="preserve">
+    <value>لا يمكن تنفيذ هذا الإجراء على الإتاحة في حالتها الحالية.</value>
+  </data>
+  <data name="Err_validation_failed" xml:space="preserve">
+    <value>سير العمل غير صالح للحماية. أصلح المشكلات المذكورة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Err_not_found" xml:space="preserve">
+    <value>لم يتم العثور على سير العمل أو الإتاحة.</value>
+  </data>
+  <data name="Err_trigger_not_supported" xml:space="preserve">
+    <value>في هذا الإصدار، لا يمكن حماية سوى مشغّلات البلاغات.</value>
+  </data>
+  <data name="Err_too_many_fields" xml:space="preserve">
+    <value>تم تحديد عدد كبير جدًا من الحقول.</value>
+  </data>
+  <data name="Err_no_fields" xml:space="preserve">
+    <value>حدّد حقلًا واحدًا على الأقل لإتاحته.</value>
+  </data>
+  <data name="Err_unknown_field" xml:space="preserve">
+    <value>تم تحديد حقل غير معروف.</value>
+  </data>
+  <data name="Err_recipient_required" xml:space="preserve">
+    <value>أدخل نوع المستلِم واسمه.</value>
+  </data>
+  <data name="Err_purpose_required" xml:space="preserve">
+    <value>أدخل الغرض من الإفصاح.</value>
+  </data>
+  <data name="Err_adp_not_enabled" xml:space="preserve">
+    <value>يجب تفعيل حماية البيانات المتقدمة أولًا.</value>
+  </data>
+  <data name="Err_protected_workflows_disabled" xml:space="preserve">
+    <value>سير العمل المحمي متوقف لإدارتك.</value>
+  </data>
+  <data name="Err_config_changed" xml:space="preserve">
+    <value>تغيّر سير العمل بعد تقديم الطلب. اطلب الموافقة مجددًا على التهيئة الحالية.</value>
+  </data>
+  <data name="Err_http_failed" xml:space="preserve">
+    <value>لم تقبل الوجهة الطلب.</value>
+  </data>
+  <data name="Err_command_failed" xml:space="preserve">
+    <value>تعذّر إكمال الإجراء. حاول مرة أخرى.</value>
+  </data>
+  <data name="ColWorkflow" xml:space="preserve">
+    <value>سير العمل</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="ColFields" xml:space="preserve">
+    <value>الحقول</value>
+  </data>
+  <data name="ColHost" xml:space="preserve">
+    <value>المضيف</value>
+  </data>
+  <data name="ColRecipient" xml:space="preserve">
+    <value>المستلِم</value>
+  </data>
+  <data name="ColApprovedBy" xml:space="preserve">
+    <value>الموافِق</value>
+  </data>
+  <data name="ColExpires" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="ColSends30" xml:space="preserve">
+    <value>الإرسالات (30 يومًا)</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="NoReleases" xml:space="preserve">
+    <value>لا يوجد سير عمل لديه إتاحة محمية.</value>
+  </data>
+  <data name="OpenWorkflow" xml:space="preserve">
+    <value>فتح سير العمل</value>
+  </data>
+  <data name="ViewDisclosures" xml:space="preserve">
+    <value>سجل الإفصاح</value>
+  </data>
+  <data name="ChainValid" xml:space="preserve">
+    <value>تم التحقق من سلسلة التدقيق (عدد السجلات: {0}).</value>
+  </data>
+  <data name="ChainInvalid" xml:space="preserve">
+    <value>فشل التحقق من سلسلة التدقيق عند السجل {0}. تواصل مع دعم Resgrid.</value>
+  </data>
+  <data name="RenewFromEditor" xml:space="preserve">
+    <value>جدّد من محرر سير العمل، حيث يظهر الإشهاد.</value>
+  </data>
+  <data name="FilterWorkflow" xml:space="preserve">
+    <value>سير العمل</value>
+  </data>
+  <data name="FilterAllWorkflows" xml:space="preserve">
+    <value>كل سير العمل</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>معرّف البلاغ</value>
+  </data>
+  <data name="FilterFrom" xml:space="preserve">
+    <value>من (UTC)</value>
+  </data>
+  <data name="FilterTo" xml:space="preserve">
+    <value>إلى (UTC)</value>
+  </data>
+  <data name="ApplyFilter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>تصدير CSV</value>
+  </data>
+  <data name="MetadataOnly" xml:space="preserve">
+    <value>بيانات وصفية فقط. لا يحتوي هذا السجل أبدًا على قيم الحقول أو الحمولات أو نصوص الاستجابات.</value>
+  </data>
+  <data name="ColSequence" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ColOccurred" xml:space="preserve">
+    <value>وقت الحدوث (UTC)</value>
+  </data>
+  <data name="ColType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="ColEvent" xml:space="preserve">
+    <value>الحدث أو النتيجة</value>
+  </data>
+  <data name="ColCall" xml:space="preserve">
+    <value>البلاغ</value>
+  </data>
+  <data name="ColHttp" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="ColBytes" xml:space="preserve">
+    <value>البايتات</value>
+  </data>
+  <data name="ColActor" xml:space="preserve">
+    <value>المنفّذ</value>
+  </data>
+  <data name="ColDetail" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>لا توجد سجلات مطابقة.</value>
+  </data>
+  <data name="TestBadge" xml:space="preserve">
+    <value>اختبار</value>
+  </data>
+  <data name="RecordType_disclosure" xml:space="preserve">
+    <value>إفصاح</value>
+  </data>
+  <data name="RecordType_admin_event" xml:space="preserve">
+    <value>إداري</value>
+  </data>
+  <data name="Outcome_sent" xml:space="preserve">
+    <value>تم الإرسال</value>
+  </data>
+  <data name="Outcome_failed_http" xml:space="preserve">
+    <value>فشل HTTP</value>
+  </data>
+  <data name="Outcome_failed_broker" xml:space="preserve">
+    <value>فشل فك التشفير</value>
+  </data>
+  <data name="Outcome_blocked_host" xml:space="preserve">
+    <value>محظور: المضيف</value>
+  </data>
+  <data name="Outcome_blocked_release" xml:space="preserve">
+    <value>محظور: الإتاحة</value>
+  </data>
+  <data name="Outcome_blocked_department" xml:space="preserve">
+    <value>محظور: الإدارة</value>
+  </data>
+  <data name="Outcome_blocked_guard" xml:space="preserve">
+    <value>محظور: نص مشفّر في الحمولة</value>
+  </data>
+  <data name="Outcome_failed_render" xml:space="preserve">
+    <value>فشل العرض</value>
+  </data>
+  <data name="Event_department_enabled" xml:space="preserve">
+    <value>تم تفعيل سير العمل المحمي</value>
+  </data>
+  <data name="Event_department_disabled" xml:space="preserve">
+    <value>تم تعطيل سير العمل المحمي</value>
+  </data>
+  <data name="Event_release_requested" xml:space="preserve">
+    <value>طُلبت الإتاحة</value>
+  </data>
+  <data name="Event_release_approved" xml:space="preserve">
+    <value>تمت الموافقة على الإتاحة</value>
+  </data>
+  <data name="Event_release_suspended" xml:space="preserve">
+    <value>عُلّقت الإتاحة</value>
+  </data>
+  <data name="Event_release_revoked" xml:space="preserve">
+    <value>أُلغيت الإتاحة</value>
+  </data>
+  <data name="Event_release_expired" xml:space="preserve">
+    <value>انتهت صلاحية الإتاحة</value>
+  </data>
+  <data name="Event_credential_rotated" xml:space="preserve">
+    <value>تم تدوير بيانات الاعتماد</value>
+  </data>
+  <data name="NoticeExpiryTitle" xml:space="preserve">
+    <value>سير عمل محمي توشك صلاحيته على الانتهاء</value>
+  </data>
+  <data name="NoticeExpiringBody" xml:space="preserve">
+    <value>تنتهي صلاحية الإتاحة المحمية لسير العمل «{0}» في {1}. يجب أن يجددها أحد المسؤولين، وإلا سيتوقف سير العمل عن الإرسال.</value>
+  </data>
+  <data name="NoticeExpiredBody" xml:space="preserve">
+    <value>انتهت صلاحية الإتاحة المحمية لسير العمل «{0}» وتوقف سير العمل عن الإرسال. يمكن لأحد المسؤولين تجديدها من محرر سير العمل.</value>
+  </data>
+  <data name="NoticeFailureTitle" xml:space="preserve">
+    <value>فشل سير عمل محمي</value>
+  </data>
+  <data name="NoticeFailureBody" xml:space="preserve">
+    <value>فشل سير العمل المحمي «{0}» في محاولته الأخيرة (التشغيل {1}، الخطأ {2}).</value>
+  </data>
+  <data name="Outcome_attempted" xml:space="preserve">
+    <value>محاولة (سُجّلت قبل الإرسال)</value>
+  </data>
+  <data name="Event_second_approver_relax_requested" xml:space="preserve">
+    <value>طُلب إلغاء اشتراط المعتمِد الثاني</value>
+  </data>
+  <data name="Event_second_approver_relaxed" xml:space="preserve">
+    <value>لم يعد المعتمِد الثاني مطلوبًا</value>
+  </data>
+  <data name="SecondApproverRelaxPending" xml:space="preserve">
+    <value>في {0} طلب أحد المسؤولين إيقاف اشتراط معتمِد ثانٍ. يجب أن يؤكد ذلك مسؤول آخر خلال 7 أيام بإلغاء تحديد المربع والحفظ.</value>
+  </data>
+  <data name="SecondApproverRelaxRequested" xml:space="preserve">
+    <value>تم تسجيل طلبك بإيقاف اشتراط معتمِد ثانٍ. يجب أن يؤكده مسؤول آخر قبل أن يصبح نافذًا.</value>
+  </data>
+  <data name="Err_concurrent_change" xml:space="preserve">
+    <value>قام شخص آخر بتغيير هذا الإذن في الوقت نفسه. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Err_disclosure_unavailable" xml:space="preserve">
+    <value>تعذّرت كتابة سجل الإفصاحات، لذلك لم يُرسل أي شيء. حاول مرة أخرى.</value>
+  </data>
+  <data name="Err_release_not_active" xml:space="preserve">
+    <value>لا يوجد إذن نشط لسير العمل هذا.</value>
+  </data>
+  <data name="Err_release_expired" xml:space="preserve">
+    <value>انتهت صلاحية الإذن. جدّده لاستئناف الإرسال.</value>
+  </data>
+  <data name="Err_action_not_allowed" xml:space="preserve">
+    <value>يمكن لخطوات استدعاء واجهة API فقط (POST أو PUT) إرسال البيانات المحمية.</value>
+  </data>
+  <data name="Err_credential_not_allowed" xml:space="preserve">
+    <value>بيانات اعتماد الخطوة ليست تلك المعتمدة لهذا الإذن.</value>
+  </data>
+  <data name="Err_host_mismatch" xml:space="preserve">
+    <value>مضيف الوجهة ليس المضيف المعتمد لهذا الإذن.</value>
+  </data>
+  <data name="Err_scheme_not_https" xml:space="preserve">
+    <value>يجب أن تستخدم الوجهة بروتوكول HTTPS.</value>
+  </data>
+  <data name="Err_redirect_refused" xml:space="preserve">
+    <value>ردّت الوجهة بإعادة توجيه. لا تُتبع عمليات إعادة التوجيه أبدًا مع البيانات المحمية.</value>
+  </data>
+  <data name="Err_token_host_mismatch" xml:space="preserve">
+    <value>مضيف رموز OAuth2 ليس المضيف المعتمد لهذا الإذن.</value>
+  </data>
+  <data name="Err_broker_failed" xml:space="preserve">
+    <value>تعذّر فك تشفير القيم المحمية. لم يُرسل أي شيء.</value>
+  </data>
+  <data name="Err_entity_unavailable" xml:space="preserve">
+    <value>تعذّر تحميل البلاغ لفك التشفير. لم يُرسل أي شيء.</value>
+  </data>
+  <data name="Err_render_failed" xml:space="preserve">
+    <value>تعذّر إنشاء القالب. لم يُرسل أي شيء.</value>
+  </data>
+  <data name="Err_payload_too_large" xml:space="preserve">
+    <value>المحتوى المُنشأ كبير جدًا. لم يُرسل أي شيء.</value>
+  </data>
+  <data name="Err_envelope_in_payload" xml:space="preserve">
+    <value>احتوى المحتوى المُنشأ على بيانات مشفّرة فتم حظره.</value>
+  </data>
+  <data name="Err_http_timeout" xml:space="preserve">
+    <value>لم تستجب الوجهة في الوقت المحدد.</value>
+  </data>
+  <data name="Err_protected_step_error" xml:space="preserve">
+    <value>فشلت الخطوة. لا يُسجَّل السبب لإبقاء القيم المحمية خارج السجلات.</value>
+  </data>
+  <data name="Field_calls_subjectidentifiers" xml:space="preserve">
+    <value>معرّفات الشخص (جميع المفاتيح)</value>
+  </data>
+  <data name="Outcome_failed_validation" xml:space="preserve">
+    <value>محتوى غير صالح</value>
+  </data>
+  <data name="Outcome_failed_projection" xml:space="preserve">
+    <value>فشل الإسقاط</value>
+  </data>
+  <data name="Outcome_failed_ack" xml:space="preserve">
+    <value>رفضته الوجهة</value>
+  </data>
+  <data name="Outcome_failed_response_too_large" xml:space="preserve">
+    <value>الاستجابة كبيرة جدًا</value>
+  </data>
+  <data name="Outcome_blocked_consent" xml:space="preserve">
+    <value>محظور: لا توجد موافقة Part 2</value>
+  </data>
+  <data name="Err_payload_invalid" xml:space="preserve">
+    <value>المحتوى المُنشأ غير صالح لنوع المحتوى الخاص به. لم يُرسل أي شيء.</value>
+  </data>
+  <data name="Err_projection_failed" xml:space="preserve">
+    <value>تعذّرت قراءة معرّفات الشخص في البلاغ. لم يُرسل أي شيء.</value>
+  </data>
+  <data name="Err_ack_rejected" xml:space="preserve">
+    <value>استلمت الوجهة الطلب لكنها رفضته.</value>
+  </data>
+  <data name="Err_response_too_large" xml:space="preserve">
+    <value>كانت استجابة الوجهة أكبر من المسموح، لذا تعذّر التحقق منها.</value>
+  </data>
+  <data name="Err_part2_consent_missing" xml:space="preserve">
+    <value>لا توجد موافقة مسجّلة وفق 42 CFR Part 2 لهذا البلاغ، لذلك لم تُرسل حقوله الخاضعة لـ Part 2.</value>
+  </data>
+  <data name="Err_capture_failed" xml:space="preserve">
+    <value>تم تسليم الطلب، لكن تعذّر حفظ القيم التي أعادتها الوجهة في البلاغ.</value>
+  </data>
+  <data name="Err_oauth_token_failed" xml:space="preserve">
+    <value>لم تُصدر نقطة نهاية رموز OAuth2 رمزًا.</value>
+  </data>
+  <data name="Err_auth_method_mismatch" xml:space="preserve">
+    <value>لم تعد بيانات الاعتماد تُصادق بالطريقة التي اعتمدها هذا الإذن.</value>
+  </data>
+  <data name="Err_signing_key_unavailable" xml:space="preserve">
+    <value>لا يوجد لبيانات الاعتماد مفتاح توقيع حالي.</value>
+  </data>
+  <data name="Err_field_conflict" xml:space="preserve">
+    <value>اسمح إما بحقل معرّفات الشخص كاملًا أو بمفاتيح منفردة، وليس بكليهما.</value>
+  </data>
+  <data name="Err_restricted_attestation_required" xml:space="preserve">
+    <value>أحد الحقول المحددة مقيّد. حدّد إقرار الحقول المقيّدة.</value>
+  </data>
+  <data name="Err_part2_attestation_required" xml:space="preserve">
+    <value>أحد الحقول المحددة يحتوي على معلومات خاضعة لـ 42 CFR Part 2. حدّد إقرار Part 2.</value>
+  </data>
+  <data name="Err_capture_requires_subject_identifiers" xml:space="preserve">
+    <value>تحفظ إحدى الخطوات قيمًا من الاستجابة في معرّفات الشخص، لذا يجب أن يشملها الإذن (الحقل كاملًا أو مفتاحًا واحدًا على الأقل).</value>
+  </data>
+  <data name="ValidationError_content_type_not_allowed" xml:space="preserve">
+    <value>تعلن إحدى الخطوات عن نوع محتوى لا يمكن للخطوات المحمية استخدامه.</value>
+  </data>
+  <data name="ValidationError_success_rule_invalid" xml:space="preserve">
+    <value>قاعدة النجاح لإحدى الخطوات غير مكتملة أو غير معروفة.</value>
+  </data>
+  <data name="ValidationError_capture_invalid" xml:space="preserve">
+    <value>أحد إدخالات التقاط الاستجابة في خطوة غير صالح (المصدر أو التعبير أو المفتاح).</value>
+  </data>
+  <data name="ValidationError_capture_too_many" xml:space="preserve">
+    <value>تلتقط إحدى الخطوات قيم استجابة أكثر من المسموح.</value>
+  </data>
+  <data name="ValidationError_idempotency_header_invalid" xml:space="preserve">
+    <value>اسم ترويسة عدم التكرار لإحدى الخطوات غير صالح أو محجوز.</value>
+  </data>
+  <data name="ValidationError_if_none_exist_invalid" xml:space="preserve">
+    <value>قيمة If-None-Exist لإحدى الخطوات طويلة جدًا أو تحتوي على فاصل أسطر.</value>
+  </data>
+  <data name="ValidationError_signing_key_missing" xml:space="preserve">
+    <value>تستخدم بيانات اعتماد OAuth2 طريقة private_key_jwt لكن ليس لديها مفتاح توقيع بعد. احفظ بيانات الاعتماد لإنشاء مفتاح.</value>
+  </data>
+  <data name="Warning_unescaped_protected_value" xml:space="preserve">
+    <value>يضع أحد القوالب قيمة محمية دون json_escape أو xml_escape أو hl7_escape. قد تؤدي علامة اقتباس أو فاصل أسطر في القيمة إلى إفساد المحتوى، فيفشل عندها في التحقق بدلًا من إرساله.</value>
+  </data>
+  <data name="AuthMethodLabel" xml:space="preserve">
+    <value>مصادقة العميل</value>
+  </data>
+  <data name="SubjectKeysHeader" xml:space="preserve">
+    <value>مفاتيح معرّفات الشخص</value>
+  </data>
+  <data name="SubjectKeysHelp" xml:space="preserve">
+    <value>اسمح بمعرّفات منفردة بدلًا من المجموعة كاملة: لا تصل إلى protected.call.subject_ids إلا المفاتيح المحددة.</value>
+  </data>
+  <data name="SubjectKeysOtherLabel" xml:space="preserve">
+    <value>مفاتيح أخرى (مفصولة بفواصل)</value>
+  </data>
+  <data name="CustomFieldsHeader" xml:space="preserve">
+    <value>الحقول المخصصة للبلاغ</value>
+  </data>
+  <data name="CustomFieldsHelp" xml:space="preserve">
+    <value>يُفك تشفير كل حقل مخصص محدد على حدة ويظهر بالشكل protected.call.udf.&lt;الاسم&gt;.</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>مقيّد</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="RestrictedAttestationLabel" xml:space="preserve">
+    <value>أؤكد أن هذا المستلم مخوّل باستلام الحقول المقيّدة ({0}).</value>
+  </data>
+  <data name="Part2AttestationText" xml:space="preserve">
+    <value>42 CFR Part 2: تحتوي الحقول المحددة على معلومات عن اضطرابات تعاطي المواد. تتطلب إعادة الإفصاح عنها موافقة خطية من المريض أو أساسًا آخر يسمح به 42 CFR Part 2، ويجب إبلاغ المستلم بأن أي إعادة إفصاح لاحقة محظورة.</value>
+  </data>
+  <data name="Part2AttestationLabel" xml:space="preserve">
+    <value>أقرّ بأن القسم لديه الموافقة أو أي أساس آخر وفق 42 CFR Part 2 مطلوب لإعادة الإفصاح هذه ({0}).</value>
+  </data>
+  <data name="Part2ConsentNotice" xml:space="preserve">
+    <value>لا يُرسل البلاغ إلا عند تحديد "موافقة Part 2 مسجّلة" عليه؛ وإلا تُحظر الخطوة ويُسجَّل ذلك.</value>
+  </data>
+  <data name="StepOptionsHeader" xml:space="preserve">
+    <value>خيارات التسليم المحمي</value>
+  </data>
+  <data name="StepOptionsHelp" xml:space="preserve">
+    <value>كيف تؤكد الوجهة الاستلام، وأي القيم المُعادة تُحفظ في البلاغ، وكيف يتم التعرّف على إعادة المحاولات. كل خيار هنا جزء من اعتماد الإذن.</value>
+  </data>
+  <data name="StepSuccessRule" xml:space="preserve">
+    <value>قاعدة النجاح</value>
+  </data>
+  <data name="StepRulePath" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="StepRuleExpected" xml:space="preserve">
+    <value>القيمة المتوقعة</value>
+  </data>
+  <data name="StepCapture" xml:space="preserve">
+    <value>حفظ قيم الاستجابة</value>
+  </data>
+  <data name="StepCaptureHelp" xml:space="preserve">
+    <value>واحد في كل سطر: المصدر | التعبير | المفتاح. المصادر: json_path وxpath وhl7_field وheader وfhir_location_id. تُحفظ القيم مشفّرة في معرّفات الشخص الخاصة بالبلاغ.</value>
+  </data>
+  <data name="StepIdempotencyHeader" xml:space="preserve">
+    <value>ترويسة عدم التكرار</value>
+  </data>
+  <data name="StepIfNoneExist" xml:space="preserve">
+    <value>FHIR If-None-Exist</value>
+  </data>
+  <data name="Rule_http_2xx" xml:space="preserve">
+    <value>أي حالة 2xx</value>
+  </data>
+  <data name="Rule_json_path" xml:space="preserve">
+    <value>مسار JSON يساوي</value>
+  </data>
+  <data name="Rule_xpath" xml:space="preserve">
+    <value>XPath يساوي</value>
+  </data>
+  <data name="Rule_hl7_ack" xml:space="preserve">
+    <value>إقرار HL7 (AA / CA)</value>
+  </data>
+  <data name="Rule_fhir_operation_outcome" xml:space="preserve">
+    <value>لا يوجد خطأ في OperationOutcome الخاص بـ FHIR</value>
+  </data>
+  <data name="ColContentType" xml:space="preserve">
+    <value>نوع المحتوى</value>
+  </data>
+  <data name="CapturedKeysLabel" xml:space="preserve">
+    <value>المفاتيح المحفوظة</value>
+  </data>
+</root>

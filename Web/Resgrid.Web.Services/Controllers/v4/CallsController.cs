@@ -64,6 +64,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IProtectedReadService _protectedCallReadService;
 		private readonly IContactsService _contactsService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IProtectedWriteService _protectedWriteService;
 
 		public CallsController(
@@ -93,10 +94,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentDataProtectionService dataProtectionService,
 			IProtectedReadService protectedCallReadService,
 			IProtectedWriteService protectedWriteService,
-			IContactsService contactsService
+			IContactsService contactsService,
+			IDispatchScopeService dispatchScopeService
 			)
 		{
 			_contactsService = contactsService;
+			_dispatchScopeService = dispatchScopeService;
 			_dataProtectionService = dataProtectionService;
 			_protectedCallReadService = protectedCallReadService;
 			_protectedWriteService = protectedWriteService;
@@ -172,6 +175,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.ContactInfo = null;
 				call.ReferenceId = null;
 				call.ExternalId = null;
+				call.SubjectIdentifiers = null;
 				call.IncidentId = null;
 				call.AudioFileId = null;
 				call.Type = null;
@@ -235,7 +239,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new ActiveCallsResult();
 
-			var calls = (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)).OrderByDescending(x => x.LoggedOn).ToList();
+			// Group-scoped dispatch (off by default) trims this to the caller's area and the calls they are on.
+			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
+				.OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
@@ -911,6 +917,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (fieldViolations.Count > 0)
 				return BadRequest(NewCallFieldPolicyValidator.DescribeViolations(fieldViolations));
 
+			var subjectIdentifierErrors = CallSubjectIdentifiers.Validate(newCallInput.SubjectIdentifiers);
+			if (subjectIdentifierErrors.Count > 0)
+				return BadRequest(string.Join("; ", subjectIdentifierErrors));
+
 			var call = new Call
 			{
 				DepartmentId = effectiveDepartmentId,
@@ -928,6 +938,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.ExternalId))
 				call.ExternalIdentifier = newCallInput.ExternalId;
+
+			// Plaintext here; the protected-write pass below envelopes it through the no-grant workload lane (or the
+			// caller's grant) exactly like every other cataloged call field.
+			call.SubjectIdentifiers = CallSubjectIdentifiers.Serialize(newCallInput.SubjectIdentifiers);
+			call.Part2ConsentOnFile = newCallInput.Part2ConsentOnFile ?? false;
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.IncidentId))
 				call.IncidentNumber = newCallInput.IncidentId;
@@ -1285,6 +1300,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.ExternalId))
 				call.ExternalIdentifier = editCallInput.ExternalId;
+
+			// Null leaves the stored identifiers (usually an envelope) untouched; an object replaces them.
+			if (editCallInput.SubjectIdentifiers != null)
+			{
+				var subjectIdentifierErrors = CallSubjectIdentifiers.Validate(editCallInput.SubjectIdentifiers);
+				if (subjectIdentifierErrors.Count > 0)
+					return BadRequest(string.Join("; ", subjectIdentifierErrors));
+				call.SubjectIdentifiers = CallSubjectIdentifiers.Serialize(editCallInput.SubjectIdentifiers);
+			}
+
+			if (editCallInput.Part2ConsentOnFile.HasValue)
+				call.Part2ConsentOnFile = editCallInput.Part2ConsentOnFile.Value;
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.IncidentId))
 				call.IncidentNumber = editCallInput.IncidentId;
@@ -2280,6 +2307,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// The subject identifiers for a response: only resolved plaintext is returned. An envelope or the REDACTED
+		/// placeholder (no grant) comes back as null, with calls.subjectidentifiers in RedactedFields.
+		/// </summary>
+		private static Dictionary<string, string> ToSubjectIdentifiersResult(string stored)
+		{
+			if (string.IsNullOrWhiteSpace(stored) || stored == ProtectedDataEnvelope.RedactionValue || ProtectedDataEnvelope.HasEnvelopePrefix(stored))
+				return null;
+			return CallSubjectIdentifiers.TryParse(stored, out var identifiers) && identifiers.Count > 0
+				? new Dictionary<string, string>(identifiers, StringComparer.Ordinal)
+				: null;
+		}
+
 		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null)
 		{
 			var callResult = new CallResultData();
@@ -2351,6 +2391,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.ContactInfo = call.ContactNumber;
 			callResult.ReferenceId = call.ReferenceNumber;
 			callResult.ExternalId = call.ExternalIdentifier;
+			callResult.SubjectIdentifiers = ToSubjectIdentifiersResult(call.SubjectIdentifiers);
+			callResult.Part2ConsentOnFile = call.Part2ConsentOnFile;
 			callResult.IncidentId = call.IncidentNumber;
 			callResult.Type = call.Type;
 

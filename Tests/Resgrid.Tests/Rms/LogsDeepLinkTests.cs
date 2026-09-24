@@ -103,7 +103,7 @@ namespace Resgrid.Tests.Rms
 			_unitsController = new UnitsController(_departments.Object, Mock.Of<IUsersService>(), _units.Object, _authorization.Object, Mock.Of<ILimitsService>(), groups.Object, Mock.Of<ICallsService>(),
 				Mock.Of<IEventAggregator>(), Mock.Of<ICustomStateService>(), Mock.Of<IGeoService>(), Mock.Of<IDepartmentSettingsService>(), Mock.Of<IGeoLocationProvider>(), Mock.Of<INovuProvider>(),
 				Mock.Of<IMappingService>(), Mock.Of<IUserDefinedFieldsService>(), Mock.Of<IUdfRenderingService>(), Mock.Of<IStringLocalizer<Resgrid.Localization.Common>>(), Mock.Of<IPersonnelRolesService>(),
-				_protectedRead.Object, _cutover.Object)
+				_protectedRead.Object, _cutover.Object, Mock.Of<IDispatchScopeService>())
 			{ ControllerContext = new ControllerContext { HttpContext = _http } };
 		}
 

@@ -12,6 +12,7 @@ using Resgrid.Chatbot.Services;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Tests.Helpers;
 using LinkingCodeEntity = Resgrid.Model.ChatbotLinkingCode;
 
 namespace Resgrid.Tests.Chatbot
@@ -44,7 +45,7 @@ namespace Resgrid.Tests.Chatbot
 			var depts = new Mock<IDepartmentsService>();
 			var authz = new Mock<IAuthorizationService>();
 
-			var handler = new CallDetailActionHandler(calls.Object, depts.Object, authz.Object);
+			var handler = new CallDetailActionHandler(calls.Object, depts.Object, authz.Object, DispatchScopeMocks.Off());
 
 			var response = await handler.HandleAsync(new ChatbotMessage { Text = "C5" }, CallDetailIntent("5"), Session(departmentId: 1));
 
@@ -65,7 +66,7 @@ namespace Resgrid.Tests.Chatbot
 			var authz = new Mock<IAuthorizationService>();
 			authz.Setup(a => a.CanUserViewCallAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(false);
 
-			var handler = new CallDetailActionHandler(calls.Object, depts.Object, authz.Object);
+			var handler = new CallDetailActionHandler(calls.Object, depts.Object, authz.Object, DispatchScopeMocks.Off());
 
 			var response = await handler.HandleAsync(new ChatbotMessage { Text = "C5" }, CallDetailIntent("5"), Session(departmentId: 1));
 

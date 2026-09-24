@@ -143,6 +143,12 @@ namespace Resgrid.Tests
 				builder.RegisterInstance(new Moq.Mock<Resgrid.Model.Services.IFeatureToggleService>().Object)
 					.As<Resgrid.Model.Services.IFeatureToggleService>();
 
+				// Saving a call custom field definition notifies Protected Workflows (sensitivity retags re-fingerprint releases).
+				// The workflow repositories are not in the testing data module: loose mocks, nothing is pinned to anything.
+				builder.RegisterInstance(new Moq.Mock<IWorkflowRepository>().Object).As<IWorkflowRepository>();
+				builder.RegisterInstance(new Moq.Mock<IWorkflowStepRepository>().Object).As<IWorkflowStepRepository>();
+				builder.RegisterInstance(new Moq.Mock<IWorkflowCredentialRepository>().Object).As<IWorkflowCredentialRepository>();
+
 				// UDF mock repositories
 				builder.RegisterType<MockUdfDefinitionRepository>()
 					.As<IUdfDefinitionRepository>()

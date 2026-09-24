@@ -1094,4 +1094,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Le profil n'a pas pu être enregistré ; vérifiez les champs signalés.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Répartition par groupe</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Limiter la répartition aux zones de groupe</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Lorsque cette option est activée, les listes d'appels actifs, les cartes et le tableau des unités les plus proches de chaque membre n'affichent que son propre groupe et les groupes qui en dépendent : les appels situés dans les limites de ces groupes ou qui leur ont été attribués, ainsi que tout appel que le membre a signalé ou auquel il a été affecté. Les administrateurs du département et les rôles ci-dessous conservent une vue de tout le département. Rien n'est copié ni déplacé : confier la répartition à un autre poste au changement de garde n'est qu'un changement de rôle.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Rôles de répartition pour tout le département</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Les membres ayant l'un de ces rôles (par exemple un centre de répartition central) voient toutes les zones lorsque la limitation est active. Attribuez ou retirez le rôle pour transférer la répartition ; cela prend effet au prochain chargement de page.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Aucun rôle de personnel n'est encore défini.</value>
+  </data>
 </root>

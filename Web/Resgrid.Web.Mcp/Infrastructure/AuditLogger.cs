@@ -56,8 +56,7 @@ namespace Resgrid.Web.Mcp.Infrastructure
 					entry.DurationMs
 				);
 
-				// Could also send to external audit service or database
-				// await _apiClient.PostAsync<AuditEntry, object>("/api/v4/Audit/LogEntry", entry, entry.AccessToken);
+				// Local log only: the v4 API has no audit-ingestion endpoint to forward these entries to.
 			}
 			catch (Exception ex)
 			{

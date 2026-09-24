@@ -1143,4 +1143,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>تعذّر حفظ الملف؛ راجع الحقول المميّزة.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>التوجيه حسب المجموعة</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>قصر التوجيه على مناطق المجموعات</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>عند التفعيل، تعرض قوائم البلاغات النشطة والخرائط ولوحة أقرب الوحدات لكل عضو مجموعته فقط والمجموعات التابعة لها: البلاغات الواقعة داخل حدود تلك المجموعات أو الموجهة إليها، بالإضافة إلى أي بلاغ أبلغ عنه العضو أو وُجِّه إليه. يحتفظ مسؤولو القسم والأدوار أدناه بعرض القسم بالكامل. لا يتم نسخ أي شيء أو نقله، لذا فإن تسليم التوجيه إلى مكتب آخر عند تغيير المناوبة هو مجرد تغيير في الدور.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>أدوار التوجيه على مستوى القسم</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>يرى الأعضاء الذين يحملون أيًا من هذه الأدوار (مثل مركز توجيه مركزي) جميع المناطق أثناء تفعيل التقييد. عيّن الدور أو أزِله لتسليم التوجيه؛ ويسري ذلك عند تحميل الصفحة التالي.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>لم يتم تعريف أي أدوار للأفراد بعد.</value>
+  </data>
 </root>

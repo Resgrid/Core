@@ -255,16 +255,16 @@
     <value>L'activation de cette option imprimera un appel sur l'imprimante sélectionnée lorsqu'une unité ou une personne de ce groupe est attachée (déployée) à un appel</value>
   </data>
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>Géorepérage de Station</value>
+    <value>Limite du groupe</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>Géorepérage de Station</value>
+    <value>Limite du groupe</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>Géorepérage de Station</value>
+    <value>Limite du groupe</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>Ci-dessous, vous pouvez créer un géorepérage pour votre station. Les champs en italique bleu sont obligatoires. Les géorepérages vous permettent de créer une limite sur la carte qui correspond à la zone de réponse de cette station.</value>
+    <value>Ci-dessous, vous pouvez tracer la limite de ce groupe : la zone d'intervention d'une station ou la zone de service d'un groupe organisationnel. Les appels situés à l'intérieur appartiennent à ce groupe pour la répartition par groupe et les recommandations par station. Pour la tracer, cliquez sur la carte pour placer le premier point, continuez à cliquer pour ajouter des lignes jusqu'à fermer la zone, puis enregistrez.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>Couleur du District</value>

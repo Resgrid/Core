@@ -23,6 +23,12 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool DispatchShiftInsteadOfGroup { get; set; }
 		public bool AutoSetStatusForShiftPersonnel { get; set; }
 
+		/// <summary>Group-scoped dispatch: limit each user's dispatch view to their group and the groups beneath it.</summary>
+		public bool GroupDispatchScopeEnabled { get; set; }
+
+		/// <summary>Personnel roles that keep a department-wide dispatch view while scoping is on.</summary>
+		public List<int> GroupDispatchScopeRoleIds { get; set; } = new List<int>();
+
 		public bool UnitDispatchAlsoDispatchToAssignedPersonnel { get; set; }
 		public bool UnitDispatchAlsoDispatchToGroup { get; set; }
 

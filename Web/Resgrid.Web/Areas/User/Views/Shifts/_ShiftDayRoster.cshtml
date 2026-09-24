@@ -1,0 +1,97 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Shifts
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftDayRosterList
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@* One roster table on the day page: who is on it, why, and the per-person actions the caller is allowed. *@
+@if (!Model.Rows.Any())
+{
+	<p class="text-muted">@localizer["NoPersonnelOnDay"]</p>
+}
+else
+{
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>@localizer["NameColumn"]</th>
+					@if (Model.ShowGroup)
+					{
+						<th>@localizer["GroupColumn"]</th>
+					}
+					<th>@localizer["RolesColumn"]</th>
+					<th>@localizer["StatusColumn"]</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var row in Model.Rows)
+				{
+					<tr>
+						<td>
+							@row.Name
+							@if (row.IsYou)
+							{
+								<span class="label label-info">@localizer["YouBadge"]</span>
+							}
+						</td>
+						@if (Model.ShowGroup)
+						{
+							<td>@row.GroupName</td>
+						}
+						<td>@row.Roles</td>
+						<td>
+							@switch (row.Source)
+							{
+								case ShiftRosterSources.SupervisorAssigned:
+									<span class="label label-primary">@localizer["SourceSupervisorAssigned"]</span>
+									break;
+								case ShiftRosterSources.Signup:
+									<span class="label label-default">@localizer["SourceSignup"]</span>
+									break;
+								case ShiftRosterSources.Trade:
+									<span class="label label-info">@String.Format(localizer["SourceTradeFormat"].Value, row.TradedFromName)</span>
+									break;
+								default:
+									<span class="label label-default">@localizer["SourceAssigned"]</span>
+									break;
+							}
+							@if (row.ApprovalPending)
+							{
+								<span class="label label-warning">@localizer["PendingApprovalBadge"]</span>
+							}
+						</td>
+						<td>
+							@if (row.CanReview)
+							{
+								<form method="post" asp-controller="Shifts" asp-action="ReviewSignup" asp-route-area="User" class="form-inline m-b-xs">
+									<input type="hidden" name="shiftSignupId" value="@row.ShiftSignupId" />
+									<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+									<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" />
+									<button type="submit" name="approve" value="true" class="btn btn-xs btn-primary">@localizer["ApproveButton"]</button>
+									<button type="submit" name="approve" value="false" class="btn btn-xs btn-danger">@localizer["DenyButton"]</button>
+								</form>
+							}
+							else if (row.CanManage)
+							{
+								<form method="post" asp-controller="Shifts" asp-action="RemoveFromShiftDay" asp-route-area="User" class="form-inline m-b-xs">
+									<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+									<input type="hidden" name="userId" value="@row.UserId" />
+									<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" />
+									<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["RemoveFromDayConfirm"]">@localizer["RemoveFromDayButton"]</button>
+								</form>
+							}
+							@if (row.CanWithdraw && !row.CanManage)
+							{
+								<form method="post" asp-controller="Shifts" asp-action="DeleteShiftDaySignup" asp-route-area="User" style="display:inline;">
+									<input type="hidden" name="shiftSignupId" value="@row.ShiftSignupId" />
+									<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+									<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["WithdrawConfirm"]">@localizer["WithdrawButton"]</button>
+								</form>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}

@@ -45,7 +45,8 @@ namespace Resgrid.Tests.Services
 		public void Catalog_27_keeps_only_internal_fields_and_binds_no_customer_facing_table()
 		{
 			var catalog = new ProtectedFieldCatalog();
-			catalog.Version.Should().Be(28, "Phase D rides 26, the completion pass 27 and Phase E 28; nothing is deployed on any of them yet");
+			catalog.Version.Should().Be(29, "Phase D rides 26, the completion pass 27, Phase E 28 and the Protected Workflows subject identifiers 29; nothing is deployed on any of them yet");
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 29).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "calls.subjectidentifiers" });
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 28).Select(f => f.FieldId).Should().BeEquivalentTo(WorkforceProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
 			foreach (var table in WorkforceProtectedFields.Tables)
 				AdpTableBindings.V1.Should().Contain(b => string.Equals(b.TableName, table.Table, StringComparison.OrdinalIgnoreCase), table.Table);

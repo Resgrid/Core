@@ -582,11 +582,8 @@
   <data name="RenderedOutput" xml:space="preserve">
     <value>Wyrenderowane wyjście</value>
   </data>
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value>Wszystkie dostępne typy zdarzeń wyzwalacza mają już skonfigurowany przepływ pracy. Usuń istniejący przepływ pracy, aby zwolnić jego typ zdarzenia.</value>
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
-    <value>Każdy typ zdarzenia może mieć tylko jeden przepływ pracy. Wyświetlane są tylko nieużywane typy zdarzeń.</value>
+    <value>Zdarzenie, które uruchamia ten przepływ pracy. Kilka przepływów pracy może korzystać z tego samego zdarzenia; każdy działa niezależnie.</value>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>Szczegóły</value>
@@ -618,4 +615,112 @@
   <data name="ExportTemplate" xml:space="preserve"><value>Eksport raportu rekordów</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>Brak (wyślij tylko wyrenderowany szablon)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>Kroki e-mail dołączają eksport; kroki przesyłania pliku wysyłają go pod jego nazwą pliku zamiast wyrenderowanego tekstu. Eksporty projektuje się w Rekordy &gt; Eksporty raportów.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>Poświadczenia klienta OAuth2</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>Adres URL tokenu</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>Punkt końcowy tokenu HTTPS, na przykład https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>Identyfikator klienta</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>Klucz tajny klienta</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>Zakres</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>W przypadku Microsoft Dataverse użyj https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>Odbiorca tokenu (opcjonalnie)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>Uwierzytelnianie klienta</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>Klucz tajny klienta</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>JWT z kluczem prywatnym (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>Algorytm podpisu</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>Resgrid generuje i przechowuje parę kluczy; klucz prywatny jest szyfrowany i nigdy nie jest wyświetlany. Zarejestruj adres URL JWKS (lub prześlij klucz publiczny) na serwerze tokenów.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>Adres URL JWKS</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>Kopiuj</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>Bieżący klucz {0}, utworzony {1}. Opublikowane klucze: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>Pobierz publiczny JWK</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>Zmień klucz</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>Wygenerować nowy klucz podpisu? Bieżący klucz pozostanie opublikowany przez okres przejściowy, aby serwer tokenów mógł się przełączyć.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>Wygenerowano nowy klucz podpisu. Poprzedni klucz pozostaje opublikowany przez okres przejściowy.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>Para kluczy jest generowana przy zapisie. Następnie pojawią się tu adres URL JWKS i pobieranie klucza publicznego.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>Zacznij od szablonu</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>Szablony tworzą wyłączony przepływ pracy z przykładowymi miejscami docelowymi. Ustaw adres URL i poświadczenie dla każdego kroku, a następnie go włącz.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>Użyj szablonu</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>Chronione przepływy pracy</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>Przepływ pracy utworzono z szablonu. Jest wyłączony: ustaw miejsce docelowe i poświadczenie dla każdego kroku, a następnie go włącz.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>Przepływ pracy utworzono z szablonu wraz z roboczym chronionym zezwoleniem. Ustaw docelowy adres URL i poświadczenie kroku, wybierz udostępniane pola i poproś o zatwierdzenie. Nic nie zostanie wysłane przed zatwierdzeniem zezwolenia.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>Osiągnięto limit przepływów pracy w Twoim planie. Przejdź na wyższy plan, aby dodać więcej.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Webhook: nowe zgłoszenie (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>Wysyła numer, nazwę, priorytet i adres zgłoszenia jako JSON po jego dodaniu, z kluczem idempotencji.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>E-mail: zamknięte zgłoszenie</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>Wysyła e-mailem krótkie podsumowanie po zamknięciu zgłoszenia.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter i Observations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>Po zamknięciu zgłoszenia wysyła do elektronicznej dokumentacji medycznej pakiet transakcyjny FHIR R4 (Bundle): Encounter (klasa FLD, zakończony, od dysponowania do zamknięcia) dla pacjenta z subject_ids.ehr_client_id oraz jedną Observation na każde udostępnione pole niestandardowe. Używa warunkowego tworzenia i zapisuje identyfikator nowego Encounter jako ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>Notatka z wizyty HL7 v2.5.1 MDM^T02</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>Po zamknięciu zgłoszenia wysyła dokument MDM^T02 „Crisis Field Response” do silnika integracyjnego przez HTTPS: PID-3 to identyfikator klienta w dokumentacji medycznej, MSH-10 to klucz idempotencji, jeden OBX na każde udostępnione pole niestandardowe. Kończy się sukcesem tylko przy potwierdzeniu AA.</value>
+  </data>
 </root>

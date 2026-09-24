@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Resgrid.Web.Mcp.ModelContextProtocol;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Resgrid.Web.Mcp.Tools
 {
@@ -64,7 +65,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving personnel list");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Personnel/GetAll",
+							V4Routes.Get.AllPersonnelInfos,
 							args.AccessToken
 						);
 
@@ -113,15 +114,15 @@ namespace Resgrid.Web.Mcp.Tools
 
 						_logger.LogInformation("Retrieving personnel statuses");
 
-						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/PersonnelStatuses/GetAllStatuses",
+						var result = await _apiClient.GetAsync<JObject>(
+							V4Routes.Get.AllPersonnelInfos,
 							args.AccessToken
 						);
 
 						return new
 						{
 							success = true,
-							data = result
+							data = V4ResponseReader.Project(V4ResponseReader.GetDataArray(result), V4ResponseReader.PersonnelStatusFields)
 						};
 					}
 					catch (Exception ex)
@@ -143,7 +144,7 @@ namespace Resgrid.Web.Mcp.Tools
 				{
 					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
 					["userId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "User ID of the personnel member" },
-					["statusType"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Status type code (0=Unavailable, 1=Available, 2=Committed, 3=OnScene, 4=Responding, 5=Standing By, 6=Not Responding)" },
+					["statusType"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Status id. Defaults: 0=Available, 1=Not Responding, 2=Responding, 3=On Scene, 4=Available Station, 5=Responding To Station, 6=Responding To Scene, 7=On Unit. Departments with custom statuses use their own status ids." },
 					["note"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional note about the status change" }
 				},
 				new[] { "accessToken", "userId", "statusType" }
@@ -169,22 +170,23 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("User ID is required");
 						}
 
-						if (args.StatusType < 0 || args.StatusType > 6)
+						if (args.StatusType < 0)
 						{
-							return CreateErrorResponse("StatusType must be between 0 and 6 (0=Unavailable, 1=Available, 2=Committed, 3=OnScene, 4=Responding, 5=Standing By, 6=Not Responding)");
+							return CreateErrorResponse("StatusType must be a status id of 0 or greater");
 						}
 
 						_logger.LogInformation("Setting status for personnel {UserId}", args.UserId);
 
+						// SavePersonStatus takes the status id as a string Type. Only department admins may set another member's status.
 						var statusData = new
 						{
-							userId = args.UserId,
-							type = args.StatusType,
-							note = args.Note
+							UserId = args.UserId,
+							Type = args.StatusType.ToString(),
+							Note = args.Note
 						};
 
 						var result = await _apiClient.PostAsync<object, object>(
-							"/api/v4/PersonnelStatuses/SetPersonnelStatus",
+							V4Routes.Post.SavePersonStatus,
 							statusData,
 							args.AccessToken
 						);
@@ -220,7 +222,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 			server.AddTool(
 				toolName,
-				"Retrieves the current GPS locations of all personnel in the department",
+				"Retrieves the current GPS locations of personnel in the department. Only people with a current location that the caller may view are returned.",
 				schema,
 				async (arguments) =>
 				{
@@ -235,15 +237,17 @@ namespace Resgrid.Web.Mcp.Tools
 
 						_logger.LogInformation("Retrieving personnel locations");
 
-						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/PersonnelLocation/GetLatestLocations",
+						// v4 has no bulk latest-location endpoint for personnel; the map markers carry them, with the
+						// department's location TTL and the location-view permissions already applied.
+						var result = await _apiClient.GetAsync<JObject>(
+							V4Routes.Get.MapDataAndMarkers,
 							args.AccessToken
 						);
 
 						return new
 						{
 							success = true,
-							data = result
+							data = V4ResponseReader.GetMapMarkers(result, V4ResponseReader.PersonnelMarkerType, "UserId")
 						};
 					}
 				catch (Exception ex)

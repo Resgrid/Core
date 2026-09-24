@@ -321,7 +321,8 @@ namespace Resgrid.Tests.Services
 				new Mock<INotesService>().Object,
 				new Mock<ICacheProvider>().Object,
 				new Mock<IContactsService>().Object,
-				new Mock<IEventAggregator>().Object);
+				new Mock<IEventAggregator>().Object,
+				new Mock<IDispatchScopeService>().Object);
 		}
 
 		[Test]

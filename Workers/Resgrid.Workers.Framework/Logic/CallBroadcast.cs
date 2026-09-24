@@ -108,27 +108,32 @@ namespace Resgrid.Workers.Framework.Logic
 						_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
 
 					var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(cqi.Call.DepartmentId);
-					var localizedDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
-					var shiftDate = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
+
+					// Whoever is on duty for each group right now, from the resolved shift roster (assigned staff, approved
+					// signups, single-day edits and trades). A group with nobody on shift falls back to all its members.
+					var onDutyByGroup = dispatchShiftInsteadOfGroup
+						? await _shiftsService.GetOnDutyUserIdsForGroupsAsync(cqi.Call.DepartmentId, cqi.Call.GroupDispatches.Select(x => x.DepartmentGroupId), DateTime.UtcNow)
+						: null;
+					onDutyByGroup = onDutyByGroup ?? new Dictionary<int, List<string>>();
 
 					foreach (var d in cqi.Call.GroupDispatches)
 					{
 						if (!groupIds.Contains(d.DepartmentGroupId))
 							groupIds.Add(d.DepartmentGroupId);
 
-						var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(d.DepartmentGroupId, shiftDate);
+						onDutyByGroup.TryGetValue(d.DepartmentGroupId, out var onDutyUserIds);
 
-						if (dispatchShiftInsteadOfGroup && (signups != null && signups.Any()))
+						if (dispatchShiftInsteadOfGroup && (onDutyUserIds != null && onDutyUserIds.Any()))
 						{
-							foreach (var signup in signups)
+							foreach (var onDutyUserId in onDutyUserIds)
 							{
-								if (!dispatchedUsers.Contains(signup.UserId))
+								if (!dispatchedUsers.Contains(onDutyUserId))
 								{
-									dispatchedUsers.Add(signup.UserId);
+									dispatchedUsers.Add(onDutyUserId);
 									try
 									{
-										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == signup.UserId);
-										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = signup.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == onDutyUserId);
+										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = onDutyUserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
 									}
 									catch (SocketException sex)
 									{

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Tests.Services
@@ -134,6 +137,82 @@ namespace Resgrid.Tests.Services
 
 				errors.Should().ContainKey(fieldId);
 				errors[fieldId].Should().NotBeEmpty();
+			}
+
+			[Test]
+			public async Task should_keep_a_protected_dropdown_value_posted_back_as_the_sentinel()
+			{
+				var fields = new List<UdfField>
+				{
+					new UdfField { Name = "disposition", Label = "Disposition", FieldDataType = (int)UdfFieldDataType.Dropdown, IsEnabled = true, IsVisibleOnMobile = true, IsVisibleOnReports = true,
+						ValidationRules = JsonConvert.SerializeObject(new UdfValidationRules { Options = new List<UdfDropdownOption> { new UdfDropdownOption { Key = "transported", Label = "Transported" } } }) }
+				};
+
+				var definition = await _udfService.SaveDefinitionAsync(401, (int)UdfEntityType.Call, fields, "user1");
+				var fieldId = (await _udfService.GetFieldsForActiveDefinitionAsync(401, (int)UdfEntityType.Call)).Single().UdfFieldId;
+
+				// What ADP leaves in the row: an envelope, which the edit form and the mobile schema show as REDACTED.
+				var sealedValue = ProtectedDataEnvelope.Prefix + "sealed-transported";
+				await Resolve<IUdfFieldValueRepository>().SaveOrUpdateAsync(new UdfFieldValue
+				{
+					UdfFieldValueId = Guid.NewGuid().ToString(), UdfFieldId = fieldId, UdfDefinitionId = definition.UdfDefinitionId,
+					EntityId = "call-sealed", EntityType = (int)UdfEntityType.Call, Value = sealedValue
+				}, CancellationToken.None);
+
+				var errors = await _udfService.SaveFieldValuesForEntityAsync(401, (int)UdfEntityType.Call, "call-sealed",
+					new List<UdfFieldValue> { new UdfFieldValue { UdfFieldId = fieldId, Value = ProtectedDataEnvelope.RedactionValue } }, "user2");
+
+				errors.Should().BeEmpty();
+				(await _udfService.GetFieldValuesForEntityAsync(401, (int)UdfEntityType.Call, "call-sealed"))
+					.Should().ContainSingle().Which.Value.Should().Be(sealedValue);
+			}
+		}
+
+		// ── Combo box ────────────────────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_saving_combo_box_values : with_the_udf_service
+		{
+			[TestCase("Transported", "tx")]
+			[TestCase("tx", "tx")]
+			[TestCase("  Referred to crisis line ", "Referred to crisis line")]
+			public async Task should_store_an_option_as_its_key_and_free_text_as_typed(string entered, string stored)
+			{
+				var fields = new List<UdfField>
+				{
+					new UdfField { Name = "outcome", Label = "Outcome", FieldDataType = (int)UdfFieldDataType.ComboBox, IsEnabled = true, IsVisibleOnMobile = true, IsVisibleOnReports = true,
+						ValidationRules = JsonConvert.SerializeObject(new UdfValidationRules { Options = new List<UdfDropdownOption> { new UdfDropdownOption { Key = "tx", Label = "Transported" } } }) }
+				};
+
+				await _udfService.SaveDefinitionAsync(403, (int)UdfEntityType.Call, fields, "user1");
+				var fieldId = (await _udfService.GetFieldsForActiveDefinitionAsync(403, (int)UdfEntityType.Call)).Single().UdfFieldId;
+				var callId = $"call-combo-{Guid.NewGuid()}";
+
+				var errors = await _udfService.SaveFieldValuesForEntityAsync(403, (int)UdfEntityType.Call, callId,
+					new List<UdfFieldValue> { new UdfFieldValue { UdfFieldId = fieldId, Value = entered } }, "user1");
+
+				errors.Should().BeEmpty();
+				(await _udfService.GetFieldValuesForEntityAsync(403, (int)UdfEntityType.Call, callId))
+					.Should().ContainSingle().Which.Value.Should().Be(stored);
+			}
+		}
+
+		// ── Option lists ─────────────────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_saving_a_definition_with_option_fields : with_the_udf_service
+		{
+			[Test]
+			public async Task should_reject_a_dropdown_without_options()
+			{
+				var fields = new List<UdfField>
+				{
+					new UdfField { Name = "disposition", Label = "Disposition", FieldDataType = (int)UdfFieldDataType.Dropdown, IsEnabled = true }
+				};
+
+				Func<Task> save = () => _udfService.SaveDefinitionAsync(402, (int)UdfEntityType.Call, fields, "user1");
+
+				await save.Should().ThrowAsync<InvalidOperationException>().WithMessage("*at least one option*");
 			}
 		}
 

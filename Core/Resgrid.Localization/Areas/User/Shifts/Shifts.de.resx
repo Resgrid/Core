@@ -569,4 +569,325 @@
   <data name="RoleCountRequired" xml:space="preserve">
     <value>Rollenanzahl ist erforderlich</value>
   </data>
+  <data name="ActiveNowBadge" xml:space="preserve">
+    <value>Jetzt aktiv</value>
+  </data>
+  <data name="AddPersonButton" xml:space="preserve">
+    <value>Zum Tag hinzufügen</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Person zu diesem Tag hinzufügen</value>
+  </data>
+  <data name="AddPersonHelp" xml:space="preserve">
+    <value>Setzt die Person nur für diesen Tag ein; der restliche Plan bleibt unverändert.</value>
+  </data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve">
+    <value>Genehmigung erforderlich</value>
+  </data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve">
+    <value>Anmeldungen und Tausche für diese Schicht müssen von Vorgesetzten genehmigt werden.</value>
+  </data>
+  <data name="ApprovalsButton" xml:space="preserve">
+    <value>Genehmigungen</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Schichtgenehmigungen</value>
+  </data>
+  <data name="ApprovalsHelp" xml:space="preserve">
+    <value>Anmeldungen und Tausche in den von Ihnen betreuten Gruppen, die auf eine Genehmigung warten. Bis zur Genehmigung ist niemand aufgrund einer offenen Anfrage im Dienst.</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Genehmigen</value>
+  </data>
+  <data name="DenyButton" xml:space="preserve">
+    <value>Ablehnen</value>
+  </data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve">
+    <value>Gegen diesen Tag tauschen</value>
+  </data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve">
+    <value>Dieser Tausch ist abgeschlossen: {0} arbeitet an diesem Tag.</value>
+  </data>
+  <data name="FinishTradeDenied" xml:space="preserve">
+    <value>Vorgesetzte haben die letzte Auswahl für diesen Tausch abgelehnt. Sie können ein anderes Angebot wählen.</value>
+  </data>
+  <data name="FinishTradePendingFormat" xml:space="preserve">
+    <value>Sie haben {0} gewählt. Der Tausch wartet auf die Genehmigung durch Vorgesetzte.</value>
+  </data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve">
+    <value>Wählen Sie ein Angebot aus, das Sie annehmen möchten.</value>
+  </data>
+  <data name="FullyStaffed" xml:space="preserve">
+    <value>Voll besetzt</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Gruppe</value>
+  </data>
+  <data name="MyStatusNone" xml:space="preserve">
+    <value>Sie sind an diesem Schichttag nicht eingeteilt.</value>
+  </data>
+  <data name="MyStatusOnDuty" xml:space="preserve">
+    <value>Sie sind an diesem Schichttag eingeteilt.</value>
+  </data>
+  <data name="MyStatusPending" xml:space="preserve">
+    <value>Ihre Anmeldung wartet auf die Genehmigung durch Vorgesetzte.</value>
+  </data>
+  <data name="MyStatusRemoved" xml:space="preserve">
+    <value>Vorgesetzte haben Ihre Anmeldung nicht genehmigt oder Sie von diesem Tag abgezogen.</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Keine Gruppe</value>
+  </data>
+  <data name="NoPendingSignups" xml:space="preserve">
+    <value>Keine Anmeldungen warten auf Genehmigung.</value>
+  </data>
+  <data name="NoPendingTrades" xml:space="preserve">
+    <value>Keine Tausche warten auf Genehmigung.</value>
+  </data>
+  <data name="NoPersonnelOnDay" xml:space="preserve">
+    <value>Für diesen Tag ist noch niemand eingeteilt.</value>
+  </data>
+  <data name="NoShiftsOnDuty" xml:space="preserve">
+    <value>Derzeit läuft keine Schicht.</value>
+  </data>
+  <data name="NobodyOnDuty" xml:space="preserve">
+    <value>Niemand im Dienst</value>
+  </data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve">
+    <value>Im Dienst, Stand {0}. Diese Seite wird jede Minute aktualisiert.</value>
+  </data>
+  <data name="OnDutyButton" xml:space="preserve">
+    <value>Jetzt im Dienst</value>
+  </data>
+  <data name="OnDutyHeader" xml:space="preserve">
+    <value>Jetzt im Dienst</value>
+  </data>
+  <data name="OpenSlotsFormat" xml:space="preserve">
+    <value>Offene Plätze: {0}</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Hinweis (optional)</value>
+  </data>
+  <data name="OtherPersonnelHeader" xml:space="preserve">
+    <value>Weiteres Personal</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Genehmigung ausstehend</value>
+  </data>
+  <data name="PendingSignupsHeader" xml:space="preserve">
+    <value>Anmeldungen, die auf Genehmigung warten</value>
+  </data>
+  <data name="PendingTradesHeader" xml:space="preserve">
+    <value>Tausche, die auf Genehmigung warten</value>
+  </data>
+  <data name="PersonAddedToDay" xml:space="preserve">
+    <value>Die Person wurde diesem Tag hinzugefügt.</value>
+  </data>
+  <data name="PersonLabel" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="PersonRemovedFromDay" xml:space="preserve">
+    <value>Die Person wurde von diesem Tag abgezogen.</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Von diesem Tag abziehen</value>
+  </data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve">
+    <value>Diese Person von diesem Schichttag abziehen? Ihr restlicher Plan bleibt unverändert.</value>
+  </data>
+  <data name="RemovedDaysHeader" xml:space="preserve">
+    <value>Tage, von denen Sie abgezogen wurden</value>
+  </data>
+  <data name="RemovedDaysHelp" xml:space="preserve">
+    <value>Anmeldungen, die Vorgesetzte nicht genehmigt haben, und Tage, von denen Vorgesetzte Sie abgezogen haben.</value>
+  </data>
+  <data name="RequestedByColumn" xml:space="preserve">
+    <value>Angefragt von</value>
+  </data>
+  <data name="RequireApprovalHelp" xml:space="preserve">
+    <value>Wenn aktiviert, setzt eine Anmeldung oder ein Tausch erst dann jemanden in den Dienst, wenn Vorgesetzte der Gruppe sie genehmigt haben.</value>
+  </data>
+  <data name="RequireApprovalLabel" xml:space="preserve">
+    <value>Anmeldungen und Tausche müssen von Vorgesetzten genehmigt werden</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Hinweis</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Dienstplan</value>
+  </data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve">
+    <value>Tage auswählen...</value>
+  </data>
+  <data name="SelectPersonToAdd" xml:space="preserve">
+    <value>Wählen Sie eine Person aus, die hinzugefügt werden soll.</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Benutzer auswählen...</value>
+  </data>
+  <data name="ShiftDeleted" xml:space="preserve">
+    <value>Die Schicht wurde gelöscht.</value>
+  </data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve">
+    <value>Diese Person ist an diesem Tag bereits in dieser Gruppe eingeteilt.</value>
+  </data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve">
+    <value>Sie sind für diesen Schichttag bereits angemeldet.</value>
+  </data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve">
+    <value>Dieser Schichttag ist vorbei.</value>
+  </data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve">
+    <value>Diese Gruppe gehört nicht zu dieser Schicht.</value>
+  </data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve">
+    <value>Dieses Angebot ist nicht mehr verfügbar.</value>
+  </data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve">
+    <value>Das ist für diesen Schichttag nicht möglich.</value>
+  </data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve">
+    <value>Wählen Sie mindestens eine Person aus.</value>
+  </data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve">
+    <value>Dazu sind Sie nicht berechtigt.</value>
+  </data>
+  <data name="ShiftErrorNotFound" xml:space="preserve">
+    <value>Der Schichttag, die Anmeldung oder der Tausch wurde nicht gefunden.</value>
+  </data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve">
+    <value>Diese Person ist an diesem Schichttag nicht eingeteilt.</value>
+  </data>
+  <data name="ShiftErrorNotPending" xml:space="preserve">
+    <value>Diese Anfrage wartet nicht mehr auf Genehmigung.</value>
+  </data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve">
+    <value>Für diesen Tag wurde bereits ein Tausch angefragt.</value>
+  </data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve">
+    <value>Sie können nur die von Ihnen verwalteten Gruppen verwenden, und eine Schicht benötigt mindestens eine davon.</value>
+  </data>
+  <data name="ShiftOnDateFormat" xml:space="preserve">
+    <value>{0} am {1}</value>
+  </data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve">
+    <value>Alle ausgewählten Personen, die an diesem Tag noch nicht arbeiten, werden hinzugefügt.</value>
+  </data>
+  <data name="ShiftStaffingSaved" xml:space="preserve">
+    <value>Besetzung gespeichert. Zum Tag hinzugefügte Personen: {0}.</value>
+  </data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve">
+    <value>Besetzung gespeichert. Zum Tag hinzugefügte Personen: {0}. Nicht hinzugefügt: {1}</value>
+  </data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve">
+    <value>Sie müssen einen gültigen Schichttag auswählen</value>
+  </data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve">
+    <value>Sie müssen eine Schicht auswählen</value>
+  </data>
+  <data name="SignupApproved" xml:space="preserve">
+    <value>Die Anmeldung wurde genehmigt.</value>
+  </data>
+  <data name="SignupDenied" xml:space="preserve">
+    <value>Die Anmeldung wurde abgelehnt.</value>
+  </data>
+  <data name="SignupForShift" xml:space="preserve">
+    <value>Für diese Schicht anmelden</value>
+  </data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve">
+    <value>Ihre Anmeldung ist eingegangen und wartet auf die Genehmigung durch Vorgesetzte. Bis zur Genehmigung sind Sie an diesem Tag nicht im Dienst.</value>
+  </data>
+  <data name="SignupTradeLocked" xml:space="preserve">
+    <value>Dieser Tag wurde getauscht oder ein Tausch wartet auf Genehmigung, daher kann er nicht zurückgezogen werden. Bitten Sie stattdessen Vorgesetzte, den Tag zu ändern.</value>
+  </data>
+  <data name="SignupWithdrawn" xml:space="preserve">
+    <value>Ihre Anmeldung wurde zurückgezogen.</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Eingeteilt</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Anmeldung</value>
+  </data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve">
+    <value>Von Vorgesetzten hinzugefügt</value>
+  </data>
+  <data name="SourceTradeFormat" xml:space="preserve">
+    <value>Tausch (von {0})</value>
+  </data>
+  <data name="StaffingLabel" xml:space="preserve">
+    <value>Besetzung</value>
+  </data>
+  <data name="SwapBackFormat" xml:space="preserve">
+    <value>Gegentausch: {0}</value>
+  </data>
+  <data name="TradeAlreadyFilled" xml:space="preserve">
+    <value>Dieser Tausch ist bereits besetzt.</value>
+  </data>
+  <data name="TradeApproved" xml:space="preserve">
+    <value>Der Tausch wurde genehmigt.</value>
+  </data>
+  <data name="TradeCompleted" xml:space="preserve">
+    <value>Der Tausch ist abgeschlossen.</value>
+  </data>
+  <data name="TradeDeclinedMessage" xml:space="preserve">
+    <value>Sie haben die Tauschanfrage abgelehnt.</value>
+  </data>
+  <data name="TradeDenied" xml:space="preserve">
+    <value>Der Tausch wurde abgelehnt.</value>
+  </data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve">
+    <value>Eine Anmeldung muss genehmigt sein, bevor sie getauscht werden kann.</value>
+  </data>
+  <data name="TradeRequested" xml:space="preserve">
+    <value>Ihre Tauschanfrage wurde gesendet.</value>
+  </data>
+  <data name="TradeRequestedByFormat" xml:space="preserve">
+    <value>Angefragt von {0}</value>
+  </data>
+  <data name="TradeResponseSent" xml:space="preserve">
+    <value>Ihre Antwort wurde gesendet.</value>
+  </data>
+  <data name="TradeStatusComplete" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="TradeStatusDenied" xml:space="preserve">
+    <value>Von Vorgesetzten abgelehnt</value>
+  </data>
+  <data name="TradeStatusOpen" xml:space="preserve">
+    <value>Angefragt</value>
+  </data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve">
+    <value>Wartet auf Genehmigung durch Vorgesetzte</value>
+  </data>
+  <data name="TradeUsersRequired" xml:space="preserve">
+    <value>Sie müssen Benutzer angeben, bei denen ein Tausch angefragt werden soll. Die Liste enthält nur qualifizierte Benutzer.</value>
+  </data>
+  <data name="TradeWaitingForApproval" xml:space="preserve">
+    <value>Ihre Auswahl wurde gespeichert. Der Tausch wartet auf die Genehmigung durch Vorgesetzte.</value>
+  </data>
+  <data name="TradedToYouFormat" xml:space="preserve">
+    <value>Von {0} an Sie getauscht</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Unbekannt</value>
+  </data>
+  <data name="ViewShiftDayButton" xml:space="preserve">
+    <value>Tag anzeigen</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Zurückziehen</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Von diesem Schichttag zurückziehen?</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Sie</value>
+  </data>
+  <data name="YourStatusHeader" xml:space="preserve">
+    <value>Ihr Status</value>
+  </data>
 </root>

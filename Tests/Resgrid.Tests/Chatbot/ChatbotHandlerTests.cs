@@ -25,6 +25,28 @@ namespace Resgrid.Tests.Chatbot
 		private static ChatbotSession Session(string userId = "user-1", int departmentId = 1) =>
 			new ChatbotSession { SessionId = "s1", UserId = userId, DepartmentId = departmentId, Platform = ChatbotPlatform.SmsTwilio };
 
+		/// <summary>Group-scoped dispatch off: every user is department-wide.</summary>
+		private static IDispatchScopeService NoScope()
+		{
+			var scope = new Mock<IDispatchScopeService>();
+			scope.Setup(x => x.GetScopeForUserAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int departmentId, string userId) => DispatchScope.DepartmentWide(departmentId, userId, DispatchScopeReasons.ScopingDisabled));
+			return scope.Object;
+		}
+
+		/// <summary>Group-scoped dispatch on: only the calls with the given ids are in the user's area.</summary>
+		private static IDispatchScopeService ScopedTo(params int[] inScopeCallIds)
+		{
+			var inScope = new HashSet<int>(inScopeCallIds);
+			var areaScope = new DispatchScope { DepartmentId = 1, UserId = "user-1", Reason = DispatchScopeReasons.GroupAdmin, GroupIds = new HashSet<int> { 10 } };
+			var scope = new Mock<IDispatchScopeService>();
+			scope.Setup(x => x.GetScopeForUserAsync(1, "user-1")).ReturnsAsync(areaScope);
+			scope.Setup(x => x.IsCallInScopeAsync(areaScope, It.IsAny<Call>())).ReturnsAsync((DispatchScope s, Call c) => inScope.Contains(c.CallId));
+			scope.Setup(x => x.FilterCallsAsync(areaScope, It.IsAny<List<Call>>()))
+				.ReturnsAsync((DispatchScope s, List<Call> calls) => calls.FindAll(c => inScope.Contains(c.CallId)));
+			return scope.Object;
+		}
+
 		private static ChatbotIntent Intent(ChatbotIntentType type, params (string key, string value)[] parameters)
 		{
 			var intent = new ChatbotIntent { Type = type };
@@ -439,6 +461,64 @@ namespace Resgrid.Tests.Chatbot
 		// ===================== RespondToCallHandler =====================
 
 		[Test]
+		public async Task RespondToCall_ScopedUser_CallOutsideTheirArea_ReturnsNotFound_AndDoesNotSetStatus()
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetCallByIdAsync(20, It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = 20, Name = "Crisis elsewhere", DepartmentId = 1 });
+			var actionLogs = new Mock<IActionLogsService>();
+
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, ScopedTo(7));
+			var response = await handler.HandleAsync(Msg("respond to c20"), Intent(ChatbotIntentType.RespondToCall, ("callId", "20")), Session(departmentId: 1));
+
+			// Out of area reads exactly like a call that doesn't exist.
+			response.Text.Should().Contain("No active call found matching");
+			actionLogs.Invocations.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task CallDetail_ScopedUser_Shorthand_MatchesOnlyCallsInTheirArea()
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(1)).ReturnsAsync(new List<Call>
+			{
+				new Call { CallId = 20, Name = "Fire elsewhere", DepartmentId = 1, LoggedOn = DateTime.UtcNow },
+				new Call { CallId = 7, Name = "Fire in my area", DepartmentId = 1, LoggedOn = DateTime.UtcNow.AddMinutes(-30) }
+			});
+			var depts = new Mock<IDepartmentsService>();
+			depts.Setup(d => d.GetDepartmentByIdAsync(1, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = 1, TimeZone = "UTC" });
+			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserViewCallAsync("user-1", It.IsAny<int>())).ReturnsAsync(true);
+
+			var handler = new CallDetailActionHandler(calls.Object, depts.Object, authz.Object, ScopedTo(7));
+			var response = await handler.HandleAsync(Msg("call fire"), Intent(ChatbotIntentType.GetCallDetail, ("callRef", "fire")), Session(departmentId: 1));
+
+			// Without scoping the newer out-of-area fire would match and then be refused.
+			response.Text.Should().Contain("Fire in my area").And.NotContain("Fire elsewhere");
+		}
+
+		[Test]
+		public async Task RespondToCall_ScopedUser_Shorthand_MatchesOnlyCallsInTheirArea()
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(1)).ReturnsAsync(new List<Call>
+			{
+				new Call { CallId = 20, Name = "Fire elsewhere", DepartmentId = 1, LoggedOn = DateTime.UtcNow },
+				new Call { CallId = 7, Name = "Fire in my area", DepartmentId = 1, LoggedOn = DateTime.UtcNow.AddMinutes(-30) }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, ScopedTo(7));
+			await handler.HandleAsync(Msg("respond to fire"), Intent(ChatbotIntentType.RespondToCall, ("callRef", "fire")), Session(departmentId: 1));
+
+			// The newer fire is in another area, so the older in-area one is the match.
+			actionLogs.Verify(a => a.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
+				It.IsAny<string>(), 7, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+			actionLogs.Verify(a => a.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(),
+				It.IsAny<string>(), 20, It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
 		public async Task RespondToCall_CallInDifferentDepartment_ReturnsNotFound_AndDoesNotSetStatus()
 		{
 			var calls = new Mock<ICallsService>();
@@ -446,7 +526,7 @@ namespace Resgrid.Tests.Chatbot
 				.ReturnsAsync(new Call { CallId = 7, Name = "Fire", DepartmentId = 2 });
 			var actionLogs = new Mock<IActionLogsService>();
 
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope());
 			var response = await handler.HandleAsync(Msg("respond to c7"), Intent(ChatbotIntentType.RespondToCall, ("callId", "7")), Session(departmentId: 1));
 
 			// Cross-department call resolves to the same no-match reply as a nonexistent one (anti-IDOR).
@@ -462,7 +542,7 @@ namespace Resgrid.Tests.Chatbot
 				.ReturnsAsync(new Call { CallId = 7, Name = "Fire", DepartmentId = 1 });
 			var actionLogs = new Mock<IActionLogsService>();
 
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope());
 			var response = await handler.HandleAsync(Msg("respond to c7"), Intent(ChatbotIntentType.RespondToCall, ("callId", "7")), Session(departmentId: 1));
 
 			response.Processed.Should().BeTrue();
@@ -506,7 +586,7 @@ namespace Resgrid.Tests.Chatbot
 			});
 			var actionLogs = new Mock<IActionLogsService>();
 
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, customStates.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope(), customStates.Object);
 			var response = await handler.HandleAsync(Msg("omw"),
 				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
 
@@ -540,7 +620,7 @@ namespace Resgrid.Tests.Chatbot
 				new DepartmentGroupMember { UserId = "user-1", DepartmentGroupId = 5 }
 			});
 			var actionLogs = new Mock<IActionLogsService>();
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, groups.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope(), null, groups.Object);
 
 			var response = await handler.HandleAsync(Msg("responding"),
 				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
@@ -574,7 +654,7 @@ namespace Resgrid.Tests.Chatbot
 				new PersonnelRole { PersonnelRoleId = 7 }
 			});
 			var actionLogs = new Mock<IActionLogsService>();
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, null, roles.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope(), null, null, roles.Object);
 
 			var response = await handler.HandleAsync(Msg("omw"),
 				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
@@ -624,7 +704,7 @@ namespace Resgrid.Tests.Chatbot
 				new DepartmentGroupMember { UserId = "user-1", DepartmentGroupId = 5 }
 			});
 			var actionLogs = new Mock<IActionLogsService>();
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, groups.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope(), null, groups.Object);
 
 			// Act
 			var response = await handler.HandleAsync(Msg("responding"),
@@ -676,7 +756,7 @@ namespace Resgrid.Tests.Chatbot
 				new PersonnelRole { PersonnelRoleId = 7 }
 			});
 			var actionLogs = new Mock<IActionLogsService>();
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, null, roles.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope(), null, null, roles.Object);
 
 			// Act
 			var response = await handler.HandleAsync(Msg("responding"),
@@ -701,7 +781,7 @@ namespace Resgrid.Tests.Chatbot
 			});
 			var actionLogs = new Mock<IActionLogsService>();
 
-			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, customStates.Object);
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, NoScope(), customStates.Object);
 			var response = await handler.HandleAsync(Msg("not going to c7"),
 				Intent(ChatbotIntentType.RespondToCall, ("callId", "7"), ("response", "no")), Session());
 

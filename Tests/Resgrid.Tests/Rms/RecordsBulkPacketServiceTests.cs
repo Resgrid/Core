@@ -150,16 +150,24 @@ namespace Resgrid.Tests.Rms
 			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "r1", "reviewer", "rotation", It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAggregate());
 			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "draft", "reviewer", "rotation", It.IsAny<CancellationToken>())).ThrowsAsync(new RecordTransitionException("draft", RmsRecordState.Draft, RmsRecordState.Draft, "only a Record awaiting review can be assigned a reviewer"));
 			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "hidden", "reviewer", "rotation", It.IsAny<CancellationToken>())).ThrowsAsync(new UnauthorizedAccessException());
+			// An id with no operational Record (deleted since the list rendered, or another kind's id) must not abort the batch.
+			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "missing", "reviewer", "rotation", It.IsAny<CancellationToken>())).ThrowsAsync(new KeyNotFoundException("Record missing does not exist in this department."));
+			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "r2", "reviewer", "rotation", It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAggregate());
+			_authorization.Setup(a => a.HasPermissionAsync("reviewer", Dept, PermissionTypes.ReviewRecords)).ReturnsAsync(true);
 
-			var result = await _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1", "draft", "hidden" }, ReviewerUserId = "reviewer", Reason = "rotation" });
+			var result = await _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1", "draft", "missing", "hidden", "r2" }, ReviewerUserId = "reviewer", Reason = "rotation" });
 
-			result.Processed.Should().Be(1);
-			result.Skips.Select(s => s.RecordId + ":" + s.Reason).Should().BeEquivalentTo("draft:not_awaiting_review", "hidden:not_visible");
+			result.Processed.Should().Be(2);
+			result.Skips.Select(s => s.RecordId + ":" + s.Reason).Should().BeEquivalentTo("draft:not_awaiting_review", "missing:not_found", "hidden:not_visible");
 			result.Run.Should().BeNull();
 
 			_authorization.Setup(a => a.IsActiveMemberAsync("gone", Dept)).ReturnsAsync(false);
 			Func<Task> inactive = () => _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1" }, ReviewerUserId = "gone" });
 			await inactive.Should().ThrowAsync<ArgumentException>();
+
+			// A reviewer without ReviewRecords fails the whole request up front rather than skipping every row.
+			Func<Task> notReviewer = () => _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1" }, ReviewerUserId = "member" });
+			(await notReviewer.Should().ThrowAsync<ArgumentException>()).Which.Message.Should().Contain("ReviewRecords");
 		}
 	}
 }

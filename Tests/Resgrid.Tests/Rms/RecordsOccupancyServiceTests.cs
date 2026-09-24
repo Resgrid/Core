@@ -97,7 +97,11 @@ namespace Resgrid.Tests.Rms
 			_h.ContactPreplans.Setup(p => p.GetPreplansByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ContactPreplan> { preplan });
 			_h.ContactPreplans.Setup(p => p.GetPreplanByContactIdAsync("c1", Dept)).ReturnsAsync(preplan);
 			_h.ContactHazards.Setup(h => h.GetHazardsByContactIdAsync("c1", Dept)).ReturnsAsync(new List<ContactPreplanHazard> { new ContactPreplanHazard { ContactPreplanHazardId = "ch1", ContactPreplanId = "pp1", ContactId = "c1", Title = "Propane", Severity = 3, ShouldAlert = true, Description = "500 gal" } });
-			_h.Pois.Setup(p => p.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<Poi> { new Poi { PoiId = 77, Name = "Water tower", Address = "1 Hill Ct", Latitude = 45.7, Longitude = -122.7 } });
+			_h.PoiTypes.Setup(p => p.GetPoiTypesByDepartmentIdAsync(Dept)).ReturnsAsync(new List<PoiType>
+			{
+				new PoiType { PoiTypeId = 5, DepartmentId = Dept, Name = "Water", Pois = new List<Poi> { new Poi { PoiId = 77, PoiTypeId = 5, Name = "Water tower", Address = "1 Hill Ct", Latitude = 45.7, Longitude = -122.7 } } },
+				new PoiType { PoiTypeId = 6, DepartmentId = Dept, Name = "Empty", Pois = new List<Poi>() }
+			});
 		}
 
 		[Test]
@@ -221,7 +225,7 @@ namespace Resgrid.Tests.Rms
 		{
 			var broken = new Mock<IRmsOccupancyOwnershipsRepository>();
 			broken.Setup(o => o.GetForDepartmentAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("relation does not exist"));
-			var service = new RecordsOccupancyService(_h.Gate, _h.Occupancies, _h.Links, _h.Hazards, _h.Crosswalks, _h.Provenance, broken.Object, _h.Violations, _h.Hydrants, _h.ContactPreplans.Object, _h.ContactHazards.Object, _h.Contacts.Object, _h.Addresses.Object, _h.Pois.Object, _h.ProtectedReads.Object, _h.Grant.Object, _h.Protection, _h.UnitOfWork.Object);
+			var service = new RecordsOccupancyService(_h.Gate, _h.Occupancies, _h.Links, _h.Hazards, _h.Crosswalks, _h.Provenance, broken.Object, _h.Violations, _h.Hydrants, _h.ContactPreplans.Object, _h.ContactHazards.Object, _h.Contacts.Object, _h.Addresses.Object, _h.Pois.Object, _h.PoiTypes.Object, _h.ProtectedReads.Object, _h.Grant.Object, _h.Protection, _h.UnitOfWork.Object);
 			(await service.IsRecordsOwnedAsync(Dept)).Should().BeFalse();
 			(await service.GetPreplanProjectionsAsync(Dept, new[] { "c1" })).Should().BeEmpty();
 		}

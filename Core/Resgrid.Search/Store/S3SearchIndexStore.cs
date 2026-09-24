@@ -51,7 +51,10 @@ namespace Resgrid.Search
 				UseHttp = !SearchConfig.S3UseSsl,
 				AuthenticationRegion = string.IsNullOrWhiteSpace(SearchConfig.S3Region) ? "us-east-1" : SearchConfig.S3Region
 			};
-			var credentials = new BasicAWSCredentials(SearchConfig.S3AccessKey ?? string.Empty, SearchConfig.S3SecretKey ?? string.Empty);
+			// Trimmed: ConfigProcessor passes environment values through verbatim, and a Kubernetes Secret built from a file or
+			// an unterminated echo keeps its trailing newline. A padded secret key still identifies the access key but fails
+			// every request with SignatureDoesNotMatch; real S3 keys never carry surrounding whitespace.
+			var credentials = new BasicAWSCredentials((SearchConfig.S3AccessKey ?? string.Empty).Trim(), (SearchConfig.S3SecretKey ?? string.Empty).Trim());
 			return new AmazonS3Client(credentials, config);
 		}
 

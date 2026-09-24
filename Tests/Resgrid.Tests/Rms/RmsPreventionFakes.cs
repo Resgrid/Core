@@ -326,6 +326,7 @@ namespace Resgrid.Tests.Rms
 		public Mock<IContactsRepository> Contacts { get; } = new Mock<IContactsRepository>();
 		public Mock<IAddressRepository> Addresses { get; } = new Mock<IAddressRepository>();
 		public Mock<IPoisRepository> Pois { get; } = new Mock<IPoisRepository>();
+		public Mock<IPoiTypesRepository> PoiTypes { get; } = new Mock<IPoiTypesRepository>();
 		public Mock<IRmsIncidentReportsRepository> Reports { get; } = new Mock<IRmsIncidentReportsRepository>();
 		public Mock<IRmsOperationalRecordsRepository> Records { get; } = new Mock<IRmsOperationalRecordsRepository>();
 		public Mock<IRmsRecordUnitResponsesRepository> Units { get; } = new Mock<IRmsRecordUnitResponsesRepository>();
@@ -394,9 +395,11 @@ namespace Resgrid.Tests.Rms
 			ProtectedReads.Setup(r => r.ResolveContactPreplanHazardsForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<ContactPreplanHazard>>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ProtectedReadResult());
 			Scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(new Resgrid.Model.Providers.RecordAttachmentScanResult { State = RmsAttachmentScanState.Skipped });
 			Grant.SetupGet(g => g.UserId).Returns(Admin);
+			// Pois has no DepartmentId column (RESGRID-WEB-1MQ); department POIs are read through their POI types.
+			Pois.Setup(p => p.GetAllByDepartmentIdAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("Invalid column name 'DepartmentId'."));
 
 			Gate = new RecordsPreventionGate(Cutover.Object, Flags.Object, Authorization.Object, Sequences, Audits);
-			OccupancyService = new RecordsOccupancyService(Gate, Occupancies, Links, Hazards, Crosswalks, Provenance, Ownerships, Violations, Hydrants, ContactPreplans.Object, ContactHazards.Object, Contacts.Object, Addresses.Object, Pois.Object, ProtectedReads.Object, Grant.Object, Protection, UnitOfWork.Object);
+			OccupancyService = new RecordsOccupancyService(Gate, Occupancies, Links, Hazards, Crosswalks, Provenance, Ownerships, Violations, Hydrants, ContactPreplans.Object, ContactHazards.Object, Contacts.Object, Addresses.Object, Pois.Object, PoiTypes.Object, ProtectedReads.Object, Grant.Object, Protection, UnitOfWork.Object);
 			InspectionsService = new RecordsInspectionsService(Gate, CodeSets, CodeSections, Programs, Inspections, Violations, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);
 			HydrantsService = new RecordsHydrantsService(Gate, Hydrants, FlowTests, Maintenance, Attachments, UnitOfWork.Object);
 			PermitsService = new RecordsPermitsService(Gate, PermitTypes, Permits, PlanReviews, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);

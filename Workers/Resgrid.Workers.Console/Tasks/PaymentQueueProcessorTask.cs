@@ -5,6 +5,7 @@ using Resgrid.Model;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework.Logic;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,7 +45,10 @@ namespace Resgrid.Workers.Console.Tasks
 		private async Task OnPaymentEventQueueReceived(CqrsEvent cqrs)
 		{
 			_logger.LogInformation($"{Name}: Payment Queue Received with a type of {cqrs.Type}, starting processing...");
-			await PaymentQueueLogic.ProcessPaymentQueueItem(cqrs);
+			// RabbitInboundQueueProvider only retries when the handler throws; returning normally acks the message.
+			if (!await PaymentQueueLogic.ProcessPaymentQueueItem(cqrs))
+				throw new InvalidOperationException($"{Name}: Payment queue item with type of {cqrs.Type} failed processing.");
+
 			_logger.LogInformation($"{Name}: Finished processing of Payment queue item with type of {cqrs.Type}.");
 		}
 	}

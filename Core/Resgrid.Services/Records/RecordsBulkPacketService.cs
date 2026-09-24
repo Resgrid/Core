@@ -183,6 +183,10 @@ namespace Resgrid.Services.Records
 				catch (RecordTransitionException) { Skip(result, id, "not_awaiting_review"); }
 				catch (UnauthorizedAccessException) { Skip(result, id, "not_visible"); }
 				catch (KeyNotFoundException) { Skip(result, id, "not_found"); }
+				// Someone else wrote the row between load and save; skip it rather than abort the rows after it.
+				catch (RecordConcurrencyException) { Skip(result, id, "conflict"); }
+				// The reviewer lost ReviewRecords after the precheck; earlier rows are already committed, so keep the batch result.
+				catch (ArgumentException) { Skip(result, id, "reviewer_not_eligible"); }
 			}
 			return result;
 		}

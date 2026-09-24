@@ -168,6 +168,19 @@ namespace Resgrid.Tests.Rms
 			// A reviewer without ReviewRecords fails the whole request up front rather than skipping every row.
 			Func<Task> notReviewer = () => _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1" }, ReviewerUserId = "member" });
 			(await notReviewer.Should().ThrowAsync<ArgumentException>()).Which.Message.Should().Contain("ReviewRecords");
+
+			// Permission revoked mid-batch: the rows already assigned are still reported rather than lost behind an error.
+			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "r2", "reviewer", "rotation", It.IsAny<CancellationToken>())).ThrowsAsync(new ArgumentException("The chosen reviewer does not hold the ReviewRecords permission."));
+			var partial = await _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1", "r2" }, ReviewerUserId = "reviewer", Reason = "rotation" });
+			partial.Processed.Should().Be(1);
+			partial.Skips.Select(s => s.RecordId + ":" + s.Reason).Should().BeEquivalentTo("r2:reviewer_not_eligible");
+
+			// A concurrent write on one row is skipped; the rows after it are still assigned.
+			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "busy", "reviewer", "rotation", It.IsAny<CancellationToken>())).ThrowsAsync(new RecordConcurrencyException("busy", 3, 4));
+			_records.Setup(r => r.AssignReviewerAsync(Dept, Exporter, "r3", "reviewer", "rotation", It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAggregate());
+			var conflicted = await _service.AssignForReviewAsync(Dept, Exporter, new RecordsBulkAssignRequest { RecordIds = new List<string> { "r1", "busy", "r3" }, ReviewerUserId = "reviewer", Reason = "rotation" });
+			conflicted.Processed.Should().Be(2);
+			conflicted.Skips.Select(s => s.RecordId + ":" + s.Reason).Should().BeEquivalentTo("busy:conflict");
 		}
 	}
 }

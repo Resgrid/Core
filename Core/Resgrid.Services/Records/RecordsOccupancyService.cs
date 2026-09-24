@@ -492,8 +492,11 @@ namespace Resgrid.Services.Records
 				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Contact, SourceId = contact.ContactId, ContactId = contact.ContactId, DisplayName = contact.Name,
 					NormalizedAddress = address, Latitude = point.HasValue ? (decimal?)(decimal)point.Value.Latitude : null, Longitude = point.HasValue ? (decimal?)(decimal)point.Value.Longitude : null });
 			}
-			// Pois carry no DepartmentId column; a department owns its POIs through their POI type.
-			var poiTypes = (await _poiTypes.GetPoiTypesByDepartmentIdAsync(departmentId)) ?? Enumerable.Empty<PoiType>();
+			// Pois carry no DepartmentId column; a department owns its POIs through their POI type. The repository logs and
+			// returns null on failure (an empty query is an empty list), and treating that as "no POIs" would stamp an
+			// inventory that never saw them as complete.
+			var poiTypes = (await _poiTypes.GetPoiTypesByDepartmentIdAsync(departmentId))
+				?? throw new InvalidOperationException("The department's points of interest could not be loaded, so the inventory was not recorded. Try again.");
 			foreach (var poi in poiTypes.Where(t => t?.Pois != null).SelectMany(t => t.Pois).Where(p => p != null))
 			{
 				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Poi, SourceId = poi.PoiId.ToString(), DisplayName = poi.Name, NormalizedAddress = AddressNormalizer.Normalize(poi.Address),

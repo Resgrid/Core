@@ -134,6 +134,24 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task A_failed_poi_lookup_fails_the_inventory_instead_of_recording_it_without_pois()
+		{
+			SeedContactsWorld();
+			// PoiTypesRepository logs and returns null when its query fails; a department with no POI types gets an empty list.
+			_h.PoiTypes.Setup(p => p.GetPoiTypesByDepartmentIdAsync(Dept)).ReturnsAsync((IEnumerable<PoiType>)null);
+
+			Func<Task> inventory = () => _h.OccupancyService.InventoryCandidatesAsync(Dept, Admin);
+			await inventory.Should().ThrowAsync<InvalidOperationException>();
+			_h.Crosswalks.Rows.Should().BeEmpty();
+			var status = await _h.OccupancyService.GetReconciliationStatusAsync(Dept);
+			status.InventoriedOn.Should().BeNull("an inventory that never saw the POIs is not recorded as run");
+			status.State.Should().Be(RmsOccupancyOwnershipState.ContactsOwned);
+
+			_h.PoiTypes.Setup(p => p.GetPoiTypesByDepartmentIdAsync(Dept)).ReturnsAsync(new List<PoiType>());
+			(await _h.OccupancyService.InventoryCandidatesAsync(Dept, Admin)).SourcesScanned.Should().Be(2, "no POI types is a successful, empty lookup");
+		}
+
+		[Test]
 		public async Task Linking_a_preplan_candidate_creates_an_occupancy_with_provenance_hazards_and_a_site_link_then_the_switch_becomes_possible()
 		{
 			SeedContactsWorld();

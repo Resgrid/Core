@@ -399,8 +399,10 @@ namespace Resgrid.Search
 				catch (Exception ex)
 				{
 					// Only one background pull runs at a time, so the counter has a single writer. Error, not Fatal: the reader
-					// keeps serving its last local revision and the next attempt backs off.
+					// keeps serving its last local revision and the next attempt backs off. The backoff runs from the failure,
+					// not from the attempt: a request that hangs until the client timeout would otherwise have used it all up.
 					var failures = ++_consecutivePullFailures;
+					_lastPullAttemptUtc = DateTime.UtcNow;
 					Logging.LogError(ex, $"Search index '{IndexName}' pull from the object store failed ({failures} in a row); next attempt in {PullInterval().TotalSeconds:0}s at the earliest.");
 				}
 			});

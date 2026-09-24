@@ -130,6 +130,32 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task A_failing_store_is_not_polled_on_every_reader_call()
+		{
+			// The anonymous health endpoint calls GetSearcherManager on every probe; with no revision applied yet each call
+			// used to force a pull, so a store rejecting every request (e.g. SignatureDoesNotMatch) was hit once per probe.
+			var store = new FailingSearchIndexStore();
+			var reader = Host(TempDir(), store);
+
+			reader.GetSearcherManager().Should().BeNull("nothing has been pulled");
+			var deadline = DateTime.UtcNow.AddSeconds(10);
+			while (store.ManifestReads == 0 && DateTime.UtcNow < deadline)
+				await Task.Delay(10);
+			store.ManifestReads.Should().Be(1, "a fresh reader pulls on first use");
+			await Task.Delay(100); // let the failed pull complete so the next call is not merely skipped as in-flight
+
+			for (var i = 0; i < 25; i++)
+			{
+				reader.GetSearcherManager().Should().BeNull();
+				reader.MaybeRefresh();
+			}
+			await Task.Delay(100);
+
+			store.ManifestReads.Should().Be(1, "retries wait for ReaderPullSeconds (and back off) instead of firing on every call");
+			reader.LastSyncedRevision.Should().BeNull();
+		}
+
+		[Test]
 		public async Task Without_a_store_commit_is_local_only()
 		{
 			var writer = Host(TempDir(), null);
@@ -139,6 +165,32 @@ namespace Resgrid.Tests.Search
 			writer.StoreEnabled.Should().BeFalse();
 			writer.LastSyncedRevision.Should().BeNull();
 		}
+	}
+
+	/// <summary>A store that rejects every request, as one with a bad secret key does; counts manifest reads.</summary>
+	public sealed class FailingSearchIndexStore : ISearchIndexStore
+	{
+		private int _manifestReads;
+
+		public int ManifestReads => Volatile.Read(ref _manifestReads);
+
+		public bool Enabled => true;
+
+		public Task<SearchIndexManifest> GetManifestAsync(string indexName, CancellationToken cancellationToken = default)
+		{
+			Interlocked.Increment(ref _manifestReads);
+			return Task.FromException<SearchIndexManifest>(new InvalidOperationException("SignatureDoesNotMatch"));
+		}
+
+		public Task<HashSet<string>> ListFilesAsync(string indexName, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
+
+		public Task UploadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
+
+		public Task DownloadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
+
+		public Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
+
+		public Task<SearchIndexManifest> PutManifestAsync(string indexName, SearchIndexManifest manifest, string expectedETag, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
 	}
 
 	/// <summary>S3 semantics in memory: immutable objects, one manifest per index, If-None-Match:* / If-Match on the manifest.</summary>

@@ -143,6 +143,7 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 				catch (Exception ex)
 				{
+					success = false;
 					Logging.LogException(ex);
 					Logging.SendExceptionEmail(ex, "ProcessPaymentQueueItem");
 				}

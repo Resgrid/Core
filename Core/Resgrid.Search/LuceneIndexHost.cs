@@ -29,6 +29,7 @@ namespace Resgrid.Search
 		private const string ManifestFileName = "manifest.json";
 		private const string LockFileName = "write.lock";
 		private static readonly TimeSpan OrphanedTempAge = TimeSpan.FromHours(1);
+		private static readonly TimeSpan MaxPullBackoff = TimeSpan.FromMinutes(10);
 
 		private readonly object _sync = new object();
 		private readonly object _writerSyncGate = new object();
@@ -47,6 +48,7 @@ namespace Resgrid.Search
 		private long _appliedGeneration = -1;
 		private string _manifestETag;
 		private DateTime _lastPullAttemptUtc = DateTime.MinValue;
+		private int _consecutivePullFailures;
 		private Task _pullTask;
 
 		/// <summary>Production constructor: the configured local path under SearchConfig.IndexPath.</summary>
@@ -169,7 +171,7 @@ namespace Resgrid.Search
 				}
 
 				if (StoreEnabled)
-					StartBackgroundPullIfDue(force: _appliedRevision == null);
+					StartBackgroundPullIfDue();
 
 				if (!DirectoryReader.IndexExists(Store))
 					return null;
@@ -188,7 +190,7 @@ namespace Resgrid.Search
 			{
 				manager = _searcherManager;
 				if (_writer == null && StoreEnabled)
-					StartBackgroundPullIfDue(force: false);
+					StartBackgroundPullIfDue();
 			}
 
 			try { manager?.MaybeRefresh(); }
@@ -376,20 +378,42 @@ namespace Resgrid.Search
 				await PullCoreAsync(cancellationToken);
 		}
 
-		private void StartBackgroundPullIfDue(bool force)
+		private void StartBackgroundPullIfDue()
 		{
-			// Called under _sync.
+			// Called under _sync. Always throttled, including before the first revision is applied: the anonymous health
+			// endpoint lands here, so an unthrottled retry turns a store that keeps failing (bad credentials, outage) into an
+			// object-store request and a logged exception per probe. The first call is always due (_lastPullAttemptUtc is
+			// MinValue), so a fresh reader still pulls immediately.
 			if (_pullTask != null && !_pullTask.IsCompleted)
 				return;
-			var due = force || (DateTime.UtcNow - _lastPullAttemptUtc).TotalSeconds >= Math.Max(5, SearchConfig.ReaderPullSeconds);
-			if (!due)
+			if (DateTime.UtcNow - _lastPullAttemptUtc < PullInterval())
 				return;
 			_lastPullAttemptUtc = DateTime.UtcNow;
 			_pullTask = Task.Run(async () =>
 			{
-				try { await PullCoreAsync(CancellationToken.None); }
-				catch (Exception ex) { Logging.LogException(ex, $"Search index '{IndexName}' pull from the object store failed."); }
+				try
+				{
+					await PullCoreAsync(CancellationToken.None);
+					_consecutivePullFailures = 0;
+				}
+				catch (Exception ex)
+				{
+					// Only one background pull runs at a time, so the counter has a single writer. Error, not Fatal: the reader
+					// keeps serving its last local revision and the next attempt backs off.
+					var failures = ++_consecutivePullFailures;
+					Logging.LogError(ex, $"Search index '{IndexName}' pull from the object store failed ({failures} in a row); next attempt in {PullInterval().TotalSeconds:0}s at the earliest.");
+				}
 			});
+		}
+
+		/// <summary>ReaderPullSeconds, doubled per consecutive failed background pull up to <see cref="MaxPullBackoff"/>.</summary>
+		private TimeSpan PullInterval()
+		{
+			var interval = TimeSpan.FromSeconds(Math.Max(5, SearchConfig.ReaderPullSeconds));
+			if (_consecutivePullFailures == 0 || interval >= MaxPullBackoff)
+				return interval;
+			var backoffSeconds = interval.TotalSeconds * Math.Pow(2, Math.Min(_consecutivePullFailures, 10));
+			return TimeSpan.FromSeconds(Math.Min(backoffSeconds, MaxPullBackoff.TotalSeconds));
 		}
 
 		private async Task<bool> PullCoreAsync(CancellationToken cancellationToken)

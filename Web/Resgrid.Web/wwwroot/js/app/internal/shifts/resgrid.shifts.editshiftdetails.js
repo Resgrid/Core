@@ -45,13 +45,20 @@ var resgrid;
                     });
                 }
 
+                // A sign-up shift has no personnel pickers and nothing to load.
+                if ($("#shiftPersonnel").length === 0) {
+                    return;
+                }
+
                 initPersonnelSelect2("#shiftPersonnel");
+
+                var loads = [];
 
                 $('.groupPersonnelSelect').each(function () {
                     var that = this;
                     initPersonnelSelect2(that);
                     var groupId = $(that).attr("name").replace('groupPersonnel_', '');
-                    $.ajax({
+                    loads.push($.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#Shift_ShiftId').val() + '&groupId=' + groupId,
                         contentType: 'application/json', type: 'GET'
                     }).done(function (data) {
@@ -59,10 +66,10 @@ var resgrid;
                             data.forEach(function (u) { $(that).append(new Option(u.Name, u.UserId, true, true)); });
                             $(that).trigger('change');
                         }
-                    });
+                    }));
                 });
 
-                $.ajax({
+                loads.push($.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#Shift_ShiftId').val() + '&groupId=0',
                     contentType: 'application/json', type: 'GET'
                 }).done(function (data) {
@@ -70,6 +77,12 @@ var resgrid;
                         data.forEach(function (u) { $("#shiftPersonnel").append(new Option(u.Name, u.UserId, true, true)); });
                         $("#shiftPersonnel").trigger('change');
                     }
+                }));
+
+                // Only once every picker holds the current roster may a save replace it; a save before that (or after
+                // a failed load) leaves the shift's personnel untouched.
+                $.when.apply($, loads).done(function () {
+                    $('#PersonnelLoaded').val('true');
                 });
             });
         })(editshiftdetails = shifts.editshiftdetails || (shifts.editshiftdetails = {}));

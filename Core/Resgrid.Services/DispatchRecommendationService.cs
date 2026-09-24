@@ -681,20 +681,16 @@ namespace Resgrid.Services
 				return rosters;
 			}
 
-			// Shift-based departments dispatch today's shift roster instead of the whole
-			// group (same policy CallDispatchStatusService applies to group dispatches).
+			// Shift-based departments dispatch whoever is on duty now instead of the whole group (same policy
+			// CallDispatchStatusService applies to group dispatches). This used to read signups for the UTC date, which
+			// missed assigned staff and trades and picked the wrong day near midnight.
+			var onDuty = await _shiftsService.GetOnDutyUserIdsForGroupsAsync(context.Request.DepartmentId,
+				stations.Select(x => x.Station.DepartmentGroupId), context.Now) ?? new Dictionary<int, List<string>>();
+
 			foreach (var station in stations)
 			{
-				var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(station.Station.DepartmentGroupId, context.Now.Date);
-				var roster = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-				foreach (var signup in signups ?? new List<ShiftSignup>())
-				{
-					if (!string.IsNullOrWhiteSpace(signup.UserId))
-						roster.Add(signup.UserId);
-				}
-
-				rosters[station.Station.DepartmentGroupId] = roster;
+				onDuty.TryGetValue(station.Station.DepartmentGroupId, out var userIds);
+				rosters[station.Station.DepartmentGroupId] = new HashSet<string>(userIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
 			}
 
 			return rosters;

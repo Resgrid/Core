@@ -582,11 +582,8 @@
   <data name="RenderedOutput" xml:space="preserve">
     <value>Output renderizzato</value>
   </data>
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value>Tutti i tipi di evento trigger disponibili hanno già un workflow configurato. Elimina un workflow esistente per liberare il suo tipo di evento.</value>
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
-    <value>Ogni tipo di evento può avere un solo workflow. Vengono mostrati solo i tipi di evento non utilizzati.</value>
+    <value>L'evento che avvia questo flusso di lavoro. Più flussi di lavoro possono usare lo stesso evento; ognuno viene eseguito separatamente.</value>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>Dettaglio</value>
@@ -618,4 +615,112 @@
   <data name="ExportTemplate" xml:space="preserve"><value>Esportazione report dei record</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>Nessuna (invia solo il modello renderizzato)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>I passaggi e-mail allegano l'esportazione; i passaggi di caricamento file la caricano con il suo nome file al posto del testo renderizzato. Le esportazioni si progettano in Record &gt; Esportazioni di report.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>Credenziali client OAuth2</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>URL del token</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>L'endpoint HTTPS del token, ad esempio https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>ID client</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>Segreto client</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>Ambito</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>Per Microsoft Dataverse usa https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>Destinatario del token (facoltativo)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>Autenticazione del client</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>Segreto client</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>JWT con chiave privata (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>Algoritmo di firma</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>Resgrid genera e conserva la coppia di chiavi; la chiave privata è cifrata e non viene mai mostrata. Registra l'URL JWKS (o carica la chiave pubblica) presso il server dei token.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>URL JWKS</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>Copia</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>Chiave attuale {0}, creata il {1}. Chiavi pubblicate: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>Scarica la JWK pubblica</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>Ruota la chiave</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>Generare una nuova chiave di firma? La chiave attuale resta pubblicata per il periodo di sovrapposizione, così il server dei token può passare alla nuova.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>È stata generata una nuova chiave di firma. La chiave precedente resta pubblicata per il periodo di sovrapposizione.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>La coppia di chiavi viene generata al salvataggio. L'URL JWKS e il download della chiave pubblica appariranno poi qui.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>Parti da un modello</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>I modelli creano un flusso di lavoro disattivato con destinazioni segnaposto. Imposta l'URL e la credenziale di ogni passaggio, poi attivalo.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>Usa il modello</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>Flussi di lavoro protetti</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>Flusso di lavoro creato dal modello. È disattivato: imposta la destinazione e la credenziale di ogni passaggio, poi attivalo.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>Flusso di lavoro creato dal modello con un'autorizzazione protetta in bozza. Imposta l'URL di destinazione e la credenziale del passaggio, scegli i campi autorizzati e richiedi l'approvazione. Non invia nulla finché l'autorizzazione non è approvata.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>È stato raggiunto il limite di flussi di lavoro del tuo piano. Passa a un piano superiore per aggiungerne altri.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Webhook: nuova chiamata (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>Invia in JSON numero, nome, priorità e indirizzo della chiamata quando viene aggiunta, con una chiave di idempotenza.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>E-mail: chiamata chiusa</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>Invia per e-mail un breve riepilogo quando una chiamata viene chiusa.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter e Observations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>Alla chiusura di una chiamata, invia alla cartella clinica elettronica un Bundle di transazione FHIR R4: un Encounter (classe FLD, concluso, dall'invio alla chiusura) per il paziente in subject_ids.ehr_client_id e una Observation per ogni campo personalizzato autorizzato. Usa la creazione condizionale e salva l'id del nuovo Encounter come ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>Nota di incontro HL7 v2.5.1 MDM^T02</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>Alla chiusura di una chiamata, invia un documento MDM^T02 "Crisis Field Response" a un motore di integrazione via HTTPS: PID-3 è l'id cliente della cartella clinica, MSH-10 la chiave di idempotenza, un OBX per ogni campo personalizzato autorizzato. Riesce solo con una conferma AA.</value>
+  </data>
 </root>

@@ -105,10 +105,8 @@
                                             {
                                                 <a class="btn btn-xs btn-primary" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">@commonLocalizer["Edit"]</a>
 
-                                                @if (g.Type == (int)DepartmentGroupTypes.Station)
-                                                {
-                                                    <a class="btn btn-xs btn-info" asp-controller="Groups" asp-action="Geofence" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">@localizer["Geofence"]</a>
-                                                }
+                                                @* Station groups draw a response area, Organizational groups a service area: both are boundaries. *@
+                                                <a class="btn btn-xs btn-info" asp-controller="Groups" asp-action="Geofence" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">@localizer["Geofence"]</a>
                                                 <a class="btn btn-xs btn-danger" asp-controller="Groups" asp-action="DeleteGroup" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId" data-confirm="WARNING: This will permanently delete this group and all units, Shift Groups, etc attached to this group. Are you sure you want to delete the group @g.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
                                             }
                                         </td>

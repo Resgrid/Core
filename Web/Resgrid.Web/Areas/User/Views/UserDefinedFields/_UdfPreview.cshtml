@@ -133,6 +133,25 @@ else
                         }
                     </select>
                 }
+                else if (dataType == UdfFieldDataType.ComboBox)
+                {
+                    var previewListId = $"udf_preview_{field.Name}_options";
+                    <input type="text"
+                           class="form-control"
+                           list="@previewListId"
+                           placeholder="@field.Placeholder"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                    <datalist id="@previewListId">
+                        @if (rules?.Options != null)
+                        {
+                            foreach (var opt in rules.Options)
+                            {
+                                <option value="@opt.Label"></option>
+                            }
+                        }
+                    </datalist>
+                }
                 else if (dataType == UdfFieldDataType.MultiSelect)
                 {
                     <select class="form-control" multiple="multiple" @(field.IsReadOnly ? "readonly" : "") disabled="disabled">

@@ -83,6 +83,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> _editProfileLocalizer;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -98,8 +99,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentMemberEmergencyContactService emergencyContactService, IProtectedReadService protectedReadService,
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IDepartmentDataProtectionService dataProtectionService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> editProfileLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> editProfileLocalizer,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -1224,6 +1227,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var call = await _callsService.GetCallByIdAsync(callId);
 
 				if (call == null || call.DepartmentId != DepartmentId)
+					return Unauthorized();
+
+				// Group-scoped dispatch (off by default): responding to a call outside your area is refused like any other bad call id.
+				if (!await _dispatchScopeService.CanUserAccessCallAsync(DepartmentId, UserId, call))
 					return Unauthorized();
 
 				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null,

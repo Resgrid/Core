@@ -39,6 +39,18 @@ namespace Resgrid.Model
 
 		public string Note { get; set; }
 
+		/// <summary>
+		/// The requester picked an offer (UserId or TargetShiftSignupId is set) on a shift that requires approval, and
+		/// a supervisor has not reviewed it yet. The swap does not change the roster until it is approved.
+		/// </summary>
+		public bool ApprovalPending { get; set; }
+
+		public string ReviewedByUserId { get; set; }
+
+		public DateTime? ReviewedOn { get; set; }
+
+		public string ReviewNote { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]public object IdValue
 		{
@@ -58,37 +70,61 @@ namespace Resgrid.Model
 		[NotMapped]
 		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "SourceShiftSignup", "TargetShiftSignup", "User", "Users" };
 
+		/// <summary>
+		/// An offer has been picked (someone takes the source slot outright, or a swap-back signup was chosen).
+		/// This is true while the pick is still waiting on a supervisor; use <see cref="IsTradeComplete"/> to know
+		/// whether the roster has actually changed.
+		/// </summary>
+		public bool HasSelection()
+		{
+			return !String.IsNullOrWhiteSpace(UserId) || TargetShiftSignupId.HasValue;
+		}
+
+		/// <summary>
+		/// The trade has taken effect: an offer was picked, and it is neither waiting for nor denied by a supervisor.
+		/// </summary>
 		public bool IsTradeComplete()
 		{
-			if (UserId == null && TargetShiftSignupId == null)
-				return false;
-
-			return true;
+			return HasSelection() && !ApprovalPending && !Denied;
 		}
 
 		public ShiftSignupTradeStates GetState(string userId)
 		{
-			var userSignup = Users.FirstOrDefault(x => x.UserId == userId);
+			// User ids are GUID strings that arrive in either case depending on where they were read from.
+			var userSignup = Users?.FirstOrDefault(x => SameUser(x.UserId, userId));
 
 			if (userSignup != null && userSignup.Declined)
 				return ShiftSignupTradeStates.Declined;
 
-			if (!String.IsNullOrWhiteSpace(UserId) && UserId == userId)
+			if (Denied)
+				return ShiftSignupTradeStates.Denied;
+
+			var pickedUserId = !String.IsNullOrWhiteSpace(UserId) ? UserId : TargetShiftSignup?.UserId;
+
+			if (ApprovalPending && SameUser(pickedUserId, userId))
+				return ShiftSignupTradeStates.PendingApproval;
+
+			if (!String.IsNullOrWhiteSpace(UserId) && SameUser(UserId, userId))
 				return ShiftSignupTradeStates.Accepted;
 
-			if (!String.IsNullOrWhiteSpace(UserId) && UserId != userId)
+			if (!String.IsNullOrWhiteSpace(UserId) && !SameUser(UserId, userId))
 				return ShiftSignupTradeStates.Filled;
 
-			if (TargetShiftSignup != null && TargetShiftSignup.UserId == userId)
+			if (TargetShiftSignup != null && SameUser(TargetShiftSignup.UserId, userId))
 				return ShiftSignupTradeStates.Accepted;
 
-			if (TargetShiftSignup != null && TargetShiftSignup.UserId != userId)
+			if (TargetShiftSignup != null && !SameUser(TargetShiftSignup.UserId, userId))
 				return ShiftSignupTradeStates.Filled;
 
 			if (userSignup != null && userSignup.Offered)
 				return ShiftSignupTradeStates.Proposed;
 			
 			return ShiftSignupTradeStates.Open;
+		}
+
+		private static bool SameUser(string a, string b)
+		{
+			return String.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 		}
 	}
 }

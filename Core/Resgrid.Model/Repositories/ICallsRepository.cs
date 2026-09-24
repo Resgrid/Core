@@ -93,5 +93,12 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier (used to scope the result).</param>
 		/// <returns>Active calls with check-in timers that the user is dispatched on.</returns>
 		Task<IEnumerable<Call>> GetActiveCallsWithCheckInTimersForUserAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Sets Calls.SubjectIdentifiers only when the stored value is still <paramref name="expectedValue"/> (null matches
+		/// NULL): a concurrent edit is never overwritten by a stale merge. True when the row was updated.
+		/// </summary>
+		Task<bool> TryUpdateSubjectIdentifiersAsync(int callId, int departmentId, string expectedValue, string newValue,
+			System.Threading.CancellationToken cancellationToken = default);
 	}
 }

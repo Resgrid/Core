@@ -1,5 +1,6 @@
 ﻿@model List<Resgrid.Model.Workflow>
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
 @{
     ViewData["Title"] = "Resgrid | " + localizer["WorkflowsHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -27,6 +28,12 @@
             <a asp-action="Pending" class="btn btn-default">
                 <i class="fa fa-clock-o"></i> @localizer["PendingRuns"]
             </a>
+            @if (ViewBag.CanAdministerProtectedWorkflows == true)
+            {
+                <a asp-controller="ProtectedWorkflows" asp-action="Index" class="btn btn-default">
+                    <i class="fa fa-shield"></i> @pwLocalizer["PageTitle"]
+                </a>
+            }
         </div>
     </div>
 </div>
@@ -77,6 +84,25 @@
                                             else
                                             {
                                                 <span class="badge badge-danger">@localizer["Disabled"]</span>
+                                            }
+                                            @{
+                                                var releases = ViewBag.ProtectedReleases as System.Collections.Generic.IDictionary<string, Resgrid.Model.WorkflowProtectedRelease>;
+                                                Resgrid.Model.WorkflowProtectedRelease protectedRelease = null;
+                                                if (releases != null && releases.TryGetValue(wf.WorkflowId, out protectedRelease) && protectedRelease != null)
+                                                {
+                                                    var releaseState = protectedRelease.ReleaseState;
+                                                    var expiring = releaseState == Resgrid.Model.ProtectedReleaseState.Active && protectedRelease.ExpiresOn.HasValue &&
+                                                        protectedRelease.ExpiresOn.Value <= DateTime.UtcNow.AddDays(30);
+                                                    var badgeClass = releaseState == Resgrid.Model.ProtectedReleaseState.Active ? (expiring ? "badge-warning" : "badge-primary")
+                                                        : releaseState == Resgrid.Model.ProtectedReleaseState.Suspended ? "badge-danger"
+                                                        : releaseState == Resgrid.Model.ProtectedReleaseState.PendingApproval ? "badge-warning" : "badge-default";
+                                                    var badgeText = expiring ? pwLocalizer["StateExpiring"].Value : pwLocalizer["State_" + releaseState].Value;
+                                                    if (releaseState == Resgrid.Model.ProtectedReleaseState.Suspended && !string.IsNullOrWhiteSpace(protectedRelease.SuspendedReason))
+                                                    {
+                                                        badgeText += " (" + pwLocalizer["Reason_" + protectedRelease.SuspendedReason].Value + ")";
+                                                    }
+                                                    <br /><span class="badge @badgeClass" style="margin-top:4px"><i class="fa fa-shield"></i> @string.Format(pwLocalizer["ProtectedBadge"].Value, badgeText)</span>
+                                                }
                                             }
                                         </td>
                                         <td>@wf.CreatedOn.ToString("yyyy-MM-dd")</td>

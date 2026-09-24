@@ -321,5 +321,20 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>Αναφορά συμβάντος NERIS</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Ευαισθησία για προστατευμένες ροές εργασιών</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Τα περιορισμένα πεδία και τα πεδία 42 CFR Part 2 χρειάζονται πρόσθετη βεβαίωση πριν μια προστατευμένη ροή εργασιών μπορέσει να τα κοινοποιήσει. Η αλλαγή αυτής της τιμής επιστρέφει για έγκριση κάθε έγκριση που χρησιμοποιεί το πεδίο.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Περιορισμένο</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>
 

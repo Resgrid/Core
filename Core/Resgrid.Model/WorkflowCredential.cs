@@ -29,6 +29,12 @@ namespace Resgrid.Model
 		[Required]
 		public string EncryptedData { get; set; }
 
+		/// <summary>
+		/// OAuth2 private_key_jwt only: the PUBLIC signing keys as JSON (see WorkflowCredentialKeySet), served unauthenticated as
+		/// the credential's JWKS. Never contains private key material, which lives only inside EncryptedData.
+		/// </summary>
+		public string PublicJwks { get; set; }
+
 		[Required]
 		public string CreatedByUserId { get; set; }
 

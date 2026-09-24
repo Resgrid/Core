@@ -44,8 +44,9 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@localizer["ShiftLabel"]</label>
 							<div class="col-sm-10">
-								@Html.DropDownListFor(m => m.ShiftId, new SelectList(Model.Shifts, "ShiftId", "Name"), new { @class = "sl2", style="width:30%;" })
+								@Html.DropDownListFor(m => m.ShiftId, new SelectList(Model.Shifts, "ShiftId", "Name"), new { @class = "sl2", style="width:100%;max-width:400px;" })
 								<span class="help-block m-b-none">@localizer["ShiftSelectHelp"]</span>
+								<span class="help-block m-b-none">@localizer["ShiftStaffingAppliesHelp"]</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -96,32 +97,17 @@
 
 @section Scripts
 {
-	@if (Model.IsDepartmentAdmin)
-	{
-		<script>
-			var groupId = 0;
-			var isAdmin = true;
-			var resgridShiftsI18n = {
-				selectNonGroupPersonnel: '@localizer["SelectNonGroupPersonnel"]',
-				selectPersonnelForGroup: '@localizer["SelectPersonnelForGroup"]',
-				selectPerson: '@localizer["SelectPerson"]',
-				nonGroupPersonnel: '@localizer["NonGroupPersonnelStaffing"]'
-			};
-		</script>
-	}
-	else
-	{
-		<script>
-			var groupId = '@Model.GroupId';
-			var isAdmin = false;
-			var resgridShiftsI18n = {
-				selectNonGroupPersonnel: '@localizer["SelectNonGroupPersonnel"]',
-				selectPersonnelForGroup: '@localizer["SelectPersonnelForGroup"]',
-				selectPerson: '@localizer["SelectPerson"]',
-				nonGroupPersonnel: '@localizer["NonGroupPersonnelStaffing"]'
-			};
-		</script>
-	}
+	<script>
+		// Department-wide supervisors also set the non-group personnel; group supervisors only get their own groups
+		// (GetShiftGroups flags which ones).
+		var isAdmin = @(Model.IsDepartmentAdmin ? "true" : "false");
+		var resgridShiftsI18n = {
+			selectNonGroupPersonnel: '@localizer["SelectNonGroupPersonnel"]',
+			selectPersonnelForGroup: '@localizer["SelectPersonnelForGroup"]',
+			selectPerson: '@localizer["SelectPerson"]',
+			nonGroupPersonnel: '@localizer["NonGroupPersonnelStaffing"]'
+		};
+	</script>
 
 	<script src="~/js/app/internal/shifts/resgrid.shifts.shiftStaffing.js"></script>
 }

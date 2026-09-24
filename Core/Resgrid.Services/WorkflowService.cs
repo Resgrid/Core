@@ -18,7 +18,7 @@ using Scriban;
 
 namespace Resgrid.Services
 {
-	public class WorkflowService : IWorkflowService
+	public partial class WorkflowService : IWorkflowService
 	{
 		private readonly IWorkflowRepository _workflowRepository;
 		private readonly IWorkflowStepRepository _stepRepository;
@@ -34,6 +34,8 @@ namespace Resgrid.Services
 		private readonly Lazy<IProtectedProjectionService> _protectedProjection;
 		private readonly Lazy<IReadinessHistoryProtectionService> _history;
 		private IReadinessHistoryProtectionService History => _history?.Value ?? throw new InvalidOperationException("Readiness history protection is unavailable.");
+		private readonly IProtectedWorkflowRuntime _protectedRuntime;
+		private readonly IProtectedWorkflowService _protectedWorkflows;
 
 		public WorkflowService(
 			IWorkflowRepository workflowRepository,
@@ -46,8 +48,11 @@ namespace Resgrid.Services
 			IWorkflowActionExecutorFactory executorFactory,
 			IWorkflowTemplateContextBuilder contextBuilder,
 			ISubscriptionsService subscriptionsService,
-			IRecordsExportService recordsExportService, Lazy<IProtectedProjectionService> protectedProjection = null, Lazy<IReadinessHistoryProtectionService> history = null)
+			IRecordsExportService recordsExportService, Lazy<IProtectedProjectionService> protectedProjection = null, Lazy<IReadinessHistoryProtectionService> history = null,
+			IProtectedWorkflowRuntime protectedRuntime = null, IProtectedWorkflowService protectedWorkflows = null)
 		{
+			_protectedRuntime = protectedRuntime;
+			_protectedWorkflows = protectedWorkflows;
 			_recordsExportService = recordsExportService;
 			_protectedProjection = protectedProjection;
 			_history = history;
@@ -90,6 +95,7 @@ namespace Resgrid.Services
 			{
 				workflow.UpdatedOn = DateTime.UtcNow;
 				await _workflowRepository.UpdateAsync(workflow, cancellationToken);
+				await OnProtectedConfigurationChangedAsync(workflow.WorkflowId, null, cancellationToken);
 				return workflow;
 			}
 		}
@@ -104,6 +110,7 @@ namespace Resgrid.Services
 			// FK_WorkflowRuns_Workflows constraint violation that occurs when a background worker
 			// inserts a new WorkflowRun between the sequential per-table deletes.
 			await _workflowRepository.DeleteWorkflowWithAllDependenciesAsync(workflowId);
+			await OnProtectedWorkflowDeletedAsync(workflow, cancellationToken);
 
 			return true;
 		}
@@ -112,18 +119,6 @@ namespace Resgrid.Services
 		{
 			var results = await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, triggerEventType);
 			return results?.ToList() ?? new List<Workflow>();
-		}
-
-		public async Task<bool> WorkflowExistsForEventTypeAsync(int departmentId, int triggerEventType, CancellationToken cancellationToken = default)
-		{
-			var existing = await _workflowRepository.GetByDepartmentAndEventTypeAsync(departmentId, triggerEventType);
-			return existing != null;
-		}
-
-		public async Task<IReadOnlyCollection<int>> GetUsedEventTypesForDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
-		{
-			var workflows = await _workflowRepository.GetAllByDepartmentIdAsync(departmentId);
-			return workflows?.Select(w => w.TriggerEventType).ToHashSet() ?? (IReadOnlyCollection<int>)Array.Empty<int>();
 		}
 
 		public async Task<bool> CanAddWorkflowAsync(int departmentId, bool isFreePlan, CancellationToken cancellationToken = default)
@@ -177,7 +172,9 @@ namespace Resgrid.Services
 			{
 				step.WorkflowStepId = Guid.NewGuid().ToString();
 				step.CreatedOn = DateTime.UtcNow;
-				return await _stepRepository.InsertAsync(step, cancellationToken);
+				var inserted = await _stepRepository.InsertAsync(step, cancellationToken);
+				await OnProtectedConfigurationChangedAsync(step.WorkflowId, step.CreatedByUserId, cancellationToken);
+				return inserted;
 			}
 
 			// Fetch the existing record to preserve immutable audit fields (CreatedOn, CreatedByUserId).
@@ -189,6 +186,10 @@ namespace Resgrid.Services
 			step.CreatedByUserId = existing.CreatedByUserId;
 			step.UpdatedOn = DateTime.UtcNow;
 			await _stepRepository.UpdateAsync(step, cancellationToken);
+			await OnProtectedConfigurationChangedAsync(step.WorkflowId, step.UpdatedByUserId ?? step.CreatedByUserId, cancellationToken);
+			// A step moved to another workflow changes the workflow it left, too.
+			if (!string.Equals(existing.WorkflowId, step.WorkflowId, StringComparison.OrdinalIgnoreCase))
+				await OnProtectedConfigurationChangedAsync(existing.WorkflowId, step.UpdatedByUserId ?? step.CreatedByUserId, cancellationToken);
 			return step;
 		}
 
@@ -197,6 +198,7 @@ namespace Resgrid.Services
 			var step = await _stepRepository.GetByIdAsync(stepId);
 			if (step == null) return false;
 			await _stepRepository.DeleteAsync(step, cancellationToken);
+			await OnProtectedConfigurationChangedAsync(step.WorkflowId, null, cancellationToken);
 			return true;
 		}
 
@@ -217,8 +219,40 @@ namespace Resgrid.Services
 			return results?.ToList() ?? new List<WorkflowCredential>();
 		}
 
-		public async Task<WorkflowCredential> SaveCredentialAsync(WorkflowCredential credential, string departmentCode, CancellationToken cancellationToken = default)
+		public Task<WorkflowCredential> SaveCredentialAsync(WorkflowCredential credential, string departmentCode, CancellationToken cancellationToken = default) =>
+			SaveCredentialInternalAsync(credential, departmentCode, rotateSigningKey: false, cancellationToken);
+
+		public async Task<WorkflowCredential> RotateCredentialSigningKeyAsync(string credentialId, int departmentId, string departmentCode, string userId,
+			CancellationToken cancellationToken = default)
 		{
+			var credential = await _credentialRepository.GetByIdAsync(credentialId);
+			if (credential == null || credential.DepartmentId != departmentId ||
+				credential.CredentialType != (int)WorkflowCredentialType.OAuth2ClientCredentials)
+				return null;
+
+			credential.EncryptedData = _encryptionService.DecryptForDepartment(credential.EncryptedData, departmentId, departmentCode);
+			if (WorkflowJwtKeys.NormalizeAuthMethod(ReadJsonString(credential.EncryptedData, "authMethod")) != WorkflowJwtKeys.PrivateKeyJwt)
+				return null;
+
+			credential.UpdatedByUserId = userId;
+			return await SaveCredentialInternalAsync(credential, departmentCode, rotateSigningKey: true, cancellationToken);
+		}
+
+		private async Task<WorkflowCredential> SaveCredentialInternalAsync(WorkflowCredential credential, string departmentCode, bool rotateSigningKey,
+			CancellationToken cancellationToken)
+		{
+			// OAuth2 private_key_jwt: the signing keys are generated and kept here, inside the encrypted data. The editor never
+			// sends or sees them; only the public halves go to PublicJwks.
+			var keys = await PrepareSigningKeysAsync(credential, departmentCode, rotateSigningKey);
+			credential.EncryptedData = keys.Json;
+
+			// Protected Workflows pin a credential by id: capture what the stored row was BEFORE it is overwritten, so a
+			// type, OAuth2 token-host or client-authentication change suspends pinned releases and a secret-only rotation
+			// is recorded.
+			var change = await CaptureCredentialChangeAsync(credential, departmentCode);
+			if (change != null)
+				change.RotatedKeyId = keys.RotatedKeyId;
+
 			credential.EncryptedData = _encryptionService.EncryptForDepartment(
 				credential.EncryptedData, credential.DepartmentId, departmentCode);
 
@@ -232,8 +266,82 @@ namespace Resgrid.Services
 			{
 				credential.UpdatedOn = DateTime.UtcNow;
 				await _credentialRepository.UpdateAsync(credential, cancellationToken);
+				await OnProtectedCredentialSavedAsync(credential, change, cancellationToken);
 				return credential;
 			}
+		}
+
+		/// <summary>
+		/// Normalizes an OAuth2 credential's key material. client_secret: no keys, no JWKS. private_key_jwt: keys carried over
+		/// from the stored credential (never from the caller), a first key generated when there is none, a new key when
+		/// rotating or when the algorithm changes (the previous one retired but published for the overlap window), and
+		/// expired keys dropped. Returns the JSON to encrypt and the kid of a key that REPLACED another one.
+		/// </summary>
+		private async Task<(string Json, string RotatedKeyId)> PrepareSigningKeysAsync(WorkflowCredential credential, string departmentCode, bool rotate)
+		{
+			if (credential.CredentialType != (int)WorkflowCredentialType.OAuth2ClientCredentials)
+			{
+				credential.PublicJwks = null;
+				return (credential.EncryptedData, null);
+			}
+
+			JObject incoming;
+			try { incoming = JObject.Parse(credential.EncryptedData ?? "{}"); }
+			catch (JsonException) { credential.PublicJwks = null; return (credential.EncryptedData, null); }
+
+			var method = WorkflowJwtKeys.NormalizeAuthMethod((string)incoming.GetValue("authMethod", StringComparison.OrdinalIgnoreCase));
+			incoming.Remove("signingKeys");
+			if (method != WorkflowJwtKeys.PrivateKeyJwt)
+			{
+				credential.PublicJwks = null;
+				return (incoming.ToString(Formatting.None), null);
+			}
+
+			var keys = new List<WorkflowSigningKey>();
+			if (!string.IsNullOrEmpty(credential.WorkflowCredentialId))
+			{
+				var stored = await _credentialRepository.GetByIdAsync(credential.WorkflowCredentialId);
+				if (stored != null && stored.DepartmentId == credential.DepartmentId && stored.CredentialType == credential.CredentialType)
+				{
+					try
+					{
+						var previous = JObject.Parse(_encryptionService.DecryptForDepartment(stored.EncryptedData, stored.DepartmentId, departmentCode));
+						keys = previous.GetValue("signingKeys", StringComparison.OrdinalIgnoreCase)?.ToObject<List<WorkflowSigningKey>>() ?? keys;
+					}
+					catch (Exception ex) when (ex is JsonException || ex is FormatException || ex is System.Security.Cryptography.CryptographicException)
+					{
+						Logging.LogError($"Workflow credential {credential.WorkflowCredentialId}: stored signing keys unreadable ({ex.GetType().FullName}); generating a new key.");
+					}
+				}
+			}
+
+			var now = DateTime.UtcNow;
+			var alg = WorkflowJwtKeys.NormalizeAlgorithm((string)incoming.GetValue("signingAlg", StringComparison.OrdinalIgnoreCase));
+			var current = WorkflowJwtKeys.Current(keys);
+			string rotatedKeyId = null;
+			if (current == null || rotate || !string.Equals(current.Alg, alg, StringComparison.Ordinal))
+			{
+				foreach (var key in keys.Where(k => !k.RetiredOn.HasValue))
+					key.RetiredOn = now;
+				var (signing, _) = WorkflowJwtKeys.Generate(alg, now);
+				keys.Add(signing);
+				if (current != null)
+					rotatedKeyId = signing.Kid;
+			}
+
+			keys = keys.Where(k => WorkflowJwtKeys.IsPublished(k.RetiredOn, now, DataProtectionConfig.WorkflowJwksOverlapDays)).ToList();
+			incoming.Remove("clientSecret");
+			incoming["authMethod"] = WorkflowJwtKeys.PrivateKeyJwt;
+			incoming["signingAlg"] = alg;
+			incoming["signingKeys"] = JArray.FromObject(keys);
+			credential.PublicJwks = WorkflowJwtKeys.WritePublicKeys(keys.Select(WorkflowJwtKeys.PublicFor));
+			return (incoming.ToString(Formatting.None), rotatedKeyId);
+		}
+
+		private static string ReadJsonString(string json, string name)
+		{
+			try { return (string)JObject.Parse(json ?? "{}").GetValue(name, StringComparison.OrdinalIgnoreCase); }
+			catch (Exception) { return null; }
 		}
 
 		public async Task<bool> DeleteCredentialAsync(string credentialId, CancellationToken cancellationToken = default)
@@ -241,6 +349,7 @@ namespace Resgrid.Services
 			var cred = await _credentialRepository.GetByIdAsync(credentialId);
 			if (cred == null) return false;
 			await _credentialRepository.DeleteAsync(cred, cancellationToken);
+			await OnProtectedCredentialDeletedAsync(cred, cancellationToken);
 			return true;
 		}
 
@@ -369,6 +478,36 @@ namespace Resgrid.Services
 				run = await _runRepository.InsertAsync(run, cancellationToken);
 			}
 
+			// ── Protected Workflows run gate ─────────────────────────────────────
+			// A workflow whose release is not Active is skipped, never run unprotected (its destination expects
+			// plaintext; REDACTED would overwrite the real record). An Active release sends every step through the
+			// protected path: fresh preconditions, an allow-listed decrypt, the pinned host, value-free logs.
+			ProtectedRunGate protectedGate;
+			try
+			{
+				protectedGate = _protectedRuntime == null ? ProtectedRunGate.NotProtected : await _protectedRuntime.GetRunGateAsync(workflow, cancellationToken);
+			}
+			catch (Exception gateEx) when (!(gateEx is OperationCanceledException && cancellationToken.IsCancellationRequested))
+			{
+				// Unknown protection state: fail closed. Nothing runs; the run fails (and retries) without sending.
+				Logging.LogError($"Protected workflow gate unavailable for run {run.WorkflowRunId}: {gateEx.GetType().FullName}.");
+				run.Status       = (int)WorkflowRunStatus.Failed;
+				run.ErrorMessage = "protected_gate_unavailable";
+				run.CompletedOn  = DateTime.UtcNow;
+				await UpdateRunAsync(run, cancellationToken);
+				return run;
+			}
+
+			if (protectedGate.SkipReason != null)
+			{
+				run.Status      = (int)WorkflowRunStatus.Skipped;
+				run.SkipReason  = protectedGate.SkipReason;
+				run.CompletedOn = DateTime.UtcNow;
+				await UpdateRunAsync(run, cancellationToken);
+				return run;
+			}
+			// ── End protected run gate ───────────────────────────────────────────
+
 			// Build template context once for all steps
 			var triggerEventType = (WorkflowTriggerEventType)workflow.TriggerEventType;
 			object scriptObject = null;
@@ -378,9 +517,11 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}: {ex.GetType().FullName}."); else Logging.LogException(ex);
+				if (checklist || protectedGate.IsProtected) Logging.LogError($"Workflow context failed for run {run.WorkflowRunId}: {ex.GetType().FullName}."); else Logging.LogException(ex);
 				run.Status       = (int)WorkflowRunStatus.Failed;
-				run.ErrorMessage = $"Failed to build template context: {ex.Message}";
+				run.ErrorMessage = protectedGate.IsProtected
+					? ProtectedWorkflowLogText.Error("context_failed", ex)
+					: $"Failed to build template context: {ex.Message}";
 				run.CompletedOn  = DateTime.UtcNow;
 				await UpdateRunAsync(run, cancellationToken);
 				return run;
@@ -398,10 +539,36 @@ namespace Resgrid.Services
 
 			var steps = await GetStepsByWorkflowIdAsync(workflowId, cancellationToken);
 			var anyFailure = false;
+			var anyRetryable = false;
 			var utcToday = DateTime.UtcNow.Date;
+			string lastProtectedError = null;
 
 			foreach (var step in steps.Where(s => s.IsEnabled))
 			{
+				// run.* for this step: run.idempotency_key is the same on every retry of this delivery, so a destination that
+				// honors it (an Idempotency-Key header, FHIR conditional create, HL7 MSH-10) never records it twice.
+				var idempotencyKey = WorkflowIdempotency.Key(workflowId, run.EventId, run.WorkflowRunId, step.WorkflowStepId);
+				((Scriban.Runtime.ScriptObject)scriptObject)["run"] = new Scriban.Runtime.ScriptObject
+				{
+					["id"] = run.WorkflowRunId,
+					["attempt"] = attemptNumber,
+					["idempotency_key"] = idempotencyKey
+				};
+
+				if (protectedGate.IsProtected)
+				{
+					var protectedStep = await ExecuteProtectedStepAsync(workflow, run, step, (Scriban.Runtime.ScriptObject)scriptObject,
+						eventPayloadJson, departmentId, departmentCode, isFreePlan, idempotencyKey, cancellationToken);
+					await InsertLogAsync(departmentId, checklist, protectedStep.Log, cancellationToken);
+					if (protectedStep.Failed)
+					{
+						anyFailure = true;
+						anyRetryable |= protectedStep.Retryable;
+						lastProtectedError = protectedStep.ErrorCode ?? lastProtectedError;
+					}
+					continue;
+				}
+
 				var logEntry = new WorkflowRunLog
 				{
 					WorkflowRunLogId = Guid.NewGuid().ToString(),
@@ -420,7 +587,9 @@ namespace Resgrid.Services
 						var conditionContext = new Scriban.TemplateContext
 						{
 							LoopLimit       = WorkflowConfig.ScribanLoopLimit,
-							StrictVariables = false
+							StrictVariables = false,
+							// protected.* never exists outside an approved release: it must read as empty, not throw.
+							EnableRelaxedTargetAccess = ProtectedWorkflowValidator.ReferencesProtectedNamespace(step.ConditionExpression)
 						};
 						conditionContext.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
 
@@ -499,7 +668,10 @@ namespace Resgrid.Services
 					var scribanContext = new Scriban.TemplateContext
 					{
 						LoopLimit       = WorkflowConfig.ScribanLoopLimit,
-						StrictVariables = false
+						StrictVariables = false,
+						// A protected.* reference in a workflow without an Active release renders as an empty string.
+						EnableRelaxedTargetAccess = ProtectedWorkflowValidator.ReferencesProtectedNamespace(step.OutputTemplate) ||
+							ProtectedWorkflowValidator.ReferencesProtectedNamespace(step.ActionConfig)
 					};
 					scribanContext.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
 					// ── End sandboxed Scriban context ────────────────────────────────
@@ -561,12 +733,16 @@ namespace Resgrid.Services
 
 					// Decrypt credential if one is attached
 					string decryptedCredJson = null;
+					int? credentialType = null;
 					if (!string.IsNullOrEmpty(step.WorkflowCredentialId))
 					{
 						var cred = await _credentialRepository.GetByIdAsync(step.WorkflowCredentialId);
 						if (cred != null)
+						{
+							credentialType = cred.CredentialType;
 							decryptedCredJson = _encryptionService.DecryptForDepartment(
 								cred.EncryptedData, departmentId, departmentCode);
+						}
 					}
 
 					// ── Records report export attachment (RMS plan section 5.6) ─────
@@ -628,7 +804,9 @@ namespace Resgrid.Services
 						DepartmentId           = departmentId,
 						ActionType             = step.ActionType,
 						IsFreePlanDepartment   = isFreePlan,
-						Attachment             = attachment
+						Attachment             = attachment,
+						CredentialType         = credentialType,
+						IdempotencyKey         = idempotencyKey
 					};
 
 					var executor = _executorFactory.GetExecutor((WorkflowActionType)step.ActionType);
@@ -683,12 +861,19 @@ namespace Resgrid.Services
 					? workflow.MaxRetryCount
 					: WorkflowConfig.DefaultMaxRetryCount;
 
-				if (attemptNumber < maxRetries)
+				// A protected run retries only for failures another attempt could fix (transport, 5xx, 429); a rejected
+				// acknowledgement, a 4xx or a refused send stops at once and alerts.
+				if (attemptNumber < maxRetries && (!protectedGate.IsProtected || anyRetryable))
 					run.Status = (int)WorkflowRunStatus.Retrying;
 				else
 				{
 					run.Status       = (int)WorkflowRunStatus.Failed;
-					run.ErrorMessage = "Maximum retry attempts exceeded.";
+					run.ErrorMessage = protectedGate.IsProtected && !anyRetryable && attemptNumber < maxRetries
+						? $"Not retried: {lastProtectedError ?? ProtectedWorkflowErrorCodes.StepError}"
+						: "Maximum retry attempts exceeded.";
+					if (protectedGate.IsProtected && _protectedWorkflows != null)
+						await _protectedWorkflows.NotifyFinalFailureAsync(departmentId, workflow, run.WorkflowRunId,
+							lastProtectedError ?? ProtectedWorkflowErrorCodes.StepError, cancellationToken);
 				}
 			}
 			else

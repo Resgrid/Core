@@ -4,7 +4,9 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
 @model Resgrid.Model.Workflow
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
 @{
+    var isProtectedWorkflow = (bool)(ViewBag.IsProtectedWorkflow ?? false);
     ViewData["Title"] = "Resgrid | " + localizer["EditWorkflowHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     var credentialsJson = (string)(ViewBag.CredentialsJson ?? "[]");
@@ -49,6 +51,10 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
+    @if (TempData["GalleryCreated"] is string galleryCreated)
+    {
+        <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer[galleryCreated]</div>
+    }
     <div class="row">
         <div class="col-lg-8">
             <!-- Workflow settings -->
@@ -163,6 +169,9 @@
                     }
                 </div>
             </div>
+
+            <!-- ADP Protected Workflows: the release panel loads here when the department has turned the feature on. -->
+            <div id="protectedReleasePanelHost" data-url="@Url.Action("Panel", "ProtectedWorkflows", new { area = "User", workflowId = Model.WorkflowId })"></div>
         </div>
 
         <!-- Variable reference panel (right sidebar on main page) -->
@@ -317,7 +326,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Content-Type</label>
-                                        <input type="text" id="cfg_apipost_ct" class="form-control" value="application/json" />
+                                        <input type="text" id="cfg_apipost_ct" class="form-control" value="application/json" list="pwContentTypes" />
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -339,7 +348,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Content-Type</label>
-                                        <input type="text" id="cfg_apiput_ct" class="form-control" value="application/json" />
+                                        <input type="text" id="cfg_apiput_ct" class="form-control" value="application/json" list="pwContentTypes" />
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -350,6 +359,56 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if (isProtectedWorkflow)
+                        {
+                            <datalist id="pwContentTypes">
+                                @foreach (var contentType in Resgrid.Model.ProtectedStepOptions.AllowedContentTypes)
+                                {
+                                    <option value="@contentType"></option>
+                                }
+                            </datalist>
+                            <!-- Protected (EHR) delivery options for API POST / PUT steps -->
+                            <div id="cfg_protected_options" style="display:none; border-left: 3px solid #1ab394; padding-left: 10px; margin-bottom: 10px;">
+                                <div class="config-section-label"><i class="fa fa-shield"></i> @pwLocalizer["StepOptionsHeader"]</div>
+                                <p class="text-muted" style="font-size:11px;">@pwLocalizer["StepOptionsHelp"]</p>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label>@pwLocalizer["StepSuccessRule"]</label>
+                                        <select id="cfg_pw_rule" class="form-control">
+                                            <option value="http_2xx">@pwLocalizer["Rule_http_2xx"]</option>
+                                            <option value="json_path">@pwLocalizer["Rule_json_path"]</option>
+                                            <option value="xpath">@pwLocalizer["Rule_xpath"]</option>
+                                            <option value="hl7_ack">@pwLocalizer["Rule_hl7_ack"]</option>
+                                            <option value="fhir_operation_outcome">@pwLocalizer["Rule_fhir_operation_outcome"]</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label>@pwLocalizer["StepRulePath"]</label>
+                                        <input type="text" id="cfg_pw_rule_path" class="form-control" placeholder="$.status" />
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label>@pwLocalizer["StepRuleExpected"]</label>
+                                        <input type="text" id="cfg_pw_rule_expected" class="form-control" placeholder="ok" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>@pwLocalizer["StepCapture"]</label>
+                                    <textarea id="cfg_pw_capture" class="form-control" rows="3" placeholder="fhir_location_id | Encounter | ehr_encounter_id"></textarea>
+                                    <small class="text-muted">@pwLocalizer["StepCaptureHelp"]</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label>@pwLocalizer["StepIdempotencyHeader"]</label>
+                                        <input type="text" id="cfg_pw_idem" class="form-control" placeholder="Idempotency-Key" />
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        <label>@pwLocalizer["StepIfNoneExist"]</label>
+                                        <input type="text" id="cfg_pw_ifnoneexist" class="form-control" placeholder="identifier=https://resgrid.com/call|{{ call.id }}" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
 
                         <!-- 5 · CallApiDelete -->
                         <div class="action-config-panel" data-action="5">
@@ -612,6 +671,10 @@
                             Use Scriban template syntax. Click variables in the panel on the right to insert them.
                         </p>
                         <textarea id="stepOutputTemplate" class="form-control"></textarea>
+                        @if (isProtectedWorkflow)
+                        {
+                            <div id="pwEscapeWarning" class="alert alert-warning" style="display:none; margin-top:6px; padding:6px 10px; font-size:12px;">@pwLocalizer["Warning_unescaped_protected_value"]</div>
+                        }
 
                         <div id="stepSaveError" class="alert alert-danger" style="display:none; margin-top:12px;"></div>
                     </div>
@@ -741,6 +804,16 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/app/internal/protectedworkflows/resgrid.protectedworkflows.js" asp-append-version="true"></script>
+    <script>
+        // The panel is a server-rendered partial (it carries its own localized strings and handlers).
+        $(function () {
+            var host = $('#protectedReleasePanelHost');
+            if (host.length) {
+                $.get(host.data('url')).done(function (html) { host.html(html); });
+            }
+        });
+    </script>
     <script src="~/lib/codemirror/lib/codemirror.min.js" asp-append-version="true"></script>
     <script src="~/lib/codemirror/mode/xml/xml.min.js" asp-append-version="true"></script>
     <script src="~/lib/codemirror/mode/javascript/javascript.min.js" asp-append-version="true"></script>
@@ -852,6 +925,24 @@
                 lineWrapping: true
             });
 
+        // Advice, not a block: a protected value placed in JSON, XML or HL7 without json_escape / xml_escape / hl7_escape
+        // can break the payload's structure (the send then fails validation instead of going out malformed).
+        (function () {
+            var warning = document.getElementById('pwEscapeWarning');
+            if (!warning) return;
+            function check() {
+                var unescaped = false;
+                var blocks = templateEditor.getValue().match(/\{\{[\s\S]*?\}\}/g) || [];
+                blocks.forEach(function (block) {
+                    if (/(^|[^\w.])protected\s*[.\[]/.test(block) && !/(json_escape|xml_escape|hl7_escape)/.test(block)) unescaped = true;
+                });
+                var contentType = ((document.getElementById('cfg_apipost_ct') || {}).value || '') + ((document.getElementById('cfg_apiput_ct') || {}).value || '');
+                warning.style.display = unescaped && contentType.indexOf('text/plain') < 0 ? 'block' : 'none';
+            }
+            templateEditor.on('change', check);
+            setTimeout(check, 0);
+        })();
+
         // Refresh when modal opens so dimensions are correct
         $('#stepModal').on('shown.bs.modal', function () { templateEditor.refresh(); });
 
@@ -882,6 +973,66 @@
             var panel = document.querySelector('.action-config-panel[data-action="' + actionType + '"]');
             if (panel) panel.classList.add('active');
             showExportGroup(actionType);
+            var protectedOptions = document.getElementById('cfg_protected_options');
+            if (protectedOptions) protectedOptions.style.display = (parseInt(actionType, 10) === 3 || parseInt(actionType, 10) === 4) ? 'block' : 'none';
+        }
+
+        // ── Protected (EHR) delivery options ───────────────────────────────────
+        // Keys the structured API editor does not own (headers, success rule, capture, idempotency) survive a save.
+        var loadedApiExtras = {};
+        function pick(cfg, name) {
+            for (var key in cfg) { if (Object.prototype.hasOwnProperty.call(cfg, key) && key.toLowerCase() === name.toLowerCase()) return cfg[key]; }
+            return undefined;
+        }
+        function readApiExtras(cfg) {
+            var extras = {};
+            ['headers', 'successRule', 'responseCapture', 'idempotencyHeader', 'ifNoneExist'].forEach(function (name) {
+                var value = pick(cfg, name);
+                if (value !== undefined && value !== null) extras[name] = value;
+            });
+            return extras;
+        }
+        function fillProtectedOptions(extras) {
+            if (!document.getElementById('cfg_protected_options')) return;
+            var rule = extras.successRule || {};
+            document.getElementById('cfg_pw_rule').value = (typeof rule === 'string' ? rule : (pick(rule, 'type') || 'http_2xx'));
+            document.getElementById('cfg_pw_rule_path').value = typeof rule === 'string' ? '' : (pick(rule, 'path') || '');
+            document.getElementById('cfg_pw_rule_expected').value = typeof rule === 'string' ? '' : (pick(rule, 'expected') || '');
+            document.getElementById('cfg_pw_capture').value = (extras.responseCapture || []).map(function (c) {
+                return [pick(c, 'source') || '', pick(c, 'expression') || '', pick(c, 'key') || ''].join(' | ');
+            }).join('\n');
+            document.getElementById('cfg_pw_idem').value = extras.idempotencyHeader || '';
+            document.getElementById('cfg_pw_ifnoneexist').value = extras.ifNoneExist || '';
+        }
+        function withApiExtras(config) {
+            if (loadedApiExtras.headers) config.headers = loadedApiExtras.headers;
+            if (!document.getElementById('cfg_protected_options')) {
+                ['successRule', 'responseCapture', 'idempotencyHeader', 'ifNoneExist'].forEach(function (name) {
+                    if (loadedApiExtras[name] !== undefined) config[name] = loadedApiExtras[name];
+                });
+                return config;
+            }
+            var ruleType = document.getElementById('cfg_pw_rule').value;
+            if (ruleType && ruleType !== 'http_2xx') {
+                config.successRule = { type: ruleType };
+                var path = document.getElementById('cfg_pw_rule_path').value.trim();
+                var expected = document.getElementById('cfg_pw_rule_expected').value.trim();
+                if (path) config.successRule.path = path;
+                if (expected) config.successRule.expected = expected;
+            }
+            var capture = document.getElementById('cfg_pw_capture').value.split(/\r?\n/).map(function (line) {
+                var parts = line.split('|').map(function (p) { return p.trim(); });
+                if (parts.length < 3 || !parts[0] || !parts[2]) return null;
+                var entry = { source: parts[0], key: parts[2] };
+                if (parts[1]) entry.expression = parts[1];
+                return entry;
+            }).filter(function (entry) { return entry; });
+            if (capture.length) config.responseCapture = capture;
+            var idem = document.getElementById('cfg_pw_idem').value.trim();
+            if (idem) config.idempotencyHeader = idem;
+            var ifNoneExist = document.getElementById('cfg_pw_ifnoneexist').value.trim();
+            if (ifNoneExist) config.ifNoneExist = ifNoneExist;
+            return config;
         }
 
         sel.addEventListener('change', function () {
@@ -962,17 +1113,17 @@
                         timeoutSeconds: parseInt(document.getElementById('cfg_apiget_timeout').value, 10) || 30
                     });
                 case 3:  // CallApiPost
-                    return JSON.stringify({
+                    return JSON.stringify(withApiExtras({
                         url:            document.getElementById('cfg_apipost_url').value.trim(),
                         contentType:    document.getElementById('cfg_apipost_ct').value.trim() || null,
                         timeoutSeconds: parseInt(document.getElementById('cfg_apipost_timeout').value, 10) || 30
-                    });
+                    }));
                 case 4:  // CallApiPut
-                    return JSON.stringify({
+                    return JSON.stringify(withApiExtras({
                         url:            document.getElementById('cfg_apiput_url').value.trim(),
                         contentType:    document.getElementById('cfg_apiput_ct').value.trim() || null,
                         timeoutSeconds: parseInt(document.getElementById('cfg_apiput_timeout').value, 10) || 30
-                    });
+                    }));
                 case 5:  // CallApiDelete
                     return JSON.stringify({
                         url:            document.getElementById('cfg_apidel_url').value.trim(),
@@ -1042,6 +1193,8 @@
             }
             val('cfg_export_template', cfg.recordsExportTemplateId || cfg.RecordsExportTemplateId || '');
             showExportGroup(t);
+            loadedApiExtras = readApiExtras(cfg);
+            fillProtectedOptions(loadedApiExtras);
             switch (t) {
                 case 0:
                     val('cfg_email_to',      cfg.to || cfg.To || '');
@@ -1134,6 +1287,8 @@
 
         // ── Reset all config fields ────────────────────────────────────────────
         function resetAllConfigFields() {
+            loadedApiExtras = {};
+            fillProtectedOptions({});
             ['cfg_email_to','cfg_email_cc','cfg_email_subject',
              'cfg_sms_to',
              'cfg_apiget_url','cfg_apipost_url','cfg_apiput_url','cfg_apidel_url'].forEach(function (id) {

@@ -200,37 +200,17 @@ namespace Resgrid.Services
 
 		private async Task<HashSet<string>> GetShiftUserIdsAsync(Call call, Department department, IReadOnlyCollection<int> groupIds)
 		{
-			var shiftUserIds = new HashSet<string>();
-			var shiftDate = GetShiftDate(call, department);
+			// Whoever is on duty for each group at dispatch time: the resolved shift roster (assigned staff, approved
+			// signups, single-day edits and trades), so a night shift is still covered after midnight.
+			var onDuty = await _shiftsService.GetOnDutyUserIdsForGroupsAsync(call.DepartmentId, groupIds, GetReferenceDate(call));
 
-			foreach (var groupId in groupIds)
-			{
-				var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(groupId, shiftDate);
-
-				if (signups == null)
-					continue;
-
-				foreach (var signup in signups)
-				{
-					if (!String.IsNullOrWhiteSpace(signup.UserId))
-						shiftUserIds.Add(signup.UserId);
-				}
-			}
-
-			return shiftUserIds;
+			return new HashSet<string>((onDuty ?? new Dictionary<int, List<string>>()).Values.Where(x => x != null).SelectMany(x => x)
+				.Where(x => !String.IsNullOrWhiteSpace(x)), StringComparer.OrdinalIgnoreCase);
 		}
 
 		private static List<int> GetDistinctIds(IEnumerable<int> primaryIds, IEnumerable<int> fallbackIds)
 		{
 			return (primaryIds ?? fallbackIds ?? Enumerable.Empty<int>()).Distinct().ToList();
-		}
-
-		private static DateTime GetShiftDate(Call call, Department department)
-		{
-			var referenceDate = GetReferenceDate(call);
-			var localizedDate = department != null ? TimeConverterHelper.TimeConverter(referenceDate, department) : referenceDate;
-
-			return new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
 		}
 
 		private static DateTime GetReferenceDate(Call call)

@@ -19,10 +19,35 @@ namespace Resgrid.Chatbot.Services
 	{
 		private static readonly Regex CallNumberRegex = new Regex(@"^\d{2,4}-\d+$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(200));
 
-		public static async Task<Call> ResolveAsync(ICallsService callsService, int departmentId, string reference)
+		public static Task<Call> ResolveAsync(ICallsService callsService, int departmentId, string reference)
+		{
+			return ResolveAsync(callsService, departmentId, reference, null, null);
+		}
+
+		/// <summary>
+		/// As above, limited to the user's dispatch scope (group-scoped dispatch, off by default): a call
+		/// outside it resolves to null like a foreign one, and shorthand ("fire") matches only among the
+		/// in-scope active calls, so an area supervisor gets their own area's fire rather than a more
+		/// recent one elsewhere. A null <paramref name="dispatchScopeService"/> means unscoped.
+		/// </summary>
+		public static async Task<Call> ResolveAsync(ICallsService callsService, int departmentId, string reference,
+			IDispatchScopeService dispatchScopeService, string userId)
 		{
 			if (string.IsNullOrWhiteSpace(reference))
 				return null;
+
+			DispatchScope scope = null;
+			if (dispatchScopeService != null)
+			{
+				scope = await dispatchScopeService.GetScopeForUserAsync(departmentId, userId);
+
+				// Never null by contract; if it ever is, resolve nothing rather than everything.
+				if (scope == null)
+					return null;
+
+				if (scope.IsDepartmentWide)
+					scope = null;
+			}
 
 			// Trailing punctuation is never part of a call reference ("omw to 26-1.", "respond to fire?").
 			var text = reference.Trim().TrimEnd('?', '!', '.', ',');
@@ -37,10 +62,19 @@ namespace Resgrid.Chatbot.Services
 			if (int.TryParse(text, out var callId))
 			{
 				var call = await callsService.GetCallByIdAsync(callId);
-				return (call != null && call.DepartmentId == departmentId) ? call : null;
+				if (call == null || call.DepartmentId != departmentId)
+					return null;
+
+				if (scope != null && !await dispatchScopeService.IsCallInScopeAsync(scope, call))
+					return null;
+
+				return call;
 			}
 
 			var activeCalls = await callsService.GetActiveCallsByDepartmentAsync(departmentId);
+			if (scope != null && activeCalls != null)
+				activeCalls = await dispatchScopeService.FilterCallsAsync(scope, activeCalls);
+
 			if (activeCalls == null || activeCalls.Count == 0)
 				return null;
 

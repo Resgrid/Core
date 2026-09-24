@@ -201,6 +201,21 @@ namespace Resgrid.Model
 
 		public bool CheckInTimersEnabled { get; set; }
 
+		/// <summary>
+		/// External subject and record identifiers as a JSON object of string keys to string values, for example
+		/// {"ehr_client_id":"123456","ehr_encounter_id":"E-9"}. Protected (catalog calls.subjectidentifiers): an
+		/// envelope in an ADP department. Kept apart from ExternalIdentifier, which integrations already use for their
+		/// own case id. See <see cref="CallSubjectIdentifiers"/> for the rules.
+		/// </summary>
+		public string SubjectIdentifiers { get; set; }
+
+		/// <summary>
+		/// The department has 42 CFR Part 2 consent (or another Part 2 basis) on file for this call's redisclosure.
+		/// Structural, never protected: a workflow condition may read it, and a Protected Workflow releasing a Part 2
+		/// field refuses to send unless it is true.
+		/// </summary>
+		public bool Part2ConsentOnFile { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

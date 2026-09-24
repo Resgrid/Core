@@ -86,6 +86,14 @@ namespace Resgrid.Services
 		/// </summary>
 		public const int PreventionCatalogVersion = 13;
 
+		/// <summary>
+		/// Protected Workflows for EHR integration (catalog 29, registered with M0233): Calls.SubjectIdentifiers, the JSON
+		/// object of external subject and record identifiers (EHR client id, encounter id). The id calls.subjectidentifiers
+		/// is part of the envelope AAD and never changes. A department pinned below 29 keeps the column plaintext until the
+		/// catalog upgrade sweep reaches it.
+		/// </summary>
+		public const int SubjectIdentifiersCatalogVersion = 29;
+
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
 			Entries.ToDictionary(e => e.FieldId, StringComparer.OrdinalIgnoreCase);
@@ -752,6 +760,12 @@ namespace Resgrid.Services
 				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", PersonnelFamily, table, column,
 					binary ? ProtectedFieldStorageKind.Binary : ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Pii,
 					PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData, Resgrid.Model.Workforce.WorkforceProtectedFields.CatalogVersion));
+
+			// Protected Workflows for EHR integration (catalog 29): the subject identifiers identify a person in another
+			// system (EHR client id, encounter id), so they are PII in the Calls family.
+			list.Add(new ProtectedFieldDefinition("calls.subjectidentifiers", CallsFamily, "Calls", "SubjectIdentifiers",
+				ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Pii, PermissionTypes.ViewProtectedCallData,
+				PermissionTypes.EditProtectedCallData, SubjectIdentifiersCatalogVersion));
 			return list;
 		}
 	}

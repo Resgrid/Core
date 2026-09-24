@@ -273,9 +273,30 @@
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
-								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.Trade.ShiftSignupTradeId)
 								<div asp-validation-summary="All" class="text-danger"></div>
+								@if (!String.IsNullOrWhiteSpace(Model.Message))
+								{
+									<div class="alert alert-danger">@Model.Message</div>
+								}
+								@if (Model.Trade.ApprovalPending && !Model.Trade.Denied)
+								{
+									<div class="alert alert-warning">@String.Format(localizer["FinishTradePendingFormat"].Value, Model.AcceptedName)</div>
+								}
+								else if (Model.Trade.IsTradeComplete())
+								{
+									<div class="alert alert-success">@String.Format(localizer["FinishTradeCompleteFormat"].Value, Model.AcceptedName)</div>
+								}
+								else if (Model.Trade.Denied)
+								{
+									<div class="alert alert-danger">
+										@localizer["FinishTradeDenied"]
+										@if (!String.IsNullOrWhiteSpace(Model.Trade.ReviewNote))
+										{
+											<br /><small>@Model.Trade.ReviewNote</small>
+										}
+									</div>
+								}
 							</div>
 						</div>
 
@@ -288,61 +309,69 @@
 												<th>@localizer["NameColumn"]</th>
 												<th>@localizer["DateColumn"]</th>
 												<th>@localizer["ShiftColumn"]</th>
+												<th></th>
 											</tr>
 										</thead>
 										<tbody>
-											@if (Model.Trade.Users != null)
+											@foreach (var offer in Model.Offers)
 											{
-												@foreach (var tradeUser in Model.Trade.Users)
-												{
-													var profile = Model.Profiles?.FirstOrDefault(p => p.UserId == tradeUser.UserId);
-													var userShift = tradeUser.Shifts?.FirstOrDefault();
-
-													// The controller reads one "selectedShift" value and discriminates on its shape:
-													// an offered signup id for a balanced swap, or the participant's user id for an
-													// unbalanced trade where nothing is given back.
-													var offeredShiftSignupId = userShift?.ShiftSignupId;
-													var selectedShiftValue = offeredShiftSignupId.HasValue
-														? offeredShiftSignupId.Value.ToString()
-														: tradeUser.UserId;
-													<tr>
-														<td>@(profile != null ? profile.FullName.AsFirstNameLastName : tradeUser.UserId)</td>
-														<td>
-															@if (userShift?.ShiftSignup != null)
+												var canPickOffer = Model.CanPick && offer.Offered && !offer.Declined;
+												<tr>
+													<td>
+														@offer.Name
+														@if (!String.IsNullOrWhiteSpace(offer.Reason))
+														{
+															<br /><small class="text-muted">@offer.Reason</small>
+														}
+													</td>
+													<td>
+														@if (offer.Shifts.Any())
+														{
+															@foreach (var offered in offer.Shifts)
 															{
-																@userShift.ShiftSignup.ShiftDay.ToShortDateString()
+																<div>@offered.Day.ToShortDateString()</div>
 															}
-															else
+														}
+														else
+														{
+															@localizer["NoneValue"]
+														}
+													</td>
+													<td>
+														@if (offer.Shifts.Any())
+														{
+															@foreach (var offered in offer.Shifts)
 															{
-																@localizer["NoneValue"]
+																<div>
+																	@offered.ShiftName
+																	@if (canPickOffer)
+																	{
+																		<button class="btn btn-xs btn-primary" name="targetShiftSignupId" type="submit" value="@offered.ShiftSignupId">@localizer["FinalizeTradeSwapButton"]</button>
+																	}
+																</div>
 															}
-														</td>
-														<td>
-															@if (userShift?.ShiftSignup != null)
-															{
-																@userShift.ShiftSignup.Shift.Name
-															}
-															else
-															{
-																@localizer["NoneValue"]
-															}
-														</td>
-														<td>
-															@if (tradeUser.Offered && !tradeUser.Declined)
-															{
-																<button class="btn btn-primary" id="submit_button_@tradeUser.ShiftSignupTradeUserId" name="selectedShift" type="submit" value="@selectedShiftValue">@localizer["FinalizeTradeButton"]</button>
-															}
-															else if (tradeUser.Declined)
-															{
-																@localizer["Declined"]
-															}
-															else
-															{
-																@localizer["NoneValue"]
-															}
-														</td>
-													</tr>
-												}
+														}
+														else
+														{
+															@localizer["NoneValue"]
+														}
+													</td>
+													<td>
+														@if (canPickOffer)
+														{
+															@* Taking the slot outright: nothing is given back. *@
+															<button class="btn btn-primary" name="acceptedUserId" type="submit" value="@offer.UserId">@localizer["FinalizeTradeButton"]</button>
+														}
+														else if (offer.Declined)
+														{
+															<span class="label label-danger">@localizer["Declined"]</span>
+														}
+														else if (!offer.Offered)
+														{
+															<span class="label label-default">@localizer["TradeStatusOpen"]</span>
+														}
+													</td>
+												</tr>
 											}
 										</tbody>
 									</table>

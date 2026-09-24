@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Model;
@@ -80,7 +81,15 @@ namespace Resgrid.Tests.Services
 				var commonVars = catalog.Where(v => v.IsCommon).ToList();
 				commonVars.Should().NotBeEmpty();
 				commonVars.Should().AllSatisfy(v =>
-					(v.Name.StartsWith("department.") || v.Name.StartsWith("timestamp.") || v.Name.StartsWith("user.")).Should().BeTrue());
+					(v.Name.StartsWith("department.") || v.Name.StartsWith("timestamp.") || v.Name.StartsWith("user.") || v.Name.StartsWith("run.")).Should().BeTrue());
+			}
+
+			[Test]
+			public void run_variables_including_the_idempotency_key_are_common_to_every_trigger()
+			{
+				foreach (WorkflowTriggerEventType trigger in Enum.GetValues(typeof(WorkflowTriggerEventType)))
+					WorkflowTemplateVariableCatalog.GetVariableCatalog(trigger).Select(v => v.Name)
+						.Should().Contain(new[] { "run.id", "run.attempt", "run.idempotency_key" }, trigger.ToString());
 			}
 
 			[Test]

@@ -1,0 +1,412 @@
+@model Resgrid.Web.Areas.User.Models.ProtectedWorkflows.ProtectedReleasePanelView
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
+@{
+    var view = Model.Release;
+    var release = Model.Current;
+    var state = Model.State;
+    var canAdmin = view.CanAdminister;
+    var department = view.Department;
+    var secondApprover = department.RequireSecondApprover;
+    var editable = canAdmin && department.Enabled && department.AdpActive && view.TriggerSupported;
+    var stateLabel = state == null ? pwLocalizer["State_None"].Value : pwLocalizer["State_" + state].Value;
+    var stateClass = state switch
+    {
+        ProtectedReleaseState.Active => Model.IsExpiring ? "label-warning" : "label-primary",
+        ProtectedReleaseState.PendingApproval => "label-warning",
+        ProtectedReleaseState.Suspended => "label-danger",
+        ProtectedReleaseState.Draft => "label-info",
+        _ => "label-default"
+    };
+    var host = release?.DestinationHost ?? view.Validation?.DestinationHost;
+    var tokenHost = release?.TokenHost ?? view.TokenHost;
+    var canRequest = editable && (release == null || state == ProtectedReleaseState.Revoked || state == ProtectedReleaseState.Draft ||
+        state == ProtectedReleaseState.Suspended || state == ProtectedReleaseState.Expired ||
+        (state == ProtectedReleaseState.PendingApproval && (release.SuspendedReason != null || Model.CurrentUserIsRequester)));
+    var canApprove = editable && Model.AwaitingSecondApprover && !Model.CurrentUserIsRequester;
+    var canRenew = editable && state == ProtectedReleaseState.Active && !Model.IsRenewalPending;
+    var canSuspend = canAdmin && (state == ProtectedReleaseState.Active || state == ProtectedReleaseState.PendingApproval);
+    var canRevoke = canAdmin && release != null && state != ProtectedReleaseState.Revoked;
+    var canDiscard = canAdmin && state == ProtectedReleaseState.Draft && release?.RequestedOn == null;
+    var canTest = editable && release != null && state != ProtectedReleaseState.Revoked;
+    var subjectPlan = ProtectedWorkflowFieldCatalog.Plan(view.Workflow.TriggerEventType, Model.SelectedFields);
+    var extraSubjectKeys = subjectPlan.SubjectIdentifierKeys.Where(k => !view.SuggestedSubjectKeys.Contains(k)).ToList();
+}
+<div class="ibox" id="protectedReleasePanel"
+     data-workflow-id="@view.Workflow.WorkflowId"
+     data-release-id="@(release?.WorkflowProtectedReleaseId)"
+     data-steps-fingerprint="@view.StepsFingerprint"
+     data-release-fingerprint="@(release?.ConfigFingerprint)"
+     data-warning-version="@Model.WarningVersion"
+     data-restricted-version="@ProtectedWorkflowDefaults.RestrictedAttestationVersion"
+     data-part2-version="@ProtectedWorkflowDefaults.Part2AttestationVersion"
+     data-release-restricted="@(release?.AllowsRestricted == true ? "true" : "false")"
+     data-release-part2="@(release?.AllowsPart2 == true ? "true" : "false")">
+    <div class="ibox-title">
+        <h5><i class="fa fa-shield"></i> @pwLocalizer["PanelHeader"]</h5>
+        <div class="ibox-tools">
+            <span class="label @stateClass">@stateLabel@(Model.IsExpiring ? " · " + pwLocalizer["StateExpiring"].Value : string.Empty)@(Model.IsRenewalPending ? " · " + pwLocalizer["RenewalPending"].Value : string.Empty)</span>
+        </div>
+    </div>
+    <div class="ibox-content">
+        <p class="small text-muted">@pwLocalizer["PanelIntro"]</p>
+
+        @if (!department.Enabled)
+        {
+            <div class="alert alert-warning">@pwLocalizer["DepartmentOffNotice"]</div>
+        }
+        else if (!department.AdpActive)
+        {
+            <div class="alert alert-warning">@pwLocalizer["AdpRequired"]</div>
+        }
+
+        @if (release != null && state != ProtectedReleaseState.Revoked)
+        {
+            <p class="small">
+                @if (!string.IsNullOrWhiteSpace(release.SuspendedReason))
+                {
+                    <span class="text-danger">@pwLocalizer["Reason_" + release.SuspendedReason]</span><br />
+                }
+                @if (release.RequestedOn.HasValue)
+                {
+                    <span>@string.Format(pwLocalizer["RequestedOn"].Value, $"{release.RequestedOn:yyyy-MM-dd} UTC — {Model.RequestedByName}")</span><br />
+                }
+                @if (release.ApprovedOn.HasValue)
+                {
+                    <span>@string.Format(pwLocalizer["ApprovedOn"].Value, $"{release.ApprovedOn:yyyy-MM-dd} UTC — {Model.ApprovedByName}")</span><br />
+                }
+                @if (release.ExpiresOn.HasValue)
+                {
+                    <span>@string.Format(pwLocalizer["ExpiresOn"].Value, $"{release.ExpiresOn:yyyy-MM-dd} UTC")</span>
+                }
+            </p>
+
+            @if ((state == ProtectedReleaseState.Active || state == ProtectedReleaseState.PendingApproval) && !view.FingerprintMatches && !string.IsNullOrEmpty(release.ConfigFingerprint))
+            {
+                <div class="alert alert-danger">@pwLocalizer["FingerprintChanged"]</div>
+            }
+            @if (Model.AwaitingSecondApprover)
+            {
+                <div class="alert alert-info">@pwLocalizer["AwaitingSecondApprover"]</div>
+            }
+            @if (state != ProtectedReleaseState.Active)
+            {
+                <p class="small text-muted">@pwLocalizer["SkippedNotice"]</p>
+            }
+        }
+
+        @if (!canAdmin)
+        {
+            <div class="alert alert-info">@pwLocalizer["ReadOnlyNotice"]</div>
+        }
+
+        @if (view.Validation != null && !view.Validation.IsValid)
+        {
+            <div class="alert alert-danger">
+                <strong>@pwLocalizer["ValidationHeader"]</strong>
+                <ul style="margin-bottom:0">
+                    @foreach (var code in view.Validation.Errors.Select(e => e.Code).Distinct())
+                    {
+                        <li>@pwLocalizer["ValidationError_" + code]</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        @if (view.Validation != null && view.Validation.Warnings.Count > 0)
+        {
+            <div class="alert alert-warning small">
+                <ul style="margin-bottom:0">
+                    @foreach (var code in view.Validation.Warnings.Select(e => e.Code).Distinct())
+                    {
+                        <li>@pwLocalizer["Warning_" + code]</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <h4>@pwLocalizer["DestinationHeader"]</h4>
+        <dl class="dl-horizontal small">
+            <dt>@pwLocalizer["DestinationHostLabel"]</dt>
+            <dd>@(string.IsNullOrWhiteSpace(host) ? pwLocalizer["NoDestination"].Value : "https://" + host)</dd>
+            <dt>@pwLocalizer["CredentialLabel"]</dt>
+            <dd>@(Model.CredentialName ?? "—")</dd>
+            @if (!string.IsNullOrWhiteSpace(tokenHost))
+            {
+                <dt>@pwLocalizer["TokenHostLabel"]</dt>
+                <dd>https://@tokenHost</dd>
+            }
+            @if (!string.IsNullOrWhiteSpace(release?.AuthMethod ?? view.AuthMethod))
+            {
+                <dt>@pwLocalizer["AuthMethodLabel"]</dt>
+                <dd><code>@(release?.AuthMethod ?? view.AuthMethod)</code></dd>
+            }
+        </dl>
+
+        <h4>@pwLocalizer["FieldsHeader"]</h4>
+        <p class="small text-muted">@pwLocalizer["FieldsHelp"]</p>
+        <div class="row">
+            @foreach (var field in view.AvailableFields)
+            {
+                <div class="col-sm-6">
+                    <div class="checkbox" style="margin-top:2px;margin-bottom:2px">
+                        <label>
+                            <input type="checkbox" class="pw-field" value="@field.FieldId"
+                                   @(Model.SelectedFields.Contains(field.FieldId) ? "checked" : string.Empty)
+                                   @(editable ? string.Empty : "disabled") />
+                            @pwLocalizer[field.LabelKey] <code class="small">protected.call.@field.TemplateName</code>
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="small text-muted">@pwLocalizer["FormParsedHelp"]</p>
+
+        <h5>@pwLocalizer["SubjectKeysHeader"]</h5>
+        <p class="small text-muted">@pwLocalizer["SubjectKeysHelp"]</p>
+        <div class="row">
+            @foreach (var key in view.SuggestedSubjectKeys)
+            {
+                var id = ProtectedWorkflowFieldCatalog.SubjectIdentifierFieldId(key);
+                <div class="col-sm-6">
+                    <div class="checkbox" style="margin-top:2px;margin-bottom:2px">
+                        <label>
+                            <input type="checkbox" class="pw-field pw-subject-key" value="@id"
+                                   @(Model.SelectedFields.Contains(id) ? "checked" : string.Empty)
+                                   @(editable ? string.Empty : "disabled") />
+                            <code class="small">protected.call.subject_ids.@key</code>
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="form-group">
+            <label for="pwExtraSubjectKeys" class="small">@pwLocalizer["SubjectKeysOtherLabel"]</label>
+            <input id="pwExtraSubjectKeys" class="form-control input-sm" maxlength="400" value="@string.Join(", ", extraSubjectKeys)"
+                   placeholder="ehr_mrn, ehr_episode_id" @(editable ? string.Empty : "disabled") />
+        </div>
+
+        @if (view.AvailableUdfFields.Count > 0)
+        {
+            <h5>@pwLocalizer["CustomFieldsHeader"]</h5>
+            <p class="small text-muted">@pwLocalizer["CustomFieldsHelp"]</p>
+            <div class="row">
+                @foreach (var field in view.AvailableUdfFields)
+                {
+                    var id = ProtectedWorkflowFieldCatalog.UdfFieldId(field.Name);
+                    <div class="col-sm-6">
+                        <div class="checkbox" style="margin-top:2px;margin-bottom:2px">
+                            <label>
+                                <input type="checkbox" class="pw-field pw-udf" value="@id" data-sensitivity="@field.Sensitivity"
+                                       @(Model.SelectedFields.Contains(id) ? "checked" : string.Empty)
+                                       @(editable ? string.Empty : "disabled") />
+                                @field.Label <code class="small">protected.call.udf.@field.Name</code>
+                                @if (field.Sensitivity == (int)UdfFieldSensitivity.Restricted)
+                                {
+                                    <span class="label label-warning">@pwLocalizer["SensitivityRestricted"]</span>
+                                }
+                                @if (field.Sensitivity == (int)UdfFieldSensitivity.Part2)
+                                {
+                                    <span class="label label-danger">@pwLocalizer["SensitivityPart2"]</span>
+                                }
+                            </label>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <h4>@pwLocalizer["RecipientHeader"]</h4>
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label for="pwRecipientType">@pwLocalizer["RecipientTypeLabel"]</label>
+                <select id="pwRecipientType" class="form-control" @(editable ? string.Empty : "disabled")>
+                    <option value="1" selected="@(release?.RecipientType == 1 || release == null)">@pwLocalizer["RecipientType_CoveredEntity"]</option>
+                    <option value="2" selected="@(release?.RecipientType == 2)">@pwLocalizer["RecipientType_BusinessAssociate"]</option>
+                </select>
+            </div>
+            <div class="col-sm-8 form-group">
+                <label for="pwRecipientName">@pwLocalizer["RecipientNameLabel"]</label>
+                <input id="pwRecipientName" class="form-control" maxlength="200" value="@release?.RecipientName"
+                       placeholder="@pwLocalizer["RecipientNamePlaceholder"]" @(editable ? string.Empty : "disabled") />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pwPurpose">@pwLocalizer["PurposeLabel"]</label>
+            <textarea id="pwPurpose" class="form-control" rows="2" maxlength="500"
+                      placeholder="@pwLocalizer["PurposePlaceholder"]" @(editable ? string.Empty : "disabled")>@release?.Purpose</textarea>
+        </div>
+
+        @if (editable)
+        {
+            <div class="alert alert-warning small">
+                <strong>@pwLocalizer["WarningTextHeader"]:</strong> @pwLocalizer["WarningText"]
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="pwAttest" />
+                    @string.Format(pwLocalizer["AttestationLabel"].Value, Model.WarningVersion)
+                </label>
+            </div>
+            <div id="pwRestrictedBlock" style="display:none">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="pwAttestRestricted" />
+                        @string.Format(pwLocalizer["RestrictedAttestationLabel"].Value, ProtectedWorkflowDefaults.RestrictedAttestationVersion)
+                    </label>
+                </div>
+            </div>
+            <div id="pwPart2Block" style="display:none">
+                <div class="alert alert-danger small">@pwLocalizer["Part2AttestationText"]</div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="pwAttestPart2" />
+                        @string.Format(pwLocalizer["Part2AttestationLabel"].Value, ProtectedWorkflowDefaults.Part2AttestationVersion)
+                    </label>
+                </div>
+                <p class="small text-muted">@pwLocalizer["Part2ConsentNotice"]</p>
+            </div>
+            <p class="small text-muted"><i class="fa fa-mobile"></i> @pwLocalizer["StepUpNotice"]</p>
+        }
+
+        <div class="btn-toolbar" role="toolbar">
+            @if (editable)
+            {
+                <button type="button" class="btn btn-default btn-sm" id="pwSaveDraft">@pwLocalizer["SaveDraft"]</button>
+            }
+            @if (canRequest)
+            {
+                <button type="button" class="btn btn-primary btn-sm" id="pwRequest">@(secondApprover ? pwLocalizer["RequestApproval"] : pwLocalizer["ApproveAndActivate"])</button>
+            }
+            @if (canApprove)
+            {
+                <button type="button" class="btn btn-primary btn-sm" id="pwApprove">@pwLocalizer["ApproveButton"]</button>
+            }
+            @if (canRenew)
+            {
+                <button type="button" class="btn btn-primary btn-sm" id="pwRenew">@pwLocalizer["RenewButton"]</button>
+            }
+            @if (canTest)
+            {
+                <button type="button" class="btn btn-default btn-sm" id="pwTest"><i class="fa fa-flask"></i> @pwLocalizer["SendTest"]</button>
+            }
+            @if (canSuspend)
+            {
+                <button type="button" class="btn btn-warning btn-sm" id="pwSuspend">@pwLocalizer["SuspendButton"]</button>
+            }
+            @if (canRevoke)
+            {
+                <button type="button" class="btn btn-danger btn-sm" id="pwRevoke">@pwLocalizer["RevokeButton"]</button>
+            }
+            @if (canDiscard)
+            {
+                <button type="button" class="btn btn-link btn-sm" id="pwDiscard">@pwLocalizer["DiscardDraft"]</button>
+            }
+        </div>
+        <pre id="pwTestResult" class="small" style="display:none;margin-top:10px"></pre>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Areas/User/Views/ProtectedWorkflows/_Messages.cshtml")
+<script type="text/javascript">
+    (function () {
+        var pw = resgrid.protectedworkflows;
+        var panel = document.getElementById('protectedReleasePanel');
+        var workflowId = panel.getAttribute('data-workflow-id');
+        var releaseId = panel.getAttribute('data-release-id');
+        var warningVersion = panel.getAttribute('data-warning-version');
+        // What this page showed: a request binds to the steps as displayed, an approval or renewal to the release as displayed.
+        var stepsFingerprint = panel.getAttribute('data-steps-fingerprint');
+        var releaseFingerprint = panel.getAttribute('data-release-fingerprint');
+
+        var restrictedVersion = panel.getAttribute('data-restricted-version');
+        var part2Version = panel.getAttribute('data-part2-version');
+
+        // The extra attestations follow the selection (and, for an approval, what the release already carries).
+        function refreshSensitive() {
+            var restricted = panel.getAttribute('data-release-restricted') === 'true';
+            var part2 = panel.getAttribute('data-release-part2') === 'true';
+            panel.querySelectorAll('.pw-udf:checked').forEach(function (box) {
+                var tag = box.getAttribute('data-sensitivity');
+                if (tag === '1') { restricted = true; }
+                if (tag === '2') { part2 = true; }
+            });
+            var r = document.getElementById('pwRestrictedBlock');
+            var p = document.getElementById('pwPart2Block');
+            if (r) { r.style.display = restricted ? '' : 'none'; }
+            if (p) { p.style.display = part2 ? '' : 'none'; }
+        }
+        panel.querySelectorAll('.pw-udf').forEach(function (box) { box.addEventListener('change', refreshSensitive); });
+        refreshSensitive();
+
+        function draft() {
+            var fields = [];
+            panel.querySelectorAll('.pw-field:checked').forEach(function (box) { fields.push(box.value); });
+            var extra = document.getElementById('pwExtraSubjectKeys');
+            (extra ? extra.value : '').split(',').forEach(function (key) {
+                key = key.trim().toLowerCase();
+                if (key) { fields.push('calls.subjectidentifiers#' + key); }
+            });
+            return {
+                workflowId: workflowId,
+                fieldIds: fields,
+                recipientType: parseInt(document.getElementById('pwRecipientType').value, 10) || 0,
+                recipientName: document.getElementById('pwRecipientName').value,
+                purpose: document.getElementById('pwPurpose').value
+            };
+        }
+
+        function attestation(reviewedFingerprint) {
+            var box = document.getElementById('pwAttest');
+            var restricted = document.getElementById('pwAttestRestricted');
+            var part2 = document.getElementById('pwAttestPart2');
+            return {
+                workflowId: workflowId,
+                releaseId: releaseId,
+                attested: !!(box && box.checked),
+                acknowledgedVersion: warningVersion,
+                reviewedFingerprint: reviewedFingerprint,
+                restrictedAttested: !!(restricted && restricted.checked),
+                restrictedAcknowledgedVersion: restrictedVersion,
+                part2Attested: !!(part2 && part2.checked),
+                part2AcknowledgedVersion: part2Version
+            };
+        }
+
+        function on(id, handler) {
+            var element = document.getElementById(id);
+            if (element) { element.addEventListener('click', handler); }
+        }
+
+        on('pwSaveDraft', function () { pw.run('SaveDraft', draft()); });
+
+        // The request binds to what is SAVED, so the form is saved first and only then submitted for approval.
+        on('pwRequest', function () {
+            pw.post('SaveDraft', draft()).then(function (saved) {
+                if (!saved || !saved.success) { window.alert(pw.describe(saved)); return; }
+                pw.run('RequestApproval', attestation(stepsFingerprint));
+            }).catch(function () { window.alert(pw.text('Err_command_failed')); });
+        });
+
+        on('pwApprove', function () { pw.run('Approve', attestation(releaseFingerprint)); });
+        on('pwRenew', function () { pw.run('Renew', attestation(releaseFingerprint)); });
+        on('pwSuspend', function () { if (window.confirm(pw.text('ConfirmSuspend'))) { pw.run('Suspend', { releaseId: releaseId }); } });
+        on('pwRevoke', function () { if (window.confirm(pw.text('ConfirmRevoke'))) { pw.run('Revoke', { releaseId: releaseId }); } });
+        on('pwDiscard', function () { if (window.confirm(pw.text('ConfirmDiscard'))) { pw.run('DiscardDraft', { releaseId: releaseId }); } });
+
+        on('pwTest', function () {
+            var output = document.getElementById('pwTestResult');
+            pw.post('SendTest', { workflowId: workflowId }).then(function (result) {
+                var lines = [result && result.success ? pw.text('TestSucceeded') : pw.describe(result)];
+                ((result && result.steps) || []).forEach(function (step, index) {
+                    lines.push(pw.text('TestStepResult')
+                        .replace('{0}', String(index + 1))
+                        .replace('{1}', pw.text('Outcome_' + step.outcome, step.outcome || ''))
+                        .replace('{2}', step.httpStatus == null ? '—' : String(step.httpStatus)));
+                });
+                output.textContent = lines.join('\n');
+                output.style.display = 'block';
+            }).catch(function () { window.alert(pw.text('Err_command_failed')); });
+        });
+    })();
+</script>

@@ -12,7 +12,7 @@ var resgrid;
                     contentType: 'application/json; charset=utf-8',
                     type: 'GET'
                 }).done(function (data) {
-                    resgrid.shifts.newshift.groupData = data;
+                    resgrid.shifts.newshift.groupData = resgrid.shifts.newshift.filterGroupsToScope(data);
                 });
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
@@ -60,13 +60,16 @@ var resgrid;
             }
             newshift.addGroup = addGroup;
             function addGroupRole(count) {
-                var timestamp = new Date();
+                // The role select and its count input share the group's index and one suffix
+                // (roleSelection_{count}_{suffix} / groupRole_{count}_{suffix}); the server pairs them by it.
+                newshift.roleCounter = (newshift.roleCounter || 0) + 1;
+                var suffix = newshift.roleCounter;
                 var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
                 var removeRoleLabel = i18n.removeRole || 'Remove Role';
                 var removeRoleTitle = i18n.removeRoleFromGroup || 'Remove this role from the group';
                 var roleCountMsg = i18n.roleCountRequired || 'Role count is required';
-                $('#groupRolesTable_' + count + ' tbody').append("<tr><td>" + resgrid.shifts.newshift.generateRoleDropdown(newshift.groupsCount) + "</td><td><input type='number' min='1' max='999' data-bv-notempty data-bv-notempty-message='" + roleCountMsg + "' id='groupRole_" + count + "_" + timestamp.getUTCMilliseconds() + "' name='groupRole_" + count + "_" + timestamp.getUTCMilliseconds() + "' style='width:75px;' value='1'  onkeypress='resgrid.shifts.newshift.validate(event)'></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='" + removeRoleTitle + "'>" + removeRoleLabel + "</a></td></tr>");
-                addGroupRoleField('groupRole_' + count + '_' + timestamp.getUTCMilliseconds());
+                $('#groupRolesTable_' + count + ' tbody').append("<tr><td>" + resgrid.shifts.newshift.generateRoleDropdown(count, suffix) + "</td><td><input type='number' min='1' max='999' data-bv-notempty data-bv-notempty-message='" + roleCountMsg + "' id='groupRole_" + count + "_" + suffix + "' name='groupRole_" + count + "_" + suffix + "' style='width:75px;' value='1'  onkeypress='resgrid.shifts.newshift.validate(event)'></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='" + removeRoleTitle + "'>" + removeRoleLabel + "</a></td></tr>");
+                addGroupRoleField('groupRole_' + count + '_' + suffix);
             }
             newshift.addGroupRole = addGroupRole;
             function removeRole() {
@@ -84,32 +87,33 @@ var resgrid;
                   groupSelect += '<option value="' +
                     newshift.groupData[i].GroupId +
                     '">' +
-                    newshift.groupData[i].Name +
+                    newshift.escapeHtml(newshift.groupData[i].Name) +
                     '</option>';
                 }
+                groupSelect += '</select>';
                 return groupSelect;
               }
             }
             newshift.generateGroupDropdown = generateGroupDropdown;
-            function generateRoleDropdown(count) {
+            function generateRoleDropdown(count, suffix) {
               if (newshift && newshift.roleData) {
-                var timestamp = new Date();
                 var groupSelect = '<select id="roleSelection_' +
                   count +
                   '_' +
-                  timestamp.getUTCMilliseconds() +
+                  suffix +
                   '" name="roleSelection_' +
                   count +
                   '_' +
-                  timestamp.getUTCMilliseconds() +
+                  suffix +
                   '" class="sl2">';
                 for (var i = 0; i < newshift.roleData.length; i++) {
                   groupSelect += '<option value="' +
                     newshift.roleData[i].RoleId +
                     '">' +
-                    newshift.roleData[i].Name +
+                    newshift.escapeHtml(newshift.roleData[i].Name) +
                     '</option>';
                 }
+                groupSelect += '</select>';
                 return groupSelect;
               }
             }
@@ -136,6 +140,18 @@ var resgrid;
                 }
             }
             newshift.validate = validate;
+            function filterGroupsToScope(groups) {
+                var scope = (typeof resgridShiftsScope !== 'undefined') ? resgridShiftsScope : null;
+                if (!groups || !scope || scope.allGroups) {
+                    return groups;
+                }
+                return $.grep(groups, function (g) { return scope.groupIds.indexOf(g.GroupId) >= 0; });
+            }
+            newshift.filterGroupsToScope = filterGroupsToScope;
+            function escapeHtml(value) {
+                return $('<div>').text(value == null ? '' : value).html();
+            }
+            newshift.escapeHtml = escapeHtml;
         })(newshift = shifts.newshift || (shifts.newshift = {}));
     })(shifts = resgrid.shifts || (resgrid.shifts = {}));
 })(resgrid || (resgrid = {}));

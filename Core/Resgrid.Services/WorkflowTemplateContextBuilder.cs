@@ -56,6 +56,7 @@ namespace Resgrid.Services
 			CancellationToken cancellationToken)
 		{
 			var scriptObject = new ScriptObject();
+			WorkflowTemplateFunctions.AddTo(scriptObject);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			var phoneNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
@@ -915,6 +916,9 @@ namespace Resgrid.Services
 			c["dispatch_count"] = call.DispatchCount;
 			c["dispatch_on"] = call.DispatchOn;
 			c["form_data"] = ProtectedDataEnvelope.SafeDisplay(call.CallFormData) ?? string.Empty;
+			// Structural, never protected: a condition may branch on it. The subject identifiers are deliberately absent
+			// from call.*; they are only ever available as protected.call.subject_ids under an Active release.
+			c["part2_consent_on_file"] = call.Part2ConsentOnFile;
 			c["is_deleted"] = call.IsDeleted;
 			c["deleted_reason"] = ProtectedDataEnvelope.SafeDisplay(call.DeletedReason) ?? string.Empty;
 
@@ -1564,7 +1568,7 @@ namespace Resgrid.Services
 			return recordToken?["author_user_id"]?.Type == JTokenType.String ? (string)recordToken["author_user_id"] : null;
 		}
 
-		private static ScriptObject ToScriptObject(JObject source)
+		internal static ScriptObject ToScriptObject(JObject source)
 		{
 			var result = new ScriptObject();
 			if (source == null)
@@ -1576,7 +1580,7 @@ namespace Resgrid.Services
 			return result;
 		}
 
-		private static object ToScriptValue(JToken token)
+		internal static object ToScriptValue(JToken token)
 		{
 			if (token == null)
 				return null;

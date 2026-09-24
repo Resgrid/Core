@@ -35,6 +35,8 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/DataProtection/DataProtection",
 			// Records (RMS) shipped fully translated in RMS-1; keep it that way.
 			"Areas/User/Records/Records",
+			// ADP Protected Workflows (release panel, list, disclosure log, department toggle) shipped fully translated.
+			"Areas/User/ProtectedWorkflows/ProtectedWorkflows",
 		};
 
 		private static string LocalizationRoot()
@@ -196,6 +198,32 @@ namespace Resgrid.Tests.Localization
 			"Records|es|AnalyticsTotal",        // "Total"
 			"Records|fr|AnalyticsTotal",        // "Total"
 			"Records|fr|AnalyticsIncidents",    // "Incidents"
+
+			// Protected Workflows: a symbol and a protocol name in every locale, then words that are the same in the
+			// target language (checked side by side): the IT loanwords Workflow and Host, Status, Bytes, and French
+			// Destination/Actions/Type/Active (feminine, agreeing with "autorisation") and the noun "test".
+			"ProtectedWorkflows|de|ColSequence", "ProtectedWorkflows|es|ColSequence", "ProtectedWorkflows|fr|ColSequence",
+			"ProtectedWorkflows|it|ColSequence", "ProtectedWorkflows|pl|ColSequence", "ProtectedWorkflows|sv|ColSequence",
+			"ProtectedWorkflows|uk|ColSequence", "ProtectedWorkflows|el|ColSequence", "ProtectedWorkflows|ar|ColSequence",
+			// Protected Workflows for EHR integration: a regulation name and an HTTP header name, the same in every language.
+			"ProtectedWorkflows|de|SensitivityPart2", "ProtectedWorkflows|es|SensitivityPart2", "ProtectedWorkflows|fr|SensitivityPart2",
+			"ProtectedWorkflows|it|SensitivityPart2", "ProtectedWorkflows|pl|SensitivityPart2", "ProtectedWorkflows|sv|SensitivityPart2",
+			"ProtectedWorkflows|uk|SensitivityPart2", "ProtectedWorkflows|el|SensitivityPart2", "ProtectedWorkflows|ar|SensitivityPart2",
+			"ProtectedWorkflows|de|StepIfNoneExist", "ProtectedWorkflows|es|StepIfNoneExist", "ProtectedWorkflows|fr|StepIfNoneExist",
+			"ProtectedWorkflows|it|StepIfNoneExist", "ProtectedWorkflows|pl|StepIfNoneExist", "ProtectedWorkflows|sv|StepIfNoneExist",
+			"ProtectedWorkflows|uk|StepIfNoneExist", "ProtectedWorkflows|el|StepIfNoneExist", "ProtectedWorkflows|ar|StepIfNoneExist",
+			"ProtectedWorkflows|de|ColHttp", "ProtectedWorkflows|es|ColHttp", "ProtectedWorkflows|fr|ColHttp",
+			"ProtectedWorkflows|it|ColHttp", "ProtectedWorkflows|pl|ColHttp", "ProtectedWorkflows|sv|ColHttp",
+			"ProtectedWorkflows|uk|ColHttp", "ProtectedWorkflows|el|ColHttp", "ProtectedWorkflows|ar|ColHttp",
+			"ProtectedWorkflows|de|WorkflowsBreadcrumb", "ProtectedWorkflows|de|ColWorkflow", "ProtectedWorkflows|de|FilterWorkflow",
+			"ProtectedWorkflows|de|StatusLabel", "ProtectedWorkflows|de|ColStatus", "ProtectedWorkflows|de|ColHost", "ProtectedWorkflows|de|ColBytes",
+			"ProtectedWorkflows|es|ColHost", "ProtectedWorkflows|es|ColBytes",
+			"ProtectedWorkflows|fr|WorkflowsBreadcrumb", "ProtectedWorkflows|fr|ColWorkflow", "ProtectedWorkflows|fr|FilterWorkflow",
+			"ProtectedWorkflows|fr|State_Active", "ProtectedWorkflows|fr|DestinationHeader", "ProtectedWorkflows|fr|ColActions",
+			"ProtectedWorkflows|fr|ColType", "ProtectedWorkflows|fr|TestBadge",
+			"ProtectedWorkflows|it|ColHost",
+			"ProtectedWorkflows|pl|StatusLabel", "ProtectedWorkflows|pl|ColStatus", "ProtectedWorkflows|pl|ColHost", "ProtectedWorkflows|pl|TestBadge",
+			"ProtectedWorkflows|sv|StatusLabel", "ProtectedWorkflows|sv|ColStatus", "ProtectedWorkflows|sv|TestBadge",
 
 			// Counted phrases whose wording matches English.
 			"CommunicationTest|es|ScopeRoles",    // {0} roles

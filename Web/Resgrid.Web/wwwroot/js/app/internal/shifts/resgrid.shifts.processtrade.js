@@ -1,28 +1,29 @@
-
 var resgrid;
 (function (resgrid) {
     var shifts;
     (function (shifts) {
-        var requesttrade;
-        (function (requesttrade) {
+        var processtrade;
+        (function (processtrade) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Shifts - Process Trade');
-                $('#note').change(function () {
-                    $('#reject_button').attr('href', resgrid.absoluteBaseUrl + '/User/Shifts/RejectTrade?shiftTradeId=' + shiftTradeId + '&reason=' + encodeURIComponent($("#note").val()));
-                });
+
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
+                var shiftTradeId = $('#shiftSignupTradeId').val();
+
+                // The days offered back are the caller's own upcoming signups, loaded once; they post as "dates".
                 $("#dates").select2({
-                    placeholder: "Select dates...",
+                    placeholder: i18n.selectDates || "Select dates...",
                     allowClear: true,
                     multiple: true,
                     ajax: {
-                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftDaysUserIsOn?shiftTradeId=' + shiftTradeId,
+                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftDaysUserIsOn?shiftTradeId=' + encodeURIComponent(shiftTradeId),
                         dataType: 'json',
                         processResults: function (data) {
-                            return { results: $.map(data, function (d) { return { id: d.ShiftSignupId, text: d.Title }; }) };
+                            return { results: $.map(data || [], function (d) { return { id: d.ShiftSignupId, text: d.Title }; }) };
                         }
                     }
                 });
             });
-        })(requesttrade = shifts.requesttrade || (shifts.requesttrade = {}));
+        })(processtrade = shifts.processtrade || (shifts.processtrade = {}));
     })(shifts = resgrid.shifts || (resgrid.shifts = {}));
 })(resgrid || (resgrid = {}));

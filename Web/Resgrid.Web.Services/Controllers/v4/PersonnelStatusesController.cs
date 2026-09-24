@@ -39,6 +39,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IIncidentCommandService _incidentCommandService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public PersonnelStatusesController(
 			IUsersService usersService,
@@ -52,8 +53,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService,
-			IIncidentCommandService incidentCommandService)
+			IIncidentCommandService incidentCommandService,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -343,7 +346,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return station != null && station.DepartmentId == DepartmentId;
 				case DestinationEntityTypes.Call:
 					var call = await _callsService.GetCallByIdAsync(destinationId);
-					return call != null && call.DepartmentId == DepartmentId;
+					// Group-scoped dispatch (off by default): a call outside the caller's area can't be picked by id either.
+					return call != null && call.DepartmentId == DepartmentId
+						&& await _dispatchScopeService.CanUserAccessCallAsync(DepartmentId, UserId, call);
 				case DestinationEntityTypes.Poi:
 					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
 				default:

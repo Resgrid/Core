@@ -30,12 +30,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
+		private readonly IProtectedWorkflowService _protectedWorkflows;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, ISubscriptionsService subscriptionsService,
-			IWorkflowTemplateContextBuilder contextBuilder)
+			IWorkflowTemplateContextBuilder contextBuilder, IProtectedWorkflowService protectedWorkflows)
 		{
+			_protectedWorkflows      = protectedWorkflows;
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
 			_permissionsService      = permissionsService;
@@ -168,6 +170,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				IsEnabled            = input.IsEnabled,
 				ConditionExpression  = input.ConditionExpression
 			};
+
+			// Protected Workflows: protected.* is never allowed in a condition, URL or header, and only renders in an
+			// output template of a workflow with a protected release.
+			var protectedTemplateError = await _protectedWorkflows.ValidateStepTemplatesAsync(step, ct);
+			if (protectedTemplateError != null)
+				return UnprocessableEntity(new { error = protectedTemplateError });
 
 			step = await _workflowService.SaveWorkflowStepAsync(step, ct);
 			return Ok(new WorkflowStepResult { Step = MapStep(step) });

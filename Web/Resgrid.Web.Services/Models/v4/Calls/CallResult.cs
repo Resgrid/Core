@@ -177,6 +177,15 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ExternalId { get; set; }
 
 		/// <summary>
+		/// External subject and record identifiers (protected). Null when there are none, or when they are withheld
+		/// (RedactedFields then lists calls.subjectidentifiers).
+		/// </summary>
+		public Dictionary<string, string> SubjectIdentifiers { get; set; }
+
+		/// <summary>42 CFR Part 2 consent (or another Part 2 basis) is on file for this call.</summary>
+		public bool Part2ConsentOnFile { get; set; }
+
+		/// <summary>
 		/// INcident Id
 		/// </summary>
 		public string IncidentId { get; set; }

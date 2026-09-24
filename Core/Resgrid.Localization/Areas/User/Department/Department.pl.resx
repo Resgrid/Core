@@ -1094,4 +1094,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Nie udało się zapisać profilu; sprawdź wyróżnione pola.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Dysponowanie według grup</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Ogranicz dysponowanie do obszarów grup</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Po włączeniu listy aktywnych zgłoszeń, mapy i tablica najbliższych jednostek każdego członka pokazują tylko jego własną grupę i grupy jej podległe: zgłoszenia w granicach tych grup lub do nich zadysponowane, a także każde zgłoszenie, które członek zgłosił lub do którego został zadysponowany. Administratorzy działu i poniższe role zachowują widok całego działu. Nic nie jest kopiowane ani przenoszone, więc przekazanie dysponowania innemu stanowisku przy zmianie dyżuru to tylko zmiana roli.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Role dysponowania dla całego działu</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>Członkowie z dowolną z tych ról (np. centralne stanowisko dyspozytorskie) widzą wszystkie obszary, gdy ograniczenie jest włączone. Przypisz lub usuń rolę, aby przekazać dysponowanie; zmiana obowiązuje od następnego załadowania strony.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Nie zdefiniowano jeszcze żadnych ról personelu.</value>
+  </data>
 </root>

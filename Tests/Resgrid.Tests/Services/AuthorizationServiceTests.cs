@@ -36,6 +36,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ICacheProvider> _cacheProviderMock;
 			protected Mock<IContactsService> _contactsServiceMock;
 			protected Mock<IEventAggregator> _eventAggregatorMock;
+			protected Mock<IDispatchScopeService> _dispatchScopeServiceMock;
 
 			protected with_the_authorization_service()
 			{
@@ -59,6 +60,12 @@ namespace Resgrid.Tests.Services
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_contactsServiceMock = new Mock<IContactsService>();
 				_eventAggregatorMock = new Mock<IEventAggregator>();
+				_dispatchScopeServiceMock = new Mock<IDispatchScopeService>();
+
+				// Group-scoped dispatch is off by default: every call is in scope.
+				_dispatchScopeServiceMock
+					.Setup(x => x.CanUserAccessCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Call>()))
+					.ReturnsAsync(true);
 
 				_authorizationService = new AuthorizationService(
 					_departmentsServiceMock.Object,
@@ -80,7 +87,8 @@ namespace Resgrid.Tests.Services
 					_notesServiceMock.Object,
 					_cacheProviderMock.Object,
 					_contactsServiceMock.Object,
-					_eventAggregatorMock.Object);
+					_eventAggregatorMock.Object,
+					_dispatchScopeServiceMock.Object);
 			}
 
 			/// <summary>

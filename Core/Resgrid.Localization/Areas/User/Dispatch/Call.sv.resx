@@ -866,4 +866,82 @@
   <data name="UnitTimes" xml:space="preserve">
     <value>Enhetstider</value>
   </data>
+  <data name="Part2ConsentLabel" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="Part2ConsentOnFile" xml:space="preserve">
+    <value>Part 2-samtycke registrerat</value>
+  </data>
+  <data name="Part2ConsentHelp" xml:space="preserve">
+    <value>Markera när avdelningen har samtycke (eller annan grund enligt 42 CFR Part 2) för att dela larmets information om substansbrukssyndrom. Skyddade arbetsflöden skickar endast Part 2-fält när detta är markerat.</value>
+  </data>
+  <data name="SubjectIdentifiersLabel" xml:space="preserve">
+    <value>Personidentifierare</value>
+  </data>
+  <data name="NearestUnitsLabel" xml:space="preserve">
+    <value>Närmaste enheter</value>
+  </data>
+  <data name="NearestUnitsHint" xml:space="preserve">
+    <value>En enhet kan vara ett team, ett fordon eller en enskild person.</value>
+  </data>
+  <data name="NearestUnitsUnit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="NearestUnitsCrewOnShift" xml:space="preserve">
+    <value>besättning i tjänst</value>
+  </data>
+  <data name="NearestUnitsStationShift" xml:space="preserve">
+    <value>stationens skift</value>
+  </data>
+  <data name="NearestUnitsNoCrew" xml:space="preserve">
+    <value>Ingen besättning tilldelad</value>
+  </data>
+  <data name="NearestUnitsScoped" xml:space="preserve">
+    <value>Visar endast ditt områdes enheter</value>
+  </data>
+  <data name="NearestUnitsStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="NearestUnitsEta" xml:space="preserve">
+    <value>Beräknad ankomst</value>
+  </data>
+  <data name="NearestUnitsPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="NearestUnitsShift" xml:space="preserve">
+    <value>Skiftbemanning</value>
+  </data>
+  <data name="NearestUnitsRoleMix" xml:space="preserve">
+    <value>Rollfördelning</value>
+  </data>
+  <data name="NearestUnitsInBoundary" xml:space="preserve">
+    <value>Inom området</value>
+  </data>
+  <data name="NearestUnitsInParentBoundary" xml:space="preserve">
+    <value>Inom serviceområdet</value>
+  </data>
+  <data name="NearestUnitsIncidentInside" xml:space="preserve">
+    <value>Händelsen ligger inom:</value>
+  </data>
+  <data name="NearestUnitsNoBoundary" xml:space="preserve">
+    <value>Händelsen ligger inte inom någon gruppgräns.</value>
+  </data>
+  <data name="NearestUnitsEstimate" xml:space="preserve">
+    <value>uppsk.</value>
+  </data>
+  <data name="NearestUnitsMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="NearestUnitsLive" xml:space="preserve">
+    <value>Live-GPS</value>
+  </data>
+  <data name="NearestUnitsStation" xml:space="preserve">
+    <value>Stationens plats</value>
+  </data>
+  <data name="NearestUnitsStale" xml:space="preserve">
+    <value>inaktuell</value>
+  </data>
+  <data name="NearestUnitsNoPosition" xml:space="preserve">
+    <value>Ingen position</value>
+  </data>
 </root>

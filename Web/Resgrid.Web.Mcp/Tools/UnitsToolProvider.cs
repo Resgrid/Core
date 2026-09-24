@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Resgrid.Web.Mcp.ModelContextProtocol;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Resgrid.Web.Mcp.Tools
 {
@@ -64,7 +65,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving units list");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Units/GetAll",
+							V4Routes.Get.AllUnitsInfos,
 							args.AccessToken
 						);
 
@@ -114,7 +115,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving unit statuses");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/UnitStatus/GetAllStatuses",
+							V4Routes.Get.AllUnitStatuses,
 							args.AccessToken
 						);
 
@@ -190,7 +191,7 @@ namespace Resgrid.Web.Mcp.Tools
 						};
 
 						var result = await _apiClient.PostAsync<object, object>(
-							"/api/v4/UnitStatus/SaveUnitStatus",
+							V4Routes.Post.SaveUnitStatus,
 							statusData,
 							args.AccessToken
 						);
@@ -226,7 +227,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 			server.AddTool(
 				toolName,
-				"Retrieves the current GPS locations of all units in the department",
+				"Retrieves the current GPS locations of units in the department. Only units with a current location that the caller may view are returned.",
 				schema,
 				async (arguments) =>
 				{
@@ -241,15 +242,17 @@ namespace Resgrid.Web.Mcp.Tools
 
 						_logger.LogInformation("Retrieving unit locations");
 
-						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/UnitLocation/GetLatestUnitLocations",
+						// v4 only has a single-unit latest-location endpoint; the map markers carry every unit, with the
+						// department's location TTL and the location-view permissions already applied.
+						var result = await _apiClient.GetAsync<JObject>(
+							V4Routes.Get.MapDataAndMarkers,
 							args.AccessToken
 						);
 
 						return new
 						{
 							success = true,
-							data = result
+							data = V4ResponseReader.GetMapMarkers(result, V4ResponseReader.UnitMarkerType, "UnitId")
 						};
 					}
 				catch (Exception ex)

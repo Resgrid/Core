@@ -915,4 +915,82 @@
   <data name="UnitTimes" xml:space="preserve">
     <value>Tiempos de unidades</value>
   </data>
+  <data name="Part2ConsentLabel" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="Part2ConsentOnFile" xml:space="preserve">
+    <value>Consentimiento Part 2 registrado</value>
+  </data>
+  <data name="Part2ConsentHelp" xml:space="preserve">
+    <value>Márquelo cuando el departamento tenga consentimiento (u otra base de 42 CFR Part 2) para compartir la información sobre trastornos por consumo de sustancias de esta llamada. Los flujos de trabajo protegidos solo envían campos Part 2 cuando está marcado.</value>
+  </data>
+  <data name="SubjectIdentifiersLabel" xml:space="preserve">
+    <value>Identificadores del sujeto</value>
+  </data>
+  <data name="NearestUnitsLabel" xml:space="preserve">
+    <value>Unidades más cercanas</value>
+  </data>
+  <data name="NearestUnitsHint" xml:space="preserve">
+    <value>Una unidad puede ser un equipo, un vehículo o una persona.</value>
+  </data>
+  <data name="NearestUnitsUnit" xml:space="preserve">
+    <value>Unidad</value>
+  </data>
+  <data name="NearestUnitsCrewOnShift" xml:space="preserve">
+    <value>tripulación en turno</value>
+  </data>
+  <data name="NearestUnitsStationShift" xml:space="preserve">
+    <value>turno de la estación</value>
+  </data>
+  <data name="NearestUnitsNoCrew" xml:space="preserve">
+    <value>Sin tripulación asignada</value>
+  </data>
+  <data name="NearestUnitsScoped" xml:space="preserve">
+    <value>Solo se muestran las unidades de su área</value>
+  </data>
+  <data name="NearestUnitsStatus" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="NearestUnitsEta" xml:space="preserve">
+    <value>Tiempo estimado</value>
+  </data>
+  <data name="NearestUnitsPosition" xml:space="preserve">
+    <value>Posición</value>
+  </data>
+  <data name="NearestUnitsShift" xml:space="preserve">
+    <value>Cobertura de turno</value>
+  </data>
+  <data name="NearestUnitsRoleMix" xml:space="preserve">
+    <value>Combinación de roles</value>
+  </data>
+  <data name="NearestUnitsInBoundary" xml:space="preserve">
+    <value>En su área</value>
+  </data>
+  <data name="NearestUnitsInParentBoundary" xml:space="preserve">
+    <value>En el área de servicio</value>
+  </data>
+  <data name="NearestUnitsIncidentInside" xml:space="preserve">
+    <value>El incidente está dentro de:</value>
+  </data>
+  <data name="NearestUnitsNoBoundary" xml:space="preserve">
+    <value>El incidente no está dentro de ningún límite de grupo.</value>
+  </data>
+  <data name="NearestUnitsEstimate" xml:space="preserve">
+    <value>estimado</value>
+  </data>
+  <data name="NearestUnitsMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="NearestUnitsLive" xml:space="preserve">
+    <value>GPS en vivo</value>
+  </data>
+  <data name="NearestUnitsStation" xml:space="preserve">
+    <value>Ubicación de la estación</value>
+  </data>
+  <data name="NearestUnitsStale" xml:space="preserve">
+    <value>desactualizada</value>
+  </data>
+  <data name="NearestUnitsNoPosition" xml:space="preserve">
+    <value>Sin posición</value>
+  </data>
 </root>

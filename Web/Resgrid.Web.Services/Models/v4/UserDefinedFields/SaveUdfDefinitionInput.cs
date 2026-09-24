@@ -28,7 +28,7 @@ namespace Resgrid.Web.Services.Models.v4.UserDefinedFields
 		public string Description { get; set; }
 		public string Placeholder { get; set; }
 
-		/// <summary>See UdfFieldDataType enum: Text=0, Number=1, Decimal=2, Boolean=3, Date=4, DateTime=5, Dropdown=6, MultiSelect=7, Email=8, Phone=9, Url=10</summary>
+		/// <summary>See UdfFieldDataType enum: Text=0, Number=1, Decimal=2, Boolean=3, Date=4, DateTime=5, Dropdown=6, MultiSelect=7, Email=8, Phone=9, Url=10, ComboBox=11 (options are suggestions; a value naming an option by key or label is stored as its key, anything else as free text)</summary>
 		[Required]
 		public int FieldDataType { get; set; }
 
@@ -44,6 +44,12 @@ namespace Resgrid.Web.Services.Models.v4.UserDefinedFields
 		public bool IsVisibleOnMobile { get; set; } = true;
 		public bool IsVisibleOnReports { get; set; } = true;
 		public bool IsEnabled { get; set; } = true;
+
+		/// <summary>
+		/// Call fields: Protected Workflows release sensitivity (0 none, 1 restricted, 2 42 CFR Part 2). Omit it to keep the
+		/// current field's value (matched by name).
+		/// </summary>
+		public int? Sensitivity { get; set; }
 
 		/// <summary>
 		/// Visibility setting for this field. 0=Everyone, 1=DepartmentAndGroupAdmins, 2=DepartmentAdminsOnly.

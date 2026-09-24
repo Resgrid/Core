@@ -172,6 +172,27 @@ namespace Resgrid.Web.Attributes
 			}
 		}
 
+		/// <summary>
+		/// The current user's most recent step-up verification in this session, or null. For JSON commands that must
+		/// pass the proof to a service rule (Protected Workflows approvals) instead of redirecting through Verify2FA.
+		/// </summary>
+		public static DateTime? GetStepUpVerifiedAtUtc(HttpContext httpContext, string currentUserId)
+		{
+			if (httpContext == null || string.IsNullOrWhiteSpace(currentUserId))
+				return null;
+
+			try
+			{
+				var session = httpContext.Session;
+				return session == null ? null : ParseStepUpSession(session, currentUserId);
+			}
+			catch (InvalidOperationException)
+			{
+				// Session not configured for this request.
+				return null;
+			}
+		}
+
 		// ── private helpers ──────────────────────────────────────────────────────────
 
 		/// <summary>

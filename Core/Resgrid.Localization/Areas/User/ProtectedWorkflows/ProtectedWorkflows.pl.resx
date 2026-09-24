@@ -1,0 +1,862 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Chronione przepływy pracy</value>
+  </data>
+  <data name="ListHeader" xml:space="preserve">
+    <value>Chronione udostępnienia przepływów pracy</value>
+  </data>
+  <data name="DisclosuresTitle" xml:space="preserve">
+    <value>Dziennik ujawnień chronionych przepływów pracy</value>
+  </data>
+  <data name="WorkflowsBreadcrumb" xml:space="preserve">
+    <value>Przepływy pracy</value>
+  </data>
+  <data name="DataProtectionBreadcrumb" xml:space="preserve">
+    <value>Ochrona danych</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Chronione przepływy pracy</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Domyślnie przepływy pracy otrzymują wartości REDACTED. Chronione przepływy pracy pozwalają administratorowi zatwierdzić jeden konkretny przepływ pracy do wysyłania wybranych chronionych pól do jednego przypiętego miejsca docelowego HTTPS. Wszystkie pozostałe przepływy pracy nadal otrzymują wartości REDACTED.</value>
+  </data>
+  <data name="EnableLabel" xml:space="preserve">
+    <value>Włącz chronione przepływy pracy</value>
+  </data>
+  <data name="SecondApproverLabel" xml:space="preserve">
+    <value>Wymagaj zatwierdzenia chronionych przepływów pracy przez drugiego administratora</value>
+  </data>
+  <data name="WarningTextHeader" xml:space="preserve">
+    <value>Ostrzeżenie</value>
+  </data>
+  <data name="WarningText" xml:space="preserve">
+    <value>Chronione przepływy pracy wysyłają odszyfrowane dane chronione, które mogą zawierać chronione informacje o stanie zdrowia, do skonfigurowanych przez Ciebie systemów zewnętrznych. Resgrid nie ma kontroli nad tym, jak system odbierający przechowuje lub wykorzystuje te dane. Włączaj przepływ pracy tylko wtedy, gdy odbiorcą jest Twoja organizacja lub strona objęta umową z partnerem biznesowym zawartą z Twoją organizacją, i udostępniaj tylko te pola, których odbiorca potrzebuje.</value>
+  </data>
+  <data name="WarningAckLabel" xml:space="preserve">
+    <value>Potwierdzam zapoznanie się z tym ostrzeżeniem i przyjmuję je do wiadomości (wersja {0}).</value>
+  </data>
+  <data name="WarningAcknowledgedOn" xml:space="preserve">
+    <value>Ostrzeżenie przyjęte do wiadomości dnia {0} (wersja {1}).</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Zapisz ustawienia chronionych przepływów pracy</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Zapisano ustawienia chronionych przepływów pracy.</value>
+  </data>
+  <data name="AdpRequired" xml:space="preserve">
+    <value>Chronione przepływy pracy są dostępne tylko wtedy, gdy dla Twojego departamentu jest włączona zaawansowana ochrona danych.</value>
+  </data>
+  <data name="NotAdmin" xml:space="preserve">
+    <value>Tylko administratorzy z uprawnieniem „Konfigurowanie przekazywania danych chronionych” mogą zmieniać te ustawienia.</value>
+  </data>
+  <data name="ManageLink" xml:space="preserve">
+    <value>Zarządzaj chronionymi przepływami pracy</value>
+  </data>
+  <data name="StepUpNotice" xml:space="preserve">
+    <value>Włączenie lub wyłączenie tego ustawienia, a także zatwierdzenie lub odnowienie udostępnienia, wymaga świeżej weryfikacji wieloskładnikowej.</value>
+  </data>
+  <data name="StepUpRequiredPrompt" xml:space="preserve">
+    <value>Ta czynność wymaga świeżej weryfikacji wieloskładnikowej. Nastąpi przekierowanie do weryfikacji, a następnie powrót na tę stronę; potem powtórz czynność.</value>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>Chronione udostępnienie</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Wysyłaj wybrane chronione pola z tego przepływu pracy do jego przypiętego miejsca docelowego HTTPS. Odszyfrowywane są tylko zaznaczone pola; wszystkie pozostałe wartości chronione pozostają REDACTED.</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="State_None" xml:space="preserve">
+    <value>Niechroniony</value>
+  </data>
+  <data name="State_Draft" xml:space="preserve">
+    <value>Wersja robocza</value>
+  </data>
+  <data name="State_PendingApproval" xml:space="preserve">
+    <value>Oczekuje na zatwierdzenie</value>
+  </data>
+  <data name="State_Active" xml:space="preserve">
+    <value>Aktywne</value>
+  </data>
+  <data name="State_Suspended" xml:space="preserve">
+    <value>Zawieszone</value>
+  </data>
+  <data name="State_Expired" xml:space="preserve">
+    <value>Wygasłe</value>
+  </data>
+  <data name="State_Revoked" xml:space="preserve">
+    <value>Odwołane</value>
+  </data>
+  <data name="StateExpiring" xml:space="preserve">
+    <value>Wkrótce wygasa</value>
+  </data>
+  <data name="RenewalPending" xml:space="preserve">
+    <value>Odnowienie oczekuje na zatwierdzenie</value>
+  </data>
+  <data name="ProtectedBadge" xml:space="preserve">
+    <value>Chronione: {0}</value>
+  </data>
+  <data name="Reason_config_changed" xml:space="preserve">
+    <value>zmieniono konfigurację</value>
+  </data>
+  <data name="Reason_department_disabled" xml:space="preserve">
+    <value>wyłączono chronione przepływy pracy</value>
+  </data>
+  <data name="Reason_adp_not_enabled" xml:space="preserve">
+    <value>zaawansowana ochrona danych nie jest włączona</value>
+  </data>
+  <data name="Reason_credential_changed" xml:space="preserve">
+    <value>zmieniono poświadczenie</value>
+  </data>
+  <data name="Reason_admin_suspended" xml:space="preserve">
+    <value>zawieszone przez administratora</value>
+  </data>
+  <data name="Reason_admin_revoked" xml:space="preserve">
+    <value>odwołane przez administratora</value>
+  </data>
+  <data name="Reason_adp_offboarding" xml:space="preserve">
+    <value>wyłączanie zaawansowanej ochrony danych</value>
+  </data>
+  <data name="Reason_workflow_deleted" xml:space="preserve">
+    <value>usunięto przepływ pracy</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Pola do udostępnienia</value>
+  </data>
+  <data name="FieldsHelp" xml:space="preserve">
+    <value>Domyślnie nic nie jest zaznaczone. W szablonie wyjściowym odwołuj się do udostępnionych pól jako protected.call.&lt;name&gt;; wartości call.* pozostają REDACTED.</value>
+  </data>
+  <data name="FormParsedHelp" xml:space="preserve">
+    <value>Dane formularza są również dostępne w postaci przetworzonej jako protected.call.form.</value>
+  </data>
+  <data name="Field_calls_name" xml:space="preserve">
+    <value>Nazwa zgłoszenia</value>
+  </data>
+  <data name="Field_calls_type" xml:space="preserve">
+    <value>Typ zgłoszenia</value>
+  </data>
+  <data name="Field_calls_natureofcall" xml:space="preserve">
+    <value>Charakter zgłoszenia</value>
+  </data>
+  <data name="Field_calls_notes" xml:space="preserve">
+    <value>Notatki zgłoszenia</value>
+  </data>
+  <data name="Field_calls_completednotes" xml:space="preserve">
+    <value>Notatki z zakończenia</value>
+  </data>
+  <data name="Field_calls_address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="Field_calls_geolocationdata" xml:space="preserve">
+    <value>Geolokalizacja</value>
+  </data>
+  <data name="Field_calls_w3w" xml:space="preserve">
+    <value>Adres what3words</value>
+  </data>
+  <data name="Field_calls_contactname" xml:space="preserve">
+    <value>Nazwa kontaktu</value>
+  </data>
+  <data name="Field_calls_contactnumber" xml:space="preserve">
+    <value>Numer kontaktowy</value>
+  </data>
+  <data name="Field_calls_sourceidentifier" xml:space="preserve">
+    <value>Identyfikator źródła</value>
+  </data>
+  <data name="Field_calls_incidentnumber" xml:space="preserve">
+    <value>Numer zdarzenia</value>
+  </data>
+  <data name="Field_calls_externalidentifier" xml:space="preserve">
+    <value>Identyfikator zewnętrzny</value>
+  </data>
+  <data name="Field_calls_referencenumber" xml:space="preserve">
+    <value>Numer referencyjny</value>
+  </data>
+  <data name="Field_calls_callformdata" xml:space="preserve">
+    <value>Dane formularza zgłoszenia</value>
+  </data>
+  <data name="Field_calls_deletedreason" xml:space="preserve">
+    <value>Powód usunięcia</value>
+  </data>
+  <data name="DestinationHeader" xml:space="preserve">
+    <value>Miejsce docelowe</value>
+  </data>
+  <data name="DestinationHostLabel" xml:space="preserve">
+    <value>Przypięty host</value>
+  </data>
+  <data name="CredentialLabel" xml:space="preserve">
+    <value>Przypięte poświadczenie</value>
+  </data>
+  <data name="TokenHostLabel" xml:space="preserve">
+    <value>Przypięty host tokenu</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Brak jeszcze prawidłowego miejsca docelowego</value>
+  </data>
+  <data name="ValidationHeader" xml:space="preserve">
+    <value>Tego przepływu pracy nie można jeszcze objąć ochroną</value>
+  </data>
+  <data name="ValidationError_no_steps" xml:space="preserve">
+    <value>Dodaj co najmniej jeden włączony krok.</value>
+  </data>
+  <data name="ValidationError_action_not_allowed" xml:space="preserve">
+    <value>Chronione przepływy pracy mogą zawierać tylko kroki API POST lub PUT.</value>
+  </data>
+  <data name="ValidationError_credential_required" xml:space="preserve">
+    <value>Każdy krok wymaga poświadczenia.</value>
+  </data>
+  <data name="ValidationError_credential_mismatch" xml:space="preserve">
+    <value>Wszystkie kroki muszą używać tego samego poświadczenia.</value>
+  </data>
+  <data name="ValidationError_credential_not_allowed" xml:space="preserve">
+    <value>Użyj poświadczenia typu token Bearer, klucz API lub poświadczenia klienta OAuth2.</value>
+  </data>
+  <data name="ValidationError_credential_missing" xml:space="preserve">
+    <value>Jeden z kroków używa poświadczenia, które już nie istnieje.</value>
+  </data>
+  <data name="ValidationError_url_required" xml:space="preserve">
+    <value>Każdy krok wymaga adresu URL.</value>
+  </data>
+  <data name="ValidationError_scheme_not_https" xml:space="preserve">
+    <value>Adres URL każdego kroku musi używać HTTPS.</value>
+  </data>
+  <data name="ValidationError_host_not_literal" xml:space="preserve">
+    <value>Host w adresie URL musi być wpisany wprost, a nie budowany z szablonu.</value>
+  </data>
+  <data name="ValidationError_host_mismatch" xml:space="preserve">
+    <value>Wszystkie kroki muszą wysyłać do tego samego hosta.</value>
+  </data>
+  <data name="ValidationError_protected_in_action_config" xml:space="preserve">
+    <value>Wartości protected.* nie mogą być używane w adresie URL ani w nagłówku.</value>
+  </data>
+  <data name="ValidationError_protected_in_condition" xml:space="preserve">
+    <value>Wartości protected.* nie mogą być używane w warunku kroku.</value>
+  </data>
+  <data name="ValidationError_trigger_not_supported" xml:space="preserve">
+    <value>W tej wersji ochroną można objąć tylko wyzwalacze zgłoszeń.</value>
+  </data>
+  <data name="ValidationError_token_url_invalid" xml:space="preserve">
+    <value>Poświadczenie OAuth2 wymaga adresu URL tokenu HTTPS.</value>
+  </data>
+  <data name="ValidationError_protected_reference_without_release" xml:space="preserve">
+    <value>Ten przepływ pracy nie ma chronionego udostępnienia, więc wartości protected.* byłyby puste. Najpierw skonfiguruj chronione udostępnienie.</value>
+  </data>
+  <data name="RecipientHeader" xml:space="preserve">
+    <value>Odbiorca</value>
+  </data>
+  <data name="RecipientTypeLabel" xml:space="preserve">
+    <value>Typ odbiorcy</value>
+  </data>
+  <data name="RecipientType_CoveredEntity" xml:space="preserve">
+    <value>Podmiot objęty</value>
+  </data>
+  <data name="RecipientType_BusinessAssociate" xml:space="preserve">
+    <value>Partner biznesowy</value>
+  </data>
+  <data name="RecipientNameLabel" xml:space="preserve">
+    <value>Nazwa odbiorcy</value>
+  </data>
+  <data name="RecipientNamePlaceholder" xml:space="preserve">
+    <value>Na przykład: DMH hrabstwa, obsługa spraw w Dynamics 365</value>
+  </data>
+  <data name="PurposeLabel" xml:space="preserve">
+    <value>Cel</value>
+  </data>
+  <data name="PurposePlaceholder" xml:space="preserve">
+    <value>Dlaczego odbiorca potrzebuje tych pól</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Oświadczam, że odbiorcą jest nasza organizacja lub strona objęta umową z partnerem biznesowym zawartą z naszą organizacją oraz że potrzebuje on wyłącznie pól wybranych powyżej (wersja ostrzeżenia {0}).</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Zapisz wersję roboczą</value>
+  </data>
+  <data name="ApproveAndActivate" xml:space="preserve">
+    <value>Zatwierdź i aktywuj</value>
+  </data>
+  <data name="RequestApproval" xml:space="preserve">
+    <value>Poproś o zatwierdzenie</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Zatwierdź</value>
+  </data>
+  <data name="RenewButton" xml:space="preserve">
+    <value>Odnów</value>
+  </data>
+  <data name="SuspendButton" xml:space="preserve">
+    <value>Zawieś</value>
+  </data>
+  <data name="RevokeButton" xml:space="preserve">
+    <value>Odwołaj</value>
+  </data>
+  <data name="DiscardDraft" xml:space="preserve">
+    <value>Odrzuć wersję roboczą</value>
+  </data>
+  <data name="SendTest" xml:space="preserve">
+    <value>Wyślij test z przykładowymi danymi</value>
+  </data>
+  <data name="TestSucceeded" xml:space="preserve">
+    <value>Wysłano test z danymi syntetycznymi. Każdy krok zwrócił status powodzenia.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Test nie zakończył się pełnym powodzeniem. Sprawdź poniżej wyniki kroków oraz dziennik ujawnień.</value>
+  </data>
+  <data name="TestStepResult" xml:space="preserve">
+    <value>Krok {0}: {1} (HTTP {2})</value>
+  </data>
+  <data name="ConfirmRevoke" xml:space="preserve">
+    <value>Odwołać to udostępnienie? Tej operacji nie można cofnąć. Przepływ pracy nie zostanie uruchomiony, dopóki nie zostanie zatwierdzone nowe udostępnienie.</value>
+  </data>
+  <data name="ConfirmSuspend" xml:space="preserve">
+    <value>Zawiesić to udostępnienie? Przepływ pracy nie zostanie uruchomiony, dopóki administrator ponownie go nie zatwierdzi.</value>
+  </data>
+  <data name="ConfirmDiscard" xml:space="preserve">
+    <value>Odrzucić tę wersję roboczą? Przepływ pracy znów będzie uruchamiany z wartościami REDACTED.</value>
+  </data>
+  <data name="FingerprintChanged" xml:space="preserve">
+    <value>Ten przepływ pracy zmienił się od czasu zatwierdzenia. Nie wyśle niczego, dopóki administrator nie zatwierdzi bieżącej konfiguracji.</value>
+  </data>
+  <data name="RequestedOn" xml:space="preserve">
+    <value>Data prośby: {0}</value>
+  </data>
+  <data name="ApprovedOn" xml:space="preserve">
+    <value>Data zatwierdzenia: {0}</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Wygasa: {0}</value>
+  </data>
+  <data name="AwaitingSecondApprover" xml:space="preserve">
+    <value>Oczekiwanie na drugiego administratora. Osoba, która poprosiła o udostępnienie, nie może go zatwierdzić.</value>
+  </data>
+  <data name="ReadOnlyNotice" xml:space="preserve">
+    <value>Tylko administratorzy z uprawnieniem „Konfigurowanie przekazywania danych chronionych” mogą zmieniać chronione udostępnienie. Edycja tego przepływu pracy zawiesza zatwierdzone udostępnienie do czasu ponownego zatwierdzenia.</value>
+  </data>
+  <data name="SkippedNotice" xml:space="preserve">
+    <value>Dopóki ten przepływ pracy ma chronione udostępnienie, które nie jest aktywne, jego uruchomienia są pomijane. Nigdy nie jest uruchamiany z wartościami REDACTED w miejscu wartości chronionych.</value>
+  </data>
+  <data name="DepartmentOffNotice" xml:space="preserve">
+    <value>Chronione przepływy pracy są wyłączone dla Twojego departamentu. Włącz je w sekcji Ochrona danych, aby skonfigurować chronione udostępnienie.</value>
+  </data>
+  <data name="Err_protected_access_denied" xml:space="preserve">
+    <value>Nie masz uprawnień do wykonania tej czynności.</value>
+  </data>
+  <data name="Err_step_up_required" xml:space="preserve">
+    <value>Wymagana jest świeża weryfikacja wieloskładnikowa.</value>
+  </data>
+  <data name="Err_interactive_session_required" xml:space="preserve">
+    <value>Tę czynność musi wykonać zalogowany administrator, a nie klucz API ani konto usługi.</value>
+  </data>
+  <data name="Err_attestation_required" xml:space="preserve">
+    <value>Zaznacz oświadczenie, aby kontynuować.</value>
+  </data>
+  <data name="Err_ack_version_mismatch" xml:space="preserve">
+    <value>Treść ostrzeżenia uległa zmianie. Odśwież stronę, przeczytaj ostrzeżenie i ponownie przyjmij je do wiadomości.</value>
+  </data>
+  <data name="Err_self_approval_not_allowed" xml:space="preserve">
+    <value>Prośba o to udostępnienie pochodzi od Ciebie, więc musi je zatwierdzić inny administrator.</value>
+  </data>
+  <data name="Err_invalid_state" xml:space="preserve">
+    <value>Tej czynności nie można wykonać w bieżącym stanie udostępnienia.</value>
+  </data>
+  <data name="Err_validation_failed" xml:space="preserve">
+    <value>Przepływ pracy nie spełnia warunków objęcia ochroną. Popraw wymienione problemy i spróbuj ponownie.</value>
+  </data>
+  <data name="Err_not_found" xml:space="preserve">
+    <value>Nie znaleziono przepływu pracy ani udostępnienia.</value>
+  </data>
+  <data name="Err_trigger_not_supported" xml:space="preserve">
+    <value>W tej wersji ochroną można objąć tylko wyzwalacze zgłoszeń.</value>
+  </data>
+  <data name="Err_too_many_fields" xml:space="preserve">
+    <value>Wybrano zbyt wiele pól.</value>
+  </data>
+  <data name="Err_no_fields" xml:space="preserve">
+    <value>Wybierz co najmniej jedno pole do udostępnienia.</value>
+  </data>
+  <data name="Err_unknown_field" xml:space="preserve">
+    <value>Wybrano nieznane pole.</value>
+  </data>
+  <data name="Err_recipient_required" xml:space="preserve">
+    <value>Podaj typ i nazwę odbiorcy.</value>
+  </data>
+  <data name="Err_purpose_required" xml:space="preserve">
+    <value>Podaj cel ujawnienia.</value>
+  </data>
+  <data name="Err_adp_not_enabled" xml:space="preserve">
+    <value>Najpierw należy włączyć zaawansowaną ochronę danych.</value>
+  </data>
+  <data name="Err_protected_workflows_disabled" xml:space="preserve">
+    <value>Chronione przepływy pracy są wyłączone dla Twojego departamentu.</value>
+  </data>
+  <data name="Err_config_changed" xml:space="preserve">
+    <value>Przepływ pracy zmienił się po złożeniu prośby. Ponownie poproś o zatwierdzenie bieżącej konfiguracji.</value>
+  </data>
+  <data name="Err_http_failed" xml:space="preserve">
+    <value>Miejsce docelowe nie przyjęło żądania.</value>
+  </data>
+  <data name="Err_command_failed" xml:space="preserve">
+    <value>Nie udało się ukończyć czynności. Spróbuj ponownie.</value>
+  </data>
+  <data name="ColWorkflow" xml:space="preserve">
+    <value>Przepływ pracy</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColFields" xml:space="preserve">
+    <value>Pola</value>
+  </data>
+  <data name="ColHost" xml:space="preserve">
+    <value>Host</value>
+  </data>
+  <data name="ColRecipient" xml:space="preserve">
+    <value>Odbiorca</value>
+  </data>
+  <data name="ColApprovedBy" xml:space="preserve">
+    <value>Zatwierdzone przez</value>
+  </data>
+  <data name="ColExpires" xml:space="preserve">
+    <value>Wygasa</value>
+  </data>
+  <data name="ColSends30" xml:space="preserve">
+    <value>Wysyłki (30 dni)</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Akcje</value>
+  </data>
+  <data name="NoReleases" xml:space="preserve">
+    <value>Żaden przepływ pracy nie ma chronionego udostępnienia.</value>
+  </data>
+  <data name="OpenWorkflow" xml:space="preserve">
+    <value>Otwórz przepływ pracy</value>
+  </data>
+  <data name="ViewDisclosures" xml:space="preserve">
+    <value>Dziennik ujawnień</value>
+  </data>
+  <data name="ChainValid" xml:space="preserve">
+    <value>Łańcuch audytu zweryfikowany (rekordów: {0}).</value>
+  </data>
+  <data name="ChainInvalid" xml:space="preserve">
+    <value>Weryfikacja łańcucha audytu nie powiodła się przy rekordzie {0}. Skontaktuj się z pomocą techniczną Resgrid.</value>
+  </data>
+  <data name="RenewFromEditor" xml:space="preserve">
+    <value>Odnów w edytorze przepływu pracy, w którym wyświetlane jest oświadczenie.</value>
+  </data>
+  <data name="FilterWorkflow" xml:space="preserve">
+    <value>Przepływ pracy</value>
+  </data>
+  <data name="FilterAllWorkflows" xml:space="preserve">
+    <value>Wszystkie przepływy pracy</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Identyfikator zgłoszenia</value>
+  </data>
+  <data name="FilterFrom" xml:space="preserve">
+    <value>Od (UTC)</value>
+  </data>
+  <data name="FilterTo" xml:space="preserve">
+    <value>Do (UTC)</value>
+  </data>
+  <data name="ApplyFilter" xml:space="preserve">
+    <value>Filtruj</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Eksportuj CSV</value>
+  </data>
+  <data name="MetadataOnly" xml:space="preserve">
+    <value>Tylko metadane. Ten dziennik nigdy nie zawiera wartości pól, ładunków ani treści odpowiedzi.</value>
+  </data>
+  <data name="ColSequence" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ColOccurred" xml:space="preserve">
+    <value>Czas zdarzenia (UTC)</value>
+  </data>
+  <data name="ColType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="ColEvent" xml:space="preserve">
+    <value>Zdarzenie lub wynik</value>
+  </data>
+  <data name="ColCall" xml:space="preserve">
+    <value>Zgłoszenie</value>
+  </data>
+  <data name="ColHttp" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="ColBytes" xml:space="preserve">
+    <value>Bajty</value>
+  </data>
+  <data name="ColActor" xml:space="preserve">
+    <value>Wykonawca</value>
+  </data>
+  <data name="ColDetail" xml:space="preserve">
+    <value>Szczegóły</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Brak pasujących rekordów.</value>
+  </data>
+  <data name="TestBadge" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="RecordType_disclosure" xml:space="preserve">
+    <value>Ujawnienie</value>
+  </data>
+  <data name="RecordType_admin_event" xml:space="preserve">
+    <value>Administracyjne</value>
+  </data>
+  <data name="Outcome_sent" xml:space="preserve">
+    <value>Wysłano</value>
+  </data>
+  <data name="Outcome_failed_http" xml:space="preserve">
+    <value>Błąd HTTP</value>
+  </data>
+  <data name="Outcome_failed_broker" xml:space="preserve">
+    <value>Błąd odszyfrowania</value>
+  </data>
+  <data name="Outcome_blocked_host" xml:space="preserve">
+    <value>Zablokowano: host</value>
+  </data>
+  <data name="Outcome_blocked_release" xml:space="preserve">
+    <value>Zablokowano: udostępnienie</value>
+  </data>
+  <data name="Outcome_blocked_department" xml:space="preserve">
+    <value>Zablokowano: departament</value>
+  </data>
+  <data name="Outcome_blocked_guard" xml:space="preserve">
+    <value>Zablokowano: szyfrogram w ładunku</value>
+  </data>
+  <data name="Outcome_failed_render" xml:space="preserve">
+    <value>Błąd renderowania</value>
+  </data>
+  <data name="Event_department_enabled" xml:space="preserve">
+    <value>Włączono chronione przepływy pracy</value>
+  </data>
+  <data name="Event_department_disabled" xml:space="preserve">
+    <value>Wyłączono chronione przepływy pracy</value>
+  </data>
+  <data name="Event_release_requested" xml:space="preserve">
+    <value>Poproszono o udostępnienie</value>
+  </data>
+  <data name="Event_release_approved" xml:space="preserve">
+    <value>Zatwierdzono udostępnienie</value>
+  </data>
+  <data name="Event_release_suspended" xml:space="preserve">
+    <value>Zawieszono udostępnienie</value>
+  </data>
+  <data name="Event_release_revoked" xml:space="preserve">
+    <value>Odwołano udostępnienie</value>
+  </data>
+  <data name="Event_release_expired" xml:space="preserve">
+    <value>Udostępnienie wygasło</value>
+  </data>
+  <data name="Event_credential_rotated" xml:space="preserve">
+    <value>Zmieniono poświadczenie</value>
+  </data>
+  <data name="NoticeExpiryTitle" xml:space="preserve">
+    <value>Chroniony przepływ pracy wkrótce wygaśnie</value>
+  </data>
+  <data name="NoticeExpiringBody" xml:space="preserve">
+    <value>Chronione udostępnienie dla przepływu pracy „{0}” wygasa dnia {1}. Administrator musi je odnowić, w przeciwnym razie przepływ pracy przestanie wysyłać dane.</value>
+  </data>
+  <data name="NoticeExpiredBody" xml:space="preserve">
+    <value>Chronione udostępnienie dla przepływu pracy „{0}” wygasło i przepływ pracy przestał wysyłać dane. Administrator może je odnowić w edytorze przepływu pracy.</value>
+  </data>
+  <data name="NoticeFailureTitle" xml:space="preserve">
+    <value>Błąd chronionego przepływu pracy</value>
+  </data>
+  <data name="NoticeFailureBody" xml:space="preserve">
+    <value>Chroniony przepływ pracy „{0}” zakończył się błędem przy ostatniej próbie (uruchomienie {1}, błąd {2}).</value>
+  </data>
+  <data name="Outcome_attempted" xml:space="preserve">
+    <value>Próba (zapisana przed wysłaniem)</value>
+  </data>
+  <data name="Event_second_approver_relax_requested" xml:space="preserve">
+    <value>Zgłoszono wniosek o rezygnację z drugiego zatwierdzającego</value>
+  </data>
+  <data name="Event_second_approver_relaxed" xml:space="preserve">
+    <value>Drugi zatwierdzający nie jest już wymagany</value>
+  </data>
+  <data name="SecondApproverRelaxPending" xml:space="preserve">
+    <value>Dnia {0} administrator poprosił o rezygnację z wymogu drugiego zatwierdzającego. Inny administrator musi to potwierdzić w ciągu 7 dni, odznaczając pole i zapisując.</value>
+  </data>
+  <data name="SecondApproverRelaxRequested" xml:space="preserve">
+    <value>Twój wniosek o rezygnację z wymogu drugiego zatwierdzającego został zapisany. Inny administrator musi go potwierdzić, zanim zacznie obowiązywać.</value>
+  </data>
+  <data name="Err_concurrent_change" xml:space="preserve">
+    <value>Ktoś inny zmienił to zezwolenie w tym samym czasie. Odśwież stronę i spróbuj ponownie.</value>
+  </data>
+  <data name="Err_disclosure_unavailable" xml:space="preserve">
+    <value>Nie udało się zapisać dziennika ujawnień, więc nic nie zostało wysłane. Spróbuj ponownie.</value>
+  </data>
+  <data name="Err_release_not_active" xml:space="preserve">
+    <value>Ten przepływ pracy nie ma aktywnego zezwolenia.</value>
+  </data>
+  <data name="Err_release_expired" xml:space="preserve">
+    <value>Zezwolenie wygasło. Odnów je, aby wznowić wysyłanie.</value>
+  </data>
+  <data name="Err_action_not_allowed" xml:space="preserve">
+    <value>Tylko kroki wywołania API (POST lub PUT) mogą wysyłać dane chronione.</value>
+  </data>
+  <data name="Err_credential_not_allowed" xml:space="preserve">
+    <value>Poświadczenie kroku nie jest tym zatwierdzonym dla tego zezwolenia.</value>
+  </data>
+  <data name="Err_host_mismatch" xml:space="preserve">
+    <value>Host docelowy nie jest tym zatwierdzonym dla tego zezwolenia.</value>
+  </data>
+  <data name="Err_scheme_not_https" xml:space="preserve">
+    <value>Miejsce docelowe musi używać HTTPS.</value>
+  </data>
+  <data name="Err_redirect_refused" xml:space="preserve">
+    <value>Miejsce docelowe odpowiedziało przekierowaniem. Przekierowania nigdy nie są wykonywane dla danych chronionych.</value>
+  </data>
+  <data name="Err_token_host_mismatch" xml:space="preserve">
+    <value>Host tokenów OAuth2 nie jest tym zatwierdzonym dla tego zezwolenia.</value>
+  </data>
+  <data name="Err_broker_failed" xml:space="preserve">
+    <value>Nie udało się odszyfrować wartości chronionych. Nic nie zostało wysłane.</value>
+  </data>
+  <data name="Err_entity_unavailable" xml:space="preserve">
+    <value>Nie udało się wczytać zgłoszenia do odszyfrowania. Nic nie zostało wysłane.</value>
+  </data>
+  <data name="Err_render_failed" xml:space="preserve">
+    <value>Nie udało się wygenerować szablonu. Nic nie zostało wysłane.</value>
+  </data>
+  <data name="Err_payload_too_large" xml:space="preserve">
+    <value>Wygenerowana treść jest zbyt duża. Nic nie zostało wysłane.</value>
+  </data>
+  <data name="Err_envelope_in_payload" xml:space="preserve">
+    <value>Wygenerowana treść zawierała zaszyfrowane dane i została zablokowana.</value>
+  </data>
+  <data name="Err_http_timeout" xml:space="preserve">
+    <value>Miejsce docelowe nie odpowiedziało na czas.</value>
+  </data>
+  <data name="Err_protected_step_error" xml:space="preserve">
+    <value>Krok zakończył się niepowodzeniem. Przyczyna nie jest zapisywana, aby wartości chronione nie trafiły do dzienników.</value>
+  </data>
+  <data name="Field_calls_subjectidentifiers" xml:space="preserve">
+    <value>Identyfikatory osoby (wszystkie klucze)</value>
+  </data>
+  <data name="Outcome_failed_validation" xml:space="preserve">
+    <value>Nieprawidłowa treść</value>
+  </data>
+  <data name="Outcome_failed_projection" xml:space="preserve">
+    <value>Błąd projekcji</value>
+  </data>
+  <data name="Outcome_failed_ack" xml:space="preserve">
+    <value>Odrzucone przez miejsce docelowe</value>
+  </data>
+  <data name="Outcome_failed_response_too_large" xml:space="preserve">
+    <value>Za duża odpowiedź</value>
+  </data>
+  <data name="Outcome_blocked_consent" xml:space="preserve">
+    <value>Zablokowano: brak zgody Part 2</value>
+  </data>
+  <data name="Err_payload_invalid" xml:space="preserve">
+    <value>Wygenerowana treść jest nieprawidłowa dla swojego typu treści. Nic nie zostało wysłane.</value>
+  </data>
+  <data name="Err_projection_failed" xml:space="preserve">
+    <value>Nie udało się odczytać identyfikatorów osoby w zgłoszeniu. Nic nie zostało wysłane.</value>
+  </data>
+  <data name="Err_ack_rejected" xml:space="preserve">
+    <value>Miejsce docelowe odebrało żądanie, ale je odrzuciło.</value>
+  </data>
+  <data name="Err_response_too_large" xml:space="preserve">
+    <value>Odpowiedź miejsca docelowego przekroczyła dozwolony rozmiar, więc nie można było jej sprawdzić.</value>
+  </data>
+  <data name="Err_part2_consent_missing" xml:space="preserve">
+    <value>Zgłoszenie nie ma zarejestrowanej zgody zgodnej z 42 CFR Part 2, więc jego pola Part 2 nie zostały wysłane.</value>
+  </data>
+  <data name="Err_capture_failed" xml:space="preserve">
+    <value>Żądanie zostało dostarczone, ale nie udało się zapisać w zgłoszeniu wartości zwróconych przez miejsce docelowe.</value>
+  </data>
+  <data name="Err_oauth_token_failed" xml:space="preserve">
+    <value>Punkt końcowy tokenów OAuth2 nie wydał tokenu.</value>
+  </data>
+  <data name="Err_auth_method_mismatch" xml:space="preserve">
+    <value>Poświadczenie nie uwierzytelnia się już w sposób zatwierdzony dla tego zezwolenia.</value>
+  </data>
+  <data name="Err_signing_key_unavailable" xml:space="preserve">
+    <value>Poświadczenie nie ma aktualnego klucza podpisu.</value>
+  </data>
+  <data name="Err_field_conflict" xml:space="preserve">
+    <value>Zezwól na całe pole identyfikatorów osoby albo na pojedyncze klucze, nie na oba jednocześnie.</value>
+  </data>
+  <data name="Err_restricted_attestation_required" xml:space="preserve">
+    <value>Wybrane pole jest zastrzeżone. Zaznacz oświadczenie dotyczące pól zastrzeżonych.</value>
+  </data>
+  <data name="Err_part2_attestation_required" xml:space="preserve">
+    <value>Wybrane pole zawiera informacje objęte 42 CFR Part 2. Zaznacz oświadczenie Part 2.</value>
+  </data>
+  <data name="Err_capture_requires_subject_identifiers" xml:space="preserve">
+    <value>Krok zapisuje wartości z odpowiedzi w identyfikatorach osoby, więc zezwolenie musi je obejmować (całe pole lub co najmniej jeden klucz).</value>
+  </data>
+  <data name="ValidationError_content_type_not_allowed" xml:space="preserve">
+    <value>Krok deklaruje typ treści, którego kroki chronione nie mogą używać.</value>
+  </data>
+  <data name="ValidationError_success_rule_invalid" xml:space="preserve">
+    <value>Reguła powodzenia kroku jest niekompletna lub nieznana.</value>
+  </data>
+  <data name="ValidationError_capture_invalid" xml:space="preserve">
+    <value>Wpis przechwytywania odpowiedzi w kroku jest nieprawidłowy (źródło, wyrażenie lub klucz).</value>
+  </data>
+  <data name="ValidationError_capture_too_many" xml:space="preserve">
+    <value>Krok przechwytuje więcej wartości odpowiedzi, niż jest dozwolone.</value>
+  </data>
+  <data name="ValidationError_idempotency_header_invalid" xml:space="preserve">
+    <value>Nazwa nagłówka idempotencji w kroku jest nieprawidłowa lub zastrzeżona.</value>
+  </data>
+  <data name="ValidationError_if_none_exist_invalid" xml:space="preserve">
+    <value>Wartość If-None-Exist w kroku jest za długa lub zawiera znak nowego wiersza.</value>
+  </data>
+  <data name="ValidationError_signing_key_missing" xml:space="preserve">
+    <value>Poświadczenie OAuth2 używa private_key_jwt, ale nie ma jeszcze klucza podpisu. Zapisz poświadczenie, aby go wygenerować.</value>
+  </data>
+  <data name="Warning_unescaped_protected_value" xml:space="preserve">
+    <value>Szablon umieszcza wartość chronioną bez json_escape, xml_escape ani hl7_escape. Cudzysłów lub znak nowego wiersza w wartości może uszkodzić treść, która wtedy nie przejdzie walidacji zamiast zostać wysłana.</value>
+  </data>
+  <data name="AuthMethodLabel" xml:space="preserve">
+    <value>Uwierzytelnianie klienta</value>
+  </data>
+  <data name="SubjectKeysHeader" xml:space="preserve">
+    <value>Klucze identyfikatorów osoby</value>
+  </data>
+  <data name="SubjectKeysHelp" xml:space="preserve">
+    <value>Zezwól na pojedyncze identyfikatory zamiast całego zestawu: tylko zaznaczone klucze trafiają do protected.call.subject_ids.</value>
+  </data>
+  <data name="SubjectKeysOtherLabel" xml:space="preserve">
+    <value>Inne klucze (oddzielone przecinkami)</value>
+  </data>
+  <data name="CustomFieldsHeader" xml:space="preserve">
+    <value>Pola niestandardowe zgłoszenia</value>
+  </data>
+  <data name="CustomFieldsHelp" xml:space="preserve">
+    <value>Każde zaznaczone pole niestandardowe jest odszyfrowywane osobno i wyświetlane jako protected.call.udf.&lt;nazwa&gt;.</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Zastrzeżone</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="RestrictedAttestationLabel" xml:space="preserve">
+    <value>Potwierdzam, że ten odbiorca jest upoważniony do otrzymywania pól zastrzeżonych ({0}).</value>
+  </data>
+  <data name="Part2AttestationText" xml:space="preserve">
+    <value>42 CFR Part 2: wybrane pola zawierają informacje o zaburzeniach związanych z używaniem substancji. Ich dalsze ujawnienie wymaga pisemnej zgody pacjenta lub innej podstawy dozwolonej przez 42 CFR Part 2, a odbiorca musi zostać poinformowany, że dalsze ujawnianie jest zabronione.</value>
+  </data>
+  <data name="Part2AttestationLabel" xml:space="preserve">
+    <value>Oświadczam, że wydział posiada zgodę lub inną podstawę wymaganą przez 42 CFR Part 2 dla tego ujawnienia ({0}).</value>
+  </data>
+  <data name="Part2ConsentNotice" xml:space="preserve">
+    <value>Zgłoszenie jest wysyłane tylko wtedy, gdy ma zaznaczone „Zgoda Part 2 zarejestrowana”; w przeciwnym razie krok jest blokowany i odnotowywany.</value>
+  </data>
+  <data name="StepOptionsHeader" xml:space="preserve">
+    <value>Opcje chronionego doręczenia</value>
+  </data>
+  <data name="StepOptionsHelp" xml:space="preserve">
+    <value>Jak miejsce docelowe potwierdza odbiór, które zwrócone wartości są zapisywane w zgłoszeniu i jak rozpoznawane są ponowne próby. Każda opcja jest częścią zatwierdzenia zezwolenia.</value>
+  </data>
+  <data name="StepSuccessRule" xml:space="preserve">
+    <value>Reguła powodzenia</value>
+  </data>
+  <data name="StepRulePath" xml:space="preserve">
+    <value>Ścieżka</value>
+  </data>
+  <data name="StepRuleExpected" xml:space="preserve">
+    <value>Oczekiwana wartość</value>
+  </data>
+  <data name="StepCapture" xml:space="preserve">
+    <value>Zapisz wartości z odpowiedzi</value>
+  </data>
+  <data name="StepCaptureHelp" xml:space="preserve">
+    <value>Jeden na wiersz: źródło | wyrażenie | klucz. Źródła: json_path, xpath, hl7_field, header, fhir_location_id. Wartości są zapisywane w postaci zaszyfrowanej w identyfikatorach osoby zgłoszenia.</value>
+  </data>
+  <data name="StepIdempotencyHeader" xml:space="preserve">
+    <value>Nagłówek idempotencji</value>
+  </data>
+  <data name="StepIfNoneExist" xml:space="preserve">
+    <value>FHIR If-None-Exist</value>
+  </data>
+  <data name="Rule_http_2xx" xml:space="preserve">
+    <value>Dowolny status 2xx</value>
+  </data>
+  <data name="Rule_json_path" xml:space="preserve">
+    <value>Ścieżka JSON jest równa</value>
+  </data>
+  <data name="Rule_xpath" xml:space="preserve">
+    <value>XPath jest równe</value>
+  </data>
+  <data name="Rule_hl7_ack" xml:space="preserve">
+    <value>Potwierdzenie HL7 (AA / CA)</value>
+  </data>
+  <data name="Rule_fhir_operation_outcome" xml:space="preserve">
+    <value>Brak błędu w OperationOutcome FHIR</value>
+  </data>
+  <data name="ColContentType" xml:space="preserve">
+    <value>Typ treści</value>
+  </data>
+  <data name="CapturedKeysLabel" xml:space="preserve">
+    <value>Zapisane klucze</value>
+  </data>
+</root>

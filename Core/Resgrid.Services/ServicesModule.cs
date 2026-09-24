@@ -70,6 +70,11 @@ namespace Resgrid.Services
 			builder.RegisterType<ChecklistAuthorizationService>().As<IChecklistAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
+			// Protected Workflows (ADP push model): the administrative lifecycle and the unattended runtime WorkflowService
+			// hands every step of an approved release to. The runtime needs IProtectedDataBrokerClient
+			// (ProtectedDataBrokerClientModule), which every host that loads this module already registers.
+			builder.RegisterType<ProtectedWorkflowService>().As<IProtectedWorkflowService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectedWorkflowRuntime>().As<IProtectedWorkflowRuntime>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentCommandService>().As<IIncidentCommandService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatChannelService>().As<IChatChannelService>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchAccessService>().As<IDispatchAccessService>().InstancePerLifetimeScope();
@@ -272,6 +277,8 @@ namespace Resgrid.Services
 			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchRecommendationService>().As<IDispatchRecommendationService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchScopeService>().As<IDispatchScopeService>().InstancePerLifetimeScope();
+			builder.RegisterType<NearestUnitService>().As<INearestUnitService>().InstancePerLifetimeScope();
 
 			// UDF Services
 			builder.RegisterType<UserDefinedFieldsService>().As<IUserDefinedFieldsService>().InstancePerLifetimeScope();

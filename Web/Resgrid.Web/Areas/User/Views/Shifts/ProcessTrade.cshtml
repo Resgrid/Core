@@ -5,6 +5,12 @@
 	ViewBag.Title = "Resgrid | " + localizer["ProcessTradeHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
+@functions {
+	string FormatTime(DateTime value)
+	{
+		return Model.Department != null ? value.FormatForDepartment(Model.Department, true) : value.ToString("g");
+	}
+}
 @section Styles
 {
 
@@ -273,8 +279,8 @@
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
-								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.Trade.ShiftSignupTradeId)
+								<input type="hidden" id="shiftSignupTradeId" name="shiftSignupTradeId" value="@Model.Trade.ShiftSignupTradeId" />
 								<div asp-validation-summary="All" class="text-danger"></div>
 							</div>
 						</div>
@@ -283,40 +289,61 @@
 							<div class="col-sm-12">
 								<ul class="event-list">
 									<li>
-										<time datetime="@Model.Trade.SourceShiftSignup.ShiftDay.ToShortDateString()">
-											<span class="day">@Model.Trade.SourceShiftSignup.ShiftDay.Day</span>
-											<span class="month">@DateTimeHelpers.MonthToShortString(Model.Trade.SourceShiftSignup.ShiftDay.Month)</span>
-											<span class="year">@Model.Trade.SourceShiftSignup.ShiftDay.Year</span>
+										<time datetime="@Model.Start.ToString("s")">
+											<span class="day">@Model.Start.Day</span>
+											<span class="month">@DateTimeHelpers.MonthToShortString(Model.Start.Month)</span>
+											<span class="year">@Model.Start.Year</span>
 											<span class="time">@Model.Trade.SourceShiftSignup.Shift.StartTime</span>
 										</time>
 										<div class="info">
 											<h2 class="title">@Model.Trade.SourceShiftSignup.Shift.Name</h2>
-											<p class="desc">@localizer["StartsAtLabel"] @Model.Trade.SourceShiftSignup.Shift.StartTime</p>
+											<p class="desc">@String.Format(localizer["TradeRequestedByFormat"].Value, Model.RequesterName) @(String.IsNullOrWhiteSpace(Model.GroupName) ? "" : "(" + Model.GroupName + ")")</p>
+											<p class="desc">@localizer["StartsAtLabel"] @FormatTime(Model.Start) - @FormatTime(Model.End)</p>
 										</div>
 									</li>
 								</ul>
 							</div>
 						</div>
 
+						@if (!String.IsNullOrWhiteSpace(Model.Trade.Note))
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["NoteLabel"]</label>
+								<div class="col-sm-8">
+									<p class="form-control-static">@Model.Trade.Note</p>
+								</div>
+							</div>
+						}
+
+						@if (Model.Trade.SourceShiftSignup.Shift.RequireApproval == true)
+						{
+							<div class="form-group">
+								<div class="col-sm-8 col-sm-offset-2">
+									<p class="text-muted"><i class="fa fa-info-circle"></i> @localizer["ApprovalRequiredNotice"]</p>
+								</div>
+							</div>
+						}
+
 						<div class="form-group">
-							<label class="col-sm-2 control-label">@localizer["DatesToTradeLabel"]</label>
-							<div class="col-sm-4">
-								<select id="shifts" name="shifts"></select>
+							<label class="col-sm-2 control-label" for="dates">@localizer["DatesToTradeLabel"]</label>
+							<div class="col-sm-6">
+								<select id="dates" name="dates" multiple="multiple" style="width: 100%;"></select>
 								<span class="help-block text-left">@localizer["DatesToTradeHelp"]</span>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">@localizer["NoteLabel"]</label>
-							<div class="col-sm-4">
-								<textarea cols="30" rows="5" class="form-control" placeholder="@localizer["NoteTradePlaceholder"]" id="Note" name="Note"></textarea>
+							<label class="col-sm-2 control-label" for="note">@localizer["NoteLabel"]</label>
+							<div class="col-sm-6">
+								<textarea cols="30" rows="5" class="form-control" placeholder="@localizer["NoteTradePlaceholder"]" id="note" name="note" maxlength="1000"></textarea>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-danger" asp-controller="Shifts" asp-action="RejectTrade" asp-route-area="User" asp-route-shiftSignupTradeId="@Model.Trade.ShiftSignupTradeId" data-confirm="@localizer["RejectTradeConfirm"]" rel="nofollow">@localizer["RejectTradeRequest"]</a>
-								<input class="btn btn-primary" id="submit_button" name="commit" type="submit" value="@localizer["ProposeTradeRequest"]" />
+							<div class="col-sm-6 col-sm-offset-2">
+								@* Declining posts this same form (with the note as the reason) to RejectTrade. *@
+								<button class="btn btn-danger" id="reject_button" type="submit" formaction="@Url.Action("RejectTrade", "Shifts", new { area = "User" })" data-confirm="@localizer["RejectTradeConfirm"]">@localizer["RejectTradeRequest"]</button>
+								<button class="btn btn-primary" id="submit_button" type="submit">@localizer["ProposeTradeRequest"]</button>
 							</div>
 						</div>
 					</form>
@@ -328,5 +355,10 @@
 
 @section Scripts
 {
+	<script>
+		var resgridShiftsI18n = {
+			selectDates: '@localizer["SelectDatesPlaceholder"]'
+		};
+	</script>
 	<script src="~/js/app/internal/shifts/resgrid.shifts.processtrade.js"></script>
 }

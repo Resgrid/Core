@@ -34,7 +34,7 @@ namespace Resgrid.Tests.Chatbot
 			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(DepartmentId)).ReturnsAsync(candidates);
 			var authorization = MemberAuthorization();
 			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
-				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), authorization.Object);
+				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), authorization.Object, PassThroughScope());
 
 			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
 
@@ -47,13 +47,34 @@ namespace Resgrid.Tests.Chatbot
 		}
 
 		[Test]
+		public async Task CallsList_ScopedUser_ListsOnlyCallsInTheirArea()
+		{
+			var active = new List<Call>
+			{
+				new Call { CallId = 101, DepartmentId = DepartmentId, Name = "MyAreaCall" },
+				new Call { CallId = 202, DepartmentId = DepartmentId, Name = "OtherAreaCall" }
+			};
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(DepartmentId)).ReturnsAsync(active);
+			var scope = new Mock<IDispatchScopeService>();
+			scope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, active))
+				.ReturnsAsync(new List<Call> { active[0] });
+			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
+				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), MemberAuthorization().Object, scope.Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
+
+			response.Text.Should().Contain("MyAreaCall").And.NotContain("OtherAreaCall");
+		}
+
+		[Test]
 		public async Task CallsList_OnlyForeignRows_ReportsNoActiveCalls()
 		{
 			var calls = new Mock<ICallsService>();
 			calls.Setup(c => c.GetActiveCallsByDepartmentAsync(DepartmentId))
 				.ReturnsAsync(new List<Call> { new Call { CallId = 900, DepartmentId = 99, Name = "ForeignCall" } });
 			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
-				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), MemberAuthorization().Object);
+				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), MemberAuthorization().Object, PassThroughScope());
 
 			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
 
@@ -68,7 +89,7 @@ namespace Resgrid.Tests.Chatbot
 			var authorization = new Mock<IAuthorizationService>();
 			authorization.Setup(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(false);
 			var handler = new CallsActionHandler(calls.Object, Mock.Of<IDepartmentsService>(),
-				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), authorization.Object);
+				Mock.Of<ICustomStateService>(), Mock.Of<IUserProfileService>(), authorization.Object, PassThroughScope());
 
 			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListCalls }, Session());
 
@@ -251,6 +272,15 @@ namespace Resgrid.Tests.Chatbot
 		}
 		private static UnitState State(int id, int departmentId, string name) => new()
 		{ UnitId = id, State = id, Unit = new Unit { UnitId = id, DepartmentId = departmentId, Name = name } };
+		/// <summary>Group-scoped dispatch off: call lists come back unchanged.</summary>
+		private static IDispatchScopeService PassThroughScope()
+		{
+			var scope = new Mock<IDispatchScopeService>();
+			scope.Setup(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()))
+				.ReturnsAsync((int departmentId, string userId, List<Call> calls) => calls);
+			return scope.Object;
+		}
+
 		private static Mock<IAuthorizationService> MemberAuthorization()
 		{
 			var authorization = new Mock<IAuthorizationService>();

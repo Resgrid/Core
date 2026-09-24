@@ -1,0 +1,132 @@
+@model Resgrid.Web.Areas.User.Models.ProtectedWorkflows.ProtectedWorkflowDisclosuresView
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
+@{
+    ViewData["Title"] = "Resgrid | " + pwLocalizer["DisclosuresTitle"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@pwLocalizer["DisclosuresTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Workflows" asp-action="Index" asp-route-area="User">@pwLocalizer["WorkflowsBreadcrumb"]</a></li>
+            <li><a asp-action="Index">@pwLocalizer["PageTitle"]</a></li>
+            <li class="active"><strong>@pwLocalizer["ViewDisclosures"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-4">
+        <div class="title-action">
+            <a class="btn btn-default" asp-action="DisclosuresCsv" asp-route-workflowId="@Model.WorkflowId" asp-route-callId="@Model.CallId"
+               asp-route-from="@(Model.From?.ToString("yyyy-MM-dd"))" asp-route-to="@(Model.To?.ToString("yyyy-MM-dd"))">
+                <i class="fa fa-download"></i> @pwLocalizer["ExportCsv"]
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <p class="small text-muted"><i class="fa fa-lock"></i> @pwLocalizer["MetadataOnly"]</p>
+    @if (Model.Chain != null)
+    {
+        if (Model.Chain.IsValid)
+        {
+            <div class="alert alert-success small"><i class="fa fa-check"></i> @string.Format(pwLocalizer["ChainValid"].Value, Model.Chain.RecordCount)</div>
+        }
+        else
+        {
+            <div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> @string.Format(pwLocalizer["ChainInvalid"].Value, Model.Chain.FirstInvalidSequence)</div>
+        }
+    }
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="get" asp-action="Disclosures" class="form-inline">
+                <div class="form-group">
+                    <label for="workflowId">@pwLocalizer["FilterWorkflow"]</label>
+                    <select id="workflowId" name="workflowId" class="form-control input-sm">
+                        <option value="">@pwLocalizer["FilterAllWorkflows"]</option>
+                        @foreach (var workflow in Model.Workflows)
+                        {
+                            <option value="@workflow.WorkflowId" selected="@(string.Equals(workflow.WorkflowId, Model.WorkflowId, StringComparison.OrdinalIgnoreCase))">@workflow.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="callId">@pwLocalizer["FilterCall"]</label>
+                    <input id="callId" name="callId" class="form-control input-sm" value="@Model.CallId" style="width:110px" />
+                </div>
+                <div class="form-group">
+                    <label for="from">@pwLocalizer["FilterFrom"]</label>
+                    <input id="from" name="from" type="date" class="form-control input-sm" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="form-group">
+                    <label for="to">@pwLocalizer["FilterTo"]</label>
+                    <input id="to" name="to" type="date" class="form-control input-sm" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">@pwLocalizer["ApplyFilter"]</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-content">
+            @if (Model.Records.Count == 0)
+            {
+                <p class="text-muted">@pwLocalizer["NoDisclosures"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-condensed small">
+                        <thead>
+                            <tr>
+                                <th>@pwLocalizer["ColSequence"]</th>
+                                <th>@pwLocalizer["ColOccurred"]</th>
+                                <th>@pwLocalizer["ColType"]</th>
+                                <th>@pwLocalizer["ColEvent"]</th>
+                                <th>@pwLocalizer["ColWorkflow"]</th>
+                                <th>@pwLocalizer["ColCall"]</th>
+                                <th>@pwLocalizer["ColFields"]</th>
+                                <th>@pwLocalizer["ColHost"]</th>
+                                <th>@pwLocalizer["ColContentType"]</th>
+                                <th>@pwLocalizer["ColHttp"]</th>
+                                <th>@pwLocalizer["ColBytes"]</th>
+                                <th>@pwLocalizer["ColActor"]</th>
+                                <th>@pwLocalizer["ColDetail"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.Records)
+                            {
+                                var isDisclosure = record.RecordType == ProtectedWorkflowRecordTypes.Disclosure;
+                                <tr>
+                                    <td>@record.ChainSequence</td>
+                                    <td class="text-nowrap">@record.OccurredOn.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td>@pwLocalizer["RecordType_" + record.RecordType]@if (record.IsTest)
+                                        {
+                                            <span class="label label-info" style="margin-left:4px">@pwLocalizer["TestBadge"]</span>
+                                        }</td>
+                                    <td>@(isDisclosure ? pwLocalizer["Outcome_" + record.Outcome] : pwLocalizer["Event_" + record.EventType])</td>
+                                    <td>@(record.WorkflowId != null && Model.WorkflowNames.TryGetValue(record.WorkflowId, out var name) ? name : record.WorkflowId)</td>
+                                    <td>@record.EntityId</td>
+                                    <td>@string.Join(", ", WorkflowProtectedRelease.ParseFieldIds(record.FieldIds))</td>
+                                    <td>@record.DestinationHost</td>
+                                    <td class="small">@record.ContentType</td>
+                                    <td>@record.HttpStatus</td>
+                                    <td>@record.PayloadBytes</td>
+                                    <td>@(record.ActorUserId != null && Model.ActorNames.TryGetValue(record.ActorUserId, out var actor) ? actor : record.ActorUserId)</td>
+                                    <td title="@record.PayloadSha256">@record.Detail@if (!string.IsNullOrEmpty(record.CapturedKeys))
+                                        {
+                                            <br /><small class="text-muted">@pwLocalizer["CapturedKeysLabel"]: @string.Join(", ", WorkflowProtectedRelease.ParseFieldIds(record.CapturedKeys))</small>
+                                        }</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

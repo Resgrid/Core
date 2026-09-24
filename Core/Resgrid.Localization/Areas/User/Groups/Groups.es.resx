@@ -255,16 +255,16 @@
     <value>Habilitar esta opción imprimirá una llamada en la impresora seleccionada cuando una unidad o persona de este grupo sea adjuntada (despachada) a una llamada</value>
   </data>
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>Geocerca de Estación</value>
+    <value>Límite del grupo</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>Geocerca de Estación</value>
+    <value>Límite del grupo</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>Geocerca de Estación</value>
+    <value>Límite del grupo</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>A continuación puede crear una geocerca para su estación. Los campos en cursiva azul son obligatorios. Las geocercas le permiten crear un límite en el mapa que es el área de respuesta de esta estación. Se usará para enrutar automáticamente las llamadas y determinar las respuestas.</value>
+    <value>A continuación puede dibujar el límite de este grupo: el área de respuesta de una estación o el área de servicio de un grupo organizativo. Las llamadas ubicadas dentro de él pertenecen a este grupo para el despacho por grupo y las recomendaciones basadas en estaciones. Para dibujarlo, haga clic en el mapa para colocar el primer punto, siga haciendo clic para añadir líneas hasta cerrar el área y luego guarde.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>Color del Distrito</value>

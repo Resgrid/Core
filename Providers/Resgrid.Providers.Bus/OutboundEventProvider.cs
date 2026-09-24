@@ -42,7 +42,9 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(dListCheckHandler);
 			_eventAggregator.AddListener(shiftTradeRequestedHandler);
 			_eventAggregator.AddListener(shiftTradeRejectedEventHandler);
+			_eventAggregator.AddListener(shiftTradeProposedEventHandler);
 			_eventAggregator.AddListener(shiftTradeFilledEventHandler);
+			_eventAggregator.AddListener(shiftRosterChangedEventHandler);
 			_eventAggregator.AddListener(shiftCreatedEventHandler);
 			_eventAggregator.AddListener(shiftUpdatedEventHandler);
 			_eventAggregator.AddListener(shiftDaysAddedEventHandler);
@@ -531,6 +533,23 @@ namespace Resgrid.Providers.Bus
 			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
 			item.DepartmentNumber = message.DepartmentNumber;
 			item.Type = (int)ShiftQueueTypes.TradeFilled;
+			item.SourceUserId = message.UserId;
+
+			await _outboundQueueProvider.EnqueueShiftNotification(item);
+		};
+
+		public Action<ShiftRosterChangedEvent> shiftRosterChangedEventHandler = async delegate (ShiftRosterChangedEvent message)
+		{
+			if (_outboundQueueProvider == null)
+				_outboundQueueProvider = new OutboundQueueProvider();
+
+			var item = new ShiftQueueItem();
+			item.DepartmentId = message.DepartmentId;
+			item.DepartmentNumber = message.DepartmentNumber;
+			item.Type = (int)message.ChangeType;
+			item.ShiftId = message.ShiftId;
+			item.ShiftSignupId = message.ShiftSignupId;
+			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
 			item.SourceUserId = message.UserId;
 
 			await _outboundQueueProvider.EnqueueShiftNotification(item);

@@ -60,6 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IRecordsService _recordsService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> _certificationLocalizer;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
@@ -76,8 +77,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService,
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService, IRecordsService recordsService,
+			IDispatchScopeService dispatchScopeService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer = null)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_certificationLocalizer = certificationLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -1450,7 +1453,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				activeDetails = _customStateService.GetDefaultPersonStatuses();
 
 			var state = activeDetails.FirstOrDefault(x => x.CustomStateDetailId == customStatusDetailId);
-			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			// Group-scoped dispatch (off by default): only offer calls in the viewer's area or that they are on.
+			var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 			var noneText = HttpUtility.HtmlEncode(_localizer["None"].Value);
@@ -2519,7 +2523,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return station != null && station.DepartmentId == DepartmentId;
 				case DestinationEntityTypes.Call:
 					var call = await _callsService.GetCallByIdAsync(destinationId, false);
-					return call != null && call.DepartmentId == DepartmentId;
+					// Group-scoped dispatch (off by default): a call outside the caller's area can't be picked by id either.
+					return call != null && call.DepartmentId == DepartmentId
+						&& await _dispatchScopeService.CanUserAccessCallAsync(DepartmentId, UserId, call);
 				case DestinationEntityTypes.Poi:
 					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
 				default:

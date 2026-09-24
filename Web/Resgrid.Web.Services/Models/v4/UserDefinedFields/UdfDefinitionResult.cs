@@ -37,6 +37,9 @@ namespace Resgrid.Web.Services.Models.v4.UserDefinedFields
 		public bool IsVisibleOnReports { get; set; }
 		public bool IsEnabled { get; set; }
 
+		/// <summary>Protected Workflows release sensitivity (0 none, 1 restricted, 2 42 CFR Part 2).</summary>
+		public int Sensitivity { get; set; }
+
 		/// <summary>
 		/// Visibility setting for this field. 0=Everyone, 1=DepartmentAndGroupAdmins, 2=DepartmentAdminsOnly.
 		/// </summary>

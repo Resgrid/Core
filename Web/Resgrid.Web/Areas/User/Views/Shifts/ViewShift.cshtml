@@ -1,229 +1,349 @@
-﻿@using Resgrid.Framework
+@using Resgrid.Framework
 @using Resgrid.Model
-@model Resgrid.Web.Areas.User.Models.Shifts.ShiftSignupView
+@using Resgrid.Web.Areas.User.Models.Shifts
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftDayView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-  ViewBag.Title = "Resgrid | " + localizer["ViewShiftHeader"];
-  Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+	ViewBag.Title = "Resgrid | " + localizer["ViewShiftHeader"];
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @functions {
-  // Signups outlive department membership, so a signup can name someone who is no longer in
-  // UserProfiles. Indexing straight into the dictionary turns that into a 500 on the page.
-  string GetSignupPersonName(string userId)
-  {
-    return Model.UserProfiles != null && Model.UserProfiles.TryGetValue(userId, out var profile)
-      ? profile.FullName.AsFirstNameLastName
-      : commonLocalizer["Unknown"].Value;
-  }
-
-  // PersonnelRoles only contains members who have at least one role assigned, and an entry can
-  // hold nulls when a role row points at a role that no longer exists.
-  string GetSignupRoleNames(string userId)
-  {
-    if (Model.PersonnelRoles == null || !Model.PersonnelRoles.TryGetValue(userId, out var roles) || roles == null)
-      return String.Empty;
-
-    return String.Join(", ", roles.Where(x => x != null).Select(x => x.Name));
-  }
-}
-@section Styles
-{
-
+	string FormatTime(DateTime value)
+	{
+		return Model.Department != null ? value.FormatForDepartment(Model.Department, true) : value.ToString("g");
+	}
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>@localizer["ViewShiftHeader"]</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
-      </li>
-      <li>
-        <a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
-      </li>
-      <li class="active">
-        <strong>@localizer["ViewShiftHeader"]</strong>
-      </li>
-    </ol>
-  </div>
+	<div class="col-sm-8">
+		<h2>@Model.ShiftName</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["ViewShiftHeader"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary top-button" asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">@localizer["YourShiftsButton"]</a>
+			<a class="btn btn-success top-button" asp-controller="Shifts" asp-action="OnDuty" asp-route-area="User">@localizer["OnDutyButton"]</a>
+		</div>
+	</div>
 </div>
 
 <div class="wrapper wrapper-content">
-  <div class="row animated fadeInRight">
-    <div class="col-md-4">
-      <div class="widget style1 navy-bg">
-        <div class="row">
-          <div class="col-xs-2">
-            <i class="fa fa-calendar fa-5x"></i>
-          </div>
-          <div class="col-xs-10 text-right">
-            <span> @localizer["ShiftStart"] </span>
-            <h2 class="font-bold">
-              <time datetime="@Model.Day.Day.ToShortDateString()">
-                <span class="day">@Model.Day.Day.Day</span>
-                <span class="month">@DateTimeHelpers.MonthToShortString(Model.Day.Day.Month)</span>
-                <span class="year">@Model.Day.Day.Year</span>
-                <span class="time">@Model.Day.Shift.StartTime</span>
-              </time>
-            </h2>
-          </div>
-        </div>
-      </div>
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>@localizer["ShiftDayDetail"]</h5>
-        </div>
-        <div>
-          <div class="ibox-content profile-content">
-            <h4><strong>@Model.Day.Shift.Name</strong></h4>
-            <div class="row">
-              <div class="col-lg-10">
-                <dl class="dl-horizontal">
-                  <dt>@localizer["TypeLabel"]</dt>
-                  @if (Model.Day.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
-				  {
-                    <dd>@localizer["AssignedType"]</dd>
-				  }
-				  else
-				  {
-                    <dd>@localizer["SignupType"]</dd>
-				  }
-                  <dt>@localizer["StatusLabel"]</dt>
-                  @if (Model.Day.Day > DateTime.UtcNow)
-				  {
-                    <dd>@localizer["Upcoming"]</dd>
-				  }
-				  else
-				  {
-                    <dd>@localizer["Completed"]</dd>
-				  }
-                  <dt>@localizer["StartLabel"]</dt>
-                  <dd>@Model.Day.Shift.StartTime</dd>
-                  <dt>@localizer["EndLabel"]</dt>
-                  @if (!String.IsNullOrWhiteSpace(Model.Day.Shift.EndTime))
-				  {
-                    <dd>@Model.Day.Shift.EndTime</dd>
-				  }
-				  else
-				  {
-                    <dd>@localizer["NoEndTime"]</dd>
-				  }
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-8">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>@localizer["GroupsSectionHeader"]</h5>
-        </div>
-        <div class="ibox-content">
-          <div>
-            <div class="feed-activity-list">
-              @foreach (var group in Model.Day.Shift.Groups)
-			  {
-                <div class="feed-element">
-                  <div class="media-body">
-                    <strong>@group.DepartmentGroup.Name</strong><br>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>@localizer["RoleColumn"]</th>
-                          <th>@localizer["RequiredColumn"]</th>
-                          <th>@localizer["OptionalColumn"]</th>
-                          <th>@localizer["NeededColumn"]</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @if (group.Roles != null)
+	<partial name="_ShiftsMessage" />
+	<div class="row animated fadeInRight">
+		<div class="col-md-4">
+			<div class="widget style1 navy-bg">
+				<div class="row">
+					<div class="col-xs-2">
+						<i class="fa fa-calendar fa-5x"></i>
+					</div>
+					<div class="col-xs-10 text-right">
+						<span> @localizer["ShiftStart"] </span>
+						<h2 class="font-bold">
+							<time datetime="@Model.Start.ToString("s")">
+								<span class="day">@Model.Start.Day</span>
+								<span class="month">@DateTimeHelpers.MonthToShortString(Model.Start.Month)</span>
+								<span class="year">@Model.Start.Year</span>
+							</time>
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["ShiftDayDetail"]</h5>
+				</div>
+				<div class="ibox-content profile-content">
+					<h4><strong>@Model.ShiftName</strong></h4>
+					<dl class="dl-horizontal">
+						<dt>@localizer["TypeLabel"]</dt>
+						@if (Model.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
 						{
-                          @foreach (var role in group.Roles)
-						  {
-                            <tr>
-                              <td>@role.Role.Name</td>
-                              <td>@role.Required</td>
-                              <td>@role.Optional</td>
-                              <td>
-                                @if (Model.Needs != null && Model.Needs.ContainsKey(group.DepartmentGroupId))
-								{
-								  var needsForGroup = Model.Needs[group.DepartmentGroupId];
-								  if (needsForGroup.ContainsKey(role.PersonnelRoleId))
-								  {
-                                    <span>@needsForGroup[role.PersonnelRoleId]</span>
-								  }
-								}
-                              </td>
-                            </tr>
-						  }
+							<dd>@localizer["AssignedType"]</dd>
 						}
-                      </tbody>
-                    </table>
-                    <h4>@localizer["SignupsSectionHeader"]</h4>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>@localizer["NameColumn"]</th>
-                          <th>@localizer["RolesColumn"]</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId))
+						else
 						{
-                          <tr>
-                            <td>@GetSignupPersonName(signup.UserId)</td>
-                            <td>@GetSignupRoleNames(signup.UserId)</td>
-                          </tr>
+							<dd>@localizer["SignupType"]</dd>
 						}
-                      </tbody>
-                    </table>
-                    <h4>@localizer["TradesSectionHeader"]</h4>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>@localizer["TradeColumn"]</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId && (x.Trade != null && x.Trade.IsTradeComplete())))
+						<dt>@localizer["StatusLabel"]</dt>
+						<dd>
+							@if (Model.IsActive)
+							{
+								<span class="label label-primary">@localizer["ActiveNowBadge"]</span>
+							}
+							else if (Model.IsOver)
+							{
+								@localizer["Completed"]
+							}
+							else
+							{
+								@localizer["Upcoming"]
+							}
+						</dd>
+						<dt>@localizer["StartLabel"]</dt>
+						<dd>@FormatTime(Model.Start)</dd>
+						<dt>@localizer["EndLabel"]</dt>
+						<dd>@FormatTime(Model.End)</dd>
+						<dt>@localizer["StaffingLabel"]</dt>
+						<dd>
+							@if (Model.IsFilled)
+							{
+								<span class="label label-success">@localizer["FullyStaffed"]</span>
+							}
+							else
+							{
+								<span class="label label-warning">@String.Format(localizer["OpenSlotsFormat"].Value, Model.OpenSlots)</span>
+							}
+						</dd>
+					</dl>
+					@if (Model.RequireApproval)
+					{
+						<p class="text-muted"><i class="fa fa-info-circle"></i> @localizer["ApprovalRequiredNotice"]</p>
+					}
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["YourStatusHeader"]</h5>
+				</div>
+				<div class="ibox-content">
+					@if (Model.MyStatus == ShiftDayUserStatus.OnDuty)
+					{
+						<p><span class="label label-success">@localizer["MyStatusOnDuty"]</span></p>
+					}
+					else if (Model.MyStatus == ShiftDayUserStatus.Pending)
+					{
+						<p><span class="label label-warning">@localizer["MyStatusPending"]</span></p>
+					}
+					else if (Model.MyStatus == ShiftDayUserStatus.Removed)
+					{
+						<p><span class="label label-danger">@localizer["MyStatusRemoved"]</span></p>
+						@if (!String.IsNullOrWhiteSpace(Model.MyReviewNote))
 						{
-						  var personName = GetSignupPersonName(signup.UserId);
-						  string message = String.Empty;
-
-						  if (!String.IsNullOrWhiteSpace(signup.Trade.UserId))
-						  {
-							message = String.Format(localizer["TradedWithFormat"].Value, personName, GetSignupPersonName(signup.Trade.UserId));
-						  }
-						  else if (signup.GetTradeType() == ShiftTradeTypes.Source && signup.Trade.TargetShiftSignup != null)
-						  {
-							message = String.Format(localizer["TradedWithFormat"].Value, personName, GetSignupPersonName(signup.Trade.TargetShiftSignup.UserId));
-						  }
-						  else if (signup.GetTradeType() == ShiftTradeTypes.Target && signup.Trade.SourceShiftSignup != null)
-						  {
-							message = String.Format(localizer["TradedWithFormat"].Value, GetSignupPersonName(signup.Trade.SourceShiftSignup.UserId), personName);
-						  }
-
-                          <tr>
-                            <td>@message</td>
-                          </tr>
+							<p><strong>@localizer["ReviewNoteLabel"]:</strong> @Model.MyReviewNote</p>
 						}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-			  }
-            </div>
-          </div>
-        </div>
+					}
+					else
+					{
+						<p class="text-muted">@localizer["MyStatusNone"]</p>
+					}
 
-      </div>
-    </div>
-  </div>
+					@foreach (var group in Model.Groups.Where(x => x.CanSignup))
+					{
+						<form method="post" asp-controller="Shifts" asp-action="ShiftDaySignup" asp-route-area="User" class="m-b-xs">
+							<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+							<input type="hidden" name="groupId" value="@group.DepartmentGroupId" />
+							<button type="submit" class="btn btn-success btn-block">@localizer["SignupForShiftWith"] @group.Name</button>
+						</form>
+					}
+					@if (Model.CanSignupWithoutGroup)
+					{
+						<form method="post" asp-controller="Shifts" asp-action="ShiftDaySignup" asp-route-area="User" class="m-b-xs">
+							<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+							<button type="submit" class="btn btn-success btn-block">@localizer["SignupForShift"]</button>
+						</form>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-8">
+			@foreach (var group in Model.Groups)
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>@group.Name</h5>
+					</div>
+					<div class="ibox-content">
+						@if (group.Needs.Any())
+						{
+							<div class="table-responsive">
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<th>@localizer["RoleColumn"]</th>
+											<th>@localizer["RequiredColumn"]</th>
+											<th>@localizer["NeededColumn"]</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var need in group.Needs)
+										{
+											<tr>
+												<td>@need.RoleName</td>
+												<td>@need.Required</td>
+												<td>
+													@if (need.Remaining > 0)
+													{
+														<span class="label label-warning">@need.Remaining</span>
+													}
+													else
+													{
+														<span class="label label-success">0</span>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+						<h4>@localizer["RosterHeader"]</h4>
+						<partial name="_ShiftDayRoster" model='new ShiftDayRosterList { ShiftDayId = Model.ShiftDayId, ShowGroup = false, Rows = group.Roster }' />
+					</div>
+				</div>
+			}
+
+			@if (Model.OtherRoster.Any() || !Model.Groups.Any())
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>@(Model.Groups.Any() ? localizer["OtherPersonnelHeader"] : localizer["RosterHeader"])</h5>
+					</div>
+					<div class="ibox-content">
+						<partial name="_ShiftDayRoster" model='new ShiftDayRosterList { ShiftDayId = Model.ShiftDayId, ShowGroup = true, Rows = Model.OtherRoster }' />
+					</div>
+				</div>
+			}
+
+			@if (Model.CanAddPerson)
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>@localizer["AddPersonHeader"]</h5>
+					</div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["AddPersonHelp"]</p>
+						<form method="post" asp-controller="Shifts" asp-action="AssignToShiftDay" asp-route-area="User">
+							<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+							<div class="row">
+								<div class="col-sm-6 form-group">
+									<label for="addPersonUserId">@localizer["PersonLabel"]</label>
+									<select id="addPersonUserId" name="userId" class="form-control" style="width:100%;">
+										@foreach (var option in Model.AddPersonnelOptions)
+										{
+											<option value="@option.Value">@option.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-4 form-group">
+									<label for="addPersonGroupId">@localizer["GroupLabel"]</label>
+									<select id="addPersonGroupId" name="groupId" class="form-control">
+										@foreach (var option in Model.AddGroupOptions)
+										{
+											<option value="@option.Value">@option.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2 form-group">
+									<label class="hidden-xs">&nbsp;</label>
+									<button type="submit" class="btn btn-primary btn-block">@localizer["AddPersonButton"]</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			}
+
+			@if (Model.Trades.Any())
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>@localizer["TradesSectionHeader"]</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>@localizer["TradeColumn"]</th>
+										<th>@localizer["GroupColumn"]</th>
+										<th>@localizer["StatusColumn"]</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var trade in Model.Trades)
+									{
+										<tr>
+											<td>
+												@trade.FromName
+												@if (!String.IsNullOrWhiteSpace(trade.ToName))
+												{
+													<i class="fa fa-long-arrow-right"></i> @trade.ToName
+												}
+												@if (trade.SwapBackDay.HasValue)
+												{
+													<br /><small class="text-muted">@String.Format(localizer["SwapBackFormat"].Value, trade.SwapBackDay.Value.ToShortDateString())</small>
+												}
+												@if (!String.IsNullOrWhiteSpace(trade.Note))
+												{
+													<br /><small class="text-muted">@trade.Note</small>
+												}
+											</td>
+											<td>@trade.GroupName</td>
+											<td>
+												@switch (trade.Status)
+												{
+													case ShiftTradeStatus.Complete:
+														<span class="label label-success">@localizer["TradeStatusComplete"]</span>
+														break;
+													case ShiftTradeStatus.PendingApproval:
+														<span class="label label-warning">@localizer["TradeStatusPendingApproval"]</span>
+														break;
+													case ShiftTradeStatus.Denied:
+														<span class="label label-danger">@localizer["TradeStatusDenied"]</span>
+														break;
+													default:
+														<span class="label label-default">@localizer["TradeStatusOpen"]</span>
+														break;
+												}
+												@if (!String.IsNullOrWhiteSpace(trade.ReviewNote))
+												{
+													<br /><small class="text-muted">@trade.ReviewNote</small>
+												}
+											</td>
+											<td>
+												@if (trade.CanReview)
+												{
+													<form method="post" asp-controller="Shifts" asp-action="ReviewTrade" asp-route-area="User" class="form-inline">
+														<input type="hidden" name="shiftSignupTradeId" value="@trade.ShiftSignupTradeId" />
+														<input type="hidden" name="shiftDayId" value="@Model.ShiftDayId" />
+														<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" />
+														<button type="submit" name="approve" value="true" class="btn btn-xs btn-primary">@localizer["ApproveButton"]</button>
+														<button type="submit" name="approve" value="false" class="btn btn-xs btn-danger">@localizer["DenyButton"]</button>
+													</form>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
 </div>
 
 @section Scripts
 {
-
+	<script>
+		$(document).ready(function () {
+			if ($.fn.select2) {
+				$('#addPersonUserId').select2();
+			}
+		});
+	</script>
 }

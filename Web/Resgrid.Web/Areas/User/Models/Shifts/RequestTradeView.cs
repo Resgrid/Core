@@ -1,4 +1,4 @@
-﻿using Resgrid.Model;
+using Resgrid.Model;
 
 namespace Resgrid.Web.Areas.User.Models.Shifts
 {
@@ -6,5 +6,6 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 	{
 		public ShiftDay ShiftDay { get; set; }
 		public ShiftSignup Signup { get; set; }
+		public string Note { get; set; }
 	}
 }

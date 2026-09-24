@@ -262,9 +262,18 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<strong>
-						@localizer["SignupSuccessMessage"]
-					</strong>
+					@if (Model.Signup.ApprovalPending)
+					{
+						<div class="alert alert-warning">
+							<strong>@localizer["SignupPendingApprovalMessage"]</strong>
+						</div>
+					}
+					else
+					{
+						<strong>
+							@localizer["SignupSuccessMessage"]
+						</strong>
+					}
 					&nbsp;<br /><br />
 					<ul class="event-list">
 						<li>
@@ -289,6 +298,11 @@
 						</li>
 					</ul>
 
+					@if (Model.ShiftDayId.HasValue)
+					{
+						<a class="btn btn-primary" asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@Model.ShiftDayId">@localizer["ViewShiftDayButton"]</a>
+					}
+					<a class="btn btn-white" asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">@localizer["YourShiftsButton"]</a>
 				</div>
 			</div>
 		</div>

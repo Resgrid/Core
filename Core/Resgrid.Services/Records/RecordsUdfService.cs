@@ -49,6 +49,7 @@ namespace Resgrid.Services.Records
 			fields=Copy(fields ?? new List<UdfField>());
 			if (fields.Count>100 || fields.Any(f=>f==null)) throw new ArgumentException("A record extension supports at most 100 fields.");
 			var errors=UdfValidationHelper.ValidateFieldNamesUnique(fields);
+			errors.AddRange(UdfValidationHelper.ValidateFieldOptions(fields));
 			foreach(var field in fields)
 			{
 				if (string.IsNullOrWhiteSpace(field.Label) || field.Label.Length>200 || field.Name.Length>200 || field.Description?.Length>500 || field.Placeholder?.Length>200 || field.GroupName?.Length>100 || field.DefaultValue?.Length>16000 || field.ValidationRules?.Length>16000) errors.Add("A field label or setting is missing or too long.");
@@ -143,7 +144,7 @@ namespace Resgrid.Services.Records
 				if (value.Value?.Length>16000) throw new ArgumentException("A custom-field value is too long.");
 				var optional=Copy(field.Field); optional.IsRequired=false;
 				var errors=UdfValidationHelper.ValidateFieldValue(optional,value.Value); if(errors.Count>0) throw new ArgumentException(string.Join(" ",errors));
-				section.Fields.Single(f=>f.Field.UdfFieldId==value.Key).Value=value.Value;
+				section.Fields.Single(f=>f.Field.UdfFieldId==value.Key).Value=UdfValidationHelper.NormalizeFieldValue(field.Field,value.Value);
 			}
 			await ReplaceValues(departmentId,recordId,section,userId,ct); return definition.UdfDefinitionId;
 		}

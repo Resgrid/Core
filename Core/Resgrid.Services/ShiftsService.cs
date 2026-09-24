@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
-	public class ShiftsService : IShiftsService
+	public partial class ShiftsService : IShiftsService
 	{
 		private readonly IShiftsRepository _shiftsRepository;
 		private readonly IShiftPersonRepository _shiftPersonRepository;
@@ -28,13 +30,16 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IShiftGroupAssignmentsRepository _shiftGroupAssignmentsRepository;
 		private readonly IShiftGroupRolesRepository _shiftGroupRolesRepository;
+		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
 			IShiftSignupRepository shiftSignupRepository, IShiftSignupTradeRepository shiftSignupTradeRepository, IPersonnelRolesService personnelRolesService,
 			IShiftSignupTradeUserRepository shiftSignupTradeUserRepository, IShiftSignupTradeUserShiftsRepository shiftSignupTradeUserShiftsRepository,
 			IShiftStaffingRepository shiftStaffingRepository, IShiftStaffingPersonRepository shiftStaffingPersonRepository, IDepartmentsService departmentsService,
-			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor)
+			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
+			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService)
 		{
 			_shiftsRepository = shiftsRepository;
 			_shiftPersonRepository = shiftPersonRepository;
@@ -51,6 +56,8 @@ namespace Resgrid.Services
 			_departmentGroupsService = departmentGroupsService;
 			_shiftGroupAssignmentsRepository = shiftGroupAssignmentsRepository;
 			_shiftGroupRolesRepository = shiftGroupRolesRepositor;
+			_eventAggregator = eventAggregator;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		public async Task<List<Shift>> GetAllShiftsByDepartmentAsync(int departmentId)
@@ -87,23 +94,49 @@ namespace Resgrid.Services
 			if (getDepartment && shift.Department == null)
 				shift.Department = await _departmentsService.GetDepartmentByIdAsync(shift.DepartmentId);
 
+			// Only load what is missing. This used to replace an already-loaded Personnel list with an empty one, which
+			// zeroed the API's PersonnelCount/InShift and made the edit page save the shift with nobody assigned.
 			if (getPersonnel && shift.Personnel == null)
-				shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId)).ToList();
-			else
+				shift.Personnel = (await _shiftPersonRepository.GetAllShiftPersonsByShiftIdAsync(shift.ShiftId) ?? Enumerable.Empty<ShiftPerson>()).ToList();
+			else if (shift.Personnel == null)
 				shift.Personnel = new List<ShiftPerson>();
 
 			if (getGroups && shift.Groups == null)
 				shift.Groups = await GetShiftGroupsForShift(shift.ShiftId);
 
 			if (getSignups && shift.Signups == null)
-				shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId)).ToList();
+				shift.Signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId) ?? Enumerable.Empty<ShiftSignup>()).ToList();
 
 			return shift;
 		}
 
 		public async Task<Shift> SaveShiftAsync(Shift shift, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken);
+			var saved = await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken);
+
+			// The repository cascades one level: a new shift's Groups are written, but each group's Roles are a level
+			// deeper and were silently dropped, so new shifts never had role requirements. Write any unsaved ones.
+			if (saved?.Groups != null)
+			{
+				foreach (var group in saved.Groups.Where(x => x != null && x.ShiftGroupId > 0 && x.Roles != null))
+				{
+					foreach (var role in group.Roles.Where(x => x != null && x.ShiftGroupRoleId == 0))
+					{
+						role.ShiftGroupId = group.ShiftGroupId;
+						await _shiftGroupRolesRepository.SaveOrUpdateAsync(role, cancellationToken, true);
+					}
+				}
+			}
+
+			return saved;
+		}
+
+		public async Task<Shift> UpdateShiftAsync(Shift shift, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (shift == null)
+				return null;
+
+			return await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken, true);
 		}
 
 		public async Task<Shift> UpdateShiftStartDayAsync(Shift shift, DateTime startDay, CancellationToken cancellationToken = default(CancellationToken))
@@ -123,7 +156,10 @@ namespace Resgrid.Services
 		{
 			var groups = await _shiftGroupsRepository.GetShiftGroupsByShiftIdAsync(shiftId);
 
-			if (groups != null && groups.Any())
+			if (groups == null)
+				return new List<ShiftGroup>();
+
+			if (groups.Any())
 			{
 				foreach (var shiftGroup in groups)
 				{
@@ -140,7 +176,12 @@ namespace Resgrid.Services
 		{
 			var dbShift = await GetShiftByIdAsync(shift.ShiftId);
 
-			foreach (var shiftPerson in dbShift.Personnel)
+			if (dbShift == null)
+				return false;
+
+			newPersonnel = newPersonnel ?? new List<ShiftPerson>();
+
+			foreach (var shiftPerson in dbShift.Personnel ?? new List<ShiftPerson>())
 			{
 				await _shiftPersonRepository.DeleteAsync(shiftPerson, cancellationToken);
 			}
@@ -212,6 +253,13 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteShift(Shift shift, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Signups cascade with the shift, but a trade elsewhere can still point at one of them as its swap-back day
+			// or offer, and those two foreign keys do not cascade, so the delete would fail.
+			var signups = await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shift.ShiftId);
+
+			foreach (var signup in signups ?? Enumerable.Empty<ShiftSignup>())
+				await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
+
 			return await _shiftsRepository.DeleteAsync(shift, cancellationToken);
 		}
 
@@ -239,12 +287,15 @@ namespace Resgrid.Services
 			if (userTradeRequest != null)
 			{
 				userTradeRequest.Declined = true;
+				userTradeRequest.Offered = false;
 				userTradeRequest.Reason = reason;
 
-				await _shiftSignupTradeUserRepository.SaveOrUpdateAsync(userTradeRequest, cancellationToken);
+				await _shiftSignupTradeUserRepository.SaveOrUpdateAsync(userTradeRequest, cancellationToken, true);
+
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		public async Task<bool> ProposeShiftDaysForTradeAsync(int shiftTradeId, string userId, string reason, List<int> signups, CancellationToken cancellationToken = default(CancellationToken))
@@ -260,17 +311,26 @@ namespace Resgrid.Services
 			{
 				userTradeRequest.Reason = reason;
 				userTradeRequest.Offered = true;
+				userTradeRequest.Declined = false;
 
-				await _shiftSignupTradeUserRepository.SaveOrUpdateAsync(userTradeRequest, cancellationToken);
+				await _shiftSignupTradeUserRepository.SaveOrUpdateAsync(userTradeRequest, cancellationToken, true);
+
+				// A second answer replaces the first rather than piling more offered days onto it.
+				if (userTradeRequest.Shifts != null)
+				{
+					foreach (var previousOffer in userTradeRequest.Shifts.Where(x => x != null).ToList())
+						await _shiftSignupTradeUserShiftsRepository.DeleteAsync(previousOffer, cancellationToken);
+				}
 
 				if (signups != null && signups.Any())
 				{
 					var shiftSignups = new List<ShiftSignupTradeUserShift>();
-					foreach (var i in signups)
+					foreach (var i in signups.Distinct())
 					{
 						var signup = await GetShiftSignupByIdAsync(i);
 
-						if (signup != null)
+						// Only the proposer's own live signups can be offered back, never the day being traded.
+						if (signup != null && signup.UserId == userId && signup.IsActive() && signup.ShiftSignupId != trade.SourceShiftSignupId)
 						{
 							var shift = new ShiftSignupTradeUserShift();
 							shift.ShiftSignupTradeUserId = userTradeRequest.ShiftSignupTradeUserId;
@@ -365,32 +425,34 @@ namespace Resgrid.Services
 		{
 			var shiftDays = new List<ShiftDay>();
 
-			var shifts = await _shiftsRepository.GetAllByDepartmentIdAsync(departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			if (department == null)
+				return shiftDays;
 
+			var shifts = await GetAllShiftsByDepartmentAsync(departmentId);
+			var localNow = currentTime.TimeConverter(department);
+			var localDate = localNow.Date;
+
+			// The department-local day's shift days, plus a night shift from the day before that is still running.
+			// This used to be "starts within twelve hours of now", which mixed yesterday's and tomorrow's days in.
 			foreach (var shift in shifts)
 			{
-				shift.Days = new List<ShiftDay>(await _shiftDaysRepository.GetAllShiftDaysByShiftIdAsync(shift.ShiftId));
+				if (shift.Days == null)
+					continue;
 
-				var localizedDate = currentTime.TimeConverter(department);
+				shift.Department = shift.Department ?? department;
 
-				var shiftStart = shift.StartTime;
+				foreach (var day in shift.Days.Where(x => x != null))
+				{
+					day.Shift = shift;
 
-				if (String.IsNullOrWhiteSpace(shiftStart))
-					shiftStart = "12:00 AM";
-
-				var startTime = DateTimeHelpers.ConvertStringTime(shiftStart, localizedDate, department.Use24HourTime.GetValueOrDefault());
-
-				var days = from sd in shift.Days
-						   let shiftDayTime = DateTimeHelpers.ConvertStringTime(shiftStart, sd.Day, department.Use24HourTime.GetValueOrDefault())
-						   let nextDayShiftTime = localizedDate
-						   where shiftDayTime == nextDayShiftTime.Within(TimeSpan.FromHours(12))
-						   select sd;
-
-				shiftDays.AddRange(days);
+					if (day.Day.Date == localDate ||
+					    (day.Day.Date < localDate && ShiftTimeWindow.IsActive(localNow, day.Day, shift.StartTime, shift.EndTime, shift.Hours)))
+						shiftDays.Add(day);
+				}
 			}
 
-			return shiftDays;
+			return shiftDays.OrderBy(x => x.Start).ToList();
 		}
 
 		public string GenerateShiftNotificationText(Shift shift)
@@ -403,25 +465,25 @@ namespace Resgrid.Services
 
 		public string GenerateShiftTradeNotificationText(UserProfile profile, ShiftSignupTrade trade)
 		{
-			return string.Format("Shift Trade Request From {0} for {1}", profile.FullName.AsFirstNameLastName, trade.SourceShiftSignup.ShiftDay.ToShortDateString());
+			return string.Format("Shift Trade Request From {0} for {1}", profile?.FullName?.AsFirstNameLastName, trade?.SourceShiftSignup?.ShiftDay.ToShortDateString());
 		}
 
 		public string GenerateShiftTradeRejectionText(UserProfile profile, ShiftSignupTrade trade)
 		{
-			return string.Format("{0} Rejected Shift Trade Request for {1}", profile.FullName.AsFirstNameLastName, trade.SourceShiftSignup.ShiftDay.ToShortDateString());
+			return string.Format("{0} Rejected Shift Trade Request for {1}", profile?.FullName?.AsFirstNameLastName, trade?.SourceShiftSignup?.ShiftDay.ToShortDateString());
 		}
 
 		public string GenerateShiftTradeProposedText(UserProfile profile, ShiftSignupTrade trade)
 		{
-			return string.Format("{0} Proposed Shift Trades for {1}", profile.FullName.AsFirstNameLastName, trade.SourceShiftSignup.ShiftDay.ToShortDateString());
+			return string.Format("{0} Proposed Shift Trades for {1}", profile?.FullName?.AsFirstNameLastName, trade?.SourceShiftSignup?.ShiftDay.ToShortDateString());
 		}
 
 		public string GenerateShiftTradeFilledText(UserProfile tradeProfile, ShiftSignupTrade trade)
 		{
-			if (trade.TargetShiftSignup != null)
-				return string.Format("{0} accepted trade {1} for {2}", tradeProfile.FullName.AsFirstNameLastName, trade.SourceShiftSignup.ShiftDay.ToShortDateString(), trade.TargetShiftSignup.ShiftDay.ToShortDateString());
+			if (trade?.TargetShiftSignup != null)
+				return string.Format("{0} accepted trade {1} for {2}", tradeProfile?.FullName?.AsFirstNameLastName, trade.SourceShiftSignup?.ShiftDay.ToShortDateString(), trade.TargetShiftSignup.ShiftDay.ToShortDateString());
 			else
-				return string.Format("{0} accepted you working {1}", tradeProfile.FullName.AsFirstNameLastName, trade.SourceShiftSignup.ShiftDay.ToShortDateString());
+				return string.Format("{0} accepted you working {1}", tradeProfile?.FullName?.AsFirstNameLastName, trade?.SourceShiftSignup?.ShiftDay.ToShortDateString());
 		}
 
 		public async Task<ShiftDay> GetShiftDayByIdAsync(int shiftDayId)
@@ -431,161 +493,68 @@ namespace Resgrid.Services
 
 		public async Task<bool> IsShiftDayFilledAsync(int shiftDayId)
 		{
-			bool isFilled = true;
-			var shiftGroups = await GetShiftDayNeedsAsync(shiftDayId);
+			var schedule = await GetShiftDayScheduleAsync(shiftDayId);
 
-			if (shiftGroups == null)
-				return true;
-
-			foreach (var group in shiftGroups)
-			{
-				foreach (var role in group.Value)
-				{
-					if (role.Value > 0)
-						isFilled = false;
-				}
-			}
-
-			return isFilled;
+			return schedule == null || schedule.IsFilled();
 		}
 
 		public async Task<bool> IsShiftDayFilledWithObjAsync(Shift shift, ShiftDay shiftDay)
 		{
-			bool isFilled = true;
-			var shiftGroups = await GetShiftDayNeedsObjAsync(shift, shiftDay);
+			var needs = await GetShiftDayNeedsObjAsync(shift, shiftDay);
 
-			if (shiftGroups == null)
-				return true;
-
-			foreach (var group in shiftGroups)
-			{
-				foreach (var role in group.Value)
-				{
-					if (role.Value > 0)
-						isFilled = false;
-				}
-			}
-
-			return isFilled;
+			return needs == null || needs.Values.All(x => x.Values.All(v => v <= 0));
 		}
 
+		/// <summary>
+		/// Needs for a day of an already-loaded shift. Returns null when the shift has no groups (nothing to fill).
+		/// Needs are counted against the resolved roster, so assigned staff, pending approvals, single-day removals and
+		/// trades are all taken into account, and each person fills one role requirement at most.
+		/// </summary>
 		public async Task<Dictionary<int, Dictionary<int, int>>> GetShiftDayNeedsObjAsync(Shift shift, ShiftDay shiftDay)
 		{
-			//var shiftDay = await _shiftDaysRepository.GetShiftDayByIdAsync(shiftDayId);
-			var shiftGroups = new Dictionary<int, Dictionary<int, int>>();
+			shift = shift ?? shiftDay?.Shift;
 
-			if (shiftDay != null)
-			{
-				if (shiftDay.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
-					return null;
+			if (shift == null || shiftDay == null)
+				return null;
 
-				//shiftDay.Shift.Groups = (await _shiftGroupsRepository.GetShiftGroupsByShiftIdAsync(shiftDay.ShiftId)).ToList();
-				if (shiftDay.Shift.Groups == null || shiftDay.Shift.Groups.Count() <= 0)
-					return null;
+			if (shift.Groups == null || !shift.Groups.Any())
+				return null;
 
-				var shiftSignups =
-					(await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAndDateAsync(shiftDay.ShiftId,
-						shiftDay.Day)).ToList();
+			var schedule = await BuildScheduleForDayAsync(shift, shiftDay);
 
-
-				foreach (var group in shiftDay.Shift.Groups)
-				{
-					var roleRequirements = new Dictionary<int, int>();
-
-					if (group.Roles != null && group.Roles.Any())
-					{
-						foreach (var role in group.Roles)
-						{
-							roleRequirements.Add(role.PersonnelRoleId, role.Required);
-						}
-					}
-
-					if (shiftSignups != null && shiftSignups.Any())
-					{
-						var groupSignups = shiftSignups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId);
-
-						foreach (var signup in groupSignups)
-						{
-							var roles = await _personnelRolesService.GetRolesForUserAsync(signup.UserId, shiftDay.Shift.DepartmentId);
-							foreach (var personnelRole in roles)
-							{
-								if (roleRequirements.ContainsKey(personnelRole.PersonnelRoleId))
-									roleRequirements[personnelRole.PersonnelRoleId]--;
-							}
-						}
-					}
-
-					if (shiftGroups.ContainsKey(group.DepartmentGroupId))
-						shiftGroups[group.DepartmentGroupId] = roleRequirements;
-					else
-						shiftGroups.Add(group.DepartmentGroupId, roleRequirements);
-				}
-			}
-
-			return shiftGroups;
+			return schedule.Needs;
 		}
 
 		public async Task<Dictionary<int, Dictionary<int, int>>> GetShiftDayNeedsAsync(int shiftDayId)
 		{
-			var shiftDay = await _shiftDaysRepository.GetShiftDayByIdAsync(shiftDayId);
-			var shiftGroups = new Dictionary<int, Dictionary<int, int>>();
+			var schedule = await GetShiftDayScheduleAsync(shiftDayId);
 
-			if (shiftDay != null)
-			{
-				if (shiftDay.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
-					return null;
+			if (schedule?.Shift?.Groups == null || !schedule.Shift.Groups.Any())
+				return null;
 
-				shiftDay.Shift.Groups = (await _shiftGroupsRepository.GetShiftGroupsByShiftIdAsync(shiftDay.ShiftId)).ToList();
-				if (shiftDay.Shift.Groups == null || shiftDay.Shift.Groups.Count() <= 0)
-					return null;
-
-				var shiftSignups =
-					(await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAndDateAsync(shiftDay.ShiftId,
-						shiftDay.Day)).ToList();
-
-
-				foreach (var group in shiftDay.Shift.Groups)
-				{
-					var roleRequirements = new Dictionary<int, int>();
-
-					foreach (var role in group.Roles)
-					{
-						roleRequirements.Add(role.PersonnelRoleId, role.Required);
-					}
-
-					if (shiftSignups != null && shiftSignups.Any())
-					{
-						var groupSignups = shiftSignups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId);
-
-						foreach (var signup in groupSignups)
-						{
-							var roles = await _personnelRolesService.GetRolesForUserAsync(signup.UserId, shiftDay.Shift.DepartmentId);
-							foreach (var personnelRole in roles)
-							{
-								if (roleRequirements.ContainsKey(personnelRole.PersonnelRoleId))
-									roleRequirements[personnelRole.PersonnelRoleId]--;
-							}
-						}
-					}
-
-					shiftGroups.Add(group.DepartmentGroupId, roleRequirements);
-				}
-			}
-
-			return shiftGroups;
+			return schedule.Needs;
 		}
 
 		public async Task<ShiftSignup> SignupForShiftDayAsync(int shiftId, DateTime shiftDay, int departmentGroupId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var shift = await _shiftsRepository.GetByIdAsync(shiftId);
+
 			var signup = new ShiftSignup();
 			signup.ShiftId = shiftId;
 			signup.ShiftDay = shiftDay;
 			signup.SignupTimestamp = DateTime.UtcNow;
 			signup.UserId = userId;
-			signup.DepartmentGroupId = departmentGroupId;
+			// 0 is how callers say "no group"; storing it breaks the DepartmentGroups foreign key.
+			signup.DepartmentGroupId = departmentGroupId > 0 ? departmentGroupId : (int?)null;
 			signup.Denied = false;
+			signup.ApprovalPending = shift?.RequireApproval == true;
 
-			return await _shiftSignupRepository.SaveOrUpdateAsync(signup, cancellationToken);
+			var saved = await _shiftSignupRepository.SaveOrUpdateAsync(signup, cancellationToken, true);
+
+			if (saved != null && saved.ApprovalPending && shift != null)
+				await PublishRosterChangeAsync(shift.DepartmentId, ShiftQueueTypes.SignupPendingApproval, shift.ShiftId, saved.ShiftSignupId, 0, userId);
+
+			return saved;
 		}
 
 		public async Task<ShiftSignup> GetShiftSignupByIdAsync(int shiftSignupId)
@@ -603,54 +572,38 @@ namespace Resgrid.Services
 			return signup;
 		}
 
+		/// <summary>
+		/// Whether the user is on the day's resolved roster (pending approvals count, so a pending person is not offered
+		/// the signup again), optionally only in the given department group.
+		/// </summary>
 		public async Task<bool> IsUserSignedUpForShiftDayAsync(ShiftDay shiftDay, string userId, int? departmentId)
 		{
-			var signups = await GetShiftSignpsForShiftDayAsync(shiftDay.ShiftDayId);
-
-			if (shiftDay.Shift.Personnel != null && shiftDay.Shift.Personnel.Any())
-			{
-				if (shiftDay.Shift.Personnel.Any(x => x.UserId == userId))
-					return true;
-			}
-
-			if (signups == null || !signups.Any())
+			if (shiftDay == null || String.IsNullOrWhiteSpace(userId))
 				return false;
 
-			foreach (var shiftSignup in signups)
-			{
-				if (departmentId.HasValue)
-				{
-					if (shiftSignup.UserId == userId && shiftSignup.DepartmentGroupId == departmentId.Value)
-						return true;
-				}
-				else
-				{
-					if (shiftSignup.UserId == userId)
-						return true;
-				}
+			var shift = shiftDay.Shift?.Personnel != null ? shiftDay.Shift : await GetShiftByIdAsync(shiftDay.ShiftId);
 
-				if (shiftSignup.Trade != null && shiftSignup.Trade.TargetShiftSignup != null &&
-					shiftSignup.Trade.TargetShiftSignup.UserId == userId)
-					return true;
-			}
+			if (shift == null)
+				return false;
 
-			return false;
+			var schedule = await BuildScheduleForDayAsync(shift, shiftDay);
+
+			return schedule.Roster.Any(x => String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase) &&
+			                                (!departmentId.HasValue || x.DepartmentGroupId == departmentId.Value));
 		}
 
 		public async Task<List<ShiftSignup>> GetShiftSignpsForShiftDayAsync(int shiftDayId)
 		{
 			var shiftDay = await _shiftDaysRepository.GetShiftDayByIdAsync(shiftDayId);
 
-			var signups = (await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAsync(shiftDay.ShiftId)).Where(x => x.ShiftDay.Year == shiftDay.Day.Year &&
-																													  x.ShiftDay.Month == shiftDay.Day.Month &&
-																													  x.ShiftDay.Day == shiftDay.Day.Day).ToList();
+			if (shiftDay == null)
+				return new List<ShiftSignup>();
 
-			if (signups != null && signups.Any())
+			var signups = ((await _shiftSignupRepository.GetAllShiftSignupsByShiftIdAndDateAsync(shiftDay.ShiftId, shiftDay.Day)) ?? Enumerable.Empty<ShiftSignup>()).ToList();
+
+			foreach (var shiftSignup in signups)
 			{
-				foreach (var shiftSignup in signups)
-				{
-					shiftSignup.Trade = await _shiftSignupTradeRepository.GetShiftSignupTradeBySourceShiftSignupIdAsync(shiftSignup.ShiftSignupId);
-				}
+				shiftSignup.Trade = await _shiftSignupTradeRepository.GetShiftSignupTradeBySourceShiftSignupIdAsync(shiftSignup.ShiftSignupId);
 			}
 
 			return signups;
@@ -660,9 +613,12 @@ namespace Resgrid.Services
 		{
 			var shiftSignup = await _shiftSignupRepository.GetByIdAsync(shiftSignupId);
 
-			var shiftDay = (await _shiftDaysRepository.GetAllShiftDaysByShiftIdAsync(shiftSignup.ShiftId)).FirstOrDefault(x => x.Day.Year == shiftSignup.ShiftDay.Year &&
-																													   x.Day.Month == shiftSignup.ShiftDay.Month &&
-																													   x.Day.Day == shiftSignup.ShiftDay.Day);
+			if (shiftSignup == null)
+				return null;
+
+			var shiftDay = ((await _shiftDaysRepository.GetAllShiftDaysByShiftIdAsync(shiftSignup.ShiftId)) ?? Enumerable.Empty<ShiftDay>())
+				.FirstOrDefault(x => x.Day.Date == shiftSignup.ShiftDay.Date);
+
 			return shiftDay;
 		}
 
@@ -678,8 +634,10 @@ namespace Resgrid.Services
 
 			var unbalTrades = await _shiftSignupTradeRepository.GetTradeRequestsAndSourceShiftsByUserIdAsync(userId);
 
+			// Only trades that took effect put the user on someone else's day; a pick still waiting on a supervisor, or
+			// denied, does not.
 			if (unbalTrades != null && unbalTrades.Any())
-				signups.AddRange(unbalTrades.Select(x => x.SourceShiftSignup));
+				signups.AddRange(unbalTrades.Where(x => x.IsTradeComplete() && x.SourceShiftSignup != null).Select(x => x.SourceShiftSignup));
 
 			//var trades = from trade in _shiftSignupTradeRepository.GetAll()
 			//						 where trade.TargetShiftSignup != null && trade.TargetShiftSignup.UserId == userId
@@ -701,7 +659,7 @@ namespace Resgrid.Services
 
 			if (signups != null && signups.Any())
 			{
-				foreach (var signup in signups)
+				foreach (var signup in signups.Where(x => x != null))
 				{
 					signup.Shift = await GetShiftByIdAsync(signup.ShiftId);
 
@@ -714,11 +672,18 @@ namespace Resgrid.Services
 				}
 			}
 
-			return signups.ToList();
+			return signups.Where(x => x != null && !x.Denied).ToList();
 		}
 
 		public async Task<bool> DeleteShiftSignupAsync(ShiftSignup signup, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (signup == null)
+				return false;
+
+			// Trades started on this signup cascade away with it; one that uses it as the swap-back day, or an offer that
+			// put it up, would otherwise block the delete on a non-cascading foreign key.
+			await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
+
 			return await _shiftSignupRepository.DeleteAsync(signup, cancellationToken);
 		}
 
@@ -730,7 +695,17 @@ namespace Resgrid.Services
 		public async Task<List<ShiftSignupTrade>> GetOpenTradeRequestsForUserAsync(string userId)
 		{
 			var trades = await _shiftSignupTradeRepository.GetAllOpenTradeRequestsByUserIdAsync(userId);
-			return trades.ToList();
+			var result = new List<ShiftSignupTrade>();
+
+			foreach (var tradeId in (trades ?? Enumerable.Empty<ShiftSignupTrade>()).Select(x => x.ShiftSignupTradeId).Distinct())
+			{
+				var trade = await GetShiftTradeByIdAsync(tradeId);
+
+				if (trade != null)
+					result.Add(trade);
+			}
+
+			return result;
 		}
 
 		public async Task<ShiftSignupTrade> GetShiftTradeByIdAsync(int shiftTradeId)
@@ -742,7 +717,22 @@ namespace Resgrid.Services
 			if (trade == null)
 				return null;
 
-			trade.Users = new List<ShiftSignupTradeUser>(await _shiftSignupTradeUserRepository.GetShiftSignupTradeUsersByTradeIdAsync(shiftTradeId));
+			trade.Users = new List<ShiftSignupTradeUser>((await _shiftSignupTradeUserRepository.GetShiftSignupTradeUsersByTradeIdAsync(shiftTradeId)) ?? Enumerable.Empty<ShiftSignupTradeUser>());
+
+			// The notification worker, trade pages and API all read the two signups and their shift; the base
+			// GetByIdAsync populates no navigation properties.
+			trade.SourceShiftSignup = await _shiftSignupRepository.GetByIdAsync(trade.SourceShiftSignupId);
+
+			if (trade.SourceShiftSignup != null)
+				trade.SourceShiftSignup.Shift = await _shiftsRepository.GetByIdAsync(trade.SourceShiftSignup.ShiftId);
+
+			if (trade.TargetShiftSignupId.HasValue)
+			{
+				trade.TargetShiftSignup = await _shiftSignupRepository.GetByIdAsync(trade.TargetShiftSignupId.Value);
+
+				if (trade.TargetShiftSignup != null)
+					trade.TargetShiftSignup.Shift = await _shiftsRepository.GetByIdAsync(trade.TargetShiftSignup.ShiftId);
+			}
 
 			return trade;
 		}
@@ -801,6 +791,32 @@ namespace Resgrid.Services
 				return persons.ToList();
 
 			return new List<ShiftPerson>();
+		}
+
+		public async Task<List<OnShiftAssignment>> GetOnShiftPersonnelAsync(int departmentId, DateTime utcNow)
+		{
+			var onShift = new List<OnShiftAssignment>();
+
+			// Built on the resolved roster, so denied and pending signups, single-day removals and completed trades
+			// are all applied. One entry per person per running shift.
+			foreach (var schedule in await GetActiveShiftDaySchedulesAsync(departmentId, utcNow))
+			{
+				foreach (var entry in schedule.Roster.Where(x => x.IsOnDuty()))
+				{
+					if (onShift.Any(x => x.ShiftId == schedule.Shift.ShiftId && String.Equals(x.UserId, entry.UserId, StringComparison.OrdinalIgnoreCase)))
+						continue;
+
+					onShift.Add(new OnShiftAssignment
+					{
+						UserId = entry.UserId,
+						ShiftId = schedule.Shift.ShiftId,
+						ShiftName = schedule.Shift.Name,
+						DepartmentGroupId = entry.DepartmentGroupId
+					});
+				}
+			}
+
+			return onShift;
 		}
 	}
 }

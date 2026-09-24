@@ -42,6 +42,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
                     <form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="NewShift" asp-route-area="User" method="post" id="new_shift" name="new_shift">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div id="rootwizard">
                             <div class="navbar">
                                 <div class="navbar-inner">
@@ -88,6 +89,14 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" asp-for="RequireApproval" /> @localizer["RequireApprovalLabel"]</label>
+                                            </div>
+                                            <span class="help-block m-b-none">@localizer["RequireApprovalHelp"]</span>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">@localizer["ColorLabel"]</label>
                                         <div class="col-sm-10">
@@ -294,8 +303,8 @@
                 }
             });
 
-            $('#AssignmentType').on("change", function (e) {
-                if (e.val === '1') {
+            $('#AssignmentType').on("change", function () {
+                if ($(this).val() === '1') {
                     $('#rootwizard').bootstrapWizard('disable', 3);
                     //$('#rootwizard').bootstrapWizard('enable', 2);
                 } else {
@@ -330,6 +339,11 @@
         }
     </script>
     <script>
+        // A group-scoped supervisor may only put their own groups on a shift.
+        var resgridShiftsScope = {
+            allGroups: @(Model.CanManageAllGroups ? "true" : "false"),
+            groupIds: [@String.Join(",", Model.ManageableGroupIds)]
+        };
         var resgridShiftsI18n = {
             addGroupToShift: '@localizer["AddGroupToShift"]',
             shiftGroupColumn: '@localizer["ShiftGroupColumn"]',

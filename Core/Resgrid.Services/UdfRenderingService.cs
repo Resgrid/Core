@@ -223,6 +223,7 @@ namespace Resgrid.Services
 					case UdfFieldDataType.Dropdown:
 						sb.AppendLine($"      <select class=\"form-control\" id=\"{fieldId}\" name=\"{fieldName}\" style=\"width: 200px;\" {attrsHtml}>");
 						sb.AppendLine($"        <option value=\"\">{HtmlEncode(field.Placeholder ?? "-- Select --")}</option>");
+						AppendRedactedOption(sb, currentValue);
 						var dropRules = ParseRules(field.ValidationRules);
 						if (dropRules?.Options != null)
 							foreach (var opt in dropRules.Options)
@@ -235,6 +236,7 @@ namespace Resgrid.Services
 
 					case UdfFieldDataType.MultiSelect:
 						sb.AppendLine($"      <select class=\"form-control\" id=\"{fieldId}\" name=\"{fieldName}\" multiple style=\"width: 100%;\" {attrsHtml}>");
+						AppendRedactedOption(sb, currentValue);
 						var msRules = ParseRules(field.ValidationRules);
 						var selectedKeys = (currentValue ?? string.Empty).Split(',').Select(v => v.Trim()).ToHashSet();
 						if (msRules?.Options != null)
@@ -244,6 +246,21 @@ namespace Resgrid.Services
 								sb.AppendLine($"        <option value=\"{HtmlEncode(opt.Key)}\" {sel}>{HtmlEncode(opt.Label)}</option>");
 							}
 						sb.AppendLine($"      </select>");
+						break;
+
+					case UdfFieldDataType.ComboBox:
+						// The input shows and posts the option's label (the save maps it back to the key);
+						// data-key lets the reveal module turn a revealed key into the label it displays.
+						var comboRules = ParseRules(field.ValidationRules);
+						var listId = $"{fieldId}_options";
+						var comboText = UdfValidationHelper.FindComboOption(comboRules, currentValue) is { } shown &&
+							shown.Key == currentValue ? shown.Label : currentValue;
+						sb.AppendLine($"      <input type=\"text\" class=\"form-control\" id=\"{fieldId}\" name=\"{fieldName}\" list=\"{listId}\" autocomplete=\"off\" value=\"{HtmlEncode(comboText)}\" placeholder=\"{HtmlEncode(field.Placeholder)}\" {attrsHtml} />");
+						sb.AppendLine($"      <datalist id=\"{listId}\">");
+						if (comboRules?.Options != null)
+							foreach (var opt in comboRules.Options)
+								sb.AppendLine($"        <option value=\"{HtmlEncode(opt.Label)}\" data-key=\"{HtmlEncode(opt.Key)}\"></option>");
+						sb.AppendLine($"      </datalist>");
 						break;
 
 					case UdfFieldDataType.Date:
@@ -289,12 +306,43 @@ namespace Resgrid.Services
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// A protected value the viewer has not revealed matches none of a select's options, so without
+		/// this the select falls back to its blank entry and the save posts "" (single) or nothing
+		/// (multi), deleting the real value. A selected sentinel option posts REDACTED instead, which
+		/// the save restores to the stored value; the reveal module selects the real key over it.
+		/// </summary>
+		public string FormatDisplayValue(UdfField field, string value)
+		{
+			if (field == null)
+				return ProtectedDataEnvelope.SafeDisplay(value) ?? string.Empty;
+
+			return GetDisplayValue(field, ProtectedDataEnvelope.SafeDisplay(value));
+		}
+
+		private static void AppendRedactedOption(StringBuilder sb, string currentValue)
+		{
+			if (currentValue == ProtectedDataEnvelope.RedactionValue)
+				sb.AppendLine($"        <option value=\"{ProtectedDataEnvelope.RedactionValue}\" selected>{ProtectedDataEnvelope.RedactionValue}</option>");
+		}
+
 		private static string GetDisplayValue(UdfField field, string rawValue)
 		{
 			if (string.IsNullOrWhiteSpace(rawValue))
 				return string.Empty;
 
+			// Matches no option, so the label lookup below would render it blank.
+			if (rawValue == ProtectedDataEnvelope.RedactionValue)
+				return rawValue;
+
 			var dataType = (UdfFieldDataType)field.FieldDataType;
+
+			// A stored key shows its label; free text shows as typed.
+			if (dataType == UdfFieldDataType.ComboBox)
+			{
+				var option = UdfValidationHelper.FindComboOption(ParseRules(field.ValidationRules), rawValue);
+				return option != null && option.Key == rawValue ? option.Label : rawValue;
+			}
 
 			if (dataType == UdfFieldDataType.Boolean)
 				return rawValue == "true" || rawValue == "1" || rawValue.ToLower() == "yes" ? "Yes" : "No";
@@ -304,7 +352,11 @@ namespace Resgrid.Services
 				var rules = ParseRules(field.ValidationRules);
 				if (rules?.Options != null)
 				{
-					var keys = rawValue.Split(',').Select(v => v.Trim()).ToHashSet();
+					// Only a multi-select stores a comma-joined list; a single-select key may itself
+					// contain a comma ("Transported, ALS") and must be matched whole.
+					var keys = dataType == UdfFieldDataType.MultiSelect
+						? rawValue.Split(',').Select(v => v.Trim()).ToHashSet()
+						: new HashSet<string> { rawValue };
 					var labels = rules.Options.Where(o => keys.Contains(o.Key)).Select(o => o.Label);
 					return string.Join(", ", labels);
 				}

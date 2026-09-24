@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,17 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly ICustomStateService _customStateService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public CallsActionHandler(
 			ICallsService callsService,
 			IDepartmentsService departmentsService,
 			ICustomStateService customStateService,
 			IUserProfileService userProfileService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_customStateService = customStateService;
@@ -48,7 +52,9 @@ namespace Resgrid.Chatbot.Handlers
 
 				var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
 				var departmentName = department?.Name ?? ChatbotResources.Get("Common_YourDepartment", culture);
-				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(session.DepartmentId);
+				// Group-scoped dispatch (off by default): list only the calls in the user's area or that they're on.
+				var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(session.DepartmentId, session.UserId,
+					await _callsService.GetActiveCallsByDepartmentAsync(session.DepartmentId) ?? new List<Resgrid.Model.Call>());
 
 				// The department boundary is the per-row rule (the unread-messages list applies the same one).
 				var callList = (activeCalls ?? Enumerable.Empty<Resgrid.Model.Call>())

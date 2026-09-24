@@ -17,6 +17,12 @@ namespace Resgrid.Web.Areas.User.Models.DataProtection
 
 		public bool IsManagingMember { get; set; }
 
+		/// <summary>Protected Workflows department settings (ADP > Egress), shown while ADP is Enabled or Rotating.</summary>
+		public ProtectedWorkflowDepartmentSettings ProtectedWorkflows { get; set; }
+
+		/// <summary>True when the viewer holds the ADP egress permission and may change the Protected Workflows settings.</summary>
+		public bool CanAdministerProtectedWorkflows { get; set; }
+
 		public AdpEnrollmentPreflight Preflight { get; set; } = new AdpEnrollmentPreflight();
 
 		/// <summary>Shallow broker /health probe result (wizard preflight step 4).</summary>

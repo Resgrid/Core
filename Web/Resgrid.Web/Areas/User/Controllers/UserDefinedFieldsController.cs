@@ -292,6 +292,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IsVisibleOnReports  = field.IsVisibleOnReports,
 				Visibility          = field.Visibility,
 				RmsClassification = field.RmsClassification,
+				Sensitivity         = field.Sensitivity,
 				DefaultValue        = field.DefaultValue,
 				GroupName           = field.GroupName,
 				SortOrder           = field.SortOrder,
@@ -319,8 +320,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!string.IsNullOrWhiteSpace(form.DropdownOptionsRaw))
 			{
+				// Browsers post the textarea with CRLF, so a blank line arrives as "\r" and survives
+				// RemoveEmptyEntries; it would become an option with an empty key and label.
 				rules.Options = form.DropdownOptionsRaw
 					.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+					.Where(line => !string.IsNullOrWhiteSpace(line))
 					.Select(line =>
 					{
 						var idx = line.IndexOf('=');
@@ -353,6 +357,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IsVisibleOnReports = form.IsVisibleOnReports,
 				Visibility         = form.Visibility,
 				RmsClassification = form.RmsClassification,
+				Sensitivity        = form.Sensitivity is >= 0 and <= 2 ? form.Sensitivity : 0,
 				DefaultValue       = form.DefaultValue,
 				GroupName          = form.GroupName,
 				SortOrder          = sortOrder,

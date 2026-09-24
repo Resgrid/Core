@@ -296,6 +296,9 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectShiftByShiftIdJSONQuery { get; set; }
 		public string SelectShiftsByDidJSONQuery { get; set; }
 		public string SelectShiftSignupsByGroupIdAndDateQuery { get; set; }
+		public string SelectShiftSignupTradesByDepartmentIdQuery { get; set; }
+		public string SelectShiftSignupsByDepartmentIdAndDateRangeQuery { get; set; }
+		public string SelectShiftSignupTradeUserShiftsBySignupIdQuery { get; set; }
 		#endregion Shifts
 
 		#region Calls

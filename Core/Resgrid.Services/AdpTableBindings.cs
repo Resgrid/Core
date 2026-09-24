@@ -78,7 +78,7 @@ namespace Resgrid.Services
 					Text("Calls", "GeoLocationData"), Text("Calls", "W3W"), Text("Calls", "ContactName"),
 					Text("Calls", "ContactNumber"), Text("Calls", "SourceIdentifier"), Text("Calls", "IncidentNumber"),
 					Text("Calls", "ExternalIdentifier"), Text("Calls", "ReferenceNumber"), Text("Calls", "CallFormData"),
-					Text("Calls", "DeletedReason")
+					Text("Calls", "DeletedReason"), Text("Calls", "SubjectIdentifiers")
 				}),
 
 				AdpTableBinding.ViaParent("CallNotes", "CallNoteId", pkIsNumeric: true, "CallId", "Calls", "CallId", new[]

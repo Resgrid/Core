@@ -110,4 +110,19 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>تقرير حادث NERIS</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>حساسية الحقل في سير العمل المحمي</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>تحتاج الحقول المقيّدة وحقول 42 CFR Part 2 إلى إقرار إضافي قبل أن يتمكن سير عمل محمي من السماح بها. يؤدي تغيير هذه القيمة إلى إعادة كل إذن يستخدم الحقل إلى الاعتماد.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>مقيّد</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>

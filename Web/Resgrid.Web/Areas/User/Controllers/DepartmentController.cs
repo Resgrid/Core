@@ -2066,6 +2066,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.DispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(DepartmentId);
 			model.AutoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
+
+			var scopeConfig = await _departmentSettingsService.GetGroupDispatchScopeConfigAsync(DepartmentId, true);
+			model.GroupDispatchScopeEnabled = scopeConfig.Enabled;
+			model.GroupDispatchScopeRoleIds = scopeConfig.DepartmentWideRoleIds ?? new List<int>();
 			model.ShiftDispatchStatus = await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(DepartmentId);
 			model.ShiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(DepartmentId);
@@ -2110,6 +2114,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.ShiftCallDispatchPersonnelStatusToSet, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ShiftClearStatus.ToString(),
 					DepartmentSettingTypes.ShiftCallReleasePersonnelStatusToSet, cancellationToken);
+
+				// Only this department's roles can be made department-wide.
+				var departmentRoleIds = new HashSet<int>(model.PersonnelRoles.Select(r => r.PersonnelRoleId));
+				await _departmentSettingsService.SetGroupDispatchScopeConfigAsync(DepartmentId, new GroupDispatchScopeConfig
+				{
+					Enabled = model.GroupDispatchScopeEnabled,
+					DepartmentWideRoleIds = (model.GroupDispatchScopeRoleIds ?? new List<int>()).Where(departmentRoleIds.Contains).ToList()
+				}, cancellationToken);
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitDispatchAlsoDispatchToAssignedPersonnel.ToString(),
 					DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel, cancellationToken);
@@ -2339,6 +2351,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task PopulateDispatchSettingsSupportingDataAsync(DispatchSettingsView model)
 		{
+			// Needed before the save (to validate the department-wide dispatch roles) and whether or not
+			// run cards are enabled; the run card section loads the same list for its own use.
+			model.PersonnelRoles = (await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>())
+				.OrderBy(r => r.Name).ToList();
 			model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
 			model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
 			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();

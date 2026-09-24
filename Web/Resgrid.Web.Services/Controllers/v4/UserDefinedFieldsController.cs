@@ -82,6 +82,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var previousDefinition = await _udfService.GetActiveDefinitionAsync(DepartmentId, input.EntityType);
 			var isNew = previousDefinition == null;
 
+			// A client that does not send Sensitivity keeps each field's current tag (a silent reset would re-open a Part 2 field).
+			var currentSensitivity = isNew
+				? new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+				: (await _udfService.GetFieldsForActiveDefinitionAsync(DepartmentId, input.EntityType))
+					.Where(f => !string.IsNullOrWhiteSpace(f.Name))
+					.GroupBy(f => f.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+					.ToDictionary(g => g.Key, g => g.First().Sensitivity, StringComparer.OrdinalIgnoreCase);
+
 			var fields = input.Fields?.Select(f => new UdfField
 			{
 				UdfFieldId = f.UdfFieldId,
@@ -99,10 +107,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 				IsVisibleOnMobile = f.IsVisibleOnMobile,
 				IsVisibleOnReports = f.IsVisibleOnReports,
 				IsEnabled = f.IsEnabled,
-				Visibility = f.Visibility
+				Visibility = f.Visibility,
+				Sensitivity = f.Sensitivity is >= 0 and <= 2
+					? f.Sensitivity.Value
+					: (f.Name != null && currentSensitivity.TryGetValue(f.Name.Trim(), out var tag) ? tag : 0)
 			}).ToList() ?? new List<UdfField>();
 
-			var saved = await _udfService.SaveDefinitionAsync(DepartmentId, input.EntityType, fields, UserId, cancellationToken);
+			UdfDefinition saved;
+			try
+			{
+				saved = await _udfService.SaveDefinitionAsync(DepartmentId, input.EntityType, fields, UserId, cancellationToken);
+			}
+			catch (InvalidOperationException ex)
+			{
+				// Service-layer definition rules (machine names, option lists) are caller errors.
+				return BadRequest(ex.Message);
+			}
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -206,10 +226,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Udf_Delete)]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<UdfDefinitionResult>> DeleteField(string fieldId, CancellationToken cancellationToken)
 		{
-			var newDefinition = await _udfService.DeleteFieldFromDefinitionAsync(fieldId, DepartmentId, UserId, cancellationToken);
+			UdfDefinition newDefinition;
+			try
+			{
+				newDefinition = await _udfService.DeleteFieldFromDefinitionAsync(fieldId, DepartmentId, UserId, cancellationToken);
+			}
+			catch (InvalidOperationException ex)
+			{
+				// The remaining fields are re-validated as a new version; a legacy field that now fails
+				// (e.g. a dropdown saved with no options) must be fixed first.
+				return BadRequest(ex.Message);
+			}
 
 			if (newDefinition == null)
 				return NotFound();
@@ -317,6 +348,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					GroupName = f.GroupName,
 					IsVisibleOnMobile = f.IsVisibleOnMobile,
 					IsVisibleOnReports = f.IsVisibleOnReports,
+					Sensitivity = f.Sensitivity,
 					IsEnabled = f.IsEnabled,
 					Visibility = f.Visibility
 				}).ToList() ?? new List<UdfFieldResultData>()

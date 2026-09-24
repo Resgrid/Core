@@ -75,6 +75,13 @@ namespace Resgrid.Model
 		/// <summary>Published RMS classification: 0 unrestricted, 1 restricted; unknown legacy fields require restricted access.</summary>
 		public int? RmsClassification { get; set; }
 
+		/// <summary>
+		/// Release sensitivity for Protected Workflows, see <see cref="UdfFieldSensitivity"/>: none (0), restricted (1)
+		/// or 42 CFR Part 2 (2). Releasing a restricted or Part 2 field needs its own attestation, and a change here sends
+		/// every release that references the field back for approval.
+		/// </summary>
+		public int Sensitivity { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

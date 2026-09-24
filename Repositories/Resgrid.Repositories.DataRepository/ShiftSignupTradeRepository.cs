@@ -48,8 +48,10 @@ namespace Resgrid.Repositories.DataRepository
 						map: ShiftSignupTradeMapping(dictionary),
 						splitOn: "ShiftSignupTradeUserId");
 
+					// A signup can carry more than one trade over time (a denied trade stays on record), so
+					// hand back the live one: not denied, newest first.
 					if (dictionary.Count > 0)
-						return dictionary.Select(y => y.Value).FirstOrDefault();
+						return dictionary.Values.OrderBy(y => y.Denied).ThenByDescending(y => y.ShiftSignupTradeId).FirstOrDefault();
 					
 					return result.FirstOrDefault();
 				});
@@ -96,8 +98,10 @@ namespace Resgrid.Repositories.DataRepository
 						map: ShiftSignupTradeMapping(dictionary),
 						splitOn: "ShiftSignupTradeUserId");
 
+					// A signup can carry more than one trade over time (a denied trade stays on record), so
+					// hand back the live one: not denied, newest first.
 					if (dictionary.Count > 0)
-						return dictionary.Select(y => y.Value).FirstOrDefault();
+						return dictionary.Values.OrderBy(y => y.Denied).ThenByDescending(y => y.ShiftSignupTradeId).FirstOrDefault();
 					
 					return result.FirstOrDefault();
 				});
@@ -262,6 +266,57 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<ShiftSignupTrade>> GetShiftSignupTradesByDepartmentIdAsync(int departmentId, DateTime startDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftSignupTrade>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("StartDate", startDate);
+
+					var query = _queryFactory.GetQuery<SelectShiftSignupTradesByDepartmentIdQuery>();
+
+					// A trade with no swap-back signup comes out of the LEFT JOIN with null target columns, which Dapper
+					// maps to a null TargetShiftSignup.
+					return await x.QueryAsync<ShiftSignupTrade, ShiftSignup, ShiftSignup, ShiftSignupTrade>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: (trade, source, target) =>
+						{
+							trade.SourceShiftSignup = source;
+							trade.TargetShiftSignup = target;
+							return trade;
+						},
+						splitOn: "ShiftSignupId,ShiftSignupId");
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		private static Func<ShiftSignupTrade, ShiftSignupTradeUser, ShiftSignupTrade> ShiftSignupTradeMapping(Dictionary<int, ShiftSignupTrade> dictionary)
 		{
 			return new Func<ShiftSignupTrade, ShiftSignupTradeUser, ShiftSignupTrade>((shiftSignupTrade, shiftSignupTradeUser) =>
@@ -270,7 +325,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				if (shiftSignupTradeUser != null)
 				{
-					if (dictionary.TryGetValue(shiftSignupTrade.ShiftSignupTradeId, out shiftSignupTrade))
+					if (dictionary.TryGetValue(shiftSignupTrade.ShiftSignupTradeId, out dictionaryShiftSignupTrade))
 					{
 						if (dictionaryShiftSignupTrade.Users.All(x => x.ShiftSignupTradeUserId != shiftSignupTradeUser.ShiftSignupTradeUserId))
 							dictionaryShiftSignupTrade.Users.Add(shiftSignupTradeUser);

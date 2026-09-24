@@ -113,4 +113,19 @@
   <data name="RecordTypeNerisIncident" xml:space="preserve">
     <value>NERIS-Ereignisbericht</value>
   </data>
+  <data name="ReleaseSensitivity" xml:space="preserve">
+    <value>Sensibilität für geschützte Workflows</value>
+  </data>
+  <data name="ReleaseSensitivityHelp" xml:space="preserve">
+    <value>Eingeschränkte Felder und Felder nach 42 CFR Part 2 benötigen eine zusätzliche Erklärung, bevor ein geschützter Workflow sie freigeben kann. Eine Änderung schickt jede Freigabe, die das Feld verwendet, zurück zur Genehmigung.</value>
+  </data>
+  <data name="SensitivityNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Eingeschränkt</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
 </root>

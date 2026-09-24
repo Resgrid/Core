@@ -581,11 +581,8 @@
   <data name="RenderedOutput" xml:space="preserve">
     <value>المخرجات المعروضة</value>
   </data>
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value>جميع أنواع أحداث التشغيل المتاحة لها بالفعل سير عمل مُكوَّن. احذف سير عمل موجوداً لتحرير نوع حدثه.</value>
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
-    <value>يمكن لكل نوع حدث أن يكون له سير عمل واحد فقط. يتم عرض أنواع الأحداث غير المستخدمة فقط.</value>
+    <value>الحدث الذي يبدأ سير العمل هذا. يمكن لعدة مسارات عمل استخدام الحدث نفسه؛ ويعمل كل منها بشكل مستقل.</value>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>تفاصيل</value>
@@ -617,4 +614,112 @@
   <data name="ExportTemplate" xml:space="preserve"><value>تصدير تقرير السجلات</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>لا شيء (إرسال القالب المُعالَج فقط)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>تُرفق خطوات البريد الإلكتروني التصدير؛ وترفع خطوات رفع الملفات التصدير باسم ملفه بدلًا من النص المُعالَج. تُصمَّم التصديرات ضمن السجلات &gt; تصدير التقارير.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>بيانات اعتماد عميل OAuth2</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>عنوان URL للرمز المميز</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>نقطة نهاية الرمز المميز عبر HTTPS، على سبيل المثال https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>معرّف العميل</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>سر العميل</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>النطاق</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>بالنسبة إلى Microsoft Dataverse، استخدم https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>الجمهور (اختياري)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>مصادقة العميل</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>سرّ العميل</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>JWT بمفتاح خاص (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>خوارزمية التوقيع</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>تُنشئ Resgrid زوج المفاتيح وتحتفظ به؛ يُشفَّر المفتاح الخاص ولا يُعرض أبدًا. سجّل عنوان JWKS (أو ارفع المفتاح العام) لدى خادم الرموز.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>عنوان JWKS</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>المفتاح الحالي {0}، أُنشئ في {1}. المفاتيح المنشورة: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>تنزيل JWK العام</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>تدوير المفتاح</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>هل تريد إنشاء مفتاح توقيع جديد؟ يبقى المفتاح الحالي منشورًا خلال فترة التداخل ليتمكن خادم الرموز من الانتقال.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>تم إنشاء مفتاح توقيع جديد. يبقى المفتاح السابق منشورًا خلال فترة التداخل.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>يُنشأ زوج المفاتيح عند الحفظ. بعد ذلك يظهر هنا عنوان JWKS وتنزيل المفتاح العام.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>البدء من قالب</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>تُنشئ القوالب سير عمل معطّلًا بوجهات افتراضية. اضبط العنوان وبيانات الاعتماد لكل خطوة ثم فعّله.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>استخدام القالب</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>سير العمل المحمي</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>تم إنشاء سير العمل من القالب. إنه معطّل: اضبط الوجهة وبيانات الاعتماد لكل خطوة ثم فعّله.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>تم إنشاء سير العمل من القالب مع مسودة إذن محمي. اضبط عنوان الوجهة وبيانات الاعتماد للخطوة، واختر الحقول المسموح بها، ثم اطلب الاعتماد. لن يُرسل أي شيء قبل اعتماد الإذن.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>تم بلوغ الحد الأقصى لسير العمل في خطتك. يُرجى الترقية لإضافة المزيد.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Webhook: بلاغ جديد (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>يرسل رقم البلاغ واسمه وأولويته وعنوانه بصيغة JSON عند إضافته، مع مفتاح عدم التكرار.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>بريد إلكتروني: إغلاق بلاغ</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>يرسل ملخصًا قصيرًا بالبريد الإلكتروني عند إغلاق بلاغ.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter وObservations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>عند إغلاق بلاغ، يرسل حزمة معاملات FHIR R4 (Bundle) إلى السجل الصحي الإلكتروني: Encounter (الفئة FLD، منتهٍ، من الإرسال حتى الإغلاق) للمريض في subject_ids.ehr_client_id، وObservation لكل حقل مخصص مسموح به. يستخدم الإنشاء المشروط ويحفظ معرّف Encounter الجديد باسم ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>ملاحظة زيارة HL7 v2.5.1 MDM^T02</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>عند إغلاق بلاغ، يرسل مستند MDM^T02 "Crisis Field Response" إلى محرك تكامل عبر HTTPS: PID-3 هو معرّف العميل في السجل الصحي، وMSH-10 مفتاح عدم التكرار، وOBX لكل حقل مخصص مسموح به. ينجح فقط عند تلقي إقرار AA.</value>
+  </data>
 </root>

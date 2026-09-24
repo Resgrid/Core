@@ -305,5 +305,136 @@ namespace Resgrid.Model.Services
 		Task<List<ShiftSignup>> GetShiftSignupsByDepartmentGroupIdAndDayAsync(int departmentGroupId, DateTime shiftDayDate);
 
 		Task<List<ShiftPerson>> GetShiftPersonsForUserAsync(string userId);
+
+		/// <summary>
+		/// Everyone on a shift whose window (StartTime to EndTime, or Hours, in the department's local
+		/// time) contains <paramref name="utcNow"/>: assigned personnel for assigned shifts, approved
+		/// (not denied) signups for signup shifts. Trades are not applied.
+		/// </summary>
+		Task<List<OnShiftAssignment>> GetOnShiftPersonnelAsync(int departmentId, DateTime utcNow);
+	
+
+		/// <summary>
+		/// Saves only the shift row itself (name, times, colour, approval flag...), leaving Days, Groups, Personnel,
+		/// Signups and Admins untouched. Use this for detail edits so a loaded collection is never re-synced.
+		/// </summary>
+		Task<Shift> UpdateShiftAsync(Shift shift, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Builds the full schedule (resolved roster, needs, active flag, signups, trades) for one shift day.
+		/// Returns null for an unknown day.
+		/// </summary>
+		Task<ShiftDaySchedule> GetShiftDayScheduleAsync(int shiftDayId);
+
+		/// <summary>
+		/// Schedules for every shift day in the department whose date is within [startDate, endDate] (department-local
+		/// dates, inclusive), optionally for one shift only.
+		/// </summary>
+		Task<List<ShiftDaySchedule>> GetShiftDaySchedulesForDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate, int? shiftId = null);
+
+		/// <summary>
+		/// Schedules for the department's shift days that are running at <paramref name="timestampUtc"/>, including a
+		/// night shift that started the previous evening.
+		/// </summary>
+		Task<List<ShiftDaySchedule>> GetActiveShiftDaySchedulesAsync(int departmentId, DateTime timestampUtc);
+
+		/// <summary>
+		/// Across all departments, the shift days that start within the next 24 hours of <paramref name="timestampUtc"/>
+		/// (each in its department's local time), with resolved rosters, for the shift reminder worker.
+		/// </summary>
+		Task<List<ShiftDaySchedule>> GetShiftDaysStartingWithinDayAsync(DateTime timestampUtc);
+
+		/// <summary>
+		/// The people on duty for a department group right now: approved roster entries for that group on every
+		/// running shift day, plus standing-roster people with no group on that shift who are members of the group.
+		/// Empty when no shift covering the group is running.
+		/// </summary>
+		Task<List<string>> GetOnDutyUserIdsForGroupAsync(int departmentId, int departmentGroupId, DateTime timestampUtc);
+
+		/// <summary>
+		/// <see cref="GetOnDutyUserIdsForGroupAsync"/> for several groups off one schedule load: group id to the user
+		/// ids on duty for it (an empty list when no running shift covers the group).
+		/// </summary>
+		Task<Dictionary<int, List<string>>> GetOnDutyUserIdsForGroupsAsync(int departmentId, IEnumerable<int> departmentGroupIds, DateTime timestampUtc);
+
+		/// <summary>
+		/// A user signs up for an open slot on a shift day. Validates the day, the group, and existing signups, and
+		/// leaves the signup pending when the shift requires approval.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignup>> SignupUserForShiftDayAsync(int shiftDayId, int? departmentGroupId, string userId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// A supervisor puts a person on one shift day (single-day roster edit). Reactivates a day the person had been
+		/// taken off. Not subject to approval.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignup>> AssignUserToShiftDayAsync(int shiftDayId, string userId, int? departmentGroupId, string assignedByUserId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// A supervisor takes a person off one shift day. Signups are marked denied (kept for the record) and a
+		/// standing-roster person gets a denied signup for that day so the rest of the month is unchanged.
+		/// </summary>
+		Task<ShiftActionResult<bool>> RemoveUserFromShiftDayAsync(int shiftDayId, string userId, string removedByUserId, string note,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// A supervisor approves or denies a pending signup.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignup>> ReviewShiftSignupAsync(int shiftSignupId, bool approve, string reviewerUserId, string note,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Signups waiting for supervisor approval in the department whose day has not passed, with Shift and Group set.
+		/// </summary>
+		Task<List<ShiftSignup>> GetPendingShiftSignupsAsync(int departmentId);
+
+		/// <summary>
+		/// A user asks colleagues to take their slot on a shift day. People on the standing roster get a signup for
+		/// that day created so the slot can be traded.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> RequestTradeAsync(int shiftDayId, string userId, List<string> userIds, string note,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Starts a trade on an existing signup owned by the caller.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> RequestTradeForSignupAsync(int shiftSignupId, string userId, List<string> userIds, string note,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// An invited user accepts (optionally offering their own signups as swap-backs) or declines a trade request.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> RespondToTradeAsync(int shiftSignupTradeId, string userId, bool accept, string note, List<int> offeredShiftSignupIds,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// The requester picks an offer: a user taking the slot outright, or one of the offered swap-back signups. On a
+		/// shift that requires approval the trade then waits for a supervisor.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> FinishTradeAsync(int shiftSignupTradeId, string requesterUserId, string acceptedUserId, int? targetShiftSignupId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// The requester withdraws a trade that has not taken effect.
+		/// </summary>
+		Task<ShiftActionResult<bool>> CancelTradeAsync(int shiftSignupTradeId, string requesterUserId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// A supervisor approves or denies a trade waiting for approval.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> ReviewTradeAsync(int shiftSignupTradeId, bool approve, string reviewerUserId, string note,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Trades waiting for supervisor approval in the department, fully loaded.
+		/// </summary>
+		Task<List<ShiftSignupTrade>> GetPendingTradesAsync(int departmentId);
+
+		/// <summary>
+		/// Trades the user started or was asked to take whose day has not long passed, fully loaded.
+		/// </summary>
+		Task<List<ShiftSignupTrade>> GetTradesForUserAsync(int departmentId, string userId);
 	}
 }

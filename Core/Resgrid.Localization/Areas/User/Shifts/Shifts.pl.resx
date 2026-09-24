@@ -569,4 +569,325 @@
   <data name="RoleCountRequired" xml:space="preserve">
     <value>Liczba ról jest wymagana</value>
   </data>
+  <data name="ActiveNowBadge" xml:space="preserve">
+    <value>Trwa teraz</value>
+  </data>
+  <data name="AddPersonButton" xml:space="preserve">
+    <value>Dodaj do dnia</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Dodaj osobę do tego dnia</value>
+  </data>
+  <data name="AddPersonHelp" xml:space="preserve">
+    <value>Przydziela osobę tylko do tego dnia; reszta grafiku pozostaje bez zmian.</value>
+  </data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve">
+    <value>Wymaga zatwierdzenia</value>
+  </data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve">
+    <value>Zapisy i wymiany na tej zmianie wymagają zatwierdzenia przez przełożonego.</value>
+  </data>
+  <data name="ApprovalsButton" xml:space="preserve">
+    <value>Zatwierdzenia</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Zatwierdzenia zmian</value>
+  </data>
+  <data name="ApprovalsHelp" xml:space="preserve">
+    <value>Zapisy i wymiany oczekujące na zatwierdzenie w grupach, które nadzorujesz. Oczekujący wniosek nie kieruje nikogo na służbę, dopóki nie zostanie zatwierdzony.</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Zatwierdź</value>
+  </data>
+  <data name="DenyButton" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve">
+    <value>Zamień na ten dzień</value>
+  </data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve">
+    <value>Ta wymiana jest zakończona: {0} pracuje w tym dniu.</value>
+  </data>
+  <data name="FinishTradeDenied" xml:space="preserve">
+    <value>Przełożony odrzucił ostatni wybór dla tej wymiany. Możesz wybrać inną ofertę.</value>
+  </data>
+  <data name="FinishTradePendingFormat" xml:space="preserve">
+    <value>Wybrałeś: {0}. Wymiana czeka na zatwierdzenie przez przełożonego.</value>
+  </data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve">
+    <value>Wybierz ofertę do przyjęcia.</value>
+  </data>
+  <data name="FullyStaffed" xml:space="preserve">
+    <value>Pełna obsada</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupa</value>
+  </data>
+  <data name="MyStatusNone" xml:space="preserve">
+    <value>Nie jesteś w grafiku tego dnia zmiany.</value>
+  </data>
+  <data name="MyStatusOnDuty" xml:space="preserve">
+    <value>Jesteś w grafiku tego dnia zmiany.</value>
+  </data>
+  <data name="MyStatusPending" xml:space="preserve">
+    <value>Twój zapis czeka na zatwierdzenie przez przełożonego.</value>
+  </data>
+  <data name="MyStatusRemoved" xml:space="preserve">
+    <value>Przełożony nie zatwierdził Twojego zapisu lub usunął Cię z tego dnia.</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Bez grupy</value>
+  </data>
+  <data name="NoPendingSignups" xml:space="preserve">
+    <value>Żadne zapisy nie czekają na zatwierdzenie.</value>
+  </data>
+  <data name="NoPendingTrades" xml:space="preserve">
+    <value>Żadne wymiany nie czekają na zatwierdzenie.</value>
+  </data>
+  <data name="NoPersonnelOnDay" xml:space="preserve">
+    <value>Nikt nie jest jeszcze przydzielony do tego dnia.</value>
+  </data>
+  <data name="NoShiftsOnDuty" xml:space="preserve">
+    <value>Obecnie nie trwa żadna zmiana.</value>
+  </data>
+  <data name="NobodyOnDuty" xml:space="preserve">
+    <value>Nikt na służbie</value>
+  </data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve">
+    <value>Na służbie, stan na {0}. Ta strona odświeża się co minutę.</value>
+  </data>
+  <data name="OnDutyButton" xml:space="preserve">
+    <value>Teraz na służbie</value>
+  </data>
+  <data name="OnDutyHeader" xml:space="preserve">
+    <value>Teraz na służbie</value>
+  </data>
+  <data name="OpenSlotsFormat" xml:space="preserve">
+    <value>Wolne miejsca: {0}</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Notatka (opcjonalnie)</value>
+  </data>
+  <data name="OtherPersonnelHeader" xml:space="preserve">
+    <value>Pozostały personel</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Oczekuje na zatwierdzenie</value>
+  </data>
+  <data name="PendingSignupsHeader" xml:space="preserve">
+    <value>Zapisy oczekujące na zatwierdzenie</value>
+  </data>
+  <data name="PendingTradesHeader" xml:space="preserve">
+    <value>Wymiany oczekujące na zatwierdzenie</value>
+  </data>
+  <data name="PersonAddedToDay" xml:space="preserve">
+    <value>Osoba została dodana do tego dnia.</value>
+  </data>
+  <data name="PersonLabel" xml:space="preserve">
+    <value>Osoba</value>
+  </data>
+  <data name="PersonRemovedFromDay" xml:space="preserve">
+    <value>Osoba została usunięta z tego dnia.</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>Odśwież</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Usuń z tego dnia</value>
+  </data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve">
+    <value>Usunąć tę osobę z tego dnia zmiany? Reszta jej grafiku pozostaje bez zmian.</value>
+  </data>
+  <data name="RemovedDaysHeader" xml:space="preserve">
+    <value>Dni, z których Cię usunięto</value>
+  </data>
+  <data name="RemovedDaysHelp" xml:space="preserve">
+    <value>Zapisy, których przełożony nie zatwierdził, oraz dni, z których przełożony Cię usunął.</value>
+  </data>
+  <data name="RequestedByColumn" xml:space="preserve">
+    <value>Zgłoszone przez</value>
+  </data>
+  <data name="RequireApprovalHelp" xml:space="preserve">
+    <value>Po zaznaczeniu zapis ani wymiana nie kierują nikogo na służbę, dopóki przełożony grupy ich nie zatwierdzi.</value>
+  </data>
+  <data name="RequireApprovalLabel" xml:space="preserve">
+    <value>Zapisy i wymiany wymagają zatwierdzenia przez przełożonego</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Notatka</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Skład</value>
+  </data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve">
+    <value>Wybierz daty...</value>
+  </data>
+  <data name="SelectPersonToAdd" xml:space="preserve">
+    <value>Wybierz osobę do dodania.</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Wybierz użytkowników...</value>
+  </data>
+  <data name="ShiftDeleted" xml:space="preserve">
+    <value>Zmiana została usunięta.</value>
+  </data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve">
+    <value>Ta osoba jest już przydzielona do tego dnia w tej grupie.</value>
+  </data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve">
+    <value>Jesteś już zapisany na ten dzień zmiany.</value>
+  </data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve">
+    <value>Ten dzień zmiany już się zakończył.</value>
+  </data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve">
+    <value>Ta grupa nie należy do tej zmiany.</value>
+  </data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve">
+    <value>Ta oferta nie jest już dostępna.</value>
+  </data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve">
+    <value>Nie można tego zrobić dla tego dnia zmiany.</value>
+  </data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve">
+    <value>Wybierz co najmniej jedną osobę.</value>
+  </data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve">
+    <value>Nie masz uprawnień, aby to zrobić.</value>
+  </data>
+  <data name="ShiftErrorNotFound" xml:space="preserve">
+    <value>Nie znaleziono dnia zmiany, zapisu ani wymiany.</value>
+  </data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve">
+    <value>Ta osoba nie jest przydzielona do tego dnia zmiany.</value>
+  </data>
+  <data name="ShiftErrorNotPending" xml:space="preserve">
+    <value>Ten wniosek nie czeka już na zatwierdzenie.</value>
+  </data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve">
+    <value>Dla tego dnia już poproszono o wymianę.</value>
+  </data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve">
+    <value>Możesz używać tylko grup, którymi zarządzasz, a zmiana musi zawierać co najmniej jedną z nich.</value>
+  </data>
+  <data name="ShiftOnDateFormat" xml:space="preserve">
+    <value>{0} w dniu {1}</value>
+  </data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve">
+    <value>Wszystkie wybrane osoby, które jeszcze nie pracują w tym dniu, zostaną do niego dodane.</value>
+  </data>
+  <data name="ShiftStaffingSaved" xml:space="preserve">
+    <value>Obsada zapisana. Osoby dodane do dnia: {0}.</value>
+  </data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve">
+    <value>Obsada zapisana. Osoby dodane do dnia: {0}. Nie udało się dodać: {1}</value>
+  </data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve">
+    <value>Musisz wybrać prawidłowy dzień zmiany</value>
+  </data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve">
+    <value>Musisz wybrać zmianę</value>
+  </data>
+  <data name="SignupApproved" xml:space="preserve">
+    <value>Zapis został zatwierdzony.</value>
+  </data>
+  <data name="SignupDenied" xml:space="preserve">
+    <value>Zapis został odrzucony.</value>
+  </data>
+  <data name="SignupForShift" xml:space="preserve">
+    <value>Zapisz się na tę zmianę</value>
+  </data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve">
+    <value>Twój zapis został przyjęty i czeka na zatwierdzenie przez przełożonego. Do czasu zatwierdzenia nie jesteś na służbie w tym dniu.</value>
+  </data>
+  <data name="SignupTradeLocked" xml:space="preserve">
+    <value>Ten dzień został wymieniony lub wymiana czeka na zatwierdzenie, więc nie można z niego zrezygnować. Poproś przełożonego o zmianę dnia.</value>
+  </data>
+  <data name="SignupWithdrawn" xml:space="preserve">
+    <value>Twój zapis został wycofany.</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Przydzielony</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Zapis</value>
+  </data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve">
+    <value>Dodany przez przełożonego</value>
+  </data>
+  <data name="SourceTradeFormat" xml:space="preserve">
+    <value>Wymiana (od {0})</value>
+  </data>
+  <data name="StaffingLabel" xml:space="preserve">
+    <value>Obsada</value>
+  </data>
+  <data name="SwapBackFormat" xml:space="preserve">
+    <value>Dzień w zamian: {0}</value>
+  </data>
+  <data name="TradeAlreadyFilled" xml:space="preserve">
+    <value>Ta wymiana została już obsadzona.</value>
+  </data>
+  <data name="TradeApproved" xml:space="preserve">
+    <value>Wymiana została zatwierdzona.</value>
+  </data>
+  <data name="TradeCompleted" xml:space="preserve">
+    <value>Wymiana została zakończona.</value>
+  </data>
+  <data name="TradeDeclinedMessage" xml:space="preserve">
+    <value>Odrzuciłeś prośbę o wymianę.</value>
+  </data>
+  <data name="TradeDenied" xml:space="preserve">
+    <value>Wymiana została odrzucona.</value>
+  </data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve">
+    <value>Zapis musi zostać zatwierdzony, zanim będzie można go wymienić.</value>
+  </data>
+  <data name="TradeRequested" xml:space="preserve">
+    <value>Twoja prośba o wymianę została wysłana.</value>
+  </data>
+  <data name="TradeRequestedByFormat" xml:space="preserve">
+    <value>Zgłoszone przez: {0}</value>
+  </data>
+  <data name="TradeResponseSent" xml:space="preserve">
+    <value>Twoja odpowiedź została wysłana.</value>
+  </data>
+  <data name="TradeStatusComplete" xml:space="preserve">
+    <value>Zakończona</value>
+  </data>
+  <data name="TradeStatusDenied" xml:space="preserve">
+    <value>Odrzucona przez przełożonego</value>
+  </data>
+  <data name="TradeStatusOpen" xml:space="preserve">
+    <value>Zgłoszona</value>
+  </data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve">
+    <value>Czeka na zatwierdzenie przez przełożonego</value>
+  </data>
+  <data name="TradeUsersRequired" xml:space="preserve">
+    <value>Musisz wskazać użytkowników, których chcesz poprosić o wymianę. Lista zawiera tylko uprawnionych użytkowników.</value>
+  </data>
+  <data name="TradeWaitingForApproval" xml:space="preserve">
+    <value>Twój wybór został zapisany. Wymiana czeka na zatwierdzenie przez przełożonego.</value>
+  </data>
+  <data name="TradedToYouFormat" xml:space="preserve">
+    <value>Przekazany Tobie przez: {0}</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Nieznany</value>
+  </data>
+  <data name="ViewShiftDayButton" xml:space="preserve">
+    <value>Pokaż dzień</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Zrezygnuj</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Zrezygnować z tego dnia zmiany?</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Ty</value>
+  </data>
+  <data name="YourStatusHeader" xml:space="preserve">
+    <value>Twój status</value>
+  </data>
 </root>

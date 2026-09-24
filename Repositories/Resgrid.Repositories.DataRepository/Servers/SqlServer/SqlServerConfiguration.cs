@@ -930,11 +930,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE%
 					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE% ON %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE%.[ShiftSignupTradeId] =  %SCHEMA%.%SHIFTSIGNUPTRADESTABLE%.[ShiftSignupTradeId]
 					WHERE [UserId] = %USERID%";
+			// Trades the user has been asked to take, whose source shift day is not long over. The user's own
+			// ShiftSignupTradeUsers row is what makes them a participant; sst.UserId is only set once a taker is picked.
 			SelectOpenShiftSignupTradesByUserIdQuery = @"
-					SELECT *
-					FROM ShiftSignupTrades sst
-					INNER JOIN ShiftSignupTradeUsers sstu ON sstu.ShiftSignupTradeId = sst.ShiftSignupTradeId
-					WHERE sst.UserId = %USERID% AND sst.UserId != %USERID% AND sst.TargetShiftSignupId IS NULL";
+					SELECT sst.*
+					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
+					INNER JOIN %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE% sstu ON sstu.[ShiftSignupTradeId] = sst.[ShiftSignupTradeId]
+					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]
+					WHERE sstu.[UserId] = %USERID% AND ss.[ShiftDay] >= DATEADD(day, -1, GETUTCDATE())";
 			SelectShiftAndDaysByDIdQuery = @"
 					SELECT s.*, sd.*
 					FROM %SCHEMA%.%SHIFTSTABLE% s
@@ -1102,6 +1105,22 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				FOR JSON PATH) AS 'JsonResult'";
 			SelectShiftSignupsByGroupIdAndDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID% AND CAST([ShiftDay] AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
+			// Every trade in the department whose source or swap-back day is on or after StartDate, with both signups
+			// joined so rosters can be built in memory. Multi-mapped as trade, source signup, target signup.
+			SelectShiftSignupTradesByDepartmentIdQuery = @"
+					SELECT sst.*, ss.*, ts.*
+					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
+					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]
+					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.[ShiftId] = ss.[ShiftId]
+					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ts ON ts.[ShiftSignupId] = sst.[TargetShiftSignupId]
+					WHERE s.[DepartmentId] = %DID% AND (ss.[ShiftDay] >= %STARTDATE% OR ts.[ShiftDay] >= %STARTDATE%)";
+			SelectShiftSignupsByDepartmentIdAndDateRangeQuery = @"
+					SELECT ss.*
+					FROM %SCHEMA%.%SHIFTSIGNUPSTABLE% ss
+					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.[ShiftId] = ss.[ShiftId]
+					WHERE s.[DepartmentId] = %DID% AND ss.[ShiftDay] >= %STARTDATE% AND ss.[ShiftDay] < %ENDDATE%";
+			SelectShiftSignupTradeUserShiftsBySignupIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [ShiftSignupId] = %SHIFTSIGNUPID%";
 
 			#endregion Shifts
 

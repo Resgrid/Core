@@ -1,0 +1,7 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
+@* Localized strings for resgrid.protectedworkflows.js, keyed by the value-free codes the server returns. *@
+<script type="text/javascript">
+    resgrid.protectedworkflows.setMessages(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        pwLocalizer.GetAllStrings(true).ToDictionary(s => s.Name, s => s.Value),
+        new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml })));
+</script>

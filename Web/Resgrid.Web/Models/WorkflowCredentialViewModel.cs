@@ -93,6 +93,27 @@ namespace Resgrid.Web.Models
 		public string DropboxAppKey { get; set; }
 		public string DropboxAppSecret { get; set; }
 
+		// ── OAuth2 client credentials ─────────────────────────────────────────
+		public string OAuth2TokenUrl { get; set; }
+		public string OAuth2ClientId { get; set; }
+		public string OAuth2ClientSecret { get; set; }
+		public string OAuth2Scope { get; set; }
+		public string OAuth2Audience { get; set; }
+
+		/// <summary>client_secret (default) or private_key_jwt (SMART Backend Services: Resgrid holds the key pair).</summary>
+		public string OAuth2AuthMethod { get; set; } = Resgrid.Model.WorkflowJwtKeys.ClientSecret;
+
+		/// <summary>private_key_jwt signing algorithm: RS384 (default) or ES384.</summary>
+		public string OAuth2SigningAlg { get; set; } = Resgrid.Model.WorkflowJwtKeys.Rs384;
+
+		// Display only (edit page): the published keys of a private_key_jwt credential. Never a private key.
+		public string JwksUrl { get; set; }
+		public string CurrentKeyId { get; set; }
+		public System.DateTime? CurrentKeyCreatedOn { get; set; }
+		public int PublishedKeyCount { get; set; }
+
+		public bool IsPrivateKeyJwt => string.Equals(OAuth2AuthMethod, Resgrid.Model.WorkflowJwtKeys.PrivateKeyJwt, System.StringComparison.OrdinalIgnoreCase);
+
 		// ── Per-type validation ────────────────────────────────────────────────
 		/// <summary>
 		/// Validates that all required fields for the selected <see cref="CredentialType"/>
@@ -203,6 +224,16 @@ namespace Resgrid.Web.Models
 						yield return new ValidationResult("Dropbox app key is required.", [nameof(DropboxAppKey)]);
 					if (string.IsNullOrWhiteSpace(DropboxAppSecret))
 						yield return new ValidationResult("Dropbox app secret is required.", [nameof(DropboxAppSecret)]);
+					break;
+
+				case WorkflowCredentialType.OAuth2ClientCredentials:
+					if (string.IsNullOrWhiteSpace(OAuth2TokenUrl) || !System.Uri.TryCreate(OAuth2TokenUrl.Trim(), System.UriKind.Absolute, out var tokenUri) || tokenUri.Scheme != System.Uri.UriSchemeHttps)
+						yield return new ValidationResult("An https token URL is required.", [nameof(OAuth2TokenUrl)]);
+					if (string.IsNullOrWhiteSpace(OAuth2ClientId))
+						yield return new ValidationResult("Client ID is required.", [nameof(OAuth2ClientId)]);
+					// private_key_jwt authenticates with a key Resgrid generates and keeps; there is no secret to enter.
+					if (!IsPrivateKeyJwt && string.IsNullOrWhiteSpace(OAuth2ClientSecret))
+						yield return new ValidationResult("Client secret is required.", [nameof(OAuth2ClientSecret)]);
 					break;
 			}
 		}

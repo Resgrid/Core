@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -252,6 +253,278 @@ namespace Resgrid.Tests.Services
 					}
 				});
 				UdfValidationHelper.ValidateFieldValue(field, "a,b").Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_pass_dropdown_key_containing_a_comma()
+			{
+				var field = UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.Dropdown, new UdfValidationRules
+				{
+					Options = new List<UdfDropdownOption>
+					{
+						new UdfDropdownOption { Key = "Transported, ALS", Label = "Transported, ALS" }
+					}
+				});
+				UdfValidationHelper.ValidateFieldValue(field, "Transported, ALS").Should().BeEmpty();
+			}
+		}
+
+		// ── ADP REDACTED sentinel ────────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_validating_the_redacted_sentinel
+		{
+			private static readonly UdfValidationRules Options = new UdfValidationRules
+			{
+				Options = new List<UdfDropdownOption>
+				{
+					new UdfDropdownOption { Key = "a", Label = "A" },
+					new UdfDropdownOption { Key = "b", Label = "B" }
+				}
+			};
+
+			[Test]
+			public void should_pass_for_dropdown_and_multiselect()
+			{
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.Dropdown, Options),
+					ProtectedDataEnvelope.RedactionValue).Should().BeEmpty();
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.MultiSelect, Options),
+					ProtectedDataEnvelope.RedactionValue).Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_pass_for_typed_fields()
+			{
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeField(UdfFieldDataType.Boolean), ProtectedDataEnvelope.RedactionValue).Should().BeEmpty();
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeField(UdfFieldDataType.Number), ProtectedDataEnvelope.RedactionValue).Should().BeEmpty();
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeField(UdfFieldDataType.Date), ProtectedDataEnvelope.RedactionValue).Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_satisfy_a_required_field()
+			{
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeField(UdfFieldDataType.Dropdown, required: true),
+					ProtectedDataEnvelope.RedactionValue).Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_still_reject_the_sentinel_mixed_into_a_multiselect()
+			{
+				UdfValidationHelper.ValidateFieldValue(UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.MultiSelect, Options),
+					$"{ProtectedDataEnvelope.RedactionValue},a").Should().NotBeEmpty();
+			}
+		}
+
+		// ── Option lists (definition time) ───────────────────────────────────────
+
+		[TestFixture]
+		public class when_validating_field_options
+		{
+			private static UdfField OptionField(UdfFieldDataType type, params string[] keys) =>
+				UdfTestHelpers.MakeFieldWithRules(type, new UdfValidationRules
+				{
+					Options = keys.Select(k => new UdfDropdownOption { Key = k, Label = k }).ToList()
+				});
+
+			[Test]
+			public void should_pass_for_valid_dropdown_and_multiselect()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[]
+				{
+					OptionField(UdfFieldDataType.Dropdown, "transported", "Transported, ALS"),
+					OptionField(UdfFieldDataType.MultiSelect, "a", "b")
+				}).Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_ignore_non_option_fields()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { UdfTestHelpers.MakeField(UdfFieldDataType.Text) })
+					.Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_fail_when_an_option_field_has_no_options()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { UdfTestHelpers.MakeField(UdfFieldDataType.Dropdown) })
+					.Should().ContainSingle().Which.Should().Contain("at least one option");
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.MultiSelect) })
+					.Should().ContainSingle().Which.Should().Contain("at least one option");
+			}
+
+			[Test]
+			public void should_fail_for_empty_or_duplicate_keys()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.Dropdown, "a", " ") })
+					.Should().ContainSingle().Which.Should().Contain("needs a key");
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.Dropdown, "a", "a") })
+					.Should().ContainSingle().Which.Should().Contain("more than once");
+			}
+
+			[Test]
+			public void should_fail_for_a_comma_in_a_multiselect_key()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.MultiSelect, "a,b") })
+					.Should().ContainSingle().Which.Should().Contain("commas");
+			}
+
+			[Test]
+			public void should_fail_for_the_reserved_sentinel_key()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.Dropdown, ProtectedDataEnvelope.RedactionValue) })
+					.Should().ContainSingle().Which.Should().Contain("reserved");
+			}
+
+			[Test]
+			public void should_require_options_for_a_combo_box()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { UdfTestHelpers.MakeField(UdfFieldDataType.ComboBox) })
+					.Should().ContainSingle().Which.Should().Contain("at least one option");
+			}
+
+			[Test]
+			public void should_allow_a_comma_in_a_combo_box_option()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.ComboBox, "Transported, ALS", "Refused") })
+					.Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_fail_for_combo_box_keys_or_labels_differing_only_by_case()
+			{
+				UdfValidationHelper.ValidateFieldOptions(new[] { OptionField(UdfFieldDataType.ComboBox, "tx", "TX") })
+					.Should().Contain(e => e.Contains("key(s)")).And.Contain(e => e.Contains("label(s)"));
+			}
+
+			[Test]
+			public void should_fail_for_a_blank_or_reserved_combo_box_label()
+			{
+				var field = UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.ComboBox, new UdfValidationRules
+				{
+					Options = new List<UdfDropdownOption>
+					{
+						new UdfDropdownOption { Key = "a", Label = "" },
+						new UdfDropdownOption { Key = "b", Label = ProtectedDataEnvelope.RedactionValue }
+					}
+				});
+
+				UdfValidationHelper.ValidateFieldOptions(new[] { field })
+					.Should().Contain(e => e.Contains("needs a label")).And.Contain(e => e.Contains("reserved"));
+			}
+
+			[Test]
+			public void should_fail_for_a_combo_box_label_that_breaks_the_fields_own_rules()
+			{
+				// The browser enforces maxlength/pattern on the input, so it would block this choice.
+				var field = UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.ComboBox, new UdfValidationRules
+				{
+					MaxLength = 5,
+					Options = new List<UdfDropdownOption> { new UdfDropdownOption { Key = "tx", Label = "Transported" } }
+				});
+
+				UdfValidationHelper.ValidateFieldOptions(new[] { field })
+					.Should().ContainSingle().Which.Should().Contain("'Transported'");
+			}
+		}
+
+		// ── Combo box ────────────────────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_validating_combo_box_fields
+		{
+			private static UdfField Combo(UdfValidationRules rules = null, bool required = false)
+			{
+				rules ??= new UdfValidationRules();
+				rules.Options = new List<UdfDropdownOption>
+				{
+					new UdfDropdownOption { Key = "TX-ALS", Label = "transported als" },
+					new UdfDropdownOption { Key = "refused", Label = "Refused care" }
+				};
+				var field = UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.ComboBox, rules);
+				field.IsRequired = required;
+				return field;
+			}
+
+			[Test]
+			public void should_pass_free_text()
+			{
+				UdfValidationHelper.ValidateFieldValue(Combo(), "Referred to crisis line").Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_pass_an_option_by_key_or_label_in_any_case()
+			{
+				UdfValidationHelper.ValidateFieldValue(Combo(), "TX-ALS").Should().BeEmpty();
+				UdfValidationHelper.ValidateFieldValue(Combo(), "REFUSED CARE").Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_hold_free_text_to_the_length_and_format_rules()
+			{
+				var rules = new UdfValidationRules { MaxLength = 20, Regex = "^[a-z ]+$" };
+				UdfValidationHelper.ValidateFieldValue(Combo(rules), "this free text is far too long").Should().NotBeEmpty();
+				UdfValidationHelper.ValidateFieldValue(Combo(rules), "Capitalised").Should().NotBeEmpty();
+				UdfValidationHelper.ValidateFieldValue(Combo(rules), "left at scene").Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_exempt_a_listed_option_from_the_text_rules()
+			{
+				// "TX-ALS" is the stored key a mobile picker sends; it fails the lowercase pattern.
+				var rules = new UdfValidationRules { Regex = "^[a-z ]+$" };
+				UdfValidationHelper.ValidateFieldValue(Combo(rules), "TX-ALS").Should().BeEmpty();
+			}
+
+			[Test]
+			public void should_fail_when_required_and_empty()
+			{
+				UdfValidationHelper.ValidateFieldValue(Combo(required: true), "").Should().NotBeEmpty();
+			}
+		}
+
+		[TestFixture]
+		public class when_normalizing_field_values
+		{
+			private static readonly UdfField Combo = UdfTestHelpers.MakeFieldWithRules(UdfFieldDataType.ComboBox, new UdfValidationRules
+			{
+				Options = new List<UdfDropdownOption>
+				{
+					new UdfDropdownOption { Key = "tx", Label = "Transported" },
+					new UdfDropdownOption { Key = "refused", Label = "Refused care" }
+				}
+			});
+
+			[Test]
+			public void should_store_an_option_label_as_its_key()
+			{
+				UdfValidationHelper.NormalizeFieldValue(Combo, "Transported").Should().Be("tx");
+				UdfValidationHelper.NormalizeFieldValue(Combo, "  refused CARE ").Should().Be("refused");
+			}
+
+			[Test]
+			public void should_store_an_option_key_as_itself()
+			{
+				UdfValidationHelper.NormalizeFieldValue(Combo, "tx").Should().Be("tx");
+				UdfValidationHelper.NormalizeFieldValue(Combo, "TX").Should().Be("tx");
+			}
+
+			[Test]
+			public void should_store_free_text_trimmed()
+			{
+				UdfValidationHelper.NormalizeFieldValue(Combo, "  Referred to crisis line ").Should().Be("Referred to crisis line");
+			}
+
+			[Test]
+			public void should_leave_protected_values_alone()
+			{
+				UdfValidationHelper.NormalizeFieldValue(Combo, ProtectedDataEnvelope.RedactionValue).Should().Be(ProtectedDataEnvelope.RedactionValue);
+				UdfValidationHelper.NormalizeFieldValue(Combo, ProtectedDataEnvelope.Prefix + "sealed").Should().Be(ProtectedDataEnvelope.Prefix + "sealed");
+			}
+
+			[Test]
+			public void should_leave_other_types_alone()
+			{
+				UdfValidationHelper.NormalizeFieldValue(UdfTestHelpers.MakeField(UdfFieldDataType.Text), "  Transported ").Should().Be("  Transported ");
 			}
 		}
 

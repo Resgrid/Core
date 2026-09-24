@@ -52,14 +52,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer,
 			IPersonnelRolesService personnelRolesService, IProtectedReadService protectedReadService,
-			IRecordsCutoverService recordsCutoverService)
+			IRecordsCutoverService recordsCutoverService, IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_recordsCutoverService = recordsCutoverService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -1567,7 +1569,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var activeDetails = await GetActiveUnitStatusDetailsAsync(customStateId);
 			var state = activeDetails.FirstOrDefault(x => x.CustomStateDetailId == customStatusDetailId);
-			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 			var sb = new StringBuilder();
@@ -1598,7 +1600,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (type != null && type.CustomStatesId.HasValue)
 			{
 				var customStates = await _customStateService.GetCustomSateByIdAsync(type.CustomStatesId.Value);
-				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+				var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 				var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 				var activeDetails = customStates.GetActiveDetails();
@@ -1633,7 +1635,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (stateId > 1)
 			{
 				var customStates = await _customStateService.GetCustomSateByIdAsync(stateId);
-				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+				var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 				var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 				var activeDetails = customStates.GetActiveDetails();
@@ -1901,7 +1903,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return station != null && station.DepartmentId == DepartmentId;
 				case DestinationEntityTypes.Call:
 					var call = await _callsService.GetCallByIdAsync(destinationId, false);
-					return call != null && call.DepartmentId == DepartmentId;
+					// Group-scoped dispatch (off by default): a call outside the caller's area can't be picked by id either.
+					return call != null && call.DepartmentId == DepartmentId
+						&& await _dispatchScopeService.CanUserAccessCallAsync(DepartmentId, UserId, call);
 				case DestinationEntityTypes.Poi:
 					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
 				default:

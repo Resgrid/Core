@@ -36,6 +36,8 @@
 								@Html.HiddenFor(m => m.Shift.ShiftId)
 								@Html.HiddenFor(m => m.Shift.AssignmentType)
 								@Html.HiddenFor(m => m.Shift.ScheduleType)
+								@* Set to true by the page script once the personnel pickers hold the current roster; until then a save leaves personnel alone. *@
+								<input type="hidden" id="PersonnelLoaded" name="PersonnelLoaded" value="false" />
 								<div asp-validation-summary="All" class="text-danger"></div>
 
 								@if (!String.IsNullOrEmpty(Model.Message))
@@ -83,20 +85,32 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">@localizer["NonGroupPersonnelLabel"]</label>
-							<div class="col-sm-10">
-								<select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select>
-								<span class="help-block m-b-none">@localizer["NonGroupPersonnelHelpEdit"]</span>
+							<div class="col-sm-offset-2 col-sm-10">
+								<div class="checkbox">
+									<label><input type="checkbox" asp-for="RequireApproval" /> @localizer["RequireApprovalLabel"]</label>
+								</div>
+								<span class="help-block m-b-none">@localizer["RequireApprovalHelp"]</span>
 							</div>
 						</div>
-						@foreach (var group in Model.Groups)
+						@* Only an Assigned shift has a standing roster; a sign-up shift's people come from its sign-ups. *@
+						@if (Model.Shift.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
 						{
 							<div class="form-group">
-								<label class="col-sm-2 control-label">@group.Name</label>
+								<label class="col-sm-2 control-label">@localizer["NonGroupPersonnelLabel"]</label>
 								<div class="col-sm-10">
-									<select id="groupPersonnel_@group.DepartmentGroupId" name="groupPersonnel_@group.DepartmentGroupId" class="groupPersonnelSelect" style="width: 100%;"></select>
+									<select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select>
+									<span class="help-block m-b-none">@localizer["NonGroupPersonnelHelpEdit"]</span>
 								</div>
 							</div>
+							@foreach (var group in Model.Groups ?? new List<DepartmentGroup>())
+							{
+								<div class="form-group">
+									<label class="col-sm-2 control-label">@group.Name</label>
+									<div class="col-sm-10">
+										<select id="groupPersonnel_@group.DepartmentGroupId" name="groupPersonnel_@group.DepartmentGroupId" class="groupPersonnelSelect" style="width: 100%;"></select>
+									</div>
+								</div>
+							}
 						}
 
 						<div class="form-group">

@@ -77,7 +77,7 @@ namespace Resgrid.Tests.Web.User
 			roles.Setup(x => x.GetRolesForUserAsync(Returning, DepartmentId)).ReturnsAsync(new List<PersonnelRole>());
 
 			_controller = new PersonnelController(_departments.Object, _users.Object, null, null, _profiles.Object, null, _authorization.Object,
-				_limits.Object, roles.Object, groups.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+				_limits.Object, roles.Object, groups.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Mock.Of<IDispatchScopeService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())

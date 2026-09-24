@@ -45,6 +45,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IEncryptionService> _encryptionServiceMock;
 		private Mock<ITwilioVoiceResponseService> _twilioVoiceResponseServiceMock;
 		private Mock<IFeatureToggleService> _featureToggleServiceMock;
+		private Mock<IDispatchScopeService> _dispatchScopeServiceMock;
 
 		protected override void Before_all_tests()
 		{
@@ -68,6 +69,11 @@ namespace Resgrid.Tests.Web.Services
 			_communicationTestServiceMock = new Mock<ICommunicationTestService>();
 			_encryptionServiceMock = new Mock<IEncryptionService>();
 			_featureToggleServiceMock = new Mock<IFeatureToggleService>();
+			// Group-scoped dispatch off unless a test narrows it: every call is in scope.
+			_dispatchScopeServiceMock = new Mock<IDispatchScopeService>();
+			_dispatchScopeServiceMock.Setup(x => x.CanUserAccessCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Call>())).ReturnsAsync(true);
+			_dispatchScopeServiceMock.Setup(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()))
+				.ReturnsAsync((int departmentId, string userId, List<Call> calls) => calls);
 			_twilioVoiceResponseServiceMock = new Mock<ITwilioVoiceResponseService>();
 			_departmentSettingsServiceMock.Setup(x => x.GetTtsLanguageForDepartmentAsync(It.IsAny<int>())).ReturnsAsync((string)null);
 			_twilioVoiceResponseServiceMock
@@ -149,7 +155,8 @@ namespace Resgrid.Tests.Web.Services
 				_encryptionServiceMock.Object,
 				_twilioVoiceResponseServiceMock.Object,
 				_featureToggleServiceMock.Object,
-				Mock.Of<ITextDepartmentSwitchService>());
+				Mock.Of<ITextDepartmentSwitchService>(),
+				_dispatchScopeServiceMock.Object);
 		}
 
 		private static string InvokeBuildDispatchPrompt(Type controllerType, Call call, string address)
@@ -341,6 +348,20 @@ namespace Resgrid.Tests.Web.Services
 			content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.OutboundResponseSelectionIntro));
 			content.Should().Contain(Uri.EscapeDataString("To respond to Station 12, enter 13 and press pound."));
 			content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.RepeatDispatchWithPound));
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_refuse_to_record_a_response_to_a_call_outside_the_users_area()
+		{
+			var call = new Call { CallId = 43, DepartmentId = 7, Number = "43" };
+
+			_callsServiceMock.Setup(x => x.GetCallByIdAsync(43, true)).ReturnsAsync(call);
+			_dispatchScopeServiceMock.Setup(x => x.CanUserAccessCallAsync(7, "user2", call)).ReturnsAsync(false);
+
+			var result = await BuildController().VoiceCallRespond("user2", 43, new VoiceRequest { Digits = "1" });
+
+			((ContentResult)result).Content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.InvalidSelection));
+			_actionLogsServiceMock.Verify(x => x.SetUserActionAsync("user2", It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -599,7 +620,8 @@ namespace Resgrid.Tests.Web.Services
 				IEncryptionService encryptionService,
 				ITwilioVoiceResponseService twilioVoiceResponseService,
 				IFeatureToggleService featureToggleService,
-				ITextDepartmentSwitchService textDepartmentSwitchService)
+				ITextDepartmentSwitchService textDepartmentSwitchService,
+				IDispatchScopeService dispatchScopeService)
 				: base(
 					departmentSettingsService,
 					numbersService,
@@ -623,7 +645,8 @@ namespace Resgrid.Tests.Web.Services
 					twilioVoiceResponseService,
 					featureToggleService,
 					textDepartmentSwitchService,
-					Mock.Of<IDispatchRecommendationService>())
+					Mock.Of<IDispatchRecommendationService>(),
+					dispatchScopeService)
 			{
 			}
 

@@ -1,0 +1,150 @@
+@model Resgrid.Web.Areas.User.Models.ProtectedWorkflows.ProtectedWorkflowsIndexView
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
+@{
+    ViewData["Title"] = "Resgrid | " + pwLocalizer["PageTitle"];
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>@pwLocalizer["PageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Workflows" asp-action="Index" asp-route-area="User">@pwLocalizer["WorkflowsBreadcrumb"]</a></li>
+            <li class="active"><strong>@pwLocalizer["PageTitle"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="Disclosures" class="btn btn-default"><i class="fa fa-list"></i> @pwLocalizer["ViewDisclosures"]</a>
+            <a asp-controller="DataProtection" asp-action="Index" asp-route-area="User" class="btn btn-default"><i class="fa fa-shield"></i> @pwLocalizer["DataProtectionBreadcrumb"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    @Html.AntiForgeryToken()
+    @if (!Model.Settings.Enabled)
+    {
+        <div class="alert alert-warning">@pwLocalizer["DepartmentOffNotice"]</div>
+    }
+    @if (Model.Chain != null)
+    {
+        if (Model.Chain.IsValid)
+        {
+            <div class="alert alert-success small"><i class="fa fa-check"></i> @string.Format(pwLocalizer["ChainValid"].Value, Model.Chain.RecordCount)</div>
+        }
+        else
+        {
+            <div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> @string.Format(pwLocalizer["ChainInvalid"].Value, Model.Chain.FirstInvalidSequence)</div>
+        }
+    }
+
+    <div class="ibox">
+        <div class="ibox-title"><h5>@pwLocalizer["ListHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Releases.Count == 0)
+            {
+                <p class="text-muted">@pwLocalizer["NoReleases"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>@pwLocalizer["ColWorkflow"]</th>
+                                <th>@pwLocalizer["ColStatus"]</th>
+                                <th>@pwLocalizer["ColFields"]</th>
+                                <th>@pwLocalizer["ColHost"]</th>
+                                <th>@pwLocalizer["ColRecipient"]</th>
+                                <th>@pwLocalizer["ColApprovedBy"]</th>
+                                <th>@pwLocalizer["ColExpires"]</th>
+                                <th>@pwLocalizer["ColSends30"]</th>
+                                <th>@pwLocalizer["ColActions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Releases)
+                            {
+                                var release = row.Release;
+                                var state = release.ReleaseState;
+                                var labelClass = state switch
+                                {
+                                    ProtectedReleaseState.Active => row.IsExpiring ? "label-warning" : "label-primary",
+                                    ProtectedReleaseState.PendingApproval => "label-warning",
+                                    ProtectedReleaseState.Suspended => "label-danger",
+                                    ProtectedReleaseState.Draft => "label-info",
+                                    _ => "label-default"
+                                };
+                                <tr>
+                                    <td>
+                                        @if (row.WorkflowExists)
+                                        {
+                                            <a asp-controller="Workflows" asp-action="Edit" asp-route-area="User" asp-route-workflowId="@release.WorkflowId">@row.WorkflowName</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@row.WorkflowName</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="label @labelClass">@pwLocalizer["State_" + state]@(row.IsExpiring ? " · " + pwLocalizer["StateExpiring"].Value : string.Empty)</span>
+                                        @if (!string.IsNullOrWhiteSpace(release.SuspendedReason))
+                                        {
+                                            <br /><small class="text-muted">@pwLocalizer["Reason_" + release.SuspendedReason]</small>
+                                        }
+                                    </td>
+                                    <td class="small">@string.Join(", ", release.GetAllowedFieldIds())</td>
+                                    <td class="small">@release.DestinationHost</td>
+                                    <td class="small">@release.RecipientName</td>
+                                    <td class="small">@row.ApprovedByName @(release.ApprovedOn.HasValue ? $"({release.ApprovedOn:yyyy-MM-dd})" : string.Empty)</td>
+                                    <td class="small">@(release.ExpiresOn?.ToString("yyyy-MM-dd"))</td>
+                                    <td>@row.SendsLast30Days</td>
+                                    <td class="text-nowrap">
+                                        <a class="btn btn-xs btn-default" asp-action="Disclosures" asp-route-workflowId="@release.WorkflowId">@pwLocalizer["ViewDisclosures"]</a>
+                                        @if (state == ProtectedReleaseState.Active || state == ProtectedReleaseState.PendingApproval)
+                                        {
+                                            <button type="button" class="btn btn-xs btn-warning pw-suspend" data-release-id="@release.WorkflowProtectedReleaseId">@pwLocalizer["SuspendButton"]</button>
+                                        }
+                                        @if (state != ProtectedReleaseState.Revoked)
+                                        {
+                                            <button type="button" class="btn btn-xs btn-danger pw-revoke" data-release-id="@release.WorkflowProtectedReleaseId">@pwLocalizer["RevokeButton"]</button>
+                                        }
+                                        @if ((state == ProtectedReleaseState.Active || state == ProtectedReleaseState.Expired) && row.WorkflowExists)
+                                        {
+                                            <a class="btn btn-xs btn-primary" title="@pwLocalizer["RenewFromEditor"]"
+                                               asp-controller="Workflows" asp-action="Edit" asp-route-area="User" asp-route-workflowId="@release.WorkflowId">@pwLocalizer["RenewButton"]</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/app/internal/protectedworkflows/resgrid.protectedworkflows.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("~/Areas/User/Views/ProtectedWorkflows/_Messages.cshtml")
+    <script type="text/javascript">
+        (function () {
+            var pw = resgrid.protectedworkflows;
+            document.querySelectorAll('.pw-suspend').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    if (window.confirm(pw.text('ConfirmSuspend'))) { pw.run('Suspend', { releaseId: button.getAttribute('data-release-id') }); }
+                });
+            });
+            document.querySelectorAll('.pw-revoke').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    if (window.confirm(pw.text('ConfirmRevoke'))) { pw.run('Revoke', { releaseId: button.getAttribute('data-release-id') }); }
+                });
+            });
+        })();
+    </script>
+}

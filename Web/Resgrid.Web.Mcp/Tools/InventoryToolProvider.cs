@@ -66,7 +66,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving inventory");
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Inventory/GetAll?page={args.Page}",
+							$"{V4Routes.Get.InventoryItems}?page={args.Page}",
 							args.AccessToken
 						);
 
@@ -114,7 +114,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving inventory item {ItemId}", args.ItemId);
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Inventory/GetItem?itemId={Uri.EscapeDataString(args.ItemId)}",
+							$"{V4Routes.Get.InventoryItem}?itemId={Uri.EscapeDataString(args.ItemId)}",
 							args.AccessToken
 						);
 
@@ -189,7 +189,7 @@ namespace Resgrid.Web.Mcp.Tools
 						};
 
 						var result = await _apiClient.PutAsync<object, object>(
-							"/api/v4/Inventory/UpdateItem",
+							V4Routes.Put.UpdateInventoryItem,
 							updateData,
 							args.AccessToken
 						);
@@ -238,7 +238,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving low stock items");
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Inventory/GetLowStockItems?page={args.Page}",
+							$"{V4Routes.Get.LowStockItems}?page={args.Page}",
 							args.AccessToken
 						);
 

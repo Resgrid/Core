@@ -35,7 +35,20 @@ namespace Resgrid.Workers.Framework.Logic
 				string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Shift.DepartmentId);
 				var department = await _departmentsService.GetDepartmentByIdAsync(item.Shift.DepartmentId, false);
 
-				if (ConfigHelper.CanTransmit(item.Shift.DepartmentId))
+				if (ConfigHelper.CanTransmit(item.Shift.DepartmentId) && item.UserIds != null)
+				{
+					// The reminder window is the next 24 hours, so name the day rather than saying "tomorrow".
+					if (item.Day != null)
+						text = $"Shift ({item.Shift.Name}) starts {item.Day.Start.ToShortDateString()} at {item.Day.Start.ToShortTimeString()}";
+
+					foreach (var userId in item.UserIds.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase))
+					{
+						UserProfile profile = item.Profiles?.FirstOrDefault(x => String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
+						await _communicationService.SendNotificationAsync(userId, item.Shift.DepartmentId, text, departmentNumber, department,
+							item.Shift.Name, profile);
+					}
+				}
+				else if (ConfigHelper.CanTransmit(item.Shift.DepartmentId))
 				{
 					if (item.Shift.Personnel != null)
 					{

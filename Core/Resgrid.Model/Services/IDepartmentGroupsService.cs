@@ -199,6 +199,12 @@ namespace Resgrid.Model.Services
 		Task<List<DepartmentGroupMember>> GetAllAdminsForGroupAsync(int groupId);
 
 		/// <summary>
+		/// Admins of the group plus the admins of every group above it (parent, grandparent, ...),
+		/// so an area supervisor who administers a parent group is included for the groups beneath it.
+		/// </summary>
+		Task<List<DepartmentGroupMember>> GetAllAdminsForGroupAndAncestorsAsync(int groupId);
+
+		/// <summary>
 		/// Gets the group by dispatch email code asynchronous.
 		/// </summary>
 		/// <param name="code">The code.</param>

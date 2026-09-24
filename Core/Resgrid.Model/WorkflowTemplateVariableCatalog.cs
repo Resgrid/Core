@@ -83,11 +83,20 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("call.form_data", "Call form data JSON", "string", false),
 			new TemplateVariableDescriptor("call.is_deleted", "Whether the call is deleted", "bool", false),
 			new TemplateVariableDescriptor("call.deleted_reason", "Reason for deletion", "string", false),
+			new TemplateVariableDescriptor("call.part2_consent_on_file", "42 CFR Part 2 consent (or another Part 2 basis) is on file for this call", "bool", false),
+		};
+
+		/// <summary>run.* is set for every step of every run.</summary>
+		private static readonly List<TemplateVariableDescriptor> CommonRunVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("run.id", "Workflow run ID", "string", true),
+			new TemplateVariableDescriptor("run.attempt", "Attempt number of this run (1 on the first try)", "int", true),
+			new TemplateVariableDescriptor("run.idempotency_key", "Stable key for this step's delivery: the same on every retry, different for every event. Use it as an Idempotency-Key, a FHIR identifier or HL7 MSH-10", "string", true),
 		};
 
 		private static List<TemplateVariableDescriptor> GetCommon() =>
-			new List<TemplateVariableDescriptor>(CommonDeptVariables.Count + CommonTimestampVariables.Count + CommonUserVariables.Count)
-				.Also(l => { l.AddRange(CommonDeptVariables); l.AddRange(CommonTimestampVariables); l.AddRange(CommonUserVariables); });
+			new List<TemplateVariableDescriptor>(CommonDeptVariables.Count + CommonTimestampVariables.Count + CommonUserVariables.Count + CommonRunVariables.Count)
+				.Also(l => { l.AddRange(CommonDeptVariables); l.AddRange(CommonTimestampVariables); l.AddRange(CommonUserVariables); l.AddRange(CommonRunVariables); });
 
 		// Records (RMS) native lifecycle triggers 100-107 (plan section 5.6). The event, record and record_change
 		// namespaces are the bounded snapshot the DomainEventOutbox dispatched; nothing is rehydrated from current

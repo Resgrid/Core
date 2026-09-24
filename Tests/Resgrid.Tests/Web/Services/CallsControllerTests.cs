@@ -97,7 +97,8 @@ namespace Resgrid.Tests.Web.Services
 				_dataProtectionService.Object,
 				_protectedCallReadService.Object,
 				Mock.Of<IProtectedWriteService>(),
-				Mock.Of<IContactsService>())
+				Mock.Of<IContactsService>(),
+				PassThroughDispatchScope())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -122,6 +123,17 @@ namespace Resgrid.Tests.Web.Services
 			_callsService.Verify(
 				service => service.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()),
 				Times.Never);
+		}
+
+		/// <summary>Group-scoped dispatch off: every call list comes back unchanged.</summary>
+		private static IDispatchScopeService PassThroughDispatchScope()
+		{
+			var scope = new Mock<IDispatchScopeService>();
+			scope.Setup(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()))
+				.ReturnsAsync((int departmentId, string userId, List<Call> calls) => calls);
+			scope.Setup(x => x.CanUserAccessCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Call>()))
+				.ReturnsAsync(true);
+			return scope.Object;
 		}
 
 		[Test]

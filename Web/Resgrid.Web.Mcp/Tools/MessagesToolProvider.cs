@@ -1,5 +1,6 @@
 ﻿﻿﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Resgrid.Web.Mcp.ModelContextProtocol;
@@ -65,7 +66,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving inbox messages");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Inbox/GetInbox",
+							V4Routes.Get.InboxMessages,
 							args.AccessToken
 						);
 
@@ -111,7 +112,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving outbox messages");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Messages/GetSentMessages",
+							V4Routes.Get.OutboxMessages,
 							args.AccessToken
 						);
 
@@ -174,15 +175,18 @@ namespace Resgrid.Web.Mcp.Tools
 
 						_logger.LogInformation("Sending message: {Subject}", args.Subject);
 
+						// v4 SendMessage takes the subject as Title, a message Type (0 = normal message) and typed
+						// recipients, where Type 1 is a person addressed by user ID.
 						var messageData = new
 						{
-							subject = args.Subject,
-							body = args.Body,
-							recipients = args.Recipients
+							Title = args.Subject,
+							Body = args.Body,
+							Type = 0,
+							Recipients = args.Recipients.Select(userId => new { Id = userId, Type = 1 }).ToArray()
 						};
 
 						var result = await _apiClient.PostAsync<object, object>(
-							"/api/v4/Messages/SendMessage",
+							V4Routes.Post.SendMessage,
 							messageData,
 							args.AccessToken
 						);
@@ -230,7 +234,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving message {MessageId}", args.MessageId);
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Messages/GetMessage?messageId={args.MessageId}",
+							$"{V4Routes.Get.Message}?messageId={args.MessageId}",
 							args.AccessToken
 						);
 
@@ -277,7 +281,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Deleting message {MessageId}", args.MessageId);
 
 						var success = await _apiClient.DeleteAsync(
-							$"/api/v4/Messages/DeleteMessage?messageId={args.MessageId}",
+							$"{V4Routes.Delete.Message}?messageId={args.MessageId}",
 							args.AccessToken
 						);
 

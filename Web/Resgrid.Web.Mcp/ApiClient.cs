@@ -40,7 +40,7 @@ namespace Resgrid.Web.Mcp
 					new KeyValuePair<string, string>("scope", "openid profile email")
 				});
 
-				var response = await client.PostAsync("/api/v4/connect/token", formContent, cancellationToken);
+				var response = await client.PostAsync(V4Routes.Post.Token, formContent, cancellationToken);
 
 				if (response.IsSuccessStatusCode)
 				{

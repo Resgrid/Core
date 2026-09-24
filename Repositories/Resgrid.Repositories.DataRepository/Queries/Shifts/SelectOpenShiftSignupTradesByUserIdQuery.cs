@@ -17,10 +17,12 @@ namespace Resgrid.Repositories.DataRepository.Queries.Shifts
 		{
 			var query = _sqlConfiguration.SelectOpenShiftSignupTradesByUserIdQuery
 				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
-					_sqlConfiguration.UnitStatesTable,
+					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%USERID%" },
-					new string[] { "UserId" });
+					new string[] { "UserId" },
+					new string[] { "%SHIFTSIGNUPTRADESTABLE%", "%SHIFTSIGNUPTRADEUSERSTABLE%", "%SHIFTSIGNUPSTABLE%" },
+					new string[] { _sqlConfiguration.ShiftSignupTradesTable, _sqlConfiguration.ShiftSignupTradeUsersTable, _sqlConfiguration.ShiftSignupsTable });
 
 			return query;
 		}

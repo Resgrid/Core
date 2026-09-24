@@ -582,11 +582,8 @@
   <data name="RenderedOutput" xml:space="preserve">
     <value>Відрендерений вивід</value>
   </data>
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value>Усі доступні типи подій-тригерів вже мають налаштований робочий процес. Видаліть наявний робочий процес, щоб звільнити його тип події.</value>
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
-    <value>Кожен тип події може мати лише один робочий процес. Відображаються лише невикористані типи подій.</value>
+    <value>Подія, яка запускає цей робочий процес. Кілька робочих процесів можуть використовувати ту саму подію; кожен виконується окремо.</value>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>Деталі</value>
@@ -618,4 +615,112 @@
   <data name="ExportTemplate" xml:space="preserve"><value>Експорт звіту записів</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>Немає (надіслати лише сформований шаблон)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>Кроки електронної пошти прикріплюють експорт; кроки завантаження файлу надсилають його під назвою файлу замість сформованого тексту. Експорти створюються в розділі Записи &gt; Експорт звітів.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>Облікові дані клієнта OAuth2</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>URL-адреса токена</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>HTTPS-кінцева точка токена, наприклад https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>Ідентифікатор клієнта</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>Секрет клієнта</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>Область дії</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>Для Microsoft Dataverse використовуйте https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>Аудиторія (необов'язково)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>Автентифікація клієнта</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>Секрет клієнта</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>JWT із приватним ключем (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>Алгоритм підпису</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>Resgrid створює та зберігає пару ключів; приватний ключ зашифровано, і він ніколи не відображається. Зареєструйте URL JWKS (або завантажте відкритий ключ) на сервері токенів.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>URL JWKS</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>Поточний ключ {0}, створено {1}. Опубліковано ключів: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>Завантажити відкритий JWK</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>Змінити ключ</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>Створити новий ключ підпису? Поточний ключ залишиться опублікованим протягом перехідного періоду, щоб сервер токенів міг перейти на новий.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>Створено новий ключ підпису. Попередній ключ залишається опублікованим протягом перехідного періоду.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>Пара ключів створюється під час збереження. Після цього тут з'являться URL JWKS і завантаження відкритого ключа.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>Почати із шаблону</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>Шаблони створюють вимкнений робочий процес із заповнювачами призначень. Укажіть URL та облікові дані для кожного кроку, а потім увімкніть його.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>Використати шаблон</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>Захищені робочі процеси</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>Робочий процес створено із шаблону. Він вимкнений: укажіть призначення та облікові дані для кожного кроку, а потім увімкніть його.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>Робочий процес створено із шаблону разом із чернеткою захищеного дозволу. Укажіть URL призначення та облікові дані кроку, виберіть поля для розкриття та надішліть запит на затвердження. Нічого не надсилається, доки дозвіл не затверджено.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>Досягнуто ліміту робочих процесів вашого плану. Оновіть план, щоб додати більше робочих процесів.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Вебхук: новий виклик (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>Надсилає номер, назву, пріоритет і адресу виклику у форматі JSON під час його додавання, з ключем ідемпотентності.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>Ел. пошта: виклик закрито</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>Надсилає короткий підсумок електронною поштою, коли виклик закрито.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter і Observations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>Після закриття виклику надсилає до електронної медичної картки транзакційний Bundle FHIR R4: Encounter (клас FLD, завершений, від диспетчеризації до закриття) для пацієнта з subject_ids.ehr_client_id та одну Observation для кожного дозволеного користувацького поля. Використовує умовне створення та зберігає ідентифікатор нового Encounter як ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>Нотатка про контакт HL7 v2.5.1 MDM^T02</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>Після закриття виклику надсилає документ MDM^T02 «Crisis Field Response» до інтеграційного рушія через HTTPS: PID-3 — ідентифікатор клієнта в медичній картці, MSH-10 — ключ ідемпотентності, один OBX для кожного дозволеного користувацького поля. Успішно лише з підтвердженням AA.</value>
+  </data>
 </root>

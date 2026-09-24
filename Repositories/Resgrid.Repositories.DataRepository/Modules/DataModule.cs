@@ -359,6 +359,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<WorkflowRunRepository>().As<IWorkflowRunRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowRunLogRepository>().As<IWorkflowRunLogRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowDailyUsageRepository>().As<IWorkflowDailyUsageRepository>().InstancePerLifetimeScope();
+			// Protected Workflows (ADP push model): per-workflow releases and the per-department disclosure hash chain.
+			builder.RegisterType<WorkflowProtectedReleaseRepository>().As<IWorkflowProtectedReleaseRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectedWorkflowDisclosureRepository>().As<IProtectedWorkflowDisclosureRepository>().InstancePerLifetimeScope();
 
 			// UDF Repositories
 			builder.RegisterType<UdfDefinitionRepository>().As<IUdfDefinitionRepository>().InstancePerLifetimeScope();

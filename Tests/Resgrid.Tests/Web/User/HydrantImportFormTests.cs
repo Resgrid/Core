@@ -100,6 +100,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddSingleton(Mock.Of<IProtectedReadService>());
 			builder.Services.AddSingleton(Mock.Of<IRecordsCutoverService>());
 			builder.Services.AddSingleton(Mock.Of<IFeatureToggleService>());
+			builder.Services.AddSingleton(Mock.Of<IDispatchScopeService>());
 			builder.Services.AddSingleton(Mock.Of<IDepartmentsService>(d => d.GetDepartmentByIdAsync(77, false) == Task.FromResult(new Department { DepartmentId = 77, TimeZone = "Pacific Standard Time" })));
 			await using var app = builder.Build();
 			var previous = ClaimsAuthorizationHelper._httpContextAccessor;

@@ -50,7 +50,16 @@ namespace Resgrid.Model
 
 		[Display(Name = "URL")]
 		[Description("Web address / URL")]
-		Url = 10
+		Url = 10,
+
+		/// <summary>
+		/// A text entry with the field's options offered as suggestions. An entry matching an option's
+		/// key or label (case-insensitive) is stored as that option's key, exactly like a Dropdown;
+		/// anything else is stored as the typed text and is subject to the text length/format rules.
+		/// </summary>
+		[Display(Name = "Combo Box")]
+		[Description("Suggestion list with free-text entry")]
+		ComboBox = 11
 	}
 }
 

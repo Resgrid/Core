@@ -255,16 +255,16 @@
     <value>Aktivering av detta alternativ skriver ut ett larm på den valda skrivaren när en enhet eller person från denna grupp bifogas (utskickas) till ett larm</value>
   </data>
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>Geofence-station</value>
+    <value>Gruppgräns</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>Geofence-station</value>
+    <value>Gruppgräns</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>Geofence-station</value>
+    <value>Gruppgräns</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>Nedan kan du skapa en geofence för din station. Fält i blå kursiv är obligatoriska. Geofences låter dig skapa en gräns på kartan som är denna stations svarsområde. Detta kommer att användas för att automatiskt dirigera larm och bestämma svar.</value>
+    <value>Nedan kan du rita gränsen för den här gruppen: en stations insatsområde eller en organisationsgrupps serviceområde. Larm som ligger inom den tillhör den här gruppen för gruppbaserad utlarmning och stationsbaserade rekommendationer. Rita den genom att klicka på kartan för att placera den första punkten, fortsätt klicka för att lägga till linjer tills området är slutet och spara sedan.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>Distriktsfärg</value>

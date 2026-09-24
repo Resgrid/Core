@@ -51,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICustomMapService _customMapService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public MappingController(
 			IUsersService usersService,
@@ -71,9 +72,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICustomMapService customMapService,
 			IProtectedReadService protectedReadService,
 			IDepartmentDataProtectionService dataProtectionService,
-			IRecordsHydrantsService hydrantsService
+			IRecordsHydrantsService hydrantsService,
+			IDispatchScopeService dispatchScopeService
 			)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -125,7 +128,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
-			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var calls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			var unitLocations = await _unitsService.GetLatestUnitLocationsAsync(DepartmentId);

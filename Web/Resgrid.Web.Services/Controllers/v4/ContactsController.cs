@@ -39,6 +39,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
 		private readonly IAddressService _addressService;
+		private readonly IUdfRenderingService _udfRenderingService;
 
 		public ContactsController(
 			IContactsService contactsService,
@@ -49,10 +50,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUserDefinedFieldsService userDefinedFieldsService,
 			IProtectedReadService protectedReadService,
 			IProtectedWriteService protectedWriteService,
-			IAddressService addressService
+			IAddressService addressService,
+			IUdfRenderingService udfRenderingService
 			)
 		{
 			_addressService = addressService;
+			_udfRenderingService = udfRenderingService;
 			_protectedReadService = protectedReadService;
 			_protectedWriteService = protectedWriteService;
 			_contactsService = contactsService;
@@ -221,6 +224,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						.Select(v => new ContactCustomFieldData
 						{
 							UdfFieldId = v.UdfFieldId, Label = mobileFields[v.UdfFieldId].Label ?? mobileFields[v.UdfFieldId].Name, Value = v.Value,
+							// The field apps show this; option keys (dropdown, multi-select, combo box) mean nothing to a reader.
+							DisplayValue = _udfRenderingService.FormatDisplayValue(mobileFields[v.UdfFieldId], v.Value),
 							FieldDataType = mobileFields[v.UdfFieldId].FieldDataType, GroupName = mobileFields[v.UdfFieldId].GroupName, SortOrder = mobileFields[v.UdfFieldId].SortOrder
 						})
 						.OrderBy(f => f.GroupName).ThenBy(f => f.SortOrder).ToList();

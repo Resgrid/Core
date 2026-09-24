@@ -167,6 +167,8 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 		public string UdfFieldId { get; set; }
 		public string Label { get; set; }
 		public string Value { get; set; }
+		/// <summary>What to show for Value: option keys resolved to labels, booleans as Yes/No, sealed values as REDACTED.</summary>
+		public string DisplayValue { get; set; }
 		public int FieldDataType { get; set; }
 		public string GroupName { get; set; }
 		public int SortOrder { get; set; }

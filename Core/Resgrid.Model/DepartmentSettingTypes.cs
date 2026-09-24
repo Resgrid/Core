@@ -108,5 +108,11 @@
 
 		/// <summary>ProtoBuf-serialized <see cref="RecordsDisclosureConfig"/>: public-records statutory clock, default redaction profile, release approver. RMS-3.</summary>
 		RecordsDisclosureConfig = 77,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="GroupDispatchScopeConfig"/>: whether dispatch views are scoped to the
+		/// user's group subtree, and which personnel roles stay department-wide while it is on.
+		/// </summary>
+		GroupDispatchScopeConfig = 78,
 	}
 }

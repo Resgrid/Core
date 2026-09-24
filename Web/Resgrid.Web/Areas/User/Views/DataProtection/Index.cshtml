@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.DataProtection.DataProtectionIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtectedWorkflows.ProtectedWorkflows> pwLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["PageTitle"];
 }
@@ -350,6 +351,73 @@
             </div>
         </div>
     }
+
+    @*
+        ADP > Egress: Protected Workflows. Off by default; turning it on or off needs the versioned warning acknowledged
+        and a fresh step-up, both re-checked by the service. Workflows stay REDACTED unless a specific workflow's
+        release is approved in the workflow editor.
+    *@
+    @if (Model.State != DepartmentDataProtectionState.Disabled && Model.ProtectedWorkflows != null)
+    {
+        var pw = Model.ProtectedWorkflows;
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-shield"></i> @pwLocalizer["SettingsHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p>@pwLocalizer["SettingsIntro"]</p>
+                        @if (!pw.AdpActive)
+                        {
+                            <div class="alert alert-info">@pwLocalizer["AdpRequired"]</div>
+                        }
+                        @if (!Model.CanAdministerProtectedWorkflows)
+                        {
+                            <div class="alert alert-info">@pwLocalizer["NotAdmin"]</div>
+                        }
+
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="pwEnabled" @(pw.Enabled ? "checked" : "") @(Model.CanAdministerProtectedWorkflows && (pw.AdpActive || pw.Enabled) ? "" : "disabled") />
+                                @pwLocalizer["EnableLabel"]
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="pwSecondApprover" @(pw.RequireSecondApprover ? "checked" : "") @(Model.CanAdministerProtectedWorkflows ? "" : "disabled") />
+                                @pwLocalizer["SecondApproverLabel"]
+                            </label>
+                        </div>
+                        @if (pw.RequireSecondApprover && pw.RelaxRequestedOn.HasValue)
+                        {
+                            <div class="alert alert-info small">@string.Format(pwLocalizer["SecondApproverRelaxPending"].Value, pw.RelaxRequestedOn.Value.ToString("yyyy-MM-dd"))</div>
+                        }
+
+                        <div class="alert alert-warning">
+                            <strong>@pwLocalizer["WarningTextHeader"]:</strong> @pwLocalizer["WarningText"]
+                        </div>
+                        @if (pw.Enabled && pw.AckOn.HasValue)
+                        {
+                            <p class="small text-muted">@string.Format(pwLocalizer["WarningAcknowledgedOn"].Value, pw.AckOn.Value.ToString("yyyy-MM-dd"), pw.AckVersion)</p>
+                        }
+                        @if (Model.CanAdministerProtectedWorkflows)
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="pwAcknowledge" />
+                                    @string.Format(pwLocalizer["WarningAckLabel"].Value, Resgrid.Model.ProtectedWorkflowDefaults.WarningTextVersion)
+                                </label>
+                            </div>
+                            <p class="text-muted"><small><i class="fa fa-mobile"></i> @pwLocalizer["StepUpNotice"]</small></p>
+                            <button class="btn btn-primary" id="pwSaveSettings" data-version="@Resgrid.Model.ProtectedWorkflowDefaults.WarningTextVersion">@pwLocalizer["SaveSettings"]</button>
+                            <a class="btn btn-default" asp-controller="ProtectedWorkflows" asp-action="Index" asp-route-area="User">@pwLocalizer["ManageLink"]</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts
@@ -376,6 +444,23 @@
         };
     </script>
     <script src="~/js/app/internal/dataprotection/resgrid.dataprotection.wizard.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/protectedworkflows/resgrid.protectedworkflows.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("~/Areas/User/Views/ProtectedWorkflows/_Messages.cshtml")
+    <script type="text/javascript">
+        // Protected Workflows department settings. Enabling needs the warning acknowledged; either direction needs a
+        // fresh step-up, which the service checks and the helper routes through when it is missing.
+        $(function () {
+            $('#pwSaveSettings').on('click', function () {
+                var enabled = $('#pwEnabled').is(':checked');
+                var acknowledged = $('#pwAcknowledge').is(':checked');
+                resgrid.protectedworkflows.run('SaveDepartmentSettings', {
+                    enabled: enabled,
+                    requireSecondApprover: $('#pwSecondApprover').is(':checked'),
+                    acknowledgedVersion: acknowledged ? $(this).data('version') : null
+                });
+            });
+        });
+    </script>
 
     <script type="text/javascript">
         // Verification prompt settings (plan 3.3). The whole mask is posted every time rather than a

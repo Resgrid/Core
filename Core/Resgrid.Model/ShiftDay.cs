@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Resgrid.Model.Helpers;
 
 namespace Resgrid.Model
 {
@@ -25,32 +26,24 @@ namespace Resgrid.Model
 
 		public bool? Processed { get; set; }
 
+		/// <summary>
+		/// Department-local wall-clock start of this day's shift (Day plus the shift's StartTime; midnight when the shift has
+		/// no start time). Needs <see cref="Shift"/> loaded.
+		/// </summary>
 		[NotMapped]
 		public DateTime Start
 		{
-			get
-			{
-				if (Shift != null && !String.IsNullOrWhiteSpace(Shift.StartTime))
-				{
-					return DateTime.Parse($"{Day.Month}/{Day.Day}/{Day.Year} " + Shift.StartTime);
-				}
-
-				return Day;
-			}
+			get { return ShiftTimeWindow.GetWindow(Day, Shift?.StartTime, Shift?.EndTime, Shift?.Hours).Start; }
 		}
 
+		/// <summary>
+		/// Department-local wall-clock end of this day's shift. An end time at or before the start time runs into the next
+		/// day (a 19:00 to 07:00 night shift); a shift with no end time runs for its Hours, or a full day.
+		/// </summary>
 		[NotMapped]
 		public DateTime End
 		{
-			get
-			{
-				if (Shift != null && !String.IsNullOrWhiteSpace(Shift.EndTime))
-				{
-					return DateTime.Parse($"{Day.Month}/{Day.Day}/{Day.Year} " + Shift.EndTime);
-				}
-
-				return DateTime.Parse($"{Day.Month}/{Day.Day}/{Day.Year} 23:59:59");
-			}
+			get { return ShiftTimeWindow.GetWindow(Day, Shift?.StartTime, Shift?.EndTime, Shift?.Hours).End; }
 		}
 
 		[NotMapped]

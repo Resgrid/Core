@@ -32,6 +32,7 @@ namespace Resgrid.Services
 		private static string DispatchRecommendationModeCacheKey = "DSetDispatchRecMode_{0}";
 		private static string DispatchRecommendationAutoDispatchCacheKey = "DSetDispatchRecAuto_{0}";
 		private static string DispatchRecommendationConfigCacheKey = "DSetDispatchRecConfig_{0}";
+		private static string GroupDispatchScopeConfigCacheKey = "DSetGroupDispatchScope_{0}";
 		private static string NewCallFieldPolicyCacheKey = "DSetNewCallFieldPolicy_{0}";
 		private static string UnitStatusThresholdsCacheKey = "DSetUnitStatusThresholds_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
@@ -1156,6 +1157,54 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.DispatchRecommendationConfig, cancellationToken);
 		}
 
+		public async Task<GroupDispatchScopeConfig> GetGroupDispatchScopeConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.GroupDispatchScopeConfig);
+				return s?.Setting ?? string.Empty;
+			}
+
+			// This setting decides who can see which calls, so it rides the shorter security window.
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(GroupDispatchScopeConfigCacheKey, departmentId), getSetting, SecuritySettingCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<GroupDispatchScopeConfig>(value);
+
+					if (config != null)
+					{
+						// ProtoBuf leaves an empty repeated field null.
+						config.DepartmentWideRoleIds = config.DepartmentWideRoleIds ?? new List<int>();
+						return config;
+					}
+				}
+				catch (Exception)
+				{
+					// A corrupt blob falls back to the default (scoping off) -- today's department-wide view.
+				}
+			}
+
+			return new GroupDispatchScopeConfig();
+		}
+
+		public async Task<DepartmentSetting> SetGroupDispatchScopeConfigAsync(int departmentId, GroupDispatchScopeConfig config, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (config == null)
+				config = new GroupDispatchScopeConfig();
+
+			config.DepartmentWideRoleIds = (config.DepartmentWideRoleIds ?? new List<int>()).Where(x => x > 0).Distinct().ToList();
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config),
+				DepartmentSettingTypes.GroupDispatchScopeConfig, cancellationToken);
+		}
+
 		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1408,6 +1457,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DispatchRecommendationConfig:
 					cacheKey = string.Format(DispatchRecommendationConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.GroupDispatchScopeConfig:
+					cacheKey = string.Format(GroupDispatchScopeConfigCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.NewCallFieldPolicy:
 					cacheKey = string.Format(NewCallFieldPolicyCacheKey, departmentId);

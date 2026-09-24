@@ -83,7 +83,7 @@ namespace Resgrid.Tests.Web.User
 			events.Setup(x => x.SendMessage(It.IsAny<AuditEvent>())).Callback<AuditEvent>(a => _audits.Add(a));
 
 			_controller = new PersonnelController(_departments.Object, _users.Object, null, null, _profiles.Object, null, _authorization.Object,
-				_limits.Object, roles.Object, new Mock<IDepartmentGroupsService>().Object, null, events.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+				_limits.Object, roles.Object, new Mock<IDepartmentGroupsService>().Object, null, events.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Mock.Of<IDispatchScopeService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())

@@ -831,6 +831,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 											  'ShiftPersonId', sp.shiftpersonid,
 											  'ShiftId', sp.shiftid,
 											  'UserId', sp.userid,
+											  'GroupId', sp.groupid,
 											  'shift', (SELECT row_to_json(s3) from shifts s3 where s3.shiftid = sp.shiftid)
 										  )
 									  )
@@ -859,13 +860,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 													'SignupTimestamp', ss.signuptimestamp,
 													'ShiftDay', ss.shiftday,
 													'Denied', ss.denied,
+													'ApprovalPending', ss.approvalpending,
+													'AssignedByUserId', ss.assignedbyuserid,
+													'ReviewedByUserId', ss.reviewedbyuserid,
+													'ReviewedOn', ss.reviewedon,
+													'ReviewNote', ss.reviewnote,
 													'shift', (SELECT row_to_json(s5) from shifts s5 where s5.shiftid = ss.shiftid),
 													'departmentgroup', (SELECT row_to_json(dg2) from departmentgroups dg2 WHERE dg2.departmentgroupid = ss.departmentgroupid)
 												)
 											)
 										from shiftsignups ss
 												  where ss.shiftid = sh.shiftid
-							)
+							) signups
 
 					from shifts sh
 				) j";
@@ -910,6 +916,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 											  'ShiftPersonId', sp.shiftpersonid,
 											  'ShiftId', sp.shiftid,
 											  'UserId', sp.userid,
+											  'GroupId', sp.groupid,
 											  'shift', (SELECT row_to_json(s3) from shifts s3 where s3.shiftid = sp.shiftid)
 										  )
 									  )
@@ -938,13 +945,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 													'SignupTimestamp', ss.signuptimestamp,
 													'ShiftDay', ss.shiftday,
 													'Denied', ss.denied,
+													'ApprovalPending', ss.approvalpending,
+													'AssignedByUserId', ss.assignedbyuserid,
+													'ReviewedByUserId', ss.reviewedbyuserid,
+													'ReviewedOn', ss.reviewedon,
+													'ReviewNote', ss.reviewnote,
 													'shift', (SELECT row_to_json(s5) from shifts s5 where s5.shiftid = ss.shiftid),
 													'departmentgroup', (SELECT row_to_json(dg2) from departmentgroups dg2 WHERE dg2.departmentgroupid = ss.departmentgroupid)
 												)
 											)
 										from shiftsignups ss
 												  where ss.shiftid = sh.shiftid
-							)
+							) signups
 
 					from shifts sh
 						where exists (select 1 from shiftdays sd where sd.shiftid = sh.shiftid and sd.day >= %startdate% and sd.day < %enddate%)
@@ -955,11 +967,13 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE%
 					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE% ON %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE%.ShiftSignupTradeId =  %SCHEMA%.%SHIFTSIGNUPTRADESTABLE%.ShiftSignupTradeId
 					WHERE UserId = %USERID%";
+			// Trades the user has been asked to take, whose source shift day is not long over (see SQL Server).
 			SelectOpenShiftSignupTradesByUserIdQuery = @"
-					SELECT *
-					FROM ShiftSignupTrades sst
-					INNER JOIN ShiftSignupTradeUsers sstu ON sstu.ShiftSignupTradeId = sst.ShiftSignupTradeId
-					WHERE sst.UserId = %USERID% AND sst.UserId != %USERID% AND sst.TargetShiftSignupId IS NULL";
+					SELECT sst.*
+					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
+					INNER JOIN %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE% sstu ON sstu.ShiftSignupTradeId = sst.ShiftSignupTradeId
+					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.ShiftSignupId = sst.SourceShiftSignupId
+					WHERE sstu.UserId = %USERID% AND ss.ShiftDay >= (now() at time zone 'utc') - interval '1 day'";
 			SelectShiftAndDaysByDIdQuery = @"
 					SELECT s.*, sd.*
 					FROM %SCHEMA%.%SHIFTSTABLE% s
@@ -1031,6 +1045,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 											  'ShiftPersonId', sp.shiftpersonid,
 											  'ShiftId', sp.shiftid,
 											  'UserId', sp.userid,
+											  'GroupId', sp.groupid,
 											  'shift', (SELECT row_to_json(s3) from shifts s3 where s3.shiftid = sp.shiftid)
 										  )
 									  )
@@ -1059,13 +1074,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 													'SignupTimestamp', ss.signuptimestamp,
 													'ShiftDay', ss.shiftday,
 													'Denied', ss.denied,
+													'ApprovalPending', ss.approvalpending,
+													'AssignedByUserId', ss.assignedbyuserid,
+													'ReviewedByUserId', ss.reviewedbyuserid,
+													'ReviewedOn', ss.reviewedon,
+													'ReviewNote', ss.reviewnote,
 													'shift', (SELECT row_to_json(s5) from shifts s5 where s5.shiftid = ss.shiftid),
 													'departmentgroup', (SELECT row_to_json(dg2) from departmentgroups dg2 WHERE dg2.departmentgroupid = ss.departmentgroupid)
 												)
 											)
 										from shiftsignups ss
 												  where ss.shiftid = sh.shiftid
-							)
+							) signups
 
 						from shifts sh
 					    where sh.shiftid = %SHIFTID%
@@ -1108,6 +1128,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 											  'ShiftPersonId', sp.shiftpersonid,
 											  'ShiftId', sp.shiftid,
 											  'UserId', sp.userid,
+											  'GroupId', sp.groupid,
 											  'shift', (SELECT row_to_json(s3) from shifts s3 where s3.shiftid = sp.shiftid)
 										  )
 									  )
@@ -1136,19 +1157,39 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 													'SignupTimestamp', ss.signuptimestamp,
 													'ShiftDay', ss.shiftday,
 													'Denied', ss.denied,
+													'ApprovalPending', ss.approvalpending,
+													'AssignedByUserId', ss.assignedbyuserid,
+													'ReviewedByUserId', ss.reviewedbyuserid,
+													'ReviewedOn', ss.reviewedon,
+													'ReviewNote', ss.reviewnote,
 													'shift', (SELECT row_to_json(s5) from shifts s5 where s5.shiftid = ss.shiftid),
 													'departmentgroup', (SELECT row_to_json(dg2) from departmentgroups dg2 WHERE dg2.departmentgroupid = ss.departmentgroupid)
 												)
 											)
 										from shiftsignups ss
 												  where ss.shiftid = sh.shiftid
-							)
+							) signups
 
 						from shifts sh
 					    where sh.departmentid = %DID%
 					) j";
 			SelectShiftSignupsByGroupIdAndDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentGroupId = %GROUPID% AND CAST(ShiftDay AS DATE) = CAST(%SHIFTDAYDATE% AS DATE)";
+			// Department trades with source and target signups joined (see SQL Server).
+			SelectShiftSignupTradesByDepartmentIdQuery = @"
+					SELECT sst.*, ss.*, ts.*
+					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
+					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.ShiftSignupId = sst.SourceShiftSignupId
+					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.ShiftId = ss.ShiftId
+					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ts ON ts.ShiftSignupId = sst.TargetShiftSignupId
+					WHERE s.DepartmentId = %DID% AND (ss.ShiftDay >= %STARTDATE% OR ts.ShiftDay >= %STARTDATE%)";
+			SelectShiftSignupsByDepartmentIdAndDateRangeQuery = @"
+					SELECT ss.*
+					FROM %SCHEMA%.%SHIFTSIGNUPSTABLE% ss
+					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.ShiftId = ss.ShiftId
+					WHERE s.DepartmentId = %DID% AND ss.ShiftDay >= %STARTDATE% AND ss.ShiftDay < %ENDDATE%";
+			SelectShiftSignupTradeUserShiftsBySignupIdQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ShiftSignupId = %SHIFTSIGNUPID%";
 
 			#endregion Shifts
 

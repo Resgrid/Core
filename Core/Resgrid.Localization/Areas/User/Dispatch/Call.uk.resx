@@ -866,4 +866,82 @@
   <data name="UnitTimes" xml:space="preserve">
     <value>Час підрозділів</value>
   </data>
+  <data name="Part2ConsentLabel" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="Part2ConsentOnFile" xml:space="preserve">
+    <value>Згоду Part 2 зареєстровано</value>
+  </data>
+  <data name="Part2ConsentHelp" xml:space="preserve">
+    <value>Позначте, коли підрозділ має згоду (або іншу підставу згідно з 42 CFR Part 2) на передавання інформації цього виклику про розлади, пов'язані з уживанням речовин. Захищені робочі процеси надсилають поля Part 2 лише тоді, коли це позначено.</value>
+  </data>
+  <data name="SubjectIdentifiersLabel" xml:space="preserve">
+    <value>Ідентифікатори особи</value>
+  </data>
+  <data name="NearestUnitsLabel" xml:space="preserve">
+    <value>Найближчі підрозділи</value>
+  </data>
+  <data name="NearestUnitsHint" xml:space="preserve">
+    <value>Підрозділом може бути команда, техніка або окрема особа.</value>
+  </data>
+  <data name="NearestUnitsUnit" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="NearestUnitsCrewOnShift" xml:space="preserve">
+    <value>екіпажу на зміні</value>
+  </data>
+  <data name="NearestUnitsStationShift" xml:space="preserve">
+    <value>зміна станції</value>
+  </data>
+  <data name="NearestUnitsNoCrew" xml:space="preserve">
+    <value>Екіпаж не призначено</value>
+  </data>
+  <data name="NearestUnitsScoped" xml:space="preserve">
+    <value>Показано лише підрозділи вашої зони</value>
+  </data>
+  <data name="NearestUnitsStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="NearestUnitsEta" xml:space="preserve">
+    <value>Час прибуття</value>
+  </data>
+  <data name="NearestUnitsPosition" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="NearestUnitsShift" xml:space="preserve">
+    <value>Покриття зміни</value>
+  </data>
+  <data name="NearestUnitsRoleMix" xml:space="preserve">
+    <value>Склад ролей</value>
+  </data>
+  <data name="NearestUnitsInBoundary" xml:space="preserve">
+    <value>У зоні</value>
+  </data>
+  <data name="NearestUnitsInParentBoundary" xml:space="preserve">
+    <value>У зоні обслуговування</value>
+  </data>
+  <data name="NearestUnitsIncidentInside" xml:space="preserve">
+    <value>Інцидент у межах:</value>
+  </data>
+  <data name="NearestUnitsNoBoundary" xml:space="preserve">
+    <value>Інцидент не перебуває в межах жодної групи.</value>
+  </data>
+  <data name="NearestUnitsEstimate" xml:space="preserve">
+    <value>орієнт.</value>
+  </data>
+  <data name="NearestUnitsMinutes" xml:space="preserve">
+    <value>хв</value>
+  </data>
+  <data name="NearestUnitsLive" xml:space="preserve">
+    <value>GPS наживо</value>
+  </data>
+  <data name="NearestUnitsStation" xml:space="preserve">
+    <value>Розташування станції</value>
+  </data>
+  <data name="NearestUnitsStale" xml:space="preserve">
+    <value>застаріла</value>
+  </data>
+  <data name="NearestUnitsNoPosition" xml:space="preserve">
+    <value>Немає позиції</value>
+  </data>
 </root>

@@ -1,0 +1,127 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.OnDutyView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["OnDutyHeader"];
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+@functions {
+	string FormatTime(DateTime value)
+	{
+		return Model.Department != null ? value.FormatForDepartment(Model.Department, true) : value.ToString("g");
+	}
+
+	// Shift colours come from a picker as #rrggbb; anything else is not put into a style attribute.
+	string ColorStyle(string color)
+	{
+		return !String.IsNullOrWhiteSpace(color) && System.Text.RegularExpressions.Regex.IsMatch(color, "^#[0-9a-fA-F]{3,8}$")
+			? "border-left: 6px solid " + color + ";"
+			: "";
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["OnDutyHeader"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["OnDutyHeader"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary top-button" asp-controller="Shifts" asp-action="OnDuty" asp-route-area="User"><i class="fa fa-refresh"></i> @localizer["RefreshButton"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<p class="text-muted">@String.Format(localizer["OnDutyAsOfFormat"].Value, FormatTime(Model.LocalNow))</p>
+
+			@if (!Model.Shifts.Any())
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<p>@localizer["NoShiftsOnDuty"]</p>
+					</div>
+				</div>
+			}
+
+			@foreach (var shift in Model.Shifts)
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title" style="@ColorStyle(shift.Color)">
+						<h5>
+							<a asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@shift.ShiftDayId">@shift.ShiftName</a>
+							<small>@FormatTime(shift.Start) - @FormatTime(shift.End)</small>
+						</h5>
+						<div class="ibox-tools">
+							@if (shift.OpenSlots > 0)
+							{
+								<span class="label label-warning">@String.Format(localizer["OpenSlotsFormat"].Value, shift.OpenSlots)</span>
+							}
+							else
+							{
+								<span class="label label-success">@localizer["FullyStaffed"]</span>
+							}
+						</div>
+					</div>
+					<div class="ibox-content">
+						<div class="row">
+							@foreach (var group in shift.Groups)
+							{
+								<div class="col-sm-6 col-md-4">
+									<h4>@group.GroupName <span class="badge">@group.People.Count</span></h4>
+									@if (!group.People.Any())
+									{
+										<p class="text-muted">@localizer["NobodyOnDuty"]</p>
+									}
+									else
+									{
+										<ul class="list-unstyled">
+											@foreach (var person in group.People)
+											{
+												<li class="m-b-xs">
+													<strong>@person.Name</strong>
+													@if (person.Source == ShiftRosterSources.Trade)
+													{
+														<span class="label label-info">@String.Format(localizer["SourceTradeFormat"].Value, person.TradedFromName)</span>
+													}
+													else if (person.Source == ShiftRosterSources.SupervisorAssigned)
+													{
+														<span class="label label-primary">@localizer["SourceSupervisorAssigned"]</span>
+													}
+													@if (!String.IsNullOrWhiteSpace(person.Roles))
+													{
+														<br /><small class="text-muted">@person.Roles</small>
+													}
+												</li>
+											}
+										</ul>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		// Dispatchers leave this open: keep it current without a manual refresh.
+		setTimeout(function () { window.location.reload(); }, 60000);
+	</script>
+}

@@ -64,7 +64,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving shifts");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Shifts/GetShifts",
+							V4Routes.Get.Shifts,
 							args.AccessToken
 						);
 
@@ -111,7 +111,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving shift details for {ShiftId}", args.ShiftId);
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Shifts/GetShift?shiftId={args.ShiftId}",
+							$"{V4Routes.Get.Shift}?id={args.ShiftId}",
 							args.AccessToken
 						);
 
@@ -141,7 +141,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 			server.AddTool(
 				toolName,
-				"Retrieves the current active shift for the user",
+				"Retrieves today's shift days, including one running right now, with rosters, open needs and the user's own status",
 				schema,
 				async (arguments) =>
 				{
@@ -157,7 +157,7 @@ namespace Resgrid.Web.Mcp.Tools
 						_logger.LogInformation("Retrieving current shift");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Shifts/GetCurrentShift",
+							V4Routes.Get.TodaysShifts,
 							args.AccessToken
 						);
 
@@ -181,10 +181,11 @@ namespace Resgrid.Web.Mcp.Tools
 				new Dictionary<string, SchemaBuilder.PropertySchema>
 				{
 					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
-					["shiftId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Shift ID" },
-					["shiftDayId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Shift day ID" }
+					["shiftId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Shift ID (optional, informational)" },
+					["shiftDayId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Shift day ID" },
+					["groupId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Department group (team) to fill a slot for; required when the shift has groups" }
 				},
-				new[] { "accessToken", "shiftId", "shiftDayId" }
+				new[] { "accessToken", "shiftDayId" }
 			);
 
 			server.AddTool(
@@ -207,26 +208,21 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Access token is required");
 						}
 
-						if (args.ShiftId <= 0)
-						{
-							return CreateErrorResponse("ShiftId must be greater than 0");
-						}
-
 						if (args.ShiftDayId <= 0)
 						{
 							return CreateErrorResponse("ShiftDayId must be greater than 0");
 						}
 
-						_logger.LogInformation("Signing up for shift {ShiftId}", args.ShiftId);
+						_logger.LogInformation("Signing up for shift day {ShiftDayId}", args.ShiftDayId);
 
 						var signupData = new
 						{
-							shiftId = args.ShiftId,
-							shiftDayId = args.ShiftDayId
+							ShiftDayId = args.ShiftDayId,
+							GroupId = args.GroupId
 						};
 
 						var result = await _apiClient.PostAsync<object, object>(
-							"/api/v4/Shifts/SignupForShift",
+							V4Routes.Post.SignupForShiftDay,
 							signupData,
 							args.AccessToken
 						);
@@ -270,6 +266,9 @@ namespace Resgrid.Web.Mcp.Tools
 
 			[JsonProperty("shiftDayId")]
 			public int ShiftDayId { get; set; }
+
+			[JsonProperty("groupId")]
+			public int GroupId { get; set; }
 		}
 	}
 }

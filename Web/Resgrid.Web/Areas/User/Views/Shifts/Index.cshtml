@@ -43,8 +43,16 @@
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 				<a id="yourShiftsButton" class="btn btn-primary top-button" title="@localizer["YourShiftsButton"]" href="@Url.Action("YourShifts", "Shifts", new {area = "User"})">@localizer["YourShiftsButton"]</a>
+				<a id="onDutyButton" class="btn btn-success top-button" title="@localizer["OnDutyButton"]" href="@Url.Action("OnDuty", "Shifts", new {area = "User"})"><i class="fa fa-user-circle"></i> @localizer["OnDutyButton"]</a>
 				@if (Model.IsUserAdminOrGroupAdmin)
 				{
+					<a id="shiftApprovalsButton" class="btn btn-warning top-button" title="@localizer["ApprovalsButton"]" href="@Url.Action("Approvals", "Shifts", new {area = "User"})">
+						@localizer["ApprovalsButton"]
+						@if (Model.PendingApprovalsCount > 0)
+						{
+							<span class="badge">@Model.PendingApprovalsCount</span>
+						}
+					</a>
 					<a id="shiftDayStaffingButton" class="btn btn-info top-button" title="@localizer["ShiftStaffingButton"]" href="@Url.Action("ShiftStaffing", "Shifts", new {area = "User"})">@localizer["ShiftStaffingButton"]</a>
 				}
 			</div>
@@ -54,6 +62,7 @@
 <div class="row">
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
+			<partial name="_ShiftsMessage" />
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
 					<h5>@localizer["RecurringGroupShifts"]</h5>
@@ -85,6 +94,10 @@
 									<tr>
 										<td>
 											@g.Name
+											@if (g.RequireApproval == true)
+											{
+												<span class="label label-warning" title="@localizer["RequireApprovalLabel"]">@localizer["ApprovalRequiredBadge"]</span>
+											}
 										</td>
 										<td>
 											@if (g.AssignmentType == (int)ShiftAssignmentTypes.Assigned)
@@ -140,12 +153,22 @@
 										</td>
 										<td>
 											<a asp-controller="Shifts" asp-action="ShiftCalendar" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-primary'>@localizer["ViewCalendarButton"]</a>
-											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+											@* Department admins, and group admins whose groups make up the whole shift. *@
+											@if (Model.ManageableShiftIds.Contains(g.ShiftId))
 											{
-												<a asp-controller="Shifts" asp-action="EditShiftDetails" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-primary'>@localizer["EditDetailsButton"]</a>
-												<a asp-controller="Shifts" asp-action="EditShiftDays" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-success'>@localizer["EditCalendarButton"]</a>
-												<a asp-controller="Shifts" asp-action="EditShiftGroups" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-info'>@localizer["EditGroupsButton"]</a>
-												<a asp-controller="Shifts" asp-action="DeleteShift" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteShiftWarning"] @g.Name ?" rel="nofollow">@localizer["DeleteButton"]</a>
+												@if (Model.CanUpdateShifts)
+												{
+													<a asp-controller="Shifts" asp-action="EditShiftDetails" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-primary'>@localizer["EditDetailsButton"]</a>
+													<a asp-controller="Shifts" asp-action="EditShiftDays" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-success'>@localizer["EditCalendarButton"]</a>
+													<a asp-controller="Shifts" asp-action="EditShiftGroups" asp-route-area="User" asp-route-shiftId="@g.ShiftId" class='btn btn-xs btn-info'>@localizer["EditGroupsButton"]</a>
+												}
+												@if (Model.CanDeleteShifts)
+												{
+													<form method="post" asp-controller="Shifts" asp-action="DeleteShift" asp-route-area="User" style="display:inline;">
+														<input type="hidden" name="shiftId" value="@g.ShiftId" />
+														<button type="submit" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteShiftWarning"] @g.Name ?">@localizer["DeleteButton"]</button>
+													</form>
+												}
 											}
 										</td>
 									</tr>

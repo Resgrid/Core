@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -37,5 +38,12 @@ namespace Resgrid.Model.Repositories
 		/// <param name="userId">The user identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ShiftSignupTrade&gt;&gt;.</returns>
 		Task<IEnumerable<ShiftSignupTrade>> GetTradeRequestsAndSourceShiftsByUserIdAsync(string userId);
+
+		/// <summary>
+		/// Gets every trade in a department whose source or swap-back shift day is on or after
+		/// <paramref name="startDate"/>, with <see cref="ShiftSignupTrade.SourceShiftSignup"/> and
+		/// <see cref="ShiftSignupTrade.TargetShiftSignup"/> populated. Users are not loaded.
+		/// </summary>
+		Task<IEnumerable<ShiftSignupTrade>> GetShiftSignupTradesByDepartmentIdAsync(int departmentId, DateTime startDate);
 	}
 }

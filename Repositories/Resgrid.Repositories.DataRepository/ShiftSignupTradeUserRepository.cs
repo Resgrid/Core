@@ -46,7 +46,7 @@ namespace Resgrid.Repositories.DataRepository
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction,
 						map: ShiftGroupMapping(dictionary),
-						splitOn: "ShiftGroupRoleId");
+						splitOn: "ShiftSignupTradeUserShiftId");
 
 					if (dictionary.Count > 0)
 						return dictionary.Select(y => y.Value);

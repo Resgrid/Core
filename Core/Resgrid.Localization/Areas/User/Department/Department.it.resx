@@ -1094,4 +1094,22 @@
   <data name="ProfileSaveFailed" xml:space="preserve">
     <value>Impossibile salvare il profilo; controllate i campi evidenziati.</value>
   </data>
+  <data name="GroupDispatchScopeHeader" xml:space="preserve">
+    <value>Invio per gruppo</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledLabel" xml:space="preserve">
+    <value>Limita l'invio alle aree di gruppo</value>
+  </data>
+  <data name="GroupDispatchScopeEnabledHelp" xml:space="preserve">
+    <value>Se attivo, gli elenchi delle chiamate attive, le mappe e il quadro delle unità più vicine di ciascun membro mostrano solo il proprio gruppo e i gruppi sottostanti: le chiamate all'interno dei confini di quei gruppi o inviate a essi, più qualsiasi chiamata che il membro ha segnalato o a cui è stato inviato. Gli amministratori del dipartimento e i ruoli indicati sotto mantengono la vista dell'intero dipartimento. Nulla viene copiato o spostato: passare l'invio a un'altra postazione al cambio turno è solo un cambio di ruolo.</value>
+  </data>
+  <data name="GroupDispatchScopeRolesLabel" xml:space="preserve">
+    <value>Ruoli di invio per l'intero dipartimento</value>
+  </data>
+  <data name="GroupDispatchScopeRolesHelp" xml:space="preserve">
+    <value>I membri con uno di questi ruoli (ad esempio una centrale operativa) vedono tutte le aree quando la limitazione è attiva. Assegna o rimuovi il ruolo per passare l'invio; ha effetto al successivo caricamento della pagina.</value>
+  </data>
+  <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
+    <value>Non sono ancora definiti ruoli del personale.</value>
+  </data>
 </root>

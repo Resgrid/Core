@@ -15,12 +15,42 @@ namespace Resgrid.Services
 		public static object GenerateSampleData(WorkflowTriggerEventType eventType)
 		{
 			var obj = new ScriptObject();
+			WorkflowTemplateFunctions.AddTo(obj);
+			obj["run"] = new ScriptObject
+			{
+				["id"] = "00000000-0000-0000-0000-000000000000",
+				["attempt"] = 1,
+				["idempotency_key"] = "0123456789abcdef0123456789abcdef"
+			};
 			AddSampleDepartment(obj);
 			AddSampleTimestamp(obj);
 			AddSampleUser(obj);
 			AddEventSpecificSamples(obj, eventType);
 			return obj;
 		}
+
+		/// <summary>
+		/// Synthetic subject identifiers for a protected test send: every requested key (or the usual EHR keys when the
+		/// whole field is released) with an obviously fake value. Never real data.
+		/// </summary>
+		public static ScriptObject SampleSubjectIdentifiers(IEnumerable<string> keys)
+		{
+			var ids = new ScriptObject();
+			foreach (var key in keys ?? new[] { "ehr_client_id", "ehr_encounter_id" })
+			{
+				ids[key] = key switch
+				{
+					"ehr_client_id" => "SAMPLE-CLIENT-000123",
+					"ehr_encounter_id" => "SAMPLE-ENCOUNTER-000456",
+					"dynamics_case_id" => "SAMPLE-CAS-0042",
+					_ => "SAMPLE-" + key.ToUpperInvariant()
+				};
+			}
+			return ids;
+		}
+
+		/// <summary>A synthetic value for a released call custom field in a protected test send.</summary>
+		public static string SampleCustomFieldValue(string fieldName) => $"SAMPLE {fieldName} (synthetic test data)";
 
 		private static void AddSampleDepartment(ScriptObject obj)
 		{
@@ -194,6 +224,7 @@ namespace Resgrid.Services
 					c["dispatch_count"] = 3;
 					c["dispatch_on"] = DateTime.Now.AddMinutes(-8);
 					c["form_data"] = "{}";
+					c["part2_consent_on_file"] = false;
 					c["is_deleted"] = false;
 					c["deleted_reason"] = "";
 					obj["call"] = c;

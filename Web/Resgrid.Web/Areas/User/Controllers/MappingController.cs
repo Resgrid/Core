@@ -44,14 +44,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsHydrantsService _hydrantsService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
 			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
-			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService)
+			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService, IDispatchScopeService dispatchScopeService)
 		{
+			_dispatchScopeService = dispatchScopeService;
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
 			_callsService = callsService;
@@ -600,7 +602,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			MapDataJson dataJson = new MapDataJson();
 
-			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var calls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);

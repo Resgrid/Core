@@ -87,6 +87,11 @@
 		}
 	</script>
 	<script>
+		// A group-scoped supervisor may only put their own groups on a shift.
+		var resgridShiftsScope = {
+			allGroups: @(Model.CanManageAllGroups ? "true" : "false"),
+			groupIds: [@String.Join(",", Model.ManageableGroupIds)]
+		};
 		var resgridShiftsI18n = {
 			shiftRoleColumn: '@localizer["ShiftRoleColumn"]',
 			rolesCountColumn: '@localizer["RolesCountColumn"]',

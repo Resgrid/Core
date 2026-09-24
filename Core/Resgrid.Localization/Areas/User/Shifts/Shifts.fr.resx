@@ -569,4 +569,325 @@
   <data name="RoleCountRequired" xml:space="preserve">
     <value>Le nombre de rôles est obligatoire</value>
   </data>
+  <data name="ActiveNowBadge" xml:space="preserve">
+    <value>En cours</value>
+  </data>
+  <data name="AddPersonButton" xml:space="preserve">
+    <value>Ajouter au jour</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Ajouter une personne à ce jour</value>
+  </data>
+  <data name="AddPersonHelp" xml:space="preserve">
+    <value>Place la personne sur ce jour uniquement ; le reste du planning ne change pas.</value>
+  </data>
+  <data name="ApprovalRequiredBadge" xml:space="preserve">
+    <value>Approbation requise</value>
+  </data>
+  <data name="ApprovalRequiredNotice" xml:space="preserve">
+    <value>Les inscriptions et les échanges de ce quart doivent être approuvés par un superviseur.</value>
+  </data>
+  <data name="ApprovalsButton" xml:space="preserve">
+    <value>Approbations</value>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Approbations des quarts</value>
+  </data>
+  <data name="ApprovalsHelp" xml:space="preserve">
+    <value>Inscriptions et échanges en attente d'approbation dans les groupes que vous supervisez. Une demande en attente ne met personne en service tant qu'elle n'est pas approuvée.</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Approuver</value>
+  </data>
+  <data name="DenyButton" xml:space="preserve">
+    <value>Refuser</value>
+  </data>
+  <data name="FinalizeTradeSwapButton" xml:space="preserve">
+    <value>Échanger contre ce jour</value>
+  </data>
+  <data name="FinishTradeCompleteFormat" xml:space="preserve">
+    <value>Cet échange est terminé : {0} travaille ce jour-là.</value>
+  </data>
+  <data name="FinishTradeDenied" xml:space="preserve">
+    <value>Un superviseur a refusé le dernier choix pour cet échange. Vous pouvez choisir une autre offre.</value>
+  </data>
+  <data name="FinishTradePendingFormat" xml:space="preserve">
+    <value>Vous avez choisi {0}. L'échange attend l'approbation d'un superviseur.</value>
+  </data>
+  <data name="FinishTradeSelectOffer" xml:space="preserve">
+    <value>Choisissez une offre à accepter.</value>
+  </data>
+  <data name="FullyStaffed" xml:space="preserve">
+    <value>Effectif complet</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="MyStatusNone" xml:space="preserve">
+    <value>Vous n'êtes pas sur ce jour de quart.</value>
+  </data>
+  <data name="MyStatusOnDuty" xml:space="preserve">
+    <value>Vous êtes sur ce jour de quart.</value>
+  </data>
+  <data name="MyStatusPending" xml:space="preserve">
+    <value>Votre inscription attend l'approbation d'un superviseur.</value>
+  </data>
+  <data name="MyStatusRemoved" xml:space="preserve">
+    <value>Un superviseur n'a pas approuvé votre inscription ou vous a retiré de ce jour.</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Aucun groupe</value>
+  </data>
+  <data name="NoPendingSignups" xml:space="preserve">
+    <value>Aucune inscription n'attend d'approbation.</value>
+  </data>
+  <data name="NoPendingTrades" xml:space="preserve">
+    <value>Aucun échange n'attend d'approbation.</value>
+  </data>
+  <data name="NoPersonnelOnDay" xml:space="preserve">
+    <value>Personne n'est encore sur ce jour.</value>
+  </data>
+  <data name="NoShiftsOnDuty" xml:space="preserve">
+    <value>Aucun quart n'est en cours actuellement.</value>
+  </data>
+  <data name="NobodyOnDuty" xml:space="preserve">
+    <value>Personne en service</value>
+  </data>
+  <data name="OnDutyAsOfFormat" xml:space="preserve">
+    <value>En service au {0}. Cette page se met à jour chaque minute.</value>
+  </data>
+  <data name="OnDutyButton" xml:space="preserve">
+    <value>En service maintenant</value>
+  </data>
+  <data name="OnDutyHeader" xml:space="preserve">
+    <value>En service maintenant</value>
+  </data>
+  <data name="OpenSlotsFormat" xml:space="preserve">
+    <value>Places libres : {0}</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Note (facultatif)</value>
+  </data>
+  <data name="OtherPersonnelHeader" xml:space="preserve">
+    <value>Autre personnel</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>En attente d'approbation</value>
+  </data>
+  <data name="PendingSignupsHeader" xml:space="preserve">
+    <value>Inscriptions en attente d'approbation</value>
+  </data>
+  <data name="PendingTradesHeader" xml:space="preserve">
+    <value>Échanges en attente d'approbation</value>
+  </data>
+  <data name="PersonAddedToDay" xml:space="preserve">
+    <value>La personne a été ajoutée à ce jour.</value>
+  </data>
+  <data name="PersonLabel" xml:space="preserve">
+    <value>Personne</value>
+  </data>
+  <data name="PersonRemovedFromDay" xml:space="preserve">
+    <value>La personne a été retirée de ce jour.</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>Actualiser</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Retirer de ce jour</value>
+  </data>
+  <data name="RemoveFromDayConfirm" xml:space="preserve">
+    <value>Retirer cette personne de ce jour de quart ? Le reste de son planning ne change pas.</value>
+  </data>
+  <data name="RemovedDaysHeader" xml:space="preserve">
+    <value>Jours dont vous avez été retiré</value>
+  </data>
+  <data name="RemovedDaysHelp" xml:space="preserve">
+    <value>Inscriptions qu'un superviseur n'a pas approuvées et jours dont un superviseur vous a retiré.</value>
+  </data>
+  <data name="RequestedByColumn" xml:space="preserve">
+    <value>Demandé par</value>
+  </data>
+  <data name="RequireApprovalHelp" xml:space="preserve">
+    <value>Si coché, une inscription ou un échange ne met personne en service tant qu'un superviseur du groupe ne l'a pas approuvé.</value>
+  </data>
+  <data name="RequireApprovalLabel" xml:space="preserve">
+    <value>Les inscriptions et les échanges nécessitent l'approbation d'un superviseur</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Remarque</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Liste d'effectif</value>
+  </data>
+  <data name="SelectDatesPlaceholder" xml:space="preserve">
+    <value>Sélectionner des dates...</value>
+  </data>
+  <data name="SelectPersonToAdd" xml:space="preserve">
+    <value>Sélectionnez une personne à ajouter.</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Sélectionner des utilisateurs...</value>
+  </data>
+  <data name="ShiftDeleted" xml:space="preserve">
+    <value>Le quart a été supprimé.</value>
+  </data>
+  <data name="ShiftErrorAlreadyOnRoster" xml:space="preserve">
+    <value>Cette personne est déjà sur ce jour dans ce groupe.</value>
+  </data>
+  <data name="ShiftErrorAlreadySignedUp" xml:space="preserve">
+    <value>Vous êtes déjà inscrit à ce jour de quart.</value>
+  </data>
+  <data name="ShiftErrorDayInPast" xml:space="preserve">
+    <value>Ce jour de quart est terminé.</value>
+  </data>
+  <data name="ShiftErrorInvalidGroup" xml:space="preserve">
+    <value>Ce groupe ne fait pas partie de ce quart.</value>
+  </data>
+  <data name="ShiftErrorInvalidOffer" xml:space="preserve">
+    <value>Cette offre n'est plus disponible.</value>
+  </data>
+  <data name="ShiftErrorInvalidRequest" xml:space="preserve">
+    <value>Cette action n'est pas possible pour ce jour de quart.</value>
+  </data>
+  <data name="ShiftErrorNoUsers" xml:space="preserve">
+    <value>Sélectionnez au moins une personne.</value>
+  </data>
+  <data name="ShiftErrorNotAllowed" xml:space="preserve">
+    <value>Vous n'êtes pas autorisé à faire cela.</value>
+  </data>
+  <data name="ShiftErrorNotFound" xml:space="preserve">
+    <value>Le jour de quart, l'inscription ou l'échange est introuvable.</value>
+  </data>
+  <data name="ShiftErrorNotOnShift" xml:space="preserve">
+    <value>Cette personne n'est pas sur ce jour de quart.</value>
+  </data>
+  <data name="ShiftErrorNotPending" xml:space="preserve">
+    <value>Cette demande n'attend plus d'approbation.</value>
+  </data>
+  <data name="ShiftErrorTradeExists" xml:space="preserve">
+    <value>Un échange a déjà été demandé pour ce jour.</value>
+  </data>
+  <data name="ShiftGroupsOutsideScope" xml:space="preserve">
+    <value>Vous ne pouvez utiliser que les groupes que vous gérez, et un quart doit en comporter au moins un.</value>
+  </data>
+  <data name="ShiftOnDateFormat" xml:space="preserve">
+    <value>{0} le {1}</value>
+  </data>
+  <data name="ShiftStaffingAppliesHelp" xml:space="preserve">
+    <value>Toutes les personnes sélectionnées qui ne travaillent pas encore ce jour-là y sont ajoutées.</value>
+  </data>
+  <data name="ShiftStaffingSaved" xml:space="preserve">
+    <value>Effectif enregistré. Personnes ajoutées au jour : {0}.</value>
+  </data>
+  <data name="ShiftStaffingSavedWithErrors" xml:space="preserve">
+    <value>Effectif enregistré. Personnes ajoutées au jour : {0}. Impossible d'ajouter : {1}</value>
+  </data>
+  <data name="ShiftStaffingSelectDay" xml:space="preserve">
+    <value>Vous devez sélectionner un jour de quart valide</value>
+  </data>
+  <data name="ShiftStaffingSelectShift" xml:space="preserve">
+    <value>Vous devez sélectionner un quart</value>
+  </data>
+  <data name="SignupApproved" xml:space="preserve">
+    <value>L'inscription a été approuvée.</value>
+  </data>
+  <data name="SignupDenied" xml:space="preserve">
+    <value>L'inscription a été refusée.</value>
+  </data>
+  <data name="SignupForShift" xml:space="preserve">
+    <value>S'inscrire à ce quart</value>
+  </data>
+  <data name="SignupPendingApprovalMessage" xml:space="preserve">
+    <value>Votre inscription a été reçue et attend l'approbation d'un superviseur. Vous n'êtes pas en service ce jour-là tant qu'elle n'est pas approuvée.</value>
+  </data>
+  <data name="SignupTradeLocked" xml:space="preserve">
+    <value>Ce jour a été échangé, ou un échange attend une approbation, il ne peut donc pas être retiré. Demandez plutôt à un superviseur de modifier le jour.</value>
+  </data>
+  <data name="SignupWithdrawn" xml:space="preserve">
+    <value>Votre inscription a été retirée.</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Affecté</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Inscription</value>
+  </data>
+  <data name="SourceSupervisorAssigned" xml:space="preserve">
+    <value>Ajouté par un superviseur</value>
+  </data>
+  <data name="SourceTradeFormat" xml:space="preserve">
+    <value>Échange (de {0})</value>
+  </data>
+  <data name="StaffingLabel" xml:space="preserve">
+    <value>Effectif</value>
+  </data>
+  <data name="SwapBackFormat" xml:space="preserve">
+    <value>Jour rendu en échange : {0}</value>
+  </data>
+  <data name="TradeAlreadyFilled" xml:space="preserve">
+    <value>Cet échange a déjà été pourvu.</value>
+  </data>
+  <data name="TradeApproved" xml:space="preserve">
+    <value>L'échange a été approuvé.</value>
+  </data>
+  <data name="TradeCompleted" xml:space="preserve">
+    <value>L'échange est terminé.</value>
+  </data>
+  <data name="TradeDeclinedMessage" xml:space="preserve">
+    <value>Vous avez refusé la demande d'échange.</value>
+  </data>
+  <data name="TradeDenied" xml:space="preserve">
+    <value>L'échange a été refusé.</value>
+  </data>
+  <data name="TradeNeedsApprovedSignup" xml:space="preserve">
+    <value>Une inscription doit être approuvée avant de pouvoir être échangée.</value>
+  </data>
+  <data name="TradeRequested" xml:space="preserve">
+    <value>Votre demande d'échange a été envoyée.</value>
+  </data>
+  <data name="TradeRequestedByFormat" xml:space="preserve">
+    <value>Demandé par {0}</value>
+  </data>
+  <data name="TradeResponseSent" xml:space="preserve">
+    <value>Votre réponse a été envoyée.</value>
+  </data>
+  <data name="TradeStatusComplete" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="TradeStatusDenied" xml:space="preserve">
+    <value>Refusé par un superviseur</value>
+  </data>
+  <data name="TradeStatusOpen" xml:space="preserve">
+    <value>Demandé</value>
+  </data>
+  <data name="TradeStatusPendingApproval" xml:space="preserve">
+    <value>En attente de l'approbation d'un superviseur</value>
+  </data>
+  <data name="TradeUsersRequired" xml:space="preserve">
+    <value>Vous devez indiquer les utilisateurs à qui demander un échange. Seuls les utilisateurs qualifiés apparaissent dans la liste.</value>
+  </data>
+  <data name="TradeWaitingForApproval" xml:space="preserve">
+    <value>Votre choix a été enregistré. L'échange attend l'approbation d'un superviseur.</value>
+  </data>
+  <data name="TradedToYouFormat" xml:space="preserve">
+    <value>Échangé avec vous par {0}</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="ViewShiftDayButton" xml:space="preserve">
+    <value>Voir le jour</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Se retirer</value>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Se retirer de ce jour de quart ?</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Vous</value>
+  </data>
+  <data name="YourStatusHeader" xml:space="preserve">
+    <value>Votre statut</value>
+  </data>
 </root>

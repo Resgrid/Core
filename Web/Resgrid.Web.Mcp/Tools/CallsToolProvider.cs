@@ -74,7 +74,7 @@ namespace Resgrid.Web.Mcp.Tools
 						SentrySdk.AddBreadcrumb("Retrieving active calls", "mcp.tool", level: BreadcrumbLevel.Info);
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Calls/GetActiveCalls",
+							V4Routes.Get.ActiveCalls,
 							args.AccessToken
 						);
 
@@ -153,7 +153,7 @@ namespace Resgrid.Web.Mcp.Tools
 							level: BreadcrumbLevel.Info);
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Calls/GetCall?callId={args.CallId}",
+							$"{V4Routes.Get.Call}?callId={args.CallId}",
 							args.AccessToken
 						);
 
@@ -199,14 +199,19 @@ namespace Resgrid.Web.Mcp.Tools
 					["nature"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Nature of the call (e.g., 'Fire', 'Medical Emergency', 'Motor Vehicle Accident')" },
 					["address"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Address or location of the incident" },
 					["notes"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Additional notes or details about the call" },
-					["priority"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Priority level of the call (higher number = higher priority)" }
+					["priority"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Call priority (0=Low, 1=Medium, 2=High, 3=Emergency, or the id of one of the department's call priorities). Defaults to 0." },
+					["groupIds"] = new SchemaBuilder.PropertySchema { Type = "array", Items = "integer", Description = "Group (station) IDs to dispatch" },
+					["unitIds"] = new SchemaBuilder.PropertySchema { Type = "array", Items = "integer", Description = "Unit IDs to dispatch" },
+					["roleIds"] = new SchemaBuilder.PropertySchema { Type = "array", Items = "integer", Description = "Personnel role IDs to dispatch" },
+					["personnelIds"] = new SchemaBuilder.PropertySchema { Type = "array", Items = "string", Description = "Personnel user IDs to dispatch" },
+					["dispatchToEveryone"] = new SchemaBuilder.PropertySchema { Type = "boolean", Description = "Set to true to dispatch (page) every member of the department. Required when no dispatch targets are given." }
 				},
 				new[] { "accessToken", "name", "nature" }
 			);
 
 			server.AddTool(
 				toolName,
-				"Creates a new call (dispatch) in the Resgrid CAD system",
+				"Creates a new call in the Resgrid CAD system and dispatches it. Give the groups, units, roles or personnel to dispatch, or set dispatchToEveryone to page the whole department.",
 				schema,
 				async (arguments) =>
 				{
@@ -229,19 +234,34 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Call nature is required");
 						}
 
+						// v4 SaveCall treats an empty dispatch list as "dispatch everyone", so an omitted target list must
+						// never reach it by accident: paging the whole department has to be asked for explicitly.
+						var dispatchList = BuildDispatchList(args);
+
+						if (dispatchList.Count == 0 && !args.DispatchToEveryone)
+						{
+							return CreateErrorResponse("Specify groupIds, unitIds, roleIds or personnelIds to dispatch, or set dispatchToEveryone to true");
+						}
+
+						if (dispatchList.Count > 0 && args.DispatchToEveryone)
+						{
+							return CreateErrorResponse("Specify either dispatch targets or dispatchToEveryone, not both");
+						}
+
 						_logger.LogInformation("Creating new call: {CallName}", args.Name);
 
 						var callData = new
 						{
-							name = args.Name,
-							nature = args.Nature,
-							address = args.Address,
-							notes = args.Notes,
-							priority = args.Priority
+							Name = args.Name,
+							Nature = args.Nature,
+							Address = args.Address,
+							Note = args.Notes,
+							Priority = args.Priority,
+							DispatchList = args.DispatchToEveryone ? "0" : string.Join("|", dispatchList)
 						};
 
 						var result = await _apiClient.PostAsync<object, object>(
-							"/api/v4/Calls/NewCall",
+							V4Routes.Post.SaveCall,
 							callData,
 							args.AccessToken
 						);
@@ -272,7 +292,8 @@ namespace Resgrid.Web.Mcp.Tools
 			{
 				["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
 				["callId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "The unique identifier of the call to close" },
-				["note"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional closing note or comment" }
+				["note"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional closing note or comment" },
+				["closeType"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "How the call was closed: 1=Closed (default), 2=Cancelled, 3=Unfounded, 4=Founded, 5=Minor" }
 			},
 			new[] { "accessToken", "callId" }
 		);
@@ -297,16 +318,25 @@ namespace Resgrid.Web.Mcp.Tools
 							return CreateErrorResponse("Valid call ID is required");
 						}
 
+						var closeType = args.CloseType ?? 1;
+
+						if (closeType < 1 || closeType > 5)
+						{
+							return CreateErrorResponse("closeType must be between 1 and 5 (1=Closed, 2=Cancelled, 3=Unfounded, 4=Founded, 5=Minor)");
+						}
+
 						_logger.LogInformation("Closing call {CallId}", args.CallId);
 
+						// CloseCall writes Type straight into Call.State, where 0 is Active: always send a closed state.
 						var closeData = new
 						{
-							callId = args.CallId,
-							note = args.Note
+							Id = args.CallId.ToString(),
+							Notes = args.Note,
+							Type = closeType
 						};
 
 						var result = await _apiClient.PutAsync<object, object>(
-							"/api/v4/Calls/CloseCall",
+							V4Routes.Put.CloseCall,
 							closeData,
 							args.AccessToken
 						);
@@ -329,6 +359,29 @@ namespace Resgrid.Web.Mcp.Tools
 
 		private static object CreateErrorResponse(string errorMessage) =>
 			new { success = false, error = errorMessage };
+
+		/// <summary>
+		/// Builds v4 dispatch list entries: "P:" user, "G:" group, "R:" role and "U:" unit, joined with "|".
+		/// </summary>
+		private static List<string> BuildDispatchList(CreateCallArgs args)
+		{
+			var entries = new List<string>();
+
+			foreach (var userId in args.PersonnelIds ?? Array.Empty<string>())
+				if (!string.IsNullOrWhiteSpace(userId))
+					entries.Add($"P:{userId.Trim()}");
+
+			foreach (var groupId in args.GroupIds ?? Array.Empty<int>())
+				entries.Add($"G:{groupId}");
+
+			foreach (var roleId in args.RoleIds ?? Array.Empty<int>())
+				entries.Add($"R:{roleId}");
+
+			foreach (var unitId in args.UnitIds ?? Array.Empty<int>())
+				entries.Add($"U:{unitId}");
+
+			return entries;
+		}
 
 		private sealed class TokenArgs
 		{
@@ -364,6 +417,21 @@ namespace Resgrid.Web.Mcp.Tools
 
 			[JsonProperty("priority")]
 			public int Priority { get; set; }
+
+			[JsonProperty("groupIds")]
+			public int[] GroupIds { get; set; }
+
+			[JsonProperty("unitIds")]
+			public int[] UnitIds { get; set; }
+
+			[JsonProperty("roleIds")]
+			public int[] RoleIds { get; set; }
+
+			[JsonProperty("personnelIds")]
+			public string[] PersonnelIds { get; set; }
+
+			[JsonProperty("dispatchToEveryone")]
+			public bool DispatchToEveryone { get; set; }
 		}
 
 		private sealed class CloseCallArgs
@@ -376,6 +444,9 @@ namespace Resgrid.Web.Mcp.Tools
 
 			[JsonProperty("note")]
 			public string Note { get; set; }
+
+			[JsonProperty("closeType")]
+			public int? CloseType { get; set; }
 		}
 	}
 }

@@ -255,16 +255,16 @@
     <value>Włączenie tej opcji spowoduje wydrukowanie wezwania na wybranej drukarce, gdy jednostka lub osoba z tej grupy zostanie przydzielona (zadysponowana) do wezwania</value>
   </data>
   <data name="GeofencePageTitle" xml:space="preserve">
-    <value>Geofence Stacji</value>
+    <value>Granica grupy</value>
   </data>
   <data name="GeofenceHeading" xml:space="preserve">
-    <value>Geofence Stacji</value>
+    <value>Granica grupy</value>
   </data>
   <data name="GeofenceStationBreadcrumb" xml:space="preserve">
-    <value>Geofence Stacji</value>
+    <value>Granica grupy</value>
   </data>
   <data name="GeofenceDescription" xml:space="preserve">
-    <value>Poniżej możesz utworzyć geofence dla swojej stacji. Pola w niebieskiej kursywie są wymagane. Geofence umożliwia utworzenie granicy na mapie, która jest obszarem reagowania tej stacji.</value>
+    <value>Poniżej możesz narysować granicę tej grupy: obszar działania stacji lub obszar obsługi grupy organizacyjnej. Zgłoszenia położone wewnątrz niej należą do tej grupy na potrzeby dysponowania według grup i rekomendacji opartych na stacjach. Aby ją narysować, kliknij mapę, aby umieścić pierwszy punkt, klikaj dalej, dodając linie, aż obszar zostanie zamknięty, a następnie zapisz.</value>
   </data>
   <data name="DistrictColor" xml:space="preserve">
     <value>Kolor Dystryktu</value>

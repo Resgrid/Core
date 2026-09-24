@@ -1,0 +1,862 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Geschützte Workflows</value>
+  </data>
+  <data name="ListHeader" xml:space="preserve">
+    <value>Geschützte Workflow-Freigaben</value>
+  </data>
+  <data name="DisclosuresTitle" xml:space="preserve">
+    <value>Offenlegungsprotokoll für geschützte Workflows</value>
+  </data>
+  <data name="WorkflowsBreadcrumb" xml:space="preserve">
+    <value>Workflows</value>
+  </data>
+  <data name="DataProtectionBreadcrumb" xml:space="preserve">
+    <value>Datenschutz</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Geschützte Workflows</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Workflows erhalten standardmäßig REDACTED-Werte. Mit geschützten Workflows kann ein Administrator einen bestimmten Workflow dafür freigeben, ausgewählte geschützte Felder an ein einziges fixiertes HTTPS-Ziel zu senden. Alle anderen Workflows erhalten weiterhin REDACTED-Werte.</value>
+  </data>
+  <data name="EnableLabel" xml:space="preserve">
+    <value>Geschützte Workflows aktivieren</value>
+  </data>
+  <data name="SecondApproverLabel" xml:space="preserve">
+    <value>Genehmigung geschützter Workflows durch einen zweiten Administrator verlangen</value>
+  </data>
+  <data name="WarningTextHeader" xml:space="preserve">
+    <value>Warnung</value>
+  </data>
+  <data name="WarningText" xml:space="preserve">
+    <value>Geschützte Workflows senden entschlüsselte geschützte Daten, die geschützte Gesundheitsinformationen enthalten können, an von Ihnen konfigurierte externe Systeme. Resgrid kann nicht kontrollieren, wie das empfangende System diese Daten speichert oder verwendet. Aktivieren Sie einen Workflow nur, wenn der Empfänger Ihre Organisation oder eine Partei ist, die durch eine Geschäftspartnervereinbarung mit Ihrer Organisation abgedeckt ist, und geben Sie nur die Felder frei, die der Empfänger benötigt.</value>
+  </data>
+  <data name="WarningAckLabel" xml:space="preserve">
+    <value>Ich habe diese Warnung gelesen und nehme sie zur Kenntnis (Version {0}).</value>
+  </data>
+  <data name="WarningAcknowledgedOn" xml:space="preserve">
+    <value>Warnung am {0} zur Kenntnis genommen (Version {1}).</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Einstellungen für geschützte Workflows speichern</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Einstellungen für geschützte Workflows gespeichert.</value>
+  </data>
+  <data name="AdpRequired" xml:space="preserve">
+    <value>Geschützte Workflows sind nur verfügbar, solange der erweiterte Datenschutz für Ihre Abteilung aktiviert ist.</value>
+  </data>
+  <data name="NotAdmin" xml:space="preserve">
+    <value>Nur Administratoren mit der Berechtigung „Weitergabe geschützter Daten konfigurieren“ können diese Einstellungen ändern.</value>
+  </data>
+  <data name="ManageLink" xml:space="preserve">
+    <value>Geschützte Workflows verwalten</value>
+  </data>
+  <data name="StepUpNotice" xml:space="preserve">
+    <value>Das Ein- oder Ausschalten dieser Einstellung sowie das Genehmigen oder Verlängern einer Freigabe erfordert eine frische Multi-Faktor-Bestätigung.</value>
+  </data>
+  <data name="StepUpRequiredPrompt" xml:space="preserve">
+    <value>Für diese Aktion ist eine frische Multi-Faktor-Bestätigung erforderlich. Sie werden zur Bestätigung weitergeleitet und anschließend auf diese Seite zurückgebracht; wiederholen Sie die Aktion danach.</value>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>Geschützte Freigabe</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Senden Sie ausgewählte geschützte Felder aus diesem Workflow an sein fixiertes HTTPS-Ziel. Nur die von Ihnen angehakten Felder werden entschlüsselt; alle anderen geschützten Werte bleiben REDACTED.</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="State_None" xml:space="preserve">
+    <value>Nicht geschützt</value>
+  </data>
+  <data name="State_Draft" xml:space="preserve">
+    <value>Entwurf</value>
+  </data>
+  <data name="State_PendingApproval" xml:space="preserve">
+    <value>Genehmigung ausstehend</value>
+  </data>
+  <data name="State_Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="State_Suspended" xml:space="preserve">
+    <value>Ausgesetzt</value>
+  </data>
+  <data name="State_Expired" xml:space="preserve">
+    <value>Abgelaufen</value>
+  </data>
+  <data name="State_Revoked" xml:space="preserve">
+    <value>Widerrufen</value>
+  </data>
+  <data name="StateExpiring" xml:space="preserve">
+    <value>Läuft bald ab</value>
+  </data>
+  <data name="RenewalPending" xml:space="preserve">
+    <value>Verlängerung wartet auf Genehmigung</value>
+  </data>
+  <data name="ProtectedBadge" xml:space="preserve">
+    <value>Geschützt: {0}</value>
+  </data>
+  <data name="Reason_config_changed" xml:space="preserve">
+    <value>Konfiguration geändert</value>
+  </data>
+  <data name="Reason_department_disabled" xml:space="preserve">
+    <value>Geschützte Workflows ausgeschaltet</value>
+  </data>
+  <data name="Reason_adp_not_enabled" xml:space="preserve">
+    <value>Erweiterter Datenschutz nicht aktiviert</value>
+  </data>
+  <data name="Reason_credential_changed" xml:space="preserve">
+    <value>Zugangsdaten geändert</value>
+  </data>
+  <data name="Reason_admin_suspended" xml:space="preserve">
+    <value>von einem Administrator ausgesetzt</value>
+  </data>
+  <data name="Reason_admin_revoked" xml:space="preserve">
+    <value>von einem Administrator widerrufen</value>
+  </data>
+  <data name="Reason_adp_offboarding" xml:space="preserve">
+    <value>Deaktivierung des erweiterten Datenschutzes</value>
+  </data>
+  <data name="Reason_workflow_deleted" xml:space="preserve">
+    <value>Workflow gelöscht</value>
+  </data>
+  <data name="FieldsHeader" xml:space="preserve">
+    <value>Freizugebende Felder</value>
+  </data>
+  <data name="FieldsHelp" xml:space="preserve">
+    <value>Standardmäßig ist nichts ausgewählt. Verweisen Sie in der Ausgabevorlage mit protected.call.&lt;name&gt; auf freigegebene Felder; call.*-Werte bleiben REDACTED.</value>
+  </data>
+  <data name="FormParsedHelp" xml:space="preserve">
+    <value>Formulardaten sind zusätzlich in geparster Form als protected.call.form verfügbar.</value>
+  </data>
+  <data name="Field_calls_name" xml:space="preserve">
+    <value>Einsatzname</value>
+  </data>
+  <data name="Field_calls_type" xml:space="preserve">
+    <value>Einsatztyp</value>
+  </data>
+  <data name="Field_calls_natureofcall" xml:space="preserve">
+    <value>Einsatzart</value>
+  </data>
+  <data name="Field_calls_notes" xml:space="preserve">
+    <value>Einsatznotizen</value>
+  </data>
+  <data name="Field_calls_completednotes" xml:space="preserve">
+    <value>Abschlussnotizen</value>
+  </data>
+  <data name="Field_calls_address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Field_calls_geolocationdata" xml:space="preserve">
+    <value>Geolokalisierung</value>
+  </data>
+  <data name="Field_calls_w3w" xml:space="preserve">
+    <value>what3words-Adresse</value>
+  </data>
+  <data name="Field_calls_contactname" xml:space="preserve">
+    <value>Kontaktname</value>
+  </data>
+  <data name="Field_calls_contactnumber" xml:space="preserve">
+    <value>Kontaktnummer</value>
+  </data>
+  <data name="Field_calls_sourceidentifier" xml:space="preserve">
+    <value>Quellkennung</value>
+  </data>
+  <data name="Field_calls_incidentnumber" xml:space="preserve">
+    <value>Einsatznummer</value>
+  </data>
+  <data name="Field_calls_externalidentifier" xml:space="preserve">
+    <value>Externe Kennung</value>
+  </data>
+  <data name="Field_calls_referencenumber" xml:space="preserve">
+    <value>Referenznummer</value>
+  </data>
+  <data name="Field_calls_callformdata" xml:space="preserve">
+    <value>Einsatzformulardaten</value>
+  </data>
+  <data name="Field_calls_deletedreason" xml:space="preserve">
+    <value>Löschgrund</value>
+  </data>
+  <data name="DestinationHeader" xml:space="preserve">
+    <value>Ziel</value>
+  </data>
+  <data name="DestinationHostLabel" xml:space="preserve">
+    <value>Fixierter Host</value>
+  </data>
+  <data name="CredentialLabel" xml:space="preserve">
+    <value>Fixierte Zugangsdaten</value>
+  </data>
+  <data name="TokenHostLabel" xml:space="preserve">
+    <value>Fixierter Token-Host</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Noch kein gültiges Ziel</value>
+  </data>
+  <data name="ValidationHeader" xml:space="preserve">
+    <value>Dieser Workflow kann noch nicht geschützt werden</value>
+  </data>
+  <data name="ValidationError_no_steps" xml:space="preserve">
+    <value>Fügen Sie mindestens einen aktivierten Schritt hinzu.</value>
+  </data>
+  <data name="ValidationError_action_not_allowed" xml:space="preserve">
+    <value>Geschützte Workflows dürfen nur API-Schritte mit POST oder PUT enthalten.</value>
+  </data>
+  <data name="ValidationError_credential_required" xml:space="preserve">
+    <value>Jeder Schritt benötigt Zugangsdaten.</value>
+  </data>
+  <data name="ValidationError_credential_mismatch" xml:space="preserve">
+    <value>Alle Schritte müssen dieselben Zugangsdaten verwenden.</value>
+  </data>
+  <data name="ValidationError_credential_not_allowed" xml:space="preserve">
+    <value>Verwenden Sie Zugangsdaten vom Typ Bearer-Token, API-Schlüssel oder OAuth2-Clientanmeldeinformationen.</value>
+  </data>
+  <data name="ValidationError_credential_missing" xml:space="preserve">
+    <value>Ein Schritt verwendet Zugangsdaten, die nicht mehr existieren.</value>
+  </data>
+  <data name="ValidationError_url_required" xml:space="preserve">
+    <value>Jeder Schritt benötigt eine URL.</value>
+  </data>
+  <data name="ValidationError_scheme_not_https" xml:space="preserve">
+    <value>Die URL jedes Schritts muss HTTPS verwenden.</value>
+  </data>
+  <data name="ValidationError_host_not_literal" xml:space="preserve">
+    <value>Der Host der URL muss ausgeschrieben sein und darf nicht aus einer Vorlage erzeugt werden.</value>
+  </data>
+  <data name="ValidationError_host_mismatch" xml:space="preserve">
+    <value>Alle Schritte müssen an denselben Host senden.</value>
+  </data>
+  <data name="ValidationError_protected_in_action_config" xml:space="preserve">
+    <value>protected.*-Werte dürfen nicht in einer URL oder einem Header verwendet werden.</value>
+  </data>
+  <data name="ValidationError_protected_in_condition" xml:space="preserve">
+    <value>protected.*-Werte dürfen nicht in einer Schrittbedingung verwendet werden.</value>
+  </data>
+  <data name="ValidationError_trigger_not_supported" xml:space="preserve">
+    <value>In dieser Version können nur Einsatz-Auslöser geschützt werden.</value>
+  </data>
+  <data name="ValidationError_token_url_invalid" xml:space="preserve">
+    <value>Die OAuth2-Zugangsdaten benötigen eine HTTPS-Token-URL.</value>
+  </data>
+  <data name="ValidationError_protected_reference_without_release" xml:space="preserve">
+    <value>Dieser Workflow hat keine geschützte Freigabe, daher würden protected.*-Werte leer ausgegeben. Richten Sie zuerst eine geschützte Freigabe ein.</value>
+  </data>
+  <data name="RecipientHeader" xml:space="preserve">
+    <value>Empfänger</value>
+  </data>
+  <data name="RecipientTypeLabel" xml:space="preserve">
+    <value>Empfängertyp</value>
+  </data>
+  <data name="RecipientType_CoveredEntity" xml:space="preserve">
+    <value>Erfasste Einrichtung</value>
+  </data>
+  <data name="RecipientType_BusinessAssociate" xml:space="preserve">
+    <value>Geschäftspartner</value>
+  </data>
+  <data name="RecipientNameLabel" xml:space="preserve">
+    <value>Name des Empfängers</value>
+  </data>
+  <data name="RecipientNamePlaceholder" xml:space="preserve">
+    <value>Zum Beispiel: DMH des Landkreises, Fallverwaltung in Dynamics 365</value>
+  </data>
+  <data name="PurposeLabel" xml:space="preserve">
+    <value>Zweck</value>
+  </data>
+  <data name="PurposePlaceholder" xml:space="preserve">
+    <value>Warum der Empfänger diese Felder benötigt</value>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Ich versichere, dass der Empfänger unsere Organisation oder eine Partei ist, die durch eine Geschäftspartnervereinbarung mit unserer Organisation abgedeckt ist, und dass er nur die oben ausgewählten Felder benötigt (Warnungsversion {0}).</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Entwurf speichern</value>
+  </data>
+  <data name="ApproveAndActivate" xml:space="preserve">
+    <value>Genehmigen und aktivieren</value>
+  </data>
+  <data name="RequestApproval" xml:space="preserve">
+    <value>Genehmigung anfordern</value>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Genehmigen</value>
+  </data>
+  <data name="RenewButton" xml:space="preserve">
+    <value>Verlängern</value>
+  </data>
+  <data name="SuspendButton" xml:space="preserve">
+    <value>Aussetzen</value>
+  </data>
+  <data name="RevokeButton" xml:space="preserve">
+    <value>Widerrufen</value>
+  </data>
+  <data name="DiscardDraft" xml:space="preserve">
+    <value>Entwurf verwerfen</value>
+  </data>
+  <data name="SendTest" xml:space="preserve">
+    <value>Test mit Beispieldaten senden</value>
+  </data>
+  <data name="TestSucceeded" xml:space="preserve">
+    <value>Test mit synthetischen Daten gesendet. Jeder Schritt hat einen Erfolgsstatus zurückgegeben.</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Der Test war nicht vollständig erfolgreich. Prüfen Sie die Schrittergebnisse unten und das Offenlegungsprotokoll.</value>
+  </data>
+  <data name="TestStepResult" xml:space="preserve">
+    <value>Schritt {0}: {1} (HTTP {2})</value>
+  </data>
+  <data name="ConfirmRevoke" xml:space="preserve">
+    <value>Diese Freigabe widerrufen? Dies kann nicht rückgängig gemacht werden. Der Workflow wird erst wieder ausgeführt, wenn eine neue Freigabe genehmigt wurde.</value>
+  </data>
+  <data name="ConfirmSuspend" xml:space="preserve">
+    <value>Diese Freigabe aussetzen? Der Workflow wird erst wieder ausgeführt, wenn ein Administrator sie erneut genehmigt.</value>
+  </data>
+  <data name="ConfirmDiscard" xml:space="preserve">
+    <value>Diesen Entwurf verwerfen? Der Workflow wird dann wieder mit REDACTED-Werten ausgeführt.</value>
+  </data>
+  <data name="FingerprintChanged" xml:space="preserve">
+    <value>Dieser Workflow wurde seit seiner Genehmigung geändert. Er sendet nichts, bis ein Administrator die aktuelle Konfiguration genehmigt.</value>
+  </data>
+  <data name="RequestedOn" xml:space="preserve">
+    <value>Angefordert am {0}</value>
+  </data>
+  <data name="ApprovedOn" xml:space="preserve">
+    <value>Genehmigt am {0}</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Läuft ab am {0}</value>
+  </data>
+  <data name="AwaitingSecondApprover" xml:space="preserve">
+    <value>Warten auf einen zweiten Administrator. Die Person, die die Freigabe angefordert hat, kann sie nicht genehmigen.</value>
+  </data>
+  <data name="ReadOnlyNotice" xml:space="preserve">
+    <value>Nur Administratoren mit der Berechtigung „Weitergabe geschützter Daten konfigurieren“ können die geschützte Freigabe ändern. Das Bearbeiten dieses Workflows setzt eine genehmigte Freigabe aus, bis sie erneut genehmigt wird.</value>
+  </data>
+  <data name="SkippedNotice" xml:space="preserve">
+    <value>Solange dieser Workflow eine geschützte Freigabe hat, die nicht aktiv ist, werden seine Ausführungen übersprungen. Er wird niemals mit REDACTED-Werten anstelle der geschützten Werte ausgeführt.</value>
+  </data>
+  <data name="DepartmentOffNotice" xml:space="preserve">
+    <value>Geschützte Workflows sind für Ihre Abteilung ausgeschaltet. Schalten Sie sie unter Datenschutz ein, um eine geschützte Freigabe zu konfigurieren.</value>
+  </data>
+  <data name="Err_protected_access_denied" xml:space="preserve">
+    <value>Sie sind nicht berechtigt, diese Aktion auszuführen.</value>
+  </data>
+  <data name="Err_step_up_required" xml:space="preserve">
+    <value>Eine frische Multi-Faktor-Bestätigung ist erforderlich.</value>
+  </data>
+  <data name="Err_interactive_session_required" xml:space="preserve">
+    <value>Diese Aktion muss von einem angemeldeten Administrator ausgeführt werden, nicht über einen API-Schlüssel oder ein Dienstkonto.</value>
+  </data>
+  <data name="Err_attestation_required" xml:space="preserve">
+    <value>Setzen Sie das Häkchen bei der Versicherung, um fortzufahren.</value>
+  </data>
+  <data name="Err_ack_version_mismatch" xml:space="preserve">
+    <value>Der Warnungstext hat sich geändert. Laden Sie die Seite neu, lesen Sie die Warnung und nehmen Sie sie erneut zur Kenntnis.</value>
+  </data>
+  <data name="Err_self_approval_not_allowed" xml:space="preserve">
+    <value>Sie haben diese Freigabe angefordert, daher muss ein anderer Administrator sie genehmigen.</value>
+  </data>
+  <data name="Err_invalid_state" xml:space="preserve">
+    <value>Diese Aktion ist im aktuellen Zustand der Freigabe nicht möglich.</value>
+  </data>
+  <data name="Err_validation_failed" xml:space="preserve">
+    <value>Der Workflow erfüllt die Voraussetzungen für den Schutz nicht. Beheben Sie die aufgeführten Probleme und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Err_not_found" xml:space="preserve">
+    <value>Der Workflow oder die Freigabe wurde nicht gefunden.</value>
+  </data>
+  <data name="Err_trigger_not_supported" xml:space="preserve">
+    <value>In dieser Version können nur Einsatz-Auslöser geschützt werden.</value>
+  </data>
+  <data name="Err_too_many_fields" xml:space="preserve">
+    <value>Es sind zu viele Felder ausgewählt.</value>
+  </data>
+  <data name="Err_no_fields" xml:space="preserve">
+    <value>Wählen Sie mindestens ein freizugebendes Feld aus.</value>
+  </data>
+  <data name="Err_unknown_field" xml:space="preserve">
+    <value>Es wurde ein unbekanntes Feld ausgewählt.</value>
+  </data>
+  <data name="Err_recipient_required" xml:space="preserve">
+    <value>Geben Sie Typ und Namen des Empfängers ein.</value>
+  </data>
+  <data name="Err_purpose_required" xml:space="preserve">
+    <value>Geben Sie den Zweck der Offenlegung ein.</value>
+  </data>
+  <data name="Err_adp_not_enabled" xml:space="preserve">
+    <value>Der erweiterte Datenschutz muss zuerst aktiviert werden.</value>
+  </data>
+  <data name="Err_protected_workflows_disabled" xml:space="preserve">
+    <value>Geschützte Workflows sind für Ihre Abteilung ausgeschaltet.</value>
+  </data>
+  <data name="Err_config_changed" xml:space="preserve">
+    <value>Der Workflow wurde nach der Anforderung geändert. Fordern Sie die Genehmigung für die aktuelle Konfiguration erneut an.</value>
+  </data>
+  <data name="Err_http_failed" xml:space="preserve">
+    <value>Das Ziel hat die Anfrage nicht angenommen.</value>
+  </data>
+  <data name="Err_command_failed" xml:space="preserve">
+    <value>Die Aktion konnte nicht abgeschlossen werden. Versuchen Sie es erneut.</value>
+  </data>
+  <data name="ColWorkflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColFields" xml:space="preserve">
+    <value>Felder</value>
+  </data>
+  <data name="ColHost" xml:space="preserve">
+    <value>Host</value>
+  </data>
+  <data name="ColRecipient" xml:space="preserve">
+    <value>Empfänger</value>
+  </data>
+  <data name="ColApprovedBy" xml:space="preserve">
+    <value>Genehmigt von</value>
+  </data>
+  <data name="ColExpires" xml:space="preserve">
+    <value>Läuft ab</value>
+  </data>
+  <data name="ColSends30" xml:space="preserve">
+    <value>Sendungen (30 Tage)</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="NoReleases" xml:space="preserve">
+    <value>Kein Workflow hat eine geschützte Freigabe.</value>
+  </data>
+  <data name="OpenWorkflow" xml:space="preserve">
+    <value>Workflow öffnen</value>
+  </data>
+  <data name="ViewDisclosures" xml:space="preserve">
+    <value>Offenlegungsprotokoll</value>
+  </data>
+  <data name="ChainValid" xml:space="preserve">
+    <value>Prüfkette verifiziert ({0} Datensätze).</value>
+  </data>
+  <data name="ChainInvalid" xml:space="preserve">
+    <value>Die Verifizierung der Prüfkette ist bei Datensatz {0} fehlgeschlagen. Wenden Sie sich an den Resgrid-Support.</value>
+  </data>
+  <data name="RenewFromEditor" xml:space="preserve">
+    <value>Verlängern Sie die Freigabe im Workflow-Editor, in dem die Versicherung angezeigt wird.</value>
+  </data>
+  <data name="FilterWorkflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="FilterAllWorkflows" xml:space="preserve">
+    <value>Alle Workflows</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Einsatz-ID</value>
+  </data>
+  <data name="FilterFrom" xml:space="preserve">
+    <value>Von (UTC)</value>
+  </data>
+  <data name="FilterTo" xml:space="preserve">
+    <value>Bis (UTC)</value>
+  </data>
+  <data name="ApplyFilter" xml:space="preserve">
+    <value>Filtern</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>CSV exportieren</value>
+  </data>
+  <data name="MetadataOnly" xml:space="preserve">
+    <value>Nur Metadaten. Dieses Protokoll enthält niemals Feldwerte, Nutzdaten oder Antworttexte.</value>
+  </data>
+  <data name="ColSequence" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ColOccurred" xml:space="preserve">
+    <value>Zeitpunkt (UTC)</value>
+  </data>
+  <data name="ColType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="ColEvent" xml:space="preserve">
+    <value>Ereignis oder Ergebnis</value>
+  </data>
+  <data name="ColCall" xml:space="preserve">
+    <value>Einsatz</value>
+  </data>
+  <data name="ColHttp" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="ColBytes" xml:space="preserve">
+    <value>Bytes</value>
+  </data>
+  <data name="ColActor" xml:space="preserve">
+    <value>Akteur</value>
+  </data>
+  <data name="ColDetail" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Keine passenden Einträge.</value>
+  </data>
+  <data name="TestBadge" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="RecordType_disclosure" xml:space="preserve">
+    <value>Offenlegung</value>
+  </data>
+  <data name="RecordType_admin_event" xml:space="preserve">
+    <value>Administrativ</value>
+  </data>
+  <data name="Outcome_sent" xml:space="preserve">
+    <value>Gesendet</value>
+  </data>
+  <data name="Outcome_failed_http" xml:space="preserve">
+    <value>HTTP fehlgeschlagen</value>
+  </data>
+  <data name="Outcome_failed_broker" xml:space="preserve">
+    <value>Entschlüsselung fehlgeschlagen</value>
+  </data>
+  <data name="Outcome_blocked_host" xml:space="preserve">
+    <value>Blockiert: Host</value>
+  </data>
+  <data name="Outcome_blocked_release" xml:space="preserve">
+    <value>Blockiert: Freigabe</value>
+  </data>
+  <data name="Outcome_blocked_department" xml:space="preserve">
+    <value>Blockiert: Abteilung</value>
+  </data>
+  <data name="Outcome_blocked_guard" xml:space="preserve">
+    <value>Blockiert: Chiffretext in Nutzdaten</value>
+  </data>
+  <data name="Outcome_failed_render" xml:space="preserve">
+    <value>Rendern fehlgeschlagen</value>
+  </data>
+  <data name="Event_department_enabled" xml:space="preserve">
+    <value>Geschützte Workflows aktiviert</value>
+  </data>
+  <data name="Event_department_disabled" xml:space="preserve">
+    <value>Geschützte Workflows deaktiviert</value>
+  </data>
+  <data name="Event_release_requested" xml:space="preserve">
+    <value>Freigabe angefordert</value>
+  </data>
+  <data name="Event_release_approved" xml:space="preserve">
+    <value>Freigabe genehmigt</value>
+  </data>
+  <data name="Event_release_suspended" xml:space="preserve">
+    <value>Freigabe ausgesetzt</value>
+  </data>
+  <data name="Event_release_revoked" xml:space="preserve">
+    <value>Freigabe widerrufen</value>
+  </data>
+  <data name="Event_release_expired" xml:space="preserve">
+    <value>Freigabe abgelaufen</value>
+  </data>
+  <data name="Event_credential_rotated" xml:space="preserve">
+    <value>Zugangsdaten erneuert</value>
+  </data>
+  <data name="NoticeExpiryTitle" xml:space="preserve">
+    <value>Geschützter Workflow läuft bald ab</value>
+  </data>
+  <data name="NoticeExpiringBody" xml:space="preserve">
+    <value>Die geschützte Freigabe für den Workflow „{0}“ läuft am {1} ab. Ein Administrator muss sie verlängern, sonst stellt der Workflow das Senden ein.</value>
+  </data>
+  <data name="NoticeExpiredBody" xml:space="preserve">
+    <value>Die geschützte Freigabe für den Workflow „{0}“ ist abgelaufen, und der Workflow hat das Senden eingestellt. Ein Administrator kann sie im Workflow-Editor verlängern.</value>
+  </data>
+  <data name="NoticeFailureTitle" xml:space="preserve">
+    <value>Geschützter Workflow fehlgeschlagen</value>
+  </data>
+  <data name="NoticeFailureBody" xml:space="preserve">
+    <value>Der geschützte Workflow „{0}“ ist beim letzten Versuch fehlgeschlagen (Ausführung {1}, Fehler {2}).</value>
+  </data>
+  <data name="Outcome_attempted" xml:space="preserve">
+    <value>Versucht (vor dem Senden protokolliert)</value>
+  </data>
+  <data name="Event_second_approver_relax_requested" xml:space="preserve">
+    <value>Aufhebung des zweiten Genehmigers beantragt</value>
+  </data>
+  <data name="Event_second_approver_relaxed" xml:space="preserve">
+    <value>Zweiter Genehmiger nicht mehr erforderlich</value>
+  </data>
+  <data name="SecondApproverRelaxPending" xml:space="preserve">
+    <value>Am {0} hat ein Administrator beantragt, keinen zweiten Genehmiger mehr zu verlangen. Ein anderer Administrator muss dies innerhalb von 7 Tagen bestätigen, indem er das Kontrollkästchen deaktiviert und speichert.</value>
+  </data>
+  <data name="SecondApproverRelaxRequested" xml:space="preserve">
+    <value>Ihr Antrag, keinen zweiten Genehmiger mehr zu verlangen, wurde erfasst. Ein anderer Administrator muss ihn bestätigen, bevor er wirksam wird.</value>
+  </data>
+  <data name="Err_concurrent_change" xml:space="preserve">
+    <value>Jemand anderes hat diese Freigabe gleichzeitig geändert. Laden Sie die Seite neu und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Err_disclosure_unavailable" xml:space="preserve">
+    <value>Das Offenlegungsprotokoll konnte nicht geschrieben werden, daher wurde nichts gesendet. Versuchen Sie es erneut.</value>
+  </data>
+  <data name="Err_release_not_active" xml:space="preserve">
+    <value>Dieser Workflow hat keine aktive Freigabe.</value>
+  </data>
+  <data name="Err_release_expired" xml:space="preserve">
+    <value>Die Freigabe ist abgelaufen. Erneuern Sie sie, um das Senden fortzusetzen.</value>
+  </data>
+  <data name="Err_action_not_allowed" xml:space="preserve">
+    <value>Nur API-Aufruf-Schritte (POST oder PUT) können geschützte Daten senden.</value>
+  </data>
+  <data name="Err_credential_not_allowed" xml:space="preserve">
+    <value>Die Zugangsdaten des Schritts sind nicht die für diese Freigabe genehmigten.</value>
+  </data>
+  <data name="Err_host_mismatch" xml:space="preserve">
+    <value>Der Zielhost ist nicht der für diese Freigabe genehmigte.</value>
+  </data>
+  <data name="Err_scheme_not_https" xml:space="preserve">
+    <value>Das Ziel muss HTTPS verwenden.</value>
+  </data>
+  <data name="Err_redirect_refused" xml:space="preserve">
+    <value>Das Ziel hat mit einer Weiterleitung geantwortet. Weiterleitungen werden bei geschützten Daten nie befolgt.</value>
+  </data>
+  <data name="Err_token_host_mismatch" xml:space="preserve">
+    <value>Der OAuth2-Token-Host ist nicht der für diese Freigabe genehmigte.</value>
+  </data>
+  <data name="Err_broker_failed" xml:space="preserve">
+    <value>Die geschützten Werte konnten nicht entschlüsselt werden. Es wurde nichts gesendet.</value>
+  </data>
+  <data name="Err_entity_unavailable" xml:space="preserve">
+    <value>Der Einsatz konnte nicht zur Entschlüsselung geladen werden. Es wurde nichts gesendet.</value>
+  </data>
+  <data name="Err_render_failed" xml:space="preserve">
+    <value>Die Vorlage konnte nicht gerendert werden. Es wurde nichts gesendet.</value>
+  </data>
+  <data name="Err_payload_too_large" xml:space="preserve">
+    <value>Der gerenderte Inhalt ist zu groß. Es wurde nichts gesendet.</value>
+  </data>
+  <data name="Err_envelope_in_payload" xml:space="preserve">
+    <value>Der gerenderte Inhalt enthielt verschlüsselte Daten und wurde blockiert.</value>
+  </data>
+  <data name="Err_http_timeout" xml:space="preserve">
+    <value>Das Ziel hat nicht rechtzeitig geantwortet.</value>
+  </data>
+  <data name="Err_protected_step_error" xml:space="preserve">
+    <value>Der Schritt ist fehlgeschlagen. Die Ursache wird nicht protokolliert, damit geschützte Werte nicht in die Protokolle gelangen.</value>
+  </data>
+  <data name="Field_calls_subjectidentifiers" xml:space="preserve">
+    <value>Personenkennungen (alle Schlüssel)</value>
+  </data>
+  <data name="Outcome_failed_validation" xml:space="preserve">
+    <value>Ungültiger Inhalt</value>
+  </data>
+  <data name="Outcome_failed_projection" xml:space="preserve">
+    <value>Projektion fehlgeschlagen</value>
+  </data>
+  <data name="Outcome_failed_ack" xml:space="preserve">
+    <value>Vom Ziel abgelehnt</value>
+  </data>
+  <data name="Outcome_failed_response_too_large" xml:space="preserve">
+    <value>Antwort zu groß</value>
+  </data>
+  <data name="Outcome_blocked_consent" xml:space="preserve">
+    <value>Blockiert: keine Part-2-Einwilligung</value>
+  </data>
+  <data name="Err_payload_invalid" xml:space="preserve">
+    <value>Der gerenderte Inhalt ist für seinen Inhaltstyp nicht gültig. Es wurde nichts gesendet.</value>
+  </data>
+  <data name="Err_projection_failed" xml:space="preserve">
+    <value>Die Personenkennungen des Einsatzes konnten nicht gelesen werden. Es wurde nichts gesendet.</value>
+  </data>
+  <data name="Err_ack_rejected" xml:space="preserve">
+    <value>Das Ziel hat die Anfrage empfangen, aber abgelehnt.</value>
+  </data>
+  <data name="Err_response_too_large" xml:space="preserve">
+    <value>Die Antwort des Ziels war größer als erlaubt und konnte daher nicht geprüft werden.</value>
+  </data>
+  <data name="Err_part2_consent_missing" xml:space="preserve">
+    <value>Für den Einsatz ist keine Einwilligung nach 42 CFR Part 2 hinterlegt, daher wurden seine Part-2-Felder nicht gesendet.</value>
+  </data>
+  <data name="Err_capture_failed" xml:space="preserve">
+    <value>Die Anfrage wurde zugestellt, aber die vom Ziel zurückgegebenen Werte konnten nicht am Einsatz gespeichert werden.</value>
+  </data>
+  <data name="Err_oauth_token_failed" xml:space="preserve">
+    <value>Der OAuth2-Token-Endpunkt hat kein Token ausgestellt.</value>
+  </data>
+  <data name="Err_auth_method_mismatch" xml:space="preserve">
+    <value>Die Zugangsdaten authentifizieren sich nicht mehr auf die Weise, die diese Freigabe genehmigt hat.</value>
+  </data>
+  <data name="Err_signing_key_unavailable" xml:space="preserve">
+    <value>Die Zugangsdaten haben keinen aktuellen Signaturschlüssel.</value>
+  </data>
+  <data name="Err_field_conflict" xml:space="preserve">
+    <value>Geben Sie entweder das ganze Feld der Personenkennungen oder einzelne Schlüssel frei, nicht beides.</value>
+  </data>
+  <data name="Err_restricted_attestation_required" xml:space="preserve">
+    <value>Ein ausgewähltes Feld ist eingeschränkt. Bestätigen Sie die Erklärung für eingeschränkte Felder.</value>
+  </data>
+  <data name="Err_part2_attestation_required" xml:space="preserve">
+    <value>Ein ausgewähltes Feld enthält Informationen nach 42 CFR Part 2. Bestätigen Sie die Part-2-Erklärung.</value>
+  </data>
+  <data name="Err_capture_requires_subject_identifiers" xml:space="preserve">
+    <value>Ein Schritt speichert Antwortwerte in den Personenkennungen, daher muss die Freigabe diese enthalten (das ganze Feld oder mindestens einen Schlüssel).</value>
+  </data>
+  <data name="ValidationError_content_type_not_allowed" xml:space="preserve">
+    <value>Ein Schritt gibt einen Inhaltstyp an, den geschützte Schritte nicht verwenden dürfen.</value>
+  </data>
+  <data name="ValidationError_success_rule_invalid" xml:space="preserve">
+    <value>Die Erfolgsregel eines Schritts ist unvollständig oder unbekannt.</value>
+  </data>
+  <data name="ValidationError_capture_invalid" xml:space="preserve">
+    <value>Ein Eintrag zur Antworterfassung eines Schritts ist ungültig (Quelle, Ausdruck oder Schlüssel).</value>
+  </data>
+  <data name="ValidationError_capture_too_many" xml:space="preserve">
+    <value>Ein Schritt erfasst mehr Antwortwerte als erlaubt.</value>
+  </data>
+  <data name="ValidationError_idempotency_header_invalid" xml:space="preserve">
+    <value>Der Name des Idempotenz-Headers eines Schritts ist ungültig oder reserviert.</value>
+  </data>
+  <data name="ValidationError_if_none_exist_invalid" xml:space="preserve">
+    <value>Der If-None-Exist-Wert eines Schritts ist zu lang oder enthält einen Zeilenumbruch.</value>
+  </data>
+  <data name="ValidationError_signing_key_missing" xml:space="preserve">
+    <value>Die OAuth2-Zugangsdaten verwenden private_key_jwt, haben aber noch keinen Signaturschlüssel. Speichern Sie die Zugangsdaten, um einen zu erzeugen.</value>
+  </data>
+  <data name="Warning_unescaped_protected_value" xml:space="preserve">
+    <value>Eine Vorlage setzt einen geschützten Wert ohne json_escape, xml_escape oder hl7_escape ein. Ein Anführungszeichen oder Zeilenumbruch im Wert kann den Inhalt beschädigen, der dann die Prüfung nicht besteht, statt gesendet zu werden.</value>
+  </data>
+  <data name="AuthMethodLabel" xml:space="preserve">
+    <value>Client-Authentifizierung</value>
+  </data>
+  <data name="SubjectKeysHeader" xml:space="preserve">
+    <value>Schlüssel der Personenkennungen</value>
+  </data>
+  <data name="SubjectKeysHelp" xml:space="preserve">
+    <value>Geben Sie einzelne Kennungen statt des ganzen Satzes frei: Nur die angehakten Schlüssel gelangen in protected.call.subject_ids.</value>
+  </data>
+  <data name="SubjectKeysOtherLabel" xml:space="preserve">
+    <value>Weitere Schlüssel (kommagetrennt)</value>
+  </data>
+  <data name="CustomFieldsHeader" xml:space="preserve">
+    <value>Benutzerdefinierte Einsatzfelder</value>
+  </data>
+  <data name="CustomFieldsHelp" xml:space="preserve">
+    <value>Jedes angehakte benutzerdefinierte Feld wird einzeln entschlüsselt und als protected.call.udf.&lt;Name&gt; ausgegeben.</value>
+  </data>
+  <data name="SensitivityRestricted" xml:space="preserve">
+    <value>Eingeschränkt</value>
+  </data>
+  <data name="SensitivityPart2" xml:space="preserve">
+    <value>42 CFR Part 2</value>
+  </data>
+  <data name="RestrictedAttestationLabel" xml:space="preserve">
+    <value>Ich bestätige, dass dieser Empfänger berechtigt ist, eingeschränkte Felder zu erhalten ({0}).</value>
+  </data>
+  <data name="Part2AttestationText" xml:space="preserve">
+    <value>42 CFR Part 2: Die ausgewählten Felder enthalten Informationen zu Substanzgebrauchsstörungen. Ihre Weitergabe erfordert die schriftliche Einwilligung des Patienten oder eine andere nach 42 CFR Part 2 zulässige Grundlage, und der Empfänger muss darauf hingewiesen werden, dass eine weitere Weitergabe untersagt ist.</value>
+  </data>
+  <data name="Part2AttestationLabel" xml:space="preserve">
+    <value>Ich erkläre, dass der Abteilung die Einwilligung oder eine andere nach 42 CFR Part 2 erforderliche Grundlage für diese Weitergabe vorliegt ({0}).</value>
+  </data>
+  <data name="Part2ConsentNotice" xml:space="preserve">
+    <value>Ein Einsatz wird nur gesendet, wenn "Part-2-Einwilligung liegt vor" gesetzt ist; andernfalls wird der Schritt blockiert und protokolliert.</value>
+  </data>
+  <data name="StepOptionsHeader" xml:space="preserve">
+    <value>Optionen für geschützte Zustellung</value>
+  </data>
+  <data name="StepOptionsHelp" xml:space="preserve">
+    <value>Wie das Ziel den Empfang bestätigt, welche zurückgegebenen Werte am Einsatz gespeichert werden und wie Wiederholungen erkannt werden. Jede Option ist Teil der Freigabegenehmigung.</value>
+  </data>
+  <data name="StepSuccessRule" xml:space="preserve">
+    <value>Erfolgsregel</value>
+  </data>
+  <data name="StepRulePath" xml:space="preserve">
+    <value>Pfad</value>
+  </data>
+  <data name="StepRuleExpected" xml:space="preserve">
+    <value>Erwarteter Wert</value>
+  </data>
+  <data name="StepCapture" xml:space="preserve">
+    <value>Antwortwerte speichern</value>
+  </data>
+  <data name="StepCaptureHelp" xml:space="preserve">
+    <value>Einer pro Zeile: Quelle | Ausdruck | Schlüssel. Quellen: json_path, xpath, hl7_field, header, fhir_location_id. Die Werte werden verschlüsselt in den Personenkennungen des Einsatzes gespeichert.</value>
+  </data>
+  <data name="StepIdempotencyHeader" xml:space="preserve">
+    <value>Idempotenz-Header</value>
+  </data>
+  <data name="StepIfNoneExist" xml:space="preserve">
+    <value>FHIR If-None-Exist</value>
+  </data>
+  <data name="Rule_http_2xx" xml:space="preserve">
+    <value>Beliebiger 2xx-Status</value>
+  </data>
+  <data name="Rule_json_path" xml:space="preserve">
+    <value>JSON-Pfad ist gleich</value>
+  </data>
+  <data name="Rule_xpath" xml:space="preserve">
+    <value>XPath ist gleich</value>
+  </data>
+  <data name="Rule_hl7_ack" xml:space="preserve">
+    <value>HL7-Bestätigung (AA / CA)</value>
+  </data>
+  <data name="Rule_fhir_operation_outcome" xml:space="preserve">
+    <value>Kein Fehler im FHIR-OperationOutcome</value>
+  </data>
+  <data name="ColContentType" xml:space="preserve">
+    <value>Inhaltstyp</value>
+  </data>
+  <data name="CapturedKeysLabel" xml:space="preserve">
+    <value>Gespeicherte Schlüssel</value>
+  </data>
+</root>

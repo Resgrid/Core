@@ -141,7 +141,7 @@
     <value>If your department has not yet signed up for Resgrid you can create a new account which will create the department for you.</value>
   </data>
   <data name="LoginMessage4" xml:space="preserve">
-    <value>Maintenance is performed weekly on Saturday starting at 2000 hours Pacific.</value>
+    <value>Scheduled maintenance runs in a standing weekly window, Tuesdays 10 p.m.–midnight Pacific, and is announced in advance on the SLA status page. Occasional extended windows (up to 4 hours, no more than once per quarter) are announced at least 5 business days ahead.</value>
   </data>
   <data name="LogOnHeader" xml:space="preserve">
     <value>Logga in</value>

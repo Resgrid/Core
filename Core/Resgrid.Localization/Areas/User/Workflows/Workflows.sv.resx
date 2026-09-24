@@ -582,11 +582,8 @@
   <data name="RenderedOutput" xml:space="preserve">
     <value>Renderad utdata</value>
   </data>
-  <data name="AllEventTypesUsed" xml:space="preserve">
-    <value>Alla tillgängliga trigghändelsetyper har redan ett konfigurerat arbetsflöde. Ta bort ett befintligt arbetsflöde för att frigöra dess händelsetyp.</value>
-  </data>
   <data name="TriggerEventHelp" xml:space="preserve">
-    <value>Varje händelsetyp kan bara ha ett arbetsflöde. Endast oanvända händelsetyper visas.</value>
+    <value>Händelsen som startar arbetsflödet. Flera arbetsflöden kan använda samma händelse; vart och ett körs för sig.</value>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>Detalj</value>
@@ -618,4 +615,112 @@
   <data name="ExportTemplate" xml:space="preserve"><value>Rapportexport (poster)</value></data>
   <data name="ExportTemplateNone" xml:space="preserve"><value>Ingen (skicka endast den renderade mallen)</value></data>
   <data name="ExportTemplateHelp" xml:space="preserve"><value>E-poststeg bifogar exporten; filuppladdningssteg laddar upp den under sitt filnamn i stället för den renderade texten. Exporter utformas under Poster &gt; Rapportexporter.</value></data>
+  <data name="OAuth2Settings" xml:space="preserve">
+    <value>OAuth2-klientautentiseringsuppgifter</value>
+  </data>
+  <data name="OAuth2TokenUrl" xml:space="preserve">
+    <value>Token-URL</value>
+  </data>
+  <data name="OAuth2TokenUrlHelp" xml:space="preserve">
+    <value>HTTPS-slutpunkten för token, till exempel https://login.microsoftonline.com/&lt;tenant&gt;/oauth2/v2.0/token.</value>
+  </data>
+  <data name="OAuth2ClientId" xml:space="preserve">
+    <value>Klient-ID</value>
+  </data>
+  <data name="OAuth2ClientSecret" xml:space="preserve">
+    <value>Klienthemlighet</value>
+  </data>
+  <data name="OAuth2Scope" xml:space="preserve">
+    <value>Omfång</value>
+  </data>
+  <data name="OAuth2ScopeHelp" xml:space="preserve">
+    <value>För Microsoft Dataverse använder du https://&lt;org&gt;.crm.dynamics.com/.default.</value>
+  </data>
+  <data name="OAuth2Audience" xml:space="preserve">
+    <value>Målgrupp (valfritt)</value>
+  </data>
+  <data name="OAuth2AuthMethod" xml:space="preserve">
+    <value>Klientautentisering</value>
+  </data>
+  <data name="OAuth2AuthMethodClientSecret" xml:space="preserve">
+    <value>Klienthemlighet</value>
+  </data>
+  <data name="OAuth2AuthMethodPrivateKeyJwt" xml:space="preserve">
+    <value>JWT med privat nyckel (SMART Backend Services)</value>
+  </data>
+  <data name="OAuth2SigningAlg" xml:space="preserve">
+    <value>Signeringsalgoritm</value>
+  </data>
+  <data name="OAuth2JwtHelp" xml:space="preserve">
+    <value>Resgrid skapar och förvarar nyckelparet; den privata nyckeln krypteras och visas aldrig. Registrera JWKS-URL:en (eller ladda upp den publika nyckeln) hos tokenservern.</value>
+  </data>
+  <data name="OAuth2JwksUrl" xml:space="preserve">
+    <value>JWKS-URL</value>
+  </data>
+  <data name="OAuth2CopyUrl" xml:space="preserve">
+    <value>Kopiera</value>
+  </data>
+  <data name="OAuth2CurrentKey" xml:space="preserve">
+    <value>Aktuell nyckel {0}, skapad {1}. Publicerade nycklar: {2}.</value>
+  </data>
+  <data name="OAuth2DownloadJwk" xml:space="preserve">
+    <value>Ladda ned publik JWK</value>
+  </data>
+  <data name="OAuth2RotateKey" xml:space="preserve">
+    <value>Rotera nyckel</value>
+  </data>
+  <data name="OAuth2RotateKeyConfirm" xml:space="preserve">
+    <value>Skapa en ny signeringsnyckel? Den aktuella nyckeln förblir publicerad under överlappningsperioden så att tokenservern hinner byta.</value>
+  </data>
+  <data name="OAuth2KeyRotated" xml:space="preserve">
+    <value>En ny signeringsnyckel har skapats. Den tidigare nyckeln förblir publicerad under överlappningsperioden.</value>
+  </data>
+  <data name="OAuth2JwtAfterSave" xml:space="preserve">
+    <value>Nyckelparet skapas när du sparar. Därefter visas JWKS-URL:en och nedladdningen av den publika nyckeln här.</value>
+  </data>
+  <data name="GalleryHeader" xml:space="preserve">
+    <value>Börja från en mall</value>
+  </data>
+  <data name="GalleryHelp" xml:space="preserve">
+    <value>Mallar skapar ett inaktiverat arbetsflöde med platshållare för mottagare. Ange URL och autentiseringsuppgift för varje steg och aktivera det sedan.</value>
+  </data>
+  <data name="GalleryUseTemplate" xml:space="preserve">
+    <value>Använd mall</value>
+  </data>
+  <data name="GalleryProtected" xml:space="preserve">
+    <value>Skyddade arbetsflöden</value>
+  </data>
+  <data name="GalleryCreated" xml:space="preserve">
+    <value>Arbetsflödet skapades från mallen. Det är inaktiverat: ange mottagare och autentiseringsuppgift för varje steg och aktivera det sedan.</value>
+  </data>
+  <data name="GalleryCreatedProtected" xml:space="preserve">
+    <value>Arbetsflödet skapades från mallen med ett utkast till skyddad frisläppning. Ange mottagarens URL och autentiseringsuppgift för steget, välj de frisläppta fälten och begär sedan godkännande. Inget skickas förrän frisläppningen har godkänts.</value>
+  </data>
+  <data name="WorkflowLimitReached" xml:space="preserve">
+    <value>Gränsen för arbetsflöden i din plan har nåtts. Uppgradera för att lägga till fler arbetsflöden.</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Name" xml:space="preserve">
+    <value>Webhook: nytt larm (JSON)</value>
+  </data>
+  <data name="Gallery_webhook_call_added_Description" xml:space="preserve">
+    <value>Skickar larmets nummer, namn, prioritet och adress som JSON när ett larm läggs till, med en idempotensnyckel.</value>
+  </data>
+  <data name="Gallery_email_call_closed_Name" xml:space="preserve">
+    <value>E-post: larm avslutat</value>
+  </data>
+  <data name="Gallery_email_call_closed_Description" xml:space="preserve">
+    <value>Skickar en kort sammanfattning via e-post när ett larm avslutas.</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Name" xml:space="preserve">
+    <value>FHIR R4 Encounter och Observations</value>
+  </data>
+  <data name="Gallery_fhir_encounter_bundle_Description" xml:space="preserve">
+    <value>När ett larm avslutas skickas en FHIR R4-transaktion (Bundle) till journalsystemet: en Encounter (klass FLD, avslutad, från utlarmning till avslut) för patienten i subject_ids.ehr_client_id och en Observation per frisläppt anpassat fält. Använder villkorlig skapelse och sparar den nya Encounterns id som ehr_encounter_id.</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Name" xml:space="preserve">
+    <value>HL7 v2.5.1 MDM^T02 besöksanteckning</value>
+  </data>
+  <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
+    <value>När ett larm avslutas skickas ett MDM^T02-dokument "Crisis Field Response" till en integrationsmotor via HTTPS: PID-3 är journalsystemets klient-id, MSH-10 idempotensnyckeln och en OBX per frisläppt anpassat fält. Lyckas endast vid kvittensen AA.</value>
+  </data>
 </root>

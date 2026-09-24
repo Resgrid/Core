@@ -7,6 +7,7 @@ using Resgrid.Chatbot.Handlers;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Tests.Helpers;
 
 namespace Resgrid.Tests.Chatbot
 {
@@ -98,7 +99,8 @@ namespace Resgrid.Tests.Chatbot
 				units.Object,
 				customStates.Object,
 				profiles.Object,
-				authorization.Object);
+				authorization.Object,
+				DispatchScopeMocks.Off());
 
 			var intent = new ChatbotIntent { Type = ChatbotIntentType.CallResponders };
 			intent.Parameters["callId"] = "42";
@@ -177,7 +179,7 @@ namespace Resgrid.Tests.Chatbot
 				});
 
 			var handler = new CallRespondersActionHandler(calls.Object, actionLogs.Object, units.Object,
-				customStates.Object, profiles.Object, authorization.Object);
+				customStates.Object, profiles.Object, authorization.Object, DispatchScopeMocks.Off());
 			var intent = new ChatbotIntent { Type = ChatbotIntentType.CallResponders };
 			intent.Parameters["callId"] = "42";
 			intent.Parameters["mode"] = mode;

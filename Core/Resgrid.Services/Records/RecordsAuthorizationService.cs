@@ -67,6 +67,24 @@ namespace Resgrid.Services.Records
 			return DepartmentMemberStateHelper.IsActiveMember(member, departmentId);
 		}
 
+		public async Task<HashSet<string>> GetAssignableMemberIdsAsync(IEnumerable<string> userIds, int departmentId)
+		{
+			var assignable = new HashSet<string>(StringComparer.Ordinal);
+			var candidates = (userIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).ToHashSet(StringComparer.Ordinal);
+			if (candidates.Count == 0) return assignable;
+
+			// The same rows GetDepartmentMemberAsync reads per user (deleted ones included), keeping each user's first row as it does.
+			var members = new Dictionary<string, DepartmentMember>(StringComparer.Ordinal);
+			foreach (var member in await _departmentsService.GetAllMembersForDepartmentIncludingDeletedAsync(departmentId) ?? new List<DepartmentMember>())
+				if (member?.UserId != null)
+					members.TryAdd(member.UserId, member);
+
+			foreach (var userId in candidates)
+				if (members.TryGetValue(userId, out var member) && DepartmentMemberStateHelper.IsActiveMember(member, departmentId))
+					assignable.Add(userId);
+			return assignable;
+		}
+
 		public async Task<bool> IsDepartmentAdminAsync(string userId, int departmentId)
 		{
 			try

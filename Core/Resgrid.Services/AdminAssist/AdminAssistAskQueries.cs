@@ -11,7 +11,7 @@ namespace Resgrid.Services.AdminAssist
 {
 	/// <summary>Narrow query adapter. No operational writer, messaging, checkout, MCP executor or raw-content source is exposed.</summary>
 	public sealed class AdminAssistAskQueries(IAdminAssistCatalog catalog, IAdminAssistReferenceSearch search,
-		IAdminAssistService assist, IAdminAssistAccessService access, IConfigurationImpactService impacts, TimeProvider clock) : IAdminAssistAskQueries
+		IAdminAssistService assist, IAdminAssistAccessService access, IConfigurationImpactService impacts, TimeProvider clock, IAdminAssistPlanQueries plans) : IAdminAssistAskQueries
 	{
 		private static readonly ResourceManager Labels = new(typeof(Resgrid.Localization.Areas.User.AdminAssist.AdminAssist));
 		private static readonly IReadOnlyDictionary<string, decimal> Empty = new Dictionary<string, decimal>();
@@ -50,6 +50,19 @@ namespace Resgrid.Services.AdminAssist
 			}
 			switch (tool.Name)
 			{
+				case "draft_plan":
+				{
+					var template = Resgrid.AdminAssist.ChangePlanPolicy.Templates(catalog).SingleOrDefault(t => t.Id == tool.Id) ?? throw new ArgumentException("Select a reviewed template.");
+					var draft = await plans.DraftAsync(actor, new PlanDraftRequest(Text(template.LabelKey), template.Id), ct);
+					foreach (var step in draft.Steps.Take(8)) result.Add(Card("draft:" + template.Id + ":" + step.Change.Id, "PlanDraft", step.LabelKey, new[] { step.RationaleKey, step.InstructionsKey, "Plan.Boundary" }, "Proposed", step.Destination, draft.SnapshotRevision));
+					break;
+				}
+				case "verify_step":
+				{
+					var check = await plans.VerifyStepAsync(actor, tool.Id, tool.Value, ct);
+					result.Add(Card("verify:" + tool.Id + ":" + tool.Value, "PlanVerification", "Plan.Verification", new[] { "Plan." + check.Saved, "Plan." + check.Rule, "Plan." + check.Propagated, "Plan." + check.BehaviorTested, "Plan.VerificationBoundary" }, check.Saved, revision: check.EvidenceDigest));
+					break;
+				}
 				case "search_reference": case "search_docs":
 					if (string.IsNullOrWhiteSpace(tool.Query) || tool.Query.Length > 256) throw new ArgumentException("Invalid query.");
 					foreach (var hit in search.Search(tool.Query, actor.Locale, 3)) {

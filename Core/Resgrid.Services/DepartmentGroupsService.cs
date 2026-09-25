@@ -420,6 +420,17 @@ namespace Resgrid.Services
 			return await GetGroupByIdAsync(depMember.DepartmentGroupId);
 		}
 
+		public async Task<Dictionary<string, int>> GetGroupIdsForAllUsersInDepartmentAsync(int departmentId)
+		{
+			// Ordinal: an id that differs from the stored one only in case finds no group, which can only narrow a group-locked check.
+			var groupIds = new Dictionary<string, int>(StringComparer.Ordinal);
+			foreach (var member in await _departmentGroupMembersRepository.GetAllGroupMembersByDepartmentAsync(departmentId) ?? Enumerable.Empty<DepartmentGroupMember>())
+				if (member?.UserId != null)
+					groupIds.TryAdd(member.UserId, member.DepartmentGroupId);
+
+			return groupIds;
+		}
+
 		public async Task<DepartmentGroupMember> GetGroupMemberForUserAsync(string userId, int departmentId)
 		{
 			var depMember = (await _departmentGroupMembersRepository.GetAllGroupMembersByUserAndDepartmentAsync(userId, departmentId)).FirstOrDefault();

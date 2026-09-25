@@ -192,6 +192,14 @@ namespace Resgrid.Tests.AdminAssist
 			(await _gate.CanUseAdminAssistAsync(_actor, CancellationToken.None)).Reason.Should().Be("Unconfigured");
 		}
 
+		[TestCase("not base64!")]
+		[TestCase("c2hvcnQ=")]
+		public async Task A_malformed_or_short_audit_key_is_reported_as_unconfigured(string key)
+		{
+			AiConfig.AuditHmacKey = key;
+			(await _gate.CanUseAdminAssistAsync(_actor, CancellationToken.None)).Reason.Should().Be("Unconfigured");
+		}
+
 		[Test]
 		public async Task Turns_reserve_on_the_path_that_admitted_them()
 		{

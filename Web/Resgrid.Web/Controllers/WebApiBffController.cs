@@ -174,6 +174,7 @@ namespace Resgrid.Web.Controllers
 				// These handlers own a 90-second deadline plus bounded settlement. Other BFF routes
 				// retain their 30-second timeout; disconnect cancellation still flows to the API.
 				if (new[] { "api/v4/AdminAssist/Ask", "api/v4/AdminAssist/Conversation", "api/v4/AdminAssist/ConversationExport",
+					"api/v4/AdminAssist/PlanDraft", "api/v4/AdminAssist/PlanCreate", "api/v4/AdminAssist/Plan", "api/v4/AdminAssist/PlanCommand", "api/v4/AdminAssist/PlanExport", "api/v4/AdminAssist/Plans",
 					"api/v4/AdminAssist/Diagnose", "api/v4/AdminAssist/Diagnostic", "api/v4/AdminAssist/DiagnosticSupportPreview", "api/v4/AdminAssist/DiagnosticSupportExport" }
 					.Any(route => canonicalPath.TrimEnd('/').Equals(route, StringComparison.OrdinalIgnoreCase)))
 					proxyClient.Timeout = TimeSpan.FromSeconds(100);

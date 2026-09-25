@@ -54,7 +54,9 @@ namespace Resgrid.Services.AdminAssist
 				if (evaluations.Count > limit) throw new InvalidOperationException("Row bound exceeded.");
 				foreach (var evaluation in evaluations)
 					if (!await authorization.CanUserViewPersonAsync(actor.UserId, evaluation.UserId, actor.DepartmentId)) throw new UnauthorizedAccessException();
-				if (!evaluations.Any(e => e.Qualified)) uncovered++;
+				// A role nobody holds yet (common while roles are created before people are assigned) has no one to be
+				// uncovered; only a staffed role whose holders all lack the mandatory qualification is a coverage gap.
+				if (evaluations.Count > 0 && !evaluations.Any(e => e.Qualified)) uncovered++;
 			}
 			result.Add(Count("uncoveredQualificationCount", uncovered));
 			return result;

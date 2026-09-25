@@ -89,6 +89,10 @@ namespace Resgrid.Web.Eventing
 					});
 
 					webBuilder.UseStartup<Startup>();
-				}).ConfigureServices(services => services.AddHostedService<Worker>());
+				}).ConfigureServices(services =>
+				{
+					services.AddHostedService<Worker>();
+					services.AddHostedService<Services.GeolocationVisibilitySync>();
+				});
 	}
 }

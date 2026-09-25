@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
@@ -819,6 +820,52 @@ namespace Resgrid.Services
 				await IsAdminOfGroupOrAncestorAsync(userId, targetGroupId);
 			return ResourceVisibilityPermission.Allows(permission, departmentAdmin, isGroupAdmin,
 				group?.DepartmentGroupId, targetGroupId, roles?.Select(r => r.PersonnelRoleId), ancestorAdmin);
+		}
+
+		public async Task<HashSet<string>> GetViewablePersonIdsAsync(string userId, IEnumerable<string> targetUserIds, int departmentId)
+		{
+			var targets = new HashSet<string>(targetUserIds ?? Enumerable.Empty<string>(), StringComparer.Ordinal);
+			var viewable = new HashSet<string>(StringComparer.Ordinal);
+			if (targets.Count == 0)
+				return viewable;
+
+			// Everything CanUserViewPersonAsync reads that does not depend on the target is read once, in the same order.
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewGroupUsers);
+
+			if (permission == null)
+			{
+				viewable.UnionWith(targets);
+				return viewable;
+			}
+
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return viewable;
+
+			var isGroupAdmin = group != null && group.IsUserGroupAdmin(userId);
+			var departmentAdmin = department.IsUserAnAdmin(userId);
+			var roleIds = roles?.Select(r => r.PersonnelRoleId).ToArray();
+			var checkAncestors = !departmentAdmin && isGroupAdmin && permission.LockToGroup &&
+				permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins;
+			var targetGroups = await _departmentGroupsService.GetGroupIdsForAllUsersInDepartmentAsync(departmentId) ?? new Dictionary<string, int>();
+			// Targets share few groups, so the ancestor-admin answer is read once per group.
+			var ancestorAdmin = new Dictionary<int, bool>();
+
+			foreach (var target in targets)
+			{
+				int? targetGroupId = target != null && targetGroups.TryGetValue(target, out var groupId) ? groupId : null;
+				var adminOfTarget = false;
+				if (checkAncestors && targetGroupId.HasValue && !ancestorAdmin.TryGetValue(targetGroupId.Value, out adminOfTarget))
+					ancestorAdmin[targetGroupId.Value] = adminOfTarget = await IsAdminOfGroupOrAncestorAsync(userId, targetGroupId);
+
+				if (ResourceVisibilityPermission.Allows(permission, departmentAdmin, isGroupAdmin, group?.DepartmentGroupId, targetGroupId, roleIds, adminOfTarget))
+					viewable.Add(target);
+			}
+
+			return viewable;
 		}
 
 		private static bool AreInSameGroup(DepartmentGroup group, DepartmentGroup otherGroup)

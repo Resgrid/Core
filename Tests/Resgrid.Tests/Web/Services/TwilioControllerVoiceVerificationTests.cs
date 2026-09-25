@@ -636,6 +636,8 @@ namespace Resgrid.Tests.Web.Services
 
 		[TestCase("OPEN ABCDEF 123456")]
 		[TestCase("OPEN\tABCDEF\n123456")]
+		[TestCase("OPEN 123456 please")]
+		[TestCase("open 123456 thank you")]
 		public async System.Threading.Tasks.Task Pin_commands_over_get_are_refused_before_archiving_or_text_commands(string body)
 		{
 			var controller = BuildController();
@@ -645,6 +647,9 @@ namespace Resgrid.Tests.Web.Services
 			_queueServiceMock.Invocations.Should().BeEmpty();
 			_textCommandServiceMock.Invocations.Should().BeEmpty();
 			_adpReleaseMock.Invocations.Should().BeEmpty();
+			// The PIN-bearing body is never archived as an inbound message or routed like ordinary text.
+			_numbersServiceMock.Invocations.Should().BeEmpty();
+			_departmentSettingsServiceMock.Verify(x => x.GetDepartmentIdByTextToCallNumberAsync(It.IsAny<string>()), Times.Never);
 			((ContentResult)result).Content.Should().NotContain("123456");
 		}
 

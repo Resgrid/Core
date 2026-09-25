@@ -679,6 +679,7 @@ namespace Resgrid.Services
 					Latitude = (double)result.Location.Latitude,
 					Longitude = (double)result.Location.Longitude,
 					RecordId = result.Location.GetId(),
+					Timestamp = result.Location.Timestamp,
 				});
 			}
 

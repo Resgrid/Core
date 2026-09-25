@@ -136,6 +136,14 @@ namespace Resgrid.Model.Services
 		Task<DepartmentGroupMember> GetGroupMemberForUserAsync(string userId, int departmentId);
 
 		/// <summary>
+		/// Each department user's group id, chosen as <see cref="GetGroupForUserAsync"/> chooses it (the user's first membership
+		/// row whose group exists), read in one query for the whole department. Users in no group are absent.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>User id to department group id.</returns>
+		Task<Dictionary<string, int>> GetGroupIdsForAllUsersInDepartmentAsync(int departmentId);
+
+		/// <summary>
 		/// Saves the group member.
 		/// </summary>
 		/// <param name="depMember">The dep member.</param>

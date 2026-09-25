@@ -41,7 +41,7 @@ namespace Resgrid.Repositories.DataRepository
 			if (await ExecuteAsync(existing == null
 					? $"INSERT INTO {Tbl("AiBillingAccounts")} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
 					: $"UPDATE {Tbl("AiBillingAccounts")} SET {string.Join(",", columns.Where(c => c != "DepartmentId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId",
-				account, default) != 1)
+				Stamped(account), default) != 1)
 				throw new InvalidOperationException("Enhanced AI billing account could not be saved.");
 		}
 
@@ -55,8 +55,21 @@ namespace Resgrid.Repositories.DataRepository
 			if (await ExecuteAsync(insert
 					? $"INSERT INTO {Tbl("PaymentAddons")} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
 					: $"UPDATE {Tbl("PaymentAddons")} SET {string.Join(",", columns.Where(c => c != "DepartmentId" && c != "PaymentAddonId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("PaymentAddonId")}={P}PaymentAddonId AND {Col("PlanAddonId")}={P}PlanAddonId",
-				payment, default) != 1)
+				Stamped(payment), default) != 1)
 				throw new InvalidOperationException("Enhanced AI billing payment could not be saved.");
+		}
+
+		// Billing rows are written by hosts that do not all set Npgsql's legacy timestamp switch, so the row is bound as a
+		// copy whose DateTime values went through DatabaseTimestamp (PostgreSQL columns are timestamp without time zone).
+		private static T Stamped<T>(T row) where T : new()
+		{
+			var copy = new T();
+			foreach (var property in typeof(T).GetProperties().Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0))
+			{
+				var value = property.GetValue(row);
+				property.SetValue(copy, value is DateTime timestamp ? DatabaseTimestamp(timestamp) : value);
+			}
+			return copy;
 		}
 	}
 }

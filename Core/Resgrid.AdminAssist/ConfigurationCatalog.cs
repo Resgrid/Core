@@ -82,6 +82,21 @@ namespace Resgrid.AdminAssist
 			}
 			foreach (var pack in Packs)
 				Require(pack.AreaIds.All(areas.Contains) && pack.RuleIds.All(rules.Contains), "Operating pack reference missing: " + pack.Id);
+			var addons = Enum.GetNames<Resgrid.Model.PlanAddonTypes>().ToHashSet(StringComparer.Ordinal);
+			foreach (var module in Areas)
+			{
+				// Setup Wizard and Setup Report teach modules through a short list of key features; the rest is for Ask.
+				var keyFeatures = Capabilities.Count(c => c.AreaId == module.Id && c.IsKey);
+				Require(new[] { ProductArea.Core, ProductArea.Recommended, ProductArea.Optional, ProductArea.AddOn }.Contains(module.Tier), "Invalid module tier: " + module.Id);
+				Require(module.Tier == ProductArea.AddOn ? module.Addon != null && addons.Contains(module.Addon) : module.Addon == null, "Add-on modules name their add-on: " + module.Id);
+				Require(keyFeatures is >= 1 and <= 6, "A module needs one to six key features: " + module.Id);
+				Require(!string.IsNullOrWhiteSpace(module.ValueKey) && !string.IsNullOrWhiteSpace(module.ExampleKey) && !string.IsNullOrWhiteSpace(module.AdoptionKey) &&
+					module.MinimumMinutes > 0 && module.MaximumMinutes >= module.MinimumMinutes, "Module guidance missing: " + module.Id);
+			}
+			Require(Capabilities.All(c => c.Prominence is ProductCapability.Key or ProductCapability.Detail), "Invalid feature prominence.");
+			// Documentation links are paths on the fixed public docs origin; the catalog cannot name another host.
+			foreach (var path in Areas.Select(a => a.DocsPath).Concat(Capabilities.Select(c => c.DocsPath)))
+				Require(path == null || Regex.IsMatch(path, "^/[a-z0-9-]+(?:/[a-z0-9-]+)*/(?:#[a-z0-9-]+)?$"), "Invalid documentation path: " + path);
 		}
 
 		private static HashSet<string> Unique(IEnumerable<string> ids)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -101,13 +102,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 			take = take is 50 or 100 or 200 ? take : 100;
 			var items = await _admin.GetAuditAsync(DepartmentId, take, cancellationToken);
-			var since = DateTime.UtcNow.AddDays(-30);
-			var recent = items.Where(i => i.Audit.CreatedOnUtc >= since).ToList();
+			// Totals come from the department's whole 30-day audit, not from the page of rows the list shows.
+			var recent = await _admin.GetRecentOutcomeCountsAsync(DepartmentId, 30, cancellationToken);
 			return View(new AiDispatchActivityView
 			{
 				Status = status, Department = await _departments.GetDepartmentByIdAsync(DepartmentId), Items = items, Take = take,
-				EnrichedLast30Days = recent.Count(i => i.Audit.Outcome == AiDispatchOutcomes.Applied),
-				SkippedLast30Days = recent.Count(i => i.Audit.Outcome != AiDispatchOutcomes.Applied && i.Audit.Outcome != AiDispatchOutcomes.InProgress),
+				EnrichedLast30Days = recent.GetValueOrDefault(AiDispatchOutcomes.Applied),
+				SkippedLast30Days = recent.Where(c => c.Key != AiDispatchOutcomes.Applied && c.Key != AiDispatchOutcomes.InProgress).Sum(c => c.Value),
 				MonthlyUsage = await _admin.GetMonthlyUsageAsync(DepartmentId, cancellationToken),
 				MonthlyTokenCap = (await _admin.GetSettingsAsync(DepartmentId, cancellationToken)).MonthlyTokenCap
 			});

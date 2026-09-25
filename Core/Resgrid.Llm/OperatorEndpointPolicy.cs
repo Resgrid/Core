@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 
@@ -37,9 +38,33 @@ public static class OperatorEndpointPolicy
         return local ? operatorPrivateEndpoint : !clearText;
     }
 
-    public static HttpClient CreateClient(Uri endpoint, bool operatorPrivateEndpoint)
+    private const int SharedClientLimit = 256;
+    private static readonly ConcurrentDictionary<(string Scheme, string Host, int Port, bool Private), HttpClient> SharedClients = new();
+
+    /// <summary>
+    /// A pooled client per destination for callers that send many requests, so each one does not pay a new TCP and TLS
+    /// handshake. The handler pins scheme, host, port and private-access mode, and PooledConnectionLifetime re-runs the
+    /// address check on new connections. Callers must not dispose the result.
+    /// </summary>
+    public static HttpClient GetSharedClient(Uri endpoint, bool operatorPrivateEndpoint)
+    {
+        EnsureAllowedEndpoint(endpoint, operatorPrivateEndpoint);
+        var key = (endpoint.Scheme, endpoint.IdnHost.ToLowerInvariant(), endpoint.Port, operatorPrivateEndpoint);
+        if (SharedClients.TryGetValue(key, out var client)) return client;
+        // Department endpoints add keys, so a full cache starts over. Dropped clients are not disposed because a caller may
+        // still be using one; their idle connections close on their own.
+        if (SharedClients.Count >= SharedClientLimit) SharedClients.Clear();
+        return SharedClients.GetOrAdd(key, _ => CreateClient(endpoint, operatorPrivateEndpoint));
+    }
+
+    private static void EnsureAllowedEndpoint(Uri endpoint, bool operatorPrivateEndpoint)
     {
         if (endpoint.UserInfo.Length != 0 || endpoint.Fragment.Length != 0 || !(endpoint.Scheme == "https" || operatorPrivateEndpoint && endpoint.Scheme == "http")) throw new LlmUnavailableException();
+    }
+
+    public static HttpClient CreateClient(Uri endpoint, bool operatorPrivateEndpoint)
+    {
+        EnsureAllowedEndpoint(endpoint, operatorPrivateEndpoint);
         var handler = new SocketsHttpHandler {
             AllowAutoRedirect = false, UseProxy = false, UseCookies = false,
             PooledConnectionLifetime = TimeSpan.FromMinutes(2), ConnectTimeout = TimeSpan.FromSeconds(5),

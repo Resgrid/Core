@@ -81,6 +81,12 @@ namespace Resgrid.Services.AdminAssist
 				if (request.Topic != "settings" || !Resgrid.AdminAssist.ConfigurationImpactEvaluator.Supports(request.SettingId) || request.ProposedValue?.Length is not (>= 1 and <= 128)) throw new ArgumentException("Invalid impact context.");
 				reads.Add(new("evaluate_impact", Id: request.SettingId, Value: request.ProposedValue));
 			}
+			if (request.Topic == "plans") {
+				if (request.PlanTemplateId != null && Resgrid.AdminAssist.ChangePlanPolicy.Templates(catalog).Any(t => t.Id == request.PlanTemplateId)) reads.Add(new("draft_plan", Id: request.PlanTemplateId));
+				else if (Guid.TryParseExact(request.PlanId, "D", out _) && Resgrid.AdminAssist.ChangePlanPolicy.IsId(request.PlanStepId)) reads.Add(new("verify_step", Id: request.PlanId, Value: request.PlanStepId));
+				else throw new ArgumentException("Select a plan template or step.");
+				return reads;
+			}
 			if (request.Topic == "setup") { reads.Add(new("get_setup_report")); reads.Add(new("get_setup_next_steps")); }
 			else if (request.Topic == "permissions") reads.Add(new("get_permissions", Id: "all"));
 			else if (request.Topic == "settings") {

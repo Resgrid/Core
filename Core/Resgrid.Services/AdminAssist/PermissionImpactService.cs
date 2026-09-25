@@ -31,6 +31,20 @@ namespace Resgrid.Services.AdminAssist
 		private sealed record Inputs(Person[] People, Group[] Groups, Target[] Targets, int[] OwnedRoles, Permission Current);
 		private static bool Scoped(PermissionTypes type) => type is PermissionTypes.ViewGroupUsers or PermissionTypes.ViewGroupUnits or PermissionTypes.CanSeePersonnelLocations or PermissionTypes.CanSeeUnitLocations;
 		private static bool UnitScope(PermissionTypes type) => type is PermissionTypes.ViewGroupUnits or PermissionTypes.CanSeeUnitLocations;
+		public async Task<IReadOnlyDictionary<string, bool>> EvaluateCurrentTargetsAsync(AdminAssistActor administrator, string permissionType, IReadOnlyList<string> targetIds, CancellationToken ct)
+		{
+			if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
+			if (!Supported.Contains(permissionType) || !Enum.TryParse<PermissionTypes>(permissionType, out var type) || !Scoped(type) || targetIds == null || targetIds.Count > Math.Clamp(Config.AdminAssistConfig.MaxEvidenceRows, 1, 10000) || targetIds.Any(string.IsNullOrWhiteSpace)) throw new ArgumentException("Invalid visibility scope.");
+			try {
+				var input = await ReadAsync(administrator, type, ct);
+				var requested = targetIds.ToHashSet(StringComparer.Ordinal);
+				var selected = input with { People = input.People.Where(p => p.Id == administrator.UserId).ToArray(), Targets = input.Targets.Where(t => requested.Contains(t.Id)).ToArray() };
+				var allowed = Evaluate(selected, input.Current, true, ct);
+				if (Fingerprint(input) != Fingerprint(await ReadAsync(administrator, type, ct))) return null;
+				if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
+				return requested.ToDictionary(id => id, id => allowed.Contains((administrator.UserId, id)), StringComparer.Ordinal);
+			} catch (OperationCanceledException) { throw; } catch (UnauthorizedAccessException) { throw; } catch (Exception) { return null; }
+		}
 		public async Task<bool?> EvaluateCurrentAsync(AdminAssistActor administrator, string memberId, string permissionType, string targetId, CancellationToken ct)
 		{
 			if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();

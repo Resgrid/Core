@@ -20,7 +20,7 @@ namespace Resgrid.Services.AdminAssist
 		{
 			if (string.IsNullOrWhiteSpace(SecurityConfig.EncryptionKey) || SecurityConfig.EncryptionKey.Length < 32 || SecurityConfig.EncryptionKey.Contains("CHANGEME", StringComparison.Ordinal) ||
 				string.IsNullOrWhiteSpace(SecurityConfig.EncryptionSaltValue) || SecurityConfig.EncryptionSaltValue.Contains("CHANGEME", StringComparison.Ordinal)) throw new UnauthorizedAccessException();
-			if (await protection.ShouldEncryptNewWritesAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < 31) throw new UnauthorizedAccessException();
+			if (await protection.ShouldEncryptNewWritesAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < ProtectedFieldCatalog.AiGenerationsCatalogVersion) throw new UnauthorizedAccessException();
 			if ((await write.Value.PreflightWriteAsync(actor.DepartmentId, grant.GrantToken, actor.UserId, false, ct))?.Success != true) throw new UnauthorizedAccessException();
 		}
 		private static string Binding(AiGenerationRow row) => "AdminAssist:" + row.UserId + ":" + row.ConversationId + ":" + row.Id;
@@ -37,7 +37,7 @@ namespace Resgrid.Services.AdminAssist
 		public async Task<AskStoredContent> ReadAsync(AdminAssistActor actor, AiGenerationRow row, CancellationToken ct)
 		{
 			if (row.DepartmentId != actor.DepartmentId || row.UserId != actor.UserId) throw new UnauthorizedAccessException();
-			if (await protection.IsProtectionEnforcedAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < 31) return null;
+			if (await protection.IsProtectionEnforcedAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < ProtectedFieldCatalog.AiGenerationsCatalogVersion) return null;
 			await read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, new[] { (row, row.Id) }, Fields, grant.GrantToken, actor.UserId, ct);
 			if (row.Content == null || !row.Content.StartsWith("enc2:", StringComparison.Ordinal)) return null;
 			try { return JsonSerializer.Deserialize<AskStoredContent>(encryption.DecryptForDepartment(row.Content, actor.DepartmentId, Binding(row))); }

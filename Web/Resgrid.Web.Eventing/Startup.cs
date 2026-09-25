@@ -140,6 +140,11 @@ namespace Resgrid.Web.Eventing
 				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-evt-sr";
 			});
 
+			// Realtime location visibility: this instance's geolocation connections and their groups.
+			services.AddSingleton<Resgrid.Web.Eventing.Services.GeolocationConnectionTracker>();
+			services.AddSingleton<Resgrid.Web.Eventing.Services.GeolocationMembership>();
+			services.AddSingleton<Resgrid.Web.Eventing.Services.GeolocationBroadcaster>();
+
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
 			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();
 			services.AddScoped<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>, ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();

@@ -1,0 +1,144 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "adp",
+      "LabelKey": "Area.adp",
+      "PurposeKey": "AreaPurpose.adp",
+      "Order": 19,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "ADP",
+      "Global": true,
+      "ValueKey": "AreaValue.adp",
+      "ExampleKey": "AreaExample.adp",
+      "AdoptionKey": "ModuleAdoption.adp",
+      "MinimumMinutes": 60,
+      "MaximumMinutes": 120,
+      "DocsPath": "/web-app/data-protection/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "data-protection",
+      "AreaId": "adp",
+      "LabelKey": "Feature.data-protection",
+      "PurposeKey": "FeaturePurpose.data-protection",
+      "ValueKey": "AreaValue.adp",
+      "ExampleKey": "AreaExample.adp",
+      "AdoptionKey": "FeatureSetup.data-protection",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DataProtection",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ADP"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/data-protection/"
+    },
+    {
+      "Id": "protected-workflows",
+      "AreaId": "adp",
+      "LabelKey": "Feature.protected-workflows",
+      "PurposeKey": "FeaturePurpose.protected-workflows",
+      "ValueKey": "FeatureValue.protected-workflows",
+      "ExampleKey": "AreaExample.adp",
+      "AdoptionKey": "ModuleAdoption.adp",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtectedWorkflows",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ADP"
+        },
+        {
+          "Kind": "protection",
+          "Id": "Enabled"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protected-workflows/"
+    },
+    {
+      "Id": "addon-adp",
+      "AreaId": "adp",
+      "LabelKey": "Feature.addon-adp",
+      "PurposeKey": "FeaturePurpose.addon-adp",
+      "ValueKey": "FeatureValue.addon-adp",
+      "ExampleKey": "FeatureExample.addon-adp",
+      "AdoptionKey": "FeatureAdoption.addon-adp",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Subscription",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ADP"
+        }
+      ],
+      "SettingIds": [
+        "setting.BrainTreeCustomerId",
+        "setting.PaddleCustomerId",
+        "setting.StripeCustomerId"
+      ],
+      "RuleIds": [
+        "personnel-limit",
+        "unit-limit"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/data-protection/"
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "data-protection",
+      "Locale": "en",
+      "TitleKey": "Feature.data-protection",
+      "Body": "Data Protection Protection enrollment, key recovery and access controls. Protects sensitive incident and personnel content, with controlled disclosure and key recovery. A co-response team enrolls so client-related notes are protected in every module that stores them. Review the enrollment checklist and plan key recovery before enrolling.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "data-protection",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "protected-workflows",
+      "Locale": "en",
+      "TitleKey": "Feature.protected-workflows",
+      "Body": "Protected workflows Send protected data to approved outside systems through reviewed workflows. Keep protected-data egress scoped, reviewed and auditable. A co-response team enrolls so client-related notes are protected in every module that stores them. Requires the Advanced Data Protection add-on. Enrollment is a separate step: plan two-factor sign-in and key recovery first, and review the effects on search, exports and integrations.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protected-workflows",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "addon-adp",
+      "Locale": "en",
+      "TitleKey": "Feature.addon-adp",
+      "Body": "Advanced Data Protection The Advanced Data Protection add-on: extra encryption and controlled access for sensitive data. Control protected content disclosure and recovery through the department protection lifecycle. An administrator enrolls the department and verifies its recovery arrangements. Buying does not enroll the department. Review MFA, recovery, migration and integration behavior; this is not a compliance certification.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "addon-adp",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

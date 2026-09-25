@@ -6,6 +6,7 @@ namespace Resgrid.Model.AdminAssist
 {
 	public interface IAdminAssistPermissionEvaluator
 	{
+		Task<IReadOnlyDictionary<string, bool>> EvaluateCurrentTargetsAsync(AdminAssistActor administrator, string permissionType, IReadOnlyList<string> targetIds, CancellationToken ct);
 		Task<bool?> EvaluateCurrentAsync(AdminAssistActor administrator, string memberId, string permissionType, string targetId, CancellationToken ct);
 	}
 	public sealed record PermissionImpactRequest(string ExpectedRevision, string PermissionType, int Action,

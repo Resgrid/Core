@@ -37,6 +37,11 @@ namespace Resgrid.Services.AdminAssist
 			try { canManageSubscription = await sourceAuthorization.CanUserManageSubscriptionAsync(actor.UserId, actor.DepartmentId); }
 			catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
 			catch (Exception) { canManageSubscription = false; }
+			// Billing-dependent reads (add-on entitlement and the paid owning gates) share one bound per pass. Once it is spent,
+			// the remaining reads are unknown immediately instead of each waiting out its own billing timeout.
+			using var billing = CancellationTokenSource.CreateLinkedTokenSource(ct);
+			billing.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(Config.AdminAssistConfig.BillingEvidenceTimeoutSeconds, 1, 30)));
+			var gates = new Dictionary<string, Task<bool>>(StringComparer.Ordinal);
 			foreach (var capability in capabilities)
 			{
 				ct.ThrowIfCancellationRequested();
@@ -53,14 +58,17 @@ namespace Resgrid.Services.AdminAssist
 					var key = requirement.Kind + ":" + requirement.Id;
 					if (!observed.TryGetValue(key, out var requirementState))
 					{
-						requirementState = await EvaluateAsync(actor, requirement, ct);
+						requirementState = await EvaluateAsync(actor, requirement, ct, billing.Token);
 						observed[key] = requirementState;
 					}
 					if (requirement.Kind == "addon") commercial.Add(requirementState.State);
 					if (requirementState.State != EvidenceState.Known)
 					{
 						reasons.Add(requirementState.Reason);
-						state = state == EvidenceState.Unknown || requirementState.State == EvidenceState.Unknown ? EvidenceState.Unknown : requirementState.State;
+						// Requirements are conjunctive: one definitely unmet requirement makes the capability unavailable even
+						// when another is unknown. Commercial uncertainty is still reported separately below.
+						state = state == EvidenceState.Unavailable || requirementState.State == EvidenceState.Unavailable ? EvidenceState.Unavailable
+							: state == EvidenceState.Unknown || requirementState.State == EvidenceState.Unknown ? EvidenceState.Unknown : requirementState.State;
 					}
 				}
 				// The source gate is authoritative even when diagnostic subscription metadata appears available.
@@ -72,7 +80,7 @@ namespace Resgrid.Services.AdminAssist
 				}
 				try
 				{
-					if (state == EvidenceState.Known && !await OwningGateAsync(actor.DepartmentId, capability))
+					if (state == EvidenceState.Known && !await OwningGate(actor.DepartmentId, capability, gates).WaitAsync(billing.Token))
 					{
 						state = EvidenceState.Unavailable;
 						reasons.Add("SourceAccessUnavailable");
@@ -91,7 +99,7 @@ namespace Resgrid.Services.AdminAssist
 			return result;
 		}
 
-		private async Task<(EvidenceState, string)> EvaluateAsync(AdminAssistActor actor, CapabilityRequirement requirement, CancellationToken ct)
+		private async Task<(EvidenceState, string)> EvaluateAsync(AdminAssistActor actor, CapabilityRequirement requirement, CancellationToken ct, CancellationToken billing)
 		{
 			var departmentId = actor.DepartmentId;
 			ct.ThrowIfCancellationRequested();
@@ -135,10 +143,10 @@ namespace Resgrid.Services.AdminAssist
 						if (!Enum.TryParse<PlanAddonTypes>(requirement.Id, out var addon) || !Enum.IsDefined(addon) ||
 							string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) || string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 							return (EvidenceState.Unknown, "SubscriptionStatusUnavailable");
-						var plans = await subscriptions.GetAllAddonPlansByTypeAsync(addon);
+						var plans = await subscriptions.GetAllAddonPlansByTypeAsync(addon).WaitAsync(billing);
 						var ids = plans?.Where(p => p != null && p.AddonType == (int)addon && !string.IsNullOrWhiteSpace(p.PlanAddonId)).Select(p => p.PlanAddonId).Distinct().ToList();
 						if (ids == null || ids.Count == 0) return (EvidenceState.Unknown, "SubscriptionStatusUnavailable");
-						var payments = await subscriptions.GetCurrentPaymentAddonsForDepartmentAsync(departmentId, ids);
+						var payments = await subscriptions.GetCurrentPaymentAddonsForDepartmentAsync(departmentId, ids).WaitAsync(billing);
 						if (payments == null) return (EvidenceState.Unknown, "SubscriptionStatusUnavailable");
 						var now = clock.GetUtcNow().UtcDateTime;
 						return payments.Any(p => p != null && p.DepartmentId == departmentId && ids.Contains(p.PlanAddonId) && p.EffectiveOn != default &&
@@ -148,11 +156,21 @@ namespace Resgrid.Services.AdminAssist
 				}
 			}
 			catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+			// The shared billing bound was spent: entitlement is unknown, never "not owned".
+			catch (OperationCanceledException) when (billing.IsCancellationRequested) { return (EvidenceState.Unknown, "SubscriptionStatusUnavailable"); }
 			catch (Exception)
 			{
 				// Diagnostic fallback carries no exception message or source payload to logs/the browser.
 				return (EvidenceState.Unknown, "AvailabilityUnknown");
 			}
+		}
+
+		/// <summary>Each owning gate is read once per pass; many capabilities share one gate and several gates call billing.</summary>
+		private Task<bool> OwningGate(int departmentId, ProductCapability capability, Dictionary<string, Task<bool>> gates)
+		{
+			var key = capability.Location.Controller == "Workforce" && capability.Id == "pay-data-reporting" ? "Workforce:pay-data" : capability.Location.Controller;
+			if (!gates.TryGetValue(key, out var gate)) gates[key] = gate = OwningGateAsync(departmentId, capability);
+			return gate;
 		}
 
 		private Task<bool> OwningGateAsync(int departmentId, ProductCapability capability) => capability.Location.Controller switch

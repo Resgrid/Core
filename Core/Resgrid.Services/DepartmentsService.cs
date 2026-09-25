@@ -751,6 +751,11 @@ namespace Resgrid.Services
 			return dms.ToList();
 		}
 
+		public async Task<List<DepartmentMember>> GetAllMembersForDepartmentIncludingDeletedAsync(int departmentId)
+		{
+			return (await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedIncDelAsync(departmentId))?.ToList() ?? new List<DepartmentMember>();
+		}
+
 		public async Task<DepartmentMember> GetDepartmentMemberAsync(string userId, int departmentId, bool bypassCache = true)
 		{
 			async Task<DepartmentMember> getDepartmentMember()
@@ -954,41 +959,6 @@ namespace Resgrid.Services
 		public async Task<DepartmentReport> GetDepartmentSetupReportAsync(int departmentId)
 		{
 			return await _departmentRepository.GetDepartmentReportAsync(departmentId);
-		}
-
-		public decimal GenerateSetupScore(DepartmentReport report)
-		{
-			decimal score = 0;
-
-			if (report.Groups >= 1)
-				score++;
-
-			if (report.Users >= 1)
-				score++;
-
-			if (report.Units >= 1)
-				score++;
-
-			if (report.Roles >= 1)
-				score++;
-
-			if (report.Notifications >= 1)
-				score++;
-
-			if (report.UnitTypes >= 1 || report.CallTypes >= 1 || report.CertTypes >= 1)
-				score++;
-
-			if (report.Settings >= 1)
-				score++;
-
-			if (report.Calls >= 1)
-				score++;
-
-			if (score == 0)
-				return 0;
-
-			decimal scorePrecent = score / 8m;
-			return (scorePrecent * 100);
 		}
 
 		public async Task<DepartmentStats> GetDepartmentStatsByDepartmentUserIdAsync(int departmentId, string userId)

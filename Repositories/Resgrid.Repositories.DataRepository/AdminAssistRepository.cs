@@ -90,9 +90,11 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			var row = await ReadRowAsync(departmentId, ct);
 			var state = SetupWorkspaceMetadata.Read(row?.AreasJson);
-			var personal = await QueryAsync<LearningRow>($"SELECT {Cols("CapabilityId", "Learned", "Interested")} FROM {Tbl("AdminAssistLearning")} " +
-				$"WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("UserId")}={P}UserId AND {Col("CatalogVersion")}={P}CatalogVersion",
-				new { DepartmentId = departmentId, UserId = userId, CatalogVersion = catalogVersion }, ct);
+			// Personal learning and the prompt dismissal carry forward across catalog releases; the latest choice per
+			// capability wins. Rows for capabilities no longer in the catalog are ignored by the service.
+			var personal = LatestPerCapability(await QueryAsync<LearningRow>($"SELECT {Cols("CapabilityId", "CatalogVersion", "Learned", "Interested", "ModifiedOn")} FROM {Tbl("AdminAssistLearning")} " +
+				$"WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("UserId")}={P}UserId",
+				new { DepartmentId = departmentId, UserId = userId }, ct), catalogVersion);
 			return new SetupWorkspace(departmentId, row?.Revision ?? 0, (SetupMode)(row?.Mode ?? 0),
 				state.Areas, personal.Where(p => p.Learned && p.CapabilityId != "setup-prompt").Select(p => p.CapabilityId).ToArray(),
 				personal.Where(p => p.Interested && p.CapabilityId != "setup-prompt").Select(p => p.CapabilityId).ToArray(), catalogVersion,
@@ -109,7 +111,10 @@ namespace Resgrid.Repositories.DataRepository
 				await LockConfigurationAsync(actor.DepartmentId, ct);
 				var now = DatabaseTimestamp(DateTime.UtcNow);
 				var row = await ReadRowAsync(actor.DepartmentId, ct);
-				if ((row?.Revision ?? 0) != command.ExpectedRevision) throw new AdminAssistConcurrencyException();
+				// Learning, interest and the prompt dismissal belong to one administrator. They neither require nor advance the
+				// shared workspace revision, so one admin reading Explore never makes another admin's scope or review save conflict.
+				var personalOperation = command.Operation is "learn" or "interest" or "dismiss";
+				if (!personalOperation && (row?.Revision ?? 0) != command.ExpectedRevision) throw new AdminAssistConcurrencyException();
 				var state = SetupWorkspaceMetadata.Read(row?.AreasJson);
 				var areas = state.Areas;
 				string before = null;
@@ -141,38 +146,26 @@ namespace Resgrid.Repositories.DataRepository
 					case "learn": case "interest": case "dismiss": break;
 					default: throw new ArgumentException("Invalid setup operation.");
 				}
-				var revision = command.ExpectedRevision + 1;
-				var args = new { actor.DepartmentId, Revision = revision, Mode = mode, AreasJson = state.Serialize(),
-					command.CatalogVersion, ReviewedOn = reviewedOn, ModifiedOn = now, command.ExpectedRevision };
-				if (row == null)
+				var revision = personalOperation ? row?.Revision ?? 0 : command.ExpectedRevision + 1;
+				if (personalOperation)
+					before = await SavePersonalChoiceAsync(actor, command, now, ct);
+				else
 				{
-					try
+					var args = new { actor.DepartmentId, Revision = revision, Mode = mode, AreasJson = state.Serialize(),
+						command.CatalogVersion, ReviewedOn = reviewedOn, ModifiedOn = now, command.ExpectedRevision };
+					if (row == null)
 					{
-						await ExecuteAsync($"INSERT INTO {Tbl("AdminAssistWorkspaces")} ({Cols("DepartmentId", "Revision", "Mode", "AreasJson", "CatalogVersion", "ReviewedOn", "ModifiedOn")}) " +
-							$"VALUES ({P}DepartmentId,{P}Revision,{P}Mode,{P}AreasJson,{P}CatalogVersion,{P}ReviewedOn,{P}ModifiedOn)", args, ct);
+						try
+						{
+							await ExecuteAsync($"INSERT INTO {Tbl("AdminAssistWorkspaces")} ({Cols("DepartmentId", "Revision", "Mode", "AreasJson", "CatalogVersion", "ReviewedOn", "ModifiedOn")}) " +
+								$"VALUES ({P}DepartmentId,{P}Revision,{P}Mode,{P}AreasJson,{P}CatalogVersion,{P}ReviewedOn,{P}ModifiedOn)", args, ct);
+						}
+						catch (Exception ex) when (IsUniqueViolation(ex)) { throw new AdminAssistConcurrencyException(); }
 					}
-					catch (Exception ex) when (IsUniqueViolation(ex)) { throw new AdminAssistConcurrencyException(); }
-				}
-				else if (await ExecuteAsync($"UPDATE {Tbl("AdminAssistWorkspaces")} SET {Col("Revision")}={P}Revision,{Col("Mode")}={P}Mode," +
-					$"{Col("AreasJson")}={P}AreasJson,{Col("CatalogVersion")}={P}CatalogVersion,{Col("ReviewedOn")}={P}ReviewedOn,{Col("ModifiedOn")}={P}ModifiedOn " +
-					$"WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Revision")}={P}ExpectedRevision", args, ct) != 1)
-					throw new AdminAssistConcurrencyException();
-
-				if (command.Operation == "learn" || command.Operation == "interest" || command.Operation == "dismiss")
-				{
-					var personalArgs = new { actor.DepartmentId, actor.UserId, CapabilityId = command.Operation == "dismiss" ? "setup-prompt" : command.TargetId,
-						command.CatalogVersion, ModifiedOn = now, Value = command.Choice == "true" };
-					var where = $"{Col("DepartmentId")}={P}DepartmentId AND {Col("UserId")}={P}UserId AND {Col("CapabilityId")}={P}CapabilityId AND {Col("CatalogVersion")}={P}CatalogVersion";
-					var personal = await QueryFirstOrDefaultAsync<LearningRow>($"SELECT {Cols("CapabilityId", "Learned", "Interested")} FROM {Tbl("AdminAssistLearning")} WHERE {where}", personalArgs, ct);
-					before = (command.Operation != "interest" ? personal?.Learned : personal?.Interested)?.ToString().ToLowerInvariant();
-					var column = command.Operation != "interest" ? "Learned" : "Interested";
-					if (personal != null)
-						await ExecuteAsync($"UPDATE {Tbl("AdminAssistLearning")} SET {Col(column)}={P}Value,{Col("ModifiedOn")}={P}ModifiedOn WHERE {where}", personalArgs, ct);
-					else
-						await ExecuteAsync($"INSERT INTO {Tbl("AdminAssistLearning")} ({Cols("DepartmentId", "UserId", "CapabilityId", "CatalogVersion", "Learned", "Interested", "ModifiedOn")}) " +
-							$"VALUES ({P}DepartmentId,{P}UserId,{P}CapabilityId,{P}CatalogVersion,{P}Learned,{P}Interested,{P}ModifiedOn)",
-							new { actor.DepartmentId, actor.UserId, CapabilityId = command.Operation == "dismiss" ? "setup-prompt" : command.TargetId, command.CatalogVersion,
-								Learned = command.Operation != "interest" && command.Choice == "true", Interested = command.Operation == "interest" && command.Choice == "true", ModifiedOn = now }, ct);
+					else if (await ExecuteAsync($"UPDATE {Tbl("AdminAssistWorkspaces")} SET {Col("Revision")}={P}Revision,{Col("Mode")}={P}Mode," +
+						$"{Col("AreasJson")}={P}AreasJson,{Col("CatalogVersion")}={P}CatalogVersion,{Col("ReviewedOn")}={P}ReviewedOn,{Col("ModifiedOn")}={P}ModifiedOn " +
+						$"WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Revision")}={P}ExpectedRevision", args, ct) != 1)
+						throw new AdminAssistConcurrencyException();
 				}
 				await ExecuteAsync($"INSERT INTO {Tbl("AdminAssistHistory")} ({Cols("AdminAssistHistoryId", "DepartmentId", "ActorId", "OccurredOnUtc", "Source", "Action", "SubjectId", "BeforeCode", "AfterCode", "Revision")}) " +
 					$"VALUES ({P}Id,{P}DepartmentId,{P}ActorId,{P}OccurredOnUtc,{P}Source,{P}Action,{P}SubjectId,{P}BeforeCode,{P}AfterCode,{P}Revision)",
@@ -197,11 +190,39 @@ namespace Resgrid.Repositories.DataRepository
 
 		private Task<AdminAssistWorkspaceRow> ReadRowAsync(int departmentId, CancellationToken ct) =>
 			QueryFirstOrDefaultAsync<AdminAssistWorkspaceRow>($"SELECT * FROM {Tbl("AdminAssistWorkspaces")} WHERE {Col("DepartmentId")}={P}DepartmentId", new { DepartmentId = departmentId }, ct);
+
+		/// <summary>Saves one personal choice and returns its previous value. Called under the department lock.</summary>
+		private async Task<string> SavePersonalChoiceAsync(AdminAssistActor actor, SetupProgressCommand command, DateTime now, CancellationToken ct)
+		{
+			var scope = new { actor.DepartmentId, actor.UserId, CapabilityId = command.Operation == "dismiss" ? "setup-prompt" : command.TargetId, command.CatalogVersion };
+			var where = $"{Col("DepartmentId")}={P}DepartmentId AND {Col("UserId")}={P}UserId AND {Col("CapabilityId")}={P}CapabilityId";
+			var existing = LatestPerCapability(await QueryAsync<LearningRow>($"SELECT {Cols("CapabilityId", "CatalogVersion", "Learned", "Interested", "ModifiedOn")} FROM {Tbl("AdminAssistLearning")} WHERE {where}", scope, ct),
+				command.CatalogVersion).SingleOrDefault();
+			var learnedFlag = command.Operation != "interest";
+			var value = command.Choice == "true";
+			// Keep one row per capability: an earlier release's row moves to the current release with its other flag intact.
+			await ExecuteAsync($"DELETE FROM {Tbl("AdminAssistLearning")} WHERE {where} AND {Col("CatalogVersion")}<>{P}CatalogVersion", scope, ct);
+			var write = new { scope.DepartmentId, scope.UserId, scope.CapabilityId, scope.CatalogVersion, ModifiedOn = now,
+				Learned = learnedFlag ? value : existing?.Learned == true, Interested = learnedFlag ? existing?.Interested == true : value };
+			if (await ExecuteAsync($"UPDATE {Tbl("AdminAssistLearning")} SET {Col("Learned")}={P}Learned,{Col("Interested")}={P}Interested,{Col("ModifiedOn")}={P}ModifiedOn " +
+				$"WHERE {where} AND {Col("CatalogVersion")}={P}CatalogVersion", write, ct) == 0)
+				await ExecuteAsync($"INSERT INTO {Tbl("AdminAssistLearning")} ({Cols("DepartmentId", "UserId", "CapabilityId", "CatalogVersion", "Learned", "Interested", "ModifiedOn")}) " +
+					$"VALUES ({P}DepartmentId,{P}UserId,{P}CapabilityId,{P}CatalogVersion,{P}Learned,{P}Interested,{P}ModifiedOn)", write, ct);
+			return (learnedFlag ? existing?.Learned : existing?.Interested)?.ToString().ToLowerInvariant();
+		}
+
+		private static LearningRow[] LatestPerCapability(IEnumerable<LearningRow> rows, string catalogVersion) => rows
+			.GroupBy(r => r.CapabilityId, StringComparer.Ordinal)
+			.Select(g => g.OrderByDescending(r => r.ModifiedOn).ThenByDescending(r => r.CatalogVersion == catalogVersion).First())
+			.ToArray();
+
 		private sealed class LearningRow
 		{
 			public string CapabilityId { get; set; }
+			public string CatalogVersion { get; set; }
 			public bool Learned { get; set; }
 			public bool Interested { get; set; }
+			public DateTime ModifiedOn { get; set; }
 		}
 		private sealed class HistoryRow
 		{

@@ -1,0 +1,498 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "shifts",
+      "LabelKey": "Area.shifts",
+      "PurposeKey": "AreaPurpose.shifts",
+      "Order": 8,
+      "Archetypes": [],
+      "Tier": "Recommended",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.shifts",
+      "ExampleKey": "AreaExample.shifts",
+      "AdoptionKey": "ModuleAdoption.shifts",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 90,
+      "DocsPath": "/web-app/shifts/"
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "setting.AllowSignupsForMultipleShiftGroups",
+      "AreaId": "shifts",
+      "LabelKey": "Setting.AllowSignupsForMultipleShiftGroups",
+      "HelpKey": "SettingHelp.AllowSignupsForMultipleShiftGroups",
+      "Binding": "DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ShiftSettings",
+        "Field": "AllowSignupsForMultipleShiftGroups"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.shifts",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.AllowSignupsForMultipleShiftGroups",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.ShiftsDisabled",
+      "AreaId": "shifts",
+      "LabelKey": "Module.ShiftsDisabled",
+      "HelpKey": "ModuleHelp.ShiftsDisabled",
+      "Binding": "DepartmentModuleSettings.ShiftsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "ShiftsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.shifts",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.ShiftsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.ShiftsNameOverride",
+      "AreaId": "shifts",
+      "LabelKey": "Module.ShiftsNameOverride",
+      "HelpKey": "ModuleHelp.ShiftsNameOverride",
+      "Binding": "DepartmentModuleSettings.ShiftsNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.shifts",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.ShiftsNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "module.CalendarDisabled",
+      "AreaId": "shifts",
+      "LabelKey": "Module.CalendarDisabled",
+      "HelpKey": "ModuleHelp.CalendarDisabled",
+      "Binding": "DepartmentModuleSettings.CalendarDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "CalendarEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.shifts",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.CalendarDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.CalendarNameOverride",
+      "AreaId": "shifts",
+      "LabelKey": "Module.CalendarNameOverride",
+      "HelpKey": "ModuleHelp.CalendarNameOverride",
+      "Binding": "DepartmentModuleSettings.CalendarNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.shifts",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.CalendarNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "shifts",
+      "AreaId": "shifts",
+      "LabelKey": "Feature.shifts",
+      "PurposeKey": "FeaturePurpose.shifts",
+      "ValueKey": "AreaValue.shifts",
+      "ExampleKey": "AreaExample.shifts",
+      "AdoptionKey": "FeatureSetup.shifts",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Shifts",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Shifts"
+        }
+      ],
+      "SettingIds": [
+        "module.ShiftsDisabled"
+      ],
+      "RuleIds": [
+        "shift-open-slots",
+        "shift-overlaps",
+        "shift-trades"
+      ],
+      "Setup": {
+        "EvidenceId": "upcomingShiftCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "shift-open-slots",
+          "shift-overlaps",
+          "shift-trades"
+        ],
+        "GuidanceKey": "SetupEvidence.shifts"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/shifts/"
+    },
+    {
+      "Id": "calendar",
+      "AreaId": "shifts",
+      "LabelKey": "Feature.calendar",
+      "PurposeKey": "FeaturePurpose.calendar",
+      "ValueKey": "AreaValue.shifts",
+      "ExampleKey": "AreaExample.shifts",
+      "AdoptionKey": "FeatureSetup.calendar",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Calendar",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Calendar"
+        }
+      ],
+      "SettingIds": [
+        "module.CalendarDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/calendar/"
+    },
+    {
+      "Id": "new-calendar-item",
+      "AreaId": "shifts",
+      "LabelKey": "Feature.new-calendar-item",
+      "PurposeKey": "FeaturePurpose.new-calendar-item",
+      "ValueKey": "AreaValue.shifts",
+      "ExampleKey": "AreaExample.shifts",
+      "AdoptionKey": "ModuleAdoption.shifts",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Calendar",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Calendar"
+        }
+      ],
+      "SettingIds": [
+        "module.CalendarDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/calendar/"
+    },
+    {
+      "Id": "workshifts",
+      "AreaId": "shifts",
+      "LabelKey": "Feature.workshifts",
+      "PurposeKey": "FeaturePurpose.workshifts",
+      "ValueKey": "FeatureValue.workshifts",
+      "ExampleKey": "AreaExample.shifts",
+      "AdoptionKey": "ModuleAdoption.shifts",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workshifts",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Shifts"
+        }
+      ],
+      "SettingIds": [
+        "module.ShiftsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/workshifts/"
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "shift-open-slots",
+      "AreaId": "shifts",
+      "Severity": "Warning",
+      "TitleKey": "Rule.shift-open-slots",
+      "ExplanationKey": "RuleWhy.shift-open-slots",
+      "NextActionKey": "RuleNext.shift-open-slots",
+      "Location": {
+        "Controller": "Shifts",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "upcomingShiftCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "upcomingOpenShiftSlots",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "shift-overlaps",
+      "AreaId": "shifts",
+      "Severity": "Warning",
+      "TitleKey": "Rule.shift-overlaps",
+      "ExplanationKey": "RuleWhy.shift-overlaps",
+      "NextActionKey": "RuleNext.shift-overlaps",
+      "Location": {
+        "Controller": "Shifts",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "upcomingShiftCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "overlappingShiftPersonnel",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "shift-trades",
+      "AreaId": "shifts",
+      "Severity": "Warning",
+      "TitleKey": "Rule.shift-trades",
+      "ExplanationKey": "RuleWhy.shift-trades",
+      "NextActionKey": "RuleNext.shift-trades",
+      "Location": {
+        "Controller": "Shifts",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "upcomingShiftCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "unfilledShiftTrades",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "setting.AllowSignupsForMultipleShiftGroups",
+      "Locale": "en",
+      "TitleKey": "Setting.AllowSignupsForMultipleShiftGroups",
+      "Body": "Allow Signups For Multiple Shift Groups. Allow a member to sign up for multiple shift groups. Review overlaps and local coverage rules separately.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-allowsignupsformultipleshiftgroups",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.ShiftsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.ShiftsDisabled",
+      "Body": "Shifts availability. Controls availability of shift scheduling. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-shiftsdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.ShiftsNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.ShiftsNameOverride",
+      "Body": "Shifts menu name. Optional display name for shift scheduling in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-shiftsnameoverride",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.CalendarDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.CalendarDisabled",
+      "Body": "Calendar availability. Controls availability of calendar events. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-calendardisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.CalendarNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.CalendarNameOverride",
+      "Body": "Calendar menu name. Optional display name for calendar events in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-calendarnameoverride",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "shifts",
+      "Locale": "en",
+      "TitleKey": "Feature.shifts",
+      "Body": "Shifts Shift schedules, sign-ups and trades. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. A career department sets up A, B and C shifts, and a volunteer department uses shift sign-ups for weekend duty crews. Create your shifts, assign groups and members, and decide whether dispatch follows shifts.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "shifts",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "calendar",
+      "Locale": "en",
+      "TitleKey": "Feature.calendar",
+      "Body": "Calendar The department calendar for meetings, events and training nights. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. A career department sets up A, B and C shifts, and a volunteer department uses shift sign-ups for weekend duty crews. Add recurring meetings and training nights.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "calendar",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-calendar-item",
+      "Locale": "en",
+      "TitleKey": "Feature.new-calendar-item",
+      "Body": "New Calendar Event Add an event to the department calendar. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. A career department sets up A, B and C shifts, and a volunteer department uses shift sign-ups for weekend duty crews. Have your rotation or duty schedule, and decide whether dispatch should follow shifts.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-calendar-item",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "workshifts",
+      "Locale": "en",
+      "TitleKey": "Feature.workshifts",
+      "Body": "Workshifts Repeating work schedules for staff. Review schedule ownership and local time separately from dispatch eligibility. A career department sets up A, B and C shifts, and a volunteer department uses shift sign-ups for weekend duty crews. Have your rotation or duty schedule, and decide whether dispatch should follow shifts.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "workshifts",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

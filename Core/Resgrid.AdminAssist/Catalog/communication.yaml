@@ -1,81 +1,24 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "communication",
       "LabelKey": "Area.communication",
       "PurposeKey": "AreaPurpose.communication",
       "Order": 4,
-      "Archetypes": []
+      "Archetypes": [],
+      "Tier": "Core",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "ModuleAdoption.communication",
+      "MinimumMinutes": 20,
+      "MaximumMinutes": 60,
+      "DocsPath": "/web-app/notifications/"
     }
   ],
   "Settings": [
-    {
-      "Id": "setting.EnableTextCommand",
-      "AreaId": "communication",
-      "LabelKey": "Setting.EnableTextCommand",
-      "HelpKey": "SettingHelp.EnableTextCommand",
-      "Binding": "DepartmentSettingTypes.EnableTextCommand",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "TextSettings",
-        "Field": "EnableTextCommand"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "Medium",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.communication",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "setting.EnableTextCommand",
-      "DefaultValue": "false",
-      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
-      "EvidenceSource": "DepartmentSettings",
-      "Availability": "available"
-    },
-    {
-      "Id": "setting.TtsLanguage",
-      "AreaId": "communication",
-      "LabelKey": "Setting.TtsLanguage",
-      "HelpKey": "SettingHelp.TtsLanguage",
-      "Binding": "DepartmentSettingTypes.TtsLanguage",
-      "ValueType": "enum",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "TextSettings",
-        "Field": "TtsLanguage"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "Medium",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.communication",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "setting.TtsLanguage",
-      "DefaultValue": "owning voice default",
-      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
-      "EvidenceSource": "DepartmentSettings",
-      "Availability": "available"
-    },
     {
       "Id": "setting.EnableModernNotifications",
       "AreaId": "communication",
@@ -640,125 +583,438 @@
       "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
       "EvidenceSource": "DepartmentNotification",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.IsEnabled",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.IsEnabled",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.IsEnabled",
+      "Binding": "ChatbotDepartmentConfig.IsEnabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.IsEnabled",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.AllowedPlatforms",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.AllowedPlatforms",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.AllowedPlatforms",
+      "Binding": "ChatbotDepartmentConfig.AllowedPlatforms",
+      "ValueType": "list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.AllowedPlatforms",
+      "DefaultValue": "*",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.MaxSessionsPerUser",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.MaxSessionsPerUser",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.MaxSessionsPerUser",
+      "Binding": "ChatbotDepartmentConfig.MaxSessionsPerUser",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.MaxSessionsPerUser",
+      "DefaultValue": "3",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.SessionTtlMinutes",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.SessionTtlMinutes",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.SessionTtlMinutes",
+      "Binding": "ChatbotDepartmentConfig.SessionTtlMinutes",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.SessionTtlMinutes",
+      "DefaultValue": "30",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+      "Binding": "ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "Binding": "ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.LlmApiEndpoint",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.LlmApiEndpoint",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.LlmApiEndpoint",
+      "Binding": "ChatbotDepartmentConfig.LlmApiEndpoint",
+      "ValueType": "restricted",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.LlmApiEndpoint",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.LlmApiKey",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.LlmApiKey",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.LlmApiKey",
+      "Binding": "ChatbotDepartmentConfig.LlmApiKey",
+      "ValueType": "secret",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.LlmApiKey",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.LlmModelName",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.LlmModelName",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.LlmModelName",
+      "Binding": "ChatbotDepartmentConfig.LlmModelName",
+      "ValueType": "text",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.LlmModelName",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "Binding": "ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "DefaultValue": "host default",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "Binding": "ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "DefaultValue": "host default",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "Binding": "ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "AreaId": "communication",
+      "LabelKey": "TableField.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "HelpKey": "TableHelp.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "Binding": "ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "ChatbotDepartmentConfig",
+      "Availability": "reference-only"
     }
   ],
   "Capabilities": [
-    {
-      "Id": "inbox",
-      "AreaId": "communication",
-      "LabelKey": "Feature.inbox",
-      "PurposeKey": "FeaturePurpose.inbox",
-      "ValueKey": "AreaValue.communication",
-      "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.inbox",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Messages",
-        "Action": "Inbox"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Messaging"
-        }
-      ],
-      "SettingIds": [
-        "module.MessagingDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "outbox",
-      "AreaId": "communication",
-      "LabelKey": "Feature.outbox",
-      "PurposeKey": "FeaturePurpose.outbox",
-      "ValueKey": "AreaValue.communication",
-      "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.outbox",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Messages",
-        "Action": "Outbox"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Messaging"
-        }
-      ],
-      "SettingIds": [
-        "module.MessagingDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "compose-message",
-      "AreaId": "communication",
-      "LabelKey": "Feature.compose-message",
-      "PurposeKey": "FeaturePurpose.compose-message",
-      "ValueKey": "AreaValue.communication",
-      "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.compose-message",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Messages",
-        "Action": "Compose"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Messaging"
-        }
-      ],
-      "SettingIds": [
-        "module.MessagingDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "chat",
-      "AreaId": "communication",
-      "LabelKey": "Feature.chat",
-      "PurposeKey": "FeaturePurpose.chat",
-      "ValueKey": "AreaValue.communication",
-      "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.chat",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Chat",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "flag",
-          "Id": "Chat.System"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "voice",
-      "AreaId": "communication",
-      "LabelKey": "Feature.voice",
-      "PurposeKey": "FeaturePurpose.voice",
-      "ValueKey": "AreaValue.communication",
-      "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.voice",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Voice",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "PTT"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": []
-    },
     {
       "Id": "notifications",
       "AreaId": "communication",
@@ -766,7 +1022,7 @@
       "PurposeKey": "FeaturePurpose.notifications",
       "ValueKey": "FeatureValue.notifications",
       "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.notifications",
+      "AdoptionKey": "FeatureSetup.notifications",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Notifications",
@@ -789,7 +1045,15 @@
         "table.DepartmentNotification.UpperLimit",
         "table.DepartmentNotification.UsersToNotify"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "notificationRuleCount",
+        "Minimum": 1,
+        "RuleIds": [],
+        "GuidanceKey": "SetupEvidence.notifications"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/notifications/"
     },
     {
       "Id": "distribution-lists",
@@ -798,7 +1062,7 @@
       "PurposeKey": "FeaturePurpose.distribution-lists",
       "ValueKey": "FeatureValue.distribution-lists",
       "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.distribution-lists",
+      "AdoptionKey": "FeatureSetup.distribution-lists",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "DistributionLists",
@@ -806,7 +1070,15 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "distributionListCount",
+        "Minimum": 1,
+        "RuleIds": [],
+        "GuidanceKey": "SetupEvidence.distribution-lists"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/distribution-lists/"
     },
     {
       "Id": "communication-tests",
@@ -815,7 +1087,7 @@
       "PurposeKey": "FeaturePurpose.communication-tests",
       "ValueKey": "FeatureValue.communication-tests",
       "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.communication-tests",
+      "AdoptionKey": "FeatureSetup.communication-tests",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "CommunicationTest",
@@ -826,7 +1098,111 @@
       "RuleIds": [
         "communication-tests",
         "notification-channels"
-      ]
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/communication-tests/"
+    },
+    {
+      "Id": "chat",
+      "AreaId": "communication",
+      "LabelKey": "Feature.chat",
+      "PurposeKey": "FeaturePurpose.chat",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureSetup.chat",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Chat",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Chat.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/chat/"
+    },
+    {
+      "Id": "inbox",
+      "AreaId": "communication",
+      "LabelKey": "Feature.inbox",
+      "PurposeKey": "FeaturePurpose.inbox",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "ModuleAdoption.communication",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Messages",
+        "Action": "Inbox"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Messaging"
+        }
+      ],
+      "SettingIds": [
+        "module.MessagingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/messages/"
+    },
+    {
+      "Id": "outbox",
+      "AreaId": "communication",
+      "LabelKey": "Feature.outbox",
+      "PurposeKey": "FeaturePurpose.outbox",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "ModuleAdoption.communication",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Messages",
+        "Action": "Outbox"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Messaging"
+        }
+      ],
+      "SettingIds": [
+        "module.MessagingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/messages/"
+    },
+    {
+      "Id": "compose-message",
+      "AreaId": "communication",
+      "LabelKey": "Feature.compose-message",
+      "PurposeKey": "FeaturePurpose.compose-message",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "ModuleAdoption.communication",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Messages",
+        "Action": "Compose"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Messaging"
+        }
+      ],
+      "SettingIds": [
+        "module.MessagingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/messages/"
     },
     {
       "Id": "chatbot-settings",
@@ -835,7 +1211,7 @@
       "PurposeKey": "FeaturePurpose.chatbot-settings",
       "ValueKey": "FeatureValue.chatbot-settings",
       "ExampleKey": "AreaExample.communication",
-      "AdoptionKey": "FeatureAdoption.chatbot-settings",
+      "AdoptionKey": "ModuleAdoption.communication",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "ChatbotSettings",
@@ -857,7 +1233,9 @@
         "table.ChatbotDepartmentConfig.RequireLinkingConfirmation",
         "table.ChatbotDepartmentConfig.SessionTtlMinutes"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/chat/#assistant-settings"
     }
   ],
   "Rules": [
@@ -904,7 +1282,7 @@
     {
       "Id": "command-sources",
       "AreaId": "communication",
-      "Severity": "Warning",
+      "Severity": "Information",
       "TitleKey": "Rule.command-sources",
       "ExplanationKey": "RuleWhy.command-sources",
       "NextActionKey": "RuleNext.command-sources",
@@ -956,35 +1334,13 @@
   "Packs": [],
   "Articles": [
     {
-      "Id": "setting.EnableTextCommand",
-      "Locale": "en",
-      "TitleKey": "Setting.EnableTextCommand",
-      "Body": "Enable Text Command. Configured text-command preference. Dispatch-source patterns and verified member command identity are different checks. Provider and chatbot paths do not enforce this switch uniformly; review the active consumer before changing it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "setting-enabletextcommand",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "setting.TtsLanguage",
-      "Locale": "en",
-      "TitleKey": "Setting.TtsLanguage",
-      "Body": "Tts Language. Text-to-speech language for supported voice notifications. Confirm supported voices and pronunciation with a human-run test.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "setting-ttslanguage",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
       "Id": "setting.EnableModernNotifications",
       "Locale": "en",
       "TitleKey": "Setting.EnableModernNotifications",
       "Body": "Enable Modern Notifications. Use supported modern notification behavior. Verify each consumer and channel; provider acceptance is not delivery.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-enablemodernnotifications",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -995,7 +1351,7 @@
       "Body": "Messaging availability. Controls availability of messages and announcements. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-messagingdisabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1006,7 +1362,7 @@
       "Body": "Messaging menu name. Optional display name for messages and announcements in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-messagingnameoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1017,7 +1373,7 @@
       "Body": "Department Notification / Event Type. Event that can trigger this notification rule. Match the event to a real administrative responsibility and expected frequency.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-eventtype",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1028,7 +1384,7 @@
       "Body": "Department Notification / Users To Notify. Explicit member recipients. Membership and channel eligibility are evaluated separately at send time.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-userstonotify",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1039,7 +1395,7 @@
       "Body": "Department Notification / Roles To Notify. Personnel-role recipients. Role membership can change; a role label is not a qualification or delivery guarantee.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-rolestonotify",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1050,7 +1406,7 @@
       "Body": "Department Notification / Groups To Notify. Department-group recipients. Review group membership and lock-to-group behavior together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-groupstonotify",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1061,7 +1417,7 @@
       "Body": "Department Notification / Lock To Group. Restricts applicable event processing to group scope. Review the selected event's actual source group and recipient resolver.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-locktogroup",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1072,7 +1428,7 @@
       "Body": "Department Notification / Selected Groups Admins Only. Limits selected-group recipients to their administrators in supported event paths. It does not designate department administrators automatically.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-selectedgroupsadminsonly",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1083,7 +1439,7 @@
       "Body": "Department Notification / Department Admins. Includes department administrators in supported notification processing. Review overlap and channel eligibility before estimating volume.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-departmentadmins",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1094,7 +1450,7 @@
       "Body": "Department Notification / Everyone. Selects the department-wide recipient option. Review actual active membership, suppression and deduplication before use.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-everyone",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1105,7 +1461,7 @@
       "Body": "Department Notification / Disabled. Stored disabled marker. The inspected legacy notification processor does not consult this flag, so it must not be treated as a verified stop switch. Review the active consumer; queued and delivered notifications cannot be recalled.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-disabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1116,7 +1472,7 @@
       "Body": "Department Notification / Before Data. Previous-state filter for applicable events. Review valid status IDs and the event-specific interpretation of an empty or wildcard value.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-beforedata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1127,7 +1483,7 @@
       "Body": "Department Notification / Current Data. Current-state filter for applicable events. Compare it with the previous-state filter to avoid unintended volume.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-currentdata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1138,7 +1494,7 @@
       "Body": "Department Notification / Upper Limit. Upper threshold for event-specific alerts. Units and comparisons depend on the selected event.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-upperlimit",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1149,7 +1505,7 @@
       "Body": "Department Notification / Lower Limit. Lower threshold for event-specific alerts. Use approved local thresholds and verify the actual event interpretation.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-lowerlimit",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1160,62 +1516,150 @@
       "Body": "Department Notification / Data. Event-specific configuration payload. The owning editor validates its meaning; Admin Assist does not execute arbitrary stored expressions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-data",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "inbox",
+      "Id": "table.ChatbotDepartmentConfig.IsEnabled",
       "Locale": "en",
-      "TitleKey": "Feature.inbox",
-      "Body": "Inbox Your messages inbox Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.IsEnabled",
+      "Body": "Chatbot Department Config / Is Enabled. Department chatbot availability. Platform feature rollout, account linking and action permissions are separate gates.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "inbox",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "table-chatbotdepartmentconfig-isenabled",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "outbox",
+      "Id": "table.ChatbotDepartmentConfig.AllowedPlatforms",
       "Locale": "en",
-      "TitleKey": "Feature.outbox",
-      "Body": "Sent Messages Messages you sent Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.AllowedPlatforms",
+      "Body": "Chatbot Department Config / Allowed Platforms. Allowed chatbot platform codes; the stored asterisk represents the platform default. Review each connected provider and its account-linking requirements.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "outbox",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "table-chatbotdepartmentconfig-allowedplatforms",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "compose-message",
+      "Id": "table.ChatbotDepartmentConfig.MaxSessionsPerUser",
       "Locale": "en",
-      "TitleKey": "Feature.compose-message",
-      "Body": "New Message Send a message, poll or callback request Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.MaxSessionsPerUser",
+      "Body": "Chatbot Department Config / Max Sessions Per User. Maximum chatbot sessions per member in supported consumers. This is separate from authenticated web/mobile session limits.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "compose-message",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "table-chatbotdepartmentconfig-maxsessionsperuser",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "chat",
+      "Id": "table.ChatbotDepartmentConfig.SessionTtlMinutes",
       "Locale": "en",
-      "TitleKey": "Feature.chat",
-      "Body": "Chat Real-time department chat Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.SessionTtlMinutes",
+      "Body": "Chatbot Department Config / Session TTL Minutes. Chatbot session lifetime in minutes. Expiry does not revoke an unrelated Resgrid sign-in session.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "chat",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "table-chatbotdepartmentconfig-sessionttlminutes",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "voice",
+      "Id": "table.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
       "Locale": "en",
-      "TitleKey": "Feature.voice",
-      "Body": "Voice Voice channels and push-to-talk Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review supported clients, channel membership and current subscription quantities. Push-to-Talk is distinct from phone voice alerts and department radio requirements.",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+      "Body": "Chatbot Department Config / Allow Dispatch Via Chatbot. Permits supported chatbot dispatch actions subject to their own authorization and confirmation. Enabling it may allow real calls and pages.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "voice",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "table-chatbotdepartmentconfig-allowdispatchviachatbot",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+      "Body": "Chatbot Department Config / Require Confirmation For Status Change. Requests confirmation for supported status changes. Review each platform consumer before assuming all commands are covered.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-requireconfirmationforstatuschange",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.LlmApiEndpoint",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.LlmApiEndpoint",
+      "Body": "Chatbot Department Config / LLM API Endpoint. Optional existing chatbot model endpoint. Phase 0 Admin Assist does not call it and does not use chatbot configuration as an AI entitlement.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-llmapiendpoint",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.LlmApiKey",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.LlmApiKey",
+      "Body": "Chatbot Department Config / LLM API Key. Credential for the chatbot model provider. Never copy it into setup metadata or public reference content.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-llmapikey",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.LlmModelName",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.LlmModelName",
+      "Body": "Chatbot Department Config / LLM Model Name. Model identifier used by the existing chatbot integration. This is separate from the later Admin Assist open-source inference deployment.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-llmmodelname",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+      "Body": "Chatbot Department Config / Messages Per User Per Minute. Optional per-member chatbot rate bound. Review provider limits and burst behavior; this is not a delivery guarantee.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-messagesperuserperminute",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+      "Body": "Chatbot Department Config / Messages Per Department Per Minute. Optional department chatbot rate bound. Consider shared demand and provider quotas before changing it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-messagesperdepartmentperminute",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+      "Body": "Chatbot Department Config / Require Linking Confirmation. Requires confirmation in the supported account-linking flow. Linking must not bypass verified identity or departmental authorization.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-requirelinkingconfirmation",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "Locale": "en",
+      "TitleKey": "TableField.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+      "Body": "Chatbot Department Config / Proactive Notifications Enabled. Allows supported proactive chatbot notifications. Recipient permissions, channel configuration and sending workflows remain authoritative.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-chatbotdepartmentconfig-proactivenotificationsenabled",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1223,10 +1667,10 @@
       "Id": "notifications",
       "Locale": "en",
       "TitleKey": "Feature.notifications",
-      "Body": "Notification rules Select events, recipients and conditions for administrative notifications. Reduce missed follow-up and review unnecessary message volume. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Notification rules Rules that alert chosen people when calls, statuses or other events happen. Reduce missed follow-up and review unnecessary message volume. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Create notification rules for the events officers and administrators need to know about.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "notifications",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1234,10 +1678,10 @@
       "Id": "distribution-lists",
       "Locale": "en",
       "TitleKey": "Feature.distribution-lists",
-      "Body": "Distribution lists Maintain reusable recipient lists for supported communication flows. Keep audience ownership explicit and review recipients before sending. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Distribution lists Reusable recipient lists, including email lists. Keep audience ownership explicit and review recipients before sending. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Create lists for groups you message often, such as Officers.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "distribution-lists",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1245,10 +1689,54 @@
       "Id": "communication-tests",
       "Locale": "en",
       "TitleKey": "Feature.communication-tests",
-      "Body": "Communication Tests Prepare and explicitly run tests of configured channels. Collect observed test evidence; registration alone does not prove delivery. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Communication Tests Test messages that show whether members can be reached. Collect observed test evidence; registration alone does not prove delivery. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Run a communication test before going live and after major changes.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "communication-tests",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "chat",
+      "Locale": "en",
+      "TitleKey": "Feature.chat",
+      "Body": "Chat Team chat for members. A dispatch only helps if it reaches people. This is where you confirm members can actually be contacted. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Create channels for your teams once chat is enabled.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "chat",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "inbox",
+      "Locale": "en",
+      "TitleKey": "Feature.inbox",
+      "Body": "Inbox Messages sent to you. A dispatch only helps if it reaches people. This is where you confirm members can actually be contacted. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Make sure members have added a mobile number or email address and installed the Responder app.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "inbox",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "outbox",
+      "Locale": "en",
+      "TitleKey": "Feature.outbox",
+      "Body": "Sent Messages Messages you have sent. A dispatch only helps if it reaches people. This is where you confirm members can actually be contacted. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Make sure members have added a mobile number or email address and installed the Responder app.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "outbox",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "compose-message",
+      "Locale": "en",
+      "TitleKey": "Feature.compose-message",
+      "Body": "New Message Send a message, poll or callback request to members. A dispatch only helps if it reaches people. This is where you confirm members can actually be contacted. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Make sure members have added a mobile number or email address and installed the Responder app.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "compose-message",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1256,10 +1744,10 @@
       "Id": "chatbot-settings",
       "Locale": "en",
       "TitleKey": "Feature.chatbot-settings",
-      "Body": "Chatbot and Assistant integration settings Review supported chatbot platforms, account linking, limits and operational actions. Keep automated access and confirmations under administrator control. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Chatbot and Assistant integration settings Connect the Resgrid Assistant to chat platforms and choose what it may do. Keep automated access and confirmations under administrator control. An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live. Make sure members have added a mobile number or email address and installed the Responder app.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "chatbot-settings",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

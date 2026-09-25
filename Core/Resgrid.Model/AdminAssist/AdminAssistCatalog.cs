@@ -18,12 +18,37 @@ namespace Resgrid.Model.AdminAssist
 		string Availability = "available", string ReviewGap = null, DateTime? ReviewGapExpiresOn = null);
 	public sealed record CapabilityRequirement(string Kind, string Id);
 	public sealed record CapabilitySetupDefinition(string EvidenceId, decimal Minimum, IReadOnlyList<string> RuleIds, string GuidanceKey);
+	/// <summary>
+	/// A feature inside a module. <c>Key</c> features are what Setup Wizard, Setup Report and Explore teach and verify;
+	/// <c>Detail</c> features (page actions, secondary views, niche settings screens) stay in the catalog for Ask and reference.
+	/// </summary>
 	public sealed record ProductCapability(string Id, string AreaId, string LabelKey, string PurposeKey,
 		string ValueKey, string ExampleKey, string AdoptionKey, string ReleaseStatus,
 		CatalogLocation Location, IReadOnlyList<CapabilityRequirement> Requirements,
-		IReadOnlyList<string> SettingIds, IReadOnlyList<string> RuleIds, CapabilitySetupDefinition Setup = null);
+		IReadOnlyList<string> SettingIds, IReadOnlyList<string> RuleIds, CapabilitySetupDefinition Setup = null,
+		string Prominence = ProductCapability.Detail, string DocsPath = null)
+	{
+		public const string Key = "Key";
+		public const string Detail = "Detail";
+		public bool IsKey => Prominence == Key;
+	}
+	/// <summary>
+	/// A product module (historically "area"; the id is still referenced as AreaId by settings, features, rules and scope).
+	/// Tier orders setup priority; an add-on module names the <see cref="PlanAddonTypes"/> it needs; a global module
+	/// (for example Advanced Data Protection) applies across every other module.
+	/// </summary>
 	public sealed record ProductArea(string Id, string LabelKey, string PurposeKey, int Order,
-		IReadOnlyList<string> Archetypes);
+		IReadOnlyList<string> Archetypes, string Tier = ProductArea.Optional, string Addon = null, bool Global = false,
+		string ValueKey = null, string ExampleKey = null, string AdoptionKey = null, int MinimumMinutes = 0, int MaximumMinutes = 0,
+		string DocsPath = null)
+	{
+		/// <summary>Public documentation site; catalog entries store only a validated path on it.</summary>
+		public const string DocsOrigin = "https://docs.resgrid.com";
+		public const string Core = "Core";
+		public const string Recommended = "Recommended";
+		public const string Optional = "Optional";
+		public const string AddOn = "AddOn";
+	}
 	public sealed record CapabilityAccess(string CapabilityId, EvidenceState State,
 		IReadOnlyList<string> ReasonCodes, bool CanConfigure, string Destination, DateTime AsOfUtc, string SubscriptionDestination = null,
 		EvidenceState? CommercialState = null);

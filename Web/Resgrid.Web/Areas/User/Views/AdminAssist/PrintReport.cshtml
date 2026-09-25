@@ -7,12 +7,14 @@
 	Layout = null;
 	var report = Model.Report;
 	var findings = report.Findings.Where(f => f.Result != RuleResult.NotApplicable && (f.AreaId == "security" || f.ScopeIndependent || report.SelectedAreas.Contains(f.AreaId))).ToArray();
+	// Learning progress covers the key features setup teaches, matching the on-screen report.
+	var keyFeatureIds = catalog.Capabilities.Where(c => c.IsKey).Select(c => c.Id).ToHashSet();
 }
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.Name" dir="@(CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? "rtl" : "ltr")">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Resgrid — @aa["Ui.report"]</title><link rel="stylesheet" href="~/css/admin-assist-print.css" asp-append-version="true" /></head>
 <body>
-	<nav class="print-controls"><button type="button" id="admin-assist-print">@aa["Ui.Print"]</button><a href="/User/Help/SetupReport">@aa["Ui.report"]</a></nav>
+	<nav class="print-controls"><button type="button" id="admin-assist-print">@aa["Ui.Print"]</button><a href="@(string.Equals(Context.Request.Query["setup"], "true", StringComparison.OrdinalIgnoreCase) ? "/User/Help/SetupReport" : "/User/AdminAssist/Index")">@aa["Ui.report"]</a></nav>
 	<main>
 		<h1>Resgrid — @aa["Ui.report"]</h1>
 		<p>@aa["Ui.DepartmentId"]: @report.Snapshot.DepartmentId · @aa["Ui.CatalogVersion"]: @Model.CatalogVersion · @aa["Ui.EvidenceRevision"]: @report.Snapshot.Revision</p>
@@ -20,7 +22,7 @@
 		<p>@aa["Ui.PrintNotice"]</p><p>@aa["Ui.ReportBoundary"]</p>
 		@if (!report.Snapshot.Consistent) { <p class="warning">@aa["Ui.Inconsistent"]</p> }
 		@if (report.HasCriticalUncertainty) { <p class="warning">@aa["Ui.CriticalUnknown"]</p> }
-		<dl><dt>@aa["Ui.Checks"]</dt><dd>@report.Verified / @report.Required</dd><dt>@aa["Ui.Failures"]</dt><dd>@report.Failed</dd><dt>@aa["Ui.UnknownChecks"]</dt><dd>@report.Unknown</dd><dt>@aa["Ui.Learning"]</dt><dd>@Model.Workspace.LearnedCapabilityIds.Count / @catalog.Capabilities.Count</dd></dl>
+		<dl><dt>@aa["Ui.Checks"]</dt><dd>@report.Verified / @report.Required</dd><dt>@aa["Ui.Failures"]</dt><dd>@report.Failed</dd><dt>@aa["Ui.UnknownChecks"]</dt><dd>@report.Unknown</dd><dt>@aa["Ui.Learning"]</dt><dd>@Model.Workspace.LearnedCapabilityIds.Count(keyFeatureIds.Contains) / @keyFeatureIds.Count</dd></dl>
 		<p>@aa["Ui.VerificationCoverage"]</p>
 		@if (Model.Workspace.ReviewEvidence is { } reviewed)
 		{
@@ -32,7 +34,7 @@
 		<h2>@aa["Ui.Checks"]</h2>
 		@foreach (var finding in findings)
 		{
-			<section><h3>@aa[finding.TitleKey]</h3><p><strong>@aa["Ui." + finding.Result]</strong> · @aa["Ui." + finding.Severity]</p><p>@aa[finding.ExplanationKey]</p><p><a href="@finding.Destination">@aa[finding.NextActionKey]</a></p></section>
+			<section><h3>@aa[finding.TitleKey]</h3><p>@if (finding.Severity == FindingSeverity.Information && finding.Result != RuleResult.Pass) { <strong>@aa["Ui.Suggestion"]</strong> } else { <strong>@aa["Ui." + finding.Result]</strong> <text>· @aa["Ui." + finding.Severity]</text> }</p><p>@aa[finding.ExplanationKey]</p><p><a href="@finding.Destination">@aa[finding.NextActionKey]</a></p></section>
 		}
 		<h2>@aa["Ui.Learning"]</h2>
 		<table><thead><tr><th>@aa["Ui.Area"]</th><th>@aa["Ui.SetupChoice"]</th></tr></thead><tbody>@foreach (var area in catalog.Areas) { <tr><th scope="row">@aa[area.LabelKey]</th><td>@aa["Ui." + (Model.Workspace.Areas.TryGetValue(area.Id, out var choice) ? choice : SetupAreaChoice.LearnLater)]</td></tr> }</tbody></table>

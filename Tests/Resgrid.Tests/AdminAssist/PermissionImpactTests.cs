@@ -51,6 +51,17 @@ namespace Resgrid.Tests.AdminAssist
 			}
 		}
 		[Test]
+		public async Task Batched_map_authorization_preserves_scope_and_rechecks_membership_once_per_batch()
+		{
+			var f = new Fixture(); var actor = new AdminAssistActor(7, "member");
+			f.Permissions.Setup(p => p.GetAllByDepartmentIdAsync(7)).ReturnsAsync(new[] { new Permission { DepartmentId = 7, PermissionType = (int)PermissionTypes.CanSeeUnitLocations, Action = 3, LockToGroup = true } });
+			var result = await f.Service.EvaluateCurrentTargetsAsync(actor, "CanSeeUnitLocations", new[] { "1", "2", "unknown" }, CancellationToken.None);
+			Assert.That(result["1"], Is.True); Assert.That(result["2"], Is.False); Assert.That(result["unknown"], Is.False);
+			f.Members.Verify(m => m.GetAllDepartmentMembersUnlimitedAsync(7), Times.Exactly(2));
+			f.Members.SetupSequence(m => m.GetAllDepartmentMembersUnlimitedAsync(7)).ReturnsAsync(f.People).ReturnsAsync(f.People.Where(p => p.UserId != "member"));
+			Assert.That(await f.Service.EvaluateCurrentTargetsAsync(actor, "CanSeeUnitLocations", new[] { "1" }, CancellationToken.None), Is.Null);
+		}
+		[Test]
 		public async Task Diagnostic_permission_reads_fresh_roles_and_does_not_use_a_visibility_cache()
 		{
 			var f = new Fixture(); var actor = new AdminAssistActor(7, "owner");

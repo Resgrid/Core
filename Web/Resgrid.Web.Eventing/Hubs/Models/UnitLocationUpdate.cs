@@ -7,5 +7,6 @@
 		public double Latitude { get; set; }
 		public double Longitude { get; set; }
 		public string RecordId { get; set; }
+		public System.DateTime? Timestamp { get; set; }
 	}
 }

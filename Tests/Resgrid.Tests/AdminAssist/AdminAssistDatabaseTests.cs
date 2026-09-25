@@ -77,10 +77,38 @@ CREATE TABLE {Q("AspNetUsers")} ({Q("Id")} {text}(128) PRIMARY KEY,{Q("TwoFactor
 CREATE TABLE {Q("ActionLogs")} ({Q("ActionLogId")} int PRIMARY KEY,{Q("UserId")} {text}(128),{Q("DepartmentId")} int,{Q("ActionTypeId")} int,{Q("Timestamp")} {date},{Q("GeoLocationData")} {text}(128));
 INSERT INTO {Q("Departments")} VALUES (7),(8),(9),(10),(11),(12),(13);");
 			}
-			var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[] { type == DatabaseTypes.Postgres ? new M0235_AddAdminAssistFoundationPg() : new M0235_AddAdminAssistFoundation(), type == DatabaseTypes.Postgres ? new M0237_AddAdminAssistConversationPg() : new M0237_AddAdminAssistConversation(), type == DatabaseTypes.Postgres ? new M0238_AddEnhancedAiAddonPg() : new M0238_AddEnhancedAiAddon(), type == DatabaseTypes.Postgres ? new M0239_AddAdminAssistDiagnosticsPg() : new M0239_AddAdminAssistDiagnostics(), type == DatabaseTypes.Postgres ? new M0240_AddAiDispatchEnrichmentPg() : new M0240_AddAiDispatchEnrichment(), type == DatabaseTypes.Postgres ? new M0241_AddAiDispatchSettingsPg() : new M0241_AddAiDispatchSettings() });
+			var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[] { type == DatabaseTypes.Postgres ? new M0235_AddAdminAssistFoundationPg() : new M0235_AddAdminAssistFoundation(), type == DatabaseTypes.Postgres ? new M0237_AddAdminAssistConversationPg() : new M0237_AddAdminAssistConversation(), type == DatabaseTypes.Postgres ? new M0238_AddEnhancedAiAddonPg() : new M0238_AddEnhancedAiAddon(), type == DatabaseTypes.Postgres ? new M0239_AddAdminAssistDiagnosticsPg() : new M0239_AddAdminAssistDiagnostics(), type == DatabaseTypes.Postgres ? new M0240_AddAiDispatchEnrichmentPg() : new M0240_AddAiDispatchEnrichment(), type == DatabaseTypes.Postgres ? new M0241_AddAiDispatchSettingsPg() : new M0241_AddAiDispatchSettings(), type == DatabaseTypes.Postgres ? new M0242_AddAdminAssistPlansPg() : new M0242_AddAdminAssistPlans() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r => { if (type == DatabaseTypes.Postgres) r.AddPostgres(); else r.AddSqlServer(); r.WithGlobalConnectionString(_connection); }).AddSingleton(source.Object).BuildServiceProvider();
 			_runner.GetRequiredService<IMigrationRunner>().MigrateUp();
 		}
+		[Test]
+		public async Task Plan_storage_enforces_private_shared_cas_and_hold_aware_closed_retention()
+		{
+			await using var db = Connect(_connection); var ct = CancellationToken.None; var now = DateTime.UtcNow;
+			await db.ExecuteAsync($"INSERT INTO {Q("Departments")} VALUES (9842)");
+			using var unit = new UnitOfWork(Connections()); var repo = Repository(unit);
+			var actor = new AdminAssistActor(9842, "plan-owner");
+			var row = new AdminAssistPlanRow { Id = Guid.NewGuid().ToString("D"), DepartmentId = 9842, UserId = actor.UserId, CreatedOnUtc = now, UpdatedOnUtc = now, Revision = 1, Status = "Proposed", Content = "enc2:test" };
+			await repo.SavePlanAsync(actor, row, 0, "0", 0, ct);
+			Assert.That((await repo.ReadPlanAsync(actor, row.Id, ct)).CreatedOnUtc.Kind, Is.EqualTo(DateTimeKind.Utc));
+			Assert.That(await repo.ReadPlanAsync(actor with { UserId = "reader" }, row.Id, ct), Is.Null);
+			row.Revision = 2; row.Shared = true;
+			await repo.SavePlanAsync(actor, row, 1, "0", 0, ct);
+			Assert.That(await repo.ReadPlanAsync(actor with { UserId = "reader" }, row.Id, ct), Is.Not.Null);
+			Assert.That(await repo.ReadPlanAsync(actor with { DepartmentId = 7 }, row.Id, ct), Is.Null);
+			Assert.ThrowsAsync<AdminAssistConcurrencyException>(() => repo.SavePlanAsync(actor, row, 1, "0", 0, ct));
+			Assert.ThrowsAsync<ArgumentException>(() => repo.SavePlanAsync(actor with { UserId = "reader" }, row, 1, "0", 0, ct));
+			row.Revision = 3; row.ClosedOnUtc = now; row.Status = "Closed";
+			Assert.ThrowsAsync<AdminAssistConcurrencyException>(() => repo.SavePlanAsync(actor, row, 2, "999", 0, ct));
+			await repo.SavePlanAsync(actor, row, 2, "0", 0, ct);
+			await db.ExecuteAsync($"INSERT INTO {Q("RmsRecordLegalHolds")} ({Q("DepartmentId")}) VALUES (9842)");
+			Assert.That(await repo.PurgeExpiredMetadataAsync(9842, now.AddDays(91), ct), Is.Zero);
+			Assert.That(await repo.ListPlansAsync(actor, now.AddDays(1), ct), Is.Empty);
+			await db.ExecuteAsync($"DELETE FROM {Q("RmsRecordLegalHolds")} WHERE {Q("DepartmentId")}=9842");
+			await repo.PurgeExpiredMetadataAsync(9842, now.AddDays(91), ct);
+			Assert.That(await repo.ReadPlanAsync(actor, row.Id, ct), Is.Null);
+		}
+
 		[Test]
 		public async Task Diagnostic_storage_enforces_owner_cas_and_hold_aware_retention()
 		{
@@ -470,6 +498,34 @@ INSERT INTO {Q("Departments")} VALUES (7),(8),(9),(10),(11),(12),(13);");
 			Assert.That(dismissed.LearnedCapabilityIds, Is.EquivalentTo(new[] { "feature" }));
 			Assert.That((await repository.GetWorkspaceAsync(9, "admin", "test", CancellationToken.None)).SetupPromptDismissed, Is.False);
 			Assert.That((await repository.GetHistoryAsync(9, "admin", 0, 20, CancellationToken.None)).Select(h => h.Action), Is.EquivalentTo(new[] { "learn" }));
+		}
+		[Test]
+		public async Task Personal_choices_neither_conflict_with_shared_setup_nor_reset_on_a_catalog_release()
+		{
+			await using var db = Connect(_connection);
+			await db.ExecuteAsync($"INSERT INTO {Q("Departments")} VALUES (719)");
+			var repository = Repository(new UnitOfWork(Connections()));
+			var admin = new AdminAssistActor(719, "admin"); var other = new AdminAssistActor(719, "other");
+			await repository.UpdateWorkspaceAsync(admin, new SetupProgressCommand(0, "mode", Choice: "Review", CatalogVersion: "old"), CancellationToken.None);
+			// Another administrator reading Explore holds a stale revision; personal choices must not fail or advance it.
+			await repository.UpdateWorkspaceAsync(other, new SetupProgressCommand(0, "learn", "feature", "true", "old"), CancellationToken.None);
+			await repository.UpdateWorkspaceAsync(other, new SetupProgressCommand(0, "interest", "feature", "true", "old"), CancellationToken.None);
+			await repository.UpdateWorkspaceAsync(other, new SetupProgressCommand(0, "dismiss", Choice: "true", CatalogVersion: "old"), CancellationToken.None);
+			Assert.That((await repository.GetWorkspaceAsync(719, admin.UserId, "old", CancellationToken.None)).Revision, Is.EqualTo(1));
+			await repository.UpdateWorkspaceAsync(admin, new SetupProgressCommand(1, "mode", Choice: "Fresh", CatalogVersion: "old"), CancellationToken.None);
+			Assert.ThrowsAsync<AdminAssistConcurrencyException>(async () => await repository.UpdateWorkspaceAsync(admin,
+				new SetupProgressCommand(1, "mode", Choice: "Review", CatalogVersion: "old"), CancellationToken.None), "Shared setup keeps its revision check.");
+
+			// A new catalog release keeps learning, interest and the dismissal instead of resetting them.
+			var released = await repository.GetWorkspaceAsync(719, other.UserId, "new", CancellationToken.None);
+			Assert.That(released.LearnedCapabilityIds, Is.EquivalentTo(new[] { "feature" }));
+			Assert.That(released.InterestedCapabilityIds, Is.EquivalentTo(new[] { "feature" }));
+			Assert.That(released.SetupPromptDismissed, Is.True);
+			var changed = await repository.UpdateWorkspaceAsync(other, new SetupProgressCommand(0, "interest", "feature", "false", "new"), CancellationToken.None);
+			Assert.That(changed.LearnedCapabilityIds, Is.EquivalentTo(new[] { "feature" }), "The other flag carries into the new release.");
+			Assert.That(changed.InterestedCapabilityIds, Is.Empty);
+			Assert.That(await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {Q("AdminAssistLearning")} WHERE {Q("DepartmentId")}=719 AND {Q("UserId")}='other' AND {Q("CapabilityId")}='feature'"), Is.EqualTo(1));
+			Assert.That((await repository.GetWorkspaceAsync(719, admin.UserId, "new", CancellationToken.None)).LearnedCapabilityIds, Is.Empty, "Learning stays personal.");
 		}
 		[Test]
 		public async Task Administrative_status_projection_is_tenant_scoped_bounded_and_applies_the_reset_window()

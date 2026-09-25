@@ -69,6 +69,9 @@ namespace Resgrid.Services.AiDispatch
 		public Task<List<AiDispatchAuditListItem>> GetAuditAsync(int departmentId, int take, CancellationToken cancellationToken) =>
 			_audits.GetRecentAsync(departmentId, take, cancellationToken);
 
+		public Task<Dictionary<string, int>> GetRecentOutcomeCountsAsync(int departmentId, int days, CancellationToken cancellationToken) =>
+			_audits.GetOutcomeCountsAsync(departmentId, _clock.GetUtcNow().UtcDateTime.AddDays(-days), cancellationToken);
+
 		public Task<long> GetMonthlyUsageAsync(int departmentId, CancellationToken cancellationToken) =>
 			_admission.GetFeatureUsageAsync(departmentId, AiDispatchEnrichmentService.Feature, _clock.GetUtcNow().UtcDateTime, cancellationToken);
 

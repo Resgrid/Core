@@ -78,7 +78,7 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.AdminAssistController">
             <summary>Deterministic department setup and configuration guidance. Source configuration remains read-only; Ask is separately gated.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.#ctor(Resgrid.Model.AdminAssist.IAdminAssistService,Resgrid.Model.AdminAssist.IAdminAssistAccessService,Resgrid.Model.AdminAssist.IAdminAssistCatalog,Microsoft.Extensions.Localization.IStringLocalizer{Resgrid.Localization.Areas.User.AdminAssist.AdminAssist},Resgrid.Model.AdminAssist.IAdminAssistReferenceSearch,Resgrid.Model.AdminAssist.IAdminAssistAskService,Resgrid.Model.AdminAssist.IAdminAssistDiagnostics,Resgrid.Model.AdminAssist.IAdminAssistWorklistService,Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore,Resgrid.Model.AdminAssist.IConfigurationImpactService,Resgrid.Model.AdminAssist.IDispatchImpactService,Resgrid.Model.AdminAssist.IPermissionImpactService,Resgrid.Model.AdminAssist.IModuleImpactService,Resgrid.Model.AdminAssist.ITextImportImpactService,Resgrid.Model.AdminAssist.IRetentionImpactService,Resgrid.Model.AdminAssist.INotificationImpactService,Resgrid.Model.AdminAssist.ISecurityImpactService)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.#ctor(Resgrid.Model.AdminAssist.IAdminAssistService,Resgrid.Model.AdminAssist.IAdminAssistAccessService,Resgrid.Model.AdminAssist.IAdminAssistCatalog,Microsoft.Extensions.Localization.IStringLocalizer{Resgrid.Localization.Areas.User.AdminAssist.AdminAssist},Resgrid.Model.AdminAssist.IAdminAssistReferenceSearch,Resgrid.Model.AdminAssist.IAdminAssistAskService,Resgrid.Model.AdminAssist.IAdminAssistDiagnostics,Resgrid.Model.AdminAssist.IAdminAssistPlans,Resgrid.Model.AdminAssist.IAdminAssistPlanQueries,Resgrid.Model.AdminAssist.IAdminAssistWorklistService,Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore,Resgrid.Model.AdminAssist.IConfigurationImpactService,Resgrid.Model.AdminAssist.IDispatchImpactService,Resgrid.Model.AdminAssist.IPermissionImpactService,Resgrid.Model.AdminAssist.IModuleImpactService,Resgrid.Model.AdminAssist.ITextImportImpactService,Resgrid.Model.AdminAssist.IRetentionImpactService,Resgrid.Model.AdminAssist.INotificationImpactService,Resgrid.Model.AdminAssist.ISecurityImpactService)">
             <summary>Deterministic department setup and configuration guidance. Source configuration remains read-only; Ask is separately gated.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Overview(System.Boolean,System.Threading.CancellationToken)">
@@ -86,6 +86,27 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Catalog(System.Boolean,System.Threading.CancellationToken)">
             <summary>Read the release-pinned public setup and feature catalog.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PlanTemplates(System.Threading.CancellationToken)">
+            <summary>Read reviewed proposal templates; no configuration is applied.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PlanDraft(Resgrid.Model.AdminAssist.PlanDraftRequest,System.Threading.CancellationToken)">
+            <summary>Build a transient proposal from authorized live evidence.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PlanCreate(Resgrid.Model.AdminAssist.PlanCreateCommand,System.Threading.CancellationToken)">
+            <summary>Explicitly save a reviewed proposal as private metadata.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Plan(Resgrid.Model.AdminAssist.PlanReference,System.Threading.CancellationToken)">
+            <summary>Read a plan with fresh source authorization and verification.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Plans(System.Threading.CancellationToken)">
+            <summary>List currently authorized private and deliberately shared plans.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PlanCommand(Resgrid.Model.AdminAssist.PlanCommand,System.Threading.CancellationToken)">
+            <summary>Update owned plan metadata only, using expected revision and preview digest.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PlanExport(Resgrid.Model.AdminAssist.PlanCommand,System.Threading.CancellationToken)">
+            <summary>Export a freshly reauthorized and escaped as-of PDF.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Diagnose(Resgrid.Model.AdminAssist.DiagnosticRequest,System.Threading.CancellationToken)">
             <summary>Run an attended, read-only diagnostic within the current department.</summary>

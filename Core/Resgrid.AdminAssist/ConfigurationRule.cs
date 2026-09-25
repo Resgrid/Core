@@ -35,9 +35,17 @@ namespace Resgrid.AdminAssist
 			}
 			return new ConfigurationFinding(Definition.Id, Definition.AreaId, Definition.Severity, result,
 				Definition.TitleKey, Definition.ExplanationKey, Definition.NextActionKey, Definition.Location.Url,
-				ids, snapshot.Revision, nowUtc, reason, Definition.Severity == FindingSeverity.Critical &&
-					(result == RuleResult.Fail || result == RuleResult.Unknown && applies == true && Definition.AppliesWhen.Count > 0));
+				ids, snapshot.Revision, nowUtc, reason, IsScopeIndependent(result, applies));
 		}
+
+		/// <summary>
+		/// An applicable critical check counts even outside the selected setup scope. This follows applicability, not the
+		/// outcome, so fixing a failure raises the verified count instead of shrinking the denominator. An unknown with no
+		/// explicit applicability conditions stays in its area; missing evidence alone does not widen scope.
+		/// </summary>
+		private bool IsScopeIndependent(RuleResult result, bool? applies) =>
+			Definition.Severity == FindingSeverity.Critical && applies == true &&
+			(result is RuleResult.Fail or RuleResult.Pass || result == RuleResult.Unknown && Definition.AppliesWhen.Count > 0);
 
 		private static bool? MatchAll(IReadOnlyList<EvidenceCondition> conditions, ConfigurationSnapshot snapshot,
 			DateTime now, TimeSpan age)

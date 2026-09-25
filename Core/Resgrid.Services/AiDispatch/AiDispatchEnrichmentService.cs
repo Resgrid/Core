@@ -307,24 +307,37 @@ namespace Resgrid.Services.AiDispatch
 				if (settings.RenamePlaceholder && string.Equals(call.Name?.Trim(), PlaceholderCallName, StringComparison.Ordinal) && enrichment.Title != null) { call.Name = enrichment.Title; applied.Add(nameof(Call.Name)); }
 			}
 
-			if (applied.Count > 0)
+			var saved = applied.Count > 0;
+			if (saved)
+			{
 				call = await _calls.SaveCallAsync(call, cancellationToken);
-
-			var note = BuildNote(call, enrichment, settings);
-			var managingUserId = (await _departments.GetDepartmentByIdAsync(call.DepartmentId, false))?.ManagingUserId;
-			var noted = false;
-			if (note != null && !string.IsNullOrWhiteSpace(managingUserId))
-			{
-				await _calls.SaveCallNoteAsync(Note(call.CallId, managingUserId, note), cancellationToken);
-				applied.Add("Note");
-				noted = true;
+				// Recorded as soon as the fields are committed, so a failed note below cannot leave the audit without them.
+				audit.AppliedFields = string.Join(",", applied);
 			}
-			if (settings.FlagRelatedCalls && enrichment.RelatedCall != null && enrichment.IsDispatch && noted)
+
+			try
 			{
-				audit.RelatedCallId = enrichment.RelatedCall.CallId;
-				var related = await _calls.GetCallByIdAsync(enrichment.RelatedCall.CallId, true);
-				if (IsEnrichable(related, call.DepartmentId))
-					await _calls.SaveCallNoteAsync(Note(related.CallId, managingUserId, $"AI suggestion (Enhanced AI): call {call.Number} may be about this same incident. Please review."), cancellationToken);
+				var note = BuildNote(call, enrichment, settings);
+				var managingUserId = (await _departments.GetDepartmentByIdAsync(call.DepartmentId, false))?.ManagingUserId;
+				var noted = false;
+				if (note != null && !string.IsNullOrWhiteSpace(managingUserId))
+				{
+					await _calls.SaveCallNoteAsync(Note(call.CallId, managingUserId, note), cancellationToken);
+					applied.Add("Note");
+					noted = true;
+				}
+				if (settings.FlagRelatedCalls && enrichment.RelatedCall != null && enrichment.IsDispatch && noted)
+				{
+					audit.RelatedCallId = enrichment.RelatedCall.CallId;
+					var related = await _calls.GetCallByIdAsync(enrichment.RelatedCall.CallId, true);
+					if (IsEnrichable(related, call.DepartmentId))
+						await _calls.SaveCallNoteAsync(Note(related.CallId, managingUserId, $"AI suggestion (Enhanced AI): call {call.Number} may be about this same incident. Please review."), cancellationToken);
+				}
+			}
+			// Once fields are saved, a failed note must not hide them from the audit or keep boards from refreshing.
+			catch (Exception ex) when (saved && ex is not OperationCanceledException)
+			{
+				Framework.Logging.LogException(ex, $"AI dispatch note failed for call {call.CallId}; the applied fields were saved.");
 			}
 
 			audit.AppliedFields = applied.Count == 0 ? null : string.Join(",", applied);

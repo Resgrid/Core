@@ -1,12 +1,21 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "plans",
       "LabelKey": "Area.plans",
       "PurposeKey": "AreaPurpose.plans",
-      "Order": 12,
-      "Archetypes": []
+      "Order": 6,
+      "Archetypes": [],
+      "Tier": "Core",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.plans",
+      "ExampleKey": "AreaExample.plans",
+      "AdoptionKey": "ModuleAdoption.plans",
+      "MinimumMinutes": 5,
+      "MaximumMinutes": 15,
+      "DocsPath": "/web-app/subscription-billing/"
     }
   ],
   "Settings": [
@@ -147,158 +156,13 @@
   ],
   "Capabilities": [
     {
-      "Id": "addon-ptt",
-      "AreaId": "plans",
-      "LabelKey": "Feature.addon-ptt",
-      "PurposeKey": "FeaturePurpose.addon-ptt",
-      "ValueKey": "FeatureValue.addon-ptt",
-      "ExampleKey": "FeatureExample.addon-ptt",
-      "AdoptionKey": "FeatureAdoption.addon-ptt",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Subscription",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "PTT"
-        }
-      ],
-      "SettingIds": [
-        "setting.BrainTreeCustomerId",
-        "setting.PaddleCustomerId",
-        "setting.StripeCustomerId"
-      ],
-      "RuleIds": [
-        "personnel-limit",
-        "unit-limit"
-      ]
-    },
-    {
-      "Id": "addon-adp",
-      "AreaId": "plans",
-      "LabelKey": "Feature.addon-adp",
-      "PurposeKey": "FeaturePurpose.addon-adp",
-      "ValueKey": "FeatureValue.addon-adp",
-      "ExampleKey": "FeatureExample.addon-adp",
-      "AdoptionKey": "FeatureAdoption.addon-adp",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Subscription",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "ADP"
-        }
-      ],
-      "SettingIds": [
-        "setting.BrainTreeCustomerId",
-        "setting.PaddleCustomerId",
-        "setting.StripeCustomerId"
-      ],
-      "RuleIds": [
-        "personnel-limit",
-        "unit-limit"
-      ]
-    },
-    {
-      "Id": "addon-readiness",
-      "AreaId": "plans",
-      "LabelKey": "Feature.addon-readiness",
-      "PurposeKey": "FeaturePurpose.addon-readiness",
-      "ValueKey": "FeatureValue.addon-readiness",
-      "ExampleKey": "FeatureExample.addon-readiness",
-      "AdoptionKey": "FeatureAdoption.addon-readiness",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Subscription",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "ReadinessPro"
-        }
-      ],
-      "SettingIds": [
-        "setting.BrainTreeCustomerId",
-        "setting.PaddleCustomerId",
-        "setting.StripeCustomerId"
-      ],
-      "RuleIds": [
-        "personnel-limit",
-        "unit-limit"
-      ]
-    },
-    {
-      "Id": "addon-business",
-      "AreaId": "plans",
-      "LabelKey": "Feature.addon-business",
-      "PurposeKey": "FeaturePurpose.addon-business",
-      "ValueKey": "FeatureValue.addon-business",
-      "ExampleKey": "FeatureExample.addon-business",
-      "AdoptionKey": "FeatureAdoption.addon-business",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Subscription",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "BusinessOperations"
-        }
-      ],
-      "SettingIds": [
-        "setting.BrainTreeCustomerId",
-        "setting.PaddleCustomerId",
-        "setting.StripeCustomerId"
-      ],
-      "RuleIds": [
-        "personnel-limit",
-        "unit-limit"
-      ]
-    },
-    {
-      "Id": "addon-ai",
-      "AreaId": "plans",
-      "LabelKey": "Feature.addon-ai",
-      "PurposeKey": "FeaturePurpose.addon-ai",
-      "ValueKey": "FeatureValue.addon-ai",
-      "ExampleKey": "FeatureExample.addon-ai",
-      "AdoptionKey": "FeatureAdoption.addon-ai",
-      "ReleaseStatus": "planned",
-      "Location": {
-        "Controller": "Subscription",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "EnhancedAi"
-        }
-      ],
-      "SettingIds": [
-        "setting.BrainTreeCustomerId",
-        "setting.PaddleCustomerId",
-        "setting.StripeCustomerId"
-      ],
-      "RuleIds": [
-        "personnel-limit",
-        "unit-limit"
-      ]
-    },
-    {
       "Id": "subscription",
       "AreaId": "plans",
       "LabelKey": "Feature.subscription",
       "PurposeKey": "FeaturePurpose.subscription",
       "ValueKey": "FeatureValue.subscription",
       "ExampleKey": "AreaExample.plans",
-      "AdoptionKey": "FeatureAdoption.subscription",
+      "AdoptionKey": "FeatureSetup.subscription",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Subscription",
@@ -313,7 +177,9 @@
       "RuleIds": [
         "personnel-limit",
         "unit-limit"
-      ]
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/subscription-billing/"
     }
   ],
   "Rules": [
@@ -367,7 +233,7 @@
       "Body": "Stripe Customer Id. Billing-provider customer reference managed by subscription workflows; never edit this as an ordinary department setting.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-stripecustomerid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -378,7 +244,7 @@
       "Body": "Brain Tree Customer Id. Legacy billing reference. Use the subscription provider workflow, not a direct settings edit.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-braintreecustomerid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -389,7 +255,7 @@
       "Body": "Paddle Customer Id. Billing-provider customer reference. Managed by authorized billing flows and never returned in assistant evidence.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-paddlecustomerid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -397,65 +263,10 @@
       "Id": "module.AiDisabled",
       "Locale": "en",
       "TitleKey": "Module.AiDisabled",
-      "Body": "Ai availability. Controls availability of optional AI assistance. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "Body": "AI availability. Controls availability of optional AI assistance. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-aidisabled",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "addon-ptt",
-      "Locale": "en",
-      "TitleKey": "Feature.addon-ptt",
-      "Body": "Push-to-Talk Voice channels for crew communication in supported Resgrid clients. Coordinate field teams through configured voice channels. A SAR coordinator uses a team channel during a training exercise. Review seats, supported clients and channel setup. PTT does not provide phone dispatch alerts or certify radio replacement.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "addon-ptt",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "addon-adp",
-      "Locale": "en",
-      "TitleKey": "Feature.addon-adp",
-      "Body": "Advanced Data Protection Additional protection and scoped access for cataloged sensitive department content. Control protected content disclosure and recovery through the department protection lifecycle. An administrator enrolls the department and verifies its recovery arrangements. Buying does not enroll the department. Review MFA, recovery, migration and integration behavior; this is not a compliance certification.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "addon-adp",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "addon-readiness",
-      "Locale": "en",
-      "TitleKey": "Feature.addon-readiness",
-      "Body": "Readiness Pro Maintenance, work orders, preventive tasks, corrective work, approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "addon-readiness",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "addon-business",
-      "Locale": "en",
-      "TitleKey": "Feature.addon-business",
-      "Body": "Business Operations Invoicing, payments, rates, contracts, bids, MARS reimbursement, workforce and field costing. Connect administrative commercial work to the department activities it supports. Prepare an event standby invoice or review documented mutual-aid costs. Certifications and Deployment Finance do not require this add-on. Pay-data reporting additionally needs ADP Enabled; online payments require provider setup. No reimbursement or savings are guaranteed.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "addon-business",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "addon-ai",
-      "Locale": "en",
-      "TitleKey": "Feature.addon-ai",
-      "Body": "Enhanced AI Planned summaries, drafts, knowledge assistance and optional Admin Assist conversation. Help explain approved evidence and prepare drafts for human review when released. Ask for an explanation of a configuration finding when the conversational feature is available. Planned until product and runtime availability are verified. Deterministic Setup Wizard, Setup Report and Admin Assist do not require an AI purchase.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "addon-ai",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -463,10 +274,10 @@
       "Id": "subscription",
       "Locale": "en",
       "TitleKey": "Feature.subscription",
-      "Body": "Base plans and capacity Review current plan allowances and authorized subscription options. Choose capacity for actual department needs without inferring prices or terms. Review feature requirements with the managing member before using the normal billing screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Base plans and capacity Your plan, its personnel and unit limits, and your add-ons. Choose capacity for actual department needs without inferring prices or terms. Before inviting 40 new members, an administrator confirms the plan has room or asks the managing member to change it. Check the remaining room before adding many members or units.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "subscription",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

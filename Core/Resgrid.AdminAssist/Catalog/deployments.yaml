@@ -1,0 +1,133 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "deployments",
+      "LabelKey": "Area.deployments",
+      "PurposeKey": "AreaPurpose.deployments",
+      "Order": 14,
+      "Archetypes": [],
+      "Tier": "Optional",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.deployments",
+      "ExampleKey": "AreaExample.deployments",
+      "AdoptionKey": "ModuleAdoption.deployments",
+      "MinimumMinutes": 15,
+      "MaximumMinutes": 45,
+      "DocsPath": "/web-app/business-ops/deployment-finance/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "deployments",
+      "AreaId": "deployments",
+      "LabelKey": "Feature.deployments",
+      "PurposeKey": "FeaturePurpose.deployments",
+      "ValueKey": "AreaValue.deployments",
+      "ExampleKey": "AreaExample.deployments",
+      "AdoptionKey": "FeatureSetup.deployments",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Deployments",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/business-ops/deployment-finance/"
+    },
+    {
+      "Id": "new-deployment",
+      "AreaId": "deployments",
+      "LabelKey": "Feature.new-deployment",
+      "PurposeKey": "FeaturePurpose.new-deployment",
+      "ValueKey": "AreaValue.deployments",
+      "ExampleKey": "AreaExample.deployments",
+      "AdoptionKey": "ModuleAdoption.deployments",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Deployments",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/business-ops/deployment-finance/"
+    },
+    {
+      "Id": "deployment-from-external-order",
+      "AreaId": "deployments",
+      "LabelKey": "Feature.deployment-from-external-order",
+      "PurposeKey": "FeaturePurpose.deployment-from-external-order",
+      "ValueKey": "AreaValue.deployments",
+      "ExampleKey": "AreaExample.deployments",
+      "AdoptionKey": "ModuleAdoption.deployments",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Deployments",
+        "Action": "FromExternalOrder"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/resource-orders/"
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "deployments",
+      "Locale": "en",
+      "TitleKey": "Feature.deployments",
+      "Body": "Deployment Finance Deployment records and Deployment Finance. Keep deployment records and cost documentation together for review and reimbursement. A strike-team deployment is recorded with its personnel, apparatus and dates. Record your next deployment with its personnel and apparatus.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "deployments",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-deployment",
+      "Locale": "en",
+      "TitleKey": "Feature.new-deployment",
+      "Body": "New Deployment Start a deployment record. Keep deployment records and cost documentation together for review and reimbursement. A strike-team deployment is recorded with its personnel, apparatus and dates. Useful when your members deploy to incidents outside your jurisdiction.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-deployment",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "deployment-from-external-order",
+      "Locale": "en",
+      "TitleKey": "Feature.deployment-from-external-order",
+      "Body": "Deployment From External Order Create a deployment from a mutual-aid resource order. Keep deployment records and cost documentation together for review and reimbursement. A strike-team deployment is recorded with its personnel, apparatus and dates. Useful when your members deploy to incidents outside your jurisdiction.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "deployment-from-external-order",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

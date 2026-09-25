@@ -1,12 +1,21 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "maintenance",
       "LabelKey": "Area.maintenance",
       "PurposeKey": "AreaPurpose.maintenance",
-      "Order": 7,
-      "Archetypes": []
+      "Order": 16,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "ReadinessPro",
+      "Global": false,
+      "ValueKey": "AreaValue.maintenance",
+      "ExampleKey": "AreaExample.maintenance",
+      "AdoptionKey": "ModuleAdoption.maintenance",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 120,
+      "DocsPath": "/web-app/work-orders/"
     }
   ],
   "Settings": [
@@ -79,112 +88,9 @@
       "AllowedValues": "owning serializer and consuming UI",
       "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
       "Availability": "reference-only"
-    },
-    {
-      "Id": "module.ChecklistsDisabled",
-      "AreaId": "maintenance",
-      "LabelKey": "Module.ChecklistsDisabled",
-      "HelpKey": "ModuleHelp.ChecklistsDisabled",
-      "Binding": "DepartmentModuleSettings.ChecklistsDisabled",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": "ChecklistsEnabled"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.maintenance",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.ChecklistsDisabled",
-      "DefaultValue": "false",
-      "AllowedValues": "true or false",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "available"
     }
   ],
   "Capabilities": [
-    {
-      "Id": "checklists",
-      "AreaId": "maintenance",
-      "LabelKey": "Feature.checklists",
-      "PurposeKey": "FeaturePurpose.checklists",
-      "ValueKey": "AreaValue.maintenance",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.checklists",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Checklists",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "flag",
-          "Id": "Checklists.System"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": [
-        "checklist-overdue"
-      ]
-    },
-    {
-      "Id": "new-checklist",
-      "AreaId": "maintenance",
-      "LabelKey": "Feature.new-checklist",
-      "PurposeKey": "FeaturePurpose.new-checklist",
-      "ValueKey": "AreaValue.maintenance",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.new-checklist",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Checklists",
-        "Action": "New"
-      },
-      "Requirements": [
-        {
-          "Kind": "flag",
-          "Id": "Checklists.System"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "checklist-templates",
-      "AreaId": "maintenance",
-      "LabelKey": "Feature.checklist-templates",
-      "PurposeKey": "FeaturePurpose.checklist-templates",
-      "ValueKey": "AreaValue.maintenance",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.checklist-templates",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Checklists",
-        "Action": "Templates"
-      },
-      "Requirements": [
-        {
-          "Kind": "flag",
-          "Id": "Checklists.System"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": []
-    },
     {
       "Id": "work-orders",
       "AreaId": "maintenance",
@@ -192,7 +98,7 @@
       "PurposeKey": "FeaturePurpose.work-orders",
       "ValueKey": "AreaValue.maintenance",
       "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.work-orders",
+      "AdoptionKey": "FeatureSetup.work-orders",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "WorkOrders",
@@ -217,7 +123,69 @@
       ],
       "RuleIds": [
         "equipment-holds"
-      ]
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/work-orders/"
+    },
+    {
+      "Id": "preventive-maintenance",
+      "AreaId": "maintenance",
+      "LabelKey": "Feature.preventive-maintenance",
+      "PurposeKey": "FeaturePurpose.preventive-maintenance",
+      "ValueKey": "FeatureValue.preventive-maintenance",
+      "ExampleKey": "AreaExample.maintenance",
+      "AdoptionKey": "FeatureSetup.preventive-maintenance",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "WorkOrders",
+        "Action": "Recurrences"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ReadinessPro"
+        },
+        {
+          "Kind": "module",
+          "Id": "Maintenance"
+        }
+      ],
+      "SettingIds": [
+        "module.MaintenanceDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/work-orders/"
+    },
+    {
+      "Id": "maintenance-policy",
+      "AreaId": "maintenance",
+      "LabelKey": "Feature.maintenance-policy",
+      "PurposeKey": "FeaturePurpose.maintenance-policy",
+      "ValueKey": "FeatureValue.maintenance-policy",
+      "ExampleKey": "AreaExample.maintenance",
+      "AdoptionKey": "FeatureSetup.maintenance-policy",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "WorkOrders",
+        "Action": "Settings"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ReadinessPro"
+        },
+        {
+          "Kind": "module",
+          "Id": "Maintenance"
+        }
+      ],
+      "SettingIds": [
+        "module.MaintenanceDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/work-orders/"
     },
     {
       "Id": "new-work-order",
@@ -226,7 +194,7 @@
       "PurposeKey": "FeaturePurpose.new-work-order",
       "ValueKey": "AreaValue.maintenance",
       "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.new-work-order",
+      "AdoptionKey": "ModuleAdoption.maintenance",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "WorkOrders",
@@ -249,83 +217,9 @@
       "SettingIds": [
         "module.MaintenanceDisabled"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "checklist-schedules",
-      "AreaId": "maintenance",
-      "LabelKey": "Feature.checklist-schedules",
-      "PurposeKey": "FeaturePurpose.checklist-schedules",
-      "ValueKey": "FeatureValue.checklist-schedules",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.checklist-schedules",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Checklists",
-        "Action": "Due"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Checklists"
-        }
-      ],
-      "SettingIds": [
-        "module.ChecklistsDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "checklist-reports",
-      "AreaId": "maintenance",
-      "LabelKey": "Feature.checklist-reports",
-      "PurposeKey": "FeaturePurpose.checklist-reports",
-      "ValueKey": "FeatureValue.checklist-reports",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.checklist-reports",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Checklists",
-        "Action": "Compliance"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Checklists"
-        }
-      ],
-      "SettingIds": [
-        "module.ChecklistsDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "preventive-maintenance",
-      "AreaId": "maintenance",
-      "LabelKey": "Feature.preventive-maintenance",
-      "PurposeKey": "FeaturePurpose.preventive-maintenance",
-      "ValueKey": "FeatureValue.preventive-maintenance",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.preventive-maintenance",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "WorkOrders",
-        "Action": "Recurrences"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "ReadinessPro"
-        },
-        {
-          "Kind": "module",
-          "Id": "Maintenance"
-        }
-      ],
-      "SettingIds": [
-        "module.MaintenanceDisabled"
-      ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/work-orders/"
     },
     {
       "Id": "maintenance-reports",
@@ -334,7 +228,7 @@
       "PurposeKey": "FeaturePurpose.maintenance-reports",
       "ValueKey": "FeatureValue.maintenance-reports",
       "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.maintenance-reports",
+      "AdoptionKey": "ModuleAdoption.maintenance",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "WorkOrders",
@@ -353,58 +247,43 @@
       "SettingIds": [
         "module.MaintenanceDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/work-orders/"
     },
     {
-      "Id": "maintenance-policy",
+      "Id": "addon-readiness",
       "AreaId": "maintenance",
-      "LabelKey": "Feature.maintenance-policy",
-      "PurposeKey": "FeaturePurpose.maintenance-policy",
-      "ValueKey": "FeatureValue.maintenance-policy",
-      "ExampleKey": "AreaExample.maintenance",
-      "AdoptionKey": "FeatureAdoption.maintenance-policy",
+      "LabelKey": "Feature.addon-readiness",
+      "PurposeKey": "FeaturePurpose.addon-readiness",
+      "ValueKey": "FeatureValue.addon-readiness",
+      "ExampleKey": "FeatureExample.addon-readiness",
+      "AdoptionKey": "FeatureAdoption.addon-readiness",
       "ReleaseStatus": "available",
       "Location": {
-        "Controller": "WorkOrders",
-        "Action": "Settings"
+        "Controller": "Subscription",
+        "Action": "Index"
       },
       "Requirements": [
         {
           "Kind": "addon",
           "Id": "ReadinessPro"
-        },
-        {
-          "Kind": "module",
-          "Id": "Maintenance"
         }
       ],
       "SettingIds": [
-        "module.MaintenanceDisabled"
+        "setting.BrainTreeCustomerId",
+        "setting.PaddleCustomerId",
+        "setting.StripeCustomerId"
       ],
-      "RuleIds": []
+      "RuleIds": [
+        "personnel-limit",
+        "unit-limit"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/work-orders/"
     }
   ],
   "Rules": [
-    {
-      "Id": "checklist-overdue",
-      "AreaId": "maintenance",
-      "Severity": "Warning",
-      "TitleKey": "Rule.checklist-overdue",
-      "ExplanationKey": "RuleWhy.checklist-overdue",
-      "NextActionKey": "RuleNext.checklist-overdue",
-      "Location": {
-        "Controller": "Checklists",
-        "Action": "Index"
-      },
-      "AppliesWhen": [],
-      "FailsWhen": [
-        {
-          "EvidenceId": "overdueChecklistCount",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
     {
       "Id": "equipment-holds",
       "AreaId": "maintenance",
@@ -441,7 +320,7 @@
       "Body": "Maintenance availability. Controls availability of maintenance and work orders. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-maintenancedisabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -452,51 +331,7 @@
       "Body": "Maintenance menu name. Optional display name for maintenance and work orders in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-maintenancenameoverride",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.ChecklistsDisabled",
-      "Locale": "en",
-      "TitleKey": "Module.ChecklistsDisabled",
-      "Body": "Checklists availability. Controls availability of checklists. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-checklistsdisabled",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "checklists",
-      "Locale": "en",
-      "TitleKey": "Feature.checklists",
-      "Body": "Checklists Apparatus, station and readiness checklists Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "checklists",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-checklist",
-      "Locale": "en",
-      "TitleKey": "Feature.new-checklist",
-      "Body": "New Checklist Author a checklist definition Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-checklist",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "checklist-templates",
-      "Locale": "en",
-      "TitleKey": "Feature.checklist-templates",
-      "Body": "Checklist Templates Start from a checklist template Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "checklist-templates",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -504,43 +339,10 @@
       "Id": "work-orders",
       "Locale": "en",
       "TitleKey": "Feature.work-orders",
-      "Body": "Work Orders Maintenance and repair work orders Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Checklists do not require Readiness Pro. Maintenance requires the add-on, module access and reviewed repair and approval procedures.",
+      "Body": "Work Orders Repair and maintenance work orders. Turn a failed check or reported defect into a tracked repair and a documented return to service. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Create work orders from failed checks or reported defects.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "work-orders",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-work-order",
-      "Locale": "en",
-      "TitleKey": "Feature.new-work-order",
-      "Body": "New Work Order Open a maintenance work order Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Checklists do not require Readiness Pro. Maintenance requires the add-on, module access and reviewed repair and approval procedures.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-work-order",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "checklist-schedules",
-      "Locale": "en",
-      "TitleKey": "Feature.checklist-schedules",
-      "Body": "Checklist schedules and due work Assign recurring checks and review due occurrences. Make recorded equipment and procedure checks visible to their owners. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "checklist-schedules",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "checklist-reports",
-      "Locale": "en",
-      "TitleKey": "Feature.checklist-reports",
-      "Body": "Checklist compliance reports Review expected, completed, skipped and overdue checks. Find missing recorded checks without treating a report as safety certification. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "checklist-reports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -548,21 +350,10 @@
       "Id": "preventive-maintenance",
       "Locale": "en",
       "TitleKey": "Feature.preventive-maintenance",
-      "Body": "Preventive maintenance Configure recurring maintenance work and due tasks. Plan equipment upkeep and track corrective responsibility. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Preventive maintenance Recurring maintenance schedules. Plan equipment upkeep and track corrective responsibility. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Schedule routine service for each apparatus.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "preventive-maintenance",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "maintenance-reports",
-      "Locale": "en",
-      "TitleKey": "Feature.maintenance-reports",
-      "Body": "Maintenance history and reports Review maintenance work, recorded holds and repair history. Support accountable return-to-service review through the owning workflow. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "maintenance-reports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -570,10 +361,43 @@
       "Id": "maintenance-policy",
       "Locale": "en",
       "TitleKey": "Feature.maintenance-policy",
-      "Body": "Maintenance policies and approvals Configure supported work-order policies and approval requirements. Make authority and repair completion requirements explicit. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Maintenance policies and approvals Repair approvals and safety holds. Make authority and repair completion requirements explicit. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Decide who approves repairs and returns equipment to service.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "maintenance-policy",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-work-order",
+      "Locale": "en",
+      "TitleKey": "Feature.new-work-order",
+      "Body": "New Work Order Open a work order. Turn a failed check or reported defect into a tracked repair and a documented return to service. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Requires the Readiness Pro add-on. Checklists remain available without it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-work-order",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "maintenance-reports",
+      "Locale": "en",
+      "TitleKey": "Feature.maintenance-reports",
+      "Body": "Maintenance history and reports Maintenance history, repair costs and safety holds. Support accountable return-to-service review through the owning workflow. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Requires the Readiness Pro add-on. Checklists remain available without it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "maintenance-reports",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "addon-readiness",
+      "Locale": "en",
+      "TitleKey": "Feature.addon-readiness",
+      "Body": "Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "addon-readiness",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

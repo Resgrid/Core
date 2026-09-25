@@ -10,6 +10,7 @@ public sealed record GroundedAskResult(string Outcome, IReadOnlyList<AskEvidence
 public sealed class GroundedAskRunner(ILlmClient client, IAdminAssistAskQueries queries, Func<CancellationToken, Task>? authorize = null)
 {
     public static readonly IReadOnlyDictionary<string, string[]> Modes = new Dictionary<string, string[]> {
+        ["plans"] = ["draft_plan", "verify_step"],
         ["setup"] = ["get_setup_report", "get_setup_next_steps", "get_operating_profile", "get_findings"],
         ["settings"] = ["get_setting", "get_section", "evaluate_impact", "get_recent_changes"],
         ["permissions"] = ["get_permissions", "get_findings", "get_setting"],
@@ -31,7 +32,7 @@ public sealed class GroundedAskRunner(ILlmClient client, IAdminAssistAskQueries 
         }
         foreach (var seed in seedReads) await Read(seed);
         if (observed.Count == 0) return new("Abstained", [], reads, 0, 0);
-        var offered = AdminAssistPrompt.Tools.Where(t => names.Contains(t.Name) && (t.Name != "evaluate_impact" || seedReads.Any(s => s.Name == "evaluate_impact"))).ToArray();
+        var offered = AdminAssistPrompt.Tools.Where(t => names.Contains(t.Name) && (t.Name is not ("evaluate_impact" or "verify_step") || seedReads.Any(s => s.Name == t.Name))).ToArray();
         var messages = new List<LlmMessage> { new("system", AdminAssistPrompt.System), new("user", Compact(observed.Values)) };
         int inputTokens = 0, outputTokens = 0, calls = seedReads.Count;
         // Four tool rounds, then one final selection with no tools. Each request has its own 6,144/2,048 cap.
@@ -61,7 +62,7 @@ public sealed class GroundedAskRunner(ILlmClient client, IAdminAssistAskQueries 
             foreach (var call in result.ToolCalls) {
                 if (!offered.Any(t => t.Name == call.Name)) throw new ArgumentException("Tool was not offered.");
                 var input = AdminAssistPrompt.ValidateCall(call);
-                if (input.Name == "evaluate_impact" && !seedReads.Any(s => s.Name == input.Name && s.Id == input.Id && s.Value == input.Value)) throw new ArgumentException("Impact proposal requires explicit user context.");
+                if (input.Name is "evaluate_impact" or "verify_step" && !seedReads.Any(s => s.Name == input.Name && s.Id == input.Id && s.Value == input.Value)) throw new ArgumentException("Impact proposal requires explicit user context.");
                 var evidence = await Read(input);
                 messages.Add(new("tool", Compact(evidence), ToolCallId: call.Id));
             }

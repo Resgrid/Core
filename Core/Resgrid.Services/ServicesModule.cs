@@ -32,7 +32,10 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.QualificationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ReadinessEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.StaffingEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.SetupInventoryEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistAskService>().As<Resgrid.Model.AdminAssist.IAdminAssistAskService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistPlanService>().As<Resgrid.Model.AdminAssist.IAdminAssistPlans>().As<Resgrid.Model.AdminAssist.IAdminAssistPlanQueries>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistPlanProtection>().As<Resgrid.Model.AdminAssist.IAdminAssistPlanProtection>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistDiagnosticService>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnostics>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistDiagnosticSource>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnosticSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistDiagnosticProtection>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnosticProtection>().InstancePerLifetimeScope();
@@ -334,6 +337,8 @@ namespace Resgrid.Services
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
+			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.
+			builder.RegisterType<LocationVisibilityService>().As<ILocationVisibilityService>().SingleInstance();
 			builder.RegisterType<DispatchRecommendationService>().As<IDispatchRecommendationService>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchScopeService>().As<IDispatchScopeService>().InstancePerLifetimeScope();
 			builder.RegisterType<NearestUnitService>().As<INearestUnitService>().InstancePerLifetimeScope();

@@ -52,7 +52,8 @@ namespace Resgrid.Services.AdminAssist
 		{
 			var row = await OwnedAsync(actor, command, ct);
 			var request = await protection.ReadAsync(actor, row, ct);
-			DiagnosticPolicy.Validate(request, clock.GetUtcNow().UtcDateTime);
+			// The window was valid when the run was created; OwnedAsync enforces retention, so a retained run stays readable as its window ages.
+			DiagnosticPolicy.Validate(request, row.CreatedOnUtc);
 			if (request.Flow != row.Flow) throw new UnauthorizedAccessException();
 			var report = await BuildAsync(actor, row, request, ct);
 			await OwnedAsync(actor, command, ct); // A simultaneous tombstone cannot replay a retained request.

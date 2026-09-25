@@ -385,8 +385,9 @@ namespace Resgrid.Tests.Services
 				"AuditLogs", "DomainEventOutbox", "WorkflowRuns", "WorkflowRunLogs",
 				// Admin Assist content (registry §4G, §4I), each read through the generic Records resolver: findings (catalog v30) by
 				// AdminAssistWorklistService, dispatch traces (v30) by AdminAssistDiagnosticSource, shared AI generations (v31) by
-				// AdminAssistConversationProtection and diagnostic runs (v32) by AdminAssistDiagnosticProtection.
-				"AdminAssistFindings", "AdminAssistDispatchTraces", "AiGenerations", "AdminAssistDiagnosticRuns"
+				// AdminAssistConversationProtection, diagnostic runs (v32) by AdminAssistDiagnosticProtection and change plans (v33)
+				// by AdminAssistPlanProtection.
+				"AdminAssistFindings", "AdminAssistDispatchTraces", "AiGenerations", "AdminAssistDiagnosticRuns", "AdminAssistPlans"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)

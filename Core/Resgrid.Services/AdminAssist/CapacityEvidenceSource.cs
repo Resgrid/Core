@@ -17,8 +17,10 @@ namespace Resgrid.Services.AdminAssist
 			if (string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) || string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 				throw new InvalidOperationException("Subscription metadata unavailable.");
 			var plan = await subscriptions.GetCurrentPlanForDepartmentAsync(actor.DepartmentId, true).WaitAsync(ct);
-			var counts = await subscriptions.GetPlanCountsForDepartmentAsync(actor.DepartmentId).WaitAsync(ct);
-			if (plan?.PlanLimits == null || plan.PlanLimits.Count == 0 || counts == null) throw new InvalidOperationException("Subscription metadata unavailable.");
+			// Stop at the first missing billing answer; an unavailable Billing API should not cost two more timeouts.
+			if (plan?.PlanLimits == null || plan.PlanLimits.Count == 0) throw new InvalidOperationException("Subscription metadata unavailable.");
+			var counts = await subscriptions.GetPlanCountsForDepartmentAsync(actor.DepartmentId).WaitAsync(ct)
+				?? throw new InvalidOperationException("Subscription metadata unavailable.");
 			var current = await limits.GetLimitsForEntityPlanWithFallbackAsync(actor.DepartmentId, true).WaitAsync(ct)
 				?? throw new InvalidOperationException("Subscription limits unavailable.");
 			// Independent billing reads must agree; a moving count or stale plan is not a verified capacity snapshot.

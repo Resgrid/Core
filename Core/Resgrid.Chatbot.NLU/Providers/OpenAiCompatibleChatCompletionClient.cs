@@ -55,7 +55,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 					return null;
 				}
 
-				using var httpClient = Resgrid.Llm.OperatorEndpointPolicy.CreateClient(new Uri(endpoint), allowPrivate);
+				var httpClient = Resgrid.Llm.OperatorEndpointPolicy.GetSharedClient(new Uri(endpoint), allowPrivate);
 				var effectiveMaxTokens = maxTokens ?? (ChatbotConfig.CloudNluMaxTokens > 0 ? ChatbotConfig.CloudNluMaxTokens : 512);
 				var chatTurns = turns.Select(t => (NormalizeRole(t.Role), t.Content)).ToList();
 				var compat = LlmWire.CompatFor(provider, endpoint, model);

@@ -54,7 +54,7 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase(false, true, EvidenceState.Unknown)]
 		public async Task Unit_preview_counts_fallbacks_and_never_converts_missing_or_restricted_data_to_zero(bool restricted, bool outage, EvidenceState expected)
 		{
-			var units = new Mock<IUnitsService>(); var rows = new Mock<IUnitsRepository>(); var states = new Mock<IUnitStatesRepository>(); var authorization = new Mock<IAuthorizationService>();
+			var units = new Mock<IUnitsService>(); var rows = new Mock<IUnitsRepository>(); var states = new Mock<IUnitStatesRepository>(); var authorization = new Mock<IAdminAssistPermissionEvaluator>();
 			rows.Setup(r => r.GetAllUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<Unit> { new() { UnitId = 1, DepartmentId = 7 }, new() { UnitId = 2, DepartmentId = 7 } });
 			units.Setup(u => u.ReadLatestLocationsForAdministrationAsync(7)).ReturnsAsync(new List<UnitsLocation> {
 				new() { UnitId = 1, DepartmentId = 7, Timestamp = _now.AddMinutes(-90) }, new() { UnitId = 2, DepartmentId = 7, Timestamp = _now.AddMinutes(-90) }
@@ -63,7 +63,7 @@ namespace Resgrid.Tests.AdminAssist
 			states.Setup(s => s.GetLatestUnitStatesForDepartmentAsync(7)).ReturnsAsync(new List<UnitState> {
 				new() { UnitId = 1, Timestamp = _now.AddHours(-2), Latitude = 40, Longitude = -120 }, new() { UnitId = 2, Timestamp = _now.AddHours(-2) }
 			});
-			authorization.Setup(a => a.CanUserViewUnitLocationViaMatrixAsync(It.IsAny<int>(), "admin", 7)).ReturnsAsync(!restricted);
+			authorization.Setup(a => a.EvaluateCurrentTargetsAsync(It.IsAny<AdminAssistActor>(), nameof(PermissionTypes.CanSeeUnitLocations), It.IsAny<IReadOnlyList<string>>(), It.IsAny<CancellationToken>())).ReturnsAsync(new Dictionary<string, bool> { ["1"] = !restricted, ["2"] = !restricted });
 			var service = new MappingImpactProvider(Mock.Of<IUsersService>(), units.Object, rows.Object, states.Object, Mock.Of<IActionLogsRepository>(), authorization.Object, Mock.Of<IRecordsAuthorizationService>());
 			var facts = new Dictionary<string, ConfigurationEvidence> {
 				["MappingUnitLocationTTL"] = new("MappingUnitLocationTTL", EvidenceState.Known, "test", "1", _now, Number: 0),
@@ -78,6 +78,10 @@ namespace Resgrid.Tests.AdminAssist
 				Assert.That(report.Metrics.Single(m => m.LabelKey == "Impact.StatusFallbackMarkers").After, Is.EqualTo(1));
 			}
 			else { Assert.That(metric.Before, Is.Null); Assert.That(metric.After, Is.Null); }
+			var proposed = new ConfigurationSnapshot(7, "admin", "1", _now, true, facts.ToDictionary(p => p.Key, p => p.Key == "MappingUnitLocationTTL" ? p.Value with { Number = 60 } : p.Value));
+			var composed = await service.EvaluateComposedAsync(new(7, "admin"), new(7, "admin", "1", _now, true, facts), proposed, new[] { "setting.MappingUnitLocationTTL" }, CancellationToken.None);
+			Assert.That(composed.Metrics.Single().Before, Is.EqualTo(expected == EvidenceState.Known ? 2m : (decimal?)null));
+			Assert.That(composed.Metrics.Single().After, Is.EqualTo(expected == EvidenceState.Known ? 1m : (decimal?)null));
 		}
 	}
 }

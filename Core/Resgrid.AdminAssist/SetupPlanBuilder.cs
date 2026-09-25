@@ -14,7 +14,8 @@ namespace Resgrid.AdminAssist
 			var selected = workspace.Areas.Where(a => a.Value == SetupAreaChoice.UseNow).Select(a => a.Key).ToHashSet(StringComparer.Ordinal);
 			var interests = workspace.InterestedCapabilityIds.ToHashSet(StringComparer.Ordinal);
 			var tasks = new List<SetupTask>();
-			foreach (var capability in catalog.Capabilities.Where(c => interests.Contains(c.Id) || selected.Contains(c.AreaId)))
+			// Only key features become setup tasks; detail features stay available through Ask and reference.
+			foreach (var capability in catalog.Capabilities.Where(c => c.IsKey && (interests.Contains(c.Id) || selected.Contains(c.AreaId))))
 			{
 				var availability = access.SingleOrDefault(a => a.CapabilityId == capability.Id);
 				var assessment = assessments.SingleOrDefault(a => a.CapabilityId == capability.Id);
@@ -30,8 +31,9 @@ namespace Resgrid.AdminAssist
 				Add("Verify", assessment?.GuidanceKey ?? "Ui.ConfigurationNotAssessed", allowed && assessment?.State == CapabilitySetupState.ChecksPassed && assessment.SnapshotRevision == revision &&
 					assessment.AsOfUtc <= now && now - assessment.AsOfUtc <= TimeSpan.FromMinutes(1) ? "ChecksPassed" : "Unknown", destination);
 			}
-			var effort = catalog.Areas.Where(a => selected.Contains(a.Id) || catalog.Capabilities.Any(c => c.AreaId == a.Id && interests.Contains(c.Id)))
-				.Select(a => new SetupEffort(a.Id, a.Id is "home" or "plans" ? 15 : 30, a.Id is "home" or "plans" ? 45 : 120, "Ui.EffortAssumptions")).ToArray();
+			var planned = tasks.Select(t => catalog.Capabilities.Single(c => c.Id == t.CapabilityId).AreaId).ToHashSet(StringComparer.Ordinal);
+			var effort = catalog.Areas.Where(a => planned.Contains(a.Id))
+				.Select(a => new SetupEffort(a.Id, a.MinimumMinutes, a.MaximumMinutes, "Ui.EffortAssumptions")).ToArray();
 			return new(tasks, effort, workspace.RevisitOnUtc <= now, workspace.RevisitOnUtc, revision);
 		}
 	}

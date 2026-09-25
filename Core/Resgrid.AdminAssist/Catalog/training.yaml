@@ -1,0 +1,377 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "training",
+      "LabelKey": "Area.training",
+      "PurposeKey": "AreaPurpose.training",
+      "Order": 9,
+      "Archetypes": [],
+      "Tier": "Recommended",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "ModuleAdoption.training",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 90,
+      "DocsPath": "/web-app/trainings/"
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "module.TrainingDisabled",
+      "AreaId": "training",
+      "LabelKey": "Module.TrainingDisabled",
+      "HelpKey": "ModuleHelp.TrainingDisabled",
+      "Binding": "DepartmentModuleSettings.TrainingDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "TrainingEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.TrainingDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.TrainingNameOverride",
+      "AreaId": "training",
+      "LabelKey": "Module.TrainingNameOverride",
+      "HelpKey": "ModuleHelp.TrainingNameOverride",
+      "Binding": "DepartmentModuleSettings.TrainingNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.TrainingNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "trainings",
+      "AreaId": "training",
+      "LabelKey": "Feature.trainings",
+      "PurposeKey": "FeaturePurpose.trainings",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "FeatureSetup.trainings",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Trainings",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "trainingCount",
+        "Minimum": 1,
+        "RuleIds": [],
+        "GuidanceKey": "SetupEvidence.trainings"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/trainings/"
+    },
+    {
+      "Id": "certification-types",
+      "AreaId": "training",
+      "LabelKey": "Feature.certification-types",
+      "PurposeKey": "FeaturePurpose.certification-types",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "FeatureSetup.certification-types",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Types"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "certificationTypeCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "credential-expiry",
+          "qualified-coverage"
+        ],
+        "GuidanceKey": "SetupEvidence.certification-types"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/business-ops/certifications/"
+    },
+    {
+      "Id": "certification-dashboard",
+      "AreaId": "training",
+      "LabelKey": "Feature.certification-dashboard",
+      "PurposeKey": "FeaturePurpose.certification-dashboard",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "FeatureSetup.certification-dashboard",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [
+        "credential-expiry",
+        "qualified-coverage"
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/business-ops/certifications/"
+    },
+    {
+      "Id": "new-training",
+      "AreaId": "training",
+      "LabelKey": "Feature.new-training",
+      "PurposeKey": "FeaturePurpose.new-training",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "ModuleAdoption.training",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Trainings",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/"
+    },
+    {
+      "Id": "certification-settings",
+      "AreaId": "training",
+      "LabelKey": "Feature.certification-settings",
+      "PurposeKey": "FeaturePurpose.certification-settings",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "ModuleAdoption.training",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Settings"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/business-ops/certifications/"
+    },
+    {
+      "Id": "my-certifications",
+      "AreaId": "training",
+      "LabelKey": "Feature.my-certifications",
+      "PurposeKey": "FeaturePurpose.my-certifications",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "ModuleAdoption.training",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [
+        "credential-expiry",
+        "qualified-coverage"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/business-ops/certifications/"
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "qualified-coverage",
+      "AreaId": "training",
+      "Severity": "Critical",
+      "TitleKey": "Rule.qualified-coverage",
+      "ExplanationKey": "RuleWhy.qualified-coverage",
+      "NextActionKey": "RuleNext.qualified-coverage",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "uncoveredQualificationCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "credential-expiry",
+      "AreaId": "training",
+      "Severity": "Warning",
+      "TitleKey": "Rule.credential-expiry",
+      "ExplanationKey": "RuleWhy.credential-expiry",
+      "NextActionKey": "RuleNext.credential-expiry",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "qualificationsExpiring30Days",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "module.TrainingDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.TrainingDisabled",
+      "Body": "Training availability. Controls availability of training. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-trainingdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.TrainingNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.TrainingNameOverride",
+      "Body": "Training menu name. Optional display name for training in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-trainingnameoverride",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "trainings",
+      "Locale": "en",
+      "TitleKey": "Feature.trainings",
+      "Body": "Trainings Training assignments with materials and optional quizzes. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. Create a training and assign it to the members or groups who need it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "trainings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "certification-types",
+      "Locale": "en",
+      "TitleKey": "Feature.certification-types",
+      "Body": "Certification Types The certifications and qualifications you track. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. Add each certification type with its renewal period.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "certification-types",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "certification-dashboard",
+      "Locale": "en",
+      "TitleKey": "Feature.certification-dashboard",
+      "Body": "Certification Dashboard Who holds which certifications and what is expiring. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. Record members' current certifications, then review what expires soon.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "certification-dashboard",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-training",
+      "Locale": "en",
+      "TitleKey": "Feature.new-training",
+      "Body": "New Training Create a training, with an optional quiz. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. List the certifications your department tracks and their renewal periods.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-training",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "certification-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.certification-settings",
+      "Body": "Certification Settings What happens when a certification expires, grace periods and reminders. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. List the certifications your department tracks and their renewal periods.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "certification-settings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "my-certifications",
+      "Locale": "en",
+      "TitleKey": "Feature.my-certifications",
+      "Body": "My Certifications Your own certification records. See who is qualified and whose certifications are expiring before it affects who can respond. EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member. List the certifications your department tracks and their renewal periods.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "my-certifications",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

@@ -1,51 +1,27 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
-      "Id": "location",
-      "LabelKey": "Area.location",
-      "PurposeKey": "AreaPurpose.location",
-      "Order": 3,
-      "Archetypes": []
+      "Id": "mapping",
+      "LabelKey": "Area.mapping",
+      "PurposeKey": "AreaPurpose.mapping",
+      "Order": 7,
+      "Archetypes": [],
+      "Tier": "Recommended",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "ModuleAdoption.mapping",
+      "MinimumMinutes": 15,
+      "MaximumMinutes": 60,
+      "DocsPath": "/web-app/mapping/"
     }
   ],
   "Settings": [
     {
-      "Id": "setting.UnitsSortOrder",
-      "AreaId": "location",
-      "LabelKey": "Setting.UnitsSortOrder",
-      "HelpKey": "SettingHelp.UnitsSortOrder",
-      "Binding": "DepartmentSettingTypes.UnitsSortOrder",
-      "ValueType": "enum",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "Settings",
-        "Field": "UnitsSortOrder"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "Medium",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "setting.UnitsSortOrder",
-      "DefaultValue": "owning view default",
-      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
-      "EvidenceSource": "DepartmentSettings",
-      "Availability": "available"
-    },
-    {
       "Id": "setting.MappingPersonnelLocationTTL",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingPersonnelLocationTTL",
       "HelpKey": "SettingHelp.MappingPersonnelLocationTTL",
       "Binding": "DepartmentSettingTypes.MappingPersonnelLocationTTL",
@@ -62,7 +38,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -78,7 +54,7 @@
     },
     {
       "Id": "setting.MappingUnitLocationTTL",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingUnitLocationTTL",
       "HelpKey": "SettingHelp.MappingUnitLocationTTL",
       "Binding": "DepartmentSettingTypes.MappingUnitLocationTTL",
@@ -95,7 +71,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -111,7 +87,7 @@
     },
     {
       "Id": "setting.MappingPersonnelAllowStatusWithNoLocationToOverwrite",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingPersonnelAllowStatusWithNoLocationToOverwrite",
       "HelpKey": "SettingHelp.MappingPersonnelAllowStatusWithNoLocationToOverwrite",
       "Binding": "DepartmentSettingTypes.MappingPersonnelAllowStatusWithNoLocationToOverwrite",
@@ -128,7 +104,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -144,7 +120,7 @@
     },
     {
       "Id": "setting.MappingUnitAllowStatusWithNoLocationToOverwrite",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingUnitAllowStatusWithNoLocationToOverwrite",
       "HelpKey": "SettingHelp.MappingUnitAllowStatusWithNoLocationToOverwrite",
       "Binding": "DepartmentSettingTypes.MappingUnitAllowStatusWithNoLocationToOverwrite",
@@ -161,7 +137,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -176,41 +152,8 @@
       "Availability": "available"
     },
     {
-      "Id": "setting.PersonnelOnUnitSetUnitStatus",
-      "AreaId": "location",
-      "LabelKey": "Setting.PersonnelOnUnitSetUnitStatus",
-      "HelpKey": "SettingHelp.PersonnelOnUnitSetUnitStatus",
-      "Binding": "DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "DispatchSettings",
-        "Field": "PersonnelOnUnitSetUnitStatus"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "Medium",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "setting.PersonnelOnUnitSetUnitStatus",
-      "DefaultValue": "false",
-      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
-      "EvidenceSource": "DepartmentSettings",
-      "Availability": "available"
-    },
-    {
       "Id": "setting.WeatherAlertsEnabled",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertsEnabled",
       "HelpKey": "SettingHelp.WeatherAlertsEnabled",
       "Binding": "DepartmentSettingTypes.WeatherAlertsEnabled",
@@ -227,7 +170,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -243,7 +186,7 @@
     },
     {
       "Id": "setting.WeatherAlertMinimumSeverity",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertMinimumSeverity",
       "HelpKey": "SettingHelp.WeatherAlertMinimumSeverity",
       "Binding": "DepartmentSettingTypes.WeatherAlertMinimumSeverity",
@@ -260,7 +203,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -276,7 +219,7 @@
     },
     {
       "Id": "setting.WeatherAlertAutoMessageSeverity",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertAutoMessageSeverity",
       "HelpKey": "SettingHelp.WeatherAlertAutoMessageSeverity",
       "Binding": "DepartmentSettingTypes.WeatherAlertAutoMessageSeverity",
@@ -293,7 +236,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -309,7 +252,7 @@
     },
     {
       "Id": "setting.WeatherAlertCallIntegration",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertCallIntegration",
       "HelpKey": "SettingHelp.WeatherAlertCallIntegration",
       "Binding": "DepartmentSettingTypes.WeatherAlertCallIntegration",
@@ -326,7 +269,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -342,7 +285,7 @@
     },
     {
       "Id": "setting.WeatherAlertCacheMinutes",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertCacheMinutes",
       "HelpKey": "SettingHelp.WeatherAlertCacheMinutes",
       "Binding": "DepartmentSettingTypes.WeatherAlertCacheMinutes",
@@ -359,7 +302,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -375,7 +318,7 @@
     },
     {
       "Id": "setting.WeatherAlertAutoMessageSchedule",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertAutoMessageSchedule",
       "HelpKey": "SettingHelp.WeatherAlertAutoMessageSchedule",
       "Binding": "DepartmentSettingTypes.WeatherAlertAutoMessageSchedule",
@@ -392,7 +335,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -408,7 +351,7 @@
     },
     {
       "Id": "setting.WeatherAlertExcludedEvents",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.WeatherAlertExcludedEvents",
       "HelpKey": "SettingHelp.WeatherAlertExcludedEvents",
       "Binding": "DepartmentSettingTypes.WeatherAlertExcludedEvents",
@@ -425,7 +368,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -441,7 +384,7 @@
     },
     {
       "Id": "setting.MappingUseMapboxOverride",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingUseMapboxOverride",
       "HelpKey": "SettingHelp.MappingUseMapboxOverride",
       "Binding": "DepartmentSettingTypes.MappingUseMapboxOverride",
@@ -458,7 +401,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -477,7 +420,7 @@
     },
     {
       "Id": "setting.MappingMapboxStyleUrl",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingMapboxStyleUrl",
       "HelpKey": "SettingHelp.MappingMapboxStyleUrl",
       "Binding": "DepartmentSettingTypes.MappingMapboxStyleUrl",
@@ -494,7 +437,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -512,7 +455,7 @@
     },
     {
       "Id": "setting.MappingMapboxAccessToken",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.MappingMapboxAccessToken",
       "HelpKey": "SettingHelp.MappingMapboxAccessToken",
       "Binding": "DepartmentSettingTypes.MappingMapboxAccessToken",
@@ -529,7 +472,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -547,7 +490,7 @@
     },
     {
       "Id": "setting.HardwareTrackingStaleAfterSeconds",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.HardwareTrackingStaleAfterSeconds",
       "HelpKey": "SettingHelp.HardwareTrackingStaleAfterSeconds",
       "Binding": "DepartmentSettingTypes.HardwareTrackingStaleAfterSeconds",
@@ -564,7 +507,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -580,7 +523,7 @@
     },
     {
       "Id": "setting.HardwareTrackingMobileFallbackEnabled",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.HardwareTrackingMobileFallbackEnabled",
       "HelpKey": "SettingHelp.HardwareTrackingMobileFallbackEnabled",
       "Binding": "DepartmentSettingTypes.HardwareTrackingMobileFallbackEnabled",
@@ -597,7 +540,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -613,7 +556,7 @@
     },
     {
       "Id": "setting.HardwareTrackingLocationRetentionDays",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.HardwareTrackingLocationRetentionDays",
       "HelpKey": "SettingHelp.HardwareTrackingLocationRetentionDays",
       "Binding": "DepartmentSettingTypes.HardwareTrackingLocationRetentionDays",
@@ -630,7 +573,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -646,7 +589,7 @@
     },
     {
       "Id": "setting.UnitStatusThresholds",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Setting.UnitStatusThresholds",
       "HelpKey": "SettingHelp.UnitStatusThresholds",
       "Binding": "DepartmentSettingTypes.UnitStatusThresholds",
@@ -663,7 +606,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -679,7 +622,7 @@
     },
     {
       "Id": "module.MappingDisabled",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Module.MappingDisabled",
       "HelpKey": "ModuleHelp.MappingDisabled",
       "Binding": "DepartmentModuleSettings.MappingDisabled",
@@ -696,7 +639,7 @@
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -714,7 +657,7 @@
     },
     {
       "Id": "module.MappingNameOverride",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Module.MappingNameOverride",
       "HelpKey": "ModuleHelp.MappingNameOverride",
       "Binding": "DepartmentModuleSettings.MappingNameOverride",
@@ -731,7 +674,7 @@
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -749,7 +692,7 @@
     },
     {
       "Id": "field.UnitStatusThresholds.Thresholds",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Field.UnitStatusThresholds.Thresholds",
       "HelpKey": "FieldHelp.UnitStatusThresholds.Thresholds",
       "Binding": "UnitStatusThresholds.Thresholds",
@@ -766,7 +709,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -784,7 +727,7 @@
     },
     {
       "Id": "field.UnitStatusThreshold.BaseType",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Field.UnitStatusThreshold.BaseType",
       "HelpKey": "FieldHelp.UnitStatusThreshold.BaseType",
       "Binding": "UnitStatusThreshold.BaseType",
@@ -801,7 +744,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -819,7 +762,7 @@
     },
     {
       "Id": "field.UnitStatusThreshold.WarnSeconds",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Field.UnitStatusThreshold.WarnSeconds",
       "HelpKey": "FieldHelp.UnitStatusThreshold.WarnSeconds",
       "Binding": "UnitStatusThreshold.WarnSeconds",
@@ -836,7 +779,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -854,7 +797,7 @@
     },
     {
       "Id": "field.UnitStatusThreshold.AlertSeconds",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Field.UnitStatusThreshold.AlertSeconds",
       "HelpKey": "FieldHelp.UnitStatusThreshold.AlertSeconds",
       "Binding": "UnitStatusThreshold.AlertSeconds",
@@ -871,7 +814,7 @@
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -888,41 +831,8 @@
       "Availability": "reference-only"
     },
     {
-      "Id": "table.Department.AddressId",
-      "AreaId": "location",
-      "LabelKey": "TableField.Department.AddressId",
-      "HelpKey": "TableHelp.Department.AddressId",
-      "Binding": "Department.AddressId",
-      "ValueType": "reference",
-      "Classification": "Restricted",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "Profile",
-        "Field": null
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "Critical",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "table.Department.AddressId",
-      "DefaultValue": "unset",
-      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
-      "EvidenceSource": "Department",
-      "Availability": "reference-only"
-    },
-    {
       "Id": "table.WeatherAlertZone.Name",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "TableField.WeatherAlertZone.Name",
       "HelpKey": "TableHelp.WeatherAlertZone.Name",
       "Binding": "WeatherAlertZone.Name",
@@ -939,7 +849,7 @@
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -955,7 +865,7 @@
     },
     {
       "Id": "table.WeatherAlertZone.ZoneCode",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "TableField.WeatherAlertZone.ZoneCode",
       "HelpKey": "TableHelp.WeatherAlertZone.ZoneCode",
       "Binding": "WeatherAlertZone.ZoneCode",
@@ -972,7 +882,7 @@
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -988,7 +898,7 @@
     },
     {
       "Id": "table.WeatherAlertZone.CenterGeoLocation",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "TableField.WeatherAlertZone.CenterGeoLocation",
       "HelpKey": "TableHelp.WeatherAlertZone.CenterGeoLocation",
       "Binding": "WeatherAlertZone.CenterGeoLocation",
@@ -1005,7 +915,7 @@
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -1021,7 +931,7 @@
     },
     {
       "Id": "table.WeatherAlertZone.RadiusMiles",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "TableField.WeatherAlertZone.RadiusMiles",
       "HelpKey": "TableHelp.WeatherAlertZone.RadiusMiles",
       "Binding": "WeatherAlertZone.RadiusMiles",
@@ -1038,7 +948,7 @@
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -1054,7 +964,7 @@
     },
     {
       "Id": "table.WeatherAlertZone.IsActive",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "TableField.WeatherAlertZone.IsActive",
       "HelpKey": "TableHelp.WeatherAlertZone.IsActive",
       "Binding": "WeatherAlertZone.IsActive",
@@ -1071,7 +981,7 @@
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -1087,7 +997,7 @@
     },
     {
       "Id": "table.WeatherAlertZone.IsPrimary",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "TableField.WeatherAlertZone.IsPrimary",
       "HelpKey": "TableHelp.WeatherAlertZone.IsPrimary",
       "Binding": "WeatherAlertZone.IsPrimary",
@@ -1104,7 +1014,7 @@
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.location",
+        "OperationKey": "Area.mapping",
         "TimingKey": "Impact.Timing",
         "ReversibilityKey": "Impact.Reversal",
         "VerificationKey": "Impact.Verify"
@@ -1121,76 +1031,13 @@
   ],
   "Capabilities": [
     {
-      "Id": "units",
-      "AreaId": "location",
-      "LabelKey": "Feature.units",
-      "PurposeKey": "FeaturePurpose.units",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.units",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Units",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": [
-        "unit-group",
-        "unit-type"
-      ],
-      "Setup": {
-        "EvidenceId": "unitCount",
-        "Minimum": 1,
-        "RuleIds": [
-          "unit-type",
-          "unit-group"
-        ],
-        "GuidanceKey": "SetupEvidence.units"
-      }
-    },
-    {
-      "Id": "new-unit",
-      "AreaId": "location",
-      "LabelKey": "Feature.new-unit",
-      "PurposeKey": "FeaturePurpose.new-unit",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.new-unit",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Units",
-        "Action": "NewUnit"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "unit-staffing",
-      "AreaId": "location",
-      "LabelKey": "Feature.unit-staffing",
-      "PurposeKey": "FeaturePurpose.unit-staffing",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.unit-staffing",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Units",
-        "Action": "UnitStaffing"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
       "Id": "mapping",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.mapping",
       "PurposeKey": "FeaturePurpose.mapping",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.mapping",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.mapping",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Mapping",
@@ -1205,16 +1052,18 @@
       "SettingIds": [
         "module.MappingDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/mapping/"
     },
     {
       "Id": "pois",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.pois",
       "PurposeKey": "FeaturePurpose.pois",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.pois",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.pois",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Mapping",
@@ -1229,16 +1078,47 @@
       "SettingIds": [
         "module.MappingDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/mapping/#points-of-interest-pois"
+    },
+    {
+      "Id": "weather",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.weather",
+      "PurposeKey": "FeaturePurpose.weather",
+      "ValueKey": "FeatureValue.weather",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.weather",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "WeatherAlerts",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [
+        "weather-zones"
+      ],
+      "Setup": {
+        "EvidenceId": "weatherZoneCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "weather-zones"
+        ],
+        "GuidanceKey": "SetupEvidence.weather"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/weather-alerts/"
     },
     {
       "Id": "map-layers",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.map-layers",
       "PurposeKey": "FeaturePurpose.map-layers",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.map-layers",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "ModuleAdoption.mapping",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Mapping",
@@ -1253,16 +1133,18 @@
       "SettingIds": [
         "module.MappingDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/configuration/mapping-layers/"
     },
     {
       "Id": "live-routing",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.live-routing",
       "PurposeKey": "FeaturePurpose.live-routing",
-      "ValueKey": "AreaValue.location",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.live-routing",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "ModuleAdoption.mapping",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Mapping",
@@ -1277,50 +1159,18 @@
       "SettingIds": [
         "module.MappingDisabled"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "unit-types",
-      "AreaId": "location",
-      "LabelKey": "Feature.unit-types",
-      "PurposeKey": "FeaturePurpose.unit-types",
-      "ValueKey": "FeatureValue.unit-types",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.unit-types",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Department",
-        "Action": "Types"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "hardware-tracking",
-      "AreaId": "location",
-      "LabelKey": "Feature.hardware-tracking",
-      "PurposeKey": "FeaturePurpose.hardware-tracking",
-      "ValueKey": "FeatureValue.hardware-tracking",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.hardware-tracking",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "UnitTracking",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/mapping/#live-routing"
     },
     {
       "Id": "custom-maps",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.custom-maps",
       "PurposeKey": "FeaturePurpose.custom-maps",
       "ValueKey": "FeatureValue.custom-maps",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.custom-maps",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "ModuleAdoption.mapping",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "CustomMaps",
@@ -1335,16 +1185,18 @@
       "SettingIds": [
         "module.MappingDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/custom-maps/"
     },
     {
       "Id": "indoor-maps",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.indoor-maps",
       "PurposeKey": "FeaturePurpose.indoor-maps",
       "ValueKey": "FeatureValue.indoor-maps",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.indoor-maps",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "ModuleAdoption.mapping",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "IndoorMaps",
@@ -1359,16 +1211,18 @@
       "SettingIds": [
         "module.MappingDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/indoor-maps/"
     },
     {
       "Id": "routes",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "LabelKey": "Feature.routes",
       "PurposeKey": "FeaturePurpose.routes",
       "ValueKey": "FeatureValue.routes",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.routes",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "ModuleAdoption.mapping",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Routes",
@@ -1388,101 +1242,16 @@
         "module.MappingDisabled",
         "permission.ManageRoutes"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "weather",
-      "AreaId": "location",
-      "LabelKey": "Feature.weather",
-      "PurposeKey": "FeaturePurpose.weather",
-      "ValueKey": "FeatureValue.weather",
-      "ExampleKey": "AreaExample.location",
-      "AdoptionKey": "FeatureAdoption.weather",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "WeatherAlerts",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": [
-        "weather-zones"
-      ],
-      "Setup": {
-        "EvidenceId": "weatherZoneCount",
-        "Minimum": 1,
-        "RuleIds": [
-          "weather-zones"
-        ],
-        "GuidanceKey": "SetupEvidence.weather"
-      }
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/routes/"
     }
   ],
   "Rules": [
     {
-      "Id": "unit-type",
-      "AreaId": "location",
-      "Severity": "Warning",
-      "TitleKey": "Rule.unit-type",
-      "ExplanationKey": "RuleWhy.unit-type",
-      "NextActionKey": "RuleNext.unit-type",
-      "Location": {
-        "Controller": "Units",
-        "Action": "Index"
-      },
-      "AppliesWhen": [],
-      "FailsWhen": [
-        {
-          "EvidenceId": "unitsWithoutType",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
-      "Id": "unit-group",
-      "AreaId": "location",
-      "Severity": "Warning",
-      "TitleKey": "Rule.unit-group",
-      "ExplanationKey": "RuleWhy.unit-group",
-      "NextActionKey": "RuleNext.unit-group",
-      "Location": {
-        "Controller": "Units",
-        "Action": "Index"
-      },
-      "AppliesWhen": [],
-      "FailsWhen": [
-        {
-          "EvidenceId": "unitsWithoutGroup",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
-      "Id": "station-address",
-      "AreaId": "location",
-      "Severity": "Warning",
-      "TitleKey": "Rule.station-address",
-      "ExplanationKey": "RuleWhy.station-address",
-      "NextActionKey": "RuleNext.station-address",
-      "Location": {
-        "Controller": "Groups",
-        "Action": "Index"
-      },
-      "AppliesWhen": [],
-      "FailsWhen": [
-        {
-          "EvidenceId": "stationsWithoutLocation",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
       "Id": "person-location-age",
-      "AreaId": "location",
-      "Severity": "Warning",
+      "AreaId": "mapping",
+      "Severity": "Information",
       "TitleKey": "Rule.person-location-age",
       "ExplanationKey": "RuleWhy.person-location-age",
       "NextActionKey": "RuleNext.person-location-age",
@@ -1501,8 +1270,8 @@
     },
     {
       "Id": "unit-location-age",
-      "AreaId": "location",
-      "Severity": "Warning",
+      "AreaId": "mapping",
+      "Severity": "Information",
       "TitleKey": "Rule.unit-location-age",
       "ExplanationKey": "RuleWhy.unit-location-age",
       "NextActionKey": "RuleNext.unit-location-age",
@@ -1521,7 +1290,7 @@
     },
     {
       "Id": "map-token",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "Severity": "Warning",
       "TitleKey": "Rule.map-token",
       "ExplanationKey": "RuleWhy.map-token",
@@ -1547,7 +1316,7 @@
     },
     {
       "Id": "map-style",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "Severity": "Warning",
       "TitleKey": "Rule.map-style",
       "ExplanationKey": "RuleWhy.map-style",
@@ -1573,7 +1342,7 @@
     },
     {
       "Id": "weather-zones",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "Severity": "Warning",
       "TitleKey": "Rule.weather-zones",
       "ExplanationKey": "RuleWhy.weather-zones",
@@ -1599,7 +1368,7 @@
     },
     {
       "Id": "site-references",
-      "AreaId": "location",
+      "AreaId": "mapping",
       "Severity": "Warning",
       "TitleKey": "Rule.site-references",
       "ExplanationKey": "RuleWhy.site-references",
@@ -1627,24 +1396,13 @@
   "Packs": [],
   "Articles": [
     {
-      "Id": "setting.UnitsSortOrder",
-      "Locale": "en",
-      "TitleKey": "Setting.UnitsSortOrder",
-      "Body": "Units Sort Order. Sort order for unit lists; does not change unit eligibility or dispatch recommendation ranking.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "setting-unitssortorder",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
       "Id": "setting.MappingPersonnelLocationTTL",
       "Locale": "en",
       "TitleKey": "Setting.MappingPersonnelLocationTTL",
       "Body": "Mapping Personnel Location TTL. Maximum personnel location age in minutes. Zero keeps stale positions visible without an age limit; assess actual ping ages.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingpersonnellocationttl",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1655,7 +1413,7 @@
       "Body": "Mapping Unit Location TTL. Maximum unit location age in minutes. Zero retains stale unit locations indefinitely in supported map consumers.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingunitlocationttl",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1666,7 +1424,7 @@
       "Body": "Mapping Personnel Allow Status With No Location To Overwrite. Allow a personnel status without a location to replace the previous location-bearing state. This can remove a marker.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingpersonnelallowstatuswithnolocationtooverwrite",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1677,18 +1435,7 @@
       "Body": "Mapping Unit Allow Status With No Location To Overwrite. Allow a unit status without a location to overwrite earlier location data. Check hardware and app updates together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingunitallowstatuswithnolocationtooverwrite",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "setting.PersonnelOnUnitSetUnitStatus",
-      "Locale": "en",
-      "TitleKey": "Setting.PersonnelOnUnitSetUnitStatus",
-      "Body": "Personnel On Unit Set Unit Status. Allow personnel status updates to influence their assigned unit status. Review automation and crew assignment together.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "setting-personnelonunitsetunitstatus",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1699,7 +1446,7 @@
       "Body": "Weather Alerts Enabled. Enable supported weather-alert processing. Configure zones and communication behavior before relying on it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertsenabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1710,7 +1457,7 @@
       "Body": "Weather Alert Minimum Severity. Minimum severity eligible for the weather-alert view. Severity values come from the weather service, not local incident triage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertminimumseverity",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1721,7 +1468,7 @@
       "Body": "Weather Alert Auto Message Severity. Minimum weather severity eligible for automatic messages. Review recipients, schedule and duplicate suppression.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertautomessageseverity",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1732,7 +1479,7 @@
       "Body": "Weather Alert Call Integration. Include supported weather context in call integration. It does not certify weather or route safety.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertcallintegration",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1743,7 +1490,7 @@
       "Body": "Weather Alert Cache Minutes. Weather cache duration; longer caching changes freshness and provider load.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertcacheminutes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1754,7 +1501,7 @@
       "Body": "Weather Alert Auto Message Schedule. Schedule for automatic weather messaging. Review the department time zone, overnight periods and daylight-saving changes.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertautomessageschedule",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1765,7 +1512,7 @@
       "Body": "Weather Alert Excluded Events. Weather event types excluded from configured processing. Review exclusions against approved local procedures.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertexcludedevents",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1776,7 +1523,7 @@
       "Body": "Mapping Use Mapbox Override. Use the department map provider override. Turning it off on the owning screen removes the stored style and token.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingusemapboxoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1787,7 +1534,7 @@
       "Body": "Mapping Mapbox Style Url. Custom map style reference. Verify the provider style and credential together; disabling the override deletes this value.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingmapboxstyleurl",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1798,7 +1545,7 @@
       "Body": "Mapping Mapbox Access Token. Map-provider access token. Only presence is reported. Disabling the override deletes it and requires re-entry to restore.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingmapboxaccesstoken",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1809,7 +1556,7 @@
       "Body": "Hardware Tracking Stale After Seconds. Age at which a hardware location becomes stale, clamped to at least one second. Review device reporting intervals.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-hardwaretrackingstaleafterseconds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1820,7 +1567,7 @@
       "Body": "Hardware Tracking Mobile Fallback Enabled. Use supported mobile location fallback when hardware data is stale. Verify each device/source rather than assuming continuous tracking.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-hardwaretrackingmobilefallbackenabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1831,7 +1578,7 @@
       "Body": "Hardware Tracking Location Retention Days. Tracking retention bounded by host configuration and applicable holds. Shortening retention can make data eligible for deletion.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-hardwaretrackinglocationretentiondays",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1842,7 +1589,7 @@
       "Body": "Unit Status Thresholds. Visual warning thresholds for time in a unit status. A highlight does not change the unit status or certify availability.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitstatusthresholds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1853,7 +1600,7 @@
       "Body": "Mapping availability. Controls availability of maps and location views. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-mappingdisabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1864,7 +1611,7 @@
       "Body": "Mapping menu name. Optional display name for maps and location views in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-mappingnameoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1875,7 +1622,7 @@
       "Body": "Unit Status Thresholds / Thresholds. Board highlighting thresholds grouped by base status meaning. An empty list disables highlighting.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthresholds-thresholds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1886,7 +1633,7 @@
       "Body": "Unit Status Threshold / Base Type. Base status meaning for a threshold, independent of custom status names and colors.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthreshold-basetype",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1897,7 +1644,7 @@
       "Body": "Unit Status Threshold / Warn Seconds. Seconds in this status before a warning highlight; zero disables it. An alert at or before this threshold makes the row alert-only.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthreshold-warnseconds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1908,18 +1655,7 @@
       "Body": "Unit Status Threshold / Alert Seconds. Seconds in this status before a higher-priority highlight; zero disables it. Highlighting does not send a page or change status.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthreshold-alertseconds",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "table.Department.AddressId",
-      "Locale": "en",
-      "TitleKey": "TableField.Department.AddressId",
-      "Body": "Department / Address Id. Department address reference. Review the owning address and mapping consumers; it is separate from station and site addresses.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "table-department-addressid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1930,7 +1666,7 @@
       "Body": "Weather Alert Zone / Name. Administrator-facing label for this weather zone. The name does not define its geographic coverage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-name",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1941,7 +1677,7 @@
       "Body": "Weather Alert Zone / Zone Code. Provider weather-zone identifier. Verify the intended jurisdiction and source coverage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-zonecode",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1952,7 +1688,7 @@
       "Body": "Weather Alert Zone / Center Geo Location. Center point used by supported radius-based weather coverage. Coordinate values stay on their owning map/editor.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-centergeolocation",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1963,7 +1699,7 @@
       "Body": "Weather Alert Zone / Radius Miles. Radius in miles for supported geographic matching. Review actual coverage and provider behavior; larger is not automatically safer.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-radiusmiles",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1974,7 +1710,7 @@
       "Body": "Weather Alert Zone / Is Active. Whether the zone participates in supported weather processing. Department weather settings and worker operation are additional requirements.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-isactive",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1985,40 +1721,7 @@
       "Body": "Weather Alert Zone / Is Primary. Marks the primary zone for consumers that select a default. Review other active zones rather than assuming they are disabled.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-isprimary",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "units",
-      "Locale": "en",
-      "TitleKey": "Feature.units",
-      "Body": "Units Apparatus, vehicles and teams Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "units",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-unit",
-      "Locale": "en",
-      "TitleKey": "Feature.new-unit",
-      "Body": "New Unit Add an apparatus, vehicle or team Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-unit",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "unit-staffing",
-      "Locale": "en",
-      "TitleKey": "Feature.unit-staffing",
-      "Body": "Unit Staffing Assign personnel to units Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "unit-staffing",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2026,10 +1729,10 @@
       "Id": "mapping",
       "Locale": "en",
       "TitleKey": "Feature.mapping",
-      "Body": "Mapping Large map with layers, personnel and units Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Mapping The live map of personnel, units and calls. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Set how long locations stay on the map in the mapping settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "mapping",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2037,87 +1740,10 @@
       "Id": "pois",
       "Locale": "en",
       "TitleKey": "Feature.pois",
-      "Body": "Points of Interest Manage map points of interest Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "pois",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "map-layers",
-      "Locale": "en",
-      "TitleKey": "Feature.map-layers",
-      "Body": "Map Layers Manage map layers Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "map-layers",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "live-routing",
-      "Locale": "en",
-      "TitleKey": "Feature.live-routing",
-      "Body": "Live Routing Routing and directions for active resources Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "live-routing",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "unit-types",
-      "Locale": "en",
-      "TitleKey": "Feature.unit-types",
-      "Body": "Unit types Configure apparatus and resource types and their supported status behavior. Group comparable resources without assuming staffing or qualification. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "unit-types",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "hardware-tracking",
-      "Locale": "en",
-      "TitleKey": "Feature.hardware-tracking",
-      "Body": "Hardware location tracking Associate supported tracking devices with department resources. Review device ownership, stale-position behavior and fallback sources. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "hardware-tracking",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "custom-maps",
-      "Locale": "en",
-      "TitleKey": "Feature.custom-maps",
-      "Body": "Custom map layers Manage supported custom map content for the department. Give responders useful reference layers with an identified owner and update process. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "custom-maps",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "indoor-maps",
-      "Locale": "en",
-      "TitleKey": "Feature.indoor-maps",
-      "Body": "Indoor maps Organize indoor map references and zones where supported. Keep building references available to authorized users without inferring safe routes. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "indoor-maps",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "routes",
-      "Locale": "en",
-      "TitleKey": "Feature.routes",
-      "Body": "Routes Manage configured routes and supported route assignments. Prepare recurring route information with current source ownership. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "routes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2125,10 +1751,65 @@
       "Id": "weather",
       "Locale": "en",
       "TitleKey": "Feature.weather",
-      "Body": "Weather zones and alerts Configure monitored zones and weather alert processing. Review alert coverage and automatic-message settings before use. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Weather zones and alerts Weather alert zones and alert notifications. Review alert coverage and automatic-message settings before use. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Draw the zones you cover and choose who is alerted.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "weather",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "map-layers",
+      "Locale": "en",
+      "TitleKey": "Feature.map-layers",
+      "Body": "Map Layers Add your own shapes and overlays to the map. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "map-layers",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "live-routing",
+      "Locale": "en",
+      "TitleKey": "Feature.live-routing",
+      "Body": "Live Routing Directions and routes for responding resources. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "live-routing",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "custom-maps",
+      "Locale": "en",
+      "TitleKey": "Feature.custom-maps",
+      "Body": "Custom map layers Upload your own map images, such as a campus or venue map. Give responders useful reference layers with an identified owner and update process. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "custom-maps",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "indoor-maps",
+      "Locale": "en",
+      "TitleKey": "Feature.indoor-maps",
+      "Body": "Indoor maps Floor plans and zones for buildings. Keep building references available to authorized users without inferring safe routes. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "indoor-maps",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "routes",
+      "Locale": "en",
+      "TitleKey": "Feature.routes",
+      "Body": "Routes Planned routes, such as patrols, and who is assigned to them. Prepare recurring route information with current source ownership. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "routes",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

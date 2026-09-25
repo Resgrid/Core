@@ -44,6 +44,45 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Bulk_assignable_members_agree_with_the_single_check_for_every_membership_state()
+		{
+			// Membership rows in the order the department query returns them. "rejoined" has a deleted row first, so both
+			// checks read that first row, as GetDepartmentMemberAsync's FirstOrDefault does.
+			var rows = new List<DepartmentMember>
+			{
+				new DepartmentMember { DepartmentId = 9, UserId = "active" },
+				new DepartmentMember { DepartmentId = 9, UserId = "disabled", IsDisabled = true },
+				new DepartmentMember { DepartmentId = 9, UserId = "deleted", IsDeleted = true },
+				new DepartmentMember { DepartmentId = 9, UserId = "hidden", IsHidden = true },
+				new DepartmentMember { DepartmentId = 9, UserId = "rejoined", IsDeleted = true },
+				new DepartmentMember { DepartmentId = 9, UserId = "rejoined" },
+				new DepartmentMember { DepartmentId = 9, UserId = "flags-unset", IsDisabled = null, IsHidden = null }
+			};
+			_departments.Setup(d => d.GetDepartmentMemberAsync(It.IsAny<string>(), 9, true))
+				.ReturnsAsync((string userId, int departmentId, bool _) => rows.Find(r => r.UserId == userId && r.DepartmentId == departmentId));
+			_departments.Setup(d => d.GetAllMembersForDepartmentIncludingDeletedAsync(9)).ReturnsAsync(rows);
+			var candidates = new[] { "active", "disabled", "deleted", "hidden", "rejoined", "flags-unset", "never-a-member", "ACTIVE", "", " ", null };
+
+			var expected = new List<string>();
+			foreach (var userId in candidates)
+				if (await _service.IsAssignableMemberAsync(userId, 9))
+					expected.Add(userId);
+			var assignable = await _service.GetAssignableMemberIdsAsync(candidates, 9);
+
+			assignable.Should().BeEquivalentTo(expected);
+			assignable.Should().BeEquivalentTo(new[] { "active", "flags-unset" }, "disabled, deleted, hidden and unknown people are never assignable");
+			_departments.Verify(d => d.GetAllMembersForDepartmentIncludingDeletedAsync(9), Times.Once);
+		}
+
+		[Test]
+		public async Task Bulk_assignable_members_never_read_membership_for_an_empty_set()
+		{
+			(await _service.GetAssignableMemberIdsAsync(new[] { "", null }, 9)).Should().BeEmpty();
+			(await _service.GetAssignableMemberIdsAsync(null, 9)).Should().BeEmpty();
+			_departments.Verify(d => d.GetAllMembersForDepartmentIncludingDeletedAsync(It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
 		public async Task Removed_or_disabled_authors_do_not_keep_the_author_visibility_exception()
 		{
 			(await _service.CanUserViewRecordAsync("author", "r1", 9)).Should().BeTrue();

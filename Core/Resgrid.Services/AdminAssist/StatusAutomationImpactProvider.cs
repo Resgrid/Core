@@ -12,8 +12,11 @@ namespace Resgrid.Services.AdminAssist
 {
 	/// <summary>Uses the owning status query's actual one-hour reset filter. Preview never creates a status row.</summary>
 	public sealed class StatusAutomationImpactProvider(IActionLogsRepository actions, IAuthorizationService visibility,
-		IRecordsAuthorizationService membership) : IOperationalImpactProvider
+		IRecordsAuthorizationService membership) : IOperationalImpactProvider, IComposedOperationalImpactProvider
 	{
+		public bool AppliesTo(IReadOnlyList<string> settingIds) => settingIds.Any(Supports);
+		public Task<OperationalImpact> EvaluateComposedAsync(AdminAssistActor actor, ConfigurationSnapshot before, ConfigurationSnapshot after, IReadOnlyList<string> settingIds, CancellationToken ct) =>
+			EvaluateAsync(actor, before, new("setting.DisabledAutoAvailable", before.Revision, Boolean: after.Find("DisabledAutoAvailable").Boolean), ct);
 		public bool Supports(string settingId) => settingId == "setting.DisabledAutoAvailable";
 		public async Task<OperationalImpact> EvaluateAsync(AdminAssistActor actor, ConfigurationSnapshot snapshot, ConfigurationImpactRequest request, CancellationToken ct)
 		{

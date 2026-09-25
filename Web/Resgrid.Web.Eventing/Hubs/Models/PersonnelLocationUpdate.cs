@@ -7,5 +7,6 @@
 		public decimal Latitude { get; set; }
 		public decimal Longitude { get; set; }
 		public string RecordId { get; set; }
+		public System.DateTime? Timestamp { get; set; }
 	}
 }

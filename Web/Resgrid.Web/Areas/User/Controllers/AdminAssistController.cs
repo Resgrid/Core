@@ -17,6 +17,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public Task<IActionResult> Index(CancellationToken cancellationToken) => PageAsync("overview", false, cancellationToken);
 		[HttpGet]
+		public Task<IActionResult> Plans(CancellationToken cancellationToken) => Resgrid.Config.AdminAssistConfig.PlansEnabled ? PageAsync("plans", false, cancellationToken) : Task.FromResult<IActionResult>(NotFound());
+		[HttpGet]
 		public Task<IActionResult> SetupWizard(CancellationToken cancellationToken) => PageAsync("wizard", true, cancellationToken);
 		[HttpGet]
 		public Task<IActionResult> SetupReport(CancellationToken cancellationToken) => PageAsync("report", true, cancellationToken);
@@ -34,6 +36,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return File(System.Text.Encoding.UTF8.GetBytes(content), "text/calendar; charset=utf-8", "resgrid-setup-review.ics");
 			}
 			catch (System.UnauthorizedAccessException) { return Forbid(); }
+			catch (System.OperationCanceledException) when (!HttpContext.RequestAborted.IsCancellationRequested) { return StatusCode(503); }
 		}
 
 		[HttpGet]
@@ -50,6 +53,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View("PrintReport", overview);
 			}
 			catch (System.UnauthorizedAccessException) { return Forbid(); }
+			catch (System.OperationCanceledException) when (!HttpContext.RequestAborted.IsCancellationRequested) { return StatusCode(503); }
 		}
 
 		[HttpPost]

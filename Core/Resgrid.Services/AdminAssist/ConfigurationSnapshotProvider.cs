@@ -25,12 +25,17 @@ namespace Resgrid.Services.AdminAssist
 			var now = clock.GetUtcNow().UtcDateTime;
 			var before = await repository.GetConfigurationRevisionAsync(actor.DepartmentId, token);
 			var evidence = new Dictionary<string, ConfigurationEvidence>(StringComparer.Ordinal);
+			var sourceBudget = TimeSpan.FromSeconds(Math.Clamp(AdminAssistConfig.EvidenceSourceTimeoutSeconds, 1, 60));
 			foreach (var source in sources)
 			{
 				token.ThrowIfCancellationRequested();
+				// Each source has its own bound: one slow dependency (billing, a large roster) becomes unknown evidence for
+				// that source instead of consuming the whole overview deadline.
+				using var sourceTimeout = CancellationTokenSource.CreateLinkedTokenSource(token);
+				sourceTimeout.CancelAfter(sourceBudget);
 				try
 				{
-					var values = await source.ReadAsync(actor, now, token).WaitAsync(token);
+					var values = await source.ReadAsync(actor, now, sourceTimeout.Token).WaitAsync(sourceTimeout.Token);
 					foreach (var value in values)
 					{
 						if (!source.EvidenceIds.Contains(value.Id) || evidence.ContainsKey(value.Id))
@@ -38,7 +43,13 @@ namespace Resgrid.Services.AdminAssist
 						evidence.Add(value.Id, value);
 					}
 				}
-				catch (OperationCanceledException) { throw; }
+				catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
+				catch (OperationCanceledException)
+				{
+					foreach (var id in source.EvidenceIds)
+						evidence[id] = new ConfigurationEvidence(id, EvidenceState.Unknown, source.SourceId,
+							before.ToString(CultureInfo.InvariantCulture), now, ReasonCode: "SourceTimeout");
+				}
 				catch (UnauthorizedAccessException)
 				{
 					foreach (var id in source.EvidenceIds)

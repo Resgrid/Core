@@ -164,6 +164,32 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
+		public async Task A_failed_note_after_the_fields_are_saved_still_records_them_and_refreshes_boards()
+		{
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("note store down"));
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Should().ContainSingle();
+			_completed.Outcome.Should().Be(AiDispatchOutcomes.Applied);
+			_completed.AppliedFields.Should().Be("Type,Address,GeoLocationData,ContactName,ContactNumber,IncidentNumber,Name");
+			_events.Verify(e => e.SendMessage(It.Is<CallUpdatedEvent>(u => u.Call.CallId == CallId)), Times.Once);
+		}
+
+		[Test]
+		public async Task A_failed_note_with_no_saved_fields_is_still_unavailable()
+		{
+			Reply(new { isDispatch = true, confidence = 0.8, title = (string)null, callTypeId = (int?)null, priorityId = (int?)null, address = (string)null, contactName = (string)null,
+				contactNumber = (string)null, incidentNumber = (string)null, possibleDuplicateOfCallId = (int?)null, summary = "Update on the vehicle accident." });
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("note store down"));
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Unavailable);
+
+			_completed.AppliedFields.Should().BeNull();
+			VerifyCallUntouched();
+		}
+
+		[Test]
 		public async Task Values_a_dispatcher_already_set_are_never_overwritten()
 		{
 			_call.Name = "Working fire - command";

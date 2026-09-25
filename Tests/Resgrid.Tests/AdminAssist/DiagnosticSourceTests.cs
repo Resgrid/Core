@@ -32,6 +32,9 @@ namespace Resgrid.Tests.AdminAssist
 			public readonly Mock<IProtectedReadService> ProtectedRead = new();
 			public readonly Mock<IChecklistsService> Checklists = new();
 			public readonly Mock<IWorkOrdersService> Orders = new();
+			public readonly Mock<IRecordsAuthorizationService> Membership = new();
+			public readonly Mock<ICertificationService> Qualifications = new();
+			public readonly Mock<IShiftsService> Shifts = new();
 			public readonly AdminAssistDiagnosticSource Source;
 			public readonly string Capability;
 			public Fixture()
@@ -48,9 +51,11 @@ namespace Resgrid.Tests.AdminAssist
 				Visibility.Setup(v => v.CanUserViewCallAsync("admin", 1)).ReturnsAsync(true);
 				Visibility.Setup(v => v.CanUserViewUnitAsync("admin", 2)).ReturnsAsync(true);
 				Visibility.Setup(v => v.CanUserViewRoleAsync("admin", 3)).ReturnsAsync(true);
-				var membership = new Mock<IRecordsAuthorizationService>();
-				membership.Setup(x => x.IsAssignableMemberAsync("member", 7)).ReturnsAsync(true);
-				membership.Setup(x => x.IsActiveMemberAsync("member", 7)).ReturnsAsync(true);
+				// Coverage authorizes people in bulk; by default everyone asked about passes.
+				Visibility.Setup(v => v.GetViewablePersonIdsAsync("admin", It.IsAny<IEnumerable<string>>(), 7)).ReturnsAsync((string _, IEnumerable<string> ids, int _) => ids.ToHashSet());
+				Membership.Setup(x => x.GetAssignableMemberIdsAsync(It.IsAny<IEnumerable<string>>(), 7)).ReturnsAsync((IEnumerable<string> ids, int _) => ids.ToHashSet());
+				Membership.Setup(x => x.IsAssignableMemberAsync("member", 7)).ReturnsAsync(true);
+				Membership.Setup(x => x.IsActiveMemberAsync("member", 7)).ReturnsAsync(true);
 				var calls = new Mock<ICallsService>(); calls.Setup(c => c.GetCallByIdAsync(1, true)).ReturnsAsync(new Call { CallId = 1, DepartmentId = 7 });
 				var units = new Mock<IUnitsRepository>(); units.Setup(u => u.GetByIdAsync(2)).ReturnsAsync(new Unit { UnitId = 2, DepartmentId = 7 });
 				var users = new Mock<IUsersService>(); users.Setup(u => u.ReadLatestLocationsForAdministrationAsync(7)).ReturnsAsync(new List<PersonnelLocation>());
@@ -60,8 +65,8 @@ namespace Resgrid.Tests.AdminAssist
 				Store.Setup(s => s.ReadDiagnosticStatusesAsync(7, "member", null, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(new[] { new DiagnosticStatusHeader(Now.AddMinutes(-1), 2, "Unrecorded") });
 				var departments = new Mock<IDepartmentsService>(); departments.Setup(d => d.GetDepartmentByIdAsync(7, true)).ReturnsAsync(new Department { DepartmentId = 7, TimeZone = "UTC" });
 				var roles = new Mock<IPersonnelRolesService>(); roles.Setup(r => r.GetRolesForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<PersonnelRole> { new() { DepartmentId = 7, PersonnelRoleId = 3 } });
-				var qualifications = new Mock<ICertificationService>(); qualifications.Setup(q => q.EvaluateRoleRequirementsAsync(7, 3, Now.Date)).ReturnsAsync(new List<RoleCertificationEvaluation>());
-				var shifts = new Mock<IShiftsService>(); shifts.Setup(s => s.ReadSchedulesForAdministrationAsync(7, Now.Date.AddDays(-3), Now.Date.AddDays(1), Now, 2000, It.IsAny<CancellationToken>())).ReturnsAsync(new List<ShiftDaySchedule>());
+				Qualifications.Setup(q => q.EvaluateRoleRequirementsAsync(7, 3, Now.Date)).ReturnsAsync(new List<RoleCertificationEvaluation>());
+				Shifts.Setup(s => s.ReadSchedulesForAdministrationAsync(7, Now.Date.AddDays(-3), Now.Date.AddDays(1), Now, 2000, It.IsAny<CancellationToken>())).ReturnsAsync(new List<ShiftDaySchedule>());
 				Checklists.Setup(c => c.GetComplianceSummaryAsync(It.IsAny<ChecklistActor>(), It.IsAny<ChecklistReportQuery>())).ReturnsAsync(new ChecklistComplianceSummary { Entries = new() { new() { Expected = true, DueUtc = Now.AddHours(-1), Passed = false } } });
 				Orders.Setup(o => o.ListAsync(It.IsAny<ChecklistActor>(), It.IsAny<WorkOrderFilter>())).ReturnsAsync(new WorkOrderPage());
 				var evidence = new[] { "DepartmentSettings", "EmailImportPolling", "Readiness" }.Select(id =>
@@ -75,7 +80,7 @@ namespace Resgrid.Tests.AdminAssist
 						new ConfigurationEvidence("failedWorkflowCount", EvidenceState.Known, id, "1", Now, Number: 1)
 					}); return source.Object;
 				}).ToArray();
-				Source = new(Store.Object, access.Object, catalog, Visibility.Object, membership.Object, Members.Object, calls.Object, Mock.Of<IUnitsService>(), users.Object, profiles.Object, ProtectedRead.Object, Mock.Of<IProtectedGrantContext>(), evidence, departments.Object, Mock.Of<IDepartmentGroupsService>(), roles.Object, qualifications.Object, shifts.Object, Checklists.Object, Orders.Object, Mock.Of<IWorkOrderReportingService>(), actions.Object, units.Object, Permissions.Object);
+				Source = new(Store.Object, access.Object, catalog, Visibility.Object, Membership.Object, Members.Object, calls.Object, Mock.Of<IUnitsService>(), users.Object, profiles.Object, ProtectedRead.Object, Mock.Of<IProtectedGrantContext>(), evidence, departments.Object, Mock.Of<IDepartmentGroupsService>(), roles.Object, Qualifications.Object, Shifts.Object, Checklists.Object, Orders.Object, Mock.Of<IWorkOrderReportingService>(), actions.Object, units.Object, Permissions.Object);
 			}
 			public DiagnosticRequest Request(string flow) => new(flow, Now.AddHours(-1), Now,
 				CallId: flow == "paging" ? 1 : null, MemberId: flow is "paging" or "map" or "access" or "statuses" ? "member" : null,
@@ -88,6 +93,52 @@ namespace Resgrid.Tests.AdminAssist
 			var f = new Fixture(); var result = await f.Source.ReadAsync(f.Actor, f.Request(flow), Now, CancellationToken.None);
 			Assert.That(result.Checks.Single(c => c.Id == checkId).Outcome, Is.EqualTo("PossibleCause"));
 			Assert.That(result.Checks.Any(c => c.Outcome == "ConfirmedCause"), Is.False);
+		}
+		private static void Coverage(Fixture f, string[] qualified, params string[] onDuty)
+		{
+			f.Qualifications.Setup(q => q.EvaluateRoleRequirementsAsync(7, 3, Now.Date)).ReturnsAsync(qualified.Select(id => new RoleCertificationEvaluation { PersonnelRoleId = 3, UserId = id, Qualified = true }).ToList());
+			var shift = new Shift { ShiftId = 1, DepartmentId = 7, StartTime = "08:00", EndTime = "20:00" };
+			var schedule = new ShiftDaySchedule { Shift = shift, Day = new ShiftDay { ShiftDayId = 1, ShiftId = 1, Shift = shift, Day = Now.Date },
+				Roster = onDuty.Select(id => new ShiftDayRosterEntry { UserId = id, DepartmentGroupId = 4 }).ToList() };
+			f.Shifts.Setup(s => s.ReadSchedulesForAdministrationAsync(7, Now.Date.AddDays(-3), Now.Date.AddDays(1), Now, 2000, It.IsAny<CancellationToken>())).ReturnsAsync(new List<ShiftDaySchedule> { schedule });
+		}
+		[Test]
+		public async Task Coverage_authorizes_each_person_once_in_bulk_and_never_one_at_a_time()
+		{
+			var f = new Fixture(); Coverage(f, new[] { "a", "b", "a" }, "a", "c", "c");
+			var result = await f.Source.ReadAsync(f.Actor, f.Request("coverage"), Now, CancellationToken.None);
+			Assert.That(result.Checks.Single(c => c.Id == "QualifiedRoster").Value, Is.EqualTo(1));
+			Assert.That(result.Checks.Single(c => c.Id == "QualifiedRoster").Basis, Is.Not.EqualTo("Restricted"));
+			f.Visibility.Verify(v => v.GetViewablePersonIdsAsync("admin", It.Is<IEnumerable<string>>(ids => ids.OrderBy(id => id).SequenceEqual(new[] { "a", "b" })), 7), Times.Once);
+			f.Visibility.Verify(v => v.GetViewablePersonIdsAsync("admin", It.Is<IEnumerable<string>>(ids => ids.OrderBy(id => id).SequenceEqual(new[] { "a", "c" })), 7), Times.Once);
+			f.Membership.Verify(m => m.GetAssignableMemberIdsAsync(It.Is<IEnumerable<string>>(ids => ids.OrderBy(id => id).SequenceEqual(new[] { "a", "c" })), 7), Times.Once);
+			f.Visibility.Verify(v => v.CanUserViewPersonAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+			f.Membership.Verify(m => m.IsAssignableMemberAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+		}
+		// A refused person makes the whole coverage read Restricted, with no partial counts (the flow's UnauthorizedAccessException).
+		private static void ShouldBeRestricted(DiagnosticSourceResult result)
+		{
+			Assert.That(result.Checks.Single(c => c.Id == "QualifiedRoster").Basis, Is.EqualTo("Restricted"));
+			Assert.That(result.Checks.Select(c => c.Id), Does.Not.Contain("QualificationGaps").And.Not.Contain("RosterOverlap"));
+		}
+		[Test]
+		public async Task Coverage_with_a_hidden_qualified_person_stops_before_reading_schedules()
+		{
+			var f = new Fixture(); Coverage(f, new[] { "a", "b" }, "a");
+			f.Visibility.Setup(v => v.GetViewablePersonIdsAsync("admin", It.IsAny<IEnumerable<string>>(), 7)).ReturnsAsync(new HashSet<string> { "a" });
+			ShouldBeRestricted(await f.Source.ReadAsync(f.Actor, f.Request("coverage"), Now, CancellationToken.None));
+			f.Shifts.Verify(s => s.ReadSchedulesForAdministrationAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+			f.Membership.Verify(m => m.GetAssignableMemberIdsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int>()), Times.Never);
+		}
+		[TestCase(false, true), TestCase(true, false)]
+		public async Task Coverage_with_a_roster_member_who_is_hidden_or_not_assignable_is_refused(bool visible, bool assignable)
+		{
+			var f = new Fixture(); Coverage(f, new[] { "a" }, "a", "c");
+			f.Visibility.Setup(v => v.GetViewablePersonIdsAsync("admin", It.IsAny<IEnumerable<string>>(), 7))
+				.ReturnsAsync((string _, IEnumerable<string> ids, int _) => ids.Where(id => visible || id != "c").ToHashSet());
+			f.Membership.Setup(m => m.GetAssignableMemberIdsAsync(It.IsAny<IEnumerable<string>>(), 7))
+				.ReturnsAsync((IEnumerable<string> ids, int _) => ids.Where(id => assignable || id != "c").ToHashSet());
+			ShouldBeRestricted(await f.Source.ReadAsync(f.Actor, f.Request("coverage"), Now, CancellationToken.None));
 		}
 		[Test]
 		public async Task Status_history_has_recorded_codes_without_inventing_transition_writers()

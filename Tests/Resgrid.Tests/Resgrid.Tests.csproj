@@ -69,6 +69,8 @@
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web\Resgrid.Web.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Broker\Resgrid.Web.Broker.csproj" />
+    <!-- Aliased: Eventing carries its own copy of Resgrid.Web.Services types (e.g. ClaimsAuthorizationHelper). -->
+    <ProjectReference Include="..\..\Web\Resgrid.Web.Eventing\Resgrid.Web.Eventing.csproj" Aliases="Eventing" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Services\Resgrid.Web.Services.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Mcp\Resgrid.Web.Mcp.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Tts\Resgrid.Web.Tts.csproj" />

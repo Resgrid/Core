@@ -281,3 +281,5 @@ opencode.json
 /Web/Resgrid.Web/wwwroot/js/ng
 /tmp
 /artifacts
+/Tools/AdminAssist
+/docs

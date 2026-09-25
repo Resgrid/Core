@@ -12,161 +12,257 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Area.adp">
+    <value>Advanced Data Protection</value>
+  </data>
+  <data xml:space="preserve" name="Area.ai">
+    <value>Enhanced AI</value>
+  </data>
+  <data xml:space="preserve" name="Area.apps">
+    <value>Apps and devices</value>
+  </data>
   <data xml:space="preserve" name="Area.automation">
-    <value>Automation and connectivity</value>
+    <value>Automation and integrations</value>
   </data>
   <data xml:space="preserve" name="Area.business">
-    <value>Deployments and business</value>
+    <value>Workforce and business operations</value>
   </data>
   <data xml:space="preserve" name="Area.calls">
-    <value>Calls and response</value>
+    <value>Dispatch and calls</value>
+  </data>
+  <data xml:space="preserve" name="Area.checklists">
+    <value>Checklists</value>
   </data>
   <data xml:space="preserve" name="Area.communication">
-    <value>Communication</value>
+    <value>Notifications and messaging</value>
   </data>
-  <data xml:space="preserve" name="Area.home">
-    <value>Home and applications</value>
+  <data xml:space="preserve" name="Area.deployments">
+    <value>Deployments</value>
   </data>
   <data xml:space="preserve" name="Area.inventory">
-    <value>Inventory and readiness</value>
+    <value>Inventory</value>
   </data>
   <data xml:space="preserve" name="Area.knowledge">
-    <value>Contacts and site knowledge</value>
-  </data>
-  <data xml:space="preserve" name="Area.location">
-    <value>Units and location</value>
+    <value>Contacts, documents and protocols</value>
   </data>
   <data xml:space="preserve" name="Area.maintenance">
-    <value>Checklists and maintenance</value>
+    <value>Maintenance and work orders</value>
+  </data>
+  <data xml:space="preserve" name="Area.mapping">
+    <value>Mapping and location</value>
   </data>
   <data xml:space="preserve" name="Area.people">
-    <value>People and organization</value>
+    <value>Personnel and groups</value>
   </data>
   <data xml:space="preserve" name="Area.plans">
-    <value>Plans, add-ons and AI</value>
+    <value>Subscription and capacity</value>
+  </data>
+  <data xml:space="preserve" name="Area.ptt">
+    <value>Push-to-Talk</value>
   </data>
   <data xml:space="preserve" name="Area.records">
     <value>Records and reporting</value>
   </data>
   <data xml:space="preserve" name="Area.security">
-    <value>Administration and security</value>
+    <value>Department administration and security</value>
+  </data>
+  <data xml:space="preserve" name="Area.shifts">
+    <value>Shifts and scheduling</value>
+  </data>
+  <data xml:space="preserve" name="Area.training">
+    <value>Training and certifications</value>
+  </data>
+  <data xml:space="preserve" name="Area.units">
+    <value>Units and apparatus</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.adp">
+    <value>A co-response team enrolls so client-related notes are protected in every module that stores them.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.ai">
+    <value>An administrator asks Admin Assist why a member was not paged and reviews the evidence it links to.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.apps">
+    <value>Members install the Responder app, a tablet in Engine 1 runs the Unit app and a station screen shows the Big Board.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.automation">
-    <value>Review a Workflow and its permissions before explicitly enabling it.</value>
+    <value>A workflow posts new calls to a team channel, and a custom field records the fire district on each call.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.business">
-    <value>Compare an event standby invoice with its approved deployment documentation.</value>
+    <value>An event standby is invoiced from its deployment record, and a mutual-aid claim is prepared for MARS reimbursement.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.calls">
-    <value>Review a test scenario before enabling CAD intake or changing dispatch routing.</value>
+    <value>A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.checklists">
+    <value>A daily apparatus check is scheduled for each engine, and the weekly compliance report shows any missed checks.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.communication">
-    <value>Preview recipients and explicitly run a communication test through its own screen.</value>
+    <value>An administrator creates notification rules for new calls, builds an Officers distribution list and runs a communication test before going live.</value>
   </data>
-  <data xml:space="preserve" name="AreaExample.home">
-    <value>A dispatcher creates a call while responders and unit crews receive their assigned work.</value>
+  <data xml:space="preserve" name="AreaExample.deployments">
+    <value>A strike-team deployment is recorded with its personnel, apparatus and dates.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.inventory">
-    <value>Review an expiring supply lot and arrange restocking through the inventory screen.</value>
+    <value>Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.knowledge">
-    <value>Review a receiving-agency contact and an approved site plan before a planned event.</value>
-  </data>
-  <data xml:space="preserve" name="AreaExample.location">
-    <value>Review an apparatus location and its last update before relying on the map.</value>
+    <value>A department uploads its standard operating procedures, adds hospital and mutual-aid contacts and creates a medical dispatch protocol.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.maintenance">
-    <value>Record an equipment defect, assign repair and review return to service through the owning module.</value>
+    <value>A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.mapping">
+    <value>A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.people">
-    <value>Check that the next shift has the locally required qualified crew.</value>
+    <value>A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.plans">
-    <value>Review feature requirements with the managing member before using the normal billing screen.</value>
+    <value>Before inviting 40 new members, an administrator confirms the plan has room or asks the managing member to change it.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.ptt">
+    <value>A search team uses its team channel during a training exercise.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.records">
-    <value>Review an incident report and its outstanding corrections using the Records workflow.</value>
+    <value>After each call, the officer completes an incident report from the call and a supervisor reviews it.</value>
   </data>
   <data xml:space="preserve" name="AreaExample.security">
-    <value>Verify an additional administrator and review MFA and recovery procedures.</value>
+    <value>An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.shifts">
+    <value>A career department sets up A, B and C shifts, and a volunteer department uses shift sign-ups for weekend duty crews.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.training">
+    <value>EMT and Driver/Operator certification types are added with their renewal periods, and an annual refresher training is assigned to every member.</value>
+  </data>
+  <data xml:space="preserve" name="AreaExample.units">
+    <value>Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.adp">
+    <value>Additional encryption and controlled access for sensitive department data across every module.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.ai">
+    <value>AI summaries, drafts and Admin Assist conversations beyond the free allowance.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.apps">
+    <value>The Responder, Unit, Dispatch and Incident Command apps and the Big Board station display.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.automation">
-    <value>Configure Workflows, user-defined fields, APIs, imports and integrations.</value>
+    <value>Workflows that act on department events, custom fields, and API or MCP integrations.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.business">
-    <value>Understand free Deployment Finance and optional Business Operations workflows.</value>
+    <value>Invoicing and payments, rates, contracts and bids, MARS reimbursement, and workforce costing.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.calls">
-    <value>Create and receive calls, choose recipients and follow response status.</value>
+    <value>How calls are created, classified and dispatched: call types, response statuses, dispatch settings and CAD or email call intake.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.checklists">
+    <value>Apparatus, equipment and station checklists with schedules and compliance reports. Included in every plan.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.communication">
-    <value>Use messages, notifications, communication tests, chat and Push-to-Talk.</value>
+    <value>How members are alerted and kept informed: notification rules, distribution lists, messages, chat and communication tests.</value>
   </data>
-  <data xml:space="preserve" name="AreaPurpose.home">
-    <value>Learn how the web, Dispatch, Responder, Unit, Incident Command and Big Board fit your team.</value>
+  <data xml:space="preserve" name="AreaPurpose.deployments">
+    <value>Deployment records and Deployment Finance. Included in every plan.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.inventory">
-    <value>Track stock, equipment, issue and return, purchasing and expiry.</value>
+    <value>Supplies and equipment, stock levels, issue and return, expiry and purchasing.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.knowledge">
-    <value>Maintain contacts, preplans, forms, notes, documents, files and links.</value>
-  </data>
-  <data xml:space="preserve" name="AreaPurpose.location">
-    <value>Manage units, crews, maps, location tracking, routes and weather.</value>
+    <value>Shared contacts, documents, dispatch protocols, notes and forms.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.maintenance">
-    <value>Use included checklists and optional Readiness Pro repair and maintenance workflows.</value>
+    <value>Work orders, preventive maintenance, repair approvals and safety holds for apparatus and equipment.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.mapping">
+    <value>The live map of personnel and units, points of interest, map layers, routes and weather alerts.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.people">
-    <value>Organize members, stations, groups, roles, qualifications, shifts and training.</value>
+    <value>Your members, the stations and groups they belong to, and the roles they hold.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.plans">
-    <value>Compare included features, base-plan limits and paid add-ons.</value>
+    <value>Your plan's personnel and unit allowances and the add-ons your department has.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.ptt">
+    <value>Voice channels inside the Resgrid apps for team coordination.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.records">
-    <value>Understand Records, legacy Logs, reviews, prevention, investigations and reporting.</value>
+    <value>Incident reports and records, record forms, activity logs and department reports.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.security">
-    <value>Review department settings, permissions, MFA, SSO, audit and data protection.</value>
+    <value>Department profile and settings, which modules are switched on, permissions, two-factor sign-in and session rules.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.shifts">
+    <value>Shift schedules, sign-ups and trades, and the department calendar.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.training">
+    <value>Training assignments with optional quizzes, and certification types with expiry tracking.</value>
+  </data>
+  <data xml:space="preserve" name="AreaPurpose.units">
+    <value>The apparatus, vehicles and teams you dispatch, their types and their home stations.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.adp">
+    <value>Protects sensitive incident and personnel content, with controlled disclosure and key recovery.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.ai">
+    <value>Get explanations and drafts for people to review, alongside the tools you already use.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.apps">
+    <value>Most members use Resgrid through the Responder app. Getting everyone installed and signed in is what lets dispatches reach them.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.automation">
-    <value>Reduce repeated administrative work while retaining ownership and review of external effects.</value>
+    <value>Automate repeated administrative steps and connect Resgrid to the other systems you use.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.business">
-    <value>Connect deployment records to invoicing, reimbursement or internal cost review when needed.</value>
+    <value>Bill for standby and contract services and prepare reimbursement claims from records you already keep.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.calls">
-    <value>Make call intake and recipient selection consistent across shifts.</value>
+    <value>Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.checklists">
+    <value>Recorded checks show what was inspected and what was missed.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.communication">
-    <value>Choose a communication channel appropriate to the audience and task.</value>
+    <value>A dispatch only helps if it reaches people. This is where you confirm members can actually be contacted.</value>
   </data>
-  <data xml:space="preserve" name="AreaValue.home">
-    <value>Give each role the right app and a clear starting point.</value>
+  <data xml:space="preserve" name="AreaValue.deployments">
+    <value>Keep deployment records and cost documentation together for review and reimbursement.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.inventory">
-    <value>See recorded shortages and due dates before they become an administrative surprise.</value>
+    <value>Know what you have, where it is and what is about to expire.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.knowledge">
-    <value>Help authorized members find the current reference and responsible contact.</value>
-  </data>
-  <data xml:space="preserve" name="AreaValue.location">
-    <value>Make resource information easier to find and show when positions are stale.</value>
+    <value>Members find the current procedure, preplan or phone number when they need it instead of searching email.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.maintenance">
-    <value>Connect recorded equipment checks with owned corrective work when maintenance is enabled.</value>
+    <value>Turn a failed check or reported defect into a tracked repair and a documented return to service.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.mapping">
+    <value>A current map shows where responders and apparatus are and puts important locations in front of dispatchers.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.people">
-    <value>Keep access and responsibilities aligned with the people doing the work.</value>
+    <value>Dispatch, notifications, permissions and reports all start from who belongs to which group, so set this up first.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.plans">
-    <value>Choose optional capabilities by the work they support and their adoption requirements.</value>
+    <value>Adding members or units stops at the plan limit, so check the remaining room before a large onboarding.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.ptt">
+    <value>Coordinate field teams through app-based voice channels.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.records">
-    <value>Keep administrative follow-up and reporting evidence connected to the source record.</value>
+    <value>Keep incident and activity records with the calls they came from, ready for review and reporting.</value>
   </data>
   <data xml:space="preserve" name="AreaValue.security">
-    <value>Keep administrative access recoverable and limited to authorized people.</value>
+    <value>Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.shifts">
+    <value>Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.training">
+    <value>See who is qualified and whose certifications are expiring before it affects who can respond.</value>
+  </data>
+  <data xml:space="preserve" name="AreaValue.units">
+    <value>Units let dispatchers send the right resources and let everyone see which apparatus is available.</value>
   </data>
   <data xml:space="preserve" name="Diagnostic.Boundary">
     <value>Run a read-only diagnostic. These checks do not send a page, change access, retry an import or release equipment. AI is not required.</value>
@@ -1020,17 +1116,8 @@
   <data xml:space="preserve" name="Feature.workshifts">
     <value>Workshifts</value>
   </data>
-  <data xml:space="preserve" name="FeatureAdoption.account-sessions">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.add-person">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
   <data xml:space="preserve" name="FeatureAdoption.addon-adp">
     <value>Buying does not enroll the department. Review MFA, recovery, migration and integration behavior; this is not a compliance certification.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.addon-ai">
-    <value>Planned until product and runtime availability are verified. Deterministic Setup Wizard, Setup Report and Admin Assist do not require an AI purchase.</value>
   </data>
   <data xml:space="preserve" name="FeatureAdoption.addon-business">
     <value>Certifications and Deployment Finance do not require this add-on. Pay-data reporting additionally needs ADP Enabled; online payments require provider setup. No reimbursement or savings are guaranteed.</value>
@@ -1040,450 +1127,6 @@
   </data>
   <data xml:space="preserve" name="FeatureAdoption.addon-readiness">
     <value>Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.api-mcp">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.archived-calls">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.audit-history">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.bids">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.big-board">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.billing-settings">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.cal-oes-mars">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.cal-oes-mars-queue">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.cal-oes-mars-rates">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.cal-oes-mars-reconciliation">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.calendar">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.call-settings">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.call-templates">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.call-types-priorities">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.calls">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.certification-dashboard">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.certification-settings">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.certification-types">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.chat">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.chatbot-settings">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.checkin-setup">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.checklist-reports">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.checklist-schedules">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.checklist-templates">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.checklists">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.communication-tests">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.compliance-documents">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.compose-message">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.contact-categories">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.contacts">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.contracts">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.cost-runs">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.custom-maps">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.custom-statuses">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.dashboard">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.data-protection">
-    <value>Purchase and enrollment are separate. Review MFA, key recovery and effects on search, exports, integrations and notifications before enrollment.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.department-settings">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.departments">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.deployment-from-external-order">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.deployments">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.dispatch-app">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.dispatch-settings">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.distribution-lists">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.documents">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.email-intake">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.file-library">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.forms">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.groups">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.hardware-tracking">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.import-migration">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inbox">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.incident-command">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.incident-reports">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.indoor-maps">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inventory">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inventory-issue">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inventory-operations">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inventory-purchasing">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inventory-status">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.inventory-transfer">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.invites">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.invoice-aging">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.invoices">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.live-routing">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.logs">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.maintenance-policy">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.maintenance-reports">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.map-layers">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.mapping">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.module-settings">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.my-certifications">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.my-demographics">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-bid">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-calendar-item">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-call">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-checklist">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-contact">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-contract">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-deployment">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-document">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-group">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-invoice">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-log">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-note">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-protocol">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-training">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-unit">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-work-order">
-    <value>Checklists do not require Readiness Pro. Maintenance requires the add-on, module access and reviewed repair and approval procedures.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.new-workflow">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.notes">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.notifications">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.online-payment-settings">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.outbox">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.pay-data-reporting">
-    <value>Requires Business Operations and Advanced Data Protection in the Enabled state. Review regional applicability and protected workforce access.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.permissions">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.personnel">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.personnel-roles">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.pois">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.preventive-maintenance">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.profile">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.protected-workflows">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.protocols">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.rate-cards">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.rate-schedules">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-analytics">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-definitions">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-disclosures">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-evidence">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-exports">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-holds">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-hydrants">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-inspections">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-investigations">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-occupancies">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-permits">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-saved-reports">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.record-submissions">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.records">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.records-dashboard">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.records-settings">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.reports">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.resource-costs">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.responder-app">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.routes">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.run-cards">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.security-policy">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.setup-help">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.shared-links">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.shifts">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.sso">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.subscription">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.text-intake">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.trainings">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.two-factor">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.unit-app">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.unit-staffing">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.unit-types">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.units">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.user-defined-fields">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.voice">
-    <value>Review supported clients, channel membership and current subscription quantities. Push-to-Talk is distinct from phone voice alerts and department radio requirements.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.weather">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.work-orders">
-    <value>Checklists do not require Readiness Pro. Maintenance requires the add-on, module access and reviewed repair and approval procedures.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.workflow-runs">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.workflows">
-    <value>Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.workforce">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.workforce-annual-facts">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.workforce-compensation">
-    <value>Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.</value>
-  </data>
-  <data xml:space="preserve" name="FeatureAdoption.workshifts">
-    <value>Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.</value>
   </data>
   <data xml:space="preserve" name="FeatureExample.addon-adp">
     <value>An administrator enrolls the department and verifies its recovery arrangements.</value>
@@ -1501,469 +1144,655 @@
     <value>A failed apparatus check leads to an explicitly created maintenance work order.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.account-sessions">
-    <value>Review the current member's sessions and account security controls.</value>
+    <value>Your own sign-in sessions, password and two-factor settings.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.add-person">
-    <value>Manually create a user account in the department</value>
+    <value>Create a member account directly instead of sending an invitation.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-adp">
-    <value>Additional protection and scoped access for cataloged sensitive department content.</value>
+    <value>The Advanced Data Protection add-on: extra encryption and controlled access for sensitive data.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ai">
-    <value>Planned summaries, drafts, knowledge assistance and optional Admin Assist conversation.</value>
+    <value>AI assistance beyond the free Admin Assist allowance.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-business">
-    <value>Invoicing, payments, rates, contracts, bids, MARS reimbursement, workforce and field costing.</value>
+    <value>The Workforce and Business Operations add-on: invoicing, payments, contracts, bids, MARS reimbursement and workforce costing.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-ptt">
-    <value>Voice channels for crew communication in supported Resgrid clients.</value>
+    <value>The Push-to-Talk add-on: voice channels in the Resgrid apps.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.addon-readiness">
-    <value>Maintenance, work orders, preventive tasks, corrective work, approvals and safety holds.</value>
+    <value>The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.api-mcp">
-    <value>Use supported APIs and MCP with authorized credentials and permissions.</value>
+    <value>API and MCP access for other systems.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.archived-calls">
-    <value>Closed and historical calls</value>
+    <value>Closed and past calls.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.audit-history">
-    <value>Review recorded administrative changes and available source details.</value>
+    <value>See who changed department settings and when.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.bids">
-    <value>Priced estimates for customer contacts and contracts</value>
+    <value>Priced estimates for customers.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.big-board">
-    <value>Shared display clients show the configured resource and call picture.</value>
+    <value>A station display of calls, units and personnel.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.billing-settings">
-    <value>Legal name, remit-to address and tax registrations printed on invoices</value>
+    <value>The legal name, remit-to address and tax details printed on invoices.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.cal-oes-mars">
-    <value>CFAA cost recovery readiness: agency, F-5 resources, annual rates and agreements</value>
+    <value>Cal OES MARS reimbursement claims.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.cal-oes-mars-queue">
-    <value>F-42 and expense claims to prepare, validate and hand off to the MARS portal</value>
+    <value>MARS claims waiting to be prepared and submitted.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.cal-oes-mars-rates">
-    <value>Salary Survey, Attachment A, Administrative Rate, Rate Letter and Special Equipment snapshots</value>
+    <value>Annual MARS salary and equipment rates.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.cal-oes-mars-reconciliation">
-    <value>Observed MARS invoices, local approval and payment reconciliation</value>
+    <value>Match MARS payments to the claims you submitted.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.calendar">
-    <value>Events, meetings and trainings you can sign up for</value>
+    <value>The department calendar for meetings, events and training nights.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Call types, priorities, email import and dispatch settings</value>
+    <value>The mailbox and format used to import calls from CAD or paging email.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
-    <value>Maintain reusable call information and note templates.</value>
+    <value>Reusable call text and note templates that speed up call entry.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-types-priorities">
-    <value>Maintain the department's call classifications and priorities.</value>
+    <value>The call types and priorities used to classify calls.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.calls">
-    <value>View calls and dispatches</value>
+    <value>Active calls and their dispatch status.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-dashboard">
-    <value>Expiring and expired certifications for people and units</value>
+    <value>Who holds which certifications and what is expiring.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-settings">
-    <value>Enforcement mode, grace period and expiry notifications</value>
+    <value>What happens when a certification expires, grace periods and reminders.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-types">
-    <value>The department's certification catalog and template gallery</value>
+    <value>The certifications and qualifications you track.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.chat">
-    <value>Real-time department chat</value>
+    <value>Team chat for members.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.chatbot-settings">
-    <value>Review supported chatbot platforms, account linking, limits and operational actions.</value>
+    <value>Connect the Resgrid Assistant to chat platforms and choose what it may do.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.checkin-setup">
-    <value>Configure supported check-in targets and escalation behavior.</value>
+    <value>Timers that remind responders on a call to check in, with escalation when they do not.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.checklist-reports">
-    <value>Review expected, completed, skipped and overdue checks.</value>
+    <value>Completed, skipped and overdue checks over time.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.checklist-schedules">
-    <value>Assign recurring checks and review due occurrences.</value>
+    <value>Recurring schedules and due checks.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.checklist-templates">
-    <value>Start from a checklist template</value>
+    <value>Ready-made checklists for common checks.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.checklists">
-    <value>Apparatus, station and readiness checklists</value>
+    <value>Checklists members complete.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.communication-tests">
-    <value>Prepare and explicitly run tests of configured channels.</value>
+    <value>Test messages that show whether members can be reached.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.compliance-documents">
-    <value>Insurance, workers' comp, SAM, licences and bonds with expiry alerts</value>
+    <value>Insurance, licences and bonds, with expiry reminders.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.compose-message">
-    <value>Send a message, poll or callback request</value>
+    <value>Send a message, poll or callback request to members.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.contact-categories">
-    <value>Manage contact categories</value>
+    <value>Categories for organizing contacts.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.contacts">
-    <value>People and organizations outside the department</value>
+    <value>Shared contacts such as hospitals, agencies and vendors.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.contracts">
-    <value>Service contracts, document requirements and compliance</value>
+    <value>Contracts, bids and rate schedules.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.cost-runs">
-    <value>Internal loaded cost and margin for bids, calls and deployments</value>
+    <value>Work out the full cost of a bid, call or deployment.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-maps">
-    <value>Manage supported custom map content for the department.</value>
+    <value>Upload your own map images, such as a campus or venue map.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-statuses">
-    <value>Configure status names, base meanings and supported behavior.</value>
+    <value>The statuses members and units report, such as Responding or On Scene.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.dashboard">
-    <value>Department home: status, staffing and activity</value>
+    <value>The department home page: current status, staffing and activity.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.data-protection">
-    <value>Advanced Data Protection enrollment and policies</value>
+    <value>Protection enrollment, key recovery and access controls.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.department-settings">
-    <value>Department profile, address, API keys and module settings</value>
+    <value>Department address, time zone and core settings.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.departments">
-    <value>Switch between the departments you belong to</value>
+    <value>Switch between the departments you belong to.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.deployment-from-external-order">
-    <value>Create a deployment from an open RMS mutual-aid order</value>
+    <value>Create a deployment from a mutual-aid resource order.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.deployments">
-    <value>Deployments, rosters, daily time reports and expenses</value>
+    <value>Deployment records and Deployment Finance.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.dispatch-app">
-    <value>Dispatchers use the dispatch interface to review calls and resources and explicitly select recipients.</value>
+    <value>The dispatcher view for creating and managing calls.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.dispatch-settings">
-    <value>Dispatch behaviour and notification settings</value>
+    <value>How calls page personnel: by group or by shift, and related automatic status changes.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.distribution-lists">
-    <value>Maintain reusable recipient lists for supported communication flows.</value>
+    <value>Reusable recipient lists, including email lists.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.documents">
-    <value>Upload and share documents</value>
+    <value>Shared documents such as procedures and preplans.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.email-intake">
-    <value>Configure supported email and CAD import formats and source credentials.</value>
+    <value>Create calls automatically from CAD, paging or email dispatches.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.file-library">
-    <value>Attach and maintain files through their owning documents and records.</value>
+    <value>Files attached to documents and records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.forms">
-    <value>Custom call and dispatch forms</value>
+    <value>Custom forms used on calls and dispatches.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.groups">
-    <value>Department groups and stations</value>
+    <value>Stations and groups that organize members and units.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.hardware-tracking">
-    <value>Associate supported tracking devices with department resources.</value>
+    <value>GPS devices that report unit locations.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.import-migration">
-    <value>Plan source ownership and review existing import tools before copying data.</value>
+    <value>Plan moving your data from another system into Resgrid.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inbox">
-    <value>Your messages inbox</value>
+    <value>Messages sent to you.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.incident-command">
-    <value>Command tools organize incident roles and accountability for authorized commanders.</value>
+    <value>Incident command and accountability for incident commanders.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.incident-reports">
-    <value>Prepare incident reports linked to authorized call evidence.</value>
+    <value>Incident reports linked to calls.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.indoor-maps">
-    <value>Organize indoor map references and zones where supported.</value>
+    <value>Floor plans and zones for buildings.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inventory">
-    <value>Inventory for stations and units</value>
+    <value>Items, stock levels and storage locations.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inventory-issue">
-    <value>Issue or return equipment to personnel</value>
+    <value>Issue equipment to members and record returns.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inventory-operations">
-    <value>Review stock counts, expiry and configured inventory alerts.</value>
+    <value>Counts, expiry dates and low-stock alerts.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inventory-purchasing">
-    <value>Manage suppliers, purchase orders and receipts.</value>
+    <value>Suppliers, purchase orders and deliveries.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inventory-status">
-    <value>On-hand, low-stock and expiring inventory</value>
+    <value>What is on hand, running low or expiring.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inventory-transfer">
-    <value>Move inventory between locations</value>
+    <value>Move stock between locations.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.invites">
-    <value>Send email invites so people create their own accounts</value>
+    <value>Email invitations for new members to join the department.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.invoice-aging">
-    <value>Outstanding invoice balances by age</value>
+    <value>Unpaid invoices grouped by how overdue they are.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.invoices">
-    <value>Customer invoices and payments</value>
+    <value>Customer invoices and payments.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.live-routing">
-    <value>Routing and directions for active resources</value>
+    <value>Directions and routes for responding resources.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.logs">
-    <value>Run, training, work and meeting logs</value>
+    <value>Activity logs for calls, training and work.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.maintenance-policy">
-    <value>Configure supported work-order policies and approval requirements.</value>
+    <value>Repair approvals and safety holds.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.maintenance-reports">
-    <value>Review maintenance work, recorded holds and repair history.</value>
+    <value>Maintenance history, repair costs and safety holds.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.map-layers">
-    <value>Manage map layers</value>
+    <value>Add your own shapes and overlays to the map.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.mapping">
-    <value>Large map with layers, personnel and units</value>
+    <value>The live map of personnel, units and calls.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.module-settings">
-    <value>Choose which optional modules appear and operate for the department.</value>
+    <value>Turn optional modules on or off for the department.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.my-certifications">
-    <value>Your own certification records</value>
+    <value>Your own certification records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.my-demographics">
-    <value>Your voluntary self-identification for California pay data reporting</value>
+    <value>Your voluntary answers for California pay data reporting.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-bid">
-    <value>Draft a bid for a customer</value>
+    <value>Create a bid for a customer.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-calendar-item">
-    <value>Create a calendar event</value>
+    <value>Add an event to the department calendar.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-call">
-    <value>Create and dispatch a new call</value>
+    <value>Create and dispatch a call.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-checklist">
-    <value>Author a checklist definition</value>
+    <value>Create a checklist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-contact">
-    <value>Add a person or organization contact</value>
+    <value>Add a person or organization contact.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-contract">
-    <value>Create a service contract for a customer</value>
+    <value>Create a service contract for a customer.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-deployment">
-    <value>Create a deployment finance wrapper</value>
+    <value>Start a deployment record.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-document">
-    <value>Upload a new document</value>
+    <value>Upload a document.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-group">
-    <value>Create a group or station</value>
+    <value>Create a station or group.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-invoice">
-    <value>Draft an invoice for a customer</value>
+    <value>Create an invoice for a customer.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-log">
-    <value>Create a run report, training log or work log</value>
+    <value>Record a run report, training log or work log.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-note">
-    <value>Post a department note</value>
+    <value>Post a department note.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-protocol">
-    <value>Create a dispatch protocol</value>
+    <value>Create a dispatch protocol.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-training">
-    <value>Create a training with optional quiz</value>
+    <value>Create a training, with an optional quiz.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-unit">
-    <value>Add an apparatus, vehicle or team</value>
+    <value>Add an apparatus, vehicle or team.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-work-order">
-    <value>Open a maintenance work order</value>
+    <value>Open a work order.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-workflow">
-    <value>Create an automation workflow</value>
+    <value>Create an automation workflow.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.notes">
-    <value>Department notes: small bits of shared information</value>
+    <value>Short shared notes for the department.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.notifications">
-    <value>Select events, recipients and conditions for administrative notifications.</value>
+    <value>Rules that alert chosen people when calls, statuses or other events happen.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.online-payment-settings">
-    <value>Connect your Stripe account to collect invoice payments online</value>
+    <value>Connect your Stripe account to take invoice payments online.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.outbox">
-    <value>Messages you sent</value>
+    <value>Messages you have sent.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.pay-data-reporting">
-    <value>CRD pay data report runs: snapshots, aggregation, validation, export and the portal worksheet</value>
+    <value>Prepare California pay data reports. Also requires Advanced Data Protection.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.permissions">
-    <value>Configure action permissions, roles and supported group restrictions.</value>
+    <value>Who can create calls, see personal information and perform other sensitive actions.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.personnel">
-    <value>People in the department, status and staffing</value>
+    <value>Member accounts, contact details and status.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.personnel-roles">
-    <value>Organize department-defined role assignments.</value>
+    <value>Roles such as Firefighter, EMT or Officer.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.pois">
-    <value>Manage map points of interest</value>
+    <value>Points of interest such as stations, hospitals and hydrants.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.preventive-maintenance">
-    <value>Configure recurring maintenance work and due tasks.</value>
+    <value>Recurring maintenance schedules.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.profile">
-    <value>View and edit your own profile, contact methods and notifications</value>
+    <value>Your own profile, contact details and notification preferences.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.protected-workflows">
-    <value>Configure approved releases to supported external workflow destinations.</value>
+    <value>Send protected data to approved outside systems through reviewed workflows.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.protocols">
-    <value>Dispatch protocols and procedures</value>
+    <value>Dispatch protocols with scripted questions and instructions.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.rate-cards">
-    <value>Billing rates for units, personnel and fees</value>
+    <value>Rates for units, personnel and fees used on invoices.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.rate-schedules">
-    <value>Contractor rate tables: certifications, crews, vehicles, equipment, premiums and policies</value>
+    <value>Contractor rates for crews, vehicles and equipment.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-analytics">
-    <value>Review supported aggregate response, workload and readiness reports.</value>
+    <value>Response, workload and readiness trends from your records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-definitions">
-    <value>Configure record forms, lifecycle, numbering and review requirements.</value>
+    <value>The forms and fields records use.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-disclosures">
-    <value>Manage disclosure scope, redaction and release approval.</value>
+    <value>Requests to release records, with redaction and approval.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-evidence">
-    <value>Capture supported source evidence from the owning record workflow.</value>
+    <value>Collect and track evidence attached to a record.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-exports">
-    <value>Configure supported export templates and review their runs.</value>
+    <value>Export records to files using templates.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-holds">
-    <value>Place and release holds through the authorized Records lifecycle.</value>
+    <value>Legal holds that stop records from being deleted.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-hydrants">
-    <value>Maintain hydrant and water-source records and their review history.</value>
+    <value>Hydrants and water sources with their inspection and flow history.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-inspections">
-    <value>Schedule and record authorized inspection work and corrections.</value>
+    <value>Schedule inspections and track violations and corrections.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-investigations">
-    <value>Manage authorized investigation records and their controlled workflow.</value>
+    <value>Restricted case records, such as fire investigations.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-occupancies">
-    <value>Maintain premises, contacts, hazards and review metadata.</value>
+    <value>Buildings and sites with their contacts, hazards and preplans.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-permits">
-    <value>Manage supported permit records and lifecycle.</value>
+    <value>Permits and their approval status.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-saved-reports">
-    <value>Create reusable report selections over authorized record data.</value>
+    <value>Saved record reports you can run again.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.record-submissions">
-    <value>Prepare and reconcile supported reporting submissions from an authorized incident report.</value>
+    <value>Submit incident reports to state or national reporting systems.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records">
-    <value>Records queue: run reports, training and operational records</value>
+    <value>Incident and activity records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-dashboard">
-    <value>Records due, submissions and quality at a glance</value>
+    <value>Records that are due, awaiting review or ready to submit.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Lifecycle, numbering, search, retention and visibility settings for Records</value>
+    <value>Numbering, retention, search and visibility rules for records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
-    <value>Generate reports from department data</value>
+    <value>Department reports on calls, personnel and activity.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.resource-costs">
-    <value>Depreciation, fuel, maintenance and fixed costs per unit or asset</value>
+    <value>Running costs for units and equipment.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.responder-app">
-    <value>Individual members use the supported Responder client for their account, availability, calls and notifications.</value>
+    <value>The member app for receiving dispatches, responding and setting status.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>Manage configured routes and supported route assignments.</value>
+    <value>Planned routes, such as patrols, and who is assigned to them.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
-    <value>Configure matching rules, resource requirements and supported dispatch recommendations.</value>
+    <value>Recommended resources for each call type or area.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.security-policy">
-    <value>Configure supported MFA, password, session and network restrictions.</value>
+    <value>Two-factor requirements, password rules and session limits.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.setup-help">
-    <value>Resume orientation and review current configuration evidence.</value>
+    <value>Setup Wizard, Setup Report and Admin Assist.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.shared-links">
-    <value>Configure supported shared views and links.</value>
+    <value>Share selected calls, units and personnel with a linked department.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.shifts">
-    <value>Shift signups, recurring shifts and trades</value>
+    <value>Shift schedules, sign-ups and trades.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.sso">
-    <value>Configure supported identity providers and provisioning.</value>
+    <value>Let members sign in through your identity provider, with optional automatic account provisioning.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.subscription">
-    <value>Review current plan allowances and authorized subscription options.</value>
+    <value>Your plan, its personnel and unit limits, and your add-ons.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.text-intake">
-    <value>Configure source numbers, parsing and supported inbound text actions.</value>
+    <value>Create calls and accept member commands by text message.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.trainings">
-    <value>Trainings, study guides and procedures</value>
+    <value>Training assignments with materials and optional quizzes.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.two-factor">
-    <value>Set up or manage two-factor sign-in</value>
+    <value>Two-factor sign-in for member accounts.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.unit-app">
-    <value>A shared unit client represents an apparatus or team rather than an individual member.</value>
+    <value>The in-vehicle app that represents an apparatus.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.unit-staffing">
-    <value>Assign personnel to units</value>
+    <value>Assign crew members to units.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.unit-types">
-    <value>Configure apparatus and resource types and their supported status behavior.</value>
+    <value>Categories such as Engine, Ladder or Ambulance.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.units">
-    <value>Apparatus, vehicles and teams</value>
+    <value>Your apparatus, vehicles and response teams.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.user-defined-fields">
-    <value>Define additional fields for supported forms and records.</value>
+    <value>Custom fields on calls, personnel and other records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.voice">
-    <value>Voice channels and push-to-talk</value>
+    <value>Push-to-Talk voice channels.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.weather">
-    <value>Configure monitored zones and weather alert processing.</value>
+    <value>Weather alert zones and alert notifications.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.work-orders">
-    <value>Maintenance and repair work orders</value>
+    <value>Repair and maintenance work orders.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workflow-runs">
-    <value>Workflow execution history</value>
+    <value>The history of workflow runs, including failures.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workflows">
-    <value>Automations triggered by department events</value>
+    <value>Automations triggered by department events.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workforce">
-    <value>Employer identity, establishments, workers, employments and job assignments</value>
+    <value>Workforce compensation and field cost runs.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workforce-annual-facts">
-    <value>W-2 earnings and hours per employment for pay data reporting, with CSV import</value>
+    <value>Annual earnings and hours used for pay data reporting.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workforce-compensation">
-    <value>Employee, role-default and department-default compensation with pay and employer-cost components</value>
+    <value>Pay rates and employer costs for staff.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.workshifts">
-    <value>Configure repeating workforce schedules supported by Workshifts.</value>
+    <value>Repeating work schedules for staff.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.addon-ai">
+    <value>Nothing to set up yet; your free Admin Assist allowance works without it.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.api-mcp">
+    <value>Create credentials for each integration and limit what they can access.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.big-board">
+    <value>Open the Big Board on a station screen and choose what it shows.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.cal-oes-mars">
+    <value>Enter your annual rates, then work the MARS action queue after deployments.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.calendar">
+    <value>Add recurring meetings and training nights.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
+    <value>Add the call types your dispatchers use and set their priorities.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
+    <value>Record members' current certifications, then review what expires soon.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.certification-types">
+    <value>Add each certification type with its renewal period.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.chat">
+    <value>Create channels for your teams once chat is enabled.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.checklist-schedules">
+    <value>Schedule each checklist and choose who completes it.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.checklist-templates">
+    <value>Start from a template or build a checklist for each apparatus.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.checklists">
+    <value>Create the checklists members complete on paper today.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.communication-tests">
+    <value>Run a communication test before going live and after major changes.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.contacts">
+    <value>Add the outside contacts members call most.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.contracts">
+    <value>Add your service contracts and their rates.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-statuses">
+    <value>Review the built-in statuses and add your own where your terms differ.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.data-protection">
+    <value>Review the enrollment checklist and plan key recovery before enrolling.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.department-settings">
+    <value>Confirm the address and time zone; dates, maps and schedules depend on them.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.deployments">
+    <value>Record your next deployment with its personnel and apparatus.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dispatch-app">
+    <value>Give dispatch access to the people who dispatch, then have them sign in.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
+    <value>Choose whether dispatch follows groups or shifts, and review the automatic status options.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.distribution-lists">
+    <value>Create lists for groups you message often, such as Officers.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.documents">
+    <value>Upload your most-used documents and organize them by category.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.email-intake">
+    <value>Choose your CAD or paging format and connect the mailbox that receives dispatches.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.groups">
+    <value>Create a station group for each station with its address, and organizational groups for teams, then add members.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.hardware-tracking">
+    <value>Register each tracking device and link it to its unit.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.incident-command">
+    <value>Give command access to the officers who run incidents.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.incident-reports">
+    <value>Decide who completes and who reviews each report.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.inventory">
+    <value>Add the supplies and equipment you track and where they are stored.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.inventory-operations">
+    <value>Set minimum levels and expiry alerts for critical supplies.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.invites">
+    <value>Send invitations and follow up on any that have not been accepted.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.invoices">
+    <value>Set up billing settings and rate cards, then create invoices.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.logs">
+    <value>Choose the log types members complete.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.maintenance-policy">
+    <value>Decide who approves repairs and returns equipment to service.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.mapping">
+    <value>Set how long locations stay on the map in the mapping settings.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.module-settings">
+    <value>Hide modules you will not use so members see a simpler menu.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.notifications">
+    <value>Create notification rules for the events officers and administrators need to know about.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.permissions">
+    <value>Review each permission; some default to every member.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.personnel">
+    <value>Invite members or add them directly, then check that each has a mobile number or email address.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.personnel-roles">
+    <value>Create the roles you dispatch or report on, and assign them to members.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.pois">
+    <value>Add the locations dispatchers need to see.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
+    <value>Schedule routine service for each apparatus.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.protocols">
+    <value>Create protocols for the call types that need scripted questions.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.record-definitions">
+    <value>Start from the built-in forms and add only the fields you need.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.records">
+    <value>Turn on Records if it is available to you and review the record settings.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.reports">
+    <value>Run the reports you use for meetings or compliance.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.responder-app">
+    <value>Have every member install the Responder app, sign in and allow notifications.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.run-cards">
+    <value>Build run cards for your most common calls, then turn on recommendations.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.security-policy">
+    <value>Require two-factor sign-in for administrators and review password and session rules.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shifts">
+    <value>Create your shifts, assign groups and members, and decide whether dispatch follows shifts.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.subscription">
+    <value>Check the remaining room before adding many members or units.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.trainings">
+    <value>Create a training and assign it to the members or groups who need it.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.two-factor">
+    <value>Enroll every administrator in two-factor sign-in.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.unit-app">
+    <value>Install the Unit app on each apparatus tablet and select its unit.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.unit-types">
+    <value>Create unit types before adding units so each unit can be classified.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.units">
+    <value>Add each unit with its type and home station group.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.user-defined-fields">
+    <value>Add only the fields you must capture.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.voice">
+    <value>Create channels and add the members who use them.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.weather">
+    <value>Draw the zones you cover and choose who is alerted.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.work-orders">
+    <value>Create work orders from failed checks or reported defects.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.workflows">
+    <value>Start with one workflow for a task you repeat, and review its runs.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.workforce">
+    <value>Add compensation profiles, then run field costs for deployments.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.account-sessions">
     <value>Keep personal account recovery distinct from department-wide settings.</value>
@@ -2158,13 +1987,13 @@
     <value>Review schedule ownership and local time separately from dispatch eligibility.</value>
   </data>
   <data xml:space="preserve" name="Field.DepartmentSuppressStaffingInfo.EnableSupressStaffing">
-    <value>Department Suppress Staffing Info / Enable Supress Staffing</value>
+    <value>Department Suppress Staffing Info / Enable Suppress Staffing</value>
   </data>
   <data xml:space="preserve" name="Field.DepartmentSuppressStaffingInfo.StaffingLevelsToSupress">
-    <value>Department Suppress Staffing Info / Staffing Levels To Supress</value>
+    <value>Department Suppress Staffing Info / Staffing Levels To Suppress</value>
   </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.EtaShortlistSize">
-    <value>Dispatch Recommendation Config / Eta Shortlist Size</value>
+    <value>Dispatch Recommendation Config / ETA Shortlist Size</value>
   </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.IncludeStaleLocations">
     <value>Dispatch Recommendation Config / Include Stale Locations</value>
@@ -2188,10 +2017,10 @@
     <value>Dispatch Recommendation Config / Unit Minimum Staffing Level</value>
   </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.UseRoutedEta">
-    <value>Dispatch Recommendation Config / Use Routed Eta</value>
+    <value>Dispatch Recommendation Config / Use Routed ETA</value>
   </data>
   <data xml:space="preserve" name="Field.GroupDispatchScopeConfig.DepartmentWideRoleIds">
-    <value>Group Dispatch Scope Config / Department Wide Role Ids</value>
+    <value>Group Dispatch Scope Config / Department Wide Role IDs</value>
   </data>
   <data xml:space="preserve" name="Field.GroupDispatchScopeConfig.Enabled">
     <value>Group Dispatch Scope Config / Enabled</value>
@@ -2209,7 +2038,7 @@
     <value>New Call Field Rule / Visible</value>
   </data>
   <data xml:space="preserve" name="Field.PersonnelListStatusOrder.StatusId">
-    <value>Personnel List Status Order / Status Id</value>
+    <value>Personnel List Status Order / Status ID</value>
   </data>
   <data xml:space="preserve" name="Field.PersonnelListStatusOrder.Weight">
     <value>Personnel List Status Order / Weight</value>
@@ -2221,7 +2050,7 @@
     <value>Records Disclosure Config / Default Redaction Profile</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsDisclosureConfig.ReleaseApproverUserId">
-    <value>Records Disclosure Config / Release Approver User Id</value>
+    <value>Records Disclosure Config / Release Approver User ID</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsDisclosureConfig.StatutoryClockDays">
     <value>Records Disclosure Config / Statutory Clock Days</value>
@@ -2257,7 +2086,7 @@
     <value>Records Retention Policy / History</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsRetentionPolicy.LastChangedByUserId">
-    <value>Records Retention Policy / Last Changed By User Id</value>
+    <value>Records Retention Policy / Last Changed By User ID</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsRetentionPolicy.LastChangedOn">
     <value>Records Retention Policy / Last Changed On</value>
@@ -2296,7 +2125,7 @@
     <value>Unit Type Call Status Override / Release Status</value>
   </data>
   <data xml:space="preserve" name="Field.UnitTypeCallStatusOverride.UnitTypeId">
-    <value>Unit Type Call Status Override / Unit Type Id</value>
+    <value>Unit Type Call Status Override / Unit Type ID</value>
   </data>
   <data xml:space="preserve" name="Field.UnitTypeCallStatusOverrideSetting.Overrides">
     <value>Unit Type Call Status Override Setting / Overrides</value>
@@ -2986,10 +2815,10 @@
     <value>Choose a change window and responsible verifier using approved local procedures. Verify again after saving; new source data can invalidate this preview.</value>
   </data>
   <data xml:space="preserve" name="Module.AiDisabled">
-    <value>Ai availability</value>
+    <value>AI availability</value>
   </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
-    <value>BusinessOperations availability</value>
+    <value>Business Operations availability</value>
   </data>
   <data xml:space="preserve" name="Module.CalendarDisabled">
     <value>Calendar availability</value>
@@ -3059,6 +2888,69 @@
   </data>
   <data xml:space="preserve" name="Module.TrainingNameOverride">
     <value>Training menu name</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.adp">
+    <value>Requires the Advanced Data Protection add-on. Enrollment is a separate step: plan two-factor sign-in and key recovery first, and review the effects on search, exports and integrations.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.ai">
+    <value>Every department has a free Admin Assist allowance. The add-on becomes available when it is released.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.apps">
+    <value>Decide which devices each role will use and share the app download links with your members.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.automation">
+    <value>Have the destination systems and credentials ready, and decide who owns each automation.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.business">
+    <value>Requires the Workforce and Business Operations add-on. Online payments also need your own payment-provider account.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.calls">
+    <value>Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.checklists">
+    <value>Pick the checks you do on paper today and who completes them.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.communication">
+    <value>Make sure members have added a mobile number or email address and installed the Responder app.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.deployments">
+    <value>Useful when your members deploy to incidents outside your jurisdiction.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.inventory">
+    <value>Decide which supplies and equipment are worth tracking and where they are stored.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.knowledge">
+    <value>Gather the documents and contacts members need most, and decide who keeps them current.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.maintenance">
+    <value>Requires the Readiness Pro add-on. Checklists remain available without it.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.mapping">
+    <value>Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.people">
+    <value>Have your member list with email addresses or mobile numbers, and decide how stations or teams are grouped.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.plans">
+    <value>Know who your department's managing member is. Only the managing member can change the subscription.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.ptt">
+    <value>Requires the Push-to-Talk add-on. It supplements your radio system; it does not replace it.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.records">
+    <value>Know which reports your department completes and who reviews them. Records may need to be enabled for your department.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.security">
+    <value>Know your department address and time zone, and choose at least two people who will administer Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.shifts">
+    <value>Have your rotation or duty schedule, and decide whether dispatch should follow shifts.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.training">
+    <value>List the certifications your department tracks and their renewal periods.</value>
+  </data>
+  <data xml:space="preserve" name="ModuleAdoption.units">
+    <value>List your apparatus or response teams with their types and home stations. Teams that respond only as individuals can mark this module not applicable.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.AiDisabled">
     <value>Controls availability of optional AI assistance. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
@@ -3707,6 +3599,321 @@
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
     <value>Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AddStep">
+    <value>Add step</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Areas">
+    <value>Guided setup tasks</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AsOf">
+    <value>Evidence checked</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AskDraft">
+    <value>Ask about the reviewed template (uses AI allowance)</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AskQuestion">
+    <value>Explain the selected plan or verification evidence.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AskVerification">
+    <value>Ask about this verification (uses AI allowance)</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Attest">
+    <value>Record observed verification</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AttestHelp">
+    <value>After the live value and rules pass, verify affected consumers and behavior on the owning screen. For paging, use an explicitly authorized Communication Test and confirm receipt. Admin Assist does not send that test.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.AudienceUnknown">
+    <value>Affected people and scope need review on the owning screen.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.BehaviorCheck">
+    <value>I performed the relevant behavior checks and confirmed the intended result, including recipient checks for paging.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.BehaviorTested">
+    <value>Behavior tested</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Boundary">
+    <value>Preview, review, and verify changes here. Save configuration on the linked Resgrid screen. Admin Assist never applies changes or sends messages.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.CallId">
+    <value>Saved call ID for routing scenario</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Cancel">
+    <value>Cancel</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Cancelled">
+    <value>Request cancelled.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Changed">
+    <value>The plan, scope, or evidence changed. Reopen the plan and review a new preview.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Close">
+    <value>Close plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Communication">
+    <value>Message draft to adapt and send yourself</value>
+  </data>
+  <data xml:space="preserve" name="Plan.CommunicationDraft">
+    <value>We plan to update the settings listed in this plan during the reviewed maintenance window. Please follow the department instructions for affected apps and sessions. The responsible admin will verify behavior and use the documented fallback if needed. Review the step details, timing, audience, and rollback limits before sharing this message.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Configured">
+    <value>Configuration present</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Confirmed">
+    <value>Confirmed</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Delete">
+    <value>Delete plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.DispatchScenarioHelp">
+    <value>Routing verification requires a saved call and a UTC scenario time within seven days of now. The shared production resolver checks current route membership and empty-shift fallback. This is not historical delivery evidence; still perform an authorized Communication Test.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Export">
+    <value>Download reviewed PDF</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ExportBoundary">
+    <value>This PDF is an authorized as-of snapshot, not continuing access or proof of operational readiness. Protect it under department policy; local copies cannot be recalled after export.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Fail">
+    <value>Failed</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Fallback">
+    <value>Fallback procedure and rollback limits</value>
+  </data>
+  <data xml:space="preserve" name="Plan.FinalImpact">
+    <value>Combined result</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Goal">
+    <value>Administrative goal</value>
+  </data>
+  <data xml:space="preserve" name="Plan.History">
+    <value>Recent plans</value>
+  </data>
+  <data xml:space="preserve" name="Plan.HistoryLimit">
+    <value>The 20 most recently updated plans you can currently access. Close or supersede plans when the work ends; closed content is retained for up to 90 days unless a hold applies.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.HumanConfirmed">
+    <value>Confirmed by an administrator</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Intermediate">
+    <value>Scalar steps are evaluated in prerequisite order against earlier proposed values, then compared as a whole with current configuration. Manual setup tasks cannot simulate unchosen source-screen edits.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.MakePrivate">
+    <value>Make private</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Manual">
+    <value>Select steps myself</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ManualImpact">
+    <value>Guided tasks and effects without an evaluator remain unquantified. Review access, staffing, qualification, equipment, provider, and workflow dependencies on their owning screens.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.New">
+    <value>Create a change plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.NotConfigured">
+    <value>Not configured</value>
+  </data>
+  <data xml:space="preserve" name="Plan.NotMatched">
+    <value>Does not match</value>
+  </data>
+  <data xml:space="preserve" name="Plan.OpenSource">
+    <value>Open the owning screen</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Owned">
+    <value>Your plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Pass">
+    <value>Passed</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Prerequisites">
+    <value>Steps that must be verified first</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Preview">
+    <value>Preview ordered plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Privacy">
+    <value>Goals, proposals, review notes, and confirmations are protected department data. Keep patient details, incident narratives, passwords, and contact details out of plan text.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Private">
+    <value>Private</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Propagated">
+    <value>Propagation</value>
+  </data>
+  <data xml:space="preserve" name="Plan.PropagationCheck">
+    <value>I checked the affected clients and sessions after the expected propagation period.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ProposedValue">
+    <value>Proposed value</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Recheck">
+    <value>Suggested recheck (not a scheduled job or guaranteed propagation time)</value>
+  </data>
+  <data xml:space="preserve" name="Plan.RecordReview">
+    <value>Record my review</value>
+  </data>
+  <data xml:space="preserve" name="Plan.RecordVerification">
+    <value>Record my verification</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Refresh">
+    <value>Refresh evidence</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Remove">
+    <value>Remove</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Return">
+    <value>Return to change plans</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Review">
+    <value>Human review and change window</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ReviewCurrent">
+    <value>Review matches this preview</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ReviewExpired">
+    <value>Evidence changed; review this preview again</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ReviewHelp">
+    <value>High and critical impact steps require a review of this current preview, a chosen maintenance window, and a fallback procedure. The reviewing admin is recorded as the responsible verifier. Quiet history does not guarantee a quiet response period.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Risk">
+    <value>Highest risk</value>
+  </data>
+  <data xml:space="preserve" name="Plan.RollbackManual">
+    <value>Review rollback on the owning screen. Changing a setting back cannot undo messages, access already exercised, deleted credentials, or operational actions.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Rules">
+    <value>Verification rules</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Save">
+    <value>Save private plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Saved">
+    <value>Saved value</value>
+  </data>
+  <data xml:space="preserve" name="Plan.ScenarioTime">
+    <value>Roster scenario time (your local time)</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Select">
+    <value>Choose an option</value>
+  </data>
+  <data xml:space="preserve" name="Plan.SelectStep">
+    <value>Setting or setup task</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Settings">
+    <value>Supported setting changes</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Share">
+    <value>Share with department admins</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Shared">
+    <value>Shared with current department admins</value>
+  </data>
+  <data xml:space="preserve" name="Plan.SharingHelp">
+    <value>Sharing includes the goal, proposals, and review notes. Each reader needs current source permissions and any required protected-data grant. Only the owner changes plan metadata.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Skip">
+    <value>Skip step</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Source">
+    <value>Started from</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Start">
+    <value>Start step</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Closed">
+    <value>Closed</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Complete">
+    <value>Steps complete</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Done">
+    <value>Done — verified</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Drifted">
+    <value>Drifted — recheck required</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.InProgress">
+    <value>In progress</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Proposed">
+    <value>Proposed</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Skipped">
+    <value>Skipped</value>
+  </data>
+  <data xml:space="preserve" name="Plan.State.Superseded">
+    <value>Superseded</value>
+  </data>
+  <data xml:space="preserve" name="Plan.StepImpact">
+    <value>Impact of this intermediate step</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Supersede">
+    <value>Supersede plan</value>
+  </data>
+  <data xml:space="preserve" name="Plan.SupersedeStep">
+    <value>Supersede step</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Template">
+    <value>Starting template</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Template.admin-security">
+    <value>Require department administrator MFA</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Template.map-freshness">
+    <value>Review map location freshness</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Template.shift-routing">
+    <value>Review shift-based dispatch routing</value>
+  </data>
+  <data xml:space="preserve" name="Plan.TemplateHelp.admin-security">
+    <value>Propose MFA for department administrators. Check enrollment, recovery, and another administrator’s access before making the change.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.TemplateHelp.map-freshness">
+    <value>Propose a 15-minute personnel and unit location window. Validate against your actual update intervals and response needs before saving.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.TemplateHelp.shift-routing">
+    <value>Propose shift routing with automatic shift status changes off. Empty-shift fallback and coverage need review with the dispatch preview and an authorized Communication Test.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.TemplateScope">
+    <value>Templates include steps you can currently configure. Review missing areas and paid prerequisites in Explore Resgrid and add-ons; selecting a template does not enable or purchase features.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.TimingUnknown">
+    <value>Propagation timing varies by consumer. A saved value does not establish refreshed caches, current sessions, or correct client behavior.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Title">
+    <value>Change plans</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Unavailable">
+    <value>This request could not be completed. Check current access and protection, prerequisites, review, and selected values, then reopen or preview again.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.UniquePeople">
+    <value>Unique people affected</value>
+  </data>
+  <data xml:space="preserve" name="Plan.UniqueUnknown">
+    <value>A department-wide count of unique affected people is unavailable. Step counts can overlap and are never added together.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Unknown">
+    <value>Unknown</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Verification">
+    <value>Step verification</value>
+  </data>
+  <data xml:space="preserve" name="Plan.VerificationBoundary">
+    <value>Saved, propagated, and behavior-tested are separate. Automatic checks use current configuration and available rules. A human confirmation is labeled as such and becomes invalid when evidence or setup scope changes. Missing evidence never counts as verified.</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Verify">
+    <value>Recheck and record step status</value>
+  </data>
+  <data xml:space="preserve" name="Plan.Window">
+    <value>Maintenance window (your local time)</value>
+  </data>
+  <data xml:space="preserve" name="Plan.conversation">
+    <value>An Admin Assist question</value>
+  </data>
+  <data xml:space="preserve" name="Plan.finding">
+    <value>A configuration finding</value>
   </data>
   <data xml:space="preserve" name="Profile.AccessibilityNeeds">
     <value>Accessibility preferences</value>
@@ -4740,8 +4947,20 @@
   <data xml:space="preserve" name="SettingHelp.WeatherAlertsEnabled">
     <value>Enable supported weather-alert processing. Configure zones and communication behavior before relying on it.</value>
   </data>
+  <data xml:space="preserve" name="SetupEvidence.call-types-priorities">
+    <value>Call types are recorded. Review their names and priorities with your dispatchers.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.certification-types">
+    <value>Certification types are recorded; the listed checks look for expiring and uncovered qualifications.</value>
+  </data>
   <data xml:space="preserve" name="SetupEvidence.checkin-setup">
     <value>Check-in timer configuration is recorded. Verify target selection, deadlines, escalation ownership and a controlled scenario through the owning screen.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.checklists">
+    <value>Checklists are recorded; the listed check looks for overdue checks.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.distribution-lists">
+    <value>Distribution lists are recorded. Review each list before sending to it.</value>
   </data>
   <data xml:space="preserve" name="SetupEvidence.email-intake">
     <value>Mailbox configuration and available polling metadata are checked. Parser success, routing and page delivery require a controlled authorized test.</value>
@@ -4749,17 +4968,38 @@
   <data xml:space="preserve" name="SetupEvidence.groups">
     <value>Checks recorded group membership and station location metadata. Review intended dispatch and site coverage separately.</value>
   </data>
+  <data xml:space="preserve" name="SetupEvidence.notifications">
+    <value>Notification rules are recorded. Review who each rule alerts, then run a communication test.</value>
+  </data>
   <data xml:space="preserve" name="SetupEvidence.personnel">
     <value>Current active members are recorded. This does not verify invitations, account access, role assignment or qualifications.</value>
   </data>
+  <data xml:space="preserve" name="SetupEvidence.personnel-roles">
+    <value>Roles are recorded. Check on the Personnel screen that members have the roles they need.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.protocols">
+    <value>Dispatch protocols are recorded. Review them with your dispatchers.</value>
+  </data>
   <data xml:space="preserve" name="SetupEvidence.run-cards">
     <value>Run-card records are present. The listed check verifies presence when recommendations are enabled, not correctness of local response requirements.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.shifts">
+    <value>Upcoming shifts are scheduled; the listed checks look for open slots, overlaps and unfinished trades.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.trainings">
+    <value>Trainings are recorded. Review assignments and completion on the Trainings screen.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.unit-types">
+    <value>Unit types are recorded; the listed check confirms every unit has one.</value>
   </data>
   <data xml:space="preserve" name="SetupEvidence.units">
     <value>Checks recorded unit types and groups. Crew suitability, device setup and actual communications need separate verification.</value>
   </data>
   <data xml:space="preserve" name="SetupEvidence.weather">
     <value>Weather zones are recorded. Confirm geographic coverage and the actual provider and notification path.</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.workflows">
+    <value>Workflows are recorded; the listed check looks for recent failed runs.</value>
   </data>
   <data xml:space="preserve" name="TableField.ChatbotDepartmentConfig.AllowDispatchViaChatbot">
     <value>Chatbot Department Config / Allow Dispatch Via Chatbot</value>
@@ -4771,13 +5011,13 @@
     <value>Chatbot Department Config / Is Enabled</value>
   </data>
   <data xml:space="preserve" name="TableField.ChatbotDepartmentConfig.LlmApiEndpoint">
-    <value>Chatbot Department Config / Llm Api Endpoint</value>
+    <value>Chatbot Department Config / LLM API Endpoint</value>
   </data>
   <data xml:space="preserve" name="TableField.ChatbotDepartmentConfig.LlmApiKey">
-    <value>Chatbot Department Config / Llm Api Key</value>
+    <value>Chatbot Department Config / LLM API Key</value>
   </data>
   <data xml:space="preserve" name="TableField.ChatbotDepartmentConfig.LlmModelName">
-    <value>Chatbot Department Config / Llm Model Name</value>
+    <value>Chatbot Department Config / LLM Model Name</value>
   </data>
   <data xml:space="preserve" name="TableField.ChatbotDepartmentConfig.MaxSessionsPerUser">
     <value>Chatbot Department Config / Max Sessions Per User</value>
@@ -4798,13 +5038,13 @@
     <value>Chatbot Department Config / Require Linking Confirmation</value>
   </data>
   <data xml:space="preserve" name="TableField.ChatbotDepartmentConfig.SessionTtlMinutes">
-    <value>Chatbot Department Config / Session Ttl Minutes</value>
+    <value>Chatbot Department Config / Session TTL Minutes</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.AddressId">
-    <value>Department / Address Id</value>
+    <value>Department / Address ID</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.ApiKey">
-    <value>Department / Api Key</value>
+    <value>Department / API Key</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.Code">
     <value>Department / Code</value>
@@ -4816,13 +5056,13 @@
     <value>Department / Link Code</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.ManagingUserId">
-    <value>Department / Managing User Id</value>
+    <value>Department / Managing User ID</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.Name">
     <value>Department / Name</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.PublicApiKey">
-    <value>Department / Public Api Key</value>
+    <value>Department / Public API Key</value>
   </data>
   <data xml:space="preserve" name="TableField.Department.SharedSecret">
     <value>Department / Shared Secret</value>
@@ -4858,7 +5098,7 @@
     <value>Department Call Email / Port</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentCallEmail.UseSsl">
-    <value>Department Call Email / Use Ssl</value>
+    <value>Department Call Email / Use SSL</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentCallEmail.Username">
     <value>Department Call Email / Username</value>
@@ -4906,7 +5146,7 @@
     <value>Department Notification / Users To Notify</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
-    <value>Department Security Policy / Allowed Ip Ranges</value>
+    <value>Department Security Policy / Allowed IP Ranges</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.DataClassificationLevel">
     <value>Department Security Policy / Data Classification Level</value>
@@ -4921,64 +5161,64 @@
     <value>Department Security Policy / Password Expiration Days</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.RequireMfa">
-    <value>Department Security Policy / Require Mfa</value>
+    <value>Department Security Policy / Require MFA</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.RequirePasswordComplexity">
     <value>Department Security Policy / Require Password Complexity</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.RequireSso">
-    <value>Department Security Policy / Require Sso</value>
+    <value>Department Security Policy / Require SSO</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Department Security Policy / Session Timeout Minutes</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
-    <value>Department Sso Config / Allow Local Login</value>
+    <value>Department SSO Config / Allow Local Login</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AssertionConsumerServiceUrl">
-    <value>Department Sso Config / Assertion Consumer Service Url</value>
+    <value>Department SSO Config / Assertion Consumer Service URL</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AttributeMappingJson">
-    <value>Department Sso Config / Attribute Mapping Json</value>
+    <value>Department SSO Config / Attribute Mapping JSON</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.Authority">
-    <value>Department Sso Config / Authority</value>
+    <value>Department SSO Config / Authority</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AutoProvisionUsers">
-    <value>Department Sso Config / Auto Provision Users</value>
+    <value>Department SSO Config / Auto Provision Users</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.ClientId">
-    <value>Department Sso Config / Client Id</value>
+    <value>Department SSO Config / Client ID</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.DefaultRankId">
-    <value>Department Sso Config / Default Rank Id</value>
+    <value>Department SSO Config / Default Rank ID</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EncryptedClientSecret">
-    <value>Department Sso Config / Encrypted Client Secret</value>
+    <value>Department SSO Config / Encrypted Client Secret</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EncryptedIdpCertificate">
-    <value>Department Sso Config / Encrypted Idp Certificate</value>
+    <value>Department SSO Config / Encrypted IdP Certificate</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EncryptedScimBearerToken">
-    <value>Department Sso Config / Encrypted Scim Bearer Token</value>
+    <value>Department SSO Config / Encrypted SCIM Bearer Token</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EncryptedSigningCertificate">
-    <value>Department Sso Config / Encrypted Signing Certificate</value>
+    <value>Department SSO Config / Encrypted Signing Certificate</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
-    <value>Department Sso Config / Entity Id</value>
+    <value>Department SSO Config / Entity ID</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
-    <value>Department Sso Config / Is Enabled</value>
+    <value>Department SSO Config / Is Enabled</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.MetadataUrl">
-    <value>Department Sso Config / Metadata Url</value>
+    <value>Department SSO Config / Metadata URL</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.ScimEnabled">
-    <value>Department Sso Config / Scim Enabled</value>
+    <value>Department SSO Config / SCIM Enabled</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.SsoProviderType">
-    <value>Department Sso Config / Sso Provider Type</value>
+    <value>Department SSO Config / SSO Provider Type</value>
   </data>
   <data xml:space="preserve" name="TableField.WeatherAlertZone.CenterGeoLocation">
     <value>Weather Alert Zone / Center Geo Location</value>
@@ -5244,14 +5484,26 @@
   <data xml:space="preserve" name="Ui.ActiveFindings">
     <value>Needs attention</value>
   </data>
+  <data xml:space="preserve" name="Ui.AddonActive">
+    <value>Add-on active</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AddonBadge">
+    <value>Add-on</value>
+  </data>
   <data xml:space="preserve" name="Ui.AddonFeatures">
     <value>Features that use this add-on</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AddonNotOwned">
+    <value>Not part of your current plan</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.ADP">
     <value>Requires Advanced Data Protection</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.BusinessOperations">
     <value>Requires Workforce and Business Operations</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AddonRequired.EnhancedAi">
+    <value>Requires Enhanced AI</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonRequired.PTT">
     <value>Requires Push-to-Talk</value>
@@ -5260,7 +5512,10 @@
     <value>Requires Readiness Pro</value>
   </data>
   <data xml:space="preserve" name="Ui.AddonsOnly">
-    <value>Show add-on comparisons only</value>
+    <value>Show paid add-ons only</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AddonsReviewed">
+    <value>{0} of {1} add-ons reviewed</value>
   </data>
   <data xml:space="preserve" name="Ui.Adoption">
     <value>Before adopting</value>
@@ -5274,11 +5529,29 @@
   <data xml:space="preserve" name="Ui.AiModuleHelp">
     <value>Allow separately enabled AI assistance for this department. Turning this off stops new AI requests; deterministic setup and protected-data retention continue.</value>
   </data>
+  <data xml:space="preserve" name="Ui.AllAreas">
+    <value>All modules</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AllChecks">
+    <value>All checks in your selected scope</value>
+  </data>
   <data xml:space="preserve" name="Ui.AllFindings">
     <value>All findings</value>
   </data>
+  <data xml:space="preserve" name="Ui.AllResults">
+    <value>All results</value>
+  </data>
   <data xml:space="preserve" name="Ui.Area">
-    <value>Area</value>
+    <value>Module</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AreaReadiness">
+    <value>Module readiness</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AreaReadinessHelp">
+    <value>Checks for each module you use. Modules you deferred or marked not applicable are not counted, except security and critical checks, which always apply. A module without automated checks still needs your own review.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AreasChosen">
+    <value>{0} of {1} modules have a setup choice</value>
   </data>
   <data xml:space="preserve" name="Ui.Ask.Abstained">
     <value>There is not enough grounded evidence to answer. Try a specific setting or feature name, or use Settings Reference.</value>
@@ -5397,6 +5670,9 @@
   <data xml:space="preserve" name="Ui.Ask.WindowEnds">
     <value>Current allowance ends</value>
   </data>
+  <data xml:space="preserve" name="Ui.AskAboutMore">
+    <value>Settings reference and Admin Assist can explain these in more detail.</value>
+  </data>
   <data xml:space="preserve" name="Ui.AskHistoryScope">
     <value>A recorded configuration change within the latest 30 visible audit entries. This is bounded metadata, not a complete incident investigation.</value>
   </data>
@@ -5418,6 +5694,9 @@
   <data xml:space="preserve" name="Ui.Before">
     <value>Before</value>
   </data>
+  <data xml:space="preserve" name="Ui.BeforeYouStart">
+    <value>Before you start</value>
+  </data>
   <data xml:space="preserve" name="Ui.CapabilitySetupHelp">
     <value>Recorded configuration, supported checks, add-on access and personal learning are separate. No activity measurement is implied: a feature with no recorded setup is not necessarily unused. Unknown evidence remains unassessed.</value>
   </data>
@@ -5427,8 +5706,29 @@
   <data xml:space="preserve" name="Ui.CatalogVersion">
     <value>Catalog version</value>
   </data>
+  <data xml:space="preserve" name="Ui.ChangeScope">
+    <value>Change which modules you use</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ChecklistHelp">
+    <value>Each key feature has four steps: understand it, confirm access, configure it on its own screen, then verify. Only supported checks can verify a feature; other steps stay "Not verified" until you review them.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ChecklistLegend">
+    <value>Setup steps</value>
+  </data>
   <data xml:space="preserve" name="Ui.Checks">
-    <value>Verified checks in selected areas</value>
+    <value>Verified checks in your modules</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ChecksColumn">
+    <value>Checks</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ChecksNotApplicable">
+    <value>Checks do not apply to your current settings</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ChecksSummary">
+    <value>{0} verified · {1} need attention · {2} unknown of {3} checks</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ChooseScope">
+    <value>Choose…</value>
   </data>
   <data xml:space="preserve" name="Ui.ConfigurationChecks">
     <value>Supported configuration checks</value>
@@ -5444,6 +5744,9 @@
   </data>
   <data xml:space="preserve" name="Ui.Critical">
     <value>Critical</value>
+  </data>
+  <data xml:space="preserve" name="Ui.CriticalCount">
+    <value>{0} critical</value>
   </data>
   <data xml:space="preserve" name="Ui.CriticalUnknown">
     <value>Critical checks have unknown evidence. The department cannot be shown as fully verified.</value>
@@ -5472,11 +5775,17 @@
   <data xml:space="preserve" name="Ui.DismissSetup">
     <value>Dismiss for me; setup stays available in the menu</value>
   </data>
+  <data xml:space="preserve" name="Ui.Documentation">
+    <value>Documentation</value>
+  </data>
+  <data xml:space="preserve" name="Ui.DocumentationFor">
+    <value>Documentation for {0}</value>
+  </data>
   <data xml:space="preserve" name="Ui.DownloadReminder">
     <value>Download calendar reminder</value>
   </data>
   <data xml:space="preserve" name="Ui.EffortAssumptions">
-    <value>Planning ranges cover an initial administrative review per selected area with owners and source information available. They exclude data entry at scale, procurement, provider activation, migration, training and local policy approval. Related features share this area estimate; do not add it once per feature.</value>
+    <value>Time ranges are rough planning guides for one administrator setting up each module. They do not include entering large amounts of data, purchasing or training members.</value>
   </data>
   <data xml:space="preserve" name="Ui.Error">
     <value>The report could not be loaded. Retry or use the normal department screens.</value>
@@ -5493,6 +5802,12 @@
   <data xml:space="preserve" name="Ui.ExceptionHelp">
     <value>Choose an expiry within 90 days. The check continues to show its actual result. Notes follow department data protection.</value>
   </data>
+  <data xml:space="preserve" name="Ui.ExploreHelp">
+    <value>Browse every Resgrid module, including ones your plan or menu does not show yet. Each module lists its key features and what to do first.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ExploreThisArea">
+    <value>Explore this module</value>
+  </data>
   <data xml:space="preserve" name="Ui.Fail">
     <value>Needs attention</value>
   </data>
@@ -5501,6 +5816,9 @@
   </data>
   <data xml:space="preserve" name="Ui.False">
     <value>Disabled</value>
+  </data>
+  <data xml:space="preserve" name="Ui.FeatureCount">
+    <value>{0} features shown</value>
   </data>
   <data xml:space="preserve" name="Ui.FeatureNotEnabled">
     <value>Not enabled for this deployment</value>
@@ -5514,14 +5832,32 @@
   <data xml:space="preserve" name="Ui.Featureretired">
     <value>Retired</value>
   </data>
+  <data xml:space="preserve" name="Ui.FeaturesSetUp">
+    <value>{0} of {1} key features set up</value>
+  </data>
   <data xml:space="preserve" name="Ui.Filter">
     <value>Show</value>
+  </data>
+  <data xml:space="preserve" name="Ui.FirstStep">
+    <value>First step</value>
   </data>
   <data xml:space="preserve" name="Ui.Fresh">
     <value>Fresh setup</value>
   </data>
   <data xml:space="preserve" name="Ui.Freshness">
     <value>Evidence as of</value>
+  </data>
+  <data xml:space="preserve" name="Ui.GlobalModule">
+    <value>Applies across all modules</value>
+  </data>
+  <data xml:space="preserve" name="Ui.GroupNotApplicable">
+    <value>Not applicable to current settings</value>
+  </data>
+  <data xml:space="preserve" name="Ui.GroupSuggestions">
+    <value>Suggestions (not counted as failures)</value>
+  </data>
+  <data xml:space="preserve" name="Ui.GroupUnknown">
+    <value>Could not be verified</value>
   </data>
   <data xml:space="preserve" name="Ui.HistoryAction">
     <value>Change</value>
@@ -5535,6 +5871,12 @@
   <data xml:space="preserve" name="Ui.HistoryTime">
     <value>When</value>
   </data>
+  <data xml:space="preserve" name="Ui.ImpactPreviews">
+    <value>Preview a change before you make it</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ImpactPreviewsHelp">
+    <value>Each preview reads current evidence and shows the likely effect. Nothing is saved or sent.</value>
+  </data>
   <data xml:space="preserve" name="Ui.Import">
     <value>Import or migration</value>
   </data>
@@ -5543,6 +5885,9 @@
   </data>
   <data xml:space="preserve" name="Ui.InReview">
     <value>In review</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Included">
+    <value>Included</value>
   </data>
   <data xml:space="preserve" name="Ui.Inconsistent">
     <value>Configuration changed during this read. Verify again before relying on this report.</value>
@@ -5557,67 +5902,70 @@
     <value>Interested in this feature</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey1Help">
-    <value>Choose fresh setup, review or import mode above. Decide who dispatches, who responds and which applications or shared devices each role uses. A synthetic example: a dispatcher creates a training scenario, a responder sees assigned work and a unit crew updates its status. This lesson creates no incident or message.</value>
+    <value>Choose how you are starting: a new department, a review of an existing one, or an import. Nothing on these pages changes your configuration; you make each change on its own screen and come back here to check it.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey1Title">
     <value>Welcome and goals</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey2Help">
-    <value>Review the time zone, language, address and operating profile. Declare mission, operating hours, service areas and approved policy references. Unitless and non-dispatch teams should select only the work they need. Saving this profile does not validate a local staffing or clinical policy.</value>
+    <value>Confirm the department address and time zone, then describe your department in the operating profile so Resgrid can suggest the modules that fit.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey2Title">
-    <value>Department and operating profile</value>
+    <value>Department profile</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey3Help">
-    <value>Use the area choices below and explore the full feature map, including capabilities hidden from your current menus. Choose use now, learn later or a reason why an area does not apply. Mark understood features individually; reading does not verify configuration.</value>
+    <value>Resgrid is organized into modules. Core modules apply to every department. For the others, choose Use now, Learn later or Not applicable. Your choices decide what this wizard and the Setup Report check.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey3Title">
-    <value>Explore every area of Resgrid</value>
+    <value>Choose your modules</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey4Help">
-    <value>Review the managing member and backup administrators, MFA, groups or stations, roles and qualifications. Add or invite personnel through the owning screen only after reviewing recipients and the send action. Confirm least-privilege access with the responsible users.</value>
+    <value>Add your members, stations, groups and roles, and make sure at least two administrators use two-factor sign-in. Invitations are sent only when you send them.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey4Title">
-    <value>People, structure and access</value>
+    <value>People and access</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey5Help">
-    <value>Configure the calls, units, statuses, intake, notifications and mapping needed for your selected mission. Review dispatch previews and source eligibility before relying on a channel. App installation, device identity, provider setup and current contact verification are separate tasks.</value>
+    <value>Set up call types, statuses, dispatch settings and call intake, add your units, and make sure members can be reached through notifications and the Responder app.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey5Title">
-    <value>Operational essentials</value>
+    <value>Dispatch essentials</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey6Help">
-    <value>Open the selected-workflow list in Setup Report. Check prerequisites and responsible owners for shifts, training, checklists, inventory, records, contacts and automation. Save on the normal configuration screen, use the return-to-setup link, and verify again.</value>
+    <value>Set up the recommended and optional modules you chose, such as shifts, training, records, checklists or inventory.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey6Title">
-    <value>Configure selected areas</value>
+    <value>Your other modules</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey7Help">
-    <value>Compare current included capabilities with Push-to-Talk, Advanced Data Protection, Readiness Pro and Business Operations. Review feature value, alternatives and adoption requirements. Enhanced AI remains planned. Interest and learning never purchase, start a trial, enroll protection or enable a module.</value>
+    <value>See what your plan includes and what each paid add-on adds. Nothing here purchases, starts a trial or switches anything on.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey7Title">
-    <value>Understand plans and add-ons</value>
+    <value>Plan and add-ons</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey8Help">
-    <value>Run Setup Report and review critical failures and unknowns. Use available dry-run previews. A communication test is a separate deliberate action: review its recipients and channels before sending through Communication Tests. A completed setup review does not guarantee field response or delivery.</value>
+    <value>Open the Setup Report, fix what needs attention and look at anything that could not be verified. Run a communication test from its own screen when you are ready. Passing checks does not guarantee that every message is delivered.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey8Title">
     <value>Verify and practice</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey9Help">
-    <value>Record the reviewed evidence, unresolved work, owners and optional revisit date in Setup Report. Use the redacted print view for an authorized handover. Train other administrators and members on their normal workflows. Each new administrator keeps a separate orientation checklist.</value>
+    <value>Mark the report reviewed, choose a date to review it again and print a copy for your officers. Other administrators keep their own learning progress.</value>
   </data>
   <data xml:space="preserve" name="Ui.Journey9Title">
-    <value>Review and handover</value>
+    <value>Review and hand over</value>
   </data>
   <data xml:space="preserve" name="Ui.JourneyEffort">
-    <value>Configuration effort depends on your selected areas, data quality, local policy and provider setup. Reserve time with the responsible owners; a department-specific effort estimate is not yet available.</value>
+    <value>Time needed depends on the modules you choose and how ready your information is.</value>
   </data>
   <data xml:space="preserve" name="Ui.JourneyHelp">
-    <value>Work through these nine steps at your own pace. Shared scope, personal learning and review evidence are saved separately. Configure features on their owning screens, then use Setup Report to verify current evidence.</value>
+    <value>Work through these nine steps at your own pace. Your choices are saved as you go, and every change is made on its normal screen.</value>
   </data>
   <data xml:space="preserve" name="Ui.JourneyTitle">
     <value>Your setup journey</value>
+  </data>
+  <data xml:space="preserve" name="Ui.KeyFeatures">
+    <value>Key features</value>
   </data>
   <data xml:space="preserve" name="Ui.Known">
     <value>Available</value>
@@ -5640,6 +5988,21 @@
   <data xml:space="preserve" name="Ui.LearningPending">
     <value>Learning not yet marked complete</value>
   </data>
+  <data xml:space="preserve" name="Ui.LearningSeparate">
+    <value>Your personal learning; not counted as setup</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LearningSummary">
+    <value>{0} of {1} features marked understood</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LegendAttention">
+    <value>{0} need attention</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LegendUnknown">
+    <value>{0} unknown</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LegendVerified">
+    <value>{0} verified</value>
+  </data>
   <data xml:space="preserve" name="Ui.Loading">
     <value>Loading department setup…</value>
   </data>
@@ -5655,14 +6018,50 @@
   <data xml:space="preserve" name="Ui.ModuleDisabled">
     <value>Module is disabled</value>
   </data>
+  <data xml:space="preserve" name="Ui.ModuleStatus.Attention">
+    <value>Needs attention</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ModuleStatus.Done">
+    <value>Set up</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ModuleStatus.NotStarted">
+    <value>Not set up yet</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ModuleStatus.Progress">
+    <value>In progress</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ModuleStatus.Unknown">
+    <value>Not verified</value>
+  </data>
   <data xml:space="preserve" name="Ui.More">
     <value>Load more</value>
+  </data>
+  <data xml:space="preserve" name="Ui.MoreDetails">
+    <value>Value, example and before adopting</value>
+  </data>
+  <data xml:space="preserve" name="Ui.MoreInModule">
+    <value>More in this module ({0})</value>
   </data>
   <data xml:space="preserve" name="Ui.Next">
     <value>Next setup actions</value>
   </data>
+  <data xml:space="preserve" name="Ui.NextStep">
+    <value>Next step</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NoAutomatedChecks">
+    <value>No automated checks yet</value>
+  </data>
   <data xml:space="preserve" name="Ui.NoAutomaticActions">
     <value>Learning and interest choices never purchase, enable, send, import or change operational configuration.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NoCriticalFailures">
+    <value>No critical checks need attention</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NoModulesChosen">
+    <value>No modules in this step are selected. Choose modules in step 3.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NoNextActions">
+    <value>No checks in your selected scope need attention right now.</value>
   </data>
   <data xml:space="preserve" name="Ui.NoResults">
     <value>No matching features.</value>
@@ -5675,6 +6074,12 @@
   </data>
   <data xml:space="preserve" name="Ui.NotApplicable">
     <value>Not applicable</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Open">
+    <value>Open</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OpensInNewTab">
+    <value>(opens in a new tab)</value>
   </data>
   <data xml:space="preserve" name="Ui.OperatingProfile">
     <value>Department operating profile</value>
@@ -5701,10 +6106,13 @@
     <value>Current add-on or access information is unavailable</value>
   </data>
   <data xml:space="preserve" name="Ui.Optional">
-    <value>Unpurchased optional add-ons do not reduce core completion. Deferring an area does not hide a critical verified failure or active critical uncertainty.</value>
+    <value>Add-ons you have not purchased never lower your results. Deferring a module does not hide a critical problem.</value>
   </data>
   <data xml:space="preserve" name="Ui.OptionalCapabilities">
     <value>Optional capabilities and add-ons</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OutsideScope">
+    <value>Not in your selected scope</value>
   </data>
   <data xml:space="preserve" name="Ui.Packs">
     <value>Operating packs</value>
@@ -5721,6 +6129,9 @@
   <data xml:space="preserve" name="Ui.Preview">
     <value>Preview only</value>
   </data>
+  <data xml:space="preserve" name="Ui.PreviousStep">
+    <value>Previous step</value>
+  </data>
   <data xml:space="preserve" name="Ui.Print">
     <value>Print</value>
   </data>
@@ -5731,7 +6142,13 @@
     <value>Open a fresh printable report</value>
   </data>
   <data xml:space="preserve" name="Ui.ProfileHelp">
-    <value>Use approved local staffing, qualification and continuity policies; operating packs suggest areas to review without assuming local requirements.</value>
+    <value>Your operating profile suggests modules to review. It does not set local staffing, qualification or clinical requirements.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ProfileMissing">
+    <value>No operating profile recorded yet</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ProfileRecorded">
+    <value>Operating profile recorded</value>
   </data>
   <data xml:space="preserve" name="Ui.ProfileUnavailable">
     <value>Your operating profile could not be verified. Pack suggestions are unavailable.</value>
@@ -5757,7 +6174,7 @@
   <data xml:space="preserve" name="Ui.Redacted">
     <value>Protected evidence unavailable</value>
   </data>
-  <data xml:space="preserve" name="Ui.Reference">
+  <data xml:space="preserve" name="Ui.ReferenceResults">
     <value>Public reference</value>
   </data>
   <data xml:space="preserve" name="Ui.ReportBoundary">
@@ -5815,7 +6232,7 @@
     <value>Save review date</value>
   </data>
   <data xml:space="preserve" name="Ui.SaveScope">
-    <value>Save area choice</value>
+    <value>Save module choice</value>
   </data>
   <data xml:space="preserve" name="Ui.SaveThenReturn">
     <value>Save changes on this screen first, then return to setup and verify the current evidence. The return link does not save this form.</value>
@@ -5823,8 +6240,11 @@
   <data xml:space="preserve" name="Ui.Saving">
     <value>Saving…</value>
   </data>
+  <data xml:space="preserve" name="Ui.ScopeHelp">
+    <value>Choose Use now for modules you will set up, Learn later to come back to them, or Not applicable with a reason. Security always applies.</value>
+  </data>
   <data xml:space="preserve" name="Ui.ScopeReason">
-    <value>Why this area is not applicable</value>
+    <value>Why this module does not apply</value>
   </data>
   <data xml:space="preserve" name="Ui.ScopeReason.NoCurrentNeed">
     <value>No current department need</value>
@@ -5839,10 +6259,13 @@
     <value>Managed by a responsible partner</value>
   </data>
   <data xml:space="preserve" name="Ui.Search">
-    <value>Search areas and features</value>
+    <value>Search modules and features</value>
   </data>
   <data xml:space="preserve" name="Ui.SearchReference">
     <value>Search reference documentation</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SecurityAlwaysApplies">
+    <value>Security checks always apply.</value>
   </data>
   <data xml:space="preserve" name="Ui.SelectScopeReason">
     <value>Choose a reason</value>
@@ -5857,13 +6280,16 @@
     <value>Your selected feature interests</value>
   </data>
   <data xml:space="preserve" name="Ui.SetupChecklist">
-    <value>Selected-area setup checklist</value>
+    <value>Setup checklist for your modules</value>
   </data>
   <data xml:space="preserve" name="Ui.SetupChoice">
     <value>Setup choice</value>
   </data>
   <data xml:space="preserve" name="Ui.SetupPrompt">
-    <value>Learn the available areas and optional add-ons, configure your selected areas, then review the evidence together.</value>
+    <value>Choose the modules your department needs, set them up and check the results in the Setup Report.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SetupReview">
+    <value>Setup review</value>
   </data>
   <data xml:space="preserve" name="Ui.SetupReviewReminder">
     <value>Review Resgrid setup</value>
@@ -5904,6 +6330,39 @@
   <data xml:space="preserve" name="Ui.StartReview">
     <value>Start review</value>
   </data>
+  <data xml:space="preserve" name="Ui.StepChecks">
+    <value>Related checks</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepDetails">
+    <value>Step details</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepFeatures">
+    <value>Where to set this up</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepNeedsAttention">
+    <value>{0} need attention</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepNoOpenChecks">
+    <value>No related checks need attention.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepOf">
+    <value>Step {0} of {1}</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepReviewChanged">
+    <value>Changed since review</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepReviewed">
+    <value>Reviewed</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepStatus.Done">
+    <value>No open items found</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepUnknown">
+    <value>{0} could not be verified</value>
+  </data>
+  <data xml:space="preserve" name="Ui.StepsDone">
+    <value>{0} of {1} steps done</value>
+  </data>
   <data xml:space="preserve" name="Ui.SubscriptionOptions">
     <value>View subscription options</value>
   </data>
@@ -5912,6 +6371,9 @@
   </data>
   <data xml:space="preserve" name="Ui.SuggestedArea">
     <value>Suggested by your selected operating packs</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Suggestion">
+    <value>Suggestion</value>
   </data>
   <data xml:space="preserve" name="Ui.TaskState.AccessAvailable">
     <value>Current source access available</value>
@@ -5934,6 +6396,30 @@
   <data xml:space="preserve" name="Ui.TaskState.Unknown">
     <value>Not verified</value>
   </data>
+  <data xml:space="preserve" name="Ui.Tier.AddOn">
+    <value>Paid add-ons</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Tier.Core">
+    <value>Core modules</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Tier.Optional">
+    <value>Optional modules</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Tier.Recommended">
+    <value>Recommended</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TierHelp.AddOn">
+    <value>Extra capabilities with their own subscription. Learning about them never purchases anything.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TierHelp.Core">
+    <value>Every department sets these up.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TierHelp.Optional">
+    <value>Use these when they fit how your department works. All are included in your plan.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TierHelp.Recommended">
+    <value>Most departments benefit from these.</value>
+  </data>
   <data xml:space="preserve" name="Ui.Title">
     <value>Resgrid Admin Assist</value>
   </data>
@@ -5947,13 +6433,16 @@
     <value>Unavailable</value>
   </data>
   <data xml:space="preserve" name="Ui.UncheckedAreas">
-    <value>Selected areas without automated checks</value>
+    <value>Modules you use that have no automated checks yet</value>
   </data>
   <data xml:space="preserve" name="Ui.Unknown">
     <value>Unknown</value>
   </data>
   <data xml:space="preserve" name="Ui.UnknownChecks">
     <value>Checks with unknown evidence</value>
+  </data>
+  <data xml:space="preserve" name="Ui.UnknownMeaning">
+    <value>Evidence missing or unavailable; not a pass</value>
   </data>
   <data xml:space="preserve" name="Ui.UseNow">
     <value>Use now</value>
@@ -5962,7 +6451,7 @@
     <value>Value to your department</value>
   </data>
   <data xml:space="preserve" name="Ui.VerificationCoverage">
-    <value>Results cover only the listed checks. Review procedures, external systems and areas without automated checks with their responsible owners.</value>
+    <value>Results cover only the listed checks. Review procedures, outside systems and modules without automated checks yourself.</value>
   </data>
   <data xml:space="preserve" name="Ui.Verified">
     <value>Verified checks</value>
@@ -5973,11 +6462,20 @@
   <data xml:space="preserve" name="Ui.VerifyToPopulate">
     <value>Choose Verify again to create or update the worklist.</value>
   </data>
+  <data xml:space="preserve" name="Ui.ViewAll">
+    <value>View all</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ViewChecks">
+    <value>View checks</value>
+  </data>
   <data xml:space="preserve" name="Ui.Warning">
     <value>Warning</value>
   </data>
   <data xml:space="preserve" name="Ui.Welcome">
-    <value>Choose the work your department needs, learn the available areas, then configure each feature on its own screen. Return here to verify.</value>
+    <value>Choose the modules your department needs, set each one up on its own screen, then come back here to check it.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.WhyItMatters">
+    <value>Why it matters</value>
   </data>
   <data xml:space="preserve" name="Ui.WorkerLastRun">
     <value>Last completed background evaluation</value>
@@ -6011,6 +6509,9 @@
   </data>
   <data xml:space="preserve" name="Ui.overview">
     <value>Overview</value>
+  </data>
+  <data xml:space="preserve" name="Ui.plans">
+    <value>Plans</value>
   </data>
   <data xml:space="preserve" name="Ui.reference">
     <value>Settings reference</value>

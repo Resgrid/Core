@@ -51,7 +51,7 @@ namespace Resgrid.Tests.Web.User
 			while (root != null && !File.Exists(Path.Combine(root.FullName, "Resgrid.sln"))) root = root.Parent;
 			var builder = WebApplication.CreateBuilder(new WebApplicationOptions { ContentRootPath = Path.Combine(root!.FullName, "Web", "Resgrid.Web"), EnvironmentName = "Testing" });
 			builder.Logging.ClearProviders(); builder.WebHost.UseUrls("http://127.0.0.1:0");
-			builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization();
+			builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddAdminAssistFieldHelpStubs();
 			builder.Services.AddWebOptimizer();
 			builder.Services.AddSingleton(Moq.Mock.Of<Resgrid.Model.Services.IUdfRenderingService>());
 			builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();

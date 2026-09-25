@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "records",
@@ -1698,7 +1698,7 @@
       "Body": "Records Default Lifecycle Preset. Default lifecycle for new department-owned definitions. Locked definitions retain their own lifecycle.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsdefaultlifecyclepreset",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1709,7 +1709,7 @@
       "Body": "Records Review Due Hours. Default administrative review deadline; a definition-level override takes precedence. This is not a statutory deadline inference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsreviewduehours",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1720,7 +1720,7 @@
       "Body": "Records Numbering Config. Number assignment, year reset and sequence formatting for definitions that do not override the department configuration.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsnumberingconfig",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1731,7 +1731,7 @@
       "Body": "Records Search Config. Allowed record search scope and protected-data behavior. Search access remains bounded by current source permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordssearchconfig",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1742,7 +1742,7 @@
       "Body": "Records Retention Policy. Default and definition-specific retention, including prior-policy history. Holds and restricted-class rules can prevent purge eligibility.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsretentionpolicy",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1753,7 +1753,7 @@
       "Body": "Records Group Visibility Mode. Whether record visibility is department-wide or group scoped. Group scope narrows existing permission and never grants access.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsgroupvisibilitymode",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1764,7 +1764,7 @@
       "Body": "Records Group Scope Config. Reserved identifier with no editable behavior in this release. Do not present it as a shipped setting.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsgroupscopeconfig",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1775,7 +1775,7 @@
       "Body": "Records Disclosure Config. Disclosure review clock, redaction profile and release approver. Review local obligations through the authorized disclosure workflow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsdisclosureconfig",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1786,7 +1786,7 @@
       "Body": "Logs availability. Controls availability of legacy logs. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-logsdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1797,7 +1797,7 @@
       "Body": "Logs menu name. Optional display name for legacy logs in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-logsnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1808,7 +1808,7 @@
       "Body": "Reports availability. Controls availability of reports. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-reportsdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1819,7 +1819,7 @@
       "Body": "Reports menu name. Optional display name for reports in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-reportsnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1830,7 +1830,7 @@
       "Body": "Records Numbering Config / Number Assignment. Choose when numbers are assigned for definitions using department defaults. Review existing references before changing numbering behavior.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-numberassignment",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1841,7 +1841,7 @@
       "Body": "Records Numbering Config / Reset Yearly. Restart record sequences each calendar year in the department time zone.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-resetyearly",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1852,7 +1852,7 @@
       "Body": "Records Numbering Config / Sequence Width. Zero-padded sequence width for definitions using department defaults. The Records editor validates the supported width.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-sequencewidth",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1863,7 +1863,7 @@
       "Body": "Records Numbering Config / Include Year. Include the year between the record prefix and sequence number.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-includeyear",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1874,7 +1874,7 @@
       "Body": "Records Numbering Config / Per Group Sequence. Use separate station/group sequences. This changes numbering, not record visibility.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-pergroupsequence",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1885,7 +1885,7 @@
       "Body": "Records Search Config / Index Narrative. Include unprotected narrative in search. Advanced Data Protection enrollment withdraws narrative indexing; this preference cannot override protection.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordssearchconfig-indexnarrative",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1896,7 +1896,7 @@
       "Body": "Records Search Config / Include Legacy History. Include supported legacy personnel and unit logs in the Records search scope. Source permissions still apply.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordssearchconfig-includelegacyhistory",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1907,7 +1907,7 @@
       "Body": "Records Retention Policy / Department Default Years. Department retention for standard record classes. Zero means permanent; protected classes, prior policy and holds can retain records longer.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-departmentdefaultyears",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1918,7 +1918,7 @@
       "Body": "Records Retention Policy / Overrides. Definition-specific prospective retention overrides. Use the Records workflow and its confirmations; Admin Assist never purges records.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-overrides",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1929,7 +1929,7 @@
       "Body": "Records Retention Policy / Last Changed By User Id. Recorded policy-change actor. It is not an editable retention rule and is not exposed as raw identity in this reference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-lastchangedbyuserid",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1940,7 +1940,7 @@
       "Body": "Records Retention Policy / Last Changed On. Policy effective timestamp used with prior policy versions. It is not the record's retention expiry date.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-lastchangedon",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1951,7 +1951,7 @@
       "Body": "Records Retention Policy / History. Prior policy versions retained by the owning lifecycle so current changes do not silently rewrite historical retention.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-history",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1962,7 +1962,7 @@
       "Body": "Records Retention Override / Definition Key. Stable record-definition key to which this override applies. Display names do not identify a retention policy.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionoverride-definitionkey",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1973,7 +1973,7 @@
       "Body": "Records Retention Override / Retention Years. Years retained under this definition override; zero means permanent. Holds and prospective policy resolution still apply.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionoverride-retentionyears",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1984,7 +1984,7 @@
       "Body": "Records Retention Override / Applies From. Prospective boundary for revisions eligible for the override, evaluated by the Records lifecycle.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionoverride-appliesfrom",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1995,7 +1995,7 @@
       "Body": "Records Retention Policy Version / Effective On. Effective timestamp of a stored historical retention policy version.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicyversion-effectiveon",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2006,7 +2006,7 @@
       "Body": "Records Retention Policy Version / Policy. Historical policy snapshot used to resolve retention for older revisions. Never edit this as an ordinary preference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicyversion-policy",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2017,7 +2017,7 @@
       "Body": "Records Disclosure Config / Statutory Clock Days. Configured disclosure review clock. Verify local obligations with the responsible owner; the default does not establish a legal deadline.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsdisclosureconfig-statutoryclockdays",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2028,7 +2028,7 @@
       "Body": "Records Disclosure Config / Default Redaction Profile. Default redaction profile in the owning disclosure workflow. Review the actual proposed release before approval.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsdisclosureconfig-defaultredactionprofile",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2039,7 +2039,7 @@
       "Body": "Records Disclosure Config / Release Approver User Id. Authorized member responsible for disclosure release approval. Selecting an approver does not grant missing permissions or protected-data access.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsdisclosureconfig-releaseapproveruserid",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2050,7 +2050,7 @@
       "Body": "Logs Run, training, work and meeting logs Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "logs",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2061,7 +2061,7 @@
       "Body": "New Log Create a run report, training log or work log Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-log",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2072,7 +2072,7 @@
       "Body": "Records Records queue: run reports, training and operational records Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "records",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2083,7 +2083,7 @@
       "Body": "Records Dashboard Records due, submissions and quality at a glance Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "records-dashboard",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2094,7 +2094,7 @@
       "Body": "Records Settings Lifecycle, numbering, search, retention and visibility settings for Records Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "records-settings",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2105,7 +2105,7 @@
       "Body": "Reports Generate reports from department data Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "reports",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2116,7 +2116,7 @@
       "Body": "Record definitions and templates Configure record forms, lifecycle, numbering and review requirements. Fit reporting to approved local procedures while preserving built-in definitions. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-definitions",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2127,7 +2127,7 @@
       "Body": "Incident reports Prepare incident reports linked to authorized call evidence. Review source completeness before finalization or external submission. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "incident-reports",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2138,7 +2138,7 @@
       "Body": "Occupancies and preplans Maintain premises, contacts, hazards and review metadata. Keep site knowledge owned and current; recorded hazards do not certify safety. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-occupancies",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2149,7 +2149,7 @@
       "Body": "Inspections Schedule and record authorized inspection work and corrections. Track administrative follow-up against configured inspection procedures. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-inspections",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2160,7 +2160,7 @@
       "Body": "Hydrants and water sources Maintain hydrant and water-source records and their review history. Identify records needing verification without claiming current flow or availability. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-hydrants",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2171,7 +2171,7 @@
       "Body": "Permits Manage supported permit records and lifecycle. Assign review responsibility; a software state is not a hazardous-work safety clearance. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-permits",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2182,7 +2182,7 @@
       "Body": "Investigations Manage authorized investigation records and their controlled workflow. Keep case responsibility and access separate from general department visibility. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-investigations",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2193,7 +2193,7 @@
       "Body": "Evidence capture and provenance Capture supported source evidence from the owning record workflow. Preserve evidence context and access restrictions without copying it into setup guidance. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-evidence",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2204,7 +2204,7 @@
       "Body": "Legal holds Place and release holds through the authorized Records lifecycle. Retain affected evidence while a hold remains active. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-holds",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2215,7 +2215,7 @@
       "Body": "Reporting submissions Prepare and reconcile supported reporting submissions from an authorized incident report. Review destination requirements and actual submission outcomes. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-submissions",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2226,7 +2226,7 @@
       "Body": "Records analytics Review supported aggregate response, workload and readiness reports. Use measured source data with its scope and completeness limits. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-analytics",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2237,7 +2237,7 @@
       "Body": "Saved record reports Create reusable report selections over authorized record data. Make repeatable administrative reviews easier. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-saved-reports",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2248,7 +2248,7 @@
       "Body": "Record exports and templates Configure supported export templates and review their runs. Keep release destinations, protected access and output handling explicit. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-exports",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2259,7 +2259,7 @@
       "Body": "Disclosure requests Manage disclosure scope, redaction and release approval. Assign review ownership and verify the material approved for release. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-disclosures",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

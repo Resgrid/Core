@@ -1,0 +1,129 @@
+@model Resgrid.Web.Areas.User.Models.AiDispatch.AiDispatchSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.AiDispatch.AiDispatch> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["SettingsTitle"];
+    var status = Model.Status;
+    var errorKeys = new Dictionary<string, string>
+    {
+        ["ConfidenceOutOfRange"] = "ErrorConfidence", ["RetentionOutOfRange"] = "ErrorRetention", ["CapOutOfRange"] = "ErrorCap",
+        ["AllowlistInvalid"] = "ErrorAllowlist", ["AllowlistTooLong"] = "ErrorAllowlistTooLong", ["Conflict"] = "Conflict"
+    };
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@localizer["SettingsTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@localizer["DispatchEmailSettings"]</a></li>
+            <li class="active"><strong>@localizer["AiDispatch"]</strong></li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-lg-8">
+            @if (status.Running)
+            {
+                <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @localizer["StatusRunning"]</div>
+            }
+            else if (!status.Entitled)
+            {
+                <div class="alert alert-warning" role="status">@localizer["StatusNotEntitled"] <a asp-controller="AiBilling" asp-action="Index" asp-route-area="User">@localizer["EnhancedAi"]</a></div>
+            }
+            else if (!status.FormatSelected)
+            {
+                <div class="alert alert-warning" role="status">@localizer["StatusFormatNotSelected"] <a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@localizer["DispatchEmailSettings"]</a></div>
+            }
+            else if (!status.ModelConfigured)
+            {
+                <div class="alert alert-warning" role="status">@localizer["StatusModelNotConfigured"]</div>
+            }
+            @if (Model.Saved)
+            {
+                <div class="alert alert-success" role="status">@localizer["Saved"]</div>
+            }
+            @if (Model.Errors.Any())
+            {
+                <div class="alert alert-danger" role="alert">
+                    <ul class="m-b-none">
+                        @foreach (var error in Model.Errors)
+                        {
+                            <li>@(errorKeys.TryGetValue(error, out var key) ? localizer[key] : localizer[error])</li>
+                        }
+                    </ul>
+                </div>
+            }
+            <div class="ibox">
+                <div class="ibox-content">
+                    <p>@localizer["EnrichModeNote"]</p>
+                    <form method="post" asp-action="Index" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Revision" />
+                        <fieldset>
+                            <legend>@localizer["WhatAiMayDo"]</legend>
+                            <div class="checkbox"><label><input asp-for="FillCallType" type="checkbox" /> @localizer["FillCallType"]</label></div>
+                            <div class="checkbox"><label><input asp-for="FillAddress" type="checkbox" /> @localizer["FillAddress"]</label></div>
+                            <div class="checkbox"><label><input asp-for="FillContact" type="checkbox" /> @localizer["FillContact"]</label></div>
+                            <div class="checkbox"><label><input asp-for="FillIncidentNumber" type="checkbox" /> @localizer["FillIncidentNumber"]</label></div>
+                            <div class="checkbox"><label><input asp-for="RenamePlaceholder" type="checkbox" /> @localizer["RenamePlaceholder"]</label></div>
+                            <div class="checkbox"><label><input asp-for="AddSummaryNote" type="checkbox" /> @localizer["AddSummaryNote"]</label></div>
+                            <div class="checkbox"><label><input asp-for="FlagRelatedCalls" type="checkbox" /> @localizer["FlagRelatedCalls"]</label></div>
+                        </fieldset>
+                        <fieldset class="m-t-md">
+                            <legend>@localizer["Safeguards"]</legend>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" asp-for="MinimumConfidencePercent">@localizer["MinimumConfidence"]</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" asp-for="MinimumConfidencePercent" type="number" min="50" max="95" step="1" placeholder="@Model.DefaultConfidencePercent" aria-describedby="confidence-help" />
+                                    <span id="confidence-help" class="help-block m-b-none">@string.Format(localizer["MinimumConfidenceHelp"].Value, Model.DefaultConfidencePercent)</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" asp-for="SenderAllowlist">@localizer["SenderAllowlist"]</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" asp-for="SenderAllowlist" rows="4" dir="ltr" spellcheck="false" aria-describedby="senders-help"></textarea>
+                                    <span id="senders-help" class="help-block m-b-none">@localizer["SenderAllowlistHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" asp-for="MonthlyTokenCap">@localizer["MonthlyTokenCap"]</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" asp-for="MonthlyTokenCap" type="number" min="8192" max="50000000" step="1024" aria-describedby="cap-help" />
+                                    <span id="cap-help" class="help-block m-b-none">@string.Format(localizer["MonthlyTokenCapHelp"].Value, Model.MonthlyUsage.ToString("N0"))</span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="m-t-md">
+                            <legend>@localizer["AuditHistory"]</legend>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" asp-for="AuditRetentionDays">@localizer["AuditRetentionDays"]</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" asp-for="AuditRetentionDays" type="number" min="30" max="1095" step="1" aria-describedby="retention-help" />
+                                    <span id="retention-help" class="help-block m-b-none">@localizer["AuditRetentionDaysHelp"]</span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-group m-t-md">
+                            <div class="col-sm-8 col-sm-offset-4">
+                                <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                                @if (Model.UpdatedOnLocal.HasValue)
+                                {
+                                    <span class="text-muted m-l-sm">@string.Format(localizer["LastUpdated"].Value, Model.UpdatedOnLocal.Value.ToString("g"))</span>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <p><a asp-action="Activity">@localizer["ViewActivity"]</a></p>
+                    <p><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@localizer["DispatchEmailSettings"]</a></p>
+                    <p><a asp-controller="AiBilling" asp-action="Index" asp-route-area="User">@localizer["EnhancedAi"]</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -60,7 +60,7 @@ namespace Resgrid.Tests.Services
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory); while (directory != null && !System.IO.File.Exists(Path.Combine(directory.FullName, "Resgrid.sln"))) directory = directory.Parent;
 			var builder = WebApplication.CreateBuilder(new WebApplicationOptions { ContentRootPath = Path.Combine(directory.FullName, "Web", "Resgrid.Web"), EnvironmentName = "Testing" });
 			builder.Logging.ClearProviders(); builder.WebHost.UseUrls("http://127.0.0.1:0");
-			builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization();
+			builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddAdminAssistFieldHelpStubs();
 			builder.Services.AddAuthentication("checklist-test").AddScheme<AuthenticationSchemeOptions, ChecklistTestAuthentication>("checklist-test", _ => { });
 			builder.Services.AddAuthorization(o => o.AddPolicy(ResgridResources.Checklist_Update, p => p.RequireRole("manager")));
 			builder.Services.AddControllersWithViews(o => o.Filters.Add(new PageBodyFilter())).AddApplicationPart(typeof(ChecklistsController).Assembly);

@@ -1,0 +1,115 @@
+@model Resgrid.Web.Areas.User.Models.AiDispatch.AiDispatchActivityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.AiDispatch.AiDispatch> localizer
+@using Resgrid.Model.Helpers
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ActivityTitle"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@localizer["ActivityTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["SettingsTitle"]</a></li>
+            <li class="active"><strong>@localizer["ActivityTitle"]</strong></li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="ibox"><div class="ibox-content">
+                <h5 class="text-muted">@localizer["Outcome_Applied"] · @localizer["Last30Days"]</h5>
+                <h2 class="no-margins">@Model.EnrichedLast30Days.ToString("N0")</h2>
+            </div></div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox"><div class="ibox-content">
+                <h5 class="text-muted">@localizer["Skipped"] · @localizer["Last30Days"]</h5>
+                <h2 class="no-margins">@Model.SkippedLast30Days.ToString("N0")</h2>
+            </div></div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox"><div class="ibox-content">
+                <h5 class="text-muted">@localizer["TokensThisMonth"]</h5>
+                <h2 class="no-margins">
+                    @Model.MonthlyUsage.ToString("N0")
+                    @if (Model.MonthlyTokenCap.HasValue)
+                    {
+                        <small>/ @Model.MonthlyTokenCap.Value.ToString("N0")</small>
+                    }
+                </h2>
+            </div></div>
+        </div>
+    </div>
+    <div class="ibox">
+        <div class="ibox-content">
+            <p class="text-muted">@localizer["ActivityNote"]</p>
+            <p>
+                @foreach (var take in new[] { 50, 100, 200 })
+                {
+                    <a asp-action="Activity" asp-route-take="@take" class="btn btn-xs @(take == Model.Take ? "btn-primary" : "btn-white")" aria-current="@(take == Model.Take ? "true" : null)">@take</a>
+                }
+            </p>
+            @if (!Model.Items.Any())
+            {
+                <p>@localizer["NoActivity"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">@localizer["ColumnWhen"]</th>
+                                <th scope="col">@localizer["ColumnCall"]</th>
+                                <th scope="col">@localizer["ColumnOutcome"]</th>
+                                <th scope="col">@localizer["ColumnConfidence"]</th>
+                                <th scope="col">@localizer["ColumnFilled"]</th>
+                                <th scope="col">@localizer["ColumnRejected"]</th>
+                                <th scope="col">@localizer["ColumnRelatedCall"]</th>
+                                <th scope="col">@localizer["ColumnTime"]</th>
+                                <th scope="col">@localizer["ColumnTokens"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                var audit = item.Audit;
+                                <tr>
+                                    <td>@audit.CreatedOnUtc.TimeConverter(Model.Department).ToString("g")</td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(item.CallNumber))
+                                        {
+                                            <a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@audit.CallId">@item.CallNumber</a>
+                                        }
+                                        else
+                                        {
+                                            <span>#@audit.CallId</span>
+                                        }
+                                    </td>
+                                    <td>@localizer["Outcome_" + audit.Outcome]</td>
+                                    <td>@(audit.Confidence.HasValue ? ((double)audit.Confidence.Value).ToString("P0") : "–")</td>
+                                    <td>@(string.IsNullOrWhiteSpace(audit.AppliedFields) ? "–" : string.Join(", ", audit.AppliedFields.Split(',').Select(f => localizer["Field_" + f].Value)))</td>
+                                    <td>@audit.RejectedCount.ToString("N0")</td>
+                                    <td>
+                                        @if (audit.RelatedCallId.HasValue)
+                                        {
+                                            <a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@audit.RelatedCallId">@(item.RelatedCallNumber ?? "#" + audit.RelatedCallId)</a>
+                                        }
+                                        else
+                                        {
+                                            <span>–</span>
+                                        }
+                                    </td>
+                                    <td>@(audit.LatencyMs > 0 ? (audit.LatencyMs / 1000.0).ToString("0.0") + " s" : "–")</td>
+                                    <td>@((audit.InputTokens + audit.OutputTokens).ToString("N0"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small">@localizer["RejectedHelp"]</p>
+            }
+        </div>
+    </div>
+</div>

@@ -14,7 +14,7 @@ using Resgrid.Repositories.DataRepository.Queries.RunCards;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class RunCardUnitRequirementsRepository : RepositoryBase<RunCardUnitRequirement>, IRunCardUnitRequirementsRepository
+	public class RunCardUnitRequirementsRepository : AuditedConfigurationRepository<RunCardUnitRequirement>, IRunCardUnitRequirementsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -22,8 +22,8 @@ namespace Resgrid.Repositories.DataRepository
 		private readonly IUnitOfWork _unitOfWork;
 
 		public RunCardUnitRequirementsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration,
-			IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+			IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

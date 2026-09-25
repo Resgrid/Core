@@ -168,6 +168,393 @@
   <data xml:space="preserve" name="AreaValue.security">
     <value>Keep administrative access recoverable and limited to authorized people.</value>
   </data>
+  <data xml:space="preserve" name="Diagnostic.Boundary">
+    <value>Run a read-only diagnostic. These checks do not send a page, change access, retry an import or release equipment. AI is not required.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.CallId">
+    <value>Call ID</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Cancel</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Cancelled">
+    <value>Diagnostic cancelled. No source action was performed.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Capability">
+    <value>Feature</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Changed">
+    <value>Evidence changed or another diagnostic is running. Run the check again and review a new support preview.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ActiveSafetyHolds">
+    <value>Distinct active safety holds on visible work orders for the selected unit. This diagnostic cannot release a hold or certify the absence of other restrictions.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.AutoSetStatusForShiftDispatchPersonnel">
+    <value>Current shift-dispatch automatic-status setting (1 means enabled). A configured rule does not prove it ran during this window.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.CapabilityAccess">
+    <value>Current module, feature and owning access gates were checked for this administrator. This is separate from the selected member’s action permission and session.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ChannelFailure">
+    <value>A send service or provider recorded a failure or decline for at least one channel attempt. This does not prove that every channel failed. Inspect the attempt and the source communication settings.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ChannelSkipped">
+    <value>A recorded channel attempt was skipped. The trace reason describes that decision; another route may still have sent.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.DeliveryUnknown">
+    <value>No authenticated delivery or acknowledgement receipt is available in this capture path. Provider acceptance must not be interpreted as receipt by a responder.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.DisabledAutoAvailable">
+    <value>Current automatic-availability setting (1 means disabled). The owning one-hour availability projection may affect what users see without a new status row.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.EffectivePermission">
+    <value>The supported action was checked through its current permission policy. Resource group locks require the specific target; unsupported combinations remain unknown. Review roles and permission rows.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.EnableTextToCall">
+    <value>Current text-to-call switch. A disabled switch can explain text intake only; it does not diagnose email, CAD or API imports.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.Entitlement">
+    <value>Current add-on metadata is checked separately from permissions. A denied source does not prove an add-on is missing; unavailable billing remains unknown.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.EquipmentReadiness">
+    <value>The equipment evidence source was unavailable or restricted. Do not infer readiness from missing check or hold data.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.EquipmentRelease">
+    <value>Calibration, parts, assignments and the authorized return-to-service decision require the owning maintenance records. No automatic release is performed.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.FailedChecks">
+    <value>Recorded failed unit checks in the selected window. A later repair or completed check must be verified in the owning records.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.HistoricalTrace">
+    <value>Trace coverage is measured from recorded attempt sequences. Missing starts, completions, sequence gaps or dropped events leave the attempt incomplete.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ImportAcceptance">
+    <value>End-to-end received/parsed/imported history is not available for all intake providers. Review the owning parser and provider logs using a non-sensitive reference.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.LocalMinimum">
+    <value>The locally required staffing minimum and site-specific qualification policy have not been established. An empty or non-empty roster cannot certify coverage.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.MaintenanceReadiness">
+    <value>Maintenance evidence is unavailable or restricted. Free checklist evidence is evaluated separately; missing maintenance data does not certify readiness.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.MapClientScope">
+    <value>This check uses the v4 map policy. Tracker connectivity, other clients and historical location visibility still require their owning diagnostics.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.MapMarker">
+    <value>The current v4 map selection policy was evaluated for this resource without returning coordinates. Review marker TTL, status location and location visibility.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.MemberActive">
+    <value>Current membership or assignment eligibility may block access or paging. Review disabled and removed membership on the personnel screen.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.NotSelected">
+    <value>The complete recorded routing attempt did not select this member. Review the call recipients, group, role, unit crew and shift routing used for that attempt.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.OverdueChecks">
+    <value>Expected unit checks in the selected window that remain overdue and neither completed nor skipped. Review the owning checklist before relying on the unit.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.OverdueMaintenance">
+    <value>Visible open work orders for this unit whose due date has passed. Inspect the maintenance record for assignment, parts and the authorized return-to-service decision.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.PagingPreferences">
+    <value>Current dispatch preferences and verified contact flags determine the eligible SMS, email and push channels. Review the member profile; present eligibility does not prove historical delivery.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.PersonnelOnUnitSetUnitStatus">
+    <value>Current personnel-on-unit propagation setting (1 means enabled). Review unit crew and type overrides before attributing a transition.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.PingAge">
+    <value>Recorded location ping age, in minutes, is compared with the current TTL. A status location may still supply a marker after a ping expires.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.PlatformTelemetry">
+    <value>Platform queue depth, retry state, credentials and all external success/error history are not available here. Use the owning integration history or download a reviewed support bundle.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.PushDeviceHealth">
+    <value>Push registration and last-seen health are not established by this trace. Review the device in the owning application and use the existing communication test deliberately.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.QualificationGaps">
+    <value>Members of the selected role who do not meet its recorded qualification requirements as of today. This is a count, not a disclosure of certificate or personnel content.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.QualifiedRoster">
+    <value>Current on-duty roster members who meet the selected role’s recorded qualification requirements, optionally limited to the selected roster group. Approved trades are resolved by the owning roster builder.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ResponseAvailability">
+    <value>Scheduled and qualified staff are not guaranteed responders. Confirm actual availability and concurrent commitments through the owning operations process.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.RosterOverlap">
+    <value>People assigned more than once across the current resolved roster. Review overlapping shifts, groups and approved trades before assuming they can cover concurrent work.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ScheduledRoleVacancies">
+    <value>Unfilled slots for the selected role in currently active shift schedules, optionally limited to the selected group. These schedule targets do not establish an operational staffing minimum.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.SessionFreshness">
+    <value>A different member’s live session claims are not supplied to this diagnostic. Use the normal sign-out/sign-in or approved session recovery flow after checking account and access policy; do not share credentials.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ShiftCallDispatchPersonnelStatusToSet">
+    <value>Current shift-dispatch personnel status code. This is current configuration, not evidence of a past transition.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.ShiftCallReleasePersonnelStatusToSet">
+    <value>Current shift-release personnel status code. This is current configuration, not evidence of a past transition.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.StatusHistory">
+    <value>Number of recorded status transitions in the selected window, bounded to 100. An absent row is not proof that a scheduled automation did not run.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.StatusWriterUnknown">
+    <value>The selected status rows do not record the transition writer. A destination-decision source must not be mislabeled as the cause of a status change.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.UnitCallDispatchStatusToSet">
+    <value>Current unit-dispatch status code. Unit-type overrides and the owning dispatch path must also be checked.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.UnitCallReleaseStatusToSet">
+    <value>Current unit-release status code. Unit-type overrides and the owning release path must also be checked.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.emailImportFailureCount">
+    <value>Count of configured email sources marked failed. Review the import source configuration and its owning error report; credentials and error bodies are excluded.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.emailImportSourceCount">
+    <value>Count of configured email import sources. Zero only identifies missing email configuration; it says nothing about other intake channels.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.failedWorkflowCount">
+    <value>Current failed workflow runs in the last seven days, under your workflow-run permission. This is department-wide context, not proof of the selected feature’s cause.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.importHeartbeatMissing">
+    <value>Compare the last recorded email poll with the expected interval in the operating profile. Missing or future poll timestamps cannot establish a healthy poller.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.overdueRecordReviewCount">
+    <value>Current overdue record reviews visible to you. This is administrative context, not proof of report execution failure.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Check.textSourcePresent">
+    <value>Current presence of a text source allowlist. Presence is not proof that a particular sender matches or that its message was parsed.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Checked">
+    <value>Evidence checked</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Choose">
+    <value>Choose a problem and its scope</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Complete">
+    <value>Recorded sequence complete</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.ConfirmedCause">
+    <value>Recorded cause for the stated check</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Correlation">
+    <value>Timing is correlation, not proof. Only reviewed scalar changes are shown; complex or protected values are redacted or omitted. An empty timeline does not prove no changes occurred.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Current">
+    <value>Current configuration</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.CurrentBoundary">
+    <value>Current settings may suggest a cause but cannot prove how an earlier incident behaved.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Delete">
+    <value>Delete this diagnostic</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Deleted">
+    <value>Diagnostic hidden. Stored content follows retention and approved holds.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Dropped">
+    <value>Reported dropped observations</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Export">
+    <value>Download reviewed support bundle</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow">
+    <value>Problem</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.access">
+    <value>A member cannot use a feature</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.coverage">
+    <value>A role or site lacks coverage</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.equipment">
+    <value>Equipment is unavailable or a check is overdue</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.imports">
+    <value>Calls are not importing</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.integration">
+    <value>An integration, workflow or report stopped</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.map">
+    <value>A person or unit is missing from the map</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.paging">
+    <value>Someone was not paged</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Flow.statuses">
+    <value>Statuses change unexpectedly</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.From">
+    <value>Problem window begins (local time)</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.GroupId">
+    <value>Group ID (optional)</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Handoff">
+    <value>Selected, attempted and provider-accepted stages are distinct. Provider acceptance is a handoff, not delivery or acknowledgement. Unsupported receipts remain unknown.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Historical">
+    <value>Recorded historical evidence</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.HistoricalUnavailable">
+    <value>Historical delivery evidence is unavailable for this scope. Capture may have been off, expired, incomplete or inaccessible.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.History">
+    <value>My recent diagnostics</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.IdentifierHelp">
+    <value>Use the identifier from the relevant personnel, call, unit, role or group record. Access to each selected record is checked again.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Incomplete">
+    <value>Recorded sequence incomplete</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.InsufficientEvidence">
+    <value>Insufficient evidence</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Person</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.MemberId">
+    <value>Member ID</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Missing">
+    <value>Sequence gaps</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.NoChanges">
+    <value>No eligible configuration changes were observed in the bounded window.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.NoIssueFound">
+    <value>No issue found in this check</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Observed">
+    <value>Observed events</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.OpenSource">
+    <value>Open the source settings</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Permission">
+    <value>Action or permission</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.PossibleCause">
+    <value>Possible cause</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Preview">
+    <value>Preview support bundle</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Privacy">
+    <value>Diagnostic requests are private to your account and department, encrypted, and retained for up to 30 days unless an approved hold applies. Reopening a run checks current evidence again.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.BroadcastDisabled">
+    <value>Broadcast disabled</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.ChannelDisabled">
+    <value>Channel disabled</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.ContactUnverified">
+    <value>Contact unverified</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.DuplicateRoute">
+    <value>Duplicate route</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.EmptyShiftFallback">
+    <value>Empty shift fallback</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.MemberIneligible">
+    <value>Member ineligible</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.None">
+    <value>No recorded reason</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.ProfileMissing">
+    <value>Profile missing</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Reason.SendException">
+    <value>Send failed</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Restricted">
+    <value>Source access restricted</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.RoleId">
+    <value>Role ID</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Run">
+    <value>Run diagnostic</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Select">
+    <value>Select a feature</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Attempted">
+    <value>Attempted</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.BroadcastCompleted">
+    <value>Broadcast completed</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.BroadcastStarted">
+    <value>Broadcast started</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Excluded</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Failed">
+    <value>Failed</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.ProviderAccepted">
+    <value>Provider accepted (handoff)</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.ProviderDeclined">
+    <value>Provider declined</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.ProviderResultUnknown">
+    <value>Provider result unknown</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Selected">
+    <value>Selected</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.ServiceCompleted">
+    <value>Send service completed</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.ServiceDeclined">
+    <value>Send service declined</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Skipped">
+    <value>Skipped</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.StatusCode">
+    <value>Status code</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.StatusHistory">
+    <value>Recorded status history</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.SupportHelp">
+    <value>Preview a minimal support bundle before downloading it. It omits member identities, incident content, contact details, credentials and hidden source values. Nothing is sent automatically.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Resource</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Timeline">
+    <value>Configuration changes near the problem</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Trace">
+    <value>Recorded dispatch attempts</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Truncated">
+    <value>The result reached its evidence limit. Narrow the time window; missing rows cannot be treated as success.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unavailable">
+    <value>The diagnostic could not be completed with your current access. Verify protected-data access or return to the source screen and try again.</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unit">
+    <value>Unit</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.UnitId">
+    <value>Unit ID</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Until">
+    <value>Problem window ends (local time)</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.WindowHelp">
+    <value>Select up to seven days within the last 90 days. The configuration timeline also includes the seven days before this window. Live configuration checks describe today.</value>
+  </data>
   <data xml:space="preserve" name="Feature.account-sessions">
     <value>Account sessions and recovery</value>
   </data>
@@ -2598,6 +2985,9 @@
   <data xml:space="preserve" name="Impact.Window">
     <value>Choose a change window and responsible verifier using approved local procedures. Verify again after saving; new source data can invalidate this preview.</value>
   </data>
+  <data xml:space="preserve" name="Module.AiDisabled">
+    <value>Ai availability</value>
+  </data>
   <data xml:space="preserve" name="Module.BusinessOperationsDisabled">
     <value>BusinessOperations availability</value>
   </data>
@@ -2669,6 +3059,9 @@
   </data>
   <data xml:space="preserve" name="Module.TrainingNameOverride">
     <value>Training menu name</value>
+  </data>
+  <data xml:space="preserve" name="ModuleHelp.AiDisabled">
+    <value>Controls availability of optional AI assistance. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.BusinessOperationsDisabled">
     <value>Controls availability of business operations. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.</value>
@@ -3594,6 +3987,12 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Custom map credentials are missing</value>
   </data>
+  <data xml:space="preserve" name="Rule.notification-channels">
+    <value>Notification channel preferences need review</value>
+  </data>
+  <data xml:space="preserve" name="Rule.notification-profiles">
+    <value>Notification profiles are incomplete</value>
+  </data>
   <data xml:space="preserve" name="Rule.password-recovery">
     <value>Administrator password resets need review</value>
   </data>
@@ -3708,6 +4107,12 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Review the map override on its protected configuration screen.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.notification-channels">
+    <value>Review authorized member notification preferences and use Communication Tests only after explicit recipient and channel review.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.notification-profiles">
+    <value>Review active member profiles and contact verification through the owning screen.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.password-recovery">
     <value>Review the password-reset policy.</value>
   </data>
@@ -3821,6 +4226,12 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>An enabled map override needs its provider credentials.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.notification-channels">
+    <value>Some visible active members have no eligible SMS, email or push preference under the ordinary notification sender. Push preference alone is not a valid registration or proof of delivery.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.notification-profiles">
+    <value>Missing member profiles prevent a complete channel eligibility assessment. Unknown eligibility must not be treated as no available channel.</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.password-recovery">
     <value>Sending a single-use recovery link avoids an administrator choosing a member password.</value>
@@ -4857,11 +5268,137 @@
   <data xml:space="preserve" name="Ui.After">
     <value>After</value>
   </data>
+  <data xml:space="preserve" name="Ui.AiModule">
+    <value>AI assistance</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AiModuleHelp">
+    <value>Allow separately enabled AI assistance for this department. Turning this off stops new AI requests; deterministic setup and protected-data retention continue.</value>
+  </data>
   <data xml:space="preserve" name="Ui.AllFindings">
     <value>All findings</value>
   </data>
   <data xml:space="preserve" name="Ui.Area">
     <value>Area</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Abstained">
+    <value>There is not enough grounded evidence to answer. Try a specific setting or feature name, or use Settings Reference.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Answered">
+    <value>Related verified evidence</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Boundary">
+    <value>Find configuration, setup and add-on guidance. Answers contain current evidence cards and reference sources. Ask cannot change settings, send messages, purchase add-ons or make clinical or tactical decisions. Each question is evaluated independently; include the setting or feature name.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.BudgetExhausted">
+    <value>The department has reached its current AI allowance. Setup Report and Settings Reference remain available.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Busy">
+    <value>The local model or department budget is busy. Try again later; this request was not sent to the model.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Cancel">
+    <value>Cancel request</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Cancelled">
+    <value>Request cancelled. A request already processed by the model may still count toward usage; check history before retrying.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.CurrentEvidence">
+    <value>Current recorded evidence</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Delete">
+    <value>Delete this conversation</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Deleted">
+    <value>Conversation hidden. Stored content is removed by the retention process unless an approved hold requires it.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Disabled">
+    <value>AI assistance is disabled for this department.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.EntitlementUnavailable">
+    <value>The required AI access could not be verified.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Export">
+    <value>Download private history</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.FreeAllowanceExhausted">
+    <value>This department has used its free questions for the current allowance window. Setup Report and Settings Reference remain available. Explore add-ons to learn about Enhanced AI.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.FreeAttemptLimit">
+    <value>This department has reached its daily free request limit. Try again later; setup and reference tools remain available.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.FreeQuestions">
+    <value>Free questions remaining</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.History">
+    <value>My recent conversations</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.HistoryHelp">
+    <value>The latest 30 conversations are listed. Opening one refreshes the evidence for its latest 10 turns using your current access; it does not replay historical claims.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.New">
+    <value>New conversation</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.NoProposal">
+    <value>Reference only</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Privacy">
+    <value>Your history is private to your account and department. Questions are encrypted at rest and retained for 30 days by default, subject to approved holds. Only matched public concepts and authorized metadata reach the local model. Do not enter patient details, incident narratives, passwords or tokens.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.ProposedValue">
+    <value>Proposed value (preview only)</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.ProtectionUpgradeRequired">
+    <value>The department protection catalog needs an upgrade before conversations can be saved.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Question</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Refreshed">
+    <value>Evidence refreshed using current access and configuration</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.SelectValue">
+    <value>Choose a value</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Send">
+    <value>Ask</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Setting">
+    <value>Optional setting proposal</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Source">
+    <value>Source</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.TokensRemaining">
+    <value>Department tokens remaining this month</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Topic">
+    <value>Topic</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Topic.addons">
+    <value>Features and add-ons</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Topic.permissions">
+    <value>Permissions</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Topic.reference">
+    <value>Documentation</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Topic.settings">
+    <value>Settings and impact</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Topic.setup">
+    <value>Setup and readiness</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Unavailable">
+    <value>Ask is unavailable. Use Setup Report or Settings Reference, then try again later.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Unconfigured">
+    <value>The local inference service is not configured.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.WindowEnds">
+    <value>Current allowance ends</value>
+  </data>
+  <data xml:space="preserve" name="Ui.AskHistoryScope">
+    <value>A recorded configuration change within the latest 30 visible audit entries. This is bounded metadata, not a complete incident investigation.</value>
   </data>
   <data xml:space="preserve" name="Ui.AssignMe">
     <value>Assign to me</value>
@@ -4911,6 +5448,9 @@
   <data xml:space="preserve" name="Ui.CriticalUnknown">
     <value>Critical checks have unknown evidence. The department cannot be shown as fully verified.</value>
   </data>
+  <data xml:space="preserve" name="Ui.CurrentValue">
+    <value>Current recorded value</value>
+  </data>
   <data xml:space="preserve" name="Ui.DepartmentId">
     <value>Department ID</value>
   </data>
@@ -4932,6 +5472,12 @@
   <data xml:space="preserve" name="Ui.DismissSetup">
     <value>Dismiss for me; setup stays available in the menu</value>
   </data>
+  <data xml:space="preserve" name="Ui.DownloadReminder">
+    <value>Download calendar reminder</value>
+  </data>
+  <data xml:space="preserve" name="Ui.EffortAssumptions">
+    <value>Planning ranges cover an initial administrative review per selected area with owners and source information available. They exclude data entry at scale, procurement, provider activation, migration, training and local policy approval. Related features share this area estimate; do not add it once per feature.</value>
+  </data>
   <data xml:space="preserve" name="Ui.Error">
     <value>The report could not be loaded. Retry or use the normal department screens.</value>
   </data>
@@ -4952,6 +5498,9 @@
   </data>
   <data xml:space="preserve" name="Ui.Failures">
     <value>Checks needing attention</value>
+  </data>
+  <data xml:space="preserve" name="Ui.False">
+    <value>Disabled</value>
   </data>
   <data xml:space="preserve" name="Ui.FeatureNotEnabled">
     <value>Not enabled for this deployment</value>
@@ -5163,8 +5712,14 @@
   <data xml:space="preserve" name="Ui.Pass">
     <value>Verified</value>
   </data>
+  <data xml:space="preserve" name="Ui.PlanningMinutes">
+    <value>minutes for initial review</value>
+  </data>
   <data xml:space="preserve" name="Ui.Preferences">
     <value>Follow-up preferences</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Preview">
+    <value>Preview only</value>
   </data>
   <data xml:space="preserve" name="Ui.Print">
     <value>Print</value>
@@ -5196,11 +5751,20 @@
   <data xml:space="preserve" name="Ui.Reason">
     <value>Reason</value>
   </data>
+  <data xml:space="preserve" name="Ui.Recorded">
+    <value>Recorded change</value>
+  </data>
   <data xml:space="preserve" name="Ui.Redacted">
     <value>Protected evidence unavailable</value>
   </data>
+  <data xml:space="preserve" name="Ui.Reference">
+    <value>Public reference</value>
+  </data>
   <data xml:space="preserve" name="Ui.ReportBoundary">
     <value>Configuration health is administrative guidance. A learned feature or saved setting is not proof of operational readiness or message delivery.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Required">
+    <value>Required checks</value>
   </data>
   <data xml:space="preserve" name="Ui.RequiredAddons">
     <value>Required add-ons</value>
@@ -5235,8 +5799,11 @@
   <data xml:space="preserve" name="Ui.RevisitDate">
     <value>Review again on (UTC date)</value>
   </data>
+  <data xml:space="preserve" name="Ui.RevisitDue">
+    <value>The recorded setup review date has arrived. Review current evidence and set the next date.</value>
+  </data>
   <data xml:space="preserve" name="Ui.RevisitHelp">
-    <value>Choose an optional shared review date within the next year. It is stored at noon UTC and shown in the report; this choice does not send a reminder. Optional weekly follow-up is configured separately in the admin worklist. Clear the date to remove it.</value>
+    <value>Choose an optional shared review date within the next year. It is stored at noon UTC and shown in the report. Download the calendar reminder and import it into your calendar if wanted; Resgrid does not send a message. Clear the date to remove it.</value>
   </data>
   <data xml:space="preserve" name="Ui.SaveError">
     <value>The change was not saved. Reload and try again.</value>
@@ -5289,11 +5856,20 @@
   <data xml:space="preserve" name="Ui.SelectedWorkflows">
     <value>Your selected feature interests</value>
   </data>
+  <data xml:space="preserve" name="Ui.SetupChecklist">
+    <value>Selected-area setup checklist</value>
+  </data>
   <data xml:space="preserve" name="Ui.SetupChoice">
     <value>Setup choice</value>
   </data>
   <data xml:space="preserve" name="Ui.SetupPrompt">
     <value>Learn the available areas and optional add-ons, configure your selected areas, then review the evidence together.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SetupReviewReminder">
+    <value>Review Resgrid setup</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SetupReviewReminderHelp">
+    <value>Open Resgrid Setup Report, review current evidence and unresolved work, and update the review date. This calendar event contains no department records.</value>
   </data>
   <data xml:space="preserve" name="Ui.SetupState.ChecksPassed">
     <value>Recorded configuration and listed checks passed</value>
@@ -5310,6 +5886,18 @@
   <data xml:space="preserve" name="Ui.SetupState.NotConfigured">
     <value>No configuration recorded in the checked source</value>
   </data>
+  <data xml:space="preserve" name="Ui.SetupTask.Configure">
+    <value>Configure on the owning screen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SetupTask.Learn">
+    <value>Understand the feature and its value</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SetupTask.Prerequisites">
+    <value>Review access, owners and adoption requirements</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SetupTask.Verify">
+    <value>Verify current evidence and local procedures</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Current source access unavailable</value>
   </data>
@@ -5325,8 +5913,32 @@
   <data xml:space="preserve" name="Ui.SuggestedArea">
     <value>Suggested by your selected operating packs</value>
   </data>
+  <data xml:space="preserve" name="Ui.TaskState.AccessAvailable">
+    <value>Current source access available</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TaskState.Blocked">
+    <value>Current prerequisite unavailable</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TaskState.ChecksPassed">
+    <value>Listed checks passed</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TaskState.ConfigurationPresent">
+    <value>Configuration recorded</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TaskState.Learned">
+    <value>Marked understood by you</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TaskState.Pending">
+    <value>Review needed</value>
+  </data>
+  <data xml:space="preserve" name="Ui.TaskState.Unknown">
+    <value>Not verified</value>
+  </data>
   <data xml:space="preserve" name="Ui.Title">
     <value>Resgrid Admin Assist</value>
+  </data>
+  <data xml:space="preserve" name="Ui.True">
+    <value>Enabled</value>
   </data>
   <data xml:space="preserve" name="Ui.Unassigned">
     <value>Unassigned</value>
@@ -5351,6 +5963,9 @@
   </data>
   <data xml:space="preserve" name="Ui.VerificationCoverage">
     <value>Results cover only the listed checks. Review procedures, external systems and areas without automated checks with their responsible owners.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Verified">
+    <value>Verified checks</value>
   </data>
   <data xml:space="preserve" name="Ui.Verify">
     <value>Verify again</value>
@@ -5382,6 +5997,9 @@
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Verification updates findings. Assignment and accepted exceptions do not resolve a failed check. A fresh passing check resolves it.</value>
   </data>
+  <data xml:space="preserve" name="Ui.ask">
+    <value>Ask Admin Assist</value>
+  </data>
   <data xml:space="preserve" name="Ui.explore">
     <value>Explore Resgrid and add-ons</value>
   </data>
@@ -5399,6 +6017,9 @@
   </data>
   <data xml:space="preserve" name="Ui.report">
     <value>Setup Report</value>
+  </data>
+  <data xml:space="preserve" name="Ui.troubleshoot">
+    <value>Troubleshoot</value>
   </data>
   <data xml:space="preserve" name="Ui.wizard">
     <value>Setup Wizard</value>

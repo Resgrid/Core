@@ -19,8 +19,11 @@ namespace Resgrid.Model
 					return departmentAdmin || groupAdmin && (!permission.LockToGroup || adminOfTargetOrAncestor);
 				case PermissionActions.DepartmentAdminsAndSelectRoles:
 					if (departmentAdmin) return true;
-					if (permission.LockToGroup && !sameGroup || string.IsNullOrWhiteSpace(permission.Data)) return false;
-					var selected = permission.Data.Split(',').Select(int.Parse).ToHashSet();
+					if (permission.LockToGroup && !sameGroup || string.IsNullOrWhiteSpace(permission.Data) || roleIds == null) return false;
+					// A malformed stored entry denies that entry rather than throwing out of the visibility check.
+					var selected = permission.Data.Split(',')
+						.Select(x => int.TryParse(x.Trim(), out var id) ? id : (int?)null)
+						.Where(x => x.HasValue).Select(x => x.Value).ToHashSet();
 					return roleIds.Any(selected.Contains);
 				case PermissionActions.Everyone: return !permission.LockToGroup || departmentAdmin || sameGroup;
 				// These legacy resource gates do not implement the RMS action 4; preserve their deny behavior.

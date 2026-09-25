@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>Jede Änderung wird mit Urheber und Zeitpunkt protokolliert.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>Der Resgrid-Assistent kann das Abonnement des eigenen KI-Anbieters Ihrer Abteilung (eigener Schlüssel) nicht nutzen; er verwendet die eigene KI von Resgrid, und ein gespeicherter Anbieter bleibt ungenutzt.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>Ich verstehe, dass der Resgrid-Assistent ab dem Einreihen der Anmeldung bis zur vollständigen Deaktivierung des Schutzes das Abonnement des eigenen KI-Anbieters meiner Abteilung (eigener Schlüssel) nicht nutzen kann und stattdessen die eigene KI von Resgrid verwendet.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>Ihre Abteilung hat einen eigenen KI-Anbieter für den Chatbot gespeichert ({0}). Sobald die Anmeldung eingereiht ist, verwendet der Chatbot ihn innerhalb von fünf Minuten nicht mehr und nutzt die eigene KI von Resgrid. Der gespeicherte Anbieter wird nicht gelöscht.</value>
+  </data>
 </root>

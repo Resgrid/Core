@@ -66,10 +66,13 @@ namespace Resgrid.Tests.Services
             var audit = new AdpAuditRepository(Connections(), Configuration());
             await Task.WhenAll(Enumerable.Range(0, 16).Select(_ => audit.AppendAsync(new AdpAuditEvent {
                 DepartmentId = 7, Layer = "broker", Operation = "decrypt", Outcome = "requested" })));
-            var rows = await audit.ReadAsync(7);
+            var rows = await audit.ReadAsync(7, 0, 100);
             rows.Count.Should().Be(16);
             AdpAuditChain.Verify(rows, 16, rows.Last().Hash).Should().BeTrue();
-            (await audit.ReadAsync(8)).Should().BeEmpty();
+            var page = await audit.ReadAsync(7, 10, 3);
+            page.Select(r => r.Sequence).Should().Equal(11, 12, 13);
+            AdpAuditChain.VerifySegment(page, 10, rows[9].Hash).Should().BeTrue();
+            (await audit.ReadAsync(8, 0, 100)).Should().BeEmpty();
         }
 
         [Test]

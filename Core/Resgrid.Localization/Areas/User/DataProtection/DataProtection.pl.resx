@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>Każda zmiana jest rejestrowana wraz z autorem i czasem.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>Asystent Resgrid nie może korzystać z subskrypcji własnego dostawcy AI Twojego oddziału (własny klucz); korzysta z AI Resgrid, a zapisany dostawca pozostaje nieużywany.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>Rozumiem, że od zakolejkowania rejestracji do całkowitego wyłączenia ochrony asystent Resgrid nie może korzystać z subskrypcji własnego dostawcy AI mojego oddziału (własny klucz) i zamiast tego korzysta z AI Resgrid.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>Twój oddział ma zapisanego własnego dostawcę AI dla chatbota ({0}). Po zakolejkowaniu rejestracji chatbot w ciągu pięciu minut przestanie z niego korzystać i będzie używać AI Resgrid. Zapisany dostawca nie zostanie usunięty.</value>
+  </data>
 </root>

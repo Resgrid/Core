@@ -263,6 +263,24 @@ namespace Resgrid.Tests.Services
             AdpAuditChain.Verify(new[] { first, second }, 2, second.Hash).Should().BeFalse();
         }
 
+        [Test]
+        public void Chain_page_verifies_only_as_a_continuation_of_the_callers_anchor()
+        {
+            var first = new AdpAuditEvent { DepartmentId = 7, Layer = "identity", Operation = "grant", Outcome = "verified" };
+            var second = new AdpAuditEvent { DepartmentId = 7, Layer = "broker", Operation = "decrypt", Outcome = "requested" };
+            var third = new AdpAuditEvent { DepartmentId = 7, Layer = "broker", Operation = "decrypt", Outcome = "completed" };
+            AdpAuditChain.Link(first, null);
+            AdpAuditChain.Link(second, first);
+            AdpAuditChain.Link(third, second);
+            AdpAuditChain.VerifySegment(new[] { first }, 0, AdpAuditChain.Genesis).Should().BeTrue();
+            AdpAuditChain.VerifySegment(new[] { second, third }, 1, first.Hash).Should().BeTrue();
+            AdpAuditChain.VerifySegment(new AdpAuditEvent[0], 3, third.Hash).Should().BeTrue();
+            // A gap, a stale anchor or a rewritten predecessor breaks continuity.
+            AdpAuditChain.VerifySegment(new[] { third }, 1, first.Hash).Should().BeFalse();
+            AdpAuditChain.VerifySegment(new[] { second, third }, 1, AdpAuditChain.Genesis).Should().BeFalse();
+            AdpAuditChain.VerifySegment(new[] { second, third }, 1, null).Should().BeFalse();
+        }
+
         private sealed class MemoryAccessStore : IAdpAccessStore
         {
             private readonly Dictionary<string, AdpAccessState> _rows = new();

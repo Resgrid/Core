@@ -66,7 +66,9 @@ namespace Resgrid.Tests.AdminAssist
 				var date = type == DatabaseTypes.Postgres ? "timestamp" : "datetime2";
 				var boolean = type == DatabaseTypes.Postgres ? "boolean" : "bit";
 				await db.ExecuteAsync($@"CREATE TABLE {Q("Departments")} ({Q("DepartmentId")} int PRIMARY KEY);
-CREATE TABLE {Q("FeatureFlags")} ({Q("FlagKey")} {text}(128) PRIMARY KEY,{Q("Name")} {text}(128),{Q("Description")} {text}(512),{Q("Category")} {text}(128),{Q("IsEnabledGlobally")} {boolean});
+CREATE TABLE {Q("FeatureFlags")} ({Q("FeatureFlagId")} {(type == DatabaseTypes.Postgres ? "serial" : "int IDENTITY(1,1)")} PRIMARY KEY,{Q("FlagKey")} {text}(128) UNIQUE,{Q("Name")} {text}(128),{Q("Description")} {text}(512),{Q("Category")} {text}(128),{Q("IsEnabledGlobally")} {boolean});
+CREATE TABLE {Q("FeatureFlagPrerequisites")} ({Q("FeatureFlagId")} int,{Q("RequiredFeatureFlagId")} int,{Q("RequiredValue")} {text}(128));
+CREATE TABLE {Q("PlanAddons")} ({Q("PlanAddonId")} {text}(36) PRIMARY KEY,{Q("AddonType")} int,{Q("Cost")} decimal(18,2),{Q("ExternalId")} {text}(128),{Q("TestExternalId")} {text}(128));
 CREATE TABLE {Q("RmsRecordLegalHolds")} ({Q("DepartmentId")} int,{Q("ReleasedOn")} {date},{Q("RmsRecordLegalHoldId")} {text}(128),{Q("RecordId")} {text}(128),{Q("DefinitionKey")} {text}(128));
 CREATE TABLE {Q("DepartmentGroups")} ({Q("DepartmentId")} int,{Q("DepartmentGroupId")} int);
 CREATE TABLE {Q("Documents")} ({Q("DepartmentId")} int,{Q("DocumentId")} int,{Q("RemoveOn")} {date});
@@ -75,10 +77,192 @@ CREATE TABLE {Q("AspNetUsers")} ({Q("Id")} {text}(128) PRIMARY KEY,{Q("TwoFactor
 CREATE TABLE {Q("ActionLogs")} ({Q("ActionLogId")} int PRIMARY KEY,{Q("UserId")} {text}(128),{Q("DepartmentId")} int,{Q("ActionTypeId")} int,{Q("Timestamp")} {date},{Q("GeoLocationData")} {text}(128));
 INSERT INTO {Q("Departments")} VALUES (7),(8),(9),(10),(11),(12),(13);");
 			}
-			var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[] { type == DatabaseTypes.Postgres ? new M0235_AddAdminAssistFoundationPg() : new M0235_AddAdminAssistFoundation() });
+			var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[] { type == DatabaseTypes.Postgres ? new M0235_AddAdminAssistFoundationPg() : new M0235_AddAdminAssistFoundation(), type == DatabaseTypes.Postgres ? new M0237_AddAdminAssistConversationPg() : new M0237_AddAdminAssistConversation(), type == DatabaseTypes.Postgres ? new M0238_AddEnhancedAiAddonPg() : new M0238_AddEnhancedAiAddon(), type == DatabaseTypes.Postgres ? new M0239_AddAdminAssistDiagnosticsPg() : new M0239_AddAdminAssistDiagnostics(), type == DatabaseTypes.Postgres ? new M0240_AddAiDispatchEnrichmentPg() : new M0240_AddAiDispatchEnrichment(), type == DatabaseTypes.Postgres ? new M0241_AddAiDispatchSettingsPg() : new M0241_AddAiDispatchSettings() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r => { if (type == DatabaseTypes.Postgres) r.AddPostgres(); else r.AddSqlServer(); r.WithGlobalConnectionString(_connection); }).AddSingleton(source.Object).BuildServiceProvider();
 			_runner.GetRequiredService<IMigrationRunner>().MigrateUp();
 		}
+		[Test]
+		public async Task Diagnostic_storage_enforces_owner_cas_and_hold_aware_retention()
+		{
+			await using var db = Connect(_connection); var ct = CancellationToken.None;
+			await db.ExecuteAsync($"INSERT INTO {Q("Departments")} VALUES (9830)");
+			using var unit = new UnitOfWork(Connections()); var repo = Repository(unit);
+			var actor = new AdminAssistActor(9830, "diagnostic-owner"); var now = DateTime.UtcNow;
+			var row = new AdminAssistDiagnosticRun { Id = Guid.NewGuid().ToString("D"), DepartmentId = 9830, UserId = actor.UserId, Flow = "imports", CreatedOnUtc = now, Revision = 1, Content = "enc2:encrypted-test-data" };
+			await repo.SaveDiagnosticAsync(actor, row, ct);
+			Assert.That((await repo.ReadDiagnosticAsync(actor, row.Id, ct)).CreatedOnUtc.Kind, Is.EqualTo(DateTimeKind.Utc));
+			Assert.That(await repo.ReadDiagnosticAsync(actor with { UserId = "other" }, row.Id, ct), Is.Null);
+			Assert.That(await repo.ReadDiagnosticAsync(actor with { DepartmentId = 7 }, row.Id, ct), Is.Null);
+			Assert.ThrowsAsync<AdminAssistConcurrencyException>(() => repo.DeleteDiagnosticAsync(actor, new(row.Id, 2), ct));
+			await db.ExecuteAsync($"INSERT INTO {Q("RmsRecordLegalHolds")} ({Q("DepartmentId")}) VALUES (9830)");
+			await repo.DeleteDiagnosticAsync(actor, new(row.Id), ct);
+			Assert.That(await repo.ListDiagnosticsAsync(actor, ct), Is.Empty);
+			Assert.That(await repo.ReadDiagnosticAsync(actor, row.Id, ct), Is.Null);
+			Assert.That(await repo.PurgeExpiredMetadataAsync(9830, now.AddDays(40), ct), Is.Zero);
+			Assert.That(await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {Q("AdminAssistDiagnosticRuns")} WHERE {Q("DepartmentId")}=9830"), Is.EqualTo(1));
+			await db.ExecuteAsync($"DELETE FROM {Q("RmsRecordLegalHolds")} WHERE {Q("DepartmentId")}=9830");
+			await repo.PurgeExpiredMetadataAsync(9830, now.AddDays(40), ct);
+			Assert.That(await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {Q("AdminAssistDiagnosticRuns")} WHERE {Q("DepartmentId")}=9830"), Is.Zero);
+		}
+		[Test]
+		public async Task Diagnostic_admission_serializes_hosts_and_expires_crashed_owners()
+		{
+			await using var db = Connect(_connection); await db.ExecuteAsync($"INSERT INTO {Q("Departments")} VALUES (9831)");
+			using var firstUnit = new UnitOfWork(Connections()); using var secondUnit = new UnitOfWork(Connections());
+			var first = Repository(firstUnit); var second = Repository(secondUnit); var actor = new AdminAssistActor(9831, "a");
+			var now = DateTime.UtcNow; var ct = CancellationToken.None;
+			var ids = new[] { Guid.NewGuid().ToString("D"), Guid.NewGuid().ToString("D") };
+			var admitted = await Task.WhenAll(first.AcquireDiagnosticLeaseAsync(actor, ids[0], now, ct), second.AcquireDiagnosticLeaseAsync(actor, ids[1], now, ct));
+			Assert.That(admitted.Count(x => x), Is.EqualTo(1));
+			Assert.That(await second.AcquireDiagnosticLeaseAsync(actor with { UserId = "b" }, Guid.NewGuid().ToString("D"), now, ct), Is.True);
+			Assert.That(await first.AcquireDiagnosticLeaseAsync(actor with { UserId = "c" }, Guid.NewGuid().ToString("D"), now, ct), Is.False);
+			await first.ReleaseDiagnosticLeaseAsync(actor with { UserId = "other" }, ids[Array.IndexOf(admitted, true)], ct);
+			Assert.That(await first.AcquireDiagnosticLeaseAsync(actor, Guid.NewGuid().ToString("D"), now, ct), Is.False);
+			Assert.That(await first.AcquireDiagnosticLeaseAsync(actor, Guid.NewGuid().ToString("D"), now.AddSeconds(121), ct), Is.True);
+		}
+
+		[Test]
+		public async Task Conversation_owner_revision_and_delete_are_enforced_in_storage()
+		{
+			// Arrange
+			await using var db = Connect(_connection);
+			await db.ExecuteAsync($"INSERT INTO {Q("Departments")} VALUES (800)");
+			using var unit = new UnitOfWork(Connections()); var repository = Repository(unit);
+			var actor = new AdminAssistActor(800, "ask-admin");
+			var row = new AiGenerationRow { Id = Guid.NewGuid().ToString("D"), ConversationId = Guid.NewGuid().ToString("D"), DepartmentId = actor.DepartmentId,
+				UserId = actor.UserId, Content = "enc2:encrypted-test-content", CreatedOnUtc = DateTime.UtcNow, PromptVersion = "test", ModelRevision = "test", RuntimeDigest = "test", RequestDigest = "test", Outcome = "Answered" };
+			// Act
+			await repository.SaveAsync(actor, row, 0, CancellationToken.None);
+			// Assert
+			Assert.That(await repository.GetRevisionAsync(actor, row.ConversationId, CancellationToken.None), Is.EqualTo(1));
+			Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await repository.ReadAsync(actor with { UserId = "other-admin" }, row.ConversationId, CancellationToken.None));
+			Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await repository.ReadAsync(actor with { DepartmentId = 801 }, row.ConversationId, CancellationToken.None));
+			Assert.ThrowsAsync<AdminAssistConcurrencyException>(async () => await repository.SaveAsync(actor, row, 0, CancellationToken.None));
+			await repository.DeleteAsync(actor, row.ConversationId, 1, CancellationToken.None);
+			Assert.That(await repository.ListAsync(actor, CancellationToken.None), Is.Empty);
+			Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await repository.ReadAsync(actor, row.ConversationId, CancellationToken.None));
+		}
+
+		[Test]
+		public async Task Admission_serializes_hosts_and_keeps_uncertain_usage_charged()
+		{
+			// Arrange
+			using var firstUnit = new UnitOfWork(Connections()); using var secondUnit = new UnitOfWork(Connections());
+			var first = Repository(firstUnit); var second = Repository(secondUnit);
+			var now = DateTime.UtcNow;
+			// Act
+			var reservations = await Task.WhenAll(first.ReserveAsync(new(801, "admin-a"), now, 8192, 16384, CancellationToken.None), second.ReserveAsync(new(801, "admin-b"), now, 8192, 16384, CancellationToken.None));
+			// Assert
+			Assert.That(reservations.Count(r => r != null), Is.EqualTo(1));
+			Assert.That(await first.RemainingAsync(801, now.AddMinutes(3), 16384, CancellationToken.None), Is.EqualTo(8192));
+			await first.CompleteAsync(reservations.Single(r => r != null), 500, "Answered", CancellationToken.None);
+			await first.CompleteAsync(reservations.Single(r => r != null), 1, "Answered", CancellationToken.None);
+			Assert.That(await first.RemainingAsync(801, now, 16384, CancellationToken.None), Is.EqualTo(15884));
+		}
+
+		[Test]
+		public async Task Free_admission_counts_only_answered_questions_and_never_takes_the_last_slot()
+		{
+			// Arrange (enhanced-ai-addon-plan.md §5.4: free turns hold at most one of the two slots; only answers are charged)
+			using var firstUnit = new UnitOfWork(Connections()); using var secondUnit = new UnitOfWork(Connections());
+			var first = Repository(firstUnit); var second = Repository(secondUnit);
+			var now = DateTime.UtcNow; var ct = CancellationToken.None;
+			var window = AdminAssistFreeAllowance.Current(null, now, 2, 30, 1);
+			// Act / Assert — one free slot, the other stays available to a paying department
+			var free = await first.ReserveFreeAsync(new(821, "free-a"), now, 8192, window, 25, ct);
+			Assert.That(free.Reason, Is.EqualTo("Reserved"));
+			Assert.That((await second.ReserveFreeAsync(new(822, "free-b"), now, 8192, window, 25, ct)).Reason, Is.EqualTo("Busy"));
+			var paid = await second.ReserveAsync(new(820, "paid-admin"), now, 8192, 1_000_000, ct);
+			Assert.That(paid, Is.Not.Null);
+			await first.CompleteAsync(free.Reservation, 100, "Unavailable", ct);
+			await second.CompleteAsync(paid, 100, "Answered", ct);
+			Assert.That(await first.GetFreeUsageAsync(821, window, now, ct), Is.EqualTo(new AiFreeUsage(0, 1)));
+			Assert.That(await first.GetFirstAnsweredAsync(821, ct), Is.Null);
+			for (var i = 0; i < 2; i++)
+			{
+				var answered = await first.ReserveFreeAsync(new(821, "free-a"), now, 8192, window, 25, ct);
+				Assert.That(answered.Reason, Is.EqualTo("Reserved"));
+				await first.CompleteAsync(answered.Reservation, 100, "Answered", ct);
+			}
+			Assert.That((await first.ReserveFreeAsync(new(821, "free-a"), now, 8192, window, 25, ct)).Reason, Is.EqualTo("FreeAllowanceExhausted"));
+			Assert.That(await first.GetFirstAnsweredAsync(821, ct), Is.Not.Null);
+			Assert.That(await first.GetFirstAnsweredAsync(820, ct), Is.Not.Null, "paid answers open the starter window too");
+			var other = await second.ReserveFreeAsync(new(823, "free-c"), now, 8192, window, 1, ct);
+			Assert.That(other.Reason, Is.EqualTo("Reserved"));
+			await second.CompleteAsync(other.Reservation, 0, "Cancelled", ct);
+			Assert.That((await second.ReserveFreeAsync(new(823, "free-c"), now, 8192, window, 1, ct)).Reason, Is.EqualTo("FreeAttemptLimit"));
+		}
+
+		[Test]
+		public async Task Ai_dispatch_claims_a_call_once_and_background_admission_waits_for_idle_slots()
+		{
+			// Arrange (enhanced-ai-addon-plan.md §4: at-least-once delivery, interactive work first)
+			using var firstUnit = new UnitOfWork(Connections()); using var secondUnit = new UnitOfWork(Connections());
+			var first = Repository(firstUnit); var second = Repository(secondUnit);
+			var audits = new AiDispatchAuditRepository(Connections(), type == DatabaseTypes.Postgres ? new PostgreSqlConfiguration() : new SqlServerConfiguration(), firstUnit, Mock.Of<IQueryFactory>());
+			var now = DateTime.UtcNow; var ct = CancellationToken.None;
+			await using (var db = Connect(_connection))
+			{
+				// The viewer joins call numbers; the fixture otherwise has no Calls table.
+				await db.ExecuteAsync(type == DatabaseTypes.Postgres
+					? "CREATE TABLE IF NOT EXISTS calls (callid int PRIMARY KEY, departmentid int, number varchar(64))"
+					: "IF OBJECT_ID('[Calls]', 'U') IS NULL CREATE TABLE [Calls] ([CallId] int PRIMARY KEY, [DepartmentId] int, [Number] nvarchar(64))");
+				await db.ExecuteAsync($"INSERT INTO {Q("Calls")} ({Q("CallId")},{Q("DepartmentId")},{Q("Number")}) VALUES (9001,830,'26-9001')");
+			}
+			Resgrid.Model.AiDispatch.AiDispatchAuditRow Claim() => new() { AiDispatchAuditId = Guid.NewGuid().ToString("D"), DepartmentId = 830, CallId = 9001, Mode = "Enrich",
+				Outcome = Resgrid.Model.AiDispatch.AiDispatchOutcomes.InProgress, CreatedOnUtc = now };
+			// Act / Assert — the unique (DepartmentId, CallId) index is the claim
+			var row = Claim();
+			Assert.That(await audits.TryClaimAsync(row, ct), Is.True);
+			Assert.That(await audits.TryClaimAsync(Claim(), ct), Is.False);
+			row.Outcome = Resgrid.Model.AiDispatch.AiDispatchOutcomes.Applied; row.AppliedFields = "Type,Note"; row.CompletedOnUtc = now;
+			await audits.CompleteAsync(row, ct);
+			var recent = (await audits.GetRecentAsync(830, 5, ct)).Single();
+			Assert.That(recent.Audit.Outcome, Is.EqualTo(Resgrid.Model.AiDispatch.AiDispatchOutcomes.Applied));
+			Assert.That(recent.CallNumber, Is.EqualTo("26-9001"));
+			Assert.That(await audits.PruneAsync(830, now.AddMinutes(1), ct), Is.EqualTo(1));
+			// Settings are compare-and-swap: a stale revision never overwrites another admin's save.
+			var settings = new AiDispatchConfigRepository(Connections(), type == DatabaseTypes.Postgres ? new PostgreSqlConfiguration() : new SqlServerConfiguration(), firstUnit, Mock.Of<IQueryFactory>());
+			Assert.That(await settings.SaveAsync(new Resgrid.Model.AiDispatch.DepartmentAiDispatchConfig { DepartmentId = 830, MonthlyTokenCap = 20000, FillAddress = false }, 0, ct), Is.True);
+			Assert.That(await settings.SaveAsync(new Resgrid.Model.AiDispatch.DepartmentAiDispatchConfig { DepartmentId = 830 }, 0, ct), Is.False);
+			Assert.That(await settings.SaveAsync(new Resgrid.Model.AiDispatch.DepartmentAiDispatchConfig { DepartmentId = 830, MonthlyTokenCap = 30000 }, 1, ct), Is.True);
+			Assert.That(await settings.SaveAsync(new Resgrid.Model.AiDispatch.DepartmentAiDispatchConfig { DepartmentId = 830 }, 1, ct), Is.False);
+			var stored = await settings.GetAsync(830, ct);
+			Assert.That((stored.Revision, stored.MonthlyTokenCap, stored.FillAddress), Is.EqualTo((2L, (int?)30000, true)));
+			// Background work never starts while any turn is live, and draws on the department budget.
+			var interactive = await first.ReserveAsync(new(831, "admin"), now, 8192, 1_000_000, ct);
+			Assert.That(await second.ReserveBackgroundAsync(830, "AiDispatch", "EnhancedAi", now, 8192, 1_000_000, ct), Is.Null);
+			await first.CompleteAsync(interactive, 100, "Answered", ct);
+			var background = await second.ReserveBackgroundAsync(830, "AiDispatch", "EnhancedAi", now, 8192, 1_000_000, ct);
+			Assert.That(background, Is.Not.Null);
+			Assert.That(await second.ReserveBackgroundAsync(832, "AiDispatch", "EnhancedAi", now, 8192, 1_000_000, ct), Is.Null, "one background turn at a time");
+			await second.CompleteAsync(background, 0, "Unavailable", ct);
+			Assert.That(await second.ReserveBackgroundAsync(830, "AiDispatch", "EnhancedAi", now, 8192, 4096, ct), Is.Null, "over the monthly budget");
+		}
+
+		[Test]
+		public async Task Ledger_retention_keeps_an_anonymous_first_answer_without_restarting_starter_allowance()
+		{
+			await using var db = Connect(_connection);
+			await db.ExecuteAsync($"INSERT INTO {Q("Departments")} VALUES (824)");
+			using var unit = new UnitOfWork(Connections()); var repository = Repository(unit);
+			var actor = new AdminAssistActor(824, "former-admin");
+			var now = DateTime.UtcNow;
+			var firstDate = now.AddMonths(-15);
+			var first = await repository.ReserveAsync(actor, firstDate, 8192, 100000, CancellationToken.None);
+			await repository.CompleteAsync(first, 100, "Answered", CancellationToken.None);
+			var later = await repository.ReserveAsync(actor, firstDate.AddDays(1), 8192, 100000, CancellationToken.None);
+			await repository.CompleteAsync(later, 100, "Answered", CancellationToken.None);
+			var recordedFirst = await repository.GetFirstAnsweredAsync(824, CancellationToken.None);
+
+			await repository.PurgeExpiredMetadataAsync(824, now, CancellationToken.None);
+
+			Assert.That(await repository.GetFirstAnsweredAsync(824, CancellationToken.None), Is.EqualTo(recordedFirst));
+			Assert.That(await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {Q("AiUsageLedger")} WHERE {Q("DepartmentId")}=824"), Is.EqualTo(1));
+			Assert.That(await db.ExecuteScalarAsync<string>($"SELECT {Q("UserId")} FROM {Q("AiUsageLedger")} WHERE {Q("DepartmentId")}=824"), Is.Empty);
+			Assert.That(AdminAssistFreeAllowance.Current(recordedFirst, now, 20, 30, 4).Allowance, Is.EqualTo(4));
+		}
+
 		[Test]
 		public async Task Trace_replay_is_idempotent_tenant_bound_and_respects_department_removal()
 		{

@@ -40,11 +40,19 @@ namespace Resgrid.Model
 		[NotMapped]
 		public long Quantity { get; set; }
 
+		/// <summary>
+		/// Add-ons sold through their own monthly Billing API checkout (not the legacy PTT quantity flow), each with a
+		/// dedicated backend, billing-account table and live/test price pair: Readiness Pro, Business Operations, Enhanced AI.
+		/// </summary>
+		public static bool IsDedicatedMonthlyAddon(int addonType) =>
+			addonType == (int)PlanAddonTypes.ReadinessPro || addonType == (int)PlanAddonTypes.BusinessOperations ||
+			addonType == (int)PlanAddonTypes.EnhancedAi;
+
 		public string GetExternalKey()
 		{
-			if (AddonType == (int)PlanAddonTypes.ReadinessPro || AddonType == (int)PlanAddonTypes.BusinessOperations)
+			if (IsDedicatedMonthlyAddon(AddonType))
 			{
-				// Readiness Pro and Business Operations have separate live/test prices; never use a live price in test mode.
+				// Readiness Pro, Business Operations and Enhanced AI have separate live/test prices; never use a live price in test mode.
 				var priceId = Config.PaymentProviderConfig.IsTestMode ? TestExternalId : ExternalId;
 				return string.IsNullOrWhiteSpace(priceId) ? null : priceId.Trim();
 			}
@@ -80,9 +88,9 @@ namespace Resgrid.Model
 
 		public DateTime GetEndDateFromNow()
 		{
-			// Readiness Pro and Business Operations have their own monthly interval, even on an annual base plan.
+			// Readiness Pro, Business Operations and Enhanced AI have their own monthly interval, even on an annual base plan.
 			// Actual paid access uses the reconciled PaymentAddon interval, never this estimate.
-			if (AddonType == (int)PlanAddonTypes.ReadinessPro || AddonType == (int)PlanAddonTypes.BusinessOperations)
+			if (IsDedicatedMonthlyAddon(AddonType))
 				return DateTime.UtcNow.AddMonths(1);
 
 			if (Plan != null)
@@ -116,6 +124,8 @@ namespace Resgrid.Model
 					return "Readiness Pro";
 				case PlanAddonTypes.BusinessOperations:
 					return "Business Operations";
+				case PlanAddonTypes.EnhancedAi:
+					return "Enhanced AI";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

@@ -50,7 +50,7 @@ namespace Resgrid.Model.AdminAssist
 	public enum SetupAreaReason { OutsideMission, OtherSystem, PartnerManaged, NoCurrentNeed }
 	public sealed record SetupReviewEvidence(string CatalogVersion, string SnapshotRevision, DateTime AsOfUtc, int Required, int Verified, int Failed, int Unknown, long ScopeRevision = 0);
 	public sealed record AdminAssistOverview(string CatalogVersion, SetupWorkspace Workspace,
-		ConfigurationReport Report, IReadOnlyList<CapabilityAccess> Access, IReadOnlyList<CapabilitySetupAssessment> CapabilitySetup = null);
+		ConfigurationReport Report, IReadOnlyList<CapabilityAccess> Access, IReadOnlyList<CapabilitySetupAssessment> CapabilitySetup = null, SetupPlan SetupPlan = null);
 	public enum CapabilitySetupState { NotAssessed, NotConfigured, ConfigurationPresent, ChecksPassed, NeedsAttention }
 	public sealed record CapabilitySetupAssessment(string CapabilityId, CapabilitySetupState State, string OpportunityKey,
 		string GuidanceKey, IReadOnlyList<string> RuleIds, string SnapshotRevision, DateTime AsOfUtc);

@@ -8,6 +8,23 @@ namespace Resgrid.Tests.AdminAssist
 	public class ConfigurationAuditTests
 	{
 		[Test]
+		public void Computed_shift_windows_are_not_stored_configuration_and_cannot_break_audit()
+		{
+			var day = new ShiftDay { ShiftId = 1, Day = new System.DateTime(2026, 9, 24) };
+			var stamp = ConfigurationAuditProjection.Project(day);
+			Assert.That(stamp.Values, Does.Not.Contain("Start").And.Not.Contain("End"));
+		}
+
+		[Test]
+		public void Configuration_children_use_the_same_transactional_journal_boundary()
+		{
+			foreach (var type in new[] { typeof(CallTypesRepository), typeof(CallQuickTemplateRepository), typeof(UnitTypesRepository), typeof(CustomStateRepository),
+				typeof(CustomStateDetailRepository), typeof(RunCardsRepository), typeof(RunCardAlarmLevelsRepository), typeof(RunCardTriggersRepository),
+				typeof(RunCardUnitRequirementsRepository), typeof(RunCardRoleRequirementsRepository), typeof(RunCardAvailabilitySelectionsRepository),
+				typeof(ShiftDaysRepository), typeof(ShiftGroupsRepository), typeof(ShiftGroupRolesRepository), typeof(ShiftGroupAssignmentsRepository), typeof(ShiftPersonRepository) })
+				Assert.That(type.BaseType.GetGenericTypeDefinition(), Is.EqualTo(typeof(AuditedConfigurationRepository<>)), type.Name);
+		}
+		[Test]
 		public void Secret_rotation_is_detected_without_persisting_secret_or_digest()
 		{
 			var row = new DepartmentSetting { DepartmentId = 7, SettingType = (int)DepartmentSettingTypes.MappingMapboxAccessToken, Setting = "secret-before" };

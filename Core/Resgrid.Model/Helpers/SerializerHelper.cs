@@ -26,6 +26,7 @@ namespace Resgrid.Model.Helpers
 			// missing [ProtoContract] fails fast on boot instead of on the first enqueue.
 			Serializer.PrepareSerializer<CallQueueItem>();
 			Serializer.PrepareSerializer<ChatbotMessageQueueItem>();
+			Serializer.PrepareSerializer<AiDispatchQueueItem>();
 			Serializer.PrepareSerializer<MessageQueueItem>();
 			Serializer.PrepareSerializer<DistributionListQueueItem>();
 			Serializer.PrepareSerializer<NotificationItem>();

@@ -12,6 +12,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Скасувати</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Особа</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Виключено</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Ресурс</value>
+  </data>
   <data xml:space="preserve" name="Feature.addon-adp">
     <value>Розширений захист даних</value>
   </data>
@@ -177,6 +189,12 @@
   <data xml:space="preserve" name="Ui.After">
     <value>Після</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Запитання</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Source">
+    <value>Джерело</value>
+  </data>
   <data xml:space="preserve" name="Ui.Before">
     <value>До</value>
   </data>
@@ -191,6 +209,9 @@
   </data>
   <data xml:space="preserve" name="Ui.Fail">
     <value>Потребує уваги</value>
+  </data>
+  <data xml:space="preserve" name="Ui.False">
+    <value>Вимкнено</value>
   </data>
   <data xml:space="preserve" name="Ui.Featureplanned">
     <value>Заплановано</value>
@@ -251,6 +272,9 @@
   </data>
   <data xml:space="preserve" name="Ui.SearchReference">
     <value>Пошук у довідковій документації</value>
+  </data>
+  <data xml:space="preserve" name="Ui.True">
+    <value>Увімкнено</value>
   </data>
   <data xml:space="preserve" name="Ui.Unassigned">
     <value>Не призначено</value>

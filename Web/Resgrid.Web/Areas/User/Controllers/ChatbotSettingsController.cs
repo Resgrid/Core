@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.NLU;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Providers.Claims;
@@ -42,7 +43,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				MessagesPerDepartmentPerMinute = config?.MessagesPerDepartmentPerMinute,
 				LlmApiEndpoint = config?.LlmApiEndpoint,
 				LlmModelName = config?.LlmModelName,
-				HasLlmApiKey = !string.IsNullOrWhiteSpace(config?.LlmApiKey)
+				HasLlmApiKey = !string.IsNullOrWhiteSpace(config?.LlmApiKey),
+				ProviderId = string.IsNullOrWhiteSpace(config?.LlmApiEndpoint) ? null : LlmProviderCatalog.Infer(config.LlmApiEndpoint).Id,
+				OwnProviderStatus = await _chatbotConfigService.GetLlmOverrideStatusAsync(DepartmentId, bypassCache: true)
 			};
 
 			return View(model);
@@ -55,14 +58,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			// Same SSRF guard as the v4 API config writer (ChatbotController.UpdateConfig).
-			if (!string.IsNullOrWhiteSpace(model.LlmApiEndpoint) &&
-				!Resgrid.Chatbot.NLU.LlmEndpointValidator.IsValid(model.LlmApiEndpoint, out var llmEndpointError))
-				ModelState.AddModelError(nameof(model.LlmApiEndpoint), llmEndpointError);
+			var existing = await _chatbotConfigService.GetConfigAsync(DepartmentId, bypassCache: true);
+			model.OwnProviderStatus = await _chatbotConfigService.GetLlmOverrideStatusAsync(DepartmentId, bypassCache: true);
+
+			// Removing a saved provider is always allowed. Without the Enhanced AI add-on, or under Advanced Data Protection,
+			// the saved values are kept as they are (the form's provider fields are disabled), and a posted change is
+			// reported rather than applied.
+			string llmEndpoint = model.LlmApiEndpoint, llmModel = model.LlmModelName, newPlaintextKey;
+			if (model.RemoveLlmProvider)
+			{
+				llmEndpoint = null;
+				llmModel = null;
+				newPlaintextKey = "";
+			}
+			else if (!model.OwnProviderAllowed)
+			{
+				model.OwnProviderNotApplied = LlmProviderCatalog.SetsNewProvider(existing?.LlmApiEndpoint, existing?.LlmModelName,
+					model.LlmApiEndpoint, model.LlmModelName, model.LlmApiKey);
+				llmEndpoint = existing?.LlmApiEndpoint;
+				llmModel = existing?.LlmModelName;
+				newPlaintextKey = null;
+			}
+			else
+			{
+				// Same SSRF guard as the v4 API config writer (ChatbotController.UpdateConfig).
+				if (!string.IsNullOrWhiteSpace(model.LlmApiEndpoint) &&
+					!LlmEndpointValidator.IsValid(model.LlmApiEndpoint, out var llmEndpointError))
+					ModelState.AddModelError(nameof(model.LlmApiEndpoint), llmEndpointError);
+
+				// A blank key means "keep the existing one"; a value is encrypted and stored by the service.
+				newPlaintextKey = string.IsNullOrWhiteSpace(model.LlmApiKey) ? null : model.LlmApiKey;
+			}
 
 			if (!ModelState.IsValid)
 			{
-				var existing = await _chatbotConfigService.GetConfigAsync(DepartmentId);
 				model.HasLlmApiKey = !string.IsNullOrWhiteSpace(existing?.LlmApiKey);
 				model.LlmApiKey = null;
 				return View(model);
@@ -81,14 +110,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 					ProactiveNotificationsEnabled = model.ProactiveNotificationsEnabled,
 					MessagesPerUserPerMinute = model.MessagesPerUserPerMinute,
 					MessagesPerDepartmentPerMinute = model.MessagesPerDepartmentPerMinute,
-					LlmApiEndpoint = model.LlmApiEndpoint,
-					LlmModelName = model.LlmModelName
+					LlmApiEndpoint = string.IsNullOrWhiteSpace(llmEndpoint) ? null : llmEndpoint.Trim(),
+					LlmModelName = string.IsNullOrWhiteSpace(llmModel) ? null : llmModel.Trim()
 				};
 
-				// A blank key means "keep the existing one"; a value is encrypted and stored by the service.
-				var newPlaintextKey = string.IsNullOrWhiteSpace(model.LlmApiKey) ? null : model.LlmApiKey;
 				await _chatbotConfigService.SaveConfigAsync(config, newPlaintextKey);
 
+				// Show what was stored, not what was posted, so a kept or removed provider is visible.
+				ModelState.Remove(nameof(model.LlmApiEndpoint));
+				ModelState.Remove(nameof(model.LlmModelName));
+				ModelState.Remove(nameof(model.RemoveLlmProvider));
+				ModelState.Remove(nameof(model.ProviderId));
+				model.LlmApiEndpoint = config.LlmApiEndpoint;
+				model.LlmModelName = config.LlmModelName;
+				model.RemoveLlmProvider = false;
+				model.ProviderId = string.IsNullOrWhiteSpace(config.LlmApiEndpoint) ? null : LlmProviderCatalog.Infer(config.LlmApiEndpoint).Id;
 				model.HasLlmApiKey = !string.IsNullOrWhiteSpace(config.LlmApiKey);
 				model.LlmApiKey = null;
 				model.Saved = true;

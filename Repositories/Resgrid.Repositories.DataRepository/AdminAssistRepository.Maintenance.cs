@@ -11,7 +11,7 @@ namespace Resgrid.Repositories.DataRepository
 	public sealed partial class AdminAssistRepository
 	{
 		public async Task<IReadOnlyList<int>> GetDueDepartmentsAsync(DateTime nowUtc, int take, CancellationToken ct) =>
-			(await QueryAsync<int>($"SELECT w.{Col("DepartmentId")} FROM {Tbl("AdminAssistWorkspaces")} w INNER JOIN {Tbl("Departments")} d ON d.{Col("DepartmentId")}=w.{Col("DepartmentId")} " +
+			(await QueryAsync<int>($"SELECT w.{Col("DepartmentId")} FROM (SELECT {Col("DepartmentId")},MIN({Col("ModifiedOn")}) AS {Col("ModifiedOn")} FROM (SELECT {Col("DepartmentId")},{Col("ModifiedOn")} FROM {Tbl("AdminAssistWorkspaces")} UNION ALL SELECT {Col("DepartmentId")},{Col("ModifiedOnUtc")} AS {Col("ModifiedOn")} FROM {Tbl("AdminAssistConversations")} UNION ALL SELECT {Col("DepartmentId")},{Col("ExpiresOnUtc")} AS {Col("ModifiedOn")} FROM {Tbl("AiUsageLedger")} UNION ALL SELECT {Col("DepartmentId")},{Col("CreatedOnUtc")} AS {Col("ModifiedOn")} FROM {Tbl("AdminAssistDiagnosticRuns")} UNION ALL SELECT {Col("DepartmentId")},{Col("ExpiresOnUtc")} AS {Col("ModifiedOn")} FROM {Tbl("AdminAssistDiagnosticLeases")}) scopes GROUP BY {Col("DepartmentId")}) w INNER JOIN {Tbl("Departments")} d ON d.{Col("DepartmentId")}=w.{Col("DepartmentId")} " +
 				$"LEFT JOIN {Tbl("AdminAssistWorkerStates")} s ON s.{Col("DepartmentId")}=w.{Col("DepartmentId")} " +
 				$"WHERE (s.{Col("LeaseExpiresOn")} IS NULL OR s.{Col("LeaseExpiresOn")}<={P}Now) AND (s.{Col("LastAttemptOn")} IS NULL OR s.{Col("LastAttemptOn")}<{P}Due) " +
 				$"ORDER BY COALESCE(s.{Col("LastAttemptOn")},w.{Col("ModifiedOn")}),w.{Col("DepartmentId")} {Paging()}",
@@ -108,20 +108,30 @@ namespace Resgrid.Repositories.DataRepository
 				var sql = IsPostgres ? $"DELETE FROM {Tbl(table)} WHERE ctid IN (SELECT ctid FROM {Tbl(table)} WHERE {where} LIMIT 500)" : $"DELETE TOP (500) FROM {Tbl(table)} WHERE {where}";
 				return ExecuteAsync(sql, args, ct);
 			}
-			foreach (var (table, column, days) in new[] { ("AdminAssistDailySummaries", "DayUtc", AdminAssistConfig.AggregateRetentionDays), ("AdminAssistLearning", "ModifiedOn", AdminAssistConfig.PersonalLearningRetentionDays), ("AdminAssistDispatchTraces", "OccurredOn", AdminAssistConfig.TraceRetentionDays) })
+			foreach (var (table, column, days) in new[] { ("AdminAssistDailySummaries", "DayUtc", AdminAssistConfig.AggregateRetentionDays), ("AdminAssistLearning", "ModifiedOn", AdminAssistConfig.PersonalLearningRetentionDays), ("AdminAssistDispatchTraces", "OccurredOn", AdminAssistConfig.TraceRetentionDays), ("AiGenerations", "CreatedOnUtc", Resgrid.Config.AiConfig.ConversationRetentionDays), ("AdminAssistDiagnosticRuns", "CreatedOnUtc", Math.Clamp(AdminAssistConfig.DiagnosticRetentionDays, 1, 30)) })
 			{
 				var where = $"{Col("DepartmentId")}={P}DepartmentId AND {Col(column)}<{P}Before";
 				deleted += await DeleteWhere(table, where, new { DepartmentId = departmentId, Before = DatabaseTimestamp(nowUtc.AddDays(-Math.Clamp(days, 1, 3650))) });
 			}
+			deleted += await DeleteWhere("AdminAssistDiagnosticRuns", $"{Col("DepartmentId")}={P}DepartmentId AND {Col("Deleted")}={P}True", new { DepartmentId = departmentId, True = true });
+			deleted += await DeleteWhere("AdminAssistDiagnosticLeases", $"{Col("DepartmentId")}={P}DepartmentId AND {Col("ExpiresOnUtc")}<={P}Now", new { DepartmentId = departmentId, Now = DatabaseTimestamp(nowUtc) });
 			var personalActions = $"{Col("Action")} IN ('learn','interest','dismiss')";
 			deleted += await DeleteWhere("AdminAssistHistory", $"{Col("DepartmentId")}={P}DepartmentId AND {personalActions} AND {Col("OccurredOnUtc")}<{P}Before",
 				new { DepartmentId = departmentId, Before = DatabaseTimestamp(nowUtc.AddDays(-Math.Clamp(AdminAssistConfig.PersonalLearningRetentionDays, 1, 3650))) });
-			foreach (var (table, userColumn) in new[] { ("AdminAssistLearning", "UserId"), ("AdminAssistPreferences", "UserId"), ("AdminAssistHistory", "ActorId") })
+			deleted += await DeleteWhere("AiGenerations", $"{Col("DepartmentId")}={P}DepartmentId AND EXISTS (SELECT 1 FROM {Tbl("AdminAssistConversations")} c WHERE c.{Col("Id")}={Tbl("AiGenerations")}.{Col("ConversationId")} AND c.{Col("DepartmentId")}={P}DepartmentId AND c.{Col("Deleted")}={P}True)", new { DepartmentId = departmentId, True = true });
+			foreach (var (table, userColumn) in new[] { ("AdminAssistLearning", "UserId"), ("AdminAssistPreferences", "UserId"), ("AdminAssistHistory", "ActorId"), ("AdminAssistDiagnosticRuns", "UserId"), ("AiGenerations", "UserId"), ("AdminAssistConversations", "UserId") })
 			{
 				var where = $"{Col("DepartmentId")}={P}DepartmentId AND " + (table == "AdminAssistHistory" ? personalActions + " AND " : "") +
 					$"NOT EXISTS (SELECT 1 FROM {Tbl("DepartmentMembers")} m WHERE m.{Col("DepartmentId")}={P}DepartmentId AND m.{Col("UserId")}={Tbl(table)}.{Col(userColumn)} AND m.{Col("IsDeleted")}={P}NotDeleted)";
 				deleted += await DeleteWhere(table, where, new { DepartmentId = departmentId, NotDeleted = false });
 			}
+			deleted += await DeleteWhere("AdminAssistConversations", $"{Col("DepartmentId")}={P}DepartmentId AND {Col("ModifiedOnUtc")}<{P}Before AND NOT EXISTS (SELECT 1 FROM {Tbl("AiGenerations")} g WHERE g.{Col("ConversationId")}={Tbl("AdminAssistConversations")}.{Col("Id")})",
+				new { DepartmentId = departmentId, Before = DatabaseTimestamp(nowUtc.AddDays(-Math.Clamp(Resgrid.Config.AiConfig.ConversationRetentionDays, 1, 365))) });
+			// Preserve a single actor-free first-answer marker so retention cannot restart the free starter allowance.
+			var ledgerArgs = new { DepartmentId = departmentId, Month = nowUtc.AddMonths(-12).ToString("yyyy-MM", System.Globalization.CultureInfo.InvariantCulture), Skip = 0, Take = 1 };
+			var firstAnswer = $"SELECT {Col("Id")} FROM {Tbl("AiUsageLedger")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Outcome")}='Answered' AND ({Col("Feature")}='AdminAssist' OR {Col("Feature")} IS NULL) AND {Col("CreatedOnUtc")} IS NOT NULL ORDER BY {Col("CreatedOnUtc")},{Col("Id")} {Paging()}";
+			deleted += await DeleteWhere("AiUsageLedger", $"{Col("DepartmentId")}={P}DepartmentId AND {Col("Month")}<{P}Month AND {Col("Id")} NOT IN ({firstAnswer})", ledgerArgs);
+			await ExecuteAsync($"UPDATE {Tbl("AiUsageLedger")} SET {Col("UserId")}='' WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Month")}<{P}Month AND {Col("Id")} IN ({firstAnswer})", ledgerArgs, ct);
 			return deleted;
 		}, ct);
 		private sealed class WorkerDates { public DateTime? LastEvaluatedOn { get; set; } public DateTime? LastDigestOn { get; set; } }

@@ -20,6 +20,12 @@
             stations and break the scoping the caller asked for by emailing that address.
             </param>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueAiDispatchEnrichmentAsync(Resgrid.Model.Call,System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            AI dispatch, Enrich mode: the call above is already saved and its broadcast queued exactly as for GenericTemplate.
+            Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.PaymentWebhooksController">
             <summary>
             Connect webhook receiver for department-connected payment accounts (Workforce &amp; Business Operations plan,
@@ -70,16 +76,34 @@
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AdminAssistController">
-            <summary>Deterministic department setup and configuration guidance. No configuration mutation or model calls.</summary>
+            <summary>Deterministic department setup and configuration guidance. Source configuration remains read-only; Ask is separately gated.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.#ctor(Resgrid.Model.AdminAssist.IAdminAssistService,Resgrid.Model.AdminAssist.IAdminAssistAccessService,Resgrid.Model.AdminAssist.IAdminAssistCatalog,Microsoft.Extensions.Localization.IStringLocalizer{Resgrid.Localization.Areas.User.AdminAssist.AdminAssist},Resgrid.Model.AdminAssist.IAdminAssistReferenceSearch,Resgrid.Model.AdminAssist.IAdminAssistWorklistService,Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore,Resgrid.Model.AdminAssist.IConfigurationImpactService,Resgrid.Model.AdminAssist.IDispatchImpactService,Resgrid.Model.AdminAssist.IPermissionImpactService,Resgrid.Model.AdminAssist.IModuleImpactService,Resgrid.Model.AdminAssist.ITextImportImpactService,Resgrid.Model.AdminAssist.IRetentionImpactService,Resgrid.Model.AdminAssist.INotificationImpactService,Resgrid.Model.AdminAssist.ISecurityImpactService)">
-            <summary>Deterministic department setup and configuration guidance. No configuration mutation or model calls.</summary>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.#ctor(Resgrid.Model.AdminAssist.IAdminAssistService,Resgrid.Model.AdminAssist.IAdminAssistAccessService,Resgrid.Model.AdminAssist.IAdminAssistCatalog,Microsoft.Extensions.Localization.IStringLocalizer{Resgrid.Localization.Areas.User.AdminAssist.AdminAssist},Resgrid.Model.AdminAssist.IAdminAssistReferenceSearch,Resgrid.Model.AdminAssist.IAdminAssistAskService,Resgrid.Model.AdminAssist.IAdminAssistDiagnostics,Resgrid.Model.AdminAssist.IAdminAssistWorklistService,Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore,Resgrid.Model.AdminAssist.IConfigurationImpactService,Resgrid.Model.AdminAssist.IDispatchImpactService,Resgrid.Model.AdminAssist.IPermissionImpactService,Resgrid.Model.AdminAssist.IModuleImpactService,Resgrid.Model.AdminAssist.ITextImportImpactService,Resgrid.Model.AdminAssist.IRetentionImpactService,Resgrid.Model.AdminAssist.INotificationImpactService,Resgrid.Model.AdminAssist.ISecurityImpactService)">
+            <summary>Deterministic department setup and configuration guidance. Source configuration remains read-only; Ask is separately gated.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Overview(System.Boolean,System.Threading.CancellationToken)">
             <summary>Read fresh, authorized configuration evidence and setup progress.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Catalog(System.Boolean,System.Threading.CancellationToken)">
             <summary>Read the release-pinned public setup and feature catalog.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Diagnose(Resgrid.Model.AdminAssist.DiagnosticRequest,System.Threading.CancellationToken)">
+            <summary>Run an attended, read-only diagnostic within the current department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Diagnostic(Resgrid.Model.AdminAssist.DiagnosticRunCommand,System.Threading.CancellationToken)">
+            <summary>Refresh an owned diagnostic using current source permissions and evidence.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Diagnostics(System.Threading.CancellationToken)">
+            <summary>List recent private diagnostic runs; contains no subject names or identifiers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DiagnosticSupportPreview(Resgrid.Model.AdminAssist.DiagnosticRunCommand,System.Threading.CancellationToken)">
+            <summary>Preview a reauthorized support bundle without sending it.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DiagnosticSupportExport(Resgrid.Model.AdminAssist.DiagnosticRunCommand,System.Threading.CancellationToken)">
+            <summary>Export only when authorized evidence still matches the reviewed preview.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteDiagnostic(Resgrid.Model.AdminAssist.DiagnosticRunCommand,System.Threading.CancellationToken)">
+            <summary>Tombstone an owned diagnostic; protected content follows hold-aware cleanup.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Setup(Resgrid.Model.AdminAssist.SetupProgressCommand,System.Threading.CancellationToken)">
             <summary>Update setup choices and personal learning metadata.</summary>
@@ -134,6 +158,30 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Preferences(Resgrid.Model.AdminAssist.AdminAssistPreferencesCommand,System.Threading.CancellationToken)">
             <summary>Save the current administrator's explicit digest opt-in and quiet hours.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.AskStatus(System.Threading.CancellationToken)">
+            <summary>Read the current Ask availability and remaining department allowance.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Ask(Resgrid.Model.AdminAssist.AdminAssistAskRequest,System.Threading.CancellationToken)">
+            <summary>Select freshly authorized evidence cards using the separately gated local model.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Conversations(System.Threading.CancellationToken)">
+            <summary>List only the current administrator's private conversations.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Conversation(System.String,System.Threading.CancellationToken)">
+            <summary>Refresh authorized evidence for the latest private conversation turns.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.ConversationExport(System.String,System.Threading.CancellationToken)">
+            <summary>Export an owned conversation through current protection/grant checks, without replaying model output.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteConversation(Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteConversationRequest,System.Threading.CancellationToken)">
+            <summary>Tombstone an owned conversation using its expected revision; hold-aware retention handles payload deletion.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteConversationRequest">
+            <summary>Only an owned conversation identifier and expected revision are accepted.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteConversationRequest.#ctor(System.String,System.Int64)">
+            <summary>Only an owned conversation identifier and expected revision are accepted.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">
             <summary>
@@ -674,14 +722,25 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.GetConfig">
             <summary>
             Gets this department's chatbot configuration (admin). The LLM API key is never returned;
-            callers see only whether one is configured.
+            callers see only whether one is configured. ownLlmProviderAllowed says whether a saved
+            provider is in use; ownLlmProviderStatus says why not (AddonRequired, DataProtectionEnabled,
+            Unknown).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.GetLlmProviders">
+            <summary>
+            Lists the LLM providers a department can connect with its own subscription (bring your own
+            key): preset endpoint, an example model and whether the endpoint has placeholders to fill in.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.UpdateConfig(Resgrid.Web.Services.Controllers.v4.ChatbotConfigRequest)">
             <summary>
             Creates or updates this department's chatbot configuration (admin). A department may set
-            its own LLM endpoint/key/model so its NLU processing stays with their provider. For the
-            key: omit (null) to keep the existing one, send "" to clear it, or send a value to set it.
+            its own LLM endpoint/key/model so its NLU processing stays with their provider; that needs
+            the Enhanced AI add-on on Resgrid's hosted service and is never allowed under Advanced Data
+            Protection (403 otherwise; 503 when entitlement cannot be read). Resending the saved
+            endpoint and model, or clearing them, is always allowed. For the key: omit (null) to keep
+            the existing one, send "" to clear it, or send a value to set it.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.GetChatChannel">
@@ -1727,7 +1786,10 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.QueueEnrollment(Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput)">
             <summary>
             Queues enrollment (Disabled -> EnrollmentQueued). Managing member only; requires an active
-            paid ADP addon and an open global admission gate, both re-verified server-side.
+            paid ADP addon and an open global admission gate, both re-verified server-side, and an
+            acknowledgement record for the current version: <c>{"version": "ADP-ACK-2",
+            "acknowledgedItems": [every key], "lockConsent": true}</c>, with the version and keys from
+            Capabilities. Anything less is refused with <c>acknowledgements_incomplete</c>.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.CancelQueuedEnrollment">
@@ -11551,7 +11613,12 @@
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput.AcknowledgementsJson">
-            <summary>Versioned acknowledgement record from the wizard (section 12 disclosure items).</summary>
+            <summary>
+            Versioned acknowledgement record (section 12 disclosure items), validated server-side against
+            AdpEnrollmentAcknowledgements: <c>version</c> equal to Capabilities' AcknowledgementVersion,
+            <c>acknowledgedItems</c> containing every AcknowledgementItems key, and <c>lockConsent</c> true.
+            At most 64 KB.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput.WindowStartLocal">
             <summary>Department-local overnight window start, "HH:mm" (default 22:00).</summary>
@@ -11616,6 +11683,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.LockProjectedEndUtc">
             <summary>Projected lock end (ISO 8601), when locked and known.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.AcknowledgementVersion">
+            <summary>The acknowledgement version QueueEnrollment requires (AdpEnrollmentAcknowledgements.Version).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.AcknowledgementItems">
+            <summary>Every section 12 disclosure key QueueEnrollment requires in acknowledgedItems.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.EnrollmentCommandResult.Outcome">
             <summary>DepartmentDataProtectionEnrollmentResult name.</summary>

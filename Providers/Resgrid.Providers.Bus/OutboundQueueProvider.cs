@@ -65,5 +65,10 @@ namespace Resgrid.Providers.Bus
 		{
 			return await _rabbitOutboundQueueProvider.EnqueueCommunicationTest(communicationTestQueue);
 		}
+
+		public async Task<bool> EnqueueAiDispatchTriage(AiDispatchQueueItem aiDispatchQueue)
+		{
+			return await _rabbitOutboundQueueProvider.EnqueueAiDispatchTriage(aiDispatchQueue);
+		}
 	}
 }

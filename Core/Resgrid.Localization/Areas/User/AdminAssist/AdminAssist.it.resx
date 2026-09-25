@@ -12,6 +12,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Annulla</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Persona</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Escluso</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Risorsa</value>
+  </data>
   <data xml:space="preserve" name="Feature.addon-adp">
     <value>Protezione avanzata dei dati</value>
   </data>
@@ -183,6 +195,9 @@
   <data xml:space="preserve" name="Ui.After">
     <value>Dopo</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Domanda</value>
+  </data>
   <data xml:space="preserve" name="Ui.Assigned">
     <value>Assegnato</value>
   </data>
@@ -209,9 +224,6 @@
   </data>
   <data xml:space="preserve" name="Ui.Freshness">
     <value>Evidenze aggiornate al</value>
-  </data>
-  <data xml:space="preserve" name="Ui.HistoryTime">
-    <value>Data</value>
   </data>
   <data xml:space="preserve" name="Ui.Information">
     <value>Informazioni</value>

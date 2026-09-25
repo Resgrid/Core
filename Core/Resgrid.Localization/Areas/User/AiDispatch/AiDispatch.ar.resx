@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>إعدادات الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>نشاط الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>وضع الإثراء: تُنشأ البلاغات وتُرسل تمامًا كما في السابق، ثم يكمل الذكاء الاصطناعي البيانات التي ما زالت فارغة. لا يغيّر الأولوية أو من يُرسَل أبدًا، ولا يعيد تنبيه أي شخص.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>الإرسال بالذكاء الاصطناعي يعمل لقسمك.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>الإرسال بالذكاء الاصطناعي غير مفعّل في نشر Resgrid هذا.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>يتطلب الإرسال بالذكاء الاصطناعي إضافة Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>للبدء، اختر "Generic with AI enrichment (Enhanced AI)" تنسيقًا لبريد الإرسال.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>لم يتم إعداد نموذج الذكاء الاصطناعي لهذا النشر بعد.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>ما يمكن للذكاء الاصطناعي فعله</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>إكمال نوع بلاغ فارغ</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>إكمال عنوان وموقع على الخريطة فارغين</value></data>
+  <data name="FillContact" xml:space="preserve"><value>إكمال اسم ورقم جهة اتصال فارغين</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>إكمال رقم حادث فارغ</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>إعادة تسمية البلاغات التي تصل بعنوان "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>إضافة ملاحظة ملخص بالذكاء الاصطناعي مع أولوية مقترحة</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>الإشارة إلى التكرارات المحتملة والرسائل التي ليست بلاغات إرسال</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>الضمانات</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>الحد الأدنى للثقة (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>تحت هذه الثقة لا يغيّر الذكاء الاصطناعي شيئًا. اتركه فارغًا لاستخدام القيمة الافتراضية {0}%. النطاق المسموح: 50–95%.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>المرسلون المسموح لهم</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>عنوان بريد إلكتروني أو نطاق واحد في كل سطر، مثل cad.county.gov. تُثرى فقط الرسائل من هؤلاء المرسلين؛ وتظل كل رسالة تنشئ بلاغًا. اتركه فارغًا للسماح لجميع المرسلين.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>الحد الشهري لرموز الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>حد اختياري ضمن ميزانية Enhanced AI لقسمك. اتركه فارغًا لعدم وضع حد منفصل. المستخدم هذا الشهر: {0} رمز.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>سجل النشاط</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>الاحتفاظ بالنشاط لمدة (أيام)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>بين 30 و1095 يومًا. يُحذف النشاط الأقدم تلقائيًا.</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم حفظ إعدادات الإرسال بالذكاء الاصطناعي.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>غيّر مسؤول آخر هذه الإعدادات. راجع القيم الحالية ثم احفظ مرة أخرى.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>يجب أن يكون الحد الأدنى للثقة بين 50% و95%.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>يجب أن تكون مدة الاحتفاظ بالنشاط بين 30 و1095 يومًا.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>يجب أن يكون الحد الشهري للرموز بين 8192 و50000000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>يجب أن يكون كل مرسل مسموح له عنوان بريد إلكتروني أو نطاقًا.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>أدخل 50 مرسلًا مسموحًا لهم كحد أقصى.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>عرض نشاط الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>إعدادات بريد الإرسال</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>آخر تحديث: {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>يُحتفظ هنا بالنتائج فقط، ولا يُحتفظ أبدًا بالرسالة أو برد الذكاء الاصطناعي. افتح بلاغًا لترى ما تم إكماله.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>لا يوجد نشاط للإرسال بالذكاء الاصطناعي بعد.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>آخر 30 يومًا</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>رموز الإرسال بالذكاء الاصطناعي هذا الشهر</value></data>
+  <data name="Skipped" xml:space="preserve"><value>تم تخطيها أو دون تغيير</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>متى</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>البلاغ</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>الثقة</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>ما تم إكماله</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>المرفوض</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>قد يكون مرتبطًا</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>وقت الذكاء الاصطناعي</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>الرموز</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>المرفوض هو القيم التي أعادها الذكاء الاصطناعي ولم تكن مسموحة أو لم ترد في الرسالة.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>تم الإثراء</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>لا شيء للإضافة</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>ثقة منخفضة</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>رد غير صالح من الذكاء الاصطناعي</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>الذكاء الاصطناعي غير متاح</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>الذكاء الاصطناعي مشغول</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>نفدت ميزانية Enhanced AI</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>تم بلوغ حد الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>تم التخطي: حماية البيانات</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>البلاغ لم يعد نشطًا</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>المرسل غير مسموح له</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>قيد التنفيذ</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>نوع البلاغ</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>العنوان</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>الموقع على الخريطة</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>اسم جهة الاتصال</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>رقم جهة الاتصال</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>رقم الحادث</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>ملاحظة</value></data>
+</root>

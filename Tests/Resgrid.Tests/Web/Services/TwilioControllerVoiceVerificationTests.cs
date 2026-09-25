@@ -648,6 +648,18 @@ namespace Resgrid.Tests.Web.Services
 			((ContentResult)result).Content.Should().NotContain("123456");
 		}
 
+		[TestCase("OPEN BURN AT 123 MAIN ST")]
+		[TestCase("open door lockout")]
+		public async System.Threading.Tasks.Task Ordinary_text_starting_with_open_still_reaches_the_inbound_pipeline(string body)
+		{
+			var controller = BuildController();
+			controller.Request.Method = "GET";
+			await controller.IncomingMessage(new TwilioMessage { From = "+15555550123", To = "+15555550456", Body = body });
+			_adpReleaseMock.Invocations.Should().BeEmpty();
+			// Only the normal pipeline resolves an unknown sender's department from the texted number.
+			_departmentSettingsServiceMock.Verify(x => x.GetDepartmentIdByTextToCallNumberAsync("15555550456"), Times.Once);
+		}
+
 		[Test]
 		public async System.Threading.Tasks.Task Protected_voice_release_uses_inline_speech_without_the_audio_cache()
 		{

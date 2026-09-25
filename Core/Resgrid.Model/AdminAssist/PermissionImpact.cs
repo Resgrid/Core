@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace Resgrid.Model.AdminAssist
 {
+	public interface IAdminAssistPermissionEvaluator
+	{
+		Task<bool?> EvaluateCurrentAsync(AdminAssistActor administrator, string memberId, string permissionType, string targetId, CancellationToken ct);
+	}
 	public sealed record PermissionImpactRequest(string ExpectedRevision, string PermissionType, int Action,
 		bool LockToGroup, int[] RoleIds);
 	public sealed record PermissionRoleOption(int Id, string Name);

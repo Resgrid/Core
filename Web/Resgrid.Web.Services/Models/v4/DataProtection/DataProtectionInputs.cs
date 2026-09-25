@@ -15,7 +15,12 @@ namespace Resgrid.Web.Services.Models.v4.DataProtection
 	/// </summary>
 	public class QueueEnrollmentInput
 	{
-		/// <summary>Versioned acknowledgement record from the wizard (section 12 disclosure items).</summary>
+		/// <summary>
+		/// Versioned acknowledgement record (section 12 disclosure items), validated server-side against
+		/// AdpEnrollmentAcknowledgements: <c>version</c> equal to Capabilities' AcknowledgementVersion,
+		/// <c>acknowledgedItems</c> containing every AcknowledgementItems key, and <c>lockConsent</c> true.
+		/// At most 64 KB.
+		/// </summary>
 		public string AcknowledgementsJson { get; set; }
 
 		/// <summary>Department-local overnight window start, "HH:mm" (default 22:00).</summary>

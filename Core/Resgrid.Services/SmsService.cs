@@ -488,8 +488,16 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendProtectedDispatchChallengeAsync(UserProfile profile, int departmentId, string departmentNumber, string challengeText)
+		public async Task<bool> SendProtectedDispatchChallengeAsync(UserProfile profile, int departmentId, string departmentNumber, string challengeText, Payment payment = null)
 		{
+			// Same kill switch and plan gate as SendCallAsync. A false here falls back to SendCallAsync,
+			// which applies both gates again, so nothing is sent either way.
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (payment != null && !_subscriptionsService.CanPlanSendCallSms(payment.PlanId))
+				return false;
+
 			if (profile == null || !profile.SendSms || profile.MobileNumberVerified != true || string.IsNullOrWhiteSpace(challengeText))
 				return false;
 			// Dispatch preferences apply, and the sender must accept replies. Never use an email-to-SMS gateway.

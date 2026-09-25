@@ -38,6 +38,9 @@ namespace Resgrid.Services.CallEmailTemplates
 			_templates.Add((int)CallEmailTypes.Active911, new Active911lTemplate());
 			_templates.Add((int)CallEmailTypes.OttawaCounty, new OttawaCountyTemplate());
 			_templates.Add((int)CallEmailTypes.OttawaKingstonToronto, new OttawaKingstonTorontoTemplate());
+			// AI dispatch, Enrich mode: the call is exactly what GenericTemplate builds and is dispatched as today; the
+			// aidispatchtriage worker enriches it afterwards. A lapsed entitlement therefore still produces a normal call.
+			_templates.Add((int)CallEmailTypes.AI, new GenericTemplate());
 		}
 
 		public async Task<Call> GenerateCallFromEmailText(CallEmailTypes type, CallEmail email, string managingUser, List<IdentityUser> users,

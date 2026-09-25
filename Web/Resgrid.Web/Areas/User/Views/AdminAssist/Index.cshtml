@@ -2,9 +2,26 @@
 @{
 	ViewBag.Title = "Resgrid | " + adminAssistLocalizer["Ui.Title"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView { BannerTitle = adminAssistLocalizer["Ui.Title"] };
 }
 <div class="wrapper wrapper-content">
 	<h1>@adminAssistLocalizer["Ui.Title"]</h1>
+	@if (ViewBag.AdminAssistProtected == true)
+	{
+		<partial name="_AdpRevealBanner" model="adpReveal" />
+	}
 	<rg-admin-assist page="@ViewBag.AdminAssistPage" setup="@(ViewBag.AdminAssistSetup ? "true" : "false")"
 		loadinglabel="@adminAssistLocalizer["Ui.Loading"]" errorlabel="@adminAssistLocalizer["Ui.Error"]"></rg-admin-assist>
 </div>
+@section Scripts
+{
+	@if (ViewBag.AdminAssistProtected == true)
+	{
+		<partial name="_AdpRevealScripts" model="adpReveal" />
+		<script type="text/javascript">
+			window.resgridAdpPageRevealed = window.resgridAdpPageConcealed = window.resgridAdpPageRenewed = function () {
+				window.dispatchEvent(new CustomEvent('resgrid:adp-reveal-changed'));
+			};
+		</script>
+	}
+}

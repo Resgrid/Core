@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Resgrid.Web.Services.Models.v4.DataProtection
 {
 	/// <summary>
@@ -57,6 +59,12 @@ namespace Resgrid.Web.Services.Models.v4.DataProtection
 
 		/// <summary>Projected lock end (ISO 8601), when locked and known.</summary>
 		public string LockProjectedEndUtc { get; set; }
+
+		/// <summary>The acknowledgement version QueueEnrollment requires (AdpEnrollmentAcknowledgements.Version).</summary>
+		public string AcknowledgementVersion { get; set; }
+
+		/// <summary>Every section 12 disclosure key QueueEnrollment requires in acknowledgedItems.</summary>
+		public List<string> AcknowledgementItems { get; set; }
 	}
 
 	public class DataProtectionCapabilitiesResult : StandardApiResponseV4Base

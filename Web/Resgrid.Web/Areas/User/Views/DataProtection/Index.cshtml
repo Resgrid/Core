@@ -193,7 +193,12 @@
                                 <li>@localizer["Step1LimitBigBoard"]</li>
                                 <li>@localizer["Step1LimitWorkflow"]</li>
                                 <li>@localizer["Step1LimitNotifications"]</li>
+                                <li>@localizer["Step1LimitOwnAiProvider"]</li>
                             </ul>
+                            @if (!string.IsNullOrWhiteSpace(Model.OwnAiProviderName))
+                            {
+                                <div class="alert alert-warning" role="alert">@localizer["OwnAiProviderInUse", Model.OwnAiProviderName]</div>
+                            }
                             <div class="alert alert-warning">
                                 @localizer["Step1NotCompliance"]
                             </div>
@@ -212,6 +217,7 @@
                                 <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="bigboard_reduction" /> @localizer["AckBigBoardReduction"]</label></div>
                                 <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="workflow_redaction" /> @localizer["AckWorkflowRedaction"]</label></div>
                                 <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="default_egress" /> @localizer["AckDefaultEgress"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="own_ai_provider" /> @localizer["AckOwnAiProvider"]</label></div>
                                 <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="search_report_limitations" /> @localizer["AckSearchReportLimitations"]</label></div>
                                 <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="migration_disable" /> @localizer["AckMigrationDisable"]</label></div>
                                 <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="key_loss_support" /> @localizer["AckKeyLossSupport"]</label></div>
@@ -282,6 +288,10 @@
                         <div class="adp-step" data-step="6" style="display:none;">
                             <h3>@localizer["Step6Header"]</h3>
                             <p>@localizer["Step6Intro"]</p>
+                            @if (!string.IsNullOrWhiteSpace(Model.OwnAiProviderName))
+                            {
+                                <div class="alert alert-warning" role="alert">@localizer["OwnAiProviderInUse", Model.OwnAiProviderName]</div>
+                            }
                             <div id="adpQueueError"></div>
                             <button class="btn btn-default adp-prev">@localizer["Back"]</button>
                             <button class="btn btn-primary" id="adpQueueEnrollment">@localizer["QueueEnrollment"]</button>

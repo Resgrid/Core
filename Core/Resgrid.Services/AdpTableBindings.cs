@@ -202,6 +202,8 @@ namespace Resgrid.Services
 					Binary("PayDataExportArtifacts", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
+				AdpTableBinding.Direct("AiGenerations", "Id", pkIsNumeric: false, "DepartmentId", new[] { Text("AiGenerations", "Content") }) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("AdminAssistDiagnosticRuns", "Id", pkIsNumeric: false, "DepartmentId", new[] { Text("AdminAssistDiagnosticRuns", "Content") }) with { ProtectedMarkerColumn = "IsProtected" },
 				AdpTableBinding.Direct("AdminAssistFindings", "AdminAssistFindingId", pkIsNumeric: false, "DepartmentId", new[] { Text("AdminAssistFindings", "Content") }) with { ProtectedMarkerColumn = "IsProtected" },
 				AdpTableBinding.Direct("AdminAssistDispatchTraces", "AdminAssistDispatchTraceId", pkIsNumeric: false, "DepartmentId", new[] { Text("AdminAssistDispatchTraces", "Content") }) with { ProtectedMarkerColumn = "IsProtected" },
 

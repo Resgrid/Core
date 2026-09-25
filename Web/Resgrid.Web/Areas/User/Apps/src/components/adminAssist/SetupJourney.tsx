@@ -16,7 +16,7 @@ export default function SetupJourney({ t, capabilities, access, localLink, show,
   localLink: (url: string | null | undefined) => string | undefined;
   show: (page: string) => void; showAddons: () => void; learned: number; total: number;
 }) {
-  return <section aria-label={t('Ui.JourneyTitle')}><h3>{t('Ui.JourneyTitle')}</h3><p>{t('Ui.JourneyHelp')}</p><p>{t('Ui.JourneyEffort')}</p>
+  return <section aria-label={t('Ui.JourneyTitle')}><h3>{t('Ui.JourneyTitle')}</h3><p>{t('Ui.JourneyHelp')}</p><p>{t('Ui.EffortAssumptions')}</p>
     <ol className="rgaa-journey">{steps.map(step => <li key={step.id}><details>
       <summary>{t(`Ui.Journey${step.id}Title`)}</summary><p>{t(`Ui.Journey${step.id}Help`)}</p>
       {step.id === 2 && <p><a href={localLink("/User/Department/OperatingProfile")}>{t('Ui.OperatingProfile')}</a></p>}

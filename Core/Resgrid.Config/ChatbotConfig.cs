@@ -13,9 +13,18 @@ namespace Resgrid.Config
 		public static float MinimumIntentConfidence = 0.65f;
 		public static float MinimumCloudConfidence = 0.75f;
 
-		// Cloud LLM NLU Configuration
+		// LLM NLU Configuration (operator-owned). Open-source and on-prem installs point this at their own model server
+		// (vLLM, Ollama, LiteLLM) or at a provider account of their choosing; Resgrid's hosted service uses its own
+		// hardware. A department's own provider (bring your own key) is separate and requires the Enhanced AI add-on.
 		public static CloudNluProviderType CloudNluProvider = CloudNluProviderType.OpenAiCompatible;
 		public static string CloudNluApiEndpoint = "";
+
+		/// <summary>
+		/// Lets the operator's CloudNluApiEndpoint be http or resolve to a private, loopback or unique-local address, for a
+		/// model server on the same network. Metadata and link-local ranges stay blocked, and department endpoints are
+		/// always public https only. Environment key RESGRID:ChatbotConfig:CloudNluAllowPrivateEndpoint.
+		/// </summary>
+		public static bool CloudNluAllowPrivateEndpoint = false;
 		public static string CloudNluApiKey = "";
 		public static string CloudNluModelName = "deepseek-chat";
 		public static int CloudNluTimeoutSeconds = 10;

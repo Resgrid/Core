@@ -188,6 +188,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 								 autoDelete: false,
 								 arguments: null);
 
+					await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.AiDispatchTriageQueueName),
+								 durable: true,
+								 exclusive: false,
+								 autoDelete: false,
+								 arguments: null);
+
 					await DeclareUnitLocationV2QueuesAsync(channel);
 
 					return true;

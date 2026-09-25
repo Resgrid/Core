@@ -22,7 +22,7 @@ SELECT {string.Join(",", columns.Select(c => "al." + Q(c)))}, ROW_NUMBER() OVER 
 FROM {Table("ActionLogs")} al
 INNER JOIN {Table("AspNetUsers")} u ON u.{Q("Id")}=al.{Q("UserId")}
 INNER JOIN {Table("DepartmentMembers")} dm ON dm.{Q("UserId")}=al.{Q("UserId")} AND dm.{Q("DepartmentId")}=al.{Q("DepartmentId")}
-WHERE al.{Q("DepartmentId")}=@DepartmentId AND dm.{Q("IsDeleted")}=@False AND dm.{Q("IsDisabled")}=@False AND dm.{Q("IsHidden")}=@False
+WHERE al.{Q("DepartmentId")}=@DepartmentId AND dm.{Q("IsDeleted")}=@False AND (dm.{Q("IsDisabled")} IS NULL OR dm.{Q("IsDisabled")}=@False) AND (dm.{Q("IsHidden")} IS NULL OR dm.{Q("IsHidden")}=@False)
 AND al.{Q("Timestamp")}>=@Earliest AND (@DisableAutoAvailable=@True OR al.{Q("Timestamp")}>=@Threshold))
 SELECT {(postgres ? "" : "TOP (@Take) ")}{string.Join(",", columns.Select(Q))} FROM selected WHERE position=1 ORDER BY {Q("UserId")} {(postgres ? "LIMIT @Take" : "")}";
 			DateTime Stamp(DateTime value) => postgres ? DateTime.SpecifyKind(value, DateTimeKind.Unspecified) : value;

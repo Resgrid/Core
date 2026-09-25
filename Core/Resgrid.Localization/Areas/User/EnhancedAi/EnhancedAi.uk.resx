@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Доповнення Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>Щомісячне доповнення, яке додає до Resgrid відповіді та чернетки, створені ШІ. Воно працює на серверах, якими керує Resgrid, із моделями з відкритими вагами. Придбати або скасувати його може лише керівний член підрозділу.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist із ШІ без щомісячного ліміту запитань</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Відповіді асистента та запитання про інцидент за поточною командною дошкою</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Чернетки звітів про інциденти, післяопераційних звітів і брифінгів ICS-201, які людина перевіряє та підписує</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Короткі зведення викликів на основі оперативних планів, небезпек, гідрантів, погодних попереджень і попередніх викликів</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Відповіді щодо власних документів і протоколів вашого підрозділу з посиланнями на джерела</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>Незабаром: допомога ШІ в диспетчеризації, транскрибування аудіо диспетчеризації та семантичний пошук.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Містить щомісячний бюджет використання ШІ. Якщо ваш підрозділ його вичерпає, функції ШІ повертаються до стандартної роботи до наступного місяця. Жодних плат за перевищення.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>Дані вашого підрозділу не надсилаються стороннім постачальникам ШІ і не використовуються для навчання моделей ШІ. ШІ ніколи самостійно не змінює вашу конфігурацію чи записи.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Безкоштовні запитання до Admin Assist</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Кожен підрозділ може поставити Admin Assist до {0} запитань протягом {1} днів після першого запитання, на яке отримано відповідь, а потім до {2} запитань щокалендарного місяця. Невикористані запитання не переносяться, і враховуються лише запитання, на які отримано відповідь.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Enhanced AI активне для вашого підрозділу.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Enhanced AI вмикається для вашого підрозділу. Функції з'являться, щойно їх буде ввімкнено.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Ваш підрозділ ще не має Enhanced AI.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Enhanced AI ще недоступне для придбання вашим підрозділом.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Оплачено до</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Поновлення скасовано; доступ триває до кінця оплаченого періоду.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Придбати</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Скасувати поновлення</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Скасувати поновлення Enhanced AI?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Оплата наразі недоступна. Спробуйте пізніше.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Керувати підпискою</value></data>
+  <data name="Monthly" xml:space="preserve"><value>місяць</value></data>
+  <data name="Links" xml:space="preserve"><value>Посилання</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Керувати Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>за підрозділ</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Доповнення Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Додає до Resgrid відповіді та чернетки, створені ШІ: Admin Assist із ШІ без ліміту запитань, запитання про інциденти, чернетки звітів і брифінгів та зведення викликів. Оплачується щомісяця окремо від вашого плану Resgrid. Придбати або скасувати його може лише керівний член вашого підрозділу.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist із ШІ</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Запитання про інциденти</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Чернетки звітів і брифінгів</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Зведення викликів</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Працює на серверах Resgrid</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>Чат-бот із підпискою вашого власного постачальника ШІ (власний ключ), якщо ви віддаєте йому перевагу перед ШІ Resgrid</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Власний постачальник ШІ</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>ШІ Resgrid працює на моделях із відкритими вагами, наразі Qwen3, на обладнанні, яким Resgrid володіє та яке обслуговує. Resgrid ніколи не надсилає ваші дані хмарним постачальникам ШІ.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Ваш власний постачальник ШІ (власний ключ)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>З Enhanced AI ваш підрозділ може під'єднати власну підписку в постачальника ШІ, як-от OpenAI, Anthropic, Google Gemini, Azure OpenAI чи Mistral, або власний сервер моделей. Тоді чат-бот надсилає повідомлення цього підрозділу цьому постачальнику згідно з вашою угодою з ним. Залиште ці поля порожніми, щоб використовувати власний ШІ Resgrid, який ніколи не надсилає ваші дані хмарним постачальникам ШІ.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>Для використання підписки власного постачальника ШІ потрібне доповнення Enhanced AI.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Збережений постачальник не використовується. Чат-бот використовує власний ШІ Resgrid, доки Enhanced AI не стане активним.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Інші налаштування збережено, але зміну постачальника ШІ — ні, оскільки для неї потрібне доповнення Enhanced AI.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Постачальник</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Виберіть постачальника</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Інша кінцева точка, сумісна з OpenAI</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>Вибір постачальника заповнює його кінцеву точку. Для Azure OpenAI замініть {resource} і {deployment} власними значеннями.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>Повна URL-адреса запиту. Вона має використовувати https і публічну адресу.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Введіть назву моделі точно так, як її вказує ваш постачальник.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Видалити збереженого постачальника та ключ API</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Власного постачальника ШІ не можна використовувати, доки для вашого підрозділу ввімкнено Advanced Data Protection, щоб захищені дані ніколи не залишали Resgrid. Чат-бот використовує власний ШІ Resgrid, а збережений постачальник не використовується.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Зараз не вдалося підтвердити ваше доповнення Enhanced AI, тому чат-бот використовує власний ШІ Resgrid. Спробуйте пізніше.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Інші налаштування збережено, але зміну постачальника ШІ — ні.</value></data>
+</root>

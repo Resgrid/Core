@@ -12,6 +12,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Annuler</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Personne</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Exclu</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Ressource</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unit">
+    <value>Unité</value>
+  </data>
   <data xml:space="preserve" name="Feature.addon-adp">
     <value>Protection avancée des données</value>
   </data>
@@ -180,6 +195,9 @@
   <data xml:space="preserve" name="Ui.Area">
     <value>Zone</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Source">
+    <value>Origine</value>
+  </data>
   <data xml:space="preserve" name="Ui.Before">
     <value>Avant</value>
   </data>
@@ -195,6 +213,9 @@
   <data xml:space="preserve" name="Ui.Fail">
     <value>Nécessite une intervention</value>
   </data>
+  <data xml:space="preserve" name="Ui.False">
+    <value>Désactivé</value>
+  </data>
   <data xml:space="preserve" name="Ui.Featureplanned">
     <value>Planifié</value>
   </data>
@@ -203,9 +224,6 @@
   </data>
   <data xml:space="preserve" name="Ui.Freshness">
     <value>Éléments de preuve au</value>
-  </data>
-  <data xml:space="preserve" name="Ui.HistoryTime">
-    <value>Date</value>
   </data>
   <data xml:space="preserve" name="Ui.Information">
     <value>Informations</value>
@@ -257,6 +275,9 @@
   </data>
   <data xml:space="preserve" name="Ui.SearchReference">
     <value>Rechercher dans la documentation de référence</value>
+  </data>
+  <data xml:space="preserve" name="Ui.True">
+    <value>Activé</value>
   </data>
   <data xml:space="preserve" name="Ui.Unassigned">
     <value>Non attribué</value>

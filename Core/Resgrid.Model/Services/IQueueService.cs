@@ -81,6 +81,12 @@ namespace Resgrid.Model.Services
 		Task<bool> EnqueueCommunicationTestAsync(CommunicationTestQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Enqueues Enrich-mode AI dispatch for a call that has already been created and dispatched. Best effort: returns false
+		/// instead of throwing, because a lost enrichment leaves the deterministic call untouched.
+		/// </summary>
+		Task<bool> EnqueueAiDispatchTriageAsync(AiDispatchQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Sets the queue item completed asynchronous.
 		/// </summary>
 		/// <param name="queueItemId">The queue item identifier.</param>

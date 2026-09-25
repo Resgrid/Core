@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>Dysponowanie z AI</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Ustawienia dysponowania z AI</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>Aktywność dysponowania z AI</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Tryb uzupełniania: zdarzenia są tworzone i dysponowane dokładnie tak jak dotąd, a potem AI uzupełnia wciąż puste dane. Nigdy nie zmienia priorytetu ani tego, kto jest dysponowany, i nigdy ponownie nikogo nie powiadamia.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>Dysponowanie z AI działa w Twoim oddziale.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>Dysponowanie z AI nie jest włączone w tej instalacji Resgrid.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>Dysponowanie z AI wymaga dodatku Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>Aby zacząć, wybierz "Generic with AI enrichment (Enhanced AI)" jako format wiadomości e-mail z dysponowaniem.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>Model AI tej instalacji nie jest jeszcze skonfigurowany.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>Co może robić AI</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Uzupełniać pusty typ zdarzenia</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Uzupełniać pusty adres i położenie na mapie</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Uzupełniać puste imię i nazwisko oraz numer kontaktowy</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Uzupełniać pusty numer zdarzenia</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Zmieniać nazwę zdarzeń przychodzących z tytułem "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>Dodawać notatkę z podsumowaniem AI i sugerowanym priorytetem</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Oznaczać możliwe duplikaty i wiadomości, które nie są dysponowaniem</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Zabezpieczenia</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Minimalna pewność (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>Poniżej tej pewności AI niczego nie zmienia. Pozostaw puste, aby użyć wartości domyślnej {0}%. Dozwolony zakres: 50–95%.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Dozwoleni nadawcy</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>Jeden adres e-mail lub domena w wierszu, na przykład cad.county.gov. Uzupełniane są tylko wiadomości od tych nadawców; każda wiadomość nadal tworzy zdarzenie. Pozostaw puste, aby dopuścić wszystkich nadawców.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Miesięczny limit tokenów dysponowania z AI</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Opcjonalny limit w ramach budżetu Enhanced AI Twojego oddziału. Pozostaw puste, aby nie ustawiać osobnego limitu. Wykorzystano w tym miesiącu: {0} tokenów.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Historia aktywności</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Przechowuj aktywność przez (dni)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Od 30 do 1095 dni. Starsza aktywność jest usuwana automatycznie.</value></data>
+  <data name="Save" xml:space="preserve"><value>Zapisz</value></data>
+  <data name="Saved" xml:space="preserve"><value>Zapisano ustawienia dysponowania z AI.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>Inny administrator zmienił te ustawienia. Sprawdź bieżące wartości i zapisz ponownie.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>Minimalna pewność musi wynosić od 50% do 95%.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>Okres przechowywania aktywności musi wynosić od 30 do 1095 dni.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>Miesięczny limit tokenów musi wynosić od 8192 do 50 000 000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Każdy dozwolony nadawca musi być adresem e-mail lub domeną.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Wpisz co najwyżej 50 dozwolonych nadawców.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>Pokaż aktywność dysponowania z AI</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Ustawienia wiadomości e-mail z dysponowaniem</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Ostatnia aktualizacja: {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Przechowywane są tu tylko wyniki, nigdy wiadomość ani odpowiedź AI. Otwórz zdarzenie, aby zobaczyć, co zostało uzupełnione.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>Brak jeszcze aktywności dysponowania z AI.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>Ostatnie 30 dni</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>Tokeny dysponowania z AI w tym miesiącu</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Pominięte lub bez zmian</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>Kiedy</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Zdarzenie</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Wynik</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Pewność</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Uzupełniono</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Odrzucone</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Możliwie powiązane</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>Czas AI</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Tokeny</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Odrzucone to wartości zwrócone przez AI, które były niedozwolone lub nie występowały w wiadomości.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Uzupełniono</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Nic do dodania</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Niska pewność</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Nieprzydatna odpowiedź AI</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>AI niedostępna</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>AI zajęta</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Wyczerpano budżet Enhanced AI</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>Osiągnięto limit dysponowania z AI</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Pominięto: ochrona danych</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Zdarzenie nie jest już aktywne</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Nadawca niedozwolony</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>W toku</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Typ zdarzenia</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Położenie na mapie</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Osoba kontaktowa</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Numer kontaktowy</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Numer zdarzenia</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Nazwa</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Notatka</value></data>
+</root>

@@ -382,7 +382,11 @@ namespace Resgrid.Tests.Services
 				"InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems",
 				"InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries",
 				// ReadinessHistoryFields supplies masked audit/run/log views; outbox consumers use the safe routing copy.
-				"AuditLogs", "DomainEventOutbox", "WorkflowRuns", "WorkflowRunLogs"
+				"AuditLogs", "DomainEventOutbox", "WorkflowRuns", "WorkflowRunLogs",
+				// Admin Assist content (registry §4G, §4I), each read through the generic Records resolver: findings (catalog v30) by
+				// AdminAssistWorklistService, dispatch traces (v30) by AdminAssistDiagnosticSource, shared AI generations (v31) by
+				// AdminAssistConversationProtection and diagnostic runs (v32) by AdminAssistDiagnosticProtection.
+				"AdminAssistFindings", "AdminAssistDispatchTraces", "AiGenerations", "AdminAssistDiagnosticRuns"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)

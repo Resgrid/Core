@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "inventory",
@@ -266,7 +266,7 @@
       "Body": "Inventory availability. Controls availability of inventory. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-inventorydisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -277,7 +277,7 @@
       "Body": "Inventory menu name. Optional display name for inventory in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-inventorynameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -288,7 +288,7 @@
       "Body": "Inventory Inventory for stations and units See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -299,7 +299,7 @@
       "Body": "Inventory Status On-hand, low-stock and expiring inventory See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory-status",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -310,7 +310,7 @@
       "Body": "Transfer Inventory Move inventory between locations See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory-transfer",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -321,7 +321,7 @@
       "Body": "Issue Equipment Issue or return equipment to personnel See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory-issue",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -332,7 +332,7 @@
       "Body": "Inventory purchasing Manage suppliers, purchase orders and receipts. Connect replenishment to recorded stock needs and authorized receipt. Review an expiring supply lot and arrange restocking through the inventory screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory-purchasing",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -343,7 +343,7 @@
       "Body": "Inventory counts, expiry and alerts Review stock counts, expiry and configured inventory alerts. Identify inventory data and supplies that need owner follow-up. Review an expiring supply lot and arrange restocking through the inventory screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory-operations",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

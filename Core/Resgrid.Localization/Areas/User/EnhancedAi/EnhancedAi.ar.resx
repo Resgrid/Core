@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>إضافة Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>إضافة شهرية تضيف إلى Resgrid إجابات ومسودات مولّدة بالذكاء الاصطناعي. تعمل على خوادم يشغّلها Resgrid بنماذج مفتوحة الأوزان. يمكن فقط للعضو المدير للقسم شراؤها أو إلغاؤها.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist بالذكاء الاصطناعي دون حد شهري للأسئلة</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>إجابات المساعد وأسئلة حول الحادث من لوحة القيادة المباشرة</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>مسودات تقارير الحوادث وتقارير ما بعد العمليات وإحاطات ICS-201 يراجعها شخص ويوقّعها</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>ملخصات البلاغات المبنية على الخطط المسبقة والمخاطر وحنفيات الإطفاء وتنبيهات الطقس والبلاغات السابقة</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>إجابات حول مستندات قسمك وبروتوكولاته الخاصة، مع ذكر المصادر</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>قريبًا: مساعدة الإرسال بالذكاء الاصطناعي، وتفريغ صوت الإرسال نصيًا، والبحث الدلالي.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>تتضمن ميزانية شهرية لاستخدام الذكاء الاصطناعي. إذا بلغها قسمك، تعود ميزات الذكاء الاصطناعي إلى التجربة القياسية حتى الشهر التالي. لا توجد رسوم إضافية على التجاوز.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>لا تُرسَل بيانات قسمك إلى مزوّدي ذكاء اصطناعي خارجيين ولا تُستخدم لتدريب نماذج الذكاء الاصطناعي. لا يغيّر الذكاء الاصطناعي إعداداتك أو سجلاتك من تلقاء نفسه أبدًا.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>أسئلة Admin Assist المجانية</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>يمكن لكل قسم أن يطرح على Admin Assist ما يصل إلى {0} من الأسئلة خلال {1} يومًا بعد أول سؤال تمت الإجابة عنه، ثم ما يصل إلى {2} من الأسئلة في كل شهر ميلادي. لا تُرحَّل الأسئلة غير المستخدمة، ولا تُحتسب إلا الأسئلة التي تمت الإجابة عنها.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>إضافة Enhanced AI نشطة لقسمك.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>يجري تفعيل Enhanced AI لقسمك. ستظهر الميزات عند تشغيلها.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>لا يملك قسمك Enhanced AI بعد.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>لا يتوفر Enhanced AI للشراء لقسمك بعد.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>مدفوع حتى</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>تم إلغاء التجديد؛ يستمر الوصول حتى نهاية الفترة المدفوعة.</value></data>
+  <data name="Buy" xml:space="preserve"><value>شراء</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>إلغاء التجديد</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>هل تريد إلغاء تجديد Enhanced AI؟</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>الفوترة غير متاحة الآن. يرجى المحاولة لاحقًا.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>إدارة الاشتراك</value></data>
+  <data name="Monthly" xml:space="preserve"><value>شهر</value></data>
+  <data name="Links" xml:space="preserve"><value>روابط</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>إدارة Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>لكل قسم</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>إضافة Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>تضيف إلى Resgrid إجابات ومسودات مولّدة بالذكاء الاصطناعي: Admin Assist بالذكاء الاصطناعي دون حد للأسئلة، وأسئلة حول الحوادث، ومسودات التقارير والإحاطات، وملخصات البلاغات. تُفوتر شهريًا بشكل منفصل عن خطة Resgrid الخاصة بك. يمكن فقط للعضو المدير لقسمك شراؤها أو إلغاؤها.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist بالذكاء الاصطناعي</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>أسئلة حول الحوادث</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>مسودات التقارير والإحاطات</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>ملخصات البلاغات</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>يعمل على خوادم Resgrid</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>روبوت الدردشة باشتراك مزوّد الذكاء الاصطناعي الخاص بك (استخدم مفتاحك)، إن كنت تفضّله على ذكاء Resgrid الاصطناعي</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>مزوّد ذكاء اصطناعي خاص بك</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>يشغّل الذكاء الاصطناعي في Resgrid نماذج مفتوحة الأوزان، حاليًا Qwen3، على أجهزة تملكها Resgrid وتشغّلها. لا ترسل Resgrid بياناتك أبدًا إلى مزوّدي الذكاء الاصطناعي السحابيين.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>مزوّد الذكاء الاصطناعي الخاص بك (استخدم مفتاحك)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>مع Enhanced AI، يمكن لقسمك ربط اشتراكه الخاص لدى مزوّد ذكاء اصطناعي مثل OpenAI أو Anthropic أو Google Gemini أو Azure OpenAI أو Mistral، أو بخادم نماذج تشغّله بنفسك. عندئذ يرسل روبوت الدردشة رسائل هذا القسم إلى ذلك المزوّد وفق اتفاقك معه. اترك هذه الحقول فارغة لاستخدام الذكاء الاصطناعي الخاص بـ Resgrid، الذي لا يرسل بياناتك أبدًا إلى مزوّدي الذكاء الاصطناعي السحابيين.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>يتطلب استخدام اشتراك مزوّد الذكاء الاصطناعي الخاص بك إضافة Enhanced AI.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>المزوّد المحفوظ غير مستخدم. يستخدم روبوت الدردشة الذكاء الاصطناعي الخاص بـ Resgrid إلى أن يصبح Enhanced AI نشطًا.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>حُفظت إعداداتك الأخرى، لكن لم يُحفظ تغيير مزوّد الذكاء الاصطناعي لأنه يتطلب إضافة Enhanced AI.</value></data>
+  <data name="Provider" xml:space="preserve"><value>المزوّد</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>اختر مزوّدًا</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>نقطة نهاية أخرى متوافقة مع OpenAI</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>يؤدي اختيار مزوّد إلى تعبئة نقطة النهاية الخاصة به. في Azure OpenAI، استبدل {resource} و{deployment} بقيمك الخاصة.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>عنوان URL الكامل للطلب. يجب أن يستخدم https وعنوانًا عامًا.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>أدخل اسم النموذج تمامًا كما يذكره مزوّدك.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>إزالة المزوّد ومفتاح API المحفوظين</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>لا يمكن استخدام مزوّد الذكاء الاصطناعي الخاص بك ما دامت Advanced Data Protection مفعّلة لقسمك، حتى لا تغادر البيانات المحمية Resgrid أبدًا. يستخدم روبوت الدردشة الذكاء الاصطناعي الخاص بـ Resgrid، ويبقى أي مزوّد محفوظ دون استخدام.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>تعذّر تأكيد إضافة Enhanced AI الآن، لذلك يستخدم روبوت الدردشة الذكاء الاصطناعي الخاص بـ Resgrid. يُرجى المحاولة لاحقًا.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>حُفظت إعداداتك الأخرى، لكن لم يُحفظ تغيير مزوّد الذكاء الاصطناعي.</value></data>
+</root>

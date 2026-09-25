@@ -26,11 +26,23 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.AdminIdentityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.DispatchEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ImportEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.CommunicationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.CapacityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.CapabilityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.QualificationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ReadinessEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.StaffingEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistAskService>().As<Resgrid.Model.AdminAssist.IAdminAssistAskService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistDiagnosticService>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnostics>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistDiagnosticSource>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnosticSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistDiagnosticProtection>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnosticProtection>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistAskQueries>().As<Resgrid.Model.AdminAssist.IAdminAssistAskQueries>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistConversationProtection>().As<Resgrid.Model.AdminAssist.IAdminAssistConversationProtection>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AiAccessService>().As<Resgrid.Model.AdminAssist.IAiAccessService>().InstancePerLifetimeScope();
+			builder.Register(_ => {
+				var endpoint = Resgrid.Llm.OperatorEndpointPolicy.ValidateUri(AiConfig.Endpoint, AiConfig.AllowPrivateEndpoint);
+				return new Resgrid.Llm.OpenAiToolClient(Resgrid.Llm.OperatorEndpointPolicy.CreateClient(endpoint, AiConfig.AllowPrivateEndpoint), endpoint, AiConfig.ApiKey);
+			}).As<Resgrid.Llm.ILlmClient>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistService>().As<Resgrid.Model.AdminAssist.IAdminAssistService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ConfigurationImpactService>().As<Resgrid.Model.AdminAssist.IConfigurationImpactService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.SecurityImpactService>().As<Resgrid.Model.AdminAssist.ISecurityImpactService>().InstancePerLifetimeScope();
@@ -38,7 +50,7 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.RetentionImpactService>().As<Resgrid.Model.AdminAssist.IRetentionImpactService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.TextImportImpactService>().As<Resgrid.Model.AdminAssist.ITextImportImpactService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ModuleImpactService>().As<Resgrid.Model.AdminAssist.IModuleImpactService>().InstancePerLifetimeScope();
-			builder.RegisterType<AdminAssist.PermissionImpactService>().As<Resgrid.Model.AdminAssist.IPermissionImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.PermissionImpactService>().As<Resgrid.Model.AdminAssist.IPermissionImpactService>().As<Resgrid.Model.AdminAssist.IAdminAssistPermissionEvaluator>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.DispatchImpactService>().As<Resgrid.Model.AdminAssist.IDispatchImpactService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.MappingImpactProvider>().As<Resgrid.Model.AdminAssist.IOperationalImpactProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.StatusAutomationImpactProvider>().As<Resgrid.Model.AdminAssist.IOperationalImpactProvider>().InstancePerLifetimeScope();
@@ -72,6 +84,19 @@ namespace Resgrid.Services
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("business-operations-billing-client"));
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsAccessService>().As<IBusinessOperationsAccessService>().InstancePerLifetimeScope();
+			// Enhanced AI add-on (enhanced-ai-addon-plan.md): billing proxy and paid entitlement gate, cloned from Business Operations.
+			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
+				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("ai-billing-client").SingleInstance();
+			builder.RegisterType<AiBillingService>().As<IAiBillingService>()
+				.WithParameter((parameter, _) => parameter.ParameterType == typeof(Func<RestClient>), (_, context) =>
+				{
+					var scope = context.Resolve<ILifetimeScope>();
+					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("ai-billing-client"));
+				}).InstancePerLifetimeScope();
+			builder.RegisterType<EnhancedAiAccessService>().As<IEnhancedAiAccessService>().InstancePerLifetimeScope();
+			// AI dispatch, Enrich mode (enhanced-ai-addon-plan.md §4): worker-side enrichment of calls created from AI-format dispatch email.
+			builder.RegisterType<AiDispatch.AiDispatchEnrichmentService>().As<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>().InstancePerLifetimeScope();
+			builder.RegisterType<AiDispatch.AiDispatchAdminService>().As<Resgrid.Model.AiDispatch.IAiDispatchAdminService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.InvoicingService>().As<IInvoicingService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.DeploymentService>().As<IDeploymentService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.TimeTrackingService>().As<ITimeTrackingService>().InstancePerLifetimeScope();

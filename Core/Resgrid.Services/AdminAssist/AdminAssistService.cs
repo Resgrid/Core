@@ -26,9 +26,10 @@ namespace Resgrid.Services.AdminAssist
 			var availability = await access.GetCapabilitiesAsync(actor, ct).WaitAsync(ct);
 			await RequireAccessAsync(actor, setup, ct);
 			var report = new ConfigurationReport(snapshot, findings, workspace.Areas.Where(a => a.Value == SetupAreaChoice.UseNow).Select(a => a.Key).ToArray());
-			return new AdminAssistOverview(catalog.Version, workspace, report, availability,
-				catalog.Capabilities.Select(capability => CapabilitySetupEvaluator.Evaluate(capability, availability.SingleOrDefault(a => a.CapabilityId == capability.Id), report,
-					clock.GetUtcNow().UtcDateTime, TimeSpan.FromSeconds(Math.Clamp(AdminAssistConfig.EvidenceFreshnessSeconds, 1, 300)))).ToArray());
+			var assessments = catalog.Capabilities.Select(capability => CapabilitySetupEvaluator.Evaluate(capability, availability.SingleOrDefault(a => a.CapabilityId == capability.Id), report,
+				clock.GetUtcNow().UtcDateTime, TimeSpan.FromSeconds(Math.Clamp(AdminAssistConfig.EvidenceFreshnessSeconds, 1, 300)))).ToArray();
+			return new AdminAssistOverview(catalog.Version, workspace, report, availability, assessments,
+				SetupPlanBuilder.Build(catalog, workspace, availability, assessments, snapshot.Revision, clock.GetUtcNow().UtcDateTime));
 		}
 
 		public async Task<SetupWorkspace> UpdateSetupAsync(AdminAssistActor actor, SetupProgressCommand command, CancellationToken ct = default)

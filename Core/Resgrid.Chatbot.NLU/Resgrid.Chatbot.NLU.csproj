@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Resgrid.Chatbot\Resgrid.Chatbot.csproj" />
+    <ProjectReference Include="..\Resgrid.Llm\Resgrid.Llm.csproj" />
     <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />
   </ItemGroup>

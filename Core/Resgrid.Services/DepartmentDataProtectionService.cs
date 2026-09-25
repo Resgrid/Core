@@ -258,6 +258,11 @@ namespace Resgrid.Services
 						return DepartmentDataProtectionEnrollmentResult.InvalidWindow;
 				}
 
+				// Every caller's record must acknowledge the current section 12 list with lock consent. The web wizard
+				// checks this before calling; the v4 API forwards the client's record, so this gate covers both.
+				if (!AdpEnrollmentAcknowledgements.IsComplete(acknowledgementsJson))
+					return DepartmentDataProtectionEnrollmentResult.AcknowledgementsIncomplete;
+
 				var utcNow = DateTime.UtcNow;
 				var evaluationRecord = JsonConvert.SerializeObject(new
 				{

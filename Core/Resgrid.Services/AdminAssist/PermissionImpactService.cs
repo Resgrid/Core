@@ -19,7 +19,7 @@ namespace Resgrid.Services.AdminAssist
 	public sealed class PermissionImpactService(IAdminAssistAccessService access, IAdminAssistRepository repository,
 		IAdminAssistCatalog catalog, IDepartmentsService departments, IDepartmentMembersRepository members,
 		IDepartmentGroupsRepository groups, IPersonnelRolesRepository roles, IPersonnelRoleUsersRepository roleMembers,
-		IUnitsRepository units, IPermissionsRepository permissions, IPermissionsService policy, TimeProvider clock) : IPermissionImpactService
+		IUnitsRepository units, IPermissionsRepository permissions, IPermissionsService policy, TimeProvider clock) : IPermissionImpactService, IAdminAssistPermissionEvaluator
 	{
 		public static readonly IReadOnlyList<string> Supported = Array.AsReadOnly(new[] {
 			nameof(PermissionTypes.CreateCall), nameof(PermissionTypes.CreateNote), nameof(PermissionTypes.ViewPersonalInfo),
@@ -31,6 +31,27 @@ namespace Resgrid.Services.AdminAssist
 		private sealed record Inputs(Person[] People, Group[] Groups, Target[] Targets, int[] OwnedRoles, Permission Current);
 		private static bool Scoped(PermissionTypes type) => type is PermissionTypes.ViewGroupUsers or PermissionTypes.ViewGroupUnits or PermissionTypes.CanSeePersonnelLocations or PermissionTypes.CanSeeUnitLocations;
 		private static bool UnitScope(PermissionTypes type) => type is PermissionTypes.ViewGroupUnits or PermissionTypes.CanSeeUnitLocations;
+		public async Task<bool?> EvaluateCurrentAsync(AdminAssistActor administrator, string memberId, string permissionType, string targetId, CancellationToken ct)
+		{
+			if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
+			if (!Supported.Contains(permissionType) || !Enum.TryParse<PermissionTypes>(permissionType, out var type)) throw new ArgumentException("Unsupported permission.");
+			if (Scoped(type) && string.IsNullOrWhiteSpace(targetId)) return null;
+			try
+			{
+				var input = await ReadAsync(administrator, type, ct);
+				var target = Scoped(type) ? targetId : "department-action";
+				// Evaluate a single edge from fresh repository inputs. Do not trust the legacy
+				// visibility cache: a missing matrix currently fails open in that API.
+				var selected = input with { People = input.People.Where(p => p.Id == memberId).ToArray(), Targets = input.Targets.Where(t => t.Id == target).ToArray() };
+				var allowed = Evaluate(selected, input.Current, Scoped(type), ct).Contains((memberId, target));
+				if (Fingerprint(input) != Fingerprint(await ReadAsync(administrator, type, ct))) return null;
+				if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
+				return allowed;
+			}
+			catch (OperationCanceledException) { throw; }
+			catch (UnauthorizedAccessException) { throw; }
+			catch (Exception) { return null; }
+		}
 		public async Task<IReadOnlyList<PermissionRoleOption>> GetRoleOptionsAsync(AdminAssistActor actor, string expectedRevision, CancellationToken ct = default)
 		{
 			if (!await access.CanAccessAsync(actor, false, ct)) throw new UnauthorizedAccessException();

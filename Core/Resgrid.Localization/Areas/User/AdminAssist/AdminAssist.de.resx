@@ -12,6 +12,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Abbrechen</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Einzelperson</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Ausgeschlossen</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Skipped">
+    <value>Übersprungen</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unit">
+    <value>Einheit</value>
+  </data>
   <data xml:space="preserve" name="Feature.addon-adp">
     <value>Erweiterter Datenschutz</value>
   </data>
@@ -186,6 +201,12 @@
   <data xml:space="preserve" name="Ui.After">
     <value>Nachher</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Frage</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Source">
+    <value>Quelle</value>
+  </data>
   <data xml:space="preserve" name="Ui.Before">
     <value>Vorher</value>
   </data>
@@ -201,6 +222,9 @@
   <data xml:space="preserve" name="Ui.Fail">
     <value>Handlungsbedarf</value>
   </data>
+  <data xml:space="preserve" name="Ui.False">
+    <value>Deaktiviert</value>
+  </data>
   <data xml:space="preserve" name="Ui.Featureplanned">
     <value>Geplant</value>
   </data>
@@ -209,9 +233,6 @@
   </data>
   <data xml:space="preserve" name="Ui.Freshness">
     <value>Nachweisstand</value>
-  </data>
-  <data xml:space="preserve" name="Ui.HistoryTime">
-    <value>Zeitpunkt</value>
   </data>
   <data xml:space="preserve" name="Ui.Information">
     <value>Informationen</value>
@@ -263,6 +284,9 @@
   </data>
   <data xml:space="preserve" name="Ui.SearchReference">
     <value>Referenzdokumentation durchsuchen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.True">
+    <value>Aktiviert</value>
   </data>
   <data xml:space="preserve" name="Ui.Unassigned">
     <value>Nicht zugewiesen</value>

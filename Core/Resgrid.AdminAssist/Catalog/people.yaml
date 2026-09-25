@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "people",
@@ -577,7 +577,9 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": [],
+      "RuleIds": [
+        "notification-profiles"
+      ],
       "Setup": {
         "EvidenceId": "activePersonnelCount",
         "Minimum": 1,
@@ -1054,7 +1056,7 @@
       "Body": "Disabled Auto Available. Disables automatic availability behavior. Review staffing/status reset interactions before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-disabledautoavailable",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1065,7 +1067,7 @@
       "Body": "Personnel Sort Order. Sort order for personnel lists; does not change availability, access or dispatch priority.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-personnelsortorder",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1076,7 +1078,7 @@
       "Body": "Personnel List Status Sort Order. Custom ordering of personnel statuses in lists. Review all configured statuses before replacing the order.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-personnelliststatussortorder",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1087,7 +1089,7 @@
       "Body": "Allow Signups For Multiple Shift Groups. Allow a member to sign up for multiple shift groups. Review overlaps and local coverage rules separately.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-allowsignupsformultipleshiftgroups",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1098,7 +1100,7 @@
       "Body": "Staffing Suppress Staffing Levels. Staffing levels suppressed in supported notifications. Suppression can change who hears an alert and is not evidence of delivery.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-staffingsuppressstaffinglevels",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1109,7 +1111,7 @@
       "Body": "Shifts availability. Controls availability of shift scheduling. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-shiftsdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1120,7 +1122,7 @@
       "Body": "Shifts menu name. Optional display name for shift scheduling in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-shiftsnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1131,7 +1133,7 @@
       "Body": "Calendar availability. Controls availability of calendar events. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-calendardisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1142,7 +1144,7 @@
       "Body": "Calendar menu name. Optional display name for calendar events in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-calendarnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1153,7 +1155,7 @@
       "Body": "Training availability. Controls availability of training. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-trainingdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1164,7 +1166,7 @@
       "Body": "Training menu name. Optional display name for training in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-trainingnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1175,7 +1177,7 @@
       "Body": "Personnel List Status Order Setting / Orders. Ordered status weights for supported personnel lists. This does not set availability or dispatch priority.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-personnelliststatusordersetting-orders",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1186,7 +1188,7 @@
       "Body": "Personnel List Status Order / Weight. Relative list order for this status. Confirm all configured statuses remain represented.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-personnelliststatusorder-weight",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1197,7 +1199,7 @@
       "Body": "Personnel List Status Order / Status Id. Existing personnel-status identifier whose list position is being configured.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-personnelliststatusorder-statusid",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1208,7 +1210,7 @@
       "Body": "Department Suppress Staffing Info / Enable Supress Staffing. Enables the configured staffing-level suppression in supported notification consumers; review reachability before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-departmentsuppressstaffinginfo-enablesupressstaffing",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1219,7 +1221,7 @@
       "Body": "Department Suppress Staffing Info / Staffing Levels To Supress. Existing staffing levels to suppress. A suppressed level is not proof that another channel reaches the member.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-departmentsuppressstaffinginfo-staffinglevelstosupress",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1230,7 +1232,7 @@
       "Body": "Personnel People in the department, status and staffing Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "personnel",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1241,7 +1243,7 @@
       "Body": "Add Person Manually create a user account in the department Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "add-person",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1252,7 +1254,7 @@
       "Body": "Groups & Stations Department groups and stations Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "groups",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1263,7 +1265,7 @@
       "Body": "New Group Create a group or station Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-group",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1274,7 +1276,7 @@
       "Body": "Shifts Shift signups, recurring shifts and trades Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "shifts",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1285,7 +1287,7 @@
       "Body": "Calendar Events, meetings and trainings you can sign up for Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "calendar",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1296,7 +1298,7 @@
       "Body": "New Calendar Event Create a calendar event Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-calendar-item",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1307,7 +1309,7 @@
       "Body": "Trainings Trainings, study guides and procedures Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "trainings",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1318,7 +1320,7 @@
       "Body": "New Training Create a training with optional quiz Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-training",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1329,7 +1331,7 @@
       "Body": "Certification Dashboard Expiring and expired certifications for people and units Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "certification-dashboard",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1340,7 +1342,7 @@
       "Body": "Certification Types The department's certification catalog and template gallery Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "certification-types",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1351,7 +1353,7 @@
       "Body": "Certification Settings Enforcement mode, grace period and expiry notifications Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "certification-settings",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1362,7 +1364,7 @@
       "Body": "My Certifications Your own certification records Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "my-certifications",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1373,7 +1375,7 @@
       "Body": "Personnel roles Organize department-defined role assignments. Describe responsibility consistently without assuming that a role proves qualification. Check that the next shift has the locally required qualified crew. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "personnel-roles",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1384,7 +1386,7 @@
       "Body": "Personnel and unit statuses Configure status names, base meanings and supported behavior. Use terminology familiar to the department while preserving automation meaning. Check that the next shift has the locally required qualified crew. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "custom-statuses",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1395,7 +1397,7 @@
       "Body": "Workshifts Configure repeating workforce schedules supported by Workshifts. Review schedule ownership and local time separately from dispatch eligibility. Check that the next shift has the locally required qualified crew. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "workshifts",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

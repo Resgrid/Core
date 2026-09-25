@@ -1,0 +1,107 @@
+@model Resgrid.Web.Areas.User.Models.AiBilling.AiBillingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.EnhancedAi.EnhancedAi> localizer
+@using Resgrid.Config
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EnhancedAi"];
+    var status = Model.Status;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@localizer["EnhancedAi"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["ManageSubscription"]</a></li>
+            <li class="active"><strong>@localizer["EnhancedAi"]</strong></li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["EnhancedAiAddon"]</h5></div>
+                <div class="ibox-content">
+                    <p>@localizer["EnhancedAiAddonIntro"]</p>
+                    <ul>
+                        <li>@localizer["FeatureAdminAssist"]</li>
+                        <li>@localizer["FeatureAssistant"]</li>
+                        <li>@localizer["FeatureDrafts"]</li>
+                        <li>@localizer["FeatureCallBrief"]</li>
+                        <li>@localizer["FeatureKnowledge"]</li>
+                        <li><a asp-controller="ChatbotSettings" asp-action="Index" asp-route-area="User">@localizer["FeatureOwnProvider"]</a></li>
+                    </ul>
+                    <p class="text-muted">@localizer["ComingLater"]</p>
+                    @if (status == null)
+                    {
+                        <p class="alert alert-warning">@localizer["BillingUnavailable"]</p>
+                    }
+                    else
+                    {
+                        <h3>@status.MonthlyAmount.ToString("N2") @status.Currency / @localizer["Monthly"] <small>@localizer["PerDepartment"]</small></h3>
+                        @if (status.Active)
+                        {
+                            <p class="text-navy"><i class="fa fa-check"></i> @localizer["AddonActive"]</p>
+                            @if (!Model.RolledOut)
+                            {
+                                <p class="text-warning">@localizer["BeingEnabled"]</p>
+                            }
+                        }
+                        else if (status.CheckoutAvailable)
+                        {
+                            <p>@localizer["CheckoutPending"]</p>
+                        }
+                        else
+                        {
+                            <p>@localizer["CheckoutNotOpen"]</p>
+                        }
+                        @if (status.PaidThroughUtc.HasValue)
+                        {
+                            <p>@localizer["PaidThrough"]: @status.PaidThroughUtc.Value.ToString("u")</p>
+                        }
+                        @if (status.Cancelled)
+                        {
+                            <p class="text-warning">@localizer["SubscriptionCancelled"]</p>
+                        }
+                        @if (status.CheckoutAvailable && !status.Active)
+                        {
+                            <form method="post" asp-action="Checkout" id="ai-checkout">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">@localizer["Buy"]</button></form>
+                        }
+                        @if (status.CanCancel && !status.Cancelled)
+                        {
+                            <form method="post" asp-action="CancelRenewal" class="m-t-sm" id="ai-cancel-renewal" data-confirm="@localizer["CancelSubscriptionConfirm"]">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@localizer["CancelSubscription"]</button></form>
+                        }
+                    }
+                    <p class="alert alert-danger m-t-sm" id="ai-billing-error" hidden></p>
+                    <p class="m-t-md">@localizer["BudgetNote"]</p>
+                    <p>@localizer["ModelsNote"] @localizer["DataNote"]</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            @if (Model.FreeAllowanceEnabled)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@localizer["FreeAllowance"]</h5></div>
+                    <div class="ibox-content">
+                        <p>@string.Format(localizer["FreeAllowanceText"].Value, Model.FreeStarterQuestions, Model.FreeStarterDays, Model.FreeMonthlyQuestions)</p>
+                    </div>
+                </div>
+            }
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["Links"]</h5></div>
+                <div class="ibox-content">
+                    <p><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["ManageSubscription"]</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+@if (status?.Provider == "Paddle") { <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script> }
+<script type="application/json" id="ai-billing-config">@Html.Raw(JsonConvert.SerializeObject(new {
+    provider = status?.Provider, token = status?.Provider == "Paddle" ? PaymentProviderConfig.GetPaddleClientToken() : null,
+    environment = PaymentProviderConfig.GetPaddleEnvironment(), error = localizer["BillingUnavailable"].Value
+}, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/ai/ai-billing.js" asp-append-version="true"></script>
+}

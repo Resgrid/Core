@@ -12,6 +12,9 @@ import NotificationPreview from './NotificationPreview';
 import SecurityPreview from './SecurityPreview';
 import AreaSetupChoice from './AreaSetupChoice';
 import SetupJourney from './SetupJourney';
+import AskPanel from './AskPanel';
+import TroubleshootPanel from './TroubleshootPanel';
+import SetupChecklist, { type SetupPlan } from './SetupChecklist';
 
 export interface AdminAssistElementProps {
   page: string;
@@ -26,6 +29,7 @@ type Location = { url: string; field: string | null };
 type Capability = { id: string; areaId: string; labelKey: string; purposeKey: string; valueKey: string; exampleKey: string; adoptionKey: string; releaseStatus: string; requirements: { kind: string; id: string }[] };
 type Finding = { ruleId: string; areaId: string; severity: string; result: string; titleKey: string; explanationKey: string; nextActionKey: string; destination: string; reasonCode: string | null; scopeIndependent: boolean };
 type Catalog = {
+  askAvailable?: boolean; troubleshootingAvailable?: boolean;
   moduleImpactTypes: string[]; permissionImpactTypes: string[]; impactSettings: string[]; version: string; strings: Record<string, string>; rightToLeft: boolean; canSetup: boolean;
   areas: { id: string; labelKey: string; purposeKey: string }[];
   capabilities: Capability[];
@@ -34,6 +38,7 @@ type Catalog = {
   packs: { id: string; labelKey: string; purposeKey: string; areaIds: string[]; prerequisiteKeys: string[] }[];
 };
 type Overview = {
+  setupPlan?: SetupPlan;
   catalogVersion: string; workspace: Workspace;
   report: { verified: number; required: number; unknown: number; failed: number; hasCriticalUncertainty: boolean; selectedAreas: string[]; uncheckedAreaIds: string[]; findings: Finding[]; snapshot: { asOfUtc: string; consistent: boolean; revision: string; evidence: Record<string, { state: string; code: string | null }> } };
   access: { capabilityId: string; state: string; reasonCodes: string[]; canConfigure: boolean; subscriptionDestination: string | null; destination: string | null }[];
@@ -66,6 +71,7 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   const [workFilter, setWorkFilter] = useState('active');
   const [followup, setFollowup] = useState<Followup | null>(null);
   const request = useRef<AbortController | null>(null);
+  const protectionRevision = useRef(0);
   const t = (key: string) => catalog?.strings[key] ?? key;
   const ui = (key: string) => t(`Ui.${key}`);
 
@@ -89,6 +95,17 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     } finally { if (!controller.signal.aborted) setBusy(false); }
   }, [setup, errorLabel]);
   useEffect(() => { void reload(); return () => request.current?.abort(); }, [reload]);
+  useEffect(() => {
+    const refreshProtection = () => {
+      protectionRevision.current++;
+      setOverview(null); setWorklist([]); setHistory([]); setFollowup(null);
+      void reload();
+    };
+    window.addEventListener('resgrid:adp-reveal-changed', refreshProtection);
+    return () => window.removeEventListener('resgrid:adp-reveal-changed', refreshProtection);
+  }, [reload]);
+  useEffect(() => { if (catalog && !catalog.troubleshootingAvailable && tab === 'troubleshoot') setTab('overview'); }, [catalog, tab]);
+  useEffect(() => { if (catalog && !catalog.askAvailable && tab === 'ask') setTab('overview'); }, [catalog, tab]);
 
   async function save(operation: string, targetId: string | null = null, choice: string | null = null, reasonCode: string | null = null, revisitOnUtc: string | null = null) {
     if (!overview || !catalog || busy) return;
@@ -119,9 +136,11 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   }
 
   async function loadWorklist() {
+    const revision = protectionRevision.current;
     setBusy(true); setError('');
     try {
       const [items, preferences] = await Promise.all([apiFetchJson<WorkItem[]>(`${endpoint}Worklist`), apiFetchJson<Followup>(`${endpoint}Preferences`)]);
+      if (revision !== protectionRevision.current) return;
       setWorklist(items); setFollowup(preferences);
     }
     catch { setWorklist([]); setError(errorLabel); }
@@ -179,7 +198,7 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   const operatingPacks = overview.report.snapshot.evidence?.operatingPackIds;
   const selectedPackIds = operatingPacks?.state === 'Known' ? (operatingPacks.code ?? '').split(',').filter(Boolean) : [];
   const suggestedAreas = new Set(catalog.packs.filter(pack => selectedPackIds.includes(pack.id)).flatMap(pack => pack.areaIds));
-  const tabs = setup ? ['wizard', 'report', 'explore'] : ['overview', ...(catalog.canSetup ? ['wizard'] : []), 'report', 'explore', 'health', 'worklist', 'reference', 'history'];
+  const tabs = setup ? ['wizard', 'report', 'explore'] : ['overview', ...(catalog.canSetup ? ['wizard'] : []), 'report', 'explore', 'health', 'worklist', 'reference', 'history', ...(catalog.troubleshootingAvailable ? ['troubleshoot'] : []), ...(catalog.askAvailable ? ['ask'] : [])];
   const selected = (finding: Finding) => finding.areaId === 'security' || finding.scopeIndependent || report.selectedAreas.includes(finding.areaId);
   const next = report.findings.filter(f => selected(f) && f.result === 'Fail').sort((a, b) => Number(b.severity === 'Critical') - Number(a.severity === 'Critical')).slice(0, 3);
   const filtered = catalog.capabilities.filter(c => (!addonsOnly || c.id.startsWith('addon-')) && `${t(c.labelKey)} ${t(c.purposeKey)} ${t(catalog.areas.find(a => a.id === c.areaId)?.labelKey ?? "")}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
@@ -188,7 +207,7 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     const addon = catalog.capabilities.find(c => c.id.startsWith('addon-') && c.requirements.some(a => a.kind === 'addon' && a.id === r.id));
     return addon ? t(addon.labelKey) : ui('Unknown');
   });
-  const selectedWorkflows = <><h3>{ui('SelectedWorkflows')}</h3><p>{ui('WorkflowProgressHelp')}</p>
+  const selectedWorkflows = <>{overview.setupPlan && <SetupChecklist plan={overview.setupPlan} t={t} capabilities={catalog.capabilities} areas={catalog.areas} localLink={localLink} />}<h3>{ui('SelectedWorkflows')}</h3><p>{ui('WorkflowProgressHelp')}</p>
     {interests.length === 0 && <p>{ui('SelectWorkflowHelp')}</p>}
     <div className="rgaa-grid">{interests.map(capability => {
       const availability = overview.access.find(a => a.capabilityId === capability.id);
@@ -240,6 +259,7 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
       {catalog.canSetup && <form key={`revisit-${workspace.revision}`} onSubmit={event => { event.preventDefault(); const value = new FormData(event.currentTarget).get('revisit')?.toString(); void save('revisit', null, null, null, value ? `${value}T12:00:00.000Z` : null); }}>
         <p>{ui('RevisitHelp')}</p><label>{ui('RevisitDate')} <input type="date" name="revisit" min={new Date(Date.now() + 86400000).toISOString().slice(0,10)} max={new Date(Date.now() + 364 * 86400000).toISOString().slice(0,10)} defaultValue={workspace.revisitOnUtc?.slice(0,10) ?? ''} /></label><button type="submit" disabled={busy}>{ui('SaveRevisit')}</button>
       </form>}
+      {catalog.canSetup && workspace.revisitOnUtc && <p><a href="/User/AdminAssist/ReviewCalendar">{ui('DownloadReminder')}</a></p>}
       {!setup && <CapacityPreview key={report.snapshot.asOfUtc} revision={report.snapshot.revision} t={t} />}
       {!setup && <SecurityPreview key={`security-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
       {!setup && <NotificationPreview key={`notification-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
@@ -323,6 +343,8 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     {tab === 'reference' && <><form onSubmit={e => { e.preventDefault(); void searchReference(); }}><label>{ui('Search')} <input type="search" value={query} maxLength={256} onChange={e => setQuery(e.target.value)} /></label><button type="submit" disabled={busy}>{ui('SearchReference')}</button></form>
       {hits.map(hit => <article key={hit.id} className="rgaa-card"><h3>{t(hit.titleKey)}</h3><p lang={hit.locale}>{hit.excerpt}</p><small>{hit.sourcePath}#{hit.anchor} · {hit.packVersion} · {hit.locale}</small>{catalog.articles.filter(a => a.id === hit.id && a.locale === hit.locale && a.packVersion === hit.packVersion).map(article => <details key={article.id}><summary>{ui('ReadSource')}</summary><div className="rgaa-source" lang={article.locale}>{article.body}</div></details>)}</article>)}
       <div className="rgaa-grid">{catalog.settings.filter(s => `${t(s.labelKey)} ${t(s.helpKey)}`.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(setting => <article className="rgaa-card" key={setting.id}><h3>{t(setting.labelKey)}</h3><p>{t(setting.helpKey)}</p><p>{t(setting.impact.timingKey)}</p><p>{t(setting.impact.reversibilityKey)}</p><a href={localLink(setting.location.url)}>{ui('Configure')}</a>{!setup && catalog.impactSettings.includes(setting.id) && <ImpactPreview key={`${setting.id}:${report.snapshot.asOfUtc}`} settingId={setting.id} valueType={setting.valueType} revision={report.snapshot.revision} t={t} />}</article>)}</div></>}
+    {tab === 'troubleshoot' && catalog.troubleshootingAvailable && <TroubleshootPanel t={t} localLink={localLink} capabilities={catalog.capabilities} />}
+    {tab === 'ask' && catalog.askAvailable && <AskPanel t={t} localLink={localLink} settings={catalog.settings.filter(s => catalog.impactSettings.includes(s.id))} />}
     {tab === 'history' && <><p>{ui('HistoryBoundary')}</p><table><thead><tr><th>{ui('HistoryTime')}</th><th>{ui('HistoryAction')}</th><th>{ui('HistorySubject')}</th><th>{ui('Before')}</th><th>{ui('After')}</th></tr></thead><tbody>{history.map(row => <tr key={row.id}><td>{new Date(row.occurredOnUtc).toLocaleString()}</td><td>{row.action}</td><td>{row.subjectId}</td><td><code>{row.beforeCode}</code></td><td><code>{row.afterCode}</code></td></tr>)}</tbody></table>{hasMore && <button type="button" disabled={busy} onClick={() => void loadHistory()}>{ui('More')}</button>}</>}
   </section>;
 }

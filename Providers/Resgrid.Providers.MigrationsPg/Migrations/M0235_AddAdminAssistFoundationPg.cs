@@ -33,10 +33,11 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("actorid").AsString(128).Nullable()
 					.WithColumn("occurredonutc").AsDateTime().NotNullable()
 					.WithColumn("source").AsString(64).NotNullable()
+					.WithColumn("correlationid").AsString(64).Nullable()
 					.WithColumn("action").AsString(64).NotNullable()
 					.WithColumn("subjectid").AsString(192).NotNullable()
-					.WithColumn("beforecode").AsString(128).Nullable()
-					.WithColumn("aftercode").AsString(128).Nullable()
+					.WithColumn("beforecode").AsString(int.MaxValue).Nullable()
+					.WithColumn("aftercode").AsString(int.MaxValue).Nullable()
 					.WithColumn("revision").AsInt64().NotNullable();
 			if (!Schema.Table("adminassistconfigurationrevisions").Exists())
 				Create.Table("adminassistconfigurationrevisions")

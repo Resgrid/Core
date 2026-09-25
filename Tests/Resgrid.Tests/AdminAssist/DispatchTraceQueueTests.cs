@@ -94,6 +94,14 @@ namespace Resgrid.Tests.AdminAssist
 			var stored = false;
 			Assert.ThrowsAsync<ArgumentException>(async () => await _queue.ProcessNextAsync((_, _) => { stored = true; return Task.CompletedTask; }, CancellationToken.None));
 			Assert.That(stored, Is.False); _channel.Verify(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+			_channel.Verify(c => c.BasicRejectAsync(17, false, It.IsAny<CancellationToken>()), Times.Once, "A poison envelope must not be requeued ahead of valid evidence.");
+		}
+		[Test]
+		public async Task Store_failure_is_not_rejected_so_the_envelope_is_redelivered()
+		{
+			await _queue.EnqueueAsync(Row(), CancellationToken.None);
+			Assert.ThrowsAsync<IOException>(async () => await _queue.ProcessNextAsync((_, _) => throw new IOException("simulated outage"), CancellationToken.None));
+			_channel.Verify(c => c.BasicRejectAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 		[Test]
 		public async Task Empty_queue_does_not_invoke_the_writer()

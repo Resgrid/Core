@@ -12,6 +12,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Avbryt</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Enskild person</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Exkluderad</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Resurs</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unit">
+    <value>Enhet</value>
+  </data>
   <data xml:space="preserve" name="Feature.addon-adp">
     <value>Avancerat dataskydd</value>
   </data>
@@ -204,6 +219,12 @@
   <data xml:space="preserve" name="Ui.Area">
     <value>Område</value>
   </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Fråga</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Source">
+    <value>Källa</value>
+  </data>
   <data xml:space="preserve" name="Ui.Assigned">
     <value>Tilldelad</value>
   </data>
@@ -278,6 +299,9 @@
   </data>
   <data xml:space="preserve" name="Ui.SearchReference">
     <value>Sök i referensdokumentationen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.True">
+    <value>Aktiverad</value>
   </data>
   <data xml:space="preserve" name="Ui.Unassigned">
     <value>Ej tilldelad</value>

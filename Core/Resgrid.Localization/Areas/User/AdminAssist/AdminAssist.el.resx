@@ -12,6 +12,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Ακύρωση</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Άτομο</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Πόρος</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unit">
+    <value>Μονάδα</value>
+  </data>
   <data xml:space="preserve" name="Feature.add-person">
     <value>Προσθήκη Ατόμου</value>
   </data>
@@ -263,6 +275,9 @@
   </data>
   <data xml:space="preserve" name="Ui.Area">
     <value>Περιοχή</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Ερώτηση</value>
   </data>
   <data xml:space="preserve" name="Ui.Before">
     <value>Πριν</value>

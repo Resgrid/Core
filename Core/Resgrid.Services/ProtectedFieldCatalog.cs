@@ -719,6 +719,11 @@ namespace Resgrid.Services
 						"InventoryVendors" or "InventoryPurchaseOrders" or "InventoryPurchaseOrderItems" => Resgrid.Model.Inventories.InventoryTables.PurchasingCatalogVersion,
 						_ => Resgrid.Model.Inventories.InventoryTables.CatalogVersion }));
 
+			list.Add(new ProtectedFieldDefinition("aigenerations.content", OperationalFamily, "AiGenerations", "Content", ProtectedFieldStorageKind.Text,
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 31));
+			list.Add(new ProtectedFieldDefinition("adminassistdiagnosticruns.content", OperationalFamily, "AdminAssistDiagnosticRuns", "Content", ProtectedFieldStorageKind.Text,
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 32));
+
 			// Admin Assist Phase 0, registry §4G: review notes and dispatch evidence are protected derived copies.
 			foreach (var table in new[] { "AdminAssistFindings", "AdminAssistDispatchTraces" })
 				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,

@@ -66,7 +66,7 @@ namespace Resgrid.Tests.Services
             while(directory != null && !System.IO.File.Exists(Path.Combine(directory.FullName,"Resgrid.sln"))) directory=directory.Parent;
             var builder=WebApplication.CreateBuilder(new WebApplicationOptions { ContentRootPath=Path.Combine(directory.FullName,"Web","Resgrid.Web"),EnvironmentName="Testing" });
             builder.Logging.ClearProviders(); builder.WebHost.UseUrls("http://127.0.0.1:0");
-            builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddApiVersioning();
+            builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddAdminAssistFieldHelpStubs(); builder.Services.AddApiVersioning();
             const string scheme=OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
             builder.Services.AddAuthentication(scheme).AddScheme<AuthenticationSchemeOptions,TestAuthentication>(scheme,_=>{});
             builder.Services.AddAuthorization();

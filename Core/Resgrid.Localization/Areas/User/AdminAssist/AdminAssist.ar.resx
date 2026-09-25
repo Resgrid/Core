@@ -12,6 +12,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>إلغاء</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>مستبعد</value>
+  </data>
   <data xml:space="preserve" name="Feature.add-person">
     <value>إضافة شخص</value>
   </data>
@@ -236,6 +242,9 @@
   </data>
   <data xml:space="preserve" name="Ui.Area">
     <value>المنطقة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Source">
+    <value>المصدر</value>
   </data>
   <data xml:space="preserve" name="Ui.Before">
     <value>قبل</value>

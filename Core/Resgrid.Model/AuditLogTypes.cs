@@ -345,6 +345,9 @@ ChecklistReminderSettingsUpdated,
 		// Member removal lifecycle (2026-09-22): a removed membership brought back; it returns without its old admin standing. Append-only.
 		UserReactivated,
 		DepartmentConfigurationChanged,
-		AdminAssistReviewChanged
+		AdminAssistReviewChanged,
+		AdminAssistDiagnosticAccess,
+		/// <summary>AI dispatch department settings saved (enhanced-ai-addon-plan.md §4). Append-only.</summary>
+		AiDispatchSettingsUpdated
 	}
 }

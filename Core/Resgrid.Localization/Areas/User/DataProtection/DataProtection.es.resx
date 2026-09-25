@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>Cada cambio se registra con quién lo hizo y cuándo.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>El asistente de Resgrid no puede usar la suscripción del proveedor de IA propio de su departamento (traiga su propia clave); usa la IA propia de Resgrid y un proveedor guardado queda sin usar.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>Entiendo que, desde que la inscripción se pone en cola hasta que la protección se desactiva por completo, el asistente de Resgrid no puede usar la suscripción del proveedor de IA propio de mi departamento (traiga su propia clave) y usa la IA propia de Resgrid.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>Su departamento tiene guardado un proveedor de IA propio para el chatbot ({0}). Una vez que la inscripción se ponga en cola, el chatbot dejará de usarlo en un plazo de cinco minutos y usará la IA propia de Resgrid. El proveedor guardado no se elimina.</value>
+  </data>
 </root>

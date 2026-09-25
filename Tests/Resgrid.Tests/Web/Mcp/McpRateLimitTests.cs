@@ -69,6 +69,21 @@ namespace Resgrid.Tests.Web.Mcp
 		}
 
 		[Test]
+		public async Task TokenlessTools_ShouldIgnoreACallerSuppliedAccessToken()
+		{
+			using var limiter = new RateLimiter(NullLogger<RateLimiter>.Instance);
+			var server = CreateServer(limiter, () => { }, "authenticate");
+
+			// A fresh made-up token per call must not buy each guess its own, looser, token bucket.
+			for (var i = 0; i < McpConfig.UnauthenticatedCallsPerMinute; i++)
+				Assert.That((await CallTool(server, "fake-" + i, "203.0.113.5", "authenticate")).Value<bool>("isError"), Is.False);
+
+			var limited = await CallTool(server, "fake-next", "203.0.113.5", "authenticate");
+
+			Assert.That(ToolResult(limited).Value<string>("errorCode"), Is.EqualTo(McpToolErrorException.RateLimited));
+		}
+
+		[Test]
 		public async Task RateLimiter_ShouldNeverReceiveTheRawAccessToken()
 		{
 			var clientIds = new List<string>();
@@ -81,10 +96,10 @@ namespace Resgrid.Tests.Web.Mcp
 			Assert.That(clientIds.Single(), Does.StartWith("token:").And.Not.Contain("secret-access-token"));
 		}
 
-		private static McpServer CreateServer(IRateLimiter limiter, System.Action onCall)
+		private static McpServer CreateServer(IRateLimiter limiter, System.Action onCall, string toolName = "test_tool")
 		{
 			var server = new McpServer("test", "1.0.0", rateLimiter: limiter);
-			server.AddTool("test_tool", "test tool", new Dictionary<string, object>(), _ =>
+			server.AddTool(toolName, "test tool", new Dictionary<string, object>(), _ =>
 			{
 				onCall();
 				return Task.FromResult<object>(new { success = true });
@@ -92,7 +107,7 @@ namespace Resgrid.Tests.Web.Mcp
 			return server;
 		}
 
-		private static async Task<JObject> CallTool(McpServer server, string accessToken, string clientAddress)
+		private static async Task<JObject> CallTool(McpServer server, string accessToken, string clientAddress, string toolName = "test_tool")
 		{
 			var arguments = new JObject();
 			if (accessToken != null)
@@ -103,7 +118,7 @@ namespace Resgrid.Tests.Web.Mcp
 				["jsonrpc"] = "2.0",
 				["id"] = 1,
 				["method"] = "tools/call",
-				["params"] = new JObject { ["name"] = "test_tool", ["arguments"] = arguments }
+				["params"] = new JObject { ["name"] = toolName, ["arguments"] = arguments }
 			};
 
 			var response = await server.HandleRequestAsync(request.ToString(), clientAddress, CancellationToken.None);

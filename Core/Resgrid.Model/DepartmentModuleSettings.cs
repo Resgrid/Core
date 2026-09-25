@@ -68,5 +68,7 @@ namespace Resgrid.Model
 		/// <summary>Department switch for the Business Operations module (Workforce &amp; Business Operations plan). Next free tag after this is 25.</summary>
 		[ProtoMember(24)]
 		public bool BusinessOperationsDisabled { get; set; }
+		[ProtoMember(25)]
+		public bool AiDisabled { get; set; }
 	}
 }

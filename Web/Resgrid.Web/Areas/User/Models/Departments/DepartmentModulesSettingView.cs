@@ -20,6 +20,7 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool InventoryEnabled { get; set; }
 		public bool MaintenanceEnabled { get; set; }
 		public bool ChecklistsEnabled { get; set; } = true;
+		public bool AiEnabled { get; set; } = true;
 		public bool BusinessOperationsEnabled { get; set; } = true;
 
 		public DepartmentModulesSettingView()

@@ -58,17 +58,23 @@ VALUES (@EventId,@DepartmentId,@Sequence,@Layer,@Operation,@Outcome,@ActorId,@Co
 					var current = await connection.QuerySingleOrDefaultAsync<AdpAuditEvent>(new Dapper.CommandDefinition(TailSql,
 						new { record.DepartmentId }, cancellationToken: cancellationToken));
 					if (current == null || current.Sequence < record.Sequence) throw;
+					// Concurrent writers for one department all race for the same tail. Back off with jitter so
+					// they spread out instead of colliding again on the very next sequence.
+					await Task.Delay(Random.Shared.Next(1, 4 << Math.Min(attempt, 5)), cancellationToken);
 				}
 			}
 		}
 
-		public async Task<IReadOnlyList<AdpAuditEvent>> ReadAsync(int departmentId, CancellationToken cancellationToken = default)
+		public async Task<IReadOnlyList<AdpAuditEvent>> ReadAsync(int departmentId, long afterSequence, int take, CancellationToken cancellationToken = default)
 		{
+			if (afterSequence < 0 || take < 1) throw new ArgumentOutOfRangeException(nameof(take), "ADP audit pages start at a non-negative sequence and read at least one row.");
 			using var connection = _connections.Create();
 			await connection.OpenAsync(cancellationToken);
-			return (await connection.QueryAsync<AdpAuditEvent>(new Dapper.CommandDefinition(
-				$"SELECT * FROM {_table} WHERE DepartmentId=@departmentId ORDER BY Sequence",
-				new { departmentId }, cancellationToken: cancellationToken))).ToList();
+			var sql = _postgres
+				? $"SELECT * FROM {_table} WHERE departmentid=@departmentId AND sequence>@afterSequence ORDER BY sequence LIMIT @take"
+				: $"SELECT TOP (@take) * FROM {_table} WHERE DepartmentId=@departmentId AND Sequence>@afterSequence ORDER BY Sequence";
+			return (await connection.QueryAsync<AdpAuditEvent>(new Dapper.CommandDefinition(sql,
+				new { departmentId, afterSequence, take }, cancellationToken: cancellationToken))).ToList();
 		}
 	}
 }

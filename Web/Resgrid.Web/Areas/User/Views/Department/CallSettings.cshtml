@@ -1,5 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.CallSettings.CallSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.AiDispatch.AiDispatch> aiDispatchLocalizer
+@inject Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatch
 @{
     ViewBag.Title = "Resgrid | " + @localizer["CallSettingsHeader"];
 }
@@ -70,6 +72,10 @@
                             <div class="col-sm-10">
                                 <div id="listView"></div>
                                 <div id="pager" class="k-pager-wrap"></div>
+                                @if (Model.Department != null && await aiDispatch.IsAvailableAsync(Model.Department.DepartmentId))
+                                {
+                                    <p class="m-t-sm"><a asp-controller="AiDispatch" asp-action="Index" asp-route-area="User">@aiDispatchLocalizer["SettingsTitle"]</a></p>
+                                }
                             </div>
                         </div>
 

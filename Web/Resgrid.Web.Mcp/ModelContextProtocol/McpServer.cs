@@ -212,7 +212,7 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 						object result;
 						try
 						{
-							await EnforceRateLimitAsync(toolCallParams.Arguments, clientAddress);
+							await EnforceRateLimitAsync(toolCallParams.Name, toolCallParams.Arguments, clientAddress);
 							result = await toolDef.Handler(toolCallParams.Arguments);
 						}
 						catch (McpToolErrorException ex)
@@ -269,17 +269,22 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 			return response;
 		}
 
+		/// <summary>Tools that authenticate the caller rather than take an access token.</summary>
+		private static readonly HashSet<string> TokenlessTools = new(StringComparer.Ordinal) { "authenticate", "refresh_access_token" };
+
 		/// <summary>
 		/// Limits tool calls per signed-in session, keyed by access token so that callers sharing an address (such as a
 		/// hosted AI client's egress) do not share a limit. Calls made without a token, in practice authenticate and
 		/// refresh_access_token, are keyed by client address and held to a tighter limit.
 		/// </summary>
-		private async Task EnforceRateLimitAsync(object arguments, string clientAddress)
+		private async Task EnforceRateLimitAsync(string toolName, object arguments, string clientAddress)
 		{
 			if (_rateLimiter == null)
 				return;
 
-			var accessToken = ReadAccessToken(arguments);
+			// A tool that takes no token must never be keyed by a caller-chosen token value: a fresh fake
+			// accessToken per authenticate call would otherwise escape the tighter per-address limit.
+			var accessToken = TokenlessTools.Contains(toolName ?? string.Empty) ? null : ReadAccessToken(arguments);
 			var clientId = accessToken != null ? $"token:{Fingerprint(accessToken)}" : $"address:{clientAddress ?? "unknown"}";
 			var limit = accessToken != null ? McpConfig.ToolCallsPerMinute : McpConfig.UnauthenticatedCallsPerMinute;
 

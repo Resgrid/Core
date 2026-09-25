@@ -202,6 +202,30 @@ namespace Resgrid.Tests.Web.Mcp
 			Assert.That(redacted, Does.Not.Contain("token123"), "Should not contain token value");
 			Assert.That(redacted, Does.Not.Contain("key456"), "Should not contain API key value");
 		}
+
+		[Test]
+		public void RedactSensitiveFields_ShouldRedactTokensInsideToolResultText()
+		{
+			// Arrange: tool results are serialized JSON inside the JSON-RPC response's content[].text string
+			var toolResult = @"{""success"":true,""accessToken"":""access-abc"",""refreshToken"":""refresh-def"",""expiresIn"":86400}";
+			var response = new System.Text.Json.Nodes.JsonObject
+			{
+				["jsonrpc"] = "2.0",
+				["id"] = 1,
+				["result"] = new System.Text.Json.Nodes.JsonObject
+				{
+					["content"] = new System.Text.Json.Nodes.JsonArray(new System.Text.Json.Nodes.JsonObject { ["type"] = "text", ["text"] = toolResult })
+				}
+			}.ToJsonString();
+
+			// Act
+			var redacted = SensitiveDataRedactor.RedactSensitiveFields(response);
+
+			// Assert
+			Assert.That(redacted, Does.Not.Contain("access-abc"), "Should not contain the access token from the tool result");
+			Assert.That(redacted, Does.Not.Contain("refresh-def"), "Should not contain the refresh token from the tool result");
+			Assert.That(redacted, Does.Contain("86400"), "Should preserve non-sensitive tool result fields");
+		}
 	}
 }
 

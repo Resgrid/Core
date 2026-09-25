@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Providers;
+using Resgrid.Model;
+using Resgrid.Model.Repositories;
 
 namespace Resgrid.Providers.ProtectedData
 {
@@ -26,15 +28,17 @@ namespace Resgrid.Providers.ProtectedData
 		internal const string BrokerUnavailableErrorCode = "broker_unavailable";
 
 		private readonly HttpClient _httpClient;
+		private readonly IAdpAuditRepository _audit;
 
-		public ProtectedDataBrokerClient()
-			: this(new HttpClientHandler())
+		public ProtectedDataBrokerClient(IAdpAuditRepository audit)
+			: this(new HttpClientHandler(), audit)
 		{
 		}
 
 		/// <summary>Test seam: inject a message handler.</summary>
-		public ProtectedDataBrokerClient(HttpMessageHandler handler)
+		public ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit)
 		{
+			_audit = audit;
 			_httpClient = new HttpClient(handler, disposeHandler: true)
 			{
 				Timeout = TimeSpan.FromMilliseconds(DataProtectionConfig.BrokerTimeoutMs > 0
@@ -116,6 +120,18 @@ namespace Resgrid.Providers.ProtectedData
 		}
 
 		private async Task<ProtectedDataBrokerResult> SendAsync(string path, int departmentId, string grantToken,
+			string requestId, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken)
+		{
+			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = departmentId, Layer = "application",
+				Operation = path.Contains("decrypt") ? "decrypt" : "encrypt", Outcome = "requested", CorrelationId = requestId }, cancellationToken);
+			var result = await SendCoreAsync(path, departmentId, grantToken, requestId, items, cancellationToken);
+			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = departmentId, Layer = "application",
+				Operation = path.Contains("decrypt") ? "decrypt" : "encrypt", Outcome = result.Success ? "completed" : "denied",
+				CorrelationId = requestId }, cancellationToken);
+			return result;
+		}
+
+		private async Task<ProtectedDataBrokerResult> SendCoreAsync(string path, int departmentId, string grantToken,
 			string requestId, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken)
 		{
 			// HTTPS-only, enforced per request: the payload carries the workload key, the grant and

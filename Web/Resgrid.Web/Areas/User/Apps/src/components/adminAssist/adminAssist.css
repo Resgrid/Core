@@ -1,0 +1,27 @@
+.rgaa { color: #243342; font-size: 1rem; line-height: 1.55; max-width: 1440px; margin-inline: auto; }
+.rgaa-nav, .rgaa-toolbar, .rgaa-metrics { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.rgaa-toolbar { justify-content: space-between; }
+.rgaa-nav { padding-block: 1rem; border-block-end: 1px solid #b3c0cb; }
+.rgaa button, .rgaa select, .rgaa input[type=search] { padding: .55rem .8rem; border: 1px solid #768695; border-radius: .3rem; background: white; color: #243342; font: inherit; }
+.rgaa button, .rgaa select, .rgaa input, .rgaa textarea { box-sizing: border-box; max-width: 100%; min-width: 0; }
+.rgaa button { cursor: pointer; }
+.rgaa button:disabled { cursor: wait; opacity: .7; }
+.rgaa button[aria-current=page] { background: #123f5b; color: white; }
+.rgaa a { color: #075784; text-decoration: underline; }
+.rgaa :focus-visible { outline: 3px solid #a25400; outline-offset: 3px; }
+.rgaa label { display: block; margin-block: .7rem; }
+.rgaa input[type=checkbox] { margin-inline-end: .4rem; }
+.rgaa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); gap: 1rem; margin-block: 1.4rem; }
+.rgaa-card { background: white; border: 1px solid #b3c0cb; border-radius: .4rem; padding: 1.2rem; overflow-wrap: anywhere; }
+.rgaa-card h3 { margin-block-start: 0; font-size: 1.2rem; }
+.rgaa-card h4 { margin-block-end: .3rem; }
+.rgaa-metrics > p { background: white; padding: 1rem; flex: 1 1 180px; }
+.rgaa-metrics strong { display: block; font-size: 1.8rem; }
+.rgaa-warning, .rgaa-state-Unknown { background: #fff1cf; color: #5b3900; padding: .7rem; }
+.rgaa-state-Fail { color: #852318; }
+.rgaa-state-Pass { color: #1e5c3a; }
+.rgaa table { width: 100%; border-collapse: collapse; }
+.rgaa th, .rgaa td { text-align: start; padding: .7rem; border-block-end: 1px solid #b3c0cb; }
+@media print { .rgaa-nav, .rgaa-toolbar button, .rgaa button { display: none; } .rgaa-card { break-inside: avoid; } }
+
+.rgaa-source { white-space: pre-wrap; overflow-wrap: anywhere; margin-block: 1rem; }

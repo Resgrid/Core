@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Feature.addon-adp">
+    <value>Avancerat dataskydd</value>
+  </data>
+  <data xml:space="preserve" name="Feature.archived-calls">
+    <value>Arkiverade larm</value>
+  </data>
+  <data xml:space="preserve" name="Feature.bids">
+    <value>Anbud</value>
+  </data>
+  <data xml:space="preserve" name="Feature.big-board">
+    <value>Stortavla</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calendar">
+    <value>Kalender</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calls">
+    <value>Larm</value>
+  </data>
+  <data xml:space="preserve" name="Feature.chat">
+    <value>Chatt</value>
+  </data>
+  <data xml:space="preserve" name="Feature.checklists">
+    <value>Checklistor</value>
+  </data>
+  <data xml:space="preserve" name="Feature.communication-tests">
+    <value>Kommunikationstester</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contacts">
+    <value>Kontakter</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contracts">
+    <value>Avtal</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard">
+    <value>Översikt</value>
+  </data>
+  <data xml:space="preserve" name="Feature.data-protection">
+    <value>Dataskydd</value>
+  </data>
+  <data xml:space="preserve" name="Feature.department-settings">
+    <value>Avdelningsinställningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.departments">
+    <value>Dina avdelningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.documents">
+    <value>Dokument</value>
+  </data>
+  <data xml:space="preserve" name="Feature.forms">
+    <value>Formulär</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invoices">
+    <value>Fakturor</value>
+  </data>
+  <data xml:space="preserve" name="Feature.logs">
+    <value>Loggar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.mapping">
+    <value>Kartläggning</value>
+  </data>
+  <data xml:space="preserve" name="Feature.module-settings">
+    <value>Modulinställningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-deployment">
+    <value>Ny insats</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-group">
+    <value>Ny grupp</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-protocol">
+    <value>Nytt Protokoll</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-training">
+    <value>Ny utbildning</value>
+  </data>
+  <data xml:space="preserve" name="Feature.notes">
+    <value>Anteckningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.personnel">
+    <value>Personal</value>
+  </data>
+  <data xml:space="preserve" name="Feature.preventive-maintenance">
+    <value>Förebyggande underhåll</value>
+  </data>
+  <data xml:space="preserve" name="Feature.protocols">
+    <value>Protokoll</value>
+  </data>
+  <data xml:space="preserve" name="Feature.rate-cards">
+    <value>Prislistor</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-holds">
+    <value>Bevarandespärrar för journaler</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-inspections">
+    <value>Tillsyner</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-investigations">
+    <value>Utredningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-permits">
+    <value>Tillstånd</value>
+  </data>
+  <data xml:space="preserve" name="Feature.records-settings">
+    <value>Journalinställningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.reports">
+    <value>Rapporter</value>
+  </data>
+  <data xml:space="preserve" name="Feature.routes">
+    <value>Rutter</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shifts">
+    <value>Skift</value>
+  </data>
+  <data xml:space="preserve" name="Feature.trainings">
+    <value>Utbildningar</value>
+  </data>
+  <data xml:space="preserve" name="Feature.units">
+    <value>Enheter</value>
+  </data>
+  <data xml:space="preserve" name="Feature.voice">
+    <value>Röstsamtal</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workflows">
+    <value>Arbetsflöden</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workforce">
+    <value>Personal</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionAction3">
+    <value>Alla</value>
+  </data>
+  <data xml:space="preserve" name="Pack.fire">
+    <value>Brand</value>
+  </data>
+  <data xml:space="preserve" name="Pack.sar">
+    <value>Sök och räddning</value>
+  </data>
+  <data xml:space="preserve" name="Permission.AdjustInventory">
+    <value>Justera lager</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveRecords">
+    <value>Godkänna rapporter</value>
+  </data>
+  <data xml:space="preserve" name="Permission.FinalizeRecords">
+    <value>Slutföra rapporter</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDefinitions">
+    <value>Hantera rapportdefinitioner</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDisclosures">
+    <value>Hantera utlämnanden av rapporter</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordReports">
+    <value>Hantera rapportsammanställningar</value>
+  </data>
+  <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
+    <value>Publicera rapportdefinitioner</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewRecords">
+    <value>Granska rapporter</value>
+  </data>
+  <data xml:space="preserve" name="Profile.No">
+    <value>Nej</value>
+  </data>
+  <data xml:space="preserve" name="Profile.OperatingHours">
+    <value>Drifttimmar</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Reference">
+    <value>Referens</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Yes">
+    <value>Ja</value>
+  </data>
+  <data xml:space="preserve" name="Profile.contract">
+    <value>Avtal</value>
+  </data>
+  <data xml:space="preserve" name="Profile.unknown">
+    <value>Okänd</value>
+  </data>
+  <data xml:space="preserve" name="Profile.volunteer">
+    <value>Frivillig</value>
+  </data>
+  <data xml:space="preserve" name="ProfileField.OperatingHours">
+    <value>Drifttimmar</value>
+  </data>
+  <data xml:space="preserve" name="Ui.After">
+    <value>Efter</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Area">
+    <value>Område</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Assigned">
+    <value>Tilldelad</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Before">
+    <value>Före</value>
+  </data>
+  <data xml:space="preserve" name="Ui.CatalogVersion">
+    <value>Katalogversion</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Configure">
+    <value>Öppna tillhörande inställningssida</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Critical">
+    <value>Kritisk</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Fail">
+    <value>Behöver åtgärdas</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featureplanned">
+    <value>Planerad</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Freshness">
+    <value>Underlag per</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Information">
+    <value>Information</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Interested">
+    <value>Jag är intresserad av funktionen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Known">
+    <value>Tillgänglig</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LearnLater">
+    <value>Lär dig senare</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Learned">
+    <value>Jag förstår funktionen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Loading">
+    <value>Läser in avdelningens konfiguration…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NotApplicable">
+    <value>Ej tillämpligt</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Pass">
+    <value>Verifierad</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Print">
+    <value>Skriv ut</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReadSource">
+    <value>Läs källtexten</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Redacted">
+    <value>Skyddade underlag är inte tillgängliga</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReportBoundary">
+    <value>Konfigurationskontrollen ger administrativ vägledning. Att förstå en funktion eller spara en inställning bevisar inte operativ beredskap eller att meddelanden har levererats.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Retry">
+    <value>Försök igen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReviewDate">
+    <value>Granskning senast</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Saving">
+    <value>Sparar…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Search">
+    <value>Sök områden och funktioner</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SearchReference">
+    <value>Sök i referensdokumentationen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unassigned">
+    <value>Ej tilldelad</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unavailable">
+    <value>Inte tillgänglig</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unknown">
+    <value>Okänd</value>
+  </data>
+  <data xml:space="preserve" name="Ui.UseNow">
+    <value>Använd nu</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Verify">
+    <value>Kontrollera igen</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Warning">
+    <value>Varning</value>
+  </data>
+  <data xml:space="preserve" name="Ui.explore">
+    <value>Utforska Resgrid och tillägg</value>
+  </data>
+  <data xml:space="preserve" name="Ui.health">
+    <value>Konfigurationskontroller</value>
+  </data>
+  <data xml:space="preserve" name="Ui.history">
+    <value>Ändringshistorik</value>
+  </data>
+  <data xml:space="preserve" name="Ui.overview">
+    <value>Översikt</value>
+  </data>
+  <data xml:space="preserve" name="Ui.reference">
+    <value>Inställningsreferens</value>
+  </data>
+  <data xml:space="preserve" name="Ui.report">
+    <value>Konfigurationsrapport</value>
+  </data>
+  <data xml:space="preserve" name="Ui.wizard">
+    <value>Installationsguide</value>
+  </data>
+  <data xml:space="preserve" name="Ui.worklist">
+    <value>Administratörens uppgiftslista</value>
+  </data>
+</root>

@@ -135,4 +135,22 @@ L'équipe Resgrid</value>
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Votre code de vérification Resgrid est : {0}. Il expire dans {1} minutes.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>Code PIN des interventions protégées</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Choisissez un code PIN personnel de 6 à 12 chiffres. Une vérification récente par authentificateur est requise. Votre service doit activer la transmission par code PIN pour recevoir les détails protégés.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>Code PIN personnel</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Code de l’authentificateur</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Enregistré.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Impossible de transmettre ou d’enregistrer les données protégées. Connectez-vous à Resgrid et réessayez.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Une intervention protégée est disponible. Répondez OPEN {0} suivi de votre code PIN personnel, séparé par un espace.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Une intervention protégée est disponible. Saisissez votre code PIN personnel puis appuyez sur dièse.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Paramètres de transmission ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>Transmission par SMS</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Transmission vocale</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Alerte générique</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Transmettre après le code PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Autoriser un accès temporaire au personnel d’assistance Resgrid avec l’approbation d’un second employé.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Je reconnais que les détails transmis quittent Resgrid et peuvent être conservés par les opérateurs téléphoniques ou les destinataires.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Autoriser le contenu protégé</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Le personnel Resgrid a demandé l’accès à l’intervention protégée {0} pour le dossier d’assistance {1}. L’accès nécessite un approbateur indépendant et expire sous 15 minutes.</value></data>
 </root>

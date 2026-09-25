@@ -123,6 +123,10 @@ namespace Resgrid.Web.Mcp.Infrastructure
 					{
 						jsonObject[property.Key] = RedactedValue;
 					}
+					else if (property.Value is JsonValue value && TryRedactEmbeddedJson(value, out var redacted))
+					{
+						jsonObject[property.Key] = redacted;
+					}
 					else if (property.Value != null)
 					{
 						RedactNode(property.Value);
@@ -134,11 +138,52 @@ namespace Resgrid.Web.Mcp.Infrastructure
 				for (int i = 0; i < jsonArray.Count; i++)
 				{
 					var item = jsonArray[i];
-					if (item != null)
+					if (item is JsonValue value && TryRedactEmbeddedJson(value, out var redacted))
+					{
+						jsonArray[i] = redacted;
+					}
+					else if (item != null)
 					{
 						RedactNode(item);
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Redacts JSON carried inside a string value. MCP tool results travel serialized into result.content[].text,
+		/// so the tokens a tool returns sit inside a string rather than under a property name the walk above can see.
+		/// </summary>
+		private static bool TryRedactEmbeddedJson(JsonValue value, out string redacted)
+		{
+			redacted = null;
+
+			if (!value.TryGetValue<string>(out var text))
+			{
+				return false;
+			}
+
+			var trimmed = text.TrimStart();
+			if (!trimmed.StartsWith("{") && !trimmed.StartsWith("["))
+			{
+				return false;
+			}
+
+			try
+			{
+				var embedded = JsonNode.Parse(text);
+				if (embedded == null)
+				{
+					return false;
+				}
+
+				RedactNode(embedded);
+				redacted = embedded.ToJsonString(new JsonSerializerOptions { WriteIndented = false });
+				return true;
+			}
+			catch (JsonException)
+			{
+				return false;
 			}
 		}
 	}

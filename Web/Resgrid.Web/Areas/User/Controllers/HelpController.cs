@@ -24,13 +24,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return PartialView();
 		}
 
-		public async Task<IActionResult> SetupReport()
-		{
-			var model = new SetupReportView();
-			model.Report = await _departmentsService.GetDepartmentSetupReportAsync(DepartmentId);
-			model.SetupScore = (int)_departmentsService.GenerateSetupScore(model.Report);
-
-			return View(model);
-		}
+		[HttpGet]
+		public IActionResult SetupReport() => RedirectToAction("SetupReport", "AdminAssist", new { Area = "User" });
 	}
 }

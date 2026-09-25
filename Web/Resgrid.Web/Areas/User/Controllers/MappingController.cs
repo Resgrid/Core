@@ -619,7 +619,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					groupId = userGroup.DepartmentGroupId;
 
 				var roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
-				var allowedUsers = await _permissionsService.GetAllowedUsersAsync(userLocationPermission, DepartmentId, groupId, ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), roles);
+				var isGroupAdmin = userGroup != null && userGroup.IsUserGroupAdmin(UserId);
+				var allowedUsers = await _permissionsService.GetAllowedUsersAsync(userLocationPermission, DepartmentId, groupId, ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), isGroupAdmin, roles);
 
 				lastUserActionlogs.RemoveAll(x => !allowedUsers.Contains(x.UserId));
 			}

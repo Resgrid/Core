@@ -69,6 +69,72 @@
             Text-To-Call has always done it.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AdminAssistController">
+            <summary>Deterministic department setup and configuration guidance. No configuration mutation or model calls.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.#ctor(Resgrid.Model.AdminAssist.IAdminAssistService,Resgrid.Model.AdminAssist.IAdminAssistAccessService,Resgrid.Model.AdminAssist.IAdminAssistCatalog,Microsoft.Extensions.Localization.IStringLocalizer{Resgrid.Localization.Areas.User.AdminAssist.AdminAssist},Resgrid.Model.AdminAssist.IAdminAssistReferenceSearch,Resgrid.Model.AdminAssist.IAdminAssistWorklistService,Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore,Resgrid.Model.AdminAssist.IConfigurationImpactService,Resgrid.Model.AdminAssist.IDispatchImpactService,Resgrid.Model.AdminAssist.IPermissionImpactService,Resgrid.Model.AdminAssist.IModuleImpactService,Resgrid.Model.AdminAssist.ITextImportImpactService,Resgrid.Model.AdminAssist.IRetentionImpactService,Resgrid.Model.AdminAssist.INotificationImpactService,Resgrid.Model.AdminAssist.ISecurityImpactService)">
+            <summary>Deterministic department setup and configuration guidance. No configuration mutation or model calls.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Overview(System.Boolean,System.Threading.CancellationToken)">
+            <summary>Read fresh, authorized configuration evidence and setup progress.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Catalog(System.Boolean,System.Threading.CancellationToken)">
+            <summary>Read the release-pinned public setup and feature catalog.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Setup(Resgrid.Model.AdminAssist.SetupProgressCommand,System.Threading.CancellationToken)">
+            <summary>Update setup choices and personal learning metadata.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Search(System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>Search the allowlisted public reference corpus.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.History(System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>Read tenant history with personal learning choices restricted to the current administrator.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Worklist(System.Threading.CancellationToken)">
+            <summary>Read current findings through the department protection policy.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Verify(System.Threading.CancellationToken)">
+            <summary>Evaluate fresh evidence and persist meaningful finding transitions.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Review(Resgrid.Model.AdminAssist.FindingReviewCommand,System.Threading.CancellationToken)">
+            <summary>Update finding ownership or review metadata without changing the rule result.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Impact(Resgrid.Model.AdminAssist.ConfigurationImpactRequest,System.Threading.CancellationToken)">
+            <summary>Preview a scalar proposal against fresh evidence without saving configuration.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.CapacityImpact(Resgrid.Model.AdminAssist.CapacityImpactRequest,System.Threading.CancellationToken)">
+            <summary>Preview base-plan headroom for proposed total personnel and unit counts without provisioning.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DispatchImpact(Resgrid.Model.AdminAssist.DispatchImpactRequest,System.Threading.CancellationToken)">
+            <summary>Simulate a saved call's routes using current authorized membership and an explicit roster time; never sends.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PermissionImpact(Resgrid.Model.AdminAssist.PermissionImpactRequest,System.Threading.CancellationToken)">
+            <summary>Compare the proposed permission gate for current members and resource targets; never changes access.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.PermissionRoles(System.String,System.Threading.CancellationToken)">
+            <summary>List current department roles for a permission proposal, without exposing personnel details.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.ModuleImpact(Resgrid.Model.AdminAssist.ModuleImpactRequest,System.Threading.CancellationToken)">
+            <summary>Preview module navigation and bounded content counts without changing module availability.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.TextImportImpact(Resgrid.Model.AdminAssist.TextImportImpactRequest,System.Threading.CancellationToken)">
+            <summary>Compare a masked sender scenario against provider-specific routing; never receives or sends a message.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.SecurityImpact(Resgrid.Model.AdminAssist.ConfigurationImpactRequest,System.Threading.CancellationToken)">
+            <summary>Compare supported department security-policy gates; never changes credentials or sessions.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.NotificationImpact(Resgrid.Model.AdminAssist.NotificationImpactRequest,System.Threading.CancellationToken)">
+            <summary>Estimate ordinary notification channel gates for a declared future cohort scenario; never sends.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.RetentionImpact(Resgrid.Model.AdminAssist.RetentionImpactRequest,System.Threading.CancellationToken)">
+            <summary>Preview prospective retention windows and known hold exclusions using metadata only; never purges.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Preferences(System.Threading.CancellationToken)">
+            <summary>Read personal digest preferences and the last completed worker evaluation.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.Preferences(Resgrid.Model.AdminAssist.AdminAssistPreferencesCommand,System.Threading.CancellationToken)">
+            <summary>Save the current administrator's explicit digest opt-in and quiet hours.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -6924,6 +6990,14 @@
             <summary>
             The grant covering this request, or null when the caller is a user principal or has no grant for
             the department. Callers treat null-with-a-system-principal as a denial, not as "unrestricted".
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.UnitLocationVisibility">
+            <summary>
+            The one rule for a unit's coordinates leaving the v4 API, the same one the map applies: they go out only when
+            the caller passes See Unit Locations for that unit (the unit-location visibility matrix). A unit the caller may
+            see but not locate is still returned, with its coordinates withheld (null). An endpoint that returns nothing
+            but a location refuses the request instead.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter">

@@ -85,7 +85,7 @@ namespace Resgrid.Web.Mcp.Tools
 							}
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving dispatch status");
 						return CreateErrorResponse("Failed to retrieve dispatch status. Please try again later.");

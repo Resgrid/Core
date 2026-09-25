@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Autofac;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -15,6 +15,37 @@ namespace Resgrid.Services
 
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterInstance(TimeProvider.System).As<TimeProvider>().SingleInstance().PreserveExistingDefaults();
+			builder.RegisterType<Resgrid.AdminAssist.ConfigurationCatalog>().As<Resgrid.Model.AdminAssist.IAdminAssistCatalog>().SingleInstance();
+			builder.RegisterType<AdminAssist.AdminAssistAccessService>().As<Resgrid.Model.AdminAssist.IAdminAssistAccessService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.ConfigurationSnapshotProvider>().As<Resgrid.Model.AdminAssist.IConfigurationSnapshotProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.SettingsEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdministrativeReferenceEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.OperatingProfileEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.OrganizationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminIdentityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.DispatchEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.ImportEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.CapacityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.CapabilityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.QualificationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.ReadinessEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.StaffingEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistService>().As<Resgrid.Model.AdminAssist.IAdminAssistService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.ConfigurationImpactService>().As<Resgrid.Model.AdminAssist.IConfigurationImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.SecurityImpactService>().As<Resgrid.Model.AdminAssist.ISecurityImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.NotificationImpactService>().As<Resgrid.Model.AdminAssist.INotificationImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.RetentionImpactService>().As<Resgrid.Model.AdminAssist.IRetentionImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.TextImportImpactService>().As<Resgrid.Model.AdminAssist.ITextImportImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.ModuleImpactService>().As<Resgrid.Model.AdminAssist.IModuleImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.PermissionImpactService>().As<Resgrid.Model.AdminAssist.IPermissionImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.DispatchImpactService>().As<Resgrid.Model.AdminAssist.IDispatchImpactService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.MappingImpactProvider>().As<Resgrid.Model.AdminAssist.IOperationalImpactProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.StatusAutomationImpactProvider>().As<Resgrid.Model.AdminAssist.IOperationalImpactProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.ConfigurationChangeJournal>().As<Resgrid.Model.AdminAssist.IConfigurationChangeJournal>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistWorklistService>().As<Resgrid.Model.AdminAssist.IAdminAssistWorklistService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistMaintenanceService>().As<Resgrid.Model.AdminAssist.IAdminAssistMaintenanceService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.AdminAssistTraceWriter>().As<Resgrid.Model.AdminAssist.IAdminAssistTraceWriter>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryAuthorizationService>().As<IInventoryAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryModernizationService>().AsSelf().As<IInventoryCatalogService>().As<IInventoryStockService>().As<IInventoryWorkOrderAdapter>().As<IInventoryTransferService>()
 				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<IInventoryPurchasingService>().As<IInventoryOperationsService>().As<IInventoryAlertService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
@@ -230,6 +261,8 @@ namespace Resgrid.Services
 			builder.RegisterType<PasswordRecoveryService>().As<IPasswordRecoveryService>().InstancePerLifetimeScope();
 
 			// Advanced Data Protection (ADP)
+			builder.RegisterType<AdpReleaseService>().As<IAdpReleaseService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdpReleaseReceiptService>().As<IAdpReleaseReceiptService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentDataProtectionService>().As<IDepartmentDataProtectionService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentLockService>().As<IDepartmentLockService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectedFieldCatalog>().As<IProtectedFieldCatalog>().SingleInstance();

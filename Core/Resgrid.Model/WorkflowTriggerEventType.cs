@@ -245,7 +245,10 @@ RecordPermitExpiring = 163,
 		DeploymentAttachmentAdded = 187,
 
 		// Inventory held by a removed, disabled or hidden member (registry 188, 2026-09-22): raised with the DepartedHolder alert.
-		InventoryDepartedHolder = 188
+		InventoryDepartedHolder = 188,
+		AdminAssistFindingOpened = 189,
+		AdminAssistFindingResolved = 190,
+		AdminAssistFindingReopened = 191
 	}
 
 	public static class WorkflowTriggerEventTypes

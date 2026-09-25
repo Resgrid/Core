@@ -31,6 +31,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private const int StepUpMaxAttempts = 5;
 		private static readonly TimeSpan StepUpAttemptWindow = TimeSpan.FromMinutes(5);
 
+		[HttpPost("EnrollPin")]
+		[Authorize]
+		public async Task<IActionResult> EnrollPin([FromBody] PinEnrollmentInput input)
+		{
+			Response.Headers["Cache-Control"] = "no-store";
+			return Ok(new { success = await _adpRelease.EnrollPinAsync(DepartmentId, UserId,
+				Request.Headers[GrantHeader].ToString(), input?.Pin) });
+		}
+
+		public sealed class PinEnrollmentInput { public string Pin { get; set; } }
+
 		/// <summary>Header carrying the caller's Protected Data Grant on MFA-gated commands.</summary>
 		public const string GrantHeader = "X-Resgrid-Protected-Grant";
 
@@ -42,12 +53,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IProtectedDataGrantService _grantService;
+		private readonly IAdpReleaseService _adpRelease;
+		private readonly Resgrid.Model.Repositories.IAdpAuditRepository _adpAudit;
 
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IProtectedFieldCatalog protectedFieldCatalog,
 			IDepartmentsService departmentsService, IFeatureToggleService featureToggleService,
 			UserManager<Model.Identity.IdentityUser> userManager, ICacheProvider cacheProvider,
-			IProtectedDataGrantService grantService)
+			IProtectedDataGrantService grantService, IAdpReleaseService adpRelease, Resgrid.Model.Repositories.IAdpAuditRepository adpAudit)
 		{
 			_dataProtectionService = dataProtectionService;
 			_departmentLockService = departmentLockService;
@@ -57,6 +70,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_userManager = userManager;
 			_cacheProvider = cacheProvider;
 			_grantService = grantService;
+			_adpRelease = adpRelease;
+			_adpAudit = adpAudit;
 		}
 
 		/// <summary>
@@ -178,6 +193,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MfaAtUtc = DateTime.UtcNow,
 				StepUpExempt = true
 			});
+			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
+				Operation = "grant-issued", Outcome = "step-up-exempt", ActorId = UserId, CorrelationId = issued.GrantId });
 
 			var exemptResult = new StepUpResult
 			{
@@ -223,6 +240,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var valid = await _userManager.VerifyTwoFactorTokenAsync(user,
 				_userManager.Options.Tokens.AuthenticatorTokenProvider, input.Code.Trim());
+			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
+				Operation = "mfa-verify", Outcome = valid ? "verified" : "denied", ActorId = UserId });
 			if (!valid)
 				return Problem(type: "invalid_totp",
 					title: "The verification code is invalid or has expired.",
@@ -262,6 +281,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
 					MfaAtUtc = DateTime.UtcNow
 				});
+				await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
+					Operation = "grant-issued", Outcome = "mfa-verified", ActorId = UserId, CorrelationId = issued.GrantId });
 
 				result.GrantId = issued.GrantId;
 				result.GrantToken = issued.Token;

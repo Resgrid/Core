@@ -135,4 +135,22 @@ El equipo de Resgrid</value>
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Su código de verificación de Resgrid es: {0}. Caduca en {1} minutos.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN de despacho protegido</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Elija un PIN personal de 6 a 12 dígitos. Se requiere una verificación reciente con el autenticador. Su departamento debe habilitar la entrega mediante PIN para recibir los detalles protegidos.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>PIN personal</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Código del autenticador</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Guardar</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Guardado.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>No se pueden mostrar ni guardar los datos protegidos. Inicie sesión en Resgrid e inténtelo de nuevo.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Hay un despacho protegido disponible. Responda OPEN {0} seguido de su PIN personal, separado por un espacio.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Hay un despacho protegido disponible. Introduzca su PIN personal y pulse la tecla de almohadilla.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Configuración de entrega de ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>Entrega por SMS</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Entrega por voz</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Alerta genérica</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Mostrar después del PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Permitir acceso temporal al personal de soporte de Resgrid con la aprobación de otro empleado.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Reconozco que los detalles entregados salen de Resgrid y pueden ser conservados por operadores telefónicos o destinatarios.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Permitir contenido protegido</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>El personal de Resgrid solicitó acceso al despacho protegido {0} para el caso de soporte {1}. El acceso requiere un aprobador independiente y caduca en 15 minutos.</value></data>
 </root>

@@ -24,6 +24,7 @@ COPY ["Directory.Build.props", "./"]
 COPY ["Directory.Build.targets", "./"]
 COPY ["Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj", "Web/Resgrid.Web.Tts/"]
 COPY ["Core/Resgrid.Config/Resgrid.Config.csproj", "Core/Resgrid.Config/"]
+COPY ["Web/Resgrid.Web.Common/Resgrid.Web.Common.csproj", "Web/Resgrid.Web.Common/"]
 RUN dotnet restore "Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj"
 
 COPY . .

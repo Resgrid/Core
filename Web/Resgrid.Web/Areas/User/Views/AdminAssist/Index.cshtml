@@ -1,0 +1,10 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> adminAssistLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + adminAssistLocalizer["Ui.Title"];
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+<div class="wrapper wrapper-content">
+	<h1>@adminAssistLocalizer["Ui.Title"]</h1>
+	<rg-admin-assist page="@ViewBag.AdminAssistPage" setup="@(ViewBag.AdminAssistSetup ? "true" : "false")"
+		loadinglabel="@adminAssistLocalizer["Ui.Loading"]" errorlabel="@adminAssistLocalizer["Ui.Error"]"></rg-admin-assist>
+</div>

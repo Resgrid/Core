@@ -21,15 +21,15 @@ using Resgrid.Repositories.DataRepository.Queries.Messages;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DepartmentGroupsRepository : RepositoryBase<DepartmentGroup>, IDepartmentGroupsRepository
+	public class DepartmentGroupsRepository : AuditedConfigurationRepository<DepartmentGroup>, IDepartmentGroupsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentGroupsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public DepartmentGroupsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

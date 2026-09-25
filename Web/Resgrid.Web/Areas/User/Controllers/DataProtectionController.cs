@@ -66,6 +66,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly IProtectedDataGrantService _grantService;
+		private readonly IAdpReleaseService _adpRelease;
+		private readonly Resgrid.Model.Repositories.IAdpAccessStore _adpAccess;
+		private readonly Resgrid.Model.Repositories.IAdpAuditRepository _adpAudit;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IProtectedWorkflowService _protectedWorkflows;
@@ -73,7 +76,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IAdpSizingService sizingService,
 			IProtectedDataBrokerClient brokerClient, IDepartmentsService departmentsService,
-			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService,
+			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService, IAdpReleaseService adpRelease, Resgrid.Model.Repositories.IAdpAccessStore adpAccess, Resgrid.Model.Repositories.IAdpAuditRepository adpAudit,
 			ICacheProvider cacheProvider, IEventAggregator eventAggregator, IProtectedWorkflowService protectedWorkflows)
 		{
 			_protectedWorkflows = protectedWorkflows;
@@ -85,7 +88,70 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentsService = departmentsService;
 			_userManager = userManager;
 			_grantService = grantService;
+			_adpRelease = adpRelease;
+			_adpAccess = adpAccess;
+			_adpAudit = adpAudit;
 			_cacheProvider = cacheProvider;
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> ReleaseSettings()
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin()) return Unauthorized();
+			var egress = await _dataProtectionService.GetEgressPolicyByDepartmentIdAsync(DepartmentId, bypassCache: true);
+			var consent = await _adpAccess.GetAsync(AdpSupportConsent.Key(DepartmentId));
+			return View(new AdpReleaseSettingsView { SmsMode = egress.SmsMode, VoiceMode = egress.VoiceMode,
+				SupportEnabled = consent != null && Newtonsoft.Json.JsonConvert.DeserializeObject<AdpSupportConsent>(consent.Json).Enabled });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SaveReleaseSettings(int smsMode, int voiceMode, bool supportEnabled, bool acknowledged, string grantToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || !await _protectedWorkflows.CanAdministerAsync(DepartmentId, UserId) || smsMode is < 0 or > 2 || voiceMode is < 0 or > 2 ||
+				!acknowledged && (smsMode != 0 || voiceMode != 0 || supportEnabled)) return Unauthorized();
+			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId, bypassCache: true);
+			if (policy == null || _grantService.ValidateGrant(grantToken, DepartmentId, policy.PolicyEpoch, ProtectedDataGrantScopes.Read,
+				out var grant) != ProtectedDataGrantValidationOutcome.Valid || grant.UserId != UserId || grant.StepUpExempt ||
+				grant.MfaAtUtc < DateTime.UtcNow.AddMinutes(-5) || grant.MfaAtUtc > DateTime.UtcNow.AddSeconds(30)) return Unauthorized();
+			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "application", Operation = "release-settings",
+				Outcome = "requested", ActorId = UserId, PolicyEpoch = policy.PolicyEpoch });
+			var previous = await _adpAccess.GetAsync(AdpSupportConsent.Key(DepartmentId));
+			if (!await _adpAccess.SaveAsync(AdpSupportConsent.Key(DepartmentId), Newtonsoft.Json.JsonConvert.SerializeObject(
+				new AdpSupportConsent { Enabled = supportEnabled, UserId = UserId, UpdatedUtc = DateTime.UtcNow }), previous?.Version ?? 0))
+				return Conflict();
+			var egress = await _dataProtectionService.GetEgressPolicyByDepartmentIdAsync(DepartmentId, bypassCache: true);
+			egress.SmsMode = smsMode;
+			egress.VoiceMode = voiceMode;
+			if (acknowledged) { egress.AcknowledgementVersion = "pin-release-v1"; egress.AcknowledgedByUserId = UserId; egress.AcknowledgedOn = DateTime.UtcNow; }
+			await _dataProtectionService.SaveEgressPolicyAsync(egress, UserId);
+			return Json(new { success = true });
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> AuditChain()
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin()) return Unauthorized();
+			Response.Headers["Cache-Control"] = "no-store";
+			var rows = await _adpAudit.ReadAsync(DepartmentId);
+			var tail = rows.LastOrDefault();
+			return Json(new { rows, tailSequence = tail?.Sequence ?? 0, tailHash = tail?.Hash ?? AdpAuditChain.Genesis,
+				valid = AdpAuditChain.Verify(rows, tail?.Sequence ?? 0, tail?.Hash ?? AdpAuditChain.Genesis) });
+		}
+
+		[HttpGet]
+		public IActionResult Pin()
+		{
+			Response.Headers["Cache-Control"] = "no-store";
+			return View();
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SavePin([FromForm] string pin, [FromForm] string grantToken)
+		{
+			Response.Headers["Cache-Control"] = "no-store";
+			return Json(new { success = await _adpRelease.EnrollPinAsync(DepartmentId, UserId, grantToken, pin) });
 		}
 
 		public async Task<IActionResult> Index()
@@ -335,6 +401,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				MfaAtUtc = DateTime.UtcNow,
 				StepUpExempt = true
 			});
+			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
+				Operation = "grant-issued", Outcome = "step-up-exempt", ActorId = UserId, CorrelationId = issued.GrantId });
 
 			return Json(new
 			{
@@ -367,6 +435,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var valid = await _userManager.VerifyTwoFactorTokenAsync(user,
 				_userManager.Options.Tokens.AuthenticatorTokenProvider, code.Trim());
+			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
+				Operation = "mfa-verify", Outcome = valid ? "verified" : "denied", ActorId = UserId });
 			if (!valid)
 				return Json(new { success = false, error = "invalid_totp" });
 
@@ -390,6 +460,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
 				MfaAtUtc = DateTime.UtcNow
 			});
+			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
+				Operation = "grant-issued", Outcome = "mfa-verified", ActorId = UserId, CorrelationId = issued.GrantId });
 
 			return Json(new
 			{

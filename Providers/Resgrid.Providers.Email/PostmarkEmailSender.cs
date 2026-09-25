@@ -34,6 +34,9 @@ namespace Resgrid.Providers.EmailProvider
 				var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
 				var response = await newClient.SendMessageAsync(message);
+				Resgrid.Model.AdminAssist.DispatchTraceTelemetry.ProviderResult(
+					Resgrid.Model.AdminAssist.DispatchTraceProvider.Postmark, Resgrid.Model.AdminAssist.DispatchTraceChannel.Email,
+					response.MessageID.ToString(), response.ErrorCode == 0);
 
 				if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
 				    !response.Message.Contains("You tried to send to a recipient that has been marked as inactive"))
@@ -92,6 +95,9 @@ namespace Resgrid.Providers.EmailProvider
 						}
 
 						var response = await newClient.SendMessageAsync(message);
+						Resgrid.Model.AdminAssist.DispatchTraceTelemetry.ProviderResult(
+							Resgrid.Model.AdminAssist.DispatchTraceProvider.Postmark, Resgrid.Model.AdminAssist.DispatchTraceChannel.Email,
+							response.MessageID.ToString(), response.ErrorCode == 0);
 
 						if (response.ErrorCode != 200 && response.ErrorCode != 406 && response.Message != "OK" &&
 						    !response.Message.Contains(

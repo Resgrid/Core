@@ -102,7 +102,7 @@ namespace Resgrid.Repositories.DataRepository
 			var policy = string.IsNullOrEmpty(setting?.Setting) ? new RecordsRetentionPolicy() : ObjectSerialization.Deserialize<RecordsRetentionPolicy>(setting.Setting);
 			if (policy == null) throw new InvalidOperationException("Retention policy is unreadable.");
 			var years = policy.ResolveYears(definition, finalized.Value);
-			if (years <= 0 || years > 9999 - finalized.Value.Year || finalized.Value.AddYears(years) > now) return new RmsPurgeResult { Reason = "Retention has not expired." };
+			if (!RecordsRetentionWindow.HasExpired(finalized, years, now)) return new RmsPurgeResult { Reason = "Retention has not expired." };
 			var analyses = operational ? new List<RmsIncidentAnalysis>() : (await QueryAsync<RmsIncidentAnalysis>($"SELECT * FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IncidentReportId")} = {P}Id", key, cancellationToken)).ToList();
 			var ids = new[] { recordId }.Concat(analyses.Select(a => a.RmsIncidentAnalysisId)).ToArray();
 			foreach (var analysis in analyses.OrderBy(a => a.RmsIncidentAnalysisId, StringComparer.Ordinal))
@@ -111,7 +111,7 @@ namespace Resgrid.Repositories.DataRepository
 				var current = await QueryFirstOrDefaultAsync<RmsIncidentAnalysis>($"SELECT * FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentAnalysisId")} = {P}Id", new { DepartmentId = departmentId, Id = analysis.RmsIncidentAnalysisId }, cancellationToken);
 				if (current.DeletedOn.HasValue) continue;
 				var childYears = policy.ResolveYears(definition, current.FinalizedOn ?? current.CreatedOn);
-				if (!current.FinalizedOn.HasValue || childYears <= 0 || childYears > 9999 - current.FinalizedOn.Value.Year || current.FinalizedOn.Value.AddYears(childYears) > now)
+				if (!RecordsRetentionWindow.HasExpired(current.FinalizedOn, childYears, now))
 					return new RmsPurgeResult { Held = true, Reason = "The analysis is open or has an unexpired retention obligation." };
 			}
 			foreach (var permanentClass in new[] { "RmsCasualtyRescues", "RmsExposures" })

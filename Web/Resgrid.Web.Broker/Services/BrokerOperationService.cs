@@ -34,16 +34,18 @@ namespace Resgrid.Web.Broker.Services
 		private readonly IProtectedFieldCryptoService _cryptoService;
 		private readonly IKeyWrappingProvider _keyWrappingProvider;
 		private readonly IMemoryCache _replayCache;
+		private readonly IAdpAuditRepository _audit;
 
 		public BrokerOperationService(ILifetimeScope rootScope, IProtectedDataGrantService grantService,
 			IProtectedFieldCryptoService cryptoService, IKeyWrappingProvider keyWrappingProvider,
-			IMemoryCache replayCache)
+			IMemoryCache replayCache, IAdpAuditRepository audit)
 		{
 			_rootScope = rootScope;
 			_grantService = grantService;
 			_cryptoService = cryptoService;
 			_keyWrappingProvider = keyWrappingProvider;
 			_replayCache = replayCache;
+			_audit = audit;
 		}
 
 		public Task<ProtectedDataBrokerResult> DecryptAsync(BrokerFieldOperationRequest request, CancellationToken cancellationToken) =>
@@ -78,6 +80,24 @@ namespace Resgrid.Web.Broker.Services
 
 		private async Task<ProtectedDataBrokerResult> ProcessAsync(BrokerFieldOperationRequest request, bool decrypt,
 			CancellationToken cancellationToken, string workloadPurpose = null)
+		{
+			if (request == null || request.DepartmentId <= 0) return Fail("invalid_request");
+			var operation = workloadPurpose != null ? "workload-decrypt" : decrypt ? "decrypt" : "encrypt";
+			try
+			{
+				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = "broker",
+					Operation = operation, Outcome = "requested", CorrelationId = request.RequestId }, cancellationToken);
+				var result = await ProcessCoreAsync(request, decrypt, cancellationToken, workloadPurpose);
+				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = "broker",
+					Operation = operation, Outcome = result.Success ? "completed" : "denied", CorrelationId = request.RequestId }, cancellationToken);
+				return result;
+			}
+			catch (OperationCanceledException) { throw; }
+			catch (Exception) { return Fail("audit_unavailable"); }
+		}
+
+		private async Task<ProtectedDataBrokerResult> ProcessCoreAsync(BrokerFieldOperationRequest request, bool decrypt,
+			CancellationToken cancellationToken, string workloadPurpose)
 		{
 			if (request == null || request.DepartmentId <= 0 || string.IsNullOrWhiteSpace(request.RequestId) ||
 				request.Items == null || request.Items.Count == 0)
@@ -117,7 +137,14 @@ namespace Resgrid.Web.Broker.Services
 			// grant that IS presented is still fully validated, so a stolen/stale token cannot be
 			// laundered through the encrypt path either.
 			ProtectedDataGrant grant = null;
-			if (decrypt && workloadPurpose == null || !string.IsNullOrWhiteSpace(request.GrantToken))
+			if (decrypt && workloadPurpose == null && request.GrantToken?.StartsWith("adpr.", StringComparison.Ordinal) == true)
+			{
+				var receipts = scope.Resolve<IAdpReleaseReceiptService>();
+				if (policy == null || policy.State != (int)DepartmentDataProtectionState.Enabled && policy.State != (int)DepartmentDataProtectionState.Rotating ||
+					await receipts.ConsumeAsync(request.GrantToken, request.DepartmentId, currentEpoch, request.Items, cancellationToken) == null)
+					return Fail("grant_invalid");
+			}
+			else if (decrypt && workloadPurpose == null || !string.IsNullOrWhiteSpace(request.GrantToken))
 			{
 				var requiredScope = decrypt ? ProtectedDataGrantScopes.Read : ProtectedDataGrantScopes.Write;
 				var outcome = _grantService.ValidateGrant(request.GrantToken, request.DepartmentId, currentEpoch,
@@ -126,6 +153,10 @@ namespace Resgrid.Web.Broker.Services
 					return Fail(MapGrantOutcome(outcome));
 			}
 
+			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = "broker",
+				Operation = decrypt ? "decrypt-authorized" : "encrypt-authorized", Outcome = "authorized",
+				ActorId = grant?.UserId, ResourceId = grant?.GrantId, CorrelationId = request.RequestId,
+				PolicyEpoch = currentEpoch }, cancellationToken);
 			var result = new ProtectedDataBrokerResult { Success = true };
 			var unwrappedKeys = new Dictionary<int, byte[]>();
 			try

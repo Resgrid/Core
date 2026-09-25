@@ -35,7 +35,7 @@ using Resgrid.Web.Attributes;
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
-	public class DepartmentController : SecureBaseController
+	public partial class DepartmentController : SecureBaseController
 	{
 		#region Private Members and Constructors
 
@@ -1916,105 +1916,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public async Task<IActionResult> SetupWizard()
-		{
-			var model = new SetupWizardView();
-			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			model.Groups = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			model.CanProvisionNumber = await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId);
-			model.DepartmentTextToCallNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
-			model.DepartmentTextToCallSourceNumbers = await _departmentSettingsService.GetTextToCallSourceNumbersForDepartmentAsync(DepartmentId);
-			model.EmailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(DepartmentId);
-			model.DepartmentEmailAddress = await _departmentSettingsService.GetDispatchEmailForDepartmentAsync(DepartmentId);
-
-			return View("_SetupWizard", model);
-		}
+		public IActionResult SetupWizard() => RedirectToAction("SetupWizard", "AdminAssist", new { Area = "User" });
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> SubmitSetupWizard([FromBody] SetupWizardFormPayload payload, CancellationToken cancellationToken)
+		public IActionResult SubmitSetupWizard([FromBody] SetupWizardFormPayload payload, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
-				return Unauthorized();
-
-			var formCollection = JsonConvert.DeserializeObject<Dictionary<string, string>>(payload.setupWizardForm);
-
-			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			department.TimeZone = formCollection["Department.TimeZone"];
-
-			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, formCollection["DisableAutoAvailable"], DepartmentSettingTypes.DisabledAutoAvailable,
-				cancellationToken);
-
-			Address address = null;
-			if (department.AddressId.HasValue)
-				address = await _addressService.GetAddressByIdAsync(department.AddressId.Value);
-			else
-				address = new Address();
-
-			address.Address1 = formCollection["Department.Address.Address1"];
-			address.City = formCollection["Department.Address.City"];
-			address.State = formCollection["Department.Address.State"];
-			address.PostalCode = formCollection["Department.Address.PostalCode"];
-			address.Country = formCollection["Department.Address.Country"];
-
-			address = await _addressService.SaveAddressAsync(address, cancellationToken);
-			department.AddressId = address.AddressId;
-
-			await _departmentsService.SaveDepartmentAsync(department, cancellationToken);
-
-			int stationCount = int.Parse(formCollection["StationCount"]);
-			var newStations = new List<DepartmentGroup>();
-			for (int i = 1; i <= stationCount; i++)
-			{
-				var station = new DepartmentGroup();
-				var stationAddress = new Address();
-
-				station.Name = formCollection["station_" + i];
-				station.Type = (int)DepartmentGroupTypes.Station;
-				station.DepartmentId = DepartmentId;
-				stationAddress.Address1 = formCollection["stationAddress1_" + i];
-				stationAddress.City = formCollection["stationCity_" + i];
-				stationAddress.State = formCollection["stationState_" + i];
-				stationAddress.PostalCode = formCollection["stationPostalCode_" + i];
-				stationAddress.Country = formCollection["stationCountry_" + i];
-
-				stationAddress = await _addressService.SaveAddressAsync(stationAddress, cancellationToken);
-				station.AddressId = stationAddress.AddressId;
-
-				newStations.Add(await _departmentGroupsService.SaveAsync(station, cancellationToken));
-			}
-
-			int unitsCount = int.Parse(formCollection["UnitCount"]);
-			var newUnits = new List<Unit>();
-			for (int i = 1; i <= unitsCount; i++)
-			{
-				var unit = new Unit();
-				unit.Name = formCollection["unit_" + i];
-				unit.DepartmentId = DepartmentId;
-
-				newUnits.Add(await _unitsService.SaveUnitAsync(unit, cancellationToken));
-			}
-
-			if (formCollection["CallImportOption"] == "Email Call Importing")
-			{
-				DepartmentCallEmail emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(DepartmentId);
-				if (emailSettings == null)
-					emailSettings = new DepartmentCallEmail();
-
-				emailSettings.DepartmentId = DepartmentId;
-				emailSettings.Hostname = formCollection["EmailSettings.Hostname"];
-				emailSettings.Password = formCollection["EmailSettings.Password"];
-				emailSettings.Port = int.Parse(formCollection["EmailSettings.Port"]);
-				emailSettings.Username = formCollection["EmailSettings.Username"];
-				emailSettings.FormatType = (int)CallEmailTypes.Generic;
-				emailSettings.UseSsl = bool.Parse(formCollection["EmailSettings.UseSsl"]);
-
-				await _departmentsService.SaveDepartmentEmailSettingsAsync(emailSettings, cancellationToken);
-			}
-
-
-			return new JsonResult("{}");
+			// The legacy dictionary form performed unvalidated multi-entity writes. Resume the typed,
+			// persisted journey; each operational change now belongs to its existing validated editor.
+			return StatusCode(410, new { code = "SetupWizardReplaced", url = "/User/Department/SetupWizard" });
 		}
 
 		#endregion Setup Wizard

@@ -40,6 +40,18 @@
 		/// Enable stdio transport (for backwards compatibility)
 		/// </summary>
 		public static bool EnableStdioTransport = false;
+
+		/// <summary>
+		/// Tool calls allowed per minute for each access token (each signed-in session)
+		/// </summary>
+		public static int ToolCallsPerMinute = 100;
+
+		/// <summary>
+		/// Tool calls allowed per minute from each client address for calls made without an access token, which in
+		/// practice are authenticate and refresh_access_token. Kept low: the API sees every sign-in made through MCP as
+		/// coming from the MCP server, so this is the only per-caller limit on password attempts made through it.
+		/// </summary>
+		public static int UnauthenticatedCallsPerMinute = 10;
 	}
 }
 

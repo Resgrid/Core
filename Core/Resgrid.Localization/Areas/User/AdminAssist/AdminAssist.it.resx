@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Feature.addon-adp">
+    <value>Protezione avanzata dei dati</value>
+  </data>
+  <data xml:space="preserve" name="Feature.archived-calls">
+    <value>Chiamate archiviate</value>
+  </data>
+  <data xml:space="preserve" name="Feature.bids">
+    <value>Offerte</value>
+  </data>
+  <data xml:space="preserve" name="Feature.big-board">
+    <value>Tabellone</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calendar">
+    <value>Calendario</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calls">
+    <value>Chiamate</value>
+  </data>
+  <data xml:space="preserve" name="Feature.checklists">
+    <value>Liste di controllo</value>
+  </data>
+  <data xml:space="preserve" name="Feature.communication-tests">
+    <value>Test di comunicazione</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contacts">
+    <value>Contatti</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contracts">
+    <value>Contratti</value>
+  </data>
+  <data xml:space="preserve" name="Feature.data-protection">
+    <value>Protezione dei dati</value>
+  </data>
+  <data xml:space="preserve" name="Feature.department-settings">
+    <value>Impostazioni dipartimento</value>
+  </data>
+  <data xml:space="preserve" name="Feature.departments">
+    <value>I tuoi dipartimenti</value>
+  </data>
+  <data xml:space="preserve" name="Feature.documents">
+    <value>Documenti</value>
+  </data>
+  <data xml:space="preserve" name="Feature.forms">
+    <value>Moduli</value>
+  </data>
+  <data xml:space="preserve" name="Feature.incident-reports">
+    <value>Rapporti di incidente</value>
+  </data>
+  <data xml:space="preserve" name="Feature.inventory">
+    <value>Inventario</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invoices">
+    <value>Fatture</value>
+  </data>
+  <data xml:space="preserve" name="Feature.logs">
+    <value>Registri</value>
+  </data>
+  <data xml:space="preserve" name="Feature.mapping">
+    <value>Mappatura</value>
+  </data>
+  <data xml:space="preserve" name="Feature.module-settings">
+    <value>Impostazioni moduli</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-deployment">
+    <value>Nuovo impiego</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-group">
+    <value>Nuovo Gruppo</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-protocol">
+    <value>Nuovo Protocollo</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-training">
+    <value>Nuova formazione</value>
+  </data>
+  <data xml:space="preserve" name="Feature.notes">
+    <value>Note</value>
+  </data>
+  <data xml:space="preserve" name="Feature.personnel">
+    <value>Personale</value>
+  </data>
+  <data xml:space="preserve" name="Feature.preventive-maintenance">
+    <value>Manutenzione preventiva</value>
+  </data>
+  <data xml:space="preserve" name="Feature.protocols">
+    <value>Protocolli</value>
+  </data>
+  <data xml:space="preserve" name="Feature.rate-cards">
+    <value>Listini</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-holds">
+    <value>Blocchi di conservazione dei registri</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-inspections">
+    <value>Ispezioni</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-investigations">
+    <value>Indagini</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-permits">
+    <value>Permessi</value>
+  </data>
+  <data xml:space="preserve" name="Feature.records-settings">
+    <value>Impostazioni registri</value>
+  </data>
+  <data xml:space="preserve" name="Feature.routes">
+    <value>Percorsi</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shifts">
+    <value>Turni</value>
+  </data>
+  <data xml:space="preserve" name="Feature.trainings">
+    <value>Formazioni</value>
+  </data>
+  <data xml:space="preserve" name="Feature.units">
+    <value>Unità</value>
+  </data>
+  <data xml:space="preserve" name="Feature.voice">
+    <value>Voce</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workflows">
+    <value>Flussi di lavoro</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workforce">
+    <value>Personale</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionAction3">
+    <value>Tutti</value>
+  </data>
+  <data xml:space="preserve" name="Pack.sar">
+    <value>Ricerca e soccorso</value>
+  </data>
+  <data xml:space="preserve" name="Permission.AdjustInventory">
+    <value>Rettifica inventario</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveRecords">
+    <value>Approvare rapporti</value>
+  </data>
+  <data xml:space="preserve" name="Permission.FinalizeRecords">
+    <value>Finalizzare rapporti</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDefinitions">
+    <value>Gestire definizioni di rapporto</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDisclosures">
+    <value>Gestire divulgazioni di rapporti</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordReports">
+    <value>Gestire report sui rapporti</value>
+  </data>
+  <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
+    <value>Pubblicare definizioni di rapporto</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewRecords">
+    <value>Revisionare rapporti</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Reference">
+    <value>Riferimento</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Yes">
+    <value>Sì</value>
+  </data>
+  <data xml:space="preserve" name="Profile.contract">
+    <value>Contratto</value>
+  </data>
+  <data xml:space="preserve" name="Profile.volunteer">
+    <value>Volontario</value>
+  </data>
+  <data xml:space="preserve" name="Ui.After">
+    <value>Dopo</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Assigned">
+    <value>Assegnato</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Before">
+    <value>Prima</value>
+  </data>
+  <data xml:space="preserve" name="Ui.CatalogVersion">
+    <value>Versione catalogo</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Configure">
+    <value>Apri la pagina delle impostazioni pertinente</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Critical">
+    <value>Critico</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Fail">
+    <value>Richiede attenzione</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featureplanned">
+    <value>Pianificato</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featurepreview">
+    <value>Anteprima</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Freshness">
+    <value>Evidenze aggiornate al</value>
+  </data>
+  <data xml:space="preserve" name="Ui.HistoryTime">
+    <value>Data</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Information">
+    <value>Informazioni</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Interested">
+    <value>Mi interessa questa funzionalità</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Known">
+    <value>Disponibile</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LearnLater">
+    <value>Scopri più avanti</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Learned">
+    <value>Comprendo questa funzionalità</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Loading">
+    <value>Caricamento della configurazione del reparto…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NotApplicable">
+    <value>Non applicabile</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Pass">
+    <value>Verificato</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Print">
+    <value>Stampa</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReadSource">
+    <value>Leggi il testo originale</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Reason">
+    <value>Motivo</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Redacted">
+    <value>Evidenze protette non disponibili</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReportBoundary">
+    <value>La verifica della configurazione fornisce indicazioni amministrative. Comprendere una funzionalità o salvare un’impostazione non dimostra la prontezza operativa né la consegna dei messaggi.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Retry">
+    <value>Riprova</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReviewDate">
+    <value>Revisione entro</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Saving">
+    <value>Salvataggio…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Search">
+    <value>Cerca aree e funzionalità</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SearchReference">
+    <value>Cerca nella documentazione di riferimento</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unassigned">
+    <value>Non assegnato</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unavailable">
+    <value>Non disponibile</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unknown">
+    <value>Sconosciuto</value>
+  </data>
+  <data xml:space="preserve" name="Ui.UseNow">
+    <value>Usa ora</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Verify">
+    <value>Verifica di nuovo</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Warning">
+    <value>Avviso</value>
+  </data>
+  <data xml:space="preserve" name="Ui.explore">
+    <value>Esplora Resgrid e i componenti aggiuntivi</value>
+  </data>
+  <data xml:space="preserve" name="Ui.health">
+    <value>Verifiche della configurazione</value>
+  </data>
+  <data xml:space="preserve" name="Ui.history">
+    <value>Cronologia delle modifiche</value>
+  </data>
+  <data xml:space="preserve" name="Ui.overview">
+    <value>Panoramica</value>
+  </data>
+  <data xml:space="preserve" name="Ui.reference">
+    <value>Riferimento delle impostazioni</value>
+  </data>
+  <data xml:space="preserve" name="Ui.report">
+    <value>Rapporto di configurazione</value>
+  </data>
+  <data xml:space="preserve" name="Ui.wizard">
+    <value>Configurazione guidata</value>
+  </data>
+  <data xml:space="preserve" name="Ui.worklist">
+    <value>Elenco attività dell’amministratore</value>
+  </data>
+</root>

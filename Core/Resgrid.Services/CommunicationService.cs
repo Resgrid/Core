@@ -1,5 +1,6 @@
-using Resgrid.Framework;
+﻿using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.AdminAssist;
 using Resgrid.Model.Events;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
@@ -26,13 +27,15 @@ namespace Resgrid.Services
 		private readonly IChatbotOutboundService _chatbotOutboundService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IProtectedProjectionService _protectedProjectionService;
+		private readonly Lazy<IAdpReleaseService> _adpRelease;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
 			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
 			ISubscriptionsService subscriptionsService, IUserStateService userStateService, IChatbotOutboundService chatbotOutboundService,
-			IDepartmentsService departmentsService, IProtectedProjectionService protectedProjectionService)
+			IDepartmentsService departmentsService, IProtectedProjectionService protectedProjectionService, Lazy<IAdpReleaseService> adpRelease)
 		{
 			_protectedProjectionService = protectedProjectionService;
+			_adpRelease = adpRelease;
 			_smsService = smsService;
 			_emailService = emailService;
 			_pushService = pushService;
@@ -181,13 +184,26 @@ namespace Resgrid.Services
 		public async Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
-				return false;
+			{ DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, reason: DispatchTraceReason.BroadcastDisabled, recipientId: dispatch.UserId); return false; }
 
 			if (!await CanSendToUser(dispatch.UserId, departmentId))
-				return false;
+			{ DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, reason: DispatchTraceReason.MemberIneligible, recipientId: dispatch.UserId); return false; }
 
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
+
+			if (profile != null)
+			{
+				void Skipped(DispatchTraceChannel channel, bool enabled, bool verified = true)
+				{
+					if (!enabled || !verified) DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, channel,
+						!enabled ? DispatchTraceReason.ChannelDisabled : DispatchTraceReason.ContactUnverified, dispatch.UserId);
+				}
+				Skipped(DispatchTraceChannel.Push, profile.SendPush);
+				Skipped(DispatchTraceChannel.Sms, profile.SendSms, profile.MobileNumberVerified.IsContactMethodAllowedForSending());
+				Skipped(DispatchTraceChannel.Email, profile.SendEmail, profile.EmailVerified.IsContactMethodAllowedForSending());
+				Skipped(DispatchTraceChannel.Voice, profile.VoiceForCall, (profile.VoiceCallMobile ? profile.MobileNumberVerified : profile.HomeNumberVerified).IsContactMethodAllowedForSending());
+			}
 
 			// ADP egress (plan section 9): per-channel notification-safe views, resolved BEFORE any
 			// template, provider DTO, or TTS prompt is built. For unprotected departments every one
@@ -290,7 +306,7 @@ namespace Resgrid.Services
 					spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
 					spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
 
-					await _pushService.PushCall(spc, dispatch.UserId, profile, pushCall.CallPriority);
+					await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Push, dispatch.UserId, () => _pushService.PushCall(spc, dispatch.UserId, profile, pushCall.CallPriority));
 				}
 				catch (Exception ex)
 				{
@@ -306,8 +322,19 @@ namespace Resgrid.Services
 					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
 					// Caller-resolved address wins for an unsanitized channel (same precedence as the
 					// cancellation path); a sanitized channel gets no address at all.
-					await _smsService.SendCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile,
-						ReferenceEquals(smsCall, call) ? (address ?? smsCall.Address) : null, payment);
+					var pinDelivered = false;
+					try
+					{
+						var challenge = await _adpRelease.Value.CreateChallengeAsync(departmentId, call.CallId, dispatch.UserId,
+							profile?.MobileNumber, ProtectedDataEgressChannel.Sms);
+						if (challenge != null)
+							pinDelivered = await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Sms, dispatch.UserId, () => _smsService.SendProtectedDispatchChallengeAsync(profile, departmentId, departmentNumber,
+								Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinSmsChallenge", profile?.Language, challenge)));
+					}
+					catch (Exception) { Logging.LogError($"ADP PIN challenge unavailable for department {departmentId}; sending the safe dispatch notice."); }
+					if (!pinDelivered)
+						await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Sms, dispatch.UserId, () => _smsService.SendCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile,
+							ReferenceEquals(smsCall, call) ? (address ?? smsCall.Address) : null, payment));
 				}
 			}
 
@@ -316,7 +343,7 @@ namespace Resgrid.Services
 			{
 				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
-					await _emailService.SendCallAsync(emailCall, dispatch, profile);
+					await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Email, dispatch.UserId, () => _emailService.SendCallAsync(emailCall, dispatch, profile));
 				}
 			}
 
@@ -334,7 +361,7 @@ namespace Resgrid.Services
 					{
 
 						if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
-							await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, voiceCall);
+							await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Voice, dispatch.UserId, () => _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, voiceCall));
 					}
 					catch (Exception ex)
 					{
@@ -414,7 +441,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				await _pushService.PushCallUnit(spc, dispatch.UnitId, call.CallPriority);
+				await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.UnitPush, dispatch.UnitId.ToString(), () => _pushService.PushCallUnit(spc, dispatch.UnitId, call.CallPriority));
 			}
 			catch (Exception ex)
 			{
@@ -669,7 +696,9 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
-			if (profile == null || (profile.SendNotificationSms && profile.MobileNumberVerified.IsContactMethodAllowedForSending()))
+			var channels = NotificationChannelSelection.From(profile);
+
+			if (channels.Sms)
 			{
 				try
 				{
@@ -681,7 +710,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (profile == null || profile.SendNotificationEmail)
+			if (channels.Email)
 			{
 				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
@@ -697,7 +726,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (profile == null || profile.SendNotificationPush)
+			if (channels.Push)
 			{
 				var spm = new StandardPushMessage();
 				spm.Title = title;

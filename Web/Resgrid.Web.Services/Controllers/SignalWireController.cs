@@ -230,11 +230,9 @@ namespace Resgrid.Web.Services.Controllers
 						if (!String.IsNullOrWhiteSpace(dispatchNumbers))
 							isDispatchSource = _numbersService.DoesNumberMatchAnyPattern(dispatchNumbers.Split(Char.Parse(",")).ToList(), textMessage.Msisdn);
 
-						// If we don't have dispatchNumbers and Text Command isn't enabled it's a dispatch text
-						if (!isDispatchSource && !textCommandEnabled)
-							isDispatchSource = true;
+						var routing = TextIntakeRouting.Decide(TextIntakePath.SignalWire, isDispatchSource, textToCallEnabled, textCommandEnabled);
 
-						if (isDispatchSource && textToCallEnabled)
+						if (routing.CallBranch)
 						{
 							var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId.Value, true);
 							var c = await BuildTextToCallAsync(department, textMessage, users);
@@ -272,7 +270,7 @@ namespace Resgrid.Web.Services.Controllers
 							messageEvent.Processed = true;
 						}
 
-						if (!isDispatchSource && textCommandEnabled && profile != null)
+						if (routing.CommandBranch && profile != null)
 						{
 							var request = new ChatbotMessage
 							{

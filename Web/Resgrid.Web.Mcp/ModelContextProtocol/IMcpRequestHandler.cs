@@ -12,9 +12,10 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 		/// Handles a JSON-RPC request and returns a JSON-RPC response
 		/// </summary>
 		/// <param name="requestJson">The JSON-RPC request as a string</param>
+		/// <param name="clientAddress">The caller's address, used to rate limit tool calls made without an access token</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns>The JSON-RPC response as a string</returns>
-		Task<string> HandleRequestAsync(string requestJson, CancellationToken cancellationToken);
+		Task<string> HandleRequestAsync(string requestJson, string clientAddress, CancellationToken cancellationToken);
 	}
 }
 

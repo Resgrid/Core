@@ -488,6 +488,16 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendProtectedDispatchChallengeAsync(UserProfile profile, int departmentId, string departmentNumber, string challengeText)
+		{
+			if (profile == null || !profile.SendSms || profile.MobileNumberVerified != true || string.IsNullOrWhiteSpace(challengeText))
+				return false;
+			// Dispatch preferences apply, and the sender must accept replies. Never use an email-to-SMS gateway.
+			return await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile),
+				FormatNotificationForMessage(challengeText, ShouldDiscloseOptOut(profile.UserId)), departmentNumber,
+				(MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+		}
+
 		public async Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber, string culture = null)
 		{
 			if (string.IsNullOrWhiteSpace(toPhoneNumber))

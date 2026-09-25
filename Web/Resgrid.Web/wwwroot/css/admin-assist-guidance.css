@@ -1,0 +1,3 @@
+.admin-assist-field-help { max-width: 70ch; white-space: normal; }
+.admin-assist-field-highlight { outline: 3px solid #176ca4; outline-offset: 4px; scroll-margin-block: 8rem; }
+@media (prefers-reduced-motion: reduce) { .admin-assist-field-highlight { scroll-behavior: auto; } }

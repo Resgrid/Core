@@ -72,7 +72,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError("Error retrieving inventory ({ExceptionType})", ex.GetType().Name);
 						return CreateErrorResponse("Failed to retrieve inventory. Please try again later.");
@@ -120,7 +120,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError("Error retrieving inventory item ({ExceptionType})", ex.GetType().Name);
 						return CreateErrorResponse("Failed to retrieve inventory item. Please try again later.");
@@ -196,7 +196,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result, message = "Inventory adjustment request accepted" };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError("Error updating inventory ({ExceptionType})", ex.GetType().Name);
 						return CreateErrorResponse("The inventory adjustment could not be confirmed. Retry with the same requestId and unchanged values. Protected data requires the Inventory app.");
@@ -244,7 +244,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError("Error retrieving low stock items ({ExceptionType})", ex.GetType().Name);
 						return CreateErrorResponse("Failed to retrieve low stock items. Please try again later.");

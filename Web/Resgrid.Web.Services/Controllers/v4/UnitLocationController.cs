@@ -26,11 +26,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly IUnitsService _unitsService;
 		private readonly IUnitLocationEventProvider _unitLocationEventProvider;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
-		public UnitLocationController(IUnitsService unitsService, IUnitLocationEventProvider unitLocationEventProvider)
+		public UnitLocationController(IUnitsService unitsService, IUnitLocationEventProvider unitLocationEventProvider,
+			Model.Services.IAuthorizationService authorizationService)
 		{
 			_unitsService = unitsService;
 			_unitLocationEventProvider = unitLocationEventProvider;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -149,6 +152,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			if (unit.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// This endpoint returns nothing but the location, so a caller who may not see it is refused outright.
+			if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, unit.UnitId, UserId, DepartmentId))
 				return Unauthorized();
 
 			var lastLocation = await _unitsService.GetLatestUnitLocationAsync(int.Parse(unitId));

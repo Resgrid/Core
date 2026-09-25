@@ -717,6 +717,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Flujo de trabajo creado a partir de la plantilla con una autorización protegida en borrador. Configure la URL de destino y la credencial del paso, elija los campos autorizados y solicite la aprobación. Nunca envía nada hasta que se apruebe la autorización.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Flujo de trabajo creado a partir de la plantilla, pero sin una autorización protegida en borrador (crearla requiere un administrador de flujos de trabajo protegidos). Está desactivado: pida a un administrador que cree la autorización y solicite la aprobación antes de activarlo.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>Se alcanzó el límite de flujos de trabajo de su plan. Actualícelo para añadir más flujos de trabajo.</value>
   </data>

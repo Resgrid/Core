@@ -65,6 +65,9 @@ namespace Resgrid.Tests.Services.ProtectedWorkflows
 		public int SubjectIdentifierWriteConflicts { get; set; }
 		public bool FailDisclosureAppends { get; set; }
 
+		/// <summary>The release store is unreachable: the run gate cannot tell whether the workflow is protected.</summary>
+		public bool FailReleaseLookups { get; set; }
+
 		/// <summary>Runs inside a conditional release write, before the version check: a concurrent writer racing it.</summary>
 		public Action<WorkflowProtectedRelease> BeforeReleaseUpdate { get; set; }
 		public DepartmentDataProtectionPolicy Policy { get; }
@@ -437,7 +440,9 @@ namespace Resgrid.Tests.Services.ProtectedWorkflows
 		{
 			var mock = new Mock<IWorkflowProtectedReleaseRepository>();
 			mock.Setup(r => r.GetLatestByWorkflowIdAsync(It.IsAny<string>()))
-				.ReturnsAsync((string id) => Clone(Releases.Where(r => r.WorkflowId == id).OrderByDescending(r => r.CreatedOn).FirstOrDefault()));
+				.ReturnsAsync((string id) => FailReleaseLookups
+					? throw new InvalidOperationException("release store unavailable")
+					: Clone(Releases.Where(r => r.WorkflowId == id).OrderByDescending(r => r.CreatedOn).FirstOrDefault()));
 			mock.Setup(r => r.GetAllByWorkflowIdAsync(It.IsAny<string>()))
 				.ReturnsAsync((string id) => Releases.Where(r => r.WorkflowId == id).Select(Clone).ToList());
 			mock.Setup(r => r.GetAllByDepartmentIdAsync(It.IsAny<int>()))

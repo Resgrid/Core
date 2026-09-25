@@ -166,17 +166,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var unitStatuses = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 
+			// Security > View Units, the same filter GetAllUnits applies, for the units and their statuses alike.
+			var viewableUnitIds = new HashSet<int>();
 			foreach (var unit in units)
+			{
+				if (await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					viewableUnitIds.Add(unit.UnitId);
+			}
+
+			foreach (var unit in units.Where(u => viewableUnitIds.Contains(u.UnitId)))
 			{
 				if (!string.IsNullOrWhiteSpace(unit.Type))
 				{
 					var unitType = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
 
-					result.Units.Add(UnitsController.ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), null, TimeZone));
+					result.Units.Add(await UnitWithLocationIfVisibleAsync(UnitsController.ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), null, TimeZone), unit.UnitId));
 				}
 				else
 				{
-					result.Units.Add(UnitsController.ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), null, TimeZone));
+					result.Units.Add(await UnitWithLocationIfVisibleAsync(UnitsController.ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), null, TimeZone), unit.UnitId));
 				}
 
 				// Add unit roles for this unit
@@ -187,13 +195,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			foreach (var us in unitStatuses)
+			foreach (var us in unitStatuses.Where(x => viewableUnitIds.Contains(x.UnitId)))
 			{
 				var customState = await CustomStatesHelper.GetCustomUnitState(us);
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(us.UnitId, us.Timestamp);
 
 				var group = allGroups.FirstOrDefault(x => x.DepartmentGroupId == us.Unit.StationGroupId);
-				result.UnitStatuses.Add(UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups, pois));
+				var unitStatus = UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups, pois);
+				if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, us.UnitId, UserId, DepartmentId))
+					UnitLocationVisibility.Withhold(unitStatus);
+				result.UnitStatuses.Add(unitStatus);
 			}
 
 			foreach (var role in allRoles)
@@ -535,6 +546,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		private async Task<UnitResultData> UnitWithLocationIfVisibleAsync(UnitResultData data, int unitId)
+		{
+			if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, unitId, UserId, DepartmentId))
+				UnitLocationVisibility.Withhold(data);
+
+			return data;
 		}
 
 		/// <summary>

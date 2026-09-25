@@ -60,6 +60,9 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
 	private readonly IDispatchRecommendationService _dispatchRecommendationService;
 	private readonly IDispatchScopeService _dispatchScopeService;
+	private readonly Model.Services.IAuthorizationService _authorizationService;
+	private readonly IAdpReleaseService _adpRelease;
+	private readonly IProtectedProjectionService _adpProjection;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -69,9 +72,13 @@ namespace Resgrid.Web.Services.Controllers
 		IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
 		IEncryptionService encryptionService, ITwilioVoiceResponseService twilioVoiceResponseService,
 		IFeatureToggleService featureToggleService, ITextDepartmentSwitchService textDepartmentSwitchService,
-		IDispatchRecommendationService dispatchRecommendationService, IDispatchScopeService dispatchScopeService)
+		IDispatchRecommendationService dispatchRecommendationService, IDispatchScopeService dispatchScopeService,
+		Model.Services.IAuthorizationService authorizationService, IAdpReleaseService adpRelease, IProtectedProjectionService adpProjection)
 	{
 		_dispatchScopeService = dispatchScopeService;
+		_authorizationService = authorizationService;
+		_adpRelease = adpRelease;
+		_adpProjection = adpProjection;
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
 		_limitsService = limitsService;
@@ -145,12 +152,18 @@ namespace Resgrid.Web.Services.Controllers
 			&& !(HttpContext?.RequestAborted.IsCancellationRequested ?? false);
 
 		[HttpGet("IncomingMessage")]
+		[HttpPost("IncomingMessage")]
 		[Produces("application/xml")]
 		// Twilio signature validation: without it anyone who learns a member's mobile number can
 		// forge inbound SMS and run text commands (respond, staffing, text-to-call) as that member.
 		[ValidateRequest]
 		public async Task<ActionResult> IncomingMessage([FromQuery] TwilioMessage request)
 		{
+			if (Request.HasFormContentType)
+			{
+				var form = await Request.ReadFormAsync();
+				request = new TwilioMessage { To = form["To"], From = form["From"], Body = form["Body"], MessageSid = form["MessageSid"] };
+			}
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From) || string.IsNullOrWhiteSpace(request.Body))
 				return BadRequest();
 			// WhatsApp must use its separately authenticated native endpoint and explicit account link.
@@ -158,6 +171,16 @@ namespace Resgrid.Web.Services.Controllers
 				return BadRequest("Configure the ChatbotPlatforms/WhatsApp webhook for this sender.");
 
 			var response = new MessagingResponse();
+
+			var pinCommand = request.Body.Trim().Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+			if (pinCommand[0].Equals("OPEN", StringComparison.OrdinalIgnoreCase))
+			{
+				var text = Microsoft.AspNetCore.Http.HttpMethods.IsPost(Request.Method) && Request.HasFormContentType && pinCommand.Length == 3
+					? await _adpRelease.ReleaseAsync(pinCommand[1].ToUpperInvariant(), request.From, pinCommand[2], ProtectedDataEgressChannel.Sms) : null;
+				var profile = await _userProfileService.GetProfileByMobileNumberAsync(request.From.Replace("+", ""));
+				response.Message(text ?? Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinDenied", profile?.Language));
+				return Content(response.ToString(), "application/xml");
+			}
 
 			var textMessage = new TextMessage();
 			textMessage.To = request.To.Replace("+", "");
@@ -352,7 +375,9 @@ namespace Resgrid.Web.Services.Controllers
 					if (!String.IsNullOrWhiteSpace(dispatchNumbers))
 						isDispatchSource = _numbersService.DoesNumberMatchAnyPattern(dispatchNumbers.Split(Char.Parse(",")).ToList(), textMessage.Msisdn);
 
-					if (isDispatchSource)
+					var routing = TextIntakeRouting.Decide(TextIntakePath.TwilioLegacy, isDispatchSource, false, false);
+
+					if (routing.CallBranch)
 					{
 						var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId.Value, true);
 						var c = await BuildTextToCallAsync(department, textMessage, users);
@@ -401,7 +426,7 @@ namespace Resgrid.Web.Services.Controllers
 						messageEvent.Processed = true;
 					}
 
-					if (!isDispatchSource)
+					if (routing.CommandBranch)
 					{
 						// Reuse the profile fetched above when the department was resolved via mobile number;
 						// only hit the DB again if the department came from the phone-number lookup path.
@@ -598,6 +623,10 @@ namespace Resgrid.Web.Services.Controllers
 
 									foreach (var unit in unitStatus)
 									{
+										// Security > View Units, the same filter the unit lists apply.
+										if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, profile.UserId, department.DepartmentId))
+											continue;
+
 										var unitState = await _customStateService.GetCustomUnitStateAsync(unit);
 										unitStatusesText.Append($"{unit.Unit.Name} is {unitState.ButtonText}" + Environment.NewLine);
 									}
@@ -609,9 +638,11 @@ namespace Resgrid.Web.Services.Controllers
 
 									var call = await _callsService.GetCallByIdAsync(int.Parse(payload.Data));
 
-									// Guard against a missing call (NRE) and against reading a call that belongs
-									// to another department (cross-department data leakage).
-									if (call == null || call.DepartmentId != department.DepartmentId)
+									// Guard against a missing call (NRE), against reading a call that belongs to another
+									// department (cross-department data leakage), and, with group-scoped dispatch on, against
+									// a call outside the texter's area that the CALLS list would not have shown them.
+									if (call == null || call.DepartmentId != department.DepartmentId
+										|| !await _dispatchScopeService.CanUserAccessCallAsync(department.DepartmentId, profile.UserId, call))
 									{
 										response.Message("Resgrid could not find that call.");
 										break;
@@ -772,6 +803,22 @@ namespace Resgrid.Web.Services.Controllers
 				return CreateVoiceContentResult(response);
 			}
 
+			// The signed provider callback binds this challenge to the dialed, verified phone.
+			var destination = Request.Query["To"].ToString();
+			string challenge = null;
+			try { challenge = await _adpRelease.CreateChallengeAsync(call.DepartmentId, callId, userId, destination, ProtectedDataEgressChannel.Voice); }
+			catch (Exception) { Logging.LogError($"ADP voice challenge unavailable for department {call.DepartmentId}; using the safe prompt."); }
+			if (challenge != null)
+			{
+				var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+				var gatherPin = new Gather(action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/AdpVoicePin?challenge={challenge}"), method: "POST", finishOnKey: "#");
+				gatherPin.Say(Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinVoiceChallenge", profile?.Language));
+				response.Append(gatherPin);
+				response.Hangup();
+				return CreateVoiceContentResult(response);
+			}
+			call = await _adpProjection.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Voice);
+
 			// Load the department's custom priority so GetPriorityText() speaks its real
 			// name. The broadcast worker loads it the same way before pre-warming the
 			// dispatch TTS — the prompt text (and therefore the TTS cache key) must match.
@@ -847,6 +894,19 @@ namespace Resgrid.Web.Services.Controllers
 
 			response.Hangup();
 
+			return CreateVoiceContentResult(response);
+		}
+
+		[HttpPost("AdpVoicePin")]
+		[ValidateRequest]
+		public async Task<ActionResult> AdpVoicePin([FromQuery] string challenge, [FromForm] VoiceRequest request)
+		{
+			var response = new VoiceResponse();
+			var text = await _adpRelease.ReleaseAsync(challenge, request.To, request.Digits, ProtectedDataEgressChannel.Voice);
+			// Say sends no protected audio into Resgrid's shared TTS/URL cache.
+			foreach (var chunk in DispatchVoicePromptBuilder.ChunkText(text ?? Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinDenied", null)))
+				response.Say(chunk);
+			response.Hangup();
 			return CreateVoiceContentResult(response);
 		}
 
@@ -1238,6 +1298,10 @@ namespace Resgrid.Web.Services.Controllers
 
 					foreach (var unit in units)
 					{
+						// Security > View Units, the same filter the unit lists apply.
+						if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, userId, department.DepartmentId))
+							continue;
+
 						var unitState = states.FirstOrDefault(x => x.UnitId == unit.UnitId);
 						var unitStatus = await _customStateService.GetCustomUnitStateAsync(unitState);
 
@@ -1247,7 +1311,8 @@ namespace Resgrid.Web.Services.Controllers
 						lines.Add($"{unit.Name}, Status {unitStatus?.ButtonText ?? "Unknown"}.");
 					}
 
-					prompts.Add(string.Join(" ", lines));
+					// Every unit may be outside what the caller can view; say so rather than speak an empty prompt.
+					prompts.Add(lines.Any() ? string.Join(" ", lines) : $"There are no units for department {department.Name}.");
 				}
 				else
 				{

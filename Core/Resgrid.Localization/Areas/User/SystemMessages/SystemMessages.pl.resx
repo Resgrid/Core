@@ -135,4 +135,22 @@ Zespół Resgrid</value>
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Twój kod weryfikacyjny Resgrid to: {0}. Wygaśnie za {1} minut.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN chronionych zgłoszeń</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Wybierz osobisty PIN o długości 6–12 cyfr. Wymagana jest ponowna weryfikacja w aplikacji uwierzytelniającej. Twój dział musi włączyć udostępnianie po podaniu PIN-u, aby otrzymywać chronione szczegóły zgłoszeń.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>Osobisty PIN</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Kod z aplikacji uwierzytelniającej</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Zapisz</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Zapisano.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Nie można udostępnić ani zapisać chronionych danych. Zaloguj się do Resgrid i spróbuj ponownie.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Dostępne jest chronione zgłoszenie. Odpowiedz OPEN {0}, a następnie wpisz spację i swój osobisty PIN.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Dostępne jest chronione zgłoszenie. Wpisz swój osobisty PIN i naciśnij krzyżyk.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Ustawienia udostępniania ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>Dostarczanie SMS</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Dostarczanie głosowe</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Powiadomienie ogólne</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Udostępnij po podaniu PIN-u</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Zezwól pracownikom pomocy Resgrid na czasowy dostęp po zatwierdzeniu przez drugiego pracownika.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Przyjmuję do wiadomości, że udostępnione szczegóły opuszczają Resgrid i mogą być przechowywane przez operatorów telefonicznych lub odbiorców.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Zezwól na chronioną treść</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Pracownik Resgrid poprosił o dostęp do chronionego zgłoszenia {0} w sprawie pomocy {1}. Dostęp wymaga niezależnego zatwierdzenia i wygasa w ciągu 15 minut.</value></data>
 </root>

@@ -56,7 +56,7 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
-                                    @Html.CheckBoxFor(m => m.RequireMfa)
+                                    <input asp-for="RequireMfa" />
                                     <strong>@localizer["SecurityPolicyRequireMfaLabel"]</strong>
                                 </label>
                                 <small class="text-muted d-block m-l-lg">
@@ -68,9 +68,7 @@
                         <div class="form-group">
                             <div class="checkbox @(!Model.HasActiveSsoConfig ? "text-muted" : "")">
                                 <label>
-                                    @Html.CheckBoxFor(m => m.RequireSso, !Model.HasActiveSsoConfig
-                                        ? new { disabled = "disabled" }
-                                        : (object)new { })
+                                    <input asp-for="RequireSso" disabled="@(!Model.HasActiveSsoConfig)" />
                                     <strong>@localizer["SecurityPolicyRequireSsoLabel"]</strong>
                                     @if (!Model.HasActiveSsoConfig)
                                     {
@@ -88,8 +86,7 @@
                             <label asp-for="SessionTimeoutMinutes" class="control-label">
                                 @localizer["SecurityPolicySessionTimeoutLabel"]
                             </label>
-                            @Html.TextBoxFor(m => m.SessionTimeoutMinutes,
-                                new { @class = "form-control", type = "number", min = "0", max = "10080" })
+                            <input asp-for="SessionTimeoutMinutes" class="form-control" type="number" min="0" max="10080" />
                             <small class="text-muted">@localizer["SecurityPolicySessionTimeoutNote"]</small>
                             <span asp-validation-for="SessionTimeoutMinutes" class="text-danger"></span>
                         </div>
@@ -98,19 +95,14 @@
                             <label asp-for="MaxConcurrentSessions" class="control-label">
                                 @localizer["SecurityPolicyMaxSessionsLabel"]
                             </label>
-                            @Html.TextBoxFor(m => m.MaxConcurrentSessions,
-                                new { @class = "form-control", type = "number", min = "0", max = "100" })
+                            <input asp-for="MaxConcurrentSessions" class="form-control" type="number" min="0" max="100" />
                             <small class="text-muted">@localizer["SecurityPolicyMaxSessionsNote"]</small>
                             <span asp-validation-for="MaxConcurrentSessions" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="AllowedIpRanges" class="control-label">@localizer["SecurityPolicyIpRangesLabel"]</label>
-                            @Html.TextAreaFor(m => m.AllowedIpRanges, 3, 0, new
-                            {
-                                @class = "form-control font-monospace",
-                                placeholder = "10.0.0.0/8\n192.168.1.0/24"
-                            })
+                            <textarea asp-for="AllowedIpRanges" rows="3" class="form-control font-monospace" placeholder="10.0.0.0/8&#10;192.168.1.0/24"></textarea>
                             <small class="text-muted">@localizer["SecurityPolicyIpRangesNote"]</small>
                         </div>
 
@@ -118,8 +110,7 @@
                             <label asp-for="DataClassificationLevel" class="control-label">
                                 @localizer["SecurityPolicyDataClassLabel"]
                             </label>
-                            @Html.DropDownListFor(m => m.DataClassificationLevel, Model.DataClassificationLevels,
-                                new { @class = "form-control" })
+                            <select asp-for="DataClassificationLevel" asp-items="Model.DataClassificationLevels" class="form-control"></select>
                             <small class="text-muted">@localizer["SecurityPolicyDataClassNote"]</small>
                         </div>
                     </div>
@@ -140,8 +131,7 @@
                             <label asp-for="PasswordExpirationDays" class="control-label">
                                 @localizer["SecurityPolicyPasswordExpirationLabel"]
                             </label>
-                            @Html.TextBoxFor(m => m.PasswordExpirationDays,
-                                new { @class = "form-control", type = "number", min = "0", max = "3650" })
+                            <input asp-for="PasswordExpirationDays" class="form-control" type="number" min="0" max="3650" />
                             <small class="text-muted">@localizer["SecurityPolicyPasswordExpirationNote"]</small>
                             <span asp-validation-for="PasswordExpirationDays" class="text-danger"></span>
                         </div>
@@ -150,8 +140,7 @@
                             <label asp-for="MinPasswordLength" class="control-label">
                                 @localizer["SecurityPolicyMinPasswordLengthLabel"]
                             </label>
-                            @Html.TextBoxFor(m => m.MinPasswordLength,
-                                new { @class = "form-control", type = "number", min = "8", max = "128" })
+                            <input asp-for="MinPasswordLength" class="form-control" type="number" min="8" max="128" />
                             <small class="text-muted">@localizer["SecurityPolicyMinPasswordLengthNote"]</small>
                             <span asp-validation-for="MinPasswordLength" class="text-danger"></span>
                         </div>

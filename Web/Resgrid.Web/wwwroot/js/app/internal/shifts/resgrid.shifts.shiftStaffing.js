@@ -82,11 +82,15 @@ var resgrid;
                 var html = "";
                 var day = $('#shiftDayPicker').val();
                 var dayQuery = day ? '&day=' + encodeURIComponent(day) : '';
+                // Only the latest shift/day selection may fill the pickers: a slower response for an earlier pick is
+                // dropped, so it can never put that day's roster on the day now being edited.
+                var seq = shiftStaffing.inputsSeq = (shiftStaffing.inputsSeq || 0) + 1;
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftGroups?shiftId=' + $('#ShiftId').val(),
                     contentType: 'application/json; charset=utf-8',
                     type: 'GET'
                 }).done(function (data) {
+                    if (seq !== shiftStaffing.inputsSeq) return;
                     var ids = new Array();
 
                     if (isAdmin) {
@@ -126,6 +130,7 @@ var resgrid;
                             url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=0' + dayQuery,
                             contentType: 'application/json', type: 'GET'
                         }).done(function (data) {
+                            if (seq !== shiftStaffing.inputsSeq) return;
                             if (data) {
                                 var opts = data.map(function(u) { return new Option(u.Name, u.UserId, true, true); });
                                 opts.forEach(function(o) { $('#shiftPersonnel').append(o); });
@@ -151,6 +156,7 @@ var resgrid;
                             url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=' + groupId + dayQuery,
                             contentType: 'application/json', type: 'GET'
                         }).done(function (userData) {
+                            if (seq !== shiftStaffing.inputsSeq) return;
                             if (userData) {
                                 var opts = userData.map(function(u) { return new Option(u.Name, u.UserId, true, true); });
                                 opts.forEach(function(o) { $(that).append(o); });

@@ -15,6 +15,10 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;List&lt;Shift&gt;&gt;.</returns>
 		Task<List<Shift>> GetAllShiftsByDepartmentAsync(int departmentId);
 
+		/// <summary>Fresh administrative schedule evidence. Missing sources throw instead of becoming empty rosters.</summary>
+		Task<List<ShiftDaySchedule>> ReadSchedulesForAdministrationAsync(int departmentId, DateTime localStart, DateTime localEnd,
+			DateTime asOfUtc, int maximumRows, CancellationToken cancellationToken);
+
 
 		/// <summary>
 		/// Gets the shift by identifier asynchronous.

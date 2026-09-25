@@ -16,7 +16,7 @@ namespace Resgrid.Model.Checklists
 			(int)WorkflowTriggerEventType.ChecklistMissed, (int)WorkflowTriggerEventType.WorkOrderCreated,
 			(int)WorkflowTriggerEventType.WorkOrderStatusChanged, (int)WorkflowTriggerEventType.WorkOrderAssigned,
 			(int)WorkflowTriggerEventType.ChecklistScheduleChanged, (int)WorkflowTriggerEventType.ChecklistOccurrenceSkipped
-		}.Concat(Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Triggers).Distinct().Concat(Resgrid.Model.Inventories.InventoryWorkflowPayload.Triggers).ToArray());
+		}.Concat(Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Triggers).Distinct().Concat(Resgrid.Model.Inventories.InventoryWorkflowPayload.Triggers).Concat(AdminAssist.AdminAssistWorkflowPayload.Triggers).ToArray());
 		private static readonly string[] Identifiers = { "CompletionId", "DefinitionId", "VersionId", "ItemId", "ScheduleId", "OccurrenceId" };
 		private static bool IsStructuralTarget(int type, string target) =>
 			type >= 0 && type <= 2 && int.TryParse(target, out var numeric) && numeric > 0
@@ -31,6 +31,7 @@ namespace Resgrid.Model.Checklists
 		public static string Routing(string payloadJson, string aggregateId)
 		{
 			var source = Resgrid.Model.Inventories.InventoryWorkflowPayload.Parse(payloadJson);
+			if (source["FindingId"] != null) return AdminAssist.AdminAssistWorkflowPayload.Routing(source);
 			if (Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(source)) return Resgrid.Model.Inventories.InventoryWorkflowPayload.Routing(source);
 			if (source["WorkOrderId"] != null || source["RecurrenceId"] != null) return Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Routing(source);
 			var safe = new JObject();
@@ -49,13 +50,14 @@ namespace Resgrid.Model.Checklists
 			return safe.ToString(Newtonsoft.Json.Formatting.None);
 		}
 		public static bool IsChecklist(int trigger) => Triggers.Contains(trigger);
-		public static readonly IReadOnlyList<string> ReadinessProducers = Array.AsReadOnly(new[] { "Checklists", "WorkOrders", "Inventory" });
+		public static readonly IReadOnlyList<string> ReadinessProducers = Array.AsReadOnly(new[] { "Checklists", "WorkOrders", "Inventory", "AdminAssist" });
 		public static bool IsReadinessProducer(string producer) => ReadinessProducers.Contains(producer);
 		public static async Task<string> ProjectAsync(int departmentId, object value, IProtectedProjectionService protection, bool wrapped = false)
 		{
 			if (protection == null) throw new InvalidOperationException("Checklist workflow protection is unavailable.");
 			var source = value as JObject ?? (value == null ? new JObject() : JObject.FromObject(value));
 			var payload = wrapped ? source["Payload"] as JObject ?? new JObject() : source;
+			if (payload["FindingId"] != null) return await AdminAssist.AdminAssistWorkflowPayload.ProjectAsync(departmentId, payload, protection, wrapped);
 			if (Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(payload)) return await Resgrid.Model.Inventories.InventoryWorkflowPayload.ProjectAsync(departmentId, source, protection, wrapped);
 			if (payload["WorkOrderId"] != null || payload["RecurrenceId"] != null) return await Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.ProjectAsync(departmentId, payload, protection, wrapped);
 			var safe = new JObject();

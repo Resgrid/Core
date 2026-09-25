@@ -27,6 +27,8 @@ namespace Resgrid.Model.Services
 		Task<IdentityUser> GetUserByNameAsync(string userName);
 		Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation, System.Threading.CancellationToken cancellationToken = default);
 		Task<List<PersonnelLocation>> GetLatestLocationsForDepartmentPersonnelAsync(int departmentId);
+		/// <summary>Uncached location read that propagates failure instead of returning an empty set.</summary>
+		Task<List<PersonnelLocation>> ReadLatestLocationsForAdministrationAsync(int departmentId);
 		Task<PersonnelLocation> GetPersonnelLocationByIdAsync(string id);
 		Task<bool> ClearOutUserLoginAsync(string userId);
 		Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdInLimitAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);

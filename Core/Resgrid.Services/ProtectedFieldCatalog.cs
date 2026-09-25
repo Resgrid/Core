@@ -719,6 +719,11 @@ namespace Resgrid.Services
 						"InventoryVendors" or "InventoryPurchaseOrders" or "InventoryPurchaseOrderItems" => Resgrid.Model.Inventories.InventoryTables.PurchasingCatalogVersion,
 						_ => Resgrid.Model.Inventories.InventoryTables.CatalogVersion }));
 
+			// Admin Assist Phase 0, registry §4G: review notes and dispatch evidence are protected derived copies.
+			foreach (var table in new[] { "AdminAssistFindings", "AdminAssistDispatchTraces" })
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 30));
+
 			// Workforce & Business Operations plan, Phase D (catalog 26, registered with M0213/M0214): the free-text and
 			// document columns of unit certification records (Operational family, beside UnitLogs) and of certification
 			// credit entries (Personnel family). PersonnelCertifications itself stays catalog 6; statuses, dates and the

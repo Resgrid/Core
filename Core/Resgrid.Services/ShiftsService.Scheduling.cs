@@ -156,21 +156,11 @@ namespace Resgrid.Services
 
 			foreach (var groupId in groupIds)
 			{
-				var onDuty = new HashSet<string>(onDutyEntries.Where(x => x.DepartmentGroupId == groupId).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
-
 				// Standing-roster people placed on a shift without a group cover their own group.
-				var ungrouped = onDutyEntries.Where(x => !x.DepartmentGroupId.HasValue).Select(x => x.UserId).ToList();
-
-				if (ungrouped.Any())
-				{
-					var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId) ?? new List<DepartmentGroupMember>();
-					var memberIds = new HashSet<string>(members.Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
-
-					foreach (var userId in ungrouped.Where(memberIds.Contains))
-						onDuty.Add(userId);
-				}
-
-				result[groupId] = onDuty.ToList();
+				var members = onDutyEntries.Any(x => !x.DepartmentGroupId.HasValue)
+					? (await _departmentGroupsService.GetAllMembersForGroupAsync(groupId) ?? new List<DepartmentGroupMember>()).Select(x => x.UserId)
+					: Enumerable.Empty<string>();
+				result[groupId] = ShiftRosterGroups.Select(groupId, onDutyEntries, members);
 			}
 
 			return result;
@@ -533,7 +523,9 @@ namespace Resgrid.Services
 
 			if (!accept)
 			{
-				await RejectTradeRequestAsync(shiftSignupTradeId, userId, note, cancellationToken);
+				// Nothing was saved (the participant row went away): report that rather than an answer nobody recorded.
+				if (!await RejectTradeRequestAsync(shiftSignupTradeId, userId, note, cancellationToken))
+					return ShiftActionResult<ShiftSignupTrade>.Fail(ShiftActionErrors.NotAllowed);
 
 				await PublishAsync(departmentId, number => _eventAggregator.SendMessage<ShiftTradeRejectedEvent>(new ShiftTradeRejectedEvent
 				{
@@ -556,7 +548,8 @@ namespace Resgrid.Services
 					return ShiftActionResult<ShiftSignupTrade>.Fail(ShiftActionErrors.InvalidOffer);
 			}
 
-			await ProposeShiftDaysForTradeAsync(shiftSignupTradeId, userId, note, offers, cancellationToken);
+			if (!await ProposeShiftDaysForTradeAsync(shiftSignupTradeId, userId, note, offers, cancellationToken))
+				return ShiftActionResult<ShiftSignupTrade>.Fail(ShiftActionErrors.NotAllowed);
 
 			await PublishAsync(departmentId, number => _eventAggregator.SendMessage<ShiftTradeProposedEvent>(new ShiftTradeProposedEvent
 			{

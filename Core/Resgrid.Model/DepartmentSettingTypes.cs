@@ -114,5 +114,8 @@
 		/// user's group subtree, and which personnel roles stay department-wide while it is on.
 		/// </summary>
 		GroupDispatchScopeConfig = 78,
+
+		/// <summary>Declared, reviewed administrative operating profile; registry section 4G.</summary>
+		DepartmentOperatingProfile = 110,
 	}
 }

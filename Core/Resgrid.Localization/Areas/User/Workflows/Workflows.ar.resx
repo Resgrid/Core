@@ -695,6 +695,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>تم إنشاء سير العمل من القالب مع مسودة إذن محمي. اضبط عنوان الوجهة وبيانات الاعتماد للخطوة، واختر الحقول المسموح بها، ثم اطلب الاعتماد. لن يُرسل أي شيء قبل اعتماد الإذن.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>تم إنشاء سير العمل من القالب، ولكن دون مسودة إذن محمي (يتطلب إنشاؤها مسؤولاً عن سير العمل المحمي). سير العمل معطّل: اطلب من مسؤول إنشاء الإذن وطلب الاعتماد قبل تفعيله.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>تم بلوغ الحد الأقصى لسير العمل في خطتك. يُرجى الترقية لإضافة المزيد.</value>
   </data>

@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Queries.DepartmentSettings;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DepartmentSettingsRepository : RmsRepositoryBase<DepartmentSetting>, IDepartmentSettingsRepository
+	public class DepartmentSettingsRepository : AuditedConfigurationRepository<DepartmentSetting>, IDepartmentSettingsRepository
 	{
 		public async Task<DepartmentSetting> SaveRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, System.Threading.CancellationToken cancellationToken = default)
 		{
@@ -39,8 +39,8 @@ namespace Resgrid.Repositories.DataRepository
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentSettingsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public DepartmentSettingsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

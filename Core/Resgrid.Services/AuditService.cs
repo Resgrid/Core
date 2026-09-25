@@ -74,6 +74,10 @@ namespace Resgrid.Services
 		{
 			switch (logType)
 			{
+				case AuditLogTypes.DepartmentConfigurationChanged:
+					return "Department Configuration Changed";
+				case AuditLogTypes.AdminAssistReviewChanged:
+					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:
 					return "Department Settings Changed";
 				case AuditLogTypes.UserAdded:

@@ -108,6 +108,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					var unitData = ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), type, TimeZone);
 
+					if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, unit.UnitId, UserId, DepartmentId))
+						UnitLocationVisibility.Withhold(unitData);
+
 					if (udfValuesByEntityId.TryGetValue(unit.UnitId.ToString(), out var unitUdfValues) && unitUdfValues.Any())
 					{
 						unitData.UdfValues = unitUdfValues.Select(v => new UdfFieldValueResultData
@@ -175,7 +178,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (types != null && types.Any())
 						type = types.FirstOrDefault(x => x.Type == unit.Type);
 
-					var canViewLocation = await _authorizationService.CanUserViewUnitLocationAsync(UserId, unit.UnitId, DepartmentId);
+					var canViewLocation = await UnitLocationVisibility.CanSeeAsync(_authorizationService, unit.UnitId, UserId, DepartmentId);
 
 					var unitState = unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId);
 					var customState = await _customStateService.GetCustomUnitStateAsync(unitState);

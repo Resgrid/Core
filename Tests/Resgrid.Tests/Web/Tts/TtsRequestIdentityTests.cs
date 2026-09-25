@@ -54,7 +54,9 @@ namespace Resgrid.Tests.Web.Tts
 				.ToList();
 
 			knownNetworks.Should().Contain(x => x.Prefix.Equals(IPAddress.Parse("10.42.0.0")) && x.PrefixLength == 16);
-			knownNetworks.Should().Contain(x => x.Prefix.Equals(IPAddress.Parse("::ffff:10.42.0.0")) && x.PrefixLength == 16);
+			// The mapped form needs 96 + 16: "::ffff:10.42.0.0/16" is ::/16, which trusts every IPv4 client as a proxy.
+			knownNetworks.Should().Contain(x => x.Prefix.Equals(IPAddress.Parse("::ffff:10.42.0.0")) && x.PrefixLength == 112);
+			knownNetworks.Should().NotContain(x => x.Prefix.Equals(IPAddress.Parse("::ffff:10.42.0.0")) && x.PrefixLength == 16);
 		}
 
 		[Test]

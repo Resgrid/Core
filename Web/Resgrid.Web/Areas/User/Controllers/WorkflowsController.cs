@@ -145,9 +145,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}, ct);
 			}
 
+			var protectedDraftCreated = false;
 			if (template.RequiresProtectedWorkflows && await _protectedWorkflows.CanAdministerAsync(DepartmentId, UserId))
-				await _protectedWorkflows.SaveDraftAsync(DepartmentId, saved.WorkflowId, new ProtectedReleaseDraft { FieldIds = template.ReleaseFieldIds },
+			{
+				var draft = await _protectedWorkflows.SaveDraftAsync(DepartmentId, saved.WorkflowId, new ProtectedReleaseDraft { FieldIds = template.ReleaseFieldIds },
 					new ProtectedWorkflowActor { UserId = UserId }, ct);
+				protectedDraftCreated = draft?.Success == true;
+			}
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -161,7 +165,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				UserAgent    = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
 			});
 
-			TempData["GalleryCreated"] = template.RequiresProtectedWorkflows ? "GalleryCreatedProtected" : "GalleryCreated";
+			// Only claim a draft protected release when one was actually saved (the caller may not administer Protected
+			// Workflows, or the draft may have been refused).
+			TempData["GalleryCreated"] = !template.RequiresProtectedWorkflows
+				? "GalleryCreated"
+				: protectedDraftCreated ? "GalleryCreatedProtected" : "GalleryCreatedWithoutProtectedDraft";
 			return RedirectToAction("Edit", new { workflowId = saved.WorkflowId });
 		}
 

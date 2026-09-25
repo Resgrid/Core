@@ -1,0 +1,2833 @@
+{
+  "Version": "2026.09.24.1",
+  "Areas": [
+    {
+      "Id": "calls",
+      "LabelKey": "Area.calls",
+      "PurposeKey": "AreaPurpose.calls",
+      "Order": 1,
+      "Archetypes": []
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "setting.RssFeedKeyForActiveCalls",
+      "AreaId": "calls",
+      "LabelKey": "Setting.RssFeedKeyForActiveCalls",
+      "HelpKey": "SettingHelp.RssFeedKeyForActiveCalls",
+      "Binding": "DepartmentSettingTypes.RssFeedKeyForActiveCalls",
+      "ValueType": "secret",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "RssFeedKeyForActiveCalls"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RssFeedKeyForActiveCalls",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.TextToCallNumber",
+      "AreaId": "calls",
+      "LabelKey": "Setting.TextToCallNumber",
+      "HelpKey": "SettingHelp.TextToCallNumber",
+      "Binding": "DepartmentSettingTypes.TextToCallNumber",
+      "ValueType": "provider-reference",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "TextToCallNumber"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.TextToCallNumber",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.TextToCallImportFormat",
+      "AreaId": "calls",
+      "LabelKey": "Setting.TextToCallImportFormat",
+      "HelpKey": "SettingHelp.TextToCallImportFormat",
+      "Binding": "DepartmentSettingTypes.TextToCallImportFormat",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "TextToCallImportFormat"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.TextToCallImportFormat",
+      "DefaultValue": "owning parser default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.TextToCallSourceNumbers",
+      "AreaId": "calls",
+      "LabelKey": "Setting.TextToCallSourceNumbers",
+      "HelpKey": "SettingHelp.TextToCallSourceNumbers",
+      "Binding": "DepartmentSettingTypes.TextToCallSourceNumbers",
+      "ValueType": "sensitive-list",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "TextToCallSourceNumbers"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.TextToCallSourceNumbers",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.EnableTextToCall",
+      "AreaId": "calls",
+      "LabelKey": "Setting.EnableTextToCall",
+      "HelpKey": "SettingHelp.EnableTextToCall",
+      "Binding": "DepartmentSettingTypes.EnableTextToCall",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "EnableTextToCall"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EnableTextToCall",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.InternalDispatchEmail",
+      "AreaId": "calls",
+      "LabelKey": "Setting.InternalDispatchEmail",
+      "HelpKey": "SettingHelp.InternalDispatchEmail",
+      "Binding": "DepartmentSettingTypes.InternalDispatchEmail",
+      "ValueType": "secret",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "InternalDispatchEmail"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.InternalDispatchEmail",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.CallsSortOrder",
+      "AreaId": "calls",
+      "LabelKey": "Setting.CallsSortOrder",
+      "HelpKey": "SettingHelp.CallsSortOrder",
+      "Binding": "DepartmentSettingTypes.CallsSortOrder",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Settings",
+        "Field": "CallsSortOrder"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.CallsSortOrder",
+      "DefaultValue": "owning view default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.DispatchShiftInsteadOfGroup",
+      "AreaId": "calls",
+      "LabelKey": "Setting.DispatchShiftInsteadOfGroup",
+      "HelpKey": "SettingHelp.DispatchShiftInsteadOfGroup",
+      "Binding": "DepartmentSettingTypes.DispatchShiftInsteadOfGroup",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "DispatchShiftInsteadOfGroup"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [
+        "setting.AutoSetStatusForShiftDispatchPersonnel"
+      ],
+      "Conflicts": [],
+      "DocumentationId": "setting.DispatchShiftInsteadOfGroup",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.AutoSetStatusForShiftDispatchPersonnel",
+      "AreaId": "calls",
+      "LabelKey": "Setting.AutoSetStatusForShiftDispatchPersonnel",
+      "HelpKey": "SettingHelp.AutoSetStatusForShiftDispatchPersonnel",
+      "Binding": "DepartmentSettingTypes.AutoSetStatusForShiftDispatchPersonnel",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "AutoSetStatusForShiftPersonnel"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchShiftInsteadOfGroup"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.AutoSetStatusForShiftDispatchPersonnel",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.ShiftCallDispatchPersonnelStatusToSet",
+      "AreaId": "calls",
+      "LabelKey": "Setting.ShiftCallDispatchPersonnelStatusToSet",
+      "HelpKey": "SettingHelp.ShiftCallDispatchPersonnelStatusToSet",
+      "Binding": "DepartmentSettingTypes.ShiftCallDispatchPersonnelStatusToSet",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "ShiftCallDispatchPersonnelStatusToSet"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.ShiftCallDispatchPersonnelStatusToSet",
+      "DefaultValue": "-1",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.ShiftCallReleasePersonnelStatusToSet",
+      "AreaId": "calls",
+      "LabelKey": "Setting.ShiftCallReleasePersonnelStatusToSet",
+      "HelpKey": "SettingHelp.ShiftCallReleasePersonnelStatusToSet",
+      "Binding": "DepartmentSettingTypes.ShiftCallReleasePersonnelStatusToSet",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "ShiftCallReleasePersonnelStatusToSet"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.ShiftCallReleasePersonnelStatusToSet",
+      "DefaultValue": "-1",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "AreaId": "calls",
+      "LabelKey": "Setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "HelpKey": "SettingHelp.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "Binding": "DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "UnitDispatchAlsoDispatchToAssignedPersonnel"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.UnitDispatchAlsoDispatchToGroup",
+      "AreaId": "calls",
+      "LabelKey": "Setting.UnitDispatchAlsoDispatchToGroup",
+      "HelpKey": "SettingHelp.UnitDispatchAlsoDispatchToGroup",
+      "Binding": "DepartmentSettingTypes.UnitDispatchAlsoDispatchToGroup",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "UnitDispatchAlsoDispatchToGroup"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.UnitDispatchAlsoDispatchToGroup",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.CheckInTimersAutoEnableForNewCalls",
+      "AreaId": "calls",
+      "LabelKey": "Setting.CheckInTimersAutoEnableForNewCalls",
+      "HelpKey": "SettingHelp.CheckInTimersAutoEnableForNewCalls",
+      "Binding": "DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "AutoEnableCheckInTimers"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.CheckInTimersAutoEnableForNewCalls",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.UnitCallDispatchStatusToSet",
+      "AreaId": "calls",
+      "LabelKey": "Setting.UnitCallDispatchStatusToSet",
+      "HelpKey": "SettingHelp.UnitCallDispatchStatusToSet",
+      "Binding": "DepartmentSettingTypes.UnitCallDispatchStatusToSet",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "UnitCallDispatchStatusToSet"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.UnitCallDispatchStatusToSet",
+      "DefaultValue": "-1",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.UnitCallReleaseStatusToSet",
+      "AreaId": "calls",
+      "LabelKey": "Setting.UnitCallReleaseStatusToSet",
+      "HelpKey": "SettingHelp.UnitCallReleaseStatusToSet",
+      "Binding": "DepartmentSettingTypes.UnitCallReleaseStatusToSet",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "UnitCallReleaseStatusToSet"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.UnitCallReleaseStatusToSet",
+      "DefaultValue": "-1",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.UnitCallStatusOverridesByUnitType",
+      "AreaId": "calls",
+      "LabelKey": "Setting.UnitCallStatusOverridesByUnitType",
+      "HelpKey": "SettingHelp.UnitCallStatusOverridesByUnitType",
+      "Binding": "DepartmentSettingTypes.UnitCallStatusOverridesByUnitType",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "UnitCallStatusOverridesByUnitType"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.UnitCallStatusOverridesByUnitType",
+      "DefaultValue": "empty overrides",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.DispatchRecommendationMode",
+      "AreaId": "calls",
+      "LabelKey": "Setting.DispatchRecommendationMode",
+      "HelpKey": "SettingHelp.DispatchRecommendationMode",
+      "Binding": "DepartmentSettingTypes.DispatchRecommendationMode",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "DispatchRecommendationMode"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Conflicts": [],
+      "DocumentationId": "setting.DispatchRecommendationMode",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.DispatchRecommendationAutoDispatch",
+      "AreaId": "calls",
+      "LabelKey": "Setting.DispatchRecommendationAutoDispatch",
+      "HelpKey": "SettingHelp.DispatchRecommendationAutoDispatch",
+      "Binding": "DepartmentSettingTypes.DispatchRecommendationAutoDispatch",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "DispatchRecommendationAutoDispatch"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DispatchRecommendationAutoDispatch",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.DispatchRecommendationConfig",
+      "AreaId": "calls",
+      "LabelKey": "Setting.DispatchRecommendationConfig",
+      "HelpKey": "SettingHelp.DispatchRecommendationConfig",
+      "Binding": "DepartmentSettingTypes.DispatchRecommendationConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "DispatchRecommendationConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationMode"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DispatchRecommendationConfig",
+      "DefaultValue": "DispatchRecommendationConfig constructor",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.NewCallFieldPolicy",
+      "AreaId": "calls",
+      "LabelKey": "Setting.NewCallFieldPolicy",
+      "HelpKey": "SettingHelp.NewCallFieldPolicy",
+      "Binding": "DepartmentSettingTypes.NewCallFieldPolicy",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "NewCallFieldPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.NewCallFieldPolicy",
+      "DefaultValue": "visible, not required",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.GroupDispatchScopeConfig",
+      "AreaId": "calls",
+      "LabelKey": "Setting.GroupDispatchScopeConfig",
+      "HelpKey": "SettingHelp.GroupDispatchScopeConfig",
+      "Binding": "DepartmentSettingTypes.GroupDispatchScopeConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "GroupDispatchScopeEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.GroupDispatchScopeConfig",
+      "DefaultValue": "disabled, no department-wide role exceptions",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverrideSetting.Overrides",
+      "AreaId": "calls",
+      "LabelKey": "Field.UnitTypeCallStatusOverrideSetting.Overrides",
+      "HelpKey": "FieldHelp.UnitTypeCallStatusOverrideSetting.Overrides",
+      "Binding": "UnitTypeCallStatusOverrideSetting.Overrides",
+      "ValueType": "list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.UnitCallStatusOverridesByUnitType"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.UnitTypeCallStatusOverrideSetting.Overrides",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "UnitTypeCallStatusOverrideSetting",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverride.UnitTypeId",
+      "AreaId": "calls",
+      "LabelKey": "Field.UnitTypeCallStatusOverride.UnitTypeId",
+      "HelpKey": "FieldHelp.UnitTypeCallStatusOverride.UnitTypeId",
+      "Binding": "UnitTypeCallStatusOverride.UnitTypeId",
+      "ValueType": "reference",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.UnitCallStatusOverridesByUnitType"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.UnitTypeCallStatusOverride.UnitTypeId",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "UnitTypeCallStatusOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverride.DispatchStatus",
+      "AreaId": "calls",
+      "LabelKey": "Field.UnitTypeCallStatusOverride.DispatchStatus",
+      "HelpKey": "FieldHelp.UnitTypeCallStatusOverride.DispatchStatus",
+      "Binding": "UnitTypeCallStatusOverride.DispatchStatus",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.UnitCallStatusOverridesByUnitType"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.UnitTypeCallStatusOverride.DispatchStatus",
+      "DefaultValue": "-1",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "UnitTypeCallStatusOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverride.ReleaseStatus",
+      "AreaId": "calls",
+      "LabelKey": "Field.UnitTypeCallStatusOverride.ReleaseStatus",
+      "HelpKey": "FieldHelp.UnitTypeCallStatusOverride.ReleaseStatus",
+      "Binding": "UnitTypeCallStatusOverride.ReleaseStatus",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.UnitCallStatusOverridesByUnitType"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.UnitTypeCallStatusOverride.ReleaseStatus",
+      "DefaultValue": "-1",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "UnitTypeCallStatusOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.NewCallFieldPolicy.Rules",
+      "AreaId": "calls",
+      "LabelKey": "Field.NewCallFieldPolicy.Rules",
+      "HelpKey": "FieldHelp.NewCallFieldPolicy.Rules",
+      "Binding": "NewCallFieldPolicy.Rules",
+      "ValueType": "list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.NewCallFieldPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.NewCallFieldPolicy.Rules",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "NewCallFieldPolicy",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.NewCallFieldRule.Key",
+      "AreaId": "calls",
+      "LabelKey": "Field.NewCallFieldRule.Key",
+      "HelpKey": "FieldHelp.NewCallFieldRule.Key",
+      "Binding": "NewCallFieldRule.Key",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.NewCallFieldPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.NewCallFieldRule.Key",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "NewCallFieldRule",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.NewCallFieldRule.Visible",
+      "AreaId": "calls",
+      "LabelKey": "Field.NewCallFieldRule.Visible",
+      "HelpKey": "FieldHelp.NewCallFieldRule.Visible",
+      "Binding": "NewCallFieldRule.Visible",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.NewCallFieldPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.NewCallFieldRule.Visible",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "NewCallFieldRule",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.NewCallFieldRule.Required",
+      "AreaId": "calls",
+      "LabelKey": "Field.NewCallFieldRule.Required",
+      "HelpKey": "FieldHelp.NewCallFieldRule.Required",
+      "Binding": "NewCallFieldRule.Required",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.NewCallFieldPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.NewCallFieldRule.Required",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "NewCallFieldRule",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.GroupDispatchScopeConfig.Enabled",
+      "AreaId": "calls",
+      "LabelKey": "Field.GroupDispatchScopeConfig.Enabled",
+      "HelpKey": "FieldHelp.GroupDispatchScopeConfig.Enabled",
+      "Binding": "GroupDispatchScopeConfig.Enabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "GroupDispatchScopeEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.GroupDispatchScopeConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.GroupDispatchScopeConfig.Enabled",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "GroupDispatchScopeConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "AreaId": "calls",
+      "LabelKey": "Field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "HelpKey": "FieldHelp.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "Binding": "GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "ValueType": "reference-list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.GroupDispatchScopeConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "GroupDispatchScopeConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "Binding": "DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "DefaultValue": "1800",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MaxRadiusMeters",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.MaxRadiusMeters",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.MaxRadiusMeters",
+      "Binding": "DispatchRecommendationConfig.MaxRadiusMeters",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.MaxRadiusMeters",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.IncludeStaleLocations",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.IncludeStaleLocations",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.IncludeStaleLocations",
+      "Binding": "DispatchRecommendationConfig.IncludeStaleLocations",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.IncludeStaleLocations",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "Binding": "DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "DefaultValue": "1800",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.UseRoutedEta",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.UseRoutedEta",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.UseRoutedEta",
+      "Binding": "DispatchRecommendationConfig.UseRoutedEta",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.UseRoutedEta",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.EtaShortlistSize",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.EtaShortlistSize",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.EtaShortlistSize",
+      "Binding": "DispatchRecommendationConfig.EtaShortlistSize",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.EtaShortlistSize",
+      "DefaultValue": "5",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.RestPeriodMinutes",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.RestPeriodMinutes",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.RestPeriodMinutes",
+      "Binding": "DispatchRecommendationConfig.RestPeriodMinutes",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.RestPeriodMinutes",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "Binding": "DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "Binding": "DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Hostname",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.Hostname",
+      "HelpKey": "TableHelp.DepartmentCallEmail.Hostname",
+      "Binding": "DepartmentCallEmail.Hostname",
+      "ValueType": "restricted",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.Hostname",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Port",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.Port",
+      "HelpKey": "TableHelp.DepartmentCallEmail.Port",
+      "Binding": "DepartmentCallEmail.Port",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.Port",
+      "DefaultValue": "editor/provider default",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.UseSsl",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.UseSsl",
+      "HelpKey": "TableHelp.DepartmentCallEmail.UseSsl",
+      "Binding": "DepartmentCallEmail.UseSsl",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.UseSsl",
+      "DefaultValue": "editor/provider default",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Username",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.Username",
+      "HelpKey": "TableHelp.DepartmentCallEmail.Username",
+      "Binding": "DepartmentCallEmail.Username",
+      "ValueType": "restricted",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.Username",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Password",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.Password",
+      "HelpKey": "TableHelp.DepartmentCallEmail.Password",
+      "Binding": "DepartmentCallEmail.Password",
+      "ValueType": "secret",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.Password",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.FormatType",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.FormatType",
+      "HelpKey": "TableHelp.DepartmentCallEmail.FormatType",
+      "Binding": "DepartmentCallEmail.FormatType",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.FormatType",
+      "DefaultValue": "owning parser default",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.LastCheck",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.LastCheck",
+      "HelpKey": "TableHelp.DepartmentCallEmail.LastCheck",
+      "Binding": "DepartmentCallEmail.LastCheck",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.LastCheck",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.IsFailure",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.IsFailure",
+      "HelpKey": "TableHelp.DepartmentCallEmail.IsFailure",
+      "Binding": "DepartmentCallEmail.IsFailure",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.IsFailure",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.ErrorMessage",
+      "AreaId": "calls",
+      "LabelKey": "TableField.DepartmentCallEmail.ErrorMessage",
+      "HelpKey": "TableHelp.DepartmentCallEmail.ErrorMessage",
+      "Binding": "DepartmentCallEmail.ErrorMessage",
+      "ValueType": "restricted",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentCallEmail.ErrorMessage",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentCallEmail",
+      "Availability": "reference-only"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.calls",
+      "PurposeKey": "FeaturePurpose.calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "Dashboard"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-call",
+      "AreaId": "calls",
+      "LabelKey": "Feature.new-call",
+      "PurposeKey": "FeaturePurpose.new-call",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.new-call",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "NewCall"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "archived-calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.archived-calls",
+      "PurposeKey": "FeaturePurpose.archived-calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.archived-calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "ArchivedCalls"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "incident-command",
+      "AreaId": "calls",
+      "LabelKey": "Feature.incident-command",
+      "PurposeKey": "FeaturePurpose.incident-command",
+      "ValueKey": "FeatureValue.incident-command",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.incident-command",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Command",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "permission",
+          "Id": "CommandAppLogin"
+        }
+      ],
+      "SettingIds": [
+        "permission.CommandAppLogin"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "call-templates",
+      "AreaId": "calls",
+      "LabelKey": "Feature.call-templates",
+      "PurposeKey": "FeaturePurpose.call-templates",
+      "ValueKey": "FeatureValue.call-templates",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.call-templates",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Templates",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "call-types-priorities",
+      "AreaId": "calls",
+      "LabelKey": "Feature.call-types-priorities",
+      "PurposeKey": "FeaturePurpose.call-types-priorities",
+      "ValueKey": "FeatureValue.call-types-priorities",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.call-types-priorities",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "Types"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "run-cards",
+      "AreaId": "calls",
+      "LabelKey": "Feature.run-cards",
+      "PurposeKey": "FeaturePurpose.run-cards",
+      "ValueKey": "FeatureValue.run-cards",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.run-cards",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RunCards",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Dispatch.RunCards"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [
+        "run-cards"
+      ],
+      "Setup": {
+        "EvidenceId": "runCardCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "run-cards"
+        ],
+        "GuidanceKey": "SetupEvidence.run-cards"
+      }
+    },
+    {
+      "Id": "checkin-setup",
+      "AreaId": "calls",
+      "LabelKey": "Feature.checkin-setup",
+      "PurposeKey": "FeaturePurpose.checkin-setup",
+      "ValueKey": "FeatureValue.checkin-setup",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.checkin-setup",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "field.DispatchRecommendationConfig.EtaShortlistSize",
+        "field.DispatchRecommendationConfig.IncludeStaleLocations",
+        "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+        "field.DispatchRecommendationConfig.MaxRadiusMeters",
+        "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+        "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+        "field.DispatchRecommendationConfig.RestPeriodMinutes",
+        "field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+        "field.DispatchRecommendationConfig.UseRoutedEta",
+        "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+        "field.GroupDispatchScopeConfig.Enabled",
+        "field.NewCallFieldPolicy.Rules",
+        "field.NewCallFieldRule.Key",
+        "field.NewCallFieldRule.Required",
+        "field.NewCallFieldRule.Visible",
+        "field.UnitTypeCallStatusOverride.DispatchStatus",
+        "field.UnitTypeCallStatusOverride.ReleaseStatus",
+        "field.UnitTypeCallStatusOverride.UnitTypeId",
+        "field.UnitTypeCallStatusOverrideSetting.Overrides",
+        "setting.AutoSetStatusForShiftDispatchPersonnel",
+        "setting.CheckInTimersAutoEnableForNewCalls",
+        "setting.DispatchRecommendationAutoDispatch",
+        "setting.DispatchRecommendationConfig",
+        "setting.DispatchRecommendationMode",
+        "setting.DispatchShiftInsteadOfGroup",
+        "setting.GroupDispatchScopeConfig",
+        "setting.NewCallFieldPolicy",
+        "setting.PersonnelOnUnitSetUnitStatus",
+        "setting.ShiftCallDispatchPersonnelStatusToSet",
+        "setting.ShiftCallReleasePersonnelStatusToSet",
+        "setting.UnitCallDispatchStatusToSet",
+        "setting.UnitCallReleaseStatusToSet",
+        "setting.UnitCallStatusOverridesByUnitType",
+        "setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+        "setting.UnitDispatchAlsoDispatchToGroup"
+      ],
+      "RuleIds": [
+        "checkin-timers",
+        "shift-auto-without-dispatch",
+        "shift-coverage"
+      ],
+      "Setup": {
+        "EvidenceId": "checkInTimerCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "checkin-timers"
+        ],
+        "GuidanceKey": "SetupEvidence.checkin-setup"
+      }
+    },
+    {
+      "Id": "text-intake",
+      "AreaId": "calls",
+      "LabelKey": "Feature.text-intake",
+      "PurposeKey": "FeaturePurpose.text-intake",
+      "ValueKey": "FeatureValue.text-intake",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.text-intake",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.EnableTextCommand",
+        "setting.EnableTextToCall",
+        "setting.TextToCallImportFormat",
+        "setting.TextToCallNumber",
+        "setting.TextToCallSourceNumbers",
+        "setting.TtsLanguage"
+      ],
+      "RuleIds": [
+        "command-sources",
+        "text-sources"
+      ]
+    },
+    {
+      "Id": "email-intake",
+      "AreaId": "calls",
+      "LabelKey": "Feature.email-intake",
+      "PurposeKey": "FeaturePurpose.email-intake",
+      "ValueKey": "FeatureValue.email-intake",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureAdoption.email-intake",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.InternalDispatchEmail",
+        "setting.RssFeedKeyForActiveCalls",
+        "table.DepartmentCallEmail.ErrorMessage",
+        "table.DepartmentCallEmail.FormatType",
+        "table.DepartmentCallEmail.Hostname",
+        "table.DepartmentCallEmail.IsFailure",
+        "table.DepartmentCallEmail.LastCheck",
+        "table.DepartmentCallEmail.Password",
+        "table.DepartmentCallEmail.Port",
+        "table.DepartmentCallEmail.UseSsl",
+        "table.DepartmentCallEmail.Username"
+      ],
+      "RuleIds": [
+        "email-import-failures",
+        "import-heartbeat"
+      ],
+      "Setup": {
+        "EvidenceId": "emailImportSourceCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "email-import-failures",
+          "import-heartbeat"
+        ],
+        "GuidanceKey": "SetupEvidence.email-intake"
+      }
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "shift-auto-without-dispatch",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.shift-auto-without-dispatch",
+      "ExplanationKey": "RuleWhy.shift-auto-without-dispatch",
+      "NextActionKey": "RuleNext.shift-auto-without-dispatch",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "AutoSetStatusForShiftDispatchPersonnel",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "DispatchShiftInsteadOfGroup",
+          "Comparison": "IsFalse",
+          "Number": null
+        }
+      ]
+    },
+    {
+      "Id": "shift-coverage",
+      "AreaId": "calls",
+      "Severity": "Critical",
+      "TitleKey": "Rule.shift-coverage",
+      "ExplanationKey": "RuleWhy.shift-coverage",
+      "NextActionKey": "RuleNext.shift-coverage",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "DispatchShiftInsteadOfGroup",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "groupsWithoutShiftCoverage",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "text-sources",
+      "AreaId": "calls",
+      "Severity": "Critical",
+      "TitleKey": "Rule.text-sources",
+      "ExplanationKey": "RuleWhy.text-sources",
+      "NextActionKey": "RuleNext.text-sources",
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "EnableTextToCall",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "textSourcePresent",
+          "Comparison": "IsFalse",
+          "Number": null
+        }
+      ]
+    },
+    {
+      "Id": "run-cards",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.run-cards",
+      "ExplanationKey": "RuleWhy.run-cards",
+      "NextActionKey": "RuleNext.run-cards",
+      "Location": {
+        "Controller": "RunCards",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "DispatchRecommendationMode",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "runCardCount",
+          "Comparison": "Equal",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "checkin-timers",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.checkin-timers",
+      "ExplanationKey": "RuleWhy.checkin-timers",
+      "NextActionKey": "RuleNext.checkin-timers",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "CheckInTimersAutoEnableForNewCalls",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "checkInTimerCount",
+          "Comparison": "Equal",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-heartbeat",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.import-heartbeat",
+      "ExplanationKey": "RuleWhy.import-heartbeat",
+      "NextActionKey": "RuleNext.import-heartbeat",
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "importHeartbeatExpected",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importHeartbeatMissing",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ]
+    },
+    {
+      "Id": "email-import-failures",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.email-import-failures",
+      "ExplanationKey": "RuleWhy.email-import-failures",
+      "NextActionKey": "RuleNext.email-import-failures",
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "emailImportSourceCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "emailImportFailureCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "setting.RssFeedKeyForActiveCalls",
+      "Locale": "en",
+      "TitleKey": "Setting.RssFeedKeyForActiveCalls",
+      "Body": "Rss Feed Key For Active Calls. Credential for the active-call feed. Treat the feed and its key as sensitive; rotate through its owning screen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-rssfeedkeyforactivecalls",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.TextToCallNumber",
+      "Locale": "en",
+      "TitleKey": "Setting.TextToCallNumber",
+      "Body": "Text To Call Number. Provisioned inbound text number. Provisioning has external effects and must use the normal text settings flow.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-texttocallnumber",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.TextToCallImportFormat",
+      "Locale": "en",
+      "TitleKey": "Setting.TextToCallImportFormat",
+      "Body": "Text To Call Import Format. Parser used for inbound text call creation. Verify the sender format with a controlled example on the owning screen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-texttocallimportformat",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.TextToCallSourceNumbers",
+      "Locale": "en",
+      "TitleKey": "Setting.TextToCallSourceNumbers",
+      "Body": "Text To Call Source Numbers. Allowed inbound source numbers for text calls and commands. Empty sources prevent accepted intake; never display raw numbers in Admin Assist.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-texttocallsourcenumbers",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.EnableTextToCall",
+      "Locale": "en",
+      "TitleKey": "Setting.EnableTextToCall",
+      "Body": "Enable Text To Call. Configured text-call preference. Enforcement differs by provider and chatbot path; the stored value alone does not prove intake is stopped or accepted. Review sender classification and perform an explicit controlled verification on the owning screen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-enabletexttocall",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.InternalDispatchEmail",
+      "Locale": "en",
+      "TitleKey": "Setting.InternalDispatchEmail",
+      "Body": "Internal Dispatch Email. Assigned internal dispatch email address. Presence can be shown; the address stays on the authorized import screen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-internaldispatchemail",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.CallsSortOrder",
+      "Locale": "en",
+      "TitleKey": "Setting.CallsSortOrder",
+      "Body": "Calls Sort Order. Sort order for displayed calls; does not reorder provider delivery or change call priority.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-callssortorder",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.DispatchShiftInsteadOfGroup",
+      "Locale": "en",
+      "TitleKey": "Setting.DispatchShiftInsteadOfGroup",
+      "Body": "Dispatch Shift Instead Of Group. Expand dispatched groups using the resolved on-duty roster. An empty shift result falls back to group members; preview both cases.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-dispatchshiftinsteadofgroup",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.AutoSetStatusForShiftDispatchPersonnel",
+      "Locale": "en",
+      "TitleKey": "Setting.AutoSetStatusForShiftDispatchPersonnel",
+      "Body": "Auto Set Status For Shift Dispatch Personnel. Apply the configured status to shift-dispatched personnel. This only takes effect with shift dispatch enabled.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-autosetstatusforshiftdispatchpersonnel",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.ShiftCallDispatchPersonnelStatusToSet",
+      "Locale": "en",
+      "TitleKey": "Setting.ShiftCallDispatchPersonnelStatusToSet",
+      "Body": "Shift Call Dispatch Personnel Status To Set. Personnel status applied when shift dispatch occurs. Minus one leaves status unchanged; use an existing approved status.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-shiftcalldispatchpersonnelstatustoset",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.ShiftCallReleasePersonnelStatusToSet",
+      "Locale": "en",
+      "TitleKey": "Setting.ShiftCallReleasePersonnelStatusToSet",
+      "Body": "Shift Call Release Personnel Status To Set. Personnel status applied on call release for the shift-dispatch path. Minus one leaves status unchanged.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-shiftcallreleasepersonnelstatustoset",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "Locale": "en",
+      "TitleKey": "Setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+      "Body": "Unit Dispatch Also Dispatch To Assigned Personnel. Expand unit dispatch to its assigned crew. Review duplicate routes, current assignments and recipient permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-unitdispatchalsodispatchtoassignedpersonnel",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.UnitDispatchAlsoDispatchToGroup",
+      "Locale": "en",
+      "TitleKey": "Setting.UnitDispatchAlsoDispatchToGroup",
+      "Body": "Unit Dispatch Also Dispatch To Group. Expand unit dispatch to the station group. This can substantially increase the recipient audience.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-unitdispatchalsodispatchtogroup",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.CheckInTimersAutoEnableForNewCalls",
+      "Locale": "en",
+      "TitleKey": "Setting.CheckInTimersAutoEnableForNewCalls",
+      "Body": "Check In Timers Auto Enable For New Calls. Automatically start configured check-in timers for new calls. Review timer targets and escalation before enabling it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-checkintimersautoenablefornewcalls",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.UnitCallDispatchStatusToSet",
+      "Locale": "en",
+      "TitleKey": "Setting.UnitCallDispatchStatusToSet",
+      "Body": "Unit Call Dispatch Status To Set. Unit status applied during call dispatch. Minus one or an invalid built-in unit status leaves the status unchanged.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-unitcalldispatchstatustoset",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.UnitCallReleaseStatusToSet",
+      "Locale": "en",
+      "TitleKey": "Setting.UnitCallReleaseStatusToSet",
+      "Body": "Unit Call Release Status To Set. Unit status applied at call release. Review unit-type overrides before assuming one department-wide effect.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-unitcallreleasestatustoset",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.UnitCallStatusOverridesByUnitType",
+      "Locale": "en",
+      "TitleKey": "Setting.UnitCallStatusOverridesByUnitType",
+      "Body": "Unit Call Status Overrides By Unit Type. Per-unit-type call status overrides. Existing type-specific values take precedence over department defaults.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-unitcallstatusoverridesbyunittype",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.DispatchRecommendationMode",
+      "Locale": "en",
+      "TitleKey": "Setting.DispatchRecommendationMode",
+      "Body": "Dispatch Recommendation Mode. Dispatch recommendation selection mode. Review run cards, eligible resources and human dispatch responsibility.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-dispatchrecommendationmode",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.DispatchRecommendationAutoDispatch",
+      "Locale": "en",
+      "TitleKey": "Setting.DispatchRecommendationAutoDispatch",
+      "Body": "Dispatch Recommendation Auto Dispatch. Allow the recommendation path to dispatch automatically where enabled. Preview recipients and verify local procedures first.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-dispatchrecommendationautodispatch",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.DispatchRecommendationConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.DispatchRecommendationConfig",
+      "Body": "Dispatch Recommendation Config. Location, ETA, rest, crew and move-up settings used by recommendation consumers. External ETA calls occur only in the owning operational flow.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-dispatchrecommendationconfig",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.NewCallFieldPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.NewCallFieldPolicy",
+      "Body": "New Call Field Policy. Controls optional new-call fields across supported clients. Hidden fields cannot be required; core dispatch fields remain mandatory.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-newcallfieldpolicy",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.GroupDispatchScopeConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.GroupDispatchScopeConfig",
+      "Body": "Group Dispatch Scope Config. Group-subtree dispatch visibility with explicit role exceptions. Preview each actor and target scope before changing it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-groupdispatchscopeconfig",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverrideSetting.Overrides",
+      "Locale": "en",
+      "TitleKey": "Field.UnitTypeCallStatusOverrideSetting.Overrides",
+      "Body": "Unit Type Call Status Override Setting / Overrides. Per-unit-type dispatch and release status overrides. The owning consumer resolves these before department defaults.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-unittypecallstatusoverridesetting-overrides",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverride.UnitTypeId",
+      "Locale": "en",
+      "TitleKey": "Field.UnitTypeCallStatusOverride.UnitTypeId",
+      "Body": "Unit Type Call Status Override / Unit Type Id. Existing unit type receiving this override. A unit type name is not a qualification or staffing clearance.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-unittypecallstatusoverride-unittypeid",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverride.DispatchStatus",
+      "Locale": "en",
+      "TitleKey": "Field.UnitTypeCallStatusOverride.DispatchStatus",
+      "Body": "Unit Type Call Status Override / Dispatch Status. Status applied to this unit type on dispatch; minus one leaves it unchanged.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-unittypecallstatusoverride-dispatchstatus",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.UnitTypeCallStatusOverride.ReleaseStatus",
+      "Locale": "en",
+      "TitleKey": "Field.UnitTypeCallStatusOverride.ReleaseStatus",
+      "Body": "Unit Type Call Status Override / Release Status. Status applied to this unit type on release; minus one leaves it unchanged.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-unittypecallstatusoverride-releasestatus",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.NewCallFieldPolicy.Rules",
+      "Locale": "en",
+      "TitleKey": "Field.NewCallFieldPolicy.Rules",
+      "Body": "New Call Field Policy / Rules. Per-field visibility and requiredness for optional call-creation fields. Unconfigured fields remain visible and optional.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-newcallfieldpolicy-rules",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.NewCallFieldRule.Key",
+      "Locale": "en",
+      "TitleKey": "Field.NewCallFieldRule.Key",
+      "Body": "New Call Field Rule / Key. One supported built-in call-field key. Name, nature, priority and type cannot be removed through this policy.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-newcallfieldrule-key",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.NewCallFieldRule.Visible",
+      "Locale": "en",
+      "TitleKey": "Field.NewCallFieldRule.Visible",
+      "Body": "New Call Field Rule / Visible. Whether the optional call field is shown on supported creation surfaces. Hidden fields cannot be required.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-newcallfieldrule-visible",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.NewCallFieldRule.Required",
+      "Locale": "en",
+      "TitleKey": "Field.NewCallFieldRule.Required",
+      "Body": "New Call Field Rule / Required. Whether a visible optional field must be supplied. Review imports and each supported client before making a field mandatory.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-newcallfieldrule-required",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.GroupDispatchScopeConfig.Enabled",
+      "Locale": "en",
+      "TitleKey": "Field.GroupDispatchScopeConfig.Enabled",
+      "Body": "Group Dispatch Scope Config / Enabled. Limit supported dispatch views to the member's group subtree. Department administrators and configured department-wide roles keep department-wide access.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-groupdispatchscopeconfig-enabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "Locale": "en",
+      "TitleKey": "Field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+      "Body": "Group Dispatch Scope Config / Department Wide Role Ids. Existing roles allowed department-wide dispatch views while group scoping is enabled. This changes view scope, not licensing or operational qualification.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-groupdispatchscopeconfig-departmentwideroleids",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+      "Body": "Dispatch Recommendation Config / Max Location Age Seconds. Exclude older unit positions from closest-unit candidates; zero removes the age limit. IncludeStaleLocations changes this behavior.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-maxlocationageseconds",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MaxRadiusMeters",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.MaxRadiusMeters",
+      "Body": "Dispatch Recommendation Config / Max Radius Meters. Maximum candidate distance in meters; zero removes the radius cap. This is not a response-time or route-safety guarantee.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-maxradiusmeters",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.IncludeStaleLocations",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.IncludeStaleLocations",
+      "Body": "Dispatch Recommendation Config / Include Stale Locations. Permit positions beyond the configured age limit in closest-unit selection, marked stale. Review the risk of outdated positions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-includestalelocations",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+      "Body": "Dispatch Recommendation Config / Personnel Max Location Age Seconds. Maximum age of personnel positions for closest-unit candidate selection; zero removes the age limit.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-personnelmaxlocationageseconds",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.UseRoutedEta",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.UseRoutedEta",
+      "Body": "Dispatch Recommendation Config / Use Routed Eta. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-useroutedeta",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.EtaShortlistSize",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.EtaShortlistSize",
+      "Body": "Dispatch Recommendation Config / Eta Shortlist Size. Number of straight-line candidates per requirement sent for routed ETA when enabled. The owning validator caps provider work.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-etashortlistsize",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.RestPeriodMinutes",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.RestPeriodMinutes",
+      "Body": "Dispatch Recommendation Config / Rest Period Minutes. Deprioritize recently dispatched resources for this duration; zero disables rotation. This does not infer fatigue or medical fitness.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-restperiodminutes",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+      "Body": "Dispatch Recommendation Config / Unit Minimum Staffing Level. Minimum configured unit staffing level for recommendation eligibility; zero disables the gate. Units without defined seats pass, and run cards may override it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-unitminimumstaffinglevel",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+      "Body": "Dispatch Recommendation Config / Move Up Recommendations Enabled. Run the station coverage move-up pass after selection. Recommendations remain subject to approved local dispatch procedures.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-moveuprecommendationsenabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Hostname",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.Hostname",
+      "Body": "Department Call Email / Hostname. Mailbox host for email intake. Review the approved provider and network reachability without exposing credentials in setup guidance.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-hostname",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Port",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.Port",
+      "Body": "Department Call Email / Port. Mailbox connection port. It must match the selected provider and TLS mode.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-port",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.UseSsl",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.UseSsl",
+      "Body": "Department Call Email / Use Ssl. Mailbox transport encryption option. Verify actual provider compatibility and successful polling; a stored flag alone does not prove transport protection.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-usessl",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Username",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.Username",
+      "Body": "Department Call Email / Username. Mailbox account identifier used for intake. It remains on the authorized configuration screen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-username",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.Password",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.Password",
+      "Body": "Department Call Email / Password. Mailbox credential. Do not copy it into Admin Assist; rotate it through the mailbox and owning editor together.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-password",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.FormatType",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.FormatType",
+      "Body": "Department Call Email / Format Type. Selects the inbound email parser. Verify representative permitted source messages without sending an operational page unintentionally.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-formattype",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.LastCheck",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.LastCheck",
+      "Body": "Department Call Email / Last Check. Last recorded polling timestamp. Missing or future timestamps are unknown; quiet call volume is not proof of a poll failure.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-lastcheck",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.IsFailure",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.IsFailure",
+      "Body": "Department Call Email / Is Failure. Latest recorded mailbox failure flag. Verify a new poll before treating it as a continuing outage or a resolved problem.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-isfailure",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentCallEmail.ErrorMessage",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentCallEmail.ErrorMessage",
+      "Body": "Department Call Email / Error Message. Provider/import error details on the authorized screen. Admin Assist uses a normalized failure indication and does not copy provider bodies.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentcallemail-errormessage",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "calls",
+      "Locale": "en",
+      "TitleKey": "Feature.calls",
+      "Body": "Calls View calls and dispatches Make call intake and recipient selection consistent across shifts. Review a test scenario before enabling CAD intake or changing dispatch routing. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "calls",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-call",
+      "Locale": "en",
+      "TitleKey": "Feature.new-call",
+      "Body": "New Call Create and dispatch a new call Make call intake and recipient selection consistent across shifts. Review a test scenario before enabling CAD intake or changing dispatch routing. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-call",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "archived-calls",
+      "Locale": "en",
+      "TitleKey": "Feature.archived-calls",
+      "Body": "Archived Calls Closed and historical calls Make call intake and recipient selection consistent across shifts. Review a test scenario before enabling CAD intake or changing dispatch routing. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "archived-calls",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "incident-command",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-command",
+      "Body": "Incident command and accountability Command tools organize incident roles and accountability for authorized commanders. Prepare command structures and access before an exercise or response. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-command",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "call-templates",
+      "Locale": "en",
+      "TitleKey": "Feature.call-templates",
+      "Body": "Call templates Maintain reusable call information and note templates. Reduce repeated entry while keeping dispatch decisions explicit. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-templates",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "call-types-priorities",
+      "Locale": "en",
+      "TitleKey": "Feature.call-types-priorities",
+      "Body": "Call types and priorities Maintain the department's call classifications and priorities. Use consistent reporting and run-card matching terms. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-types-priorities",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "run-cards",
+      "Locale": "en",
+      "TitleKey": "Feature.run-cards",
+      "Body": "Run cards and recommendations Configure matching rules, resource requirements and supported dispatch recommendations. Review candidate coverage before enabling operational use. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "run-cards",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checkin-setup",
+      "Locale": "en",
+      "TitleKey": "Feature.checkin-setup",
+      "Body": "Check-in timers Configure supported check-in targets and escalation behavior. Review lone-worker and response follow-up with approved local procedures. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checkin-setup",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "text-intake",
+      "Locale": "en",
+      "TitleKey": "Feature.text-intake",
+      "Body": "Text call intake and commands Configure source numbers, parsing and supported inbound text actions. Make approved inbound sources and their operational effects explicit. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "text-intake",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "email-intake",
+      "Locale": "en",
+      "TitleKey": "Feature.email-intake",
+      "Body": "Email and CAD call intake Configure supported email and CAD import formats and source credentials. Review parsing, routing and observed integration failures before activation. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "email-intake",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

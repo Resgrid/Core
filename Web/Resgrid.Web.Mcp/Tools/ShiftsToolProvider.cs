@@ -70,7 +70,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving shifts");
 						return CreateErrorResponse("Failed to retrieve shifts. Please try again later.");
@@ -117,7 +117,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving shift details");
 						return CreateErrorResponse("Failed to retrieve shift details. Please try again later.");
@@ -163,7 +163,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving current shift");
 						return CreateErrorResponse("Failed to retrieve current shift. Please try again later.");
@@ -229,7 +229,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result, message = "Successfully signed up for shift" };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error signing up for shift");
 						return CreateErrorResponse("Failed to sign up for shift. Please try again later.");

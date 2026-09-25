@@ -72,7 +72,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving inbox");
 						return CreateErrorResponse("Failed to retrieve inbox. Please try again later.");
@@ -118,7 +118,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving outbox");
 						return CreateErrorResponse("Failed to retrieve outbox. Please try again later.");
@@ -193,7 +193,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result, message = "Message sent successfully" };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error sending message");
 						return CreateErrorResponse("Failed to send message. Please try again later.");
@@ -240,7 +240,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving message");
 						return CreateErrorResponse("Failed to retrieve message. Please try again later.");
@@ -287,7 +287,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success, message = success ? "Message deleted successfully" : "Failed to delete message" };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error deleting message");
 						return CreateErrorResponse("Failed to delete message. Please try again later.");

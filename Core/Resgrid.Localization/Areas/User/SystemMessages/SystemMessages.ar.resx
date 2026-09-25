@@ -135,4 +135,22 @@
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>رمز التحقق الخاص بك في Resgrid هو: {0}. تنتهي صلاحيته خلال {1} دقيقة.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>رمز PIN للبلاغات المحمية</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>اختر رمز PIN شخصيًا من 6 إلى 12 رقمًا. يلزم تحقق جديد عبر تطبيق المصادقة. يجب أن يفعّل قسمك إتاحة البيانات برمز PIN لتلقي تفاصيل البلاغات المحمية.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>رمز PIN الشخصي</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>رمز تطبيق المصادقة</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>حفظ</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>تم الحفظ.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>تعذر إتاحة البيانات المحمية أو حفظها. سجّل الدخول إلى Resgrid وحاول مجددًا.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>يتوفر بلاغ محمي. أرسل OPEN {0} ثم مسافة ثم رمز PIN الشخصي.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>يتوفر بلاغ محمي. أدخل رمز PIN الشخصي ثم اضغط على مفتاح المربع.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>إعدادات إتاحة بيانات ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>الإرسال بالرسائل النصية</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>الإرسال الصوتي</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>تنبيه عام</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>الإتاحة بعد رمز PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>السماح بوصول مؤقت لموظفي دعم Resgrid بموافقة موظف ثانٍ.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>أقر بأن التفاصيل المتاحة تغادر Resgrid وقد تحتفظ بها شركات الاتصالات أو المستلمون.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>السماح بالمحتوى المحمي</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>طلب موظفو Resgrid الوصول إلى البلاغ المحمي {0} لحالة الدعم {1}. يتطلب الوصول موافقة موظف مستقل وتنتهي صلاحيته خلال 15 دقيقة.</value></data>
 </root>

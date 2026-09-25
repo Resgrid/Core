@@ -135,4 +135,22 @@ Ihr Resgrid-Team</value>
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Ihr Resgrid-Bestätigungscode lautet: {0}. Er läuft in {1} Minuten ab.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN für geschützte Einsätze</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Wählen Sie eine persönliche PIN mit 6–12 Ziffern. Eine erneute Bestätigung per Authenticator ist erforderlich. Ihre Abteilung muss die PIN-Freigabe aktivieren, bevor geschützte Einsatzdetails empfangen werden können.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>Persönliche PIN</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Authenticator-Code</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Speichern</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Gespeichert.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Geschützte Daten konnten nicht freigegeben oder gespeichert werden. Melden Sie sich bei Resgrid an und versuchen Sie es erneut.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Ein geschützter Einsatz ist verfügbar. Antworten Sie mit OPEN {0}, einem Leerzeichen und Ihrer persönlichen PIN.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Ein geschützter Einsatz ist verfügbar. Geben Sie Ihre persönliche PIN ein und drücken Sie die Raute-Taste.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>ADP-Freigabeeinstellungen</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>SMS-Zustellung</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Sprachzustellung</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Allgemeine Benachrichtigung</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Freigabe nach PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Zeitlich begrenzten Zugriff durch Resgrid-Supportmitarbeiter mit Genehmigung eines zweiten Mitarbeiters erlauben.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Ich bestätige, dass freigegebene Details Resgrid verlassen und von Telefonanbietern oder Empfängern gespeichert werden können.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Geschützte Inhalte erlauben</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Resgrid-Mitarbeiter haben Zugriff auf den geschützten Einsatz {0} für Supportfall {1} angefordert. Der Zugriff erfordert einen unabhängigen Genehmiger und läuft innerhalb von 15 Minuten ab.</value></data>
 </root>

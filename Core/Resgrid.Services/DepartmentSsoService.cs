@@ -320,7 +320,7 @@ namespace Resgrid.Services
 			if (policy.RequireSso && !loginViaSso)
 			{
 				var hasSso = await IsSsoEnabledForDepartmentAsync(departmentId, cancellationToken);
-				if (hasSso)
+				if (DepartmentSecurityPolicyDecisions.BlocksPasswordLogin(policy.RequireSso, hasSso, loginViaSso))
 					return "This department requires all users to authenticate via Single Sign-On (SSO). Password-based login is disabled.";
 				// Safety valve: if RequireSso is set but no SSO config exists, allow login to
 				// prevent a complete lockout. Admins should fix their SSO config.
@@ -334,7 +334,7 @@ namespace Resgrid.Services
 			//     2FA enrolled AND provided a valid totp_code in the request.
 			// If RequireMfa is set but the caller did not complete MFA, deny — regardless of
 			// whether the login was via SSO or password. SSO does NOT bypass Resgrid 2FA.
-			if (policy.RequireMfa && !mfaCompleted)
+			if (DepartmentSecurityPolicyDecisions.RequiresMfaCompletion(policy.RequireMfa, mfaCompleted))
 				return "This department requires Multi-Factor Authentication (MFA). Please complete MFA before continuing.";
 
 			// IP range enforcement
@@ -480,7 +480,7 @@ namespace Resgrid.Services
 				if (policy == null || policy.MinPasswordLength <= SystemMinPasswordLength)
 					return SystemMinPasswordLength;
 
-				return policy.MinPasswordLength;
+				return DepartmentSecurityPolicyDecisions.MinimumPasswordLength(policy.MinPasswordLength);
 			}
 			catch
 			{
@@ -518,7 +518,7 @@ namespace Resgrid.Services
 			if (passwordLastSetOn == null)
 				return false;
 
-			return DateTime.UtcNow > passwordLastSetOn.Value.AddDays(policy.PasswordExpirationDays);
+			return DepartmentSecurityPolicyDecisions.PasswordExpired(policy.PasswordExpirationDays, passwordLastSetOn, DateTime.UtcNow);
 		}
 
 		public async Task RecordPasswordChangedAsync(int departmentId, string userId, CancellationToken cancellationToken = default)

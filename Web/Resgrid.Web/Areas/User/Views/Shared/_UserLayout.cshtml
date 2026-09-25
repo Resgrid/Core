@@ -27,6 +27,7 @@
           asp-fallback-test-value="absolute" />
 
     <link rel="stylesheet" href="/css/int-bundle.css" />
+    <link rel="stylesheet" href="~/css/admin-assist-guidance.css" asp-append-version="true" />
 
 	<link rel="stylesheet" href="~/js/ng/react-elements.css" asp-append-version="true" />
 
@@ -102,6 +103,7 @@
             @await Html.PartialAsync("_TopNavbar")
 
             <!-- Main view  -->
+            @await Component.InvokeAsync("AdminAssistReturn")
             @RenderBody()
 
             <!-- Footer -->

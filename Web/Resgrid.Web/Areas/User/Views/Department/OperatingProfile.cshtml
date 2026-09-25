@@ -1,0 +1,48 @@
+@model Resgrid.Model.AdminAssist.DepartmentOperatingProfile
+@using Resgrid.Model.AdminAssist
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aa
+@{
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+	ViewBag.Title = "Resgrid | " + aa["Ui.OperatingProfile"];
+}
+<div class="wrapper wrapper-content">
+	<h1>@aa["Ui.OperatingProfile"]</h1>
+	<p>@aa["Ui.ProfileHelp"]</p>
+	@if (ViewBag.ProfileErrorKey is string errorKey)
+	{
+		<p role="alert" class="alert alert-danger">@aa[errorKey] <a asp-action="OperatingProfile">@aa["Profile.Reload"]</a></p>
+	}
+	<p>@aa["Profile.TimeZone"]: @ViewBag.DepartmentTimeZone <a asp-action="Settings">@aa["Ui.Configure"]</a></p>
+	<form method="post" asp-action="OperatingProfile">
+		<input type="hidden" asp-for="Revision" />
+		<div asp-validation-summary="All" class="text-danger" role="alert"></div>
+		<fieldset><legend>@aa["Ui.Packs"]</legend>
+		@foreach (var code in DepartmentOperatingProfile.ArchetypeCodes)
+		{
+			<label class="checkbox-inline"><input type="checkbox" name="Archetypes" value="@code" checked="@Model.Archetypes.Contains(code)" /> @aa["Pack." + code]</label>
+		}
+		</fieldset>
+		<div class="form-group"><label asp-for="WorkforceMix">@aa["Profile.WorkforceMix"]</label><select asp-for="WorkforceMix" class="form-control">@foreach (var code in DepartmentOperatingProfile.WorkforceCodes) { <option value="@code">@aa["Profile." + code]</option> }</select></div>
+		<div class="form-group"><label asp-for="DeclaredMemberCount">@aa["Profile.DeclaredMemberCount"]</label><input asp-for="DeclaredMemberCount" min="0" max="1000000" class="form-control" /></div>
+		<div class="form-group"><label asp-for="DispatchModel">@aa["Profile.DispatchModel"]</label><select asp-for="DispatchModel" class="form-control">@foreach (var code in DepartmentOperatingProfile.DispatchCodes) { <option value="@code">@aa["Profile." + code]</option> }</select></div>
+		<div class="form-group"><label asp-for="OperatingHours">@aa["Profile.OperatingHours"]</label><select asp-for="OperatingHours" class="form-control">@foreach (var code in DepartmentOperatingProfile.HoursCodes) { <option value="@code">@aa["Profile." + code]</option> }</select></div>
+		<div class="form-group"><label asp-for="ExpectedEmailPollIntervalMinutes">@aa["ProfileField.ExpectedEmailPollIntervalMinutes"]</label><input asp-for="ExpectedEmailPollIntervalMinutes" min="1" max="10080" class="form-control" /><p>@aa["ProfileFieldHelp.ExpectedEmailPollIntervalMinutes"]</p></div>
+		<div class="form-group"><label asp-for="SeasonStartMonthDay">@aa["Profile.SeasonStartMonthDay"]</label><input asp-for="SeasonStartMonthDay" placeholder="MM-DD" maxlength="5" pattern="[0-9]{2}-[0-9]{2}" class="form-control" /></div>
+		<div class="form-group"><label asp-for="SeasonEndMonthDay">@aa["Profile.SeasonEndMonthDay"]</label><input asp-for="SeasonEndMonthDay" placeholder="MM-DD" maxlength="5" pattern="[0-9]{2}-[0-9]{2}" class="form-control" /></div>
+		<div class="form-group"><label asp-for="MutualAid">@aa["Profile.MutualAid"]</label><select asp-for="MutualAid" class="form-control"><option value="">@aa["Ui.Unknown"]</option><option value="true">@aa["Profile.Yes"]</option><option value="false">@aa["Profile.No"]</option></select></div>
+		<fieldset><legend>@aa["Profile.LanguageCodes"]</legend>
+		@foreach (var code in new[] { "ar", "de", "el", "en", "es", "fr", "it", "pl", "sv", "uk" }) { <label class="checkbox-inline"><input type="checkbox" name="LanguageCodes" value="@code" checked="@Model.LanguageCodes.Contains(code)" /> @System.Globalization.CultureInfo.GetCultureInfo(code).NativeName</label> }
+		</fieldset>
+		<fieldset><legend>@aa["Profile.AccessibilityNeeds"]</legend>
+		@foreach (var code in new[] { "captions", "screen-reader", "large-text", "plain-language" }) { <label class="checkbox-inline"><input type="checkbox" name="AccessibilityNeeds" value="@code" checked="@Model.AccessibilityNeeds.Contains(code)" /> @aa["Profile." + code]</label> }
+		</fieldset>
+		@foreach (var references in new Dictionary<string, List<string>> { ["AuthoritativeSystemReferences"] = Model.AuthoritativeSystemReferences, ["SiteGroupReferences"] = Model.SiteGroupReferences, ["StaffingPolicyReferences"] = Model.StaffingPolicyReferences, ["QualificationPolicyReferences"] = Model.QualificationPolicyReferences, ["ContinuityProcedureReferences"] = Model.ContinuityProcedureReferences })
+		{
+			<fieldset><legend>@aa["Profile." + references.Key]</legend><p>@aa[references.Key == "AuthoritativeSystemReferences" ? "Profile.SystemReferenceHelp" : references.Key == "SiteGroupReferences" ? "Profile.GroupReferenceHelp" : "Profile.DocumentReferenceHelp"]</p>
+			@for (var i = 0; i < Math.Min(25, references.Value.Count + 1); i++) { <label for="@(references.Key + i)">@aa["Profile.Reference"] @(i + 1)</label><input class="form-control" id="@(references.Key + i)" name="@(references.Key + "[" + i + "]")" value="@(i < references.Value.Count ? references.Value[i] : "")" maxlength="128" pattern="[A-Za-z0-9._-]+" /> }
+			</fieldset>
+		}
+		<button type="submit" class="btn btn-primary">@aa["Profile.Save"]</button>
+		<a asp-controller="Help" asp-action="SetupReport">@aa["Ui.report"]</a>
+	</form>
+</div>

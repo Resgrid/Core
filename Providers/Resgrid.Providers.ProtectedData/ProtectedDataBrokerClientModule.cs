@@ -13,7 +13,7 @@ namespace Resgrid.Providers.ProtectedData
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterType<ProtectedDataBrokerClient>().As<IProtectedDataBrokerClient>().SingleInstance();
+			builder.RegisterType<ProtectedDataBrokerClient>().As<IProtectedDataBrokerClient>().InstancePerLifetimeScope();
 		}
 	}
 }

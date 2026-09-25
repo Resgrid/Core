@@ -83,8 +83,10 @@ namespace Resgrid.Web.Mcp.Controllers
 			var redactedRequest = SensitiveDataRedactor.RedactSensitiveFields(requestBody);
 			_logger.LogDebug("Received MCP request: {Request}", redactedRequest);
 
-			// Process the request through the MCP handler
-			var response = await _mcpHandler.HandleRequestAsync(requestBody, cancellationToken);
+			// Process the request through the MCP handler. RemoteIpAddress is the client's own address once
+			// UseForwardedHeaders has applied a trusted proxy's X-Forwarded-For.
+			var response = await _mcpHandler.HandleRequestAsync(requestBody,
+				HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
 
 			var redactedResponse = SensitiveDataRedactor.RedactSensitiveFields(response);
 			_logger.LogDebug("Sending MCP response: {Response}", redactedResponse);

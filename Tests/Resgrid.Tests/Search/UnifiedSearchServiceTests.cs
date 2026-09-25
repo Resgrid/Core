@@ -98,7 +98,7 @@ namespace Resgrid.Tests.Search
 			_projections = new Mock<ISearchProjectionsRepository>();
 			_projections.Setup(p => p.GetByIdsAsync(7, It.IsAny<IEnumerable<string>>())).ReturnsAsync(() => _rows);
 			_permissions = new Mock<IPermissionsRepository>();
-			var permissions = new Resgrid.Services.PermissionsService(_permissions.Object, Mock.Of<IUsersService>());
+			var permissions = new Resgrid.Services.PermissionsService(_permissions.Object, Mock.Of<IUsersService>(), Mock.Of<IDepartmentGroupsService>());
 
 			_service = new UnifiedSearchService(_global.Object, _actions.Object, _flags.Object, _auth.Object, _states.Object, _recordsSearch.Object,
 				_recordsAuth.Object, _records.Object, _cutover.Object, _departments.Object, permissions, _groups.Object,

@@ -1,0 +1,1226 @@
+{
+  "Version": "2026.09.24.1",
+  "Areas": [
+    {
+      "Id": "communication",
+      "LabelKey": "Area.communication",
+      "PurposeKey": "AreaPurpose.communication",
+      "Order": 4,
+      "Archetypes": []
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "setting.EnableTextCommand",
+      "AreaId": "communication",
+      "LabelKey": "Setting.EnableTextCommand",
+      "HelpKey": "SettingHelp.EnableTextCommand",
+      "Binding": "DepartmentSettingTypes.EnableTextCommand",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "EnableTextCommand"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EnableTextCommand",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.TtsLanguage",
+      "AreaId": "communication",
+      "LabelKey": "Setting.TtsLanguage",
+      "HelpKey": "SettingHelp.TtsLanguage",
+      "Binding": "DepartmentSettingTypes.TtsLanguage",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "TtsLanguage"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.TtsLanguage",
+      "DefaultValue": "owning voice default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.EnableModernNotifications",
+      "AreaId": "communication",
+      "LabelKey": "Setting.EnableModernNotifications",
+      "HelpKey": "SettingHelp.EnableModernNotifications",
+      "Binding": "DepartmentSettingTypes.EnableModernNotifications",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Settings",
+        "Field": "EnableModernNotifications"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EnableModernNotifications",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.MessagingDisabled",
+      "AreaId": "communication",
+      "LabelKey": "Module.MessagingDisabled",
+      "HelpKey": "ModuleHelp.MessagingDisabled",
+      "Binding": "DepartmentModuleSettings.MessagingDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "MessagingEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.MessagingDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.MessagingNameOverride",
+      "AreaId": "communication",
+      "LabelKey": "Module.MessagingNameOverride",
+      "HelpKey": "ModuleHelp.MessagingNameOverride",
+      "Binding": "DepartmentModuleSettings.MessagingNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.MessagingNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.EventType",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.EventType",
+      "HelpKey": "TableHelp.DepartmentNotification.EventType",
+      "Binding": "DepartmentNotification.EventType",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.EventType",
+      "DefaultValue": "required",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.UsersToNotify",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.UsersToNotify",
+      "HelpKey": "TableHelp.DepartmentNotification.UsersToNotify",
+      "Binding": "DepartmentNotification.UsersToNotify",
+      "ValueType": "reference-list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.UsersToNotify",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.RolesToNotify",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.RolesToNotify",
+      "HelpKey": "TableHelp.DepartmentNotification.RolesToNotify",
+      "Binding": "DepartmentNotification.RolesToNotify",
+      "ValueType": "reference-list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.RolesToNotify",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.GroupsToNotify",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.GroupsToNotify",
+      "HelpKey": "TableHelp.DepartmentNotification.GroupsToNotify",
+      "Binding": "DepartmentNotification.GroupsToNotify",
+      "ValueType": "reference-list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.GroupsToNotify",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.LockToGroup",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.LockToGroup",
+      "HelpKey": "TableHelp.DepartmentNotification.LockToGroup",
+      "Binding": "DepartmentNotification.LockToGroup",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.LockToGroup",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.SelectedGroupsAdminsOnly",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.SelectedGroupsAdminsOnly",
+      "HelpKey": "TableHelp.DepartmentNotification.SelectedGroupsAdminsOnly",
+      "Binding": "DepartmentNotification.SelectedGroupsAdminsOnly",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.SelectedGroupsAdminsOnly",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.DepartmentAdmins",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.DepartmentAdmins",
+      "HelpKey": "TableHelp.DepartmentNotification.DepartmentAdmins",
+      "Binding": "DepartmentNotification.DepartmentAdmins",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.DepartmentAdmins",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.Everyone",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.Everyone",
+      "HelpKey": "TableHelp.DepartmentNotification.Everyone",
+      "Binding": "DepartmentNotification.Everyone",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.Everyone",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.Disabled",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.Disabled",
+      "HelpKey": "TableHelp.DepartmentNotification.Disabled",
+      "Binding": "DepartmentNotification.Disabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.Disabled",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.BeforeData",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.BeforeData",
+      "HelpKey": "TableHelp.DepartmentNotification.BeforeData",
+      "Binding": "DepartmentNotification.BeforeData",
+      "ValueType": "structured",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.BeforeData",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.CurrentData",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.CurrentData",
+      "HelpKey": "TableHelp.DepartmentNotification.CurrentData",
+      "Binding": "DepartmentNotification.CurrentData",
+      "ValueType": "structured",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.CurrentData",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.UpperLimit",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.UpperLimit",
+      "HelpKey": "TableHelp.DepartmentNotification.UpperLimit",
+      "Binding": "DepartmentNotification.UpperLimit",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.UpperLimit",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.LowerLimit",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.LowerLimit",
+      "HelpKey": "TableHelp.DepartmentNotification.LowerLimit",
+      "Binding": "DepartmentNotification.LowerLimit",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.LowerLimit",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "table.DepartmentNotification.Data",
+      "AreaId": "communication",
+      "LabelKey": "TableField.DepartmentNotification.Data",
+      "HelpKey": "TableHelp.DepartmentNotification.Data",
+      "Binding": "DepartmentNotification.Data",
+      "ValueType": "structured",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.communication",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.DepartmentNotification.Data",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "DepartmentNotification",
+      "Availability": "reference-only"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "inbox",
+      "AreaId": "communication",
+      "LabelKey": "Feature.inbox",
+      "PurposeKey": "FeaturePurpose.inbox",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.inbox",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Messages",
+        "Action": "Inbox"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Messaging"
+        }
+      ],
+      "SettingIds": [
+        "module.MessagingDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "outbox",
+      "AreaId": "communication",
+      "LabelKey": "Feature.outbox",
+      "PurposeKey": "FeaturePurpose.outbox",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.outbox",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Messages",
+        "Action": "Outbox"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Messaging"
+        }
+      ],
+      "SettingIds": [
+        "module.MessagingDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "compose-message",
+      "AreaId": "communication",
+      "LabelKey": "Feature.compose-message",
+      "PurposeKey": "FeaturePurpose.compose-message",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.compose-message",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Messages",
+        "Action": "Compose"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Messaging"
+        }
+      ],
+      "SettingIds": [
+        "module.MessagingDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "chat",
+      "AreaId": "communication",
+      "LabelKey": "Feature.chat",
+      "PurposeKey": "FeaturePurpose.chat",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.chat",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Chat",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Chat.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "voice",
+      "AreaId": "communication",
+      "LabelKey": "Feature.voice",
+      "PurposeKey": "FeaturePurpose.voice",
+      "ValueKey": "AreaValue.communication",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.voice",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "notifications",
+      "AreaId": "communication",
+      "LabelKey": "Feature.notifications",
+      "PurposeKey": "FeaturePurpose.notifications",
+      "ValueKey": "FeatureValue.notifications",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.notifications",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Notifications",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "table.DepartmentNotification.BeforeData",
+        "table.DepartmentNotification.CurrentData",
+        "table.DepartmentNotification.Data",
+        "table.DepartmentNotification.DepartmentAdmins",
+        "table.DepartmentNotification.Disabled",
+        "table.DepartmentNotification.EventType",
+        "table.DepartmentNotification.Everyone",
+        "table.DepartmentNotification.GroupsToNotify",
+        "table.DepartmentNotification.LockToGroup",
+        "table.DepartmentNotification.LowerLimit",
+        "table.DepartmentNotification.RolesToNotify",
+        "table.DepartmentNotification.SelectedGroupsAdminsOnly",
+        "table.DepartmentNotification.UpperLimit",
+        "table.DepartmentNotification.UsersToNotify"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "distribution-lists",
+      "AreaId": "communication",
+      "LabelKey": "Feature.distribution-lists",
+      "PurposeKey": "FeaturePurpose.distribution-lists",
+      "ValueKey": "FeatureValue.distribution-lists",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.distribution-lists",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DistributionLists",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "communication-tests",
+      "AreaId": "communication",
+      "LabelKey": "Feature.communication-tests",
+      "PurposeKey": "FeaturePurpose.communication-tests",
+      "ValueKey": "FeatureValue.communication-tests",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.communication-tests",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CommunicationTest",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [
+        "communication-tests"
+      ]
+    },
+    {
+      "Id": "chatbot-settings",
+      "AreaId": "communication",
+      "LabelKey": "Feature.chatbot-settings",
+      "PurposeKey": "FeaturePurpose.chatbot-settings",
+      "ValueKey": "FeatureValue.chatbot-settings",
+      "ExampleKey": "AreaExample.communication",
+      "AdoptionKey": "FeatureAdoption.chatbot-settings",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ChatbotSettings",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "table.ChatbotDepartmentConfig.AllowDispatchViaChatbot",
+        "table.ChatbotDepartmentConfig.AllowedPlatforms",
+        "table.ChatbotDepartmentConfig.IsEnabled",
+        "table.ChatbotDepartmentConfig.LlmApiEndpoint",
+        "table.ChatbotDepartmentConfig.LlmApiKey",
+        "table.ChatbotDepartmentConfig.LlmModelName",
+        "table.ChatbotDepartmentConfig.MaxSessionsPerUser",
+        "table.ChatbotDepartmentConfig.MessagesPerDepartmentPerMinute",
+        "table.ChatbotDepartmentConfig.MessagesPerUserPerMinute",
+        "table.ChatbotDepartmentConfig.ProactiveNotificationsEnabled",
+        "table.ChatbotDepartmentConfig.RequireConfirmationForStatusChange",
+        "table.ChatbotDepartmentConfig.RequireLinkingConfirmation",
+        "table.ChatbotDepartmentConfig.SessionTtlMinutes"
+      ],
+      "RuleIds": []
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "command-sources",
+      "AreaId": "communication",
+      "Severity": "Warning",
+      "TitleKey": "Rule.command-sources",
+      "ExplanationKey": "RuleWhy.command-sources",
+      "NextActionKey": "RuleNext.command-sources",
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "EnableTextCommand",
+          "Comparison": "IsTrue",
+          "Number": null
+        },
+        {
+          "EvidenceId": "EnableTextToCall",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "textSourcePresent",
+          "Comparison": "IsFalse",
+          "Number": null
+        }
+      ]
+    },
+    {
+      "Id": "communication-tests",
+      "AreaId": "communication",
+      "Severity": "Warning",
+      "TitleKey": "Rule.communication-tests",
+      "ExplanationKey": "RuleWhy.communication-tests",
+      "NextActionKey": "RuleNext.communication-tests",
+      "Location": {
+        "Controller": "CommunicationTest",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "communicationTestAgeDays",
+          "Comparison": "Greater",
+          "Number": 30
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "setting.EnableTextCommand",
+      "Locale": "en",
+      "TitleKey": "Setting.EnableTextCommand",
+      "Body": "Enable Text Command. Configured text-command preference. Dispatch-source patterns and verified member command identity are different checks. Provider and chatbot paths do not enforce this switch uniformly; review the active consumer before changing it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-enabletextcommand",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.TtsLanguage",
+      "Locale": "en",
+      "TitleKey": "Setting.TtsLanguage",
+      "Body": "Tts Language. Text-to-speech language for supported voice notifications. Confirm supported voices and pronunciation with a human-run test.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-ttslanguage",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.EnableModernNotifications",
+      "Locale": "en",
+      "TitleKey": "Setting.EnableModernNotifications",
+      "Body": "Enable Modern Notifications. Use supported modern notification behavior. Verify each consumer and channel; provider acceptance is not delivery.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-enablemodernnotifications",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.MessagingDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.MessagingDisabled",
+      "Body": "Messaging availability. Controls availability of messages and announcements. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-messagingdisabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.MessagingNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.MessagingNameOverride",
+      "Body": "Messaging menu name. Optional display name for messages and announcements in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-messagingnameoverride",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.EventType",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.EventType",
+      "Body": "Department Notification / Event Type. Event that can trigger this notification rule. Match the event to a real administrative responsibility and expected frequency.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-eventtype",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.UsersToNotify",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.UsersToNotify",
+      "Body": "Department Notification / Users To Notify. Explicit member recipients. Membership and channel eligibility are evaluated separately at send time.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-userstonotify",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.RolesToNotify",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.RolesToNotify",
+      "Body": "Department Notification / Roles To Notify. Personnel-role recipients. Role membership can change; a role label is not a qualification or delivery guarantee.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-rolestonotify",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.GroupsToNotify",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.GroupsToNotify",
+      "Body": "Department Notification / Groups To Notify. Department-group recipients. Review group membership and lock-to-group behavior together.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-groupstonotify",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.LockToGroup",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.LockToGroup",
+      "Body": "Department Notification / Lock To Group. Restricts applicable event processing to group scope. Review the selected event's actual source group and recipient resolver.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-locktogroup",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.SelectedGroupsAdminsOnly",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.SelectedGroupsAdminsOnly",
+      "Body": "Department Notification / Selected Groups Admins Only. Limits selected-group recipients to their administrators in supported event paths. It does not designate department administrators automatically.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-selectedgroupsadminsonly",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.DepartmentAdmins",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.DepartmentAdmins",
+      "Body": "Department Notification / Department Admins. Includes department administrators in supported notification processing. Review overlap and channel eligibility before estimating volume.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-departmentadmins",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.Everyone",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.Everyone",
+      "Body": "Department Notification / Everyone. Selects the department-wide recipient option. Review actual active membership, suppression and deduplication before use.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-everyone",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.Disabled",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.Disabled",
+      "Body": "Department Notification / Disabled. Stored disabled marker. The inspected legacy notification processor does not consult this flag, so it must not be treated as a verified stop switch. Review the active consumer; queued and delivered notifications cannot be recalled.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-disabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.BeforeData",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.BeforeData",
+      "Body": "Department Notification / Before Data. Previous-state filter for applicable events. Review valid status IDs and the event-specific interpretation of an empty or wildcard value.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-beforedata",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.CurrentData",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.CurrentData",
+      "Body": "Department Notification / Current Data. Current-state filter for applicable events. Compare it with the previous-state filter to avoid unintended volume.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-currentdata",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.UpperLimit",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.UpperLimit",
+      "Body": "Department Notification / Upper Limit. Upper threshold for event-specific alerts. Units and comparisons depend on the selected event.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-upperlimit",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.LowerLimit",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.LowerLimit",
+      "Body": "Department Notification / Lower Limit. Lower threshold for event-specific alerts. Use approved local thresholds and verify the actual event interpretation.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-lowerlimit",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "table.DepartmentNotification.Data",
+      "Locale": "en",
+      "TitleKey": "TableField.DepartmentNotification.Data",
+      "Body": "Department Notification / Data. Event-specific configuration payload. The owning editor validates its meaning; Admin Assist does not execute arbitrary stored expressions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-departmentnotification-data",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "inbox",
+      "Locale": "en",
+      "TitleKey": "Feature.inbox",
+      "Body": "Inbox Your messages inbox Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "inbox",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "outbox",
+      "Locale": "en",
+      "TitleKey": "Feature.outbox",
+      "Body": "Sent Messages Messages you sent Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "outbox",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "compose-message",
+      "Locale": "en",
+      "TitleKey": "Feature.compose-message",
+      "Body": "New Message Send a message, poll or callback request Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "compose-message",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "chat",
+      "Locale": "en",
+      "TitleKey": "Feature.chat",
+      "Body": "Chat Real-time department chat Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "chat",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "voice",
+      "Locale": "en",
+      "TitleKey": "Feature.voice",
+      "Body": "Voice Voice channels and push-to-talk Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review supported clients, channel membership and current subscription quantities. Push-to-Talk is distinct from phone voice alerts and department radio requirements.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "voice",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "notifications",
+      "Locale": "en",
+      "TitleKey": "Feature.notifications",
+      "Body": "Notification rules Select events, recipients and conditions for administrative notifications. Reduce missed follow-up and review unnecessary message volume. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "notifications",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "distribution-lists",
+      "Locale": "en",
+      "TitleKey": "Feature.distribution-lists",
+      "Body": "Distribution lists Maintain reusable recipient lists for supported communication flows. Keep audience ownership explicit and review recipients before sending. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "distribution-lists",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "communication-tests",
+      "Locale": "en",
+      "TitleKey": "Feature.communication-tests",
+      "Body": "Communication Tests Prepare and explicitly run tests of configured channels. Collect observed test evidence; registration alone does not prove delivery. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "communication-tests",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "chatbot-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.chatbot-settings",
+      "Body": "Chatbot and Assistant integration settings Review supported chatbot platforms, account linking, limits and operational actions. Keep automated access and confirmations under administrator control. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "chatbot-settings",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

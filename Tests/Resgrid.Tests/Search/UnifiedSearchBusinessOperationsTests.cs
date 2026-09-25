@@ -27,7 +27,7 @@ namespace Resgrid.Tests.Search
 		{
 			_deployments = new Mock<IDeploymentService>(MockBehavior.Strict);
 			_certifications = new Mock<ICertificationService>();
-			var permissions = new Resgrid.Services.PermissionsService(_permissions.Object, Mock.Of<IUsersService>());
+			var permissions = new Resgrid.Services.PermissionsService(_permissions.Object, Mock.Of<IUsersService>(), Mock.Of<IDepartmentGroupsService>());
 			_service = new UnifiedSearchService(_global.Object, _actions.Object, _flags.Object, _auth.Object, _states.Object, _recordsSearch.Object,
 				_recordsAuth.Object, _records.Object, _cutover.Object, _departments.Object, permissions, _groups.Object,
 				_roles.Object, _calls.Object, _units.Object, _messages.Object, _documents.Object, _notes.Object,

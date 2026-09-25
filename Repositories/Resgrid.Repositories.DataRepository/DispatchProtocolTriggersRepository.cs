@@ -13,15 +13,15 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DispatchProtocolTriggersRepository : RepositoryBase<DispatchProtocolTrigger>, IDispatchProtocolTriggersRepository
+	public class DispatchProtocolTriggersRepository : AuditedConfigurationRepository<DispatchProtocolTrigger>, IDispatchProtocolTriggersRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public DispatchProtocolTriggersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public DispatchProtocolTriggersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

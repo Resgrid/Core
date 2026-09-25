@@ -15,6 +15,7 @@ namespace Resgrid.Providers.ProtectedData
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterDecorator<AuditedKeyWrappingProvider, IKeyWrappingProvider>();
 			if (string.Equals(DataProtectionConfig.KeyWrappingProviderType, "OpenBaoTransit", System.StringComparison.OrdinalIgnoreCase))
 				builder.RegisterType<OpenBaoTransitKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance();
 		}

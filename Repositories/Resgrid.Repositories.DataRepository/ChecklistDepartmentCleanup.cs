@@ -35,6 +35,7 @@ namespace Resgrid.Repositories.DataRepository
 			if (await Exists("RmsRecordLegalHolds") && await connection.ExecuteScalarAsync<int>(new CommandDefinition($"SELECT COUNT(*) FROM {Q("RmsRecordLegalHolds")} WHERE {Q("DepartmentId")}=@DepartmentId AND {Q("ReleasedOn")} IS NULL", new { DepartmentId = departmentId }, transaction, cancellationToken: ct)) > 0)
 				throw new InvalidOperationException("Department readiness evidence is retained under an active legal hold.");
 			await InventoryDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			await AdminAssistDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
 			if (!hasChecklists) return;
 			var triggers = ChecklistWorkflowPayload.Triggers.Except(InventoryWorkflowPayload.Triggers).ToArray();
 			var triggerPredicate = Q("TriggerEventType") + (pg ? "=ANY(@Triggers)" : " IN @Triggers");

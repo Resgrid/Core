@@ -128,6 +128,30 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void Build_keeps_a_standing_roster_person_in_their_group_when_they_sign_up_for_another()
+		{
+			var shift = MakeShift(new ShiftPerson { UserId = "alice", GroupId = CrisisTeam });
+
+			var roster = ShiftRosterBuilder.Build(shift, Day1, new[] { Signup(5, "ALICE", Day1, PeerTeam) }, null);
+
+			roster.Should().ContainSingle(x => x.UserId == "alice" && x.DepartmentGroupId == CrisisTeam && x.Source == ShiftRosterSources.Assigned && x.IsOnDuty());
+			roster.Should().ContainSingle(x => x.DepartmentGroupId == PeerTeam && x.ShiftSignupId == 5);
+		}
+
+		[Test]
+		public void Build_keeps_a_standing_roster_person_on_duty_while_a_signup_waits_for_approval()
+		{
+			var shift = MakeShift(new ShiftPerson { UserId = "alice", GroupId = CrisisTeam });
+			var pending = Signup(5, "alice", Day1, PeerTeam);
+			pending.ApprovalPending = true;
+
+			var roster = ShiftRosterBuilder.Build(shift, Day1, new[] { pending }, null);
+
+			roster.Should().ContainSingle(x => x.DepartmentGroupId == CrisisTeam && x.IsOnDuty());
+			roster.Should().ContainSingle(x => x.DepartmentGroupId == PeerTeam && x.ApprovalPending);
+		}
+
+		[Test]
 		public void Build_gives_the_slot_to_the_taker_of_a_completed_give_away_trade()
 		{
 			var shift = MakeShift(new ShiftPerson { UserId = "alice", GroupId = CrisisTeam });

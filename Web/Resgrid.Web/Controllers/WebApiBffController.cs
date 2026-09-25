@@ -37,6 +37,7 @@ namespace Resgrid.Web.Controllers
 			"api/v4/ChatModeration/",
 			"api/v4/Chatbot/",
 			"api/v4/Moderation/",
+			"api/v4/AdminAssist/",
 			// Avatars back every participant image the chat and personnel surfaces render, and
 			// GetRecipients backs the message composer. Both are called by the app through this
 			// facade, so leaving them off the list 404s them.

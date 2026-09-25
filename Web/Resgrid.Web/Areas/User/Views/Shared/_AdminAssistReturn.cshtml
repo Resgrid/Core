@@ -1,0 +1,6 @@
+@model string
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aaLabels
+<aside class="alert alert-info" aria-label="@aaLabels["Ui.ReturnToSetup"]">
+    <p>@aaLabels["Ui.SaveThenReturn"]</p>
+    <a href="@(Model == "wizard" ? "/User/Department/SetupWizard" : "/User/Help/SetupReport")">@aaLabels["Ui.ReturnToSetup"]</a>
+</aside>

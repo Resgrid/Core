@@ -446,6 +446,13 @@ namespace Resgrid.Model
 							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) ? "datetime" : "string", false));
 					list.Add(new TemplateVariableDescriptor("contract.url", "Authenticated contract link", "string", false));
 					break;
+				case WorkflowTriggerEventType.AdminAssistFindingOpened:
+				case WorkflowTriggerEventType.AdminAssistFindingResolved:
+				case WorkflowTriggerEventType.AdminAssistFindingReopened:
+					foreach (var pair in AdminAssist.AdminAssistWorkflowPayload.Variables)
+						list.Add(new TemplateVariableDescriptor("admin_assist." + pair.Variable, "Admin Assist " + pair.Variable.Replace('_', ' '), pair.Variable is "id" or "rule_id" ? "string" : "int", false));
+					list.Add(new TemplateVariableDescriptor("admin_assist.url", "Authenticated Admin Assist link", "string", false));
+					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

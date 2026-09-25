@@ -266,7 +266,8 @@ namespace Resgrid.Providers.Workflow.Executors
 		/// <summary>"MSA-2", "PID-3.1" or "PID-3.1.2": field, then optional component and subcomponent.</summary>
 		private static string Hl7FieldReference(string body, string reference)
 		{
-			var match = Regex.Match(reference ?? string.Empty, @"^(?<seg>[A-Z0-9]{3})-(?<field>\d{1,3})(\.(?<comp>\d{1,3}))?(\.(?<sub>\d{1,3}))?$");
+			// ASCII digits only ([0-9], not \d), so every int.Parse below is safe.
+			var match = Regex.Match(reference ?? string.Empty, @"^(?<seg>[A-Z0-9]{3})-(?<field>[0-9]{1,3})(\.(?<comp>[0-9]{1,3}))?(\.(?<sub>[0-9]{1,3}))?$");
 			if (!match.Success)
 				return null;
 

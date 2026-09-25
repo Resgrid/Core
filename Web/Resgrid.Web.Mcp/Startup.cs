@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Resgrid.Web.Helpers;
 using Resgrid.Web.Mcp.Infrastructure;
 using Resgrid.Web.Mcp.ModelContextProtocol;
 using Resgrid.Web.Mcp.Tools;
@@ -34,7 +35,7 @@ namespace Resgrid.Web.Mcp
 				var logger = sp.GetRequiredService<ILogger<McpServer>>();
 				var serverName = McpConfig.ServerName;
 				var serverVersion = McpConfig.ServerVersion;
-				var mcpServer = new McpServer(serverName, serverVersion, logger);
+				var mcpServer = new McpServer(serverName, serverVersion, logger, sp.GetRequiredService<IRateLimiter>());
 
 				// Register tools with the server
 				var toolRegistry = sp.GetRequiredService<McpToolRegistry>();
@@ -53,6 +54,11 @@ namespace Resgrid.Web.Mcp
 			{
 				services.AddHostedService<McpServerHost>();
 			}
+
+			// Behind the ingress proxy every request arrives from the proxy's address. Trusting its X-Forwarded-For lets
+			// tool calls made without an access token be rate limited per real client.
+			services.Configure<ForwardedHeadersOptions>(options =>
+				ForwardedHeadersSetup.Configure(options, WebConfig.IngressProxyNetwork, WebConfig.IngressProxyNetworkCidr));
 
 			// Add MVC controllers for MCP and health check endpoints
 			services.AddControllers()
@@ -138,6 +144,8 @@ namespace Resgrid.Web.Mcp
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			app.UseForwardedHeaders();
+
 			// Enable CORS if configured
 			if (McpConfig.EnableCors)
 			{

@@ -29,6 +29,8 @@ namespace Resgrid.Model.Services
 		/// <param name="profile">The profile.</param>
 		/// <param name="address">The address.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> SendProtectedDispatchChallengeAsync(UserProfile profile, int departmentId, string departmentNumber, string challengeText);
+
 		Task<bool> SendCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId,
 			UserProfile profile = null, string address = null, Payment payment = null);
 

@@ -20,12 +20,14 @@ namespace Resgrid.Services
 	{
 		private readonly IDepartmentDataProtectionKeyRepository _keyRepository;
 		private readonly IKeyWrappingProvider _keyWrappingProvider;
+		private readonly IAdpAuditRepository _audit;
 
 		public DepartmentKeyService(IDepartmentDataProtectionKeyRepository keyRepository,
-			IKeyWrappingProvider keyWrappingProvider)
+			IKeyWrappingProvider keyWrappingProvider, IAdpAuditRepository audit)
 		{
 			_keyRepository = keyRepository;
 			_keyWrappingProvider = keyWrappingProvider;
+			_audit = audit;
 		}
 
 		public Task<DepartmentDataProtectionKey> GetActiveKeyAsync(int departmentId) =>
@@ -54,6 +56,8 @@ namespace Resgrid.Services
 				return await ActivateAsync(newest, existing.Where(k => k.Version < newest.Version), cancellationToken);
 
 			var nextVersion = (newest?.Version ?? 0) + 1;
+			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = departmentId, Layer = "key-management",
+				Operation = "key-provision", Outcome = "requested", ResourceId = nextVersion.ToString() }, cancellationToken);
 			var wrapped = await _keyWrappingProvider.GenerateWrappedDataKeyAsync(departmentId, cancellationToken);
 
 			var keyRow = new DepartmentDataProtectionKey
@@ -94,6 +98,8 @@ namespace Resgrid.Services
 			if (keyRow == null || keyRow.Status != (int)DepartmentDataProtectionKeyStatus.Retiring)
 				return false;
 
+			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = departmentId, Layer = "key-management",
+				Operation = "key-retire", Outcome = "requested", ResourceId = version.ToString() }, cancellationToken);
 			keyRow.Status = (int)DepartmentDataProtectionKeyStatus.Retired;
 			keyRow.RetiredOn = DateTime.UtcNow;
 			await _keyRepository.SaveOrUpdateAsync(keyRow, cancellationToken);
@@ -111,6 +117,8 @@ namespace Resgrid.Services
 			// re-encryption retires them.
 			if (keyRow.Status != (int)DepartmentDataProtectionKeyStatus.Active)
 			{
+				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = keyRow.DepartmentId, Layer = "key-management",
+					Operation = "key-activate", Outcome = "requested", ResourceId = keyRow.Version.ToString() }, cancellationToken);
 				keyRow.Status = (int)DepartmentDataProtectionKeyStatus.Active;
 				keyRow.ActivatedOn = DateTime.UtcNow;
 				await _keyRepository.SaveOrUpdateAsync(keyRow, cancellationToken);

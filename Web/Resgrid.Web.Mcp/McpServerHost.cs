@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Resgrid.Web.Mcp.Infrastructure;
 using Resgrid.Web.Mcp.ModelContextProtocol;
 using Resgrid.Config;
 using Sentry;
@@ -17,6 +18,7 @@ namespace Resgrid.Web.Mcp
 		private readonly ILogger<McpServerHost> _logger;
 		private readonly McpToolRegistry _toolRegistry;
 		private readonly IHostApplicationLifetime _applicationLifetime;
+		private readonly IRateLimiter _rateLimiter;
 		private McpServer _mcpServer;
 		private Task _executingTask;
 		private CancellationTokenSource _stoppingCts;
@@ -25,11 +27,13 @@ namespace Resgrid.Web.Mcp
 		public McpServerHost(
 			ILogger<McpServerHost> logger,
 			McpToolRegistry toolRegistry,
-			IHostApplicationLifetime applicationLifetime)
+			IHostApplicationLifetime applicationLifetime,
+			IRateLimiter rateLimiter)
 		{
 			_logger = logger;
 			_toolRegistry = toolRegistry;
 			_applicationLifetime = applicationLifetime;
+			_rateLimiter = rateLimiter;
 		}
 
 		public Task StartAsync(CancellationToken cancellationToken)
@@ -48,7 +52,7 @@ namespace Resgrid.Web.Mcp
 				var serverVersion = McpConfig.ServerVersion;
 
 				// Create MCP server with server information
-				_mcpServer = new McpServer(serverName, serverVersion, _logger);
+				_mcpServer = new McpServer(serverName, serverVersion, _logger, _rateLimiter);
 
 				// Register all tools from the registry
 				_toolRegistry.RegisterTools(_mcpServer);

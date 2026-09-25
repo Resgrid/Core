@@ -46,10 +46,13 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ITwilioVoiceResponseService> _twilioVoiceResponseServiceMock;
 		private Mock<IFeatureToggleService> _featureToggleServiceMock;
 		private Mock<IDispatchScopeService> _dispatchScopeServiceMock;
+		private Mock<IAuthorizationService> _authorizationServiceMock;
+		private Mock<IAdpReleaseService> _adpReleaseMock;
 
 		protected override void Before_all_tests()
 		{
 			_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
+			_adpReleaseMock = new Mock<IAdpReleaseService>();
 			_numbersServiceMock = new Mock<INumbersService>();
 			_limitsServiceMock = new Mock<ILimitsService>();
 			_callsServiceMock = new Mock<ICallsService>();
@@ -70,6 +73,10 @@ namespace Resgrid.Tests.Web.Services
 			_encryptionServiceMock = new Mock<IEncryptionService>();
 			_featureToggleServiceMock = new Mock<IFeatureToggleService>();
 			// Group-scoped dispatch off unless a test narrows it: every call is in scope.
+			// Every unit viewable unless a test narrows it.
+			_authorizationServiceMock = new Mock<IAuthorizationService>();
+			_authorizationServiceMock.Setup(x => x.CanUserViewUnitViaMatrixAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+
 			_dispatchScopeServiceMock = new Mock<IDispatchScopeService>();
 			_dispatchScopeServiceMock.Setup(x => x.CanUserAccessCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Call>())).ReturnsAsync(true);
 			_dispatchScopeServiceMock.Setup(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()))
@@ -156,7 +163,8 @@ namespace Resgrid.Tests.Web.Services
 				_twilioVoiceResponseServiceMock.Object,
 				_featureToggleServiceMock.Object,
 				Mock.Of<ITextDepartmentSwitchService>(),
-				_dispatchScopeServiceMock.Object);
+				_dispatchScopeServiceMock.Object,
+				_authorizationServiceMock.Object, _adpReleaseMock.Object);
 		}
 
 		private static string InvokeBuildDispatchPrompt(Type controllerType, Call call, string address)
@@ -482,6 +490,36 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async System.Threading.Tasks.Task should_read_out_only_the_units_the_caller_may_view()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user3", FirstName = "Sam" };
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user3", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user3", false)).ReturnsAsync(profile);
+			_unitsServiceMock.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 71, DepartmentId = 7, Name = "PMRT A1" },
+				new Unit { UnitId = 72, DepartmentId = 7, Name = "PMRT C1" }
+			});
+			_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<UnitState>());
+			_customStateServiceMock.Setup(x => x.GetCustomUnitStateAsync(It.IsAny<UnitState>())).ReturnsAsync(new CustomStateDetail { ButtonText = "Available" });
+			_authorizationServiceMock.Setup(x => x.CanUserViewUnitViaMatrixAsync(72, "user3", 7)).ReturnsAsync(false);
+
+			await BuildController().InboundVoiceAction("user3", new VoiceRequest { Digits = "3" });
+
+			_twilioVoiceResponseServiceMock.Verify(
+				x => x.AppendPromptAsync(It.IsAny<Gather>(), "PMRT A1, Status Available.", It.IsAny<CancellationToken>(), It.IsAny<string>()),
+				Times.AtLeastOnce);
+			_twilioVoiceResponseServiceMock.Verify(
+				x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.Is<string>(p => p.Contains("PMRT C1")), It.IsAny<CancellationToken>(), It.IsAny<string>()),
+				Times.Never);
+			_twilioVoiceResponseServiceMock.Verify(
+				x => x.AppendPromptAsync(It.IsAny<Gather>(), It.Is<string>(p => p.Contains("PMRT C1")), It.IsAny<CancellationToken>(), It.IsAny<string>()),
+				Times.Never);
+		}
+
+		[Test]
 		public async System.Threading.Tasks.Task should_read_the_listing_without_redirecting_when_audio_is_ready()
 		{
 			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
@@ -596,6 +634,30 @@ namespace Resgrid.Tests.Web.Services
 			TwilioVoicePromptCatalog.StatusMarked("Available").Should().Be("You have been marked as Available. Goodbye.");
 		}
 
+		[TestCase("OPEN ABCDEF 123456")]
+		[TestCase("OPEN\tABCDEF\n123456")]
+		public async System.Threading.Tasks.Task Pin_commands_over_get_are_refused_before_archiving_or_text_commands(string body)
+		{
+			var controller = BuildController();
+			controller.Request.Method = "GET";
+			var result = await controller.IncomingMessage(new TwilioMessage { From = "+15555550123", To = "+15555550456", Body = body });
+			result.Should().BeOfType<ContentResult>();
+			_queueServiceMock.Invocations.Should().BeEmpty();
+			_textCommandServiceMock.Invocations.Should().BeEmpty();
+			_adpReleaseMock.Invocations.Should().BeEmpty();
+			((ContentResult)result).Content.Should().NotContain("123456");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task Protected_voice_release_uses_inline_speech_without_the_audio_cache()
+		{
+			_adpReleaseMock.Setup(a => a.ReleaseAsync("challenge", "+15555550123", "123456", ProtectedDataEgressChannel.Voice, It.IsAny<CancellationToken>()))
+				.ReturnsAsync("Protected dispatch address.");
+			var result = await BuildController().AdpVoicePin("challenge", new VoiceRequest { To = "+15555550123", Digits = "123456" });
+			((ContentResult)result).Content.Should().Contain("<Say>Protected dispatch address.</Say>").And.NotContain("<Play>");
+			_twilioVoiceResponseServiceMock.Invocations.Should().BeEmpty();
+		}
+
 		private sealed class TestableTwilioController : TwilioController
 		{
 			public TestableTwilioController(
@@ -621,7 +683,8 @@ namespace Resgrid.Tests.Web.Services
 				ITwilioVoiceResponseService twilioVoiceResponseService,
 				IFeatureToggleService featureToggleService,
 				ITextDepartmentSwitchService textDepartmentSwitchService,
-				IDispatchScopeService dispatchScopeService)
+				IDispatchScopeService dispatchScopeService,
+				IAuthorizationService authorizationService, IAdpReleaseService adpRelease)
 				: base(
 					departmentSettingsService,
 					numbersService,
@@ -646,8 +709,19 @@ namespace Resgrid.Tests.Web.Services
 					featureToggleService,
 					textDepartmentSwitchService,
 					Mock.Of<IDispatchRecommendationService>(),
-					dispatchScopeService)
+					dispatchScopeService,
+					authorizationService, adpRelease, Projection())
 			{
+				ControllerContext = new ControllerContext { HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext() };
+			}
+
+			private static IProtectedProjectionService Projection()
+			{
+				var projection = new Mock<IProtectedProjectionService>();
+				projection.Setup(p => p.BuildNotificationSafeCallAsync(It.IsAny<int>(), It.IsAny<Call>(),
+					It.IsAny<ProtectedDataEgressChannel>(), It.IsAny<string>()))
+					.Returns<int, Call, ProtectedDataEgressChannel, string>((d, c, channel, culture) => System.Threading.Tasks.Task.FromResult(c));
+				return projection.Object;
 			}
 
 			public List<CryptographicException> ReportedDecryptionFailures { get; } = new List<CryptographicException>();

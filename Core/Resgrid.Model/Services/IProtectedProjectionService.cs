@@ -26,7 +26,7 @@ namespace Resgrid.Model.Services
 		/// sanitized clone: the system-generated call number and structural/routing fields survive;
 		/// every cataloged user-authored field is nulled and the nature reads the generic
 		/// "sign in to Resgrid" line — safe to hand to any template, provider DTO, or TTS builder.
-		/// ProtectedAfterPin behaves as GenericOnly until the PIN-release flow ships.
+		/// ProtectedAfterPin remains generic on unattended projections; AdpReleaseService handles verified releases.
 		/// </summary>
 		/// <summary>
 		/// The safe view of a member message for one outbound channel (catalog v7). A protected

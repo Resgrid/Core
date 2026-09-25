@@ -135,4 +135,22 @@ Il team Resgrid</value>
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Il tuo codice di verifica Resgrid è: {0}. Scade tra {1} minuti.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN per interventi protetti</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Scegli un PIN personale di 6–12 cifre. È richiesta una nuova verifica con l’app di autenticazione. Il reparto deve abilitare il rilascio tramite PIN per ricevere i dettagli protetti.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>PIN personale</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Codice di autenticazione</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Salva</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Salvato.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Impossibile rilasciare o salvare i dati protetti. Accedi a Resgrid e riprova.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>È disponibile un intervento protetto. Rispondi OPEN {0} seguito dal tuo PIN personale, separato da uno spazio.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>È disponibile un intervento protetto. Inserisci il tuo PIN personale e premi il tasto cancelletto.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Impostazioni di rilascio ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>Invio tramite SMS</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Invio vocale</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Avviso generico</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Rilascio dopo il PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Consenti l’accesso temporaneo al personale di assistenza Resgrid con l’approvazione di un secondo dipendente.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Riconosco che i dettagli rilasciati escono da Resgrid e possono essere conservati dagli operatori telefonici o dai destinatari.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Consenti contenuti protetti</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Il personale Resgrid ha richiesto accesso all’intervento protetto {0} per la richiesta di assistenza {1}. L’accesso richiede un approvatore indipendente e scade entro 15 minuti.</value></data>
 </root>

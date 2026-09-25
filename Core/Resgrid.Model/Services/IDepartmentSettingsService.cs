@@ -8,6 +8,8 @@ namespace Resgrid.Model.Services
 {
 	public interface IDepartmentSettingsService
 	{
+		Task<AdminAssist.DepartmentOperatingProfile> GetOperatingProfileAsync(int departmentId);
+		Task<DepartmentSetting> SetOperatingProfileAsync(int departmentId, AdminAssist.DepartmentOperatingProfile profile, string actingUserId, CancellationToken cancellationToken = default);
 		/// <summary>
 		/// Saves the or update setting asynchronous.
 		/// </summary>

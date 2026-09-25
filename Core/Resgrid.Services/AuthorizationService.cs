@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
@@ -382,7 +382,13 @@ namespace Resgrid.Services
 			if (unit.DepartmentId != department.DepartmentId)
 				return false;
 
-			return true;
+			// Security > View Units: the same answer the unit lists get from the visibility matrix. No row means everyone.
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(department.DepartmentId, PermissionTypes.ViewGroupUnits);
+
+			if (permission == null)
+				return true;
+
+			return await IsUserAllowedForUnitAsync(permission, userId, department.DepartmentId, unit);
 		}
 
 		public async Task<bool> CanUserViewUserAsync(string viewerUserId, string targetUserId)
@@ -664,16 +670,17 @@ namespace Resgrid.Services
 			if (department == null)
 				return scope;
 
-			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
-
-			if (member == null || member.IsDeleted)
-				return scope;
-
+			// Before the member check: the managing user can be an admin without an active DepartmentMember record.
 			if (department.IsUserAnAdmin(userId))
 			{
 				scope.AllGroups = true;
 				return scope;
 			}
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
+
+			if (member == null || member.IsDeleted)
+				return scope;
 
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateShift);
 
@@ -723,8 +730,22 @@ namespace Resgrid.Services
 			if (permission == null)
 				return true;
 
-			bool isGroupAdmin = false;
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+			return await IsUserAllowedForUnitAsync(permission, userId, departmentId, unit);
+		}
+
+		/// <summary>
+		/// One unit permission (View Units or See Unit Locations) for one user, decided the way the unit visibility
+		/// matrices decide it: locked to group means the unit's own station, except that admins of that station or of
+		/// any group above it count for the locked "department and group admins" rule. Department admins always pass.
+		/// </summary>
+		private async Task<bool> IsUserAllowedForUnitAsync(Permission permission, string userId, int departmentId, Unit unit)
+		{
+			if (unit == null)
+				return false;
+
+			bool isGroupAdmin = false;
 			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
@@ -735,59 +756,13 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
-			{ // Department Admins only
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (not locked to group)
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (locked to group)
-				if (department.IsUserAnAdmin(userId))
-					return true; // Department Admins have access.
-
-				if (unit.StationGroupId.HasValue && group != null &&
-				    unit.StationGroupId.Value == group.DepartmentGroupId)
-					return true; // Group admin in the same group have access to locked to group
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
-			{
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
-			{
-				if (permission.LockToGroup && unit.StationGroupId.HasValue && group != null &&
-				    unit.StationGroupId.Value != group.DepartmentGroupId)
-					return false;
-
-				if (!String.IsNullOrWhiteSpace(permission.Data))
-				{
-					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-					var role = from r in roles
-						where roleIds.Contains(r.PersonnelRoleId)
-						select r;
-
-					if (role.Any())
-					{
-						return true;
-					}
-				}
-
-			}
-			else if (permission.Action == (int)PermissionActions.Everyone && permission.LockToGroup)
-			{
-				if (unit.StationGroupId.HasValue && group != null &&
-				    unit.StationGroupId.Value == group.DepartmentGroupId)
-					return true; // Everyone in the same group have access to locked to group
-			}
-			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
-			{
-				return true;
-			}
-
-			return false;
+			var departmentAdmin = department.IsUserAnAdmin(userId);
+			var targetGroupId = unit.StationGroupId;
+			var ancestorAdmin = !departmentAdmin && isGroupAdmin && permission.LockToGroup &&
+				permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins &&
+				await IsAdminOfGroupOrAncestorAsync(userId, targetGroupId);
+			return ResourceVisibilityPermission.Allows(permission, departmentAdmin, isGroupAdmin,
+				group?.DepartmentGroupId, targetGroupId, roles?.Select(r => r.PersonnelRoleId), ancestorAdmin);
 		}
 
 		public async Task<bool> CanUserViewPersonLocationAsync(string userId, string targetUserId, int departmentId)
@@ -809,56 +784,13 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
-			{ // Department Admins only
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (not locked to group)
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (locked to group)
-				if (department.IsUserAnAdmin(userId))
-					return true; // Department Admins have access.
-
-				if (group != null && targetUserGroup != null && group.DepartmentGroupId == targetUserGroup.DepartmentGroupId)
-					return true; // Group admin in the same group have access to locked to group
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
-			{
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
-			{
-				if (permission.LockToGroup && group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
-					return false;
-
-				if (!String.IsNullOrWhiteSpace(permission.Data))
-				{
-					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-					var role = from r in roles
-						where roleIds.Contains(r.PersonnelRoleId)
-						select r;
-
-					if (role.Any())
-					{
-						return true;
-					}
-				}
-
-			}
-			else if (permission.Action == (int)PermissionActions.Everyone && permission.LockToGroup)
-			{
-				if (group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
-					return true; // Everyone in the same group have access to locked to group
-			}
-			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
-			{
-				return true;
-			}
-
-			return false;
+			var departmentAdmin = department.IsUserAnAdmin(userId);
+			var targetGroupId = targetUserGroup?.DepartmentGroupId;
+			var ancestorAdmin = !departmentAdmin && isGroupAdmin && permission.LockToGroup &&
+				permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins &&
+				await IsAdminOfGroupOrAncestorAsync(userId, targetGroupId);
+			return ResourceVisibilityPermission.Allows(permission, departmentAdmin, isGroupAdmin,
+				group?.DepartmentGroupId, targetGroupId, roles?.Select(r => r.PersonnelRoleId), ancestorAdmin);
 		}
 
 		public async Task<bool> CanUserViewPersonAsync(string userId, string targetUserId, int departmentId)
@@ -880,56 +812,32 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
-			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
-			{ // Department Admins only
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (not locked to group)
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (locked to group)
-				if (department.IsUserAnAdmin(userId))
-					return true; // Department Admins have access.
+			var departmentAdmin = department.IsUserAnAdmin(userId);
+			var targetGroupId = targetUserGroup?.DepartmentGroupId;
+			var ancestorAdmin = !departmentAdmin && isGroupAdmin && permission.LockToGroup &&
+				permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins &&
+				await IsAdminOfGroupOrAncestorAsync(userId, targetGroupId);
+			return ResourceVisibilityPermission.Allows(permission, departmentAdmin, isGroupAdmin,
+				group?.DepartmentGroupId, targetGroupId, roles?.Select(r => r.PersonnelRoleId), ancestorAdmin);
+		}
 
-				if (group != null && targetUserGroup != null && group.DepartmentGroupId == targetUserGroup.DepartmentGroupId)
-					return true; // Group admin in the same group have access to locked to group
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
-			{
-				return true;
-			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !department.IsUserAnAdmin(userId))
-			{
-				if (permission.LockToGroup && group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
-					return false;
+		private static bool AreInSameGroup(DepartmentGroup group, DepartmentGroup otherGroup)
+		{
+			return group != null && otherGroup != null && group.DepartmentGroupId == otherGroup.DepartmentGroupId;
+		}
 
-				if (!String.IsNullOrWhiteSpace(permission.Data))
-				{
-					var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-					var role = from r in roles
-						where roleIds.Contains(r.PersonnelRoleId)
-						select r;
+		/// <summary>
+		/// The locked-to-group admin rule the visibility matrices apply: an admin of the target's group, or of any
+		/// group above it (an area supervisor over the stations in their area). No group means no group admin.
+		/// </summary>
+		private async Task<bool> IsAdminOfGroupOrAncestorAsync(string userId, int? groupId)
+		{
+			if (!groupId.HasValue)
+				return false;
 
-					if (role.Any())
-					{
-						return true;
-					}
-				}
+			var admins = await _departmentGroupsService.GetAllAdminsForGroupAndAncestorsAsync(groupId.Value) ?? new System.Collections.Generic.List<DepartmentGroupMember>();
 
-			}
-			else if (permission.Action == (int)PermissionActions.Everyone && permission.LockToGroup)
-			{
-				if (group != null && targetUserGroup != null && group.DepartmentGroupId != targetUserGroup.DepartmentGroupId)
-					return true; // Everyone in the same group have access to locked to group
-			}
-			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
-			{
-				return true;
-			}
-
-			return false;
+			return admins.Any(a => string.Equals(a.UserId, userId, StringComparison.OrdinalIgnoreCase));
 		}
 
 		/// <summary>

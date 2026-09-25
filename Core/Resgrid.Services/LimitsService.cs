@@ -218,7 +218,7 @@ namespace Resgrid.Services
 			async Task<DepartmentLimits> getCurrentPlanForDepartmentAsync()
 			{
 				var limits = new DepartmentLimits();
-				var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
+				var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId, bypassCache);
 				var departmentCount = await _subscriptionsService.GetPlanCountsForDepartmentAsync(departmentId);
 
 				// No usage data (e.g. Billing API unavailable): default to free-plan limits with usage assumed

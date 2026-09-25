@@ -44,6 +44,7 @@
     <PackageReference Include="Scriban" Version="7.2.6" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.AdminAssist\Resgrid.AdminAssist.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Localization\Resgrid.Localization.csproj" />

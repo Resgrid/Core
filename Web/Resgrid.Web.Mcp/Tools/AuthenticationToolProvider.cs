@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Resgrid.Web.Mcp.Infrastructure;
 using Resgrid.Web.Mcp.ModelContextProtocol;
 using Newtonsoft.Json;
 
@@ -16,16 +17,25 @@ namespace Resgrid.Web.Mcp.Tools
 	public sealed class AuthenticationToolProvider
 	{
 		private readonly IApiClient _apiClient;
+		private readonly ITokenRefreshService _tokenRefreshService;
 		private readonly ILogger<AuthenticationToolProvider> _logger;
 		private const string TOOL_NAME = "authenticate";
+		private const string REFRESH_TOOL_NAME = "refresh_access_token";
 
-		public AuthenticationToolProvider(IApiClient apiClient, ILogger<AuthenticationToolProvider> logger)
+		public AuthenticationToolProvider(IApiClient apiClient, ITokenRefreshService tokenRefreshService, ILogger<AuthenticationToolProvider> logger)
 		{
 			_apiClient = apiClient;
+			_tokenRefreshService = tokenRefreshService;
 			_logger = logger;
 		}
 
 		public void RegisterTools(McpServer server)
+		{
+			RegisterAuthenticateTool(server);
+			RegisterRefreshAccessTokenTool(server);
+		}
+
+		private void RegisterAuthenticateTool(McpServer server)
 		{
 			server.AddTool(
 				TOOL_NAME,
@@ -77,7 +87,9 @@ namespace Resgrid.Web.Mcp.Tools
 								accessToken = result.AccessToken,
 								tokenType = result.TokenType,
 								expiresIn = result.ExpiresIn,
-								message = "Authentication successful. Use this access token in subsequent API calls."
+								refreshToken = result.RefreshToken,
+								message = "Authentication successful. Use this access token in subsequent API calls. " +
+									$"Before it expires (in expiresIn seconds), call {REFRESH_TOOL_NAME} with the refresh token to get a new pair; each refresh token works once."
 							};
 						}
 						else
@@ -90,7 +102,7 @@ namespace Resgrid.Web.Mcp.Tools
 							};
 						}
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error in authentication tool");
 						return new
@@ -103,9 +115,74 @@ namespace Resgrid.Web.Mcp.Tools
 			);
 		}
 
+		private void RegisterRefreshAccessTokenTool(McpServer server)
+		{
+			var schema = SchemaBuilder.BuildObjectSchema(
+				new Dictionary<string, SchemaBuilder.PropertySchema>
+				{
+					["refreshToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "The refresh token from authenticate or from the previous refresh_access_token call" }
+				},
+				new[] { "refreshToken" }
+			);
+
+			server.AddTool(
+				REFRESH_TOOL_NAME,
+				"Exchanges a refresh token for a new access token and a new refresh token, without asking for the password again. " +
+				"Each refresh token works once: always keep the new one this returns. If it fails, authenticate again.",
+				schema,
+				async (arguments) =>
+				{
+					try
+					{
+						var args = JsonConvert.DeserializeObject<RefreshArgs>(arguments.ToString());
+
+						if (string.IsNullOrWhiteSpace(args?.RefreshToken))
+						{
+							return new
+							{
+								success = false,
+								error = "Refresh token is required"
+							};
+						}
+
+						var result = await _tokenRefreshService.RefreshAsync(args.RefreshToken);
+
+						if (result.IsSuccess)
+						{
+							return new
+							{
+								success = true,
+								accessToken = result.AccessToken,
+								tokenType = result.TokenType,
+								expiresIn = result.ExpiresIn,
+								refreshToken = result.RefreshToken,
+								message = "Token refreshed. Use the new access token and keep the new refresh token; the old refresh token no longer works."
+							};
+						}
+
+						return new
+						{
+							success = false,
+							error = $"{(result.ErrorMessage ?? "Token refresh failed").TrimEnd('.')}. Call authenticate to sign in again."
+						};
+					}
+					catch (Exception ex) when (ex is not McpToolErrorException)
+					{
+						_logger.LogError(ex, "Error in refresh access token tool");
+						return new
+						{
+							success = false,
+							error = "Token refresh failed. Call authenticate to sign in again."
+						};
+					}
+				}
+			);
+		}
+
 		public IEnumerable<string> GetToolNames()
 		{
 			yield return TOOL_NAME;
+			yield return REFRESH_TOOL_NAME;
 		}
 
 		/// <summary>
@@ -142,6 +219,12 @@ namespace Resgrid.Web.Mcp.Tools
 
 			[JsonProperty("password")]
 			public string Password { get; set; }
+		}
+
+		private sealed class RefreshArgs
+		{
+			[JsonProperty("refreshToken")]
+			public string RefreshToken { get; set; }
 		}
 	}
 }

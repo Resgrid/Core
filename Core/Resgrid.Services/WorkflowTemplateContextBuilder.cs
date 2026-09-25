@@ -618,6 +618,18 @@ namespace Resgrid.Services
 					scriptObject["contract"] = contract;
 					break;
 				}
+				case WorkflowTriggerEventType.AdminAssistFindingOpened:
+				case WorkflowTriggerEventType.AdminAssistFindingResolved:
+				case WorkflowTriggerEventType.AdminAssistFindingReopened:
+				{
+					var findingEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var findingPayload = JObject.Parse(Resgrid.Model.AdminAssist.AdminAssistWorkflowPayload.Routing(findingEvent?.Payload ?? new JObject()));
+					var finding = new ScriptObject();
+					foreach (var pair in Resgrid.Model.AdminAssist.AdminAssistWorkflowPayload.Variables) finding[pair.Variable] = ToScriptValue(findingPayload[pair.Property]);
+					finding["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/AdminAssist/Index";
+					scriptObject["admin_assist"] = finding;
+					break;
+				}
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

@@ -1,0 +1,37 @@
+@using Resgrid.Localization.Areas.User.SystemMessages
+@{ ViewBag.Title = SystemMessagesResources.GetCurrent("AdpPinTitle"); }
+<div class="row"><div class="col-md-6">
+    <h2>@SystemMessagesResources.GetCurrent("AdpPinTitle")</h2>
+    <p>@SystemMessagesResources.GetCurrent("AdpPinInstructions")</p>
+    <form id="adp-pin-form" autocomplete="off">
+        @Html.AntiForgeryToken()
+        <label for="adp-pin">@SystemMessagesResources.GetCurrent("AdpPinLabel")</label>
+        <input id="adp-pin" class="form-control" type="password" inputmode="numeric" pattern="[0-9]{6,12}" minlength="6" maxlength="12" required autocomplete="new-password" />
+        <label for="adp-totp">@SystemMessagesResources.GetCurrent("AdpPinMfa")</label>
+        <input id="adp-totp" class="form-control" inputmode="numeric" maxlength="8" required autocomplete="one-time-code" />
+        <button type="submit" class="btn btn-primary">@SystemMessagesResources.GetCurrent("AdpPinSave")</button>
+        <p id="adp-pin-result" role="status"></p>
+    </form>
+</div></div>
+<script>
+document.getElementById('adp-pin-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const button = this.querySelector('button');
+    const result = document.getElementById('adp-pin-result');
+    const token = this.querySelector('input[name="__RequestVerificationToken"]').value;
+    const post = async (url, fields) => {
+        const response = await fetch(url, { method: 'POST', cache: 'no-store',
+            body: new URLSearchParams({ ...fields, __RequestVerificationToken: token }) });
+        if (!response.ok) throw new Error('request_failed');
+        return response.json();
+    };
+    button.disabled = true;
+    try {
+        const grant = await post('@Url.Action("VerifyStepUp", "DataProtection")', { code: document.getElementById('adp-totp').value });
+        if (!grant.success) throw new Error('step_up_failed');
+        const saved = await post('@Url.Action("SavePin", "DataProtection")', { pin: document.getElementById('adp-pin').value, grantToken: grant.grantToken });
+        result.textContent = saved.success ? @Html.Raw(System.Text.Json.JsonSerializer.Serialize(SystemMessagesResources.GetCurrent("AdpPinSaved"))) : @Html.Raw(System.Text.Json.JsonSerializer.Serialize(SystemMessagesResources.GetCurrent("AdpPinDenied")));
+    } catch (_) { result.textContent = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(SystemMessagesResources.GetCurrent("AdpPinDenied"))); }
+    finally { this.reset(); button.disabled = false; }
+});
+</script>

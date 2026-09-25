@@ -696,6 +696,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Workflow aus der Vorlage mit einem Entwurf einer geschützten Freigabe erstellt. Legen Sie Ziel-URL und Zugangsdaten des Schritts fest, wählen Sie die freigegebenen Felder und beantragen Sie die Genehmigung. Es wird nichts gesendet, bevor die Freigabe genehmigt ist.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Workflow aus der Vorlage erstellt, jedoch ohne Entwurf einer geschützten Freigabe (dafür ist ein Administrator für geschützte Workflows erforderlich). Er ist deaktiviert: Lassen Sie einen Administrator die Freigabe erstellen und die Genehmigung beantragen, bevor Sie ihn aktivieren.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>Das Workflow-Limit Ihres Tarifs ist erreicht. Bitte führen Sie ein Upgrade durch, um weitere Workflows hinzuzufügen.</value>
   </data>

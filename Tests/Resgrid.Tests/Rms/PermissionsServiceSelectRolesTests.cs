@@ -23,7 +23,7 @@ namespace Resgrid.Tests.Rms
 		[SetUp]
 		public void SetUp()
 		{
-			_service = new PermissionsService(new Mock<IPermissionsRepository>().Object, new Mock<IUsersService>().Object);
+			_service = new PermissionsService(new Mock<IPermissionsRepository>().Object, new Mock<IUsersService>().Object, new Mock<IDepartmentGroupsService>().Object);
 		}
 
 		private static Permission Value4(string data = "9", bool lockToGroup = false)

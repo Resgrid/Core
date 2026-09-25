@@ -16,15 +16,15 @@ using Resgrid.Repositories.DataRepository.Queries.PersonnelRoles;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class PersonnelRolesRepository : RepositoryBase<PersonnelRole>, IPersonnelRolesRepository
+	public class PersonnelRolesRepository : AuditedConfigurationRepository<PersonnelRole>, IPersonnelRolesRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public PersonnelRolesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public PersonnelRolesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;
@@ -214,6 +214,26 @@ namespace Resgrid.Repositories.DataRepository
 		}
 
 		public async Task<bool> DeleteRoleDependenciesAsync(int personnelRoleId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (!HasConfigurationJournal) return await DeleteRoleDependenciesCoreAsync(personnelRoleId, cancellationToken);
+			var role = await GetByIdAsync(personnelRoleId);
+			if (role == null) return false;
+			async Task<Resgrid.Model.AdminAssist.ConfigurationChangeStamp> Read()
+			{
+				var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
+				foreach (var reference in new[] { ("PersonnelRoleUsers", "PersonnelRoleId"), ("CallDispatchRoles", "RoleId"),
+					("ShiftGroupRoles", "PersonnelRoleId"), ("CommandDefinitionRolePersonnelRoles", "PersonnelRoleId"),
+					("RunCardRoleRequirements", "PersonnelRoleId"), ("StationCoverageRequirements", "PersonnelRoleId"),
+					("ChatChannelAccessRules", "PersonnelRoleId"), ("UnitRoles", "PersonnelRoleId") })
+					counts[reference.Item1] = await ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl(reference.Item1)} WHERE {Col(reference.Item2)}={P}Id", new { Id = personnelRoleId }, cancellationToken);
+				var value = Newtonsoft.Json.JsonConvert.SerializeObject(counts);
+				return new(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value))), value);
+			}
+			return await ExecuteConfigurationMutationAsync(role.DepartmentId, "PersonnelRoles.Dependencies", Read,
+				() => DeleteRoleDependenciesCoreAsync(personnelRoleId, cancellationToken), cancellationToken);
+		}
+
+		private async Task<bool> DeleteRoleDependenciesCoreAsync(int personnelRoleId, CancellationToken cancellationToken)
 		{
 			try
 			{

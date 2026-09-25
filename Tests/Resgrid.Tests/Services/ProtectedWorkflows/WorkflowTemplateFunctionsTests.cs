@@ -122,6 +122,11 @@ namespace Resgrid.Tests.Services.ProtectedWorkflows
 		[TestCase("application/json", "{\"a\":1}", true, null)]
 		[TestCase("application/json", "{\"a\":1", false, ProtectedPayloadValidator.RuleJsonParse)]
 		[TestCase("application/json", "{\"a\":1} {\"b\":2}", false, ProtectedPayloadValidator.RuleJsonParse)]
+		[TestCase("application/json", "{\"a\":1 /* note */}", false, ProtectedPayloadValidator.RuleJsonParse)]
+		[TestCase("application/json", "{\"a\":1} // note", false, ProtectedPayloadValidator.RuleJsonParse)]
+		[TestCase("application/json", "/* note */ {\"a\":1}", false, ProtectedPayloadValidator.RuleJsonParse)]
+		[TestCase("application/fhir+json", "{\"resourceType\":\"Bundle\", // note\n\"type\":\"transaction\"}", false, ProtectedPayloadValidator.RuleJsonParse)]
+		[TestCase("application/json", "", false, ProtectedPayloadValidator.RuleJsonParse)]
 		[TestCase("application/fhir+json", "{\"resourceType\":\"Bundle\"}", true, null)]
 		[TestCase("application/fhir+json", "{\"type\":\"transaction\"}", false, ProtectedPayloadValidator.RuleFhirResourceType)]
 		[TestCase("application/fhir+json", "[]", false, ProtectedPayloadValidator.RuleFhirResourceType)]
@@ -169,6 +174,17 @@ namespace Resgrid.Tests.Services.ProtectedWorkflows
 		public void only_the_allowed_content_types_are_accepted(string contentType, bool allowed)
 		{
 			ProtectedStepOptions.IsAllowedContentType(contentType).Should().Be(allowed);
+		}
+
+		[TestCase("PID-3.1.2", true)]
+		[TestCase("MSA-2", true)]
+		[TestCase("PID-٣", false)]
+		[TestCase("PID-3.١", false)]
+		public void hl7_field_captures_take_ascii_field_numbers_only(string expression, bool valid)
+		{
+			ProtectedStepOptions.Read("{\"responseCapture\":[{\"source\":\"hl7_field\",\"expression\":\"" + expression + "\",\"key\":\"ehr_id\"}]}", out var errors);
+
+			errors.Contains(ProtectedStepOptions.CaptureInvalid).Should().Be(!valid);
 		}
 
 		[Test]

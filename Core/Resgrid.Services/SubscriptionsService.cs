@@ -778,7 +778,7 @@ namespace Resgrid.Services
 
 		public Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType, bool bypassCache = false)
 		{
-			if (!bypassCache && (planAddonType == PlanAddonTypes.ReadinessPro || planAddonType == PlanAddonTypes.BusinessOperations) && Config.SystemBehaviorConfig.CacheEnabled &&
+			if (!bypassCache && PlanAddon.IsDedicatedMonthlyAddon((int)planAddonType) && Config.SystemBehaviorConfig.CacheEnabled &&
 				!string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 				return _cacheProvider.RetrieveAsync($"AddonPlansByType_{(int)planAddonType}",
 					() => LoadAddonPlansByTypeAsync(planAddonType), TimeSpan.FromMinutes(5));
@@ -1166,7 +1166,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> ModifyPTTAddonSubscriptionAsync(string stripeCustomerId, long quantity, PlanAddon planAddon)
 		{
-			if (planAddon?.AddonType == (int)PlanAddonTypes.ReadinessPro || planAddon?.AddonType == (int)PlanAddonTypes.BusinessOperations)
+			if (planAddon != null && PlanAddon.IsDedicatedMonthlyAddon(planAddon.AddonType))
 				return false;
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
@@ -1477,7 +1477,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> ModifyPaddlePTTAddonSubscriptionAsync(string paddleCustomerId, long quantity, PlanAddon planAddon)
 		{
-			if (planAddon?.AddonType == (int)PlanAddonTypes.ReadinessPro || planAddon?.AddonType == (int)PlanAddonTypes.BusinessOperations)
+			if (planAddon != null && PlanAddon.IsDedicatedMonthlyAddon(planAddon.AddonType))
 				return false;
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))

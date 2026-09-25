@@ -19,6 +19,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		private IChannel _callChannel;
 		private IChannel _unitLocationChannel;
 		private IChannel _personnelLocationChannel;
+		private IChannel _aiDispatchChannel;
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
 		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
@@ -33,6 +34,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<Resgrid.Model.Queue.WorkflowQueueItem, Task> WorkflowQueueReceived;
 		public Func<ChatbotMessageQueueItem, Task> ChatbotMessageQueueReceived;
 		public Func<CommunicationTestQueueItem, Task> CommunicationTestQueueReceived;
+		public Func<AiDispatchQueueItem, Task> AiDispatchTriageQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -80,6 +82,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 						// Mongo/DocumentDB operation. Rabbit dispatches callbacks sequentially per channel.
 						_personnelLocationChannel = await connection.CreateChannelAsync();
 						await _personnelLocationChannel.BasicQosAsync(0, 1, false);
+					}
+
+					if (AiDispatchTriageQueueReceived != null)
+					{
+						// AI enrichment can wait minutes for a free inference slot; it gets its own one-at-a-time
+						// channel so it never holds up message, chatbot or communication-test callbacks.
+						_aiDispatchChannel = await connection.CreateChannelAsync();
+						await _aiDispatchChannel.BasicQosAsync(0, 1, false);
 					}
 
 					await StartMonitoring();
@@ -746,16 +756,63 @@ namespace Resgrid.Providers.Bus.Rabbit
 							autoAck: false,
 							consumer: communicationTestQueueReceivedConsumer);
 				}
+
+				if (AiDispatchTriageQueueReceived != null)
+				{
+					var aiDispatchConsumer = new AsyncEventingBasicConsumer(_aiDispatchChannel);
+					aiDispatchConsumer.ReceivedAsync += async (model, ea) =>
+					{
+						if (ea == null)
+							return;
+
+						AiDispatchQueueItem item = null;
+						try
+						{
+							if (ea.Body.Length > 0)
+								item = ObjectSerialization.Deserialize<AiDispatchQueueItem>(Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
+
+						// An unprocessable delivery is settled, not left holding the only prefetch slot.
+						if (item == null)
+						{
+							await _aiDispatchChannel.BasicNackAsync(ea.DeliveryTag, false, false);
+							Logging.LogInfo("AiDispatch: dropping an empty or unreadable queue delivery.");
+							return;
+						}
+
+						try
+						{
+							await AiDispatchTriageQueueReceived.Invoke(item);
+							await _aiDispatchChannel.BasicAckAsync(ea.DeliveryTag, false);
+						}
+						catch (Exception ex)
+						{
+							// Enrichment is best effort on a call that already exists: drop rather than retry.
+							Logging.LogException(ex);
+							await _aiDispatchChannel.BasicNackAsync(ea.DeliveryTag, false, false);
+						}
+					};
+
+					await _aiDispatchChannel.BasicConsumeAsync(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.AiDispatchTriageQueueName),
+							autoAck: false,
+							consumer: aiDispatchConsumer);
+				}
 			}
 		}
 
 		private async Task DisposeChannelsAsync()
 		{
-			var channels = new[] { _channel, _callChannel, _unitLocationChannel, _personnelLocationChannel };
+			var channels = new[] { _channel, _callChannel, _unitLocationChannel, _personnelLocationChannel, _aiDispatchChannel };
 			_channel = null;
 			_callChannel = null;
 			_unitLocationChannel = null;
 			_personnelLocationChannel = null;
+			_aiDispatchChannel = null;
 
 			foreach (var channel in channels)
 			{
@@ -778,13 +835,15 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (_channel == null ||
 				(CallQueueReceived != null && _callChannel == null) ||
 				(UnitLocationEventQueueReceived != null && _unitLocationChannel == null) ||
-				(PersonnelLocationEventQueueReceived != null && _personnelLocationChannel == null))
+				(PersonnelLocationEventQueueReceived != null && _personnelLocationChannel == null) ||
+				(AiDispatchTriageQueueReceived != null && _aiDispatchChannel == null))
 				return false;
 
 			return _channel.IsOpen &&
 				(_callChannel?.IsOpen ?? true) &&
 				(_unitLocationChannel?.IsOpen ?? true) &&
-				(_personnelLocationChannel?.IsOpen ?? true);
+				(_personnelLocationChannel?.IsOpen ?? true) &&
+				(_aiDispatchChannel?.IsOpen ?? true);
 		}
 
 		private async Task StartUnitLocationConsumer(string queueName)

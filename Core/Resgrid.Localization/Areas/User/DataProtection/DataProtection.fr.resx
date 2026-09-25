@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>Chaque modification est enregistrée avec son auteur et sa date.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>L'assistant Resgrid ne peut pas utiliser l'abonnement au fournisseur d'IA de votre service (apportez votre clé) ; il utilise l'IA de Resgrid, et un fournisseur enregistré reste inutilisé.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>Je comprends que, dès la mise en file d'attente de l'inscription et jusqu'à la désactivation complète de la protection, l'assistant Resgrid ne peut pas utiliser l'abonnement au fournisseur d'IA de mon service (apportez votre clé) et utilise l'IA de Resgrid à la place.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>Votre service a enregistré son propre fournisseur d'IA pour le chatbot ({0}). Une fois l'inscription mise en file d'attente, le chatbot cesse de l'utiliser dans les cinq minutes et utilise l'IA de Resgrid. Le fournisseur enregistré n'est pas supprimé.</value>
+  </data>
 </root>

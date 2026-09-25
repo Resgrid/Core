@@ -17,5 +17,7 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueChatbotMessage(ChatbotMessageQueueItem chatbotMessageQueue);
 
 		Task<bool> EnqueueCommunicationTest(CommunicationTestQueueItem communicationTestQueue);
+
+		Task<bool> EnqueueAiDispatchTriage(AiDispatchQueueItem aiDispatchQueue);
 	}
 }

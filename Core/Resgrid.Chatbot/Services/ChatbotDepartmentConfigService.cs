@@ -15,18 +15,26 @@ namespace Resgrid.Chatbot.Services
 	{
 		private static readonly TimeSpan CacheLength = TimeSpan.FromMinutes(5);
 
+		// The add-on check is a Billing API call; a short cache keeps it off every chatbot message. A cancelled add-on, or an
+		// Advanced Data Protection enrollment, stops the department's own provider within this window. Enrollment is queued
+		// for an overnight migration window, so the block is in place long before any field is encrypted.
+		private static readonly TimeSpan OwnProviderCacheLength = TimeSpan.FromMinutes(5);
+
 		private readonly IChatbotDepartmentConfigRepository _repository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEncryptionService _encryptionService;
+		private readonly IEnhancedAiAccessService _enhancedAi;
 
 		public ChatbotDepartmentConfigService(
 			IChatbotDepartmentConfigRepository repository,
 			ICacheProvider cacheProvider,
-			IEncryptionService encryptionService)
+			IEncryptionService encryptionService,
+			IEnhancedAiAccessService enhancedAi)
 		{
 			_repository = repository;
 			_cacheProvider = cacheProvider;
 			_encryptionService = encryptionService;
+			_enhancedAi = enhancedAi;
 		}
 
 		public async Task<ChatbotDepartmentConfig> GetConfigAsync(int departmentId, bool bypassCache = false)
@@ -84,6 +92,11 @@ namespace Resgrid.Chatbot.Services
 			if (config == null || string.IsNullOrWhiteSpace(config.LlmApiEndpoint) || string.IsNullOrWhiteSpace(config.LlmApiKey))
 				return null;
 
+			// A saved provider stays inert without the Enhanced AI add-on or under Advanced Data Protection; the operator's
+			// system provider answers instead.
+			if (await GetLlmOverrideStatusAsync(departmentId) != OwnLlmProviderStatus.Allowed)
+				return null;
+
 			string apiKey;
 			try
 			{
@@ -104,6 +117,41 @@ namespace Resgrid.Chatbot.Services
 				ApiKey = apiKey,
 				Model = config.LlmModelName
 			};
+		}
+
+		public async Task<OwnLlmProviderStatus> GetLlmOverrideStatusAsync(int departmentId, bool bypassCache = false)
+		{
+			if (departmentId <= 0)
+				return OwnLlmProviderStatus.Unknown;
+
+			var cacheKey = OwnProviderCacheKey(departmentId);
+			if (!bypassCache && Resgrid.Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				try
+				{
+					if (int.TryParse(await _cacheProvider.GetStringAsync(cacheKey), out var cached) && Enum.IsDefined(typeof(OwnLlmProviderStatus), cached))
+						return (OwnLlmProviderStatus)cached;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			var status = await _enhancedAi.GetOwnLlmProviderStatusAsync(departmentId);
+			if (Resgrid.Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				try
+				{
+					await _cacheProvider.SetStringAsync(cacheKey, ((int)status).ToString(), OwnProviderCacheLength);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			return status;
 		}
 
 		public async Task<ChatbotDepartmentConfig> SaveConfigAsync(ChatbotDepartmentConfig config, string newPlaintextLlmKey = null)
@@ -146,6 +194,7 @@ namespace Resgrid.Chatbot.Services
 			try
 			{
 				await _cacheProvider.RemoveAsync(CacheKey(departmentId));
+				await _cacheProvider.RemoveAsync(OwnProviderCacheKey(departmentId));
 			}
 			catch (Exception ex)
 			{
@@ -176,5 +225,7 @@ namespace Resgrid.Chatbot.Services
 		}
 
 		private static string CacheKey(int departmentId) => $"ChatbotDeptConfig_{departmentId}";
+
+		private static string OwnProviderCacheKey(int departmentId) => $"ChatbotOwnLlmStatus_{departmentId}";
 	}
 }

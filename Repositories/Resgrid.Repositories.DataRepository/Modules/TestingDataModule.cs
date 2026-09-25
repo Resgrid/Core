@@ -15,8 +15,14 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			// Same registration as DataModule (keep the interface list in step): Admin Assist services, such as
+			// ConfigurationChangeJournal, resolve these stores, so the test container cannot build them without it.
+			builder.RegisterType<AdminAssistRepository>().As<Resgrid.Model.AdminAssist.IAdminAssistRepository>().As<Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore>().As<Resgrid.Model.AdminAssist.IAdminAssistTraceStore>().As<Resgrid.Model.AdminAssist.IRetentionImpactStore>().As<Resgrid.Model.AdminAssist.INotificationImpactStore>().As<Resgrid.Model.AdminAssist.ISecurityImpactStore>().As<Resgrid.Model.AdminAssist.IModuleImpactStore>().As<Resgrid.Model.AdminAssist.IAdministrativeReferenceStore>().As<Resgrid.Model.AdminAssist.IAiUsageMeter>().As<Resgrid.Model.AdminAssist.IAdminAssistConversationStore>().As<Resgrid.Model.AdminAssist.IAiFreeAllowanceStore>().As<Resgrid.Model.AiDispatch.IAiBackgroundAdmission>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnosticStore>().InstancePerLifetimeScope();
+			// DepartmentKeyService writes the ADP audit chain; it sits under every service that reaches DepartmentDataProtectionService.
+			builder.RegisterType<AdpAuditRepository>().As<IAdpAuditRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessProBillingRepository>().As<IReadinessProBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AiBillingRepository>().As<IAiBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomerBillingProfileRepository>().As<ICustomerBillingProfileRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RateCardRepository>().As<IRateCardRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RateCardItemRepository>().As<IRateCardItemRepository>().InstancePerLifetimeScope();

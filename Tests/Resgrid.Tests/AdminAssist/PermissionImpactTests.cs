@@ -51,6 +51,32 @@ namespace Resgrid.Tests.AdminAssist
 			}
 		}
 		[Test]
+		public async Task Diagnostic_permission_reads_fresh_roles_and_does_not_use_a_visibility_cache()
+		{
+			var f = new Fixture(); var actor = new AdminAssistActor(7, "owner");
+			f.Permissions.Setup(p => p.GetAllByDepartmentIdAsync(7)).ReturnsAsync(new[] { new Permission { DepartmentId = 7, PermissionType = (int)PermissionTypes.CreateCall, Action = 2, Data = "20" } });
+			Assert.That(await f.Service.EvaluateCurrentAsync(actor, "member", "CreateCall", null, CancellationToken.None), Is.True);
+			f.Assignments.Setup(r => r.GetAllRoleUsersForDepartmentAsync(7)).ReturnsAsync(Array.Empty<PersonnelRoleUser>());
+			Assert.That(await f.Service.EvaluateCurrentAsync(actor, "member", "CreateCall", null, CancellationToken.None), Is.False);
+		}
+		[Test]
+		public async Task Diagnostic_location_permission_preserves_group_scope_and_returns_unknown_when_sources_fail()
+		{
+			var f = new Fixture(); var actor = new AdminAssistActor(7, "owner");
+			f.Permissions.Setup(p => p.GetAllByDepartmentIdAsync(7)).ReturnsAsync(new[] { new Permission { DepartmentId = 7, PermissionType = (int)PermissionTypes.CanSeeUnitLocations, Action = 3, LockToGroup = true } });
+			Assert.That(await f.Service.EvaluateCurrentAsync(actor, "member", "CanSeeUnitLocations", "1", CancellationToken.None), Is.True);
+			Assert.That(await f.Service.EvaluateCurrentAsync(actor, "member", "CanSeeUnitLocations", "2", CancellationToken.None), Is.False);
+			f.Roles.Setup(r => r.GetPersonnelRolesByDepartmentIdAsync(7)).ThrowsAsync(new InvalidOperationException());
+			Assert.That(await f.Service.EvaluateCurrentAsync(actor, "member", "CanSeeUnitLocations", "1", CancellationToken.None), Is.Null);
+		}
+		[Test]
+		public async Task Diagnostic_permission_change_during_read_is_unknown_instead_of_a_stale_allow()
+		{
+			var f = new Fixture();
+			f.Members.SetupSequence(m => m.GetAllDepartmentMembersUnlimitedAsync(7)).ReturnsAsync(f.People).ReturnsAsync(f.People.Where(p => p.UserId != "member"));
+			Assert.That(await f.Service.EvaluateCurrentAsync(new(7, "owner"), "member", "CreateCall", null, CancellationToken.None), Is.Null);
+		}
+		[Test]
 		public async Task Role_picker_returns_department_role_names_without_loading_people_or_assignments()
 		{
 			var f = new Fixture(); f.Roles.Setup(r => r.GetPersonnelRolesByDepartmentIdAsync(7)).ReturnsAsync(new[] {

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Enhanced AI add-on</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>A monthly add-on that brings AI answers and drafts to Resgrid. It runs on Resgrid-operated servers with open-weight models. Only the department's managing member can buy or cancel it.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist AI without a monthly question cap</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Assistant answers and incident questions over the live command board</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Incident report, after-action and ICS-201 briefing drafts that a person reviews and signs</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Call briefs built from pre-plans, hazards, hydrants, weather alerts and prior calls</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Answers about your department's own documents and protocols, with citations</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>Coming later: AI dispatch assistance, dispatch audio transcription and semantic search.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Includes a monthly AI usage budget. If your department reaches it, AI features fall back to the standard experience until next month. There are no overage charges.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>Your department's data is not sent to third-party AI providers and is not used to train AI models. AI never changes your configuration or records on its own.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Admin Assist free questions</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Every department can ask Admin Assist {0} questions in the {1} days after its first answered question, then {2} questions each calendar month. Unused questions do not roll over, and only answered questions count.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Enhanced AI is active for your department.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Enhanced AI is being enabled for your department. Features appear as they are switched on.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Your department does not have Enhanced AI yet.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Enhanced AI is not available to buy for your department yet.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Paid through</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Renewal cancelled; access continues until the paid period ends.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Buy</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Cancel renewal</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Cancel the Enhanced AI renewal?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Billing is unavailable right now. Please try again later.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Manage subscription</value></data>
+  <data name="Monthly" xml:space="preserve"><value>month</value></data>
+  <data name="Links" xml:space="preserve"><value>Links</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Manage Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>per department</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Enhanced AI Addon</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Brings AI answers and drafts to Resgrid: Admin Assist AI without a question cap, incident questions, report and briefing drafts, and call briefs. Billed monthly, separately from your Resgrid plan. Only your department's managing member can buy or cancel it.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist AI</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Incident questions</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Report and briefing drafts</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Call briefs</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Runs on Resgrid servers</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>The chatbot on your own AI provider subscription (bring your own key), if you prefer it to Resgrid's AI</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Bring your own AI provider</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>Resgrid's AI runs open-weight models, currently Qwen3, on hardware Resgrid owns and operates. Resgrid never sends your data to cloud AI providers.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Your own AI provider (bring your own key)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>With Enhanced AI, your department can connect its own subscription with an AI provider such as OpenAI, Anthropic, Google Gemini, Azure OpenAI or Mistral, or with a model server you run. The chatbot then sends this department's messages to that provider under your agreement with them. Leave these fields empty to use Resgrid's own AI, which never sends your data to cloud AI providers.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>Using your own AI provider subscription requires the Enhanced AI add-on.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Your saved provider is not in use. The chatbot uses Resgrid's own AI until Enhanced AI is active.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Your other settings were saved, but the AI provider change was not, because it requires the Enhanced AI add-on.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Provider</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Choose a provider</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Other OpenAI-compatible endpoint</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>Choosing a provider fills in its endpoint. For Azure OpenAI, replace {resource} and {deployment} with your own values.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>The full request URL. It must use https and a public address.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Enter the model name exactly as your provider lists it.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Remove the saved provider and API key</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Your own AI provider cannot be used while Advanced Data Protection is on for your department, so protected data never leaves Resgrid. The chatbot uses Resgrid's own AI, and any saved provider stays unused.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Your Enhanced AI add-on could not be confirmed right now, so the chatbot uses Resgrid's own AI. Please try again later.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Your other settings were saved, but the AI provider change was not.</value></data>
+</root>

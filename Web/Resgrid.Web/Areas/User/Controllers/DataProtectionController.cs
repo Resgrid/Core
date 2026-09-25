@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.NLU;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
@@ -33,28 +35,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Authorize]
 	public class DataProtectionController : SecureBaseController
 	{
-		/// <summary>Version stamp recorded with every acknowledgement set; bump when section 12 text changes.</summary>
-		public const string AcknowledgementVersion = "ADP-ACK-1";
+		/// <summary>Version stamp recorded with every acknowledgement set (AdpEnrollmentAcknowledgements.Version).</summary>
+		public const string AcknowledgementVersion = AdpEnrollmentAcknowledgements.Version;
 
 		/// <summary>
-		/// The section 12 disclosure items. Item KEYS are stable identifiers recorded in the policy's
-		/// acknowledgement JSON; the wizard renders matching text and the queue action refuses any
-		/// submission that does not acknowledge every key.
+		/// The section 12 disclosure items (AdpEnrollmentAcknowledgements.Items, shared with the v4 API and the command
+		/// gate). The wizard renders one checkbox per key and the queue action refuses any submission that omits one.
 		/// </summary>
-		public static readonly IReadOnlyList<string> AckItems = new[]
-		{
-			"catalog_scope",
-			"plaintext_metadata",
-			"authorized_server_access",
-			"step_up_window",
-			"bigboard_reduction",
-			"workflow_redaction",
-			"default_egress",
-			"search_report_limitations",
-			"migration_disable",
-			"key_loss_support",
-			"not_hipaa_compliance"
-		};
+		public static IReadOnlyList<string> AckItems => AdpEnrollmentAcknowledgements.Items;
 
 		private const int StepUpMaxAttempts = 5;
 		private static readonly TimeSpan StepUpAttemptWindow = TimeSpan.FromMinutes(5);
@@ -72,13 +60,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IProtectedWorkflowService _protectedWorkflows;
+		private readonly IChatbotDepartmentConfigService _chatbotConfig;
 
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IAdpSizingService sizingService,
 			IProtectedDataBrokerClient brokerClient, IDepartmentsService departmentsService,
 			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService, IAdpReleaseService adpRelease, Resgrid.Model.Repositories.IAdpAccessStore adpAccess, Resgrid.Model.Repositories.IAdpAuditRepository adpAudit,
-			ICacheProvider cacheProvider, IEventAggregator eventAggregator, IProtectedWorkflowService protectedWorkflows)
+			ICacheProvider cacheProvider, IEventAggregator eventAggregator, IProtectedWorkflowService protectedWorkflows,
+			IChatbotDepartmentConfigService chatbotConfig)
 		{
+			_chatbotConfig = chatbotConfig;
 			_protectedWorkflows = protectedWorkflows;
 			_eventAggregator = eventAggregator;
 			_dataProtectionService = dataProtectionService;
@@ -128,15 +119,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(new { success = true });
 		}
 
+		/// <summary>
+		/// One verified page of the department's ADP audit chain. Page forward by passing the previous page's
+		/// tailSequence and tailHash as afterSequence and afterHash; each page is verified against that anchor.
+		/// </summary>
 		[HttpGet]
-		public async Task<IActionResult> AuditChain()
+		public async Task<IActionResult> AuditChain(long afterSequence = 0, string afterHash = null, int take = 500)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin()) return Unauthorized();
 			Response.Headers["Cache-Control"] = "no-store";
-			var rows = await _adpAudit.ReadAsync(DepartmentId);
+			if (afterSequence < 0 || afterSequence > 0 && string.IsNullOrWhiteSpace(afterHash)) return BadRequest();
+			var anchorHash = afterSequence == 0 ? AdpAuditChain.Genesis : afterHash;
+			take = Math.Clamp(take, 1, 1000);
+			var read = await _adpAudit.ReadAsync(DepartmentId, afterSequence, take + 1);
+			var rows = read.Take(take).ToList();
 			var tail = rows.LastOrDefault();
-			return Json(new { rows, tailSequence = tail?.Sequence ?? 0, tailHash = tail?.Hash ?? AdpAuditChain.Genesis,
-				valid = AdpAuditChain.Verify(rows, tail?.Sequence ?? 0, tail?.Hash ?? AdpAuditChain.Genesis) });
+			return Json(new { rows, afterSequence, afterHash = anchorHash, tailSequence = tail?.Sequence ?? afterSequence,
+				tailHash = tail?.Hash ?? anchorHash, hasMore = read.Count > take, valid = AdpAuditChain.VerifySegment(rows, afterSequence, anchorHash) });
 		}
 
 		[HttpGet]
@@ -176,6 +175,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.LockReason = (await _departmentLockService.GetActiveLockAsync(DepartmentId))?.Reason;
 
 			model.BrokerHealthy = await _brokerClient.IsHealthyAsync();
+
+			// Enrollment turns off the department's own AI provider (EnhancedAiAccessService.GetOwnLlmProviderStatusAsync);
+			// name a saved one so the wizard can say it stops being used. Only for a department that can still enroll.
+			if (model.State == DepartmentDataProtectionState.Disabled)
+			{
+				try
+				{
+					var chatbot = await _chatbotConfig.GetConfigAsync(DepartmentId, bypassCache: true);
+					if (!string.IsNullOrWhiteSpace(chatbot?.LlmApiEndpoint) && !string.IsNullOrWhiteSpace(chatbot.LlmApiKey))
+					{
+						var provider = LlmProviderCatalog.Infer(chatbot.LlmApiEndpoint);
+						model.OwnAiProviderName = provider.Id != LlmProviderCatalog.CustomId ? provider.Name
+							: Uri.TryCreate(chatbot.LlmApiEndpoint, UriKind.Absolute, out var uri) ? uri.Host : null;
+					}
+				}
+				catch (Exception ex)
+				{
+					// The acknowledgement still covers it; a failed lookup only drops the named warning.
+					Framework.Logging.LogException(ex);
+				}
+			}
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			if (department != null && !string.IsNullOrWhiteSpace(department.ManagingUserId))
@@ -487,6 +507,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DepartmentDataProtectionEnrollmentResult.FeatureNotAvailable => "feature_not_available",
 				DepartmentDataProtectionEnrollmentResult.InvalidState => "invalid_state",
 				DepartmentDataProtectionEnrollmentResult.InvalidWindow => "invalid_window",
+				DepartmentDataProtectionEnrollmentResult.AcknowledgementsIncomplete => "acknowledgements_incomplete",
 				_ => "command_failed"
 			};
 

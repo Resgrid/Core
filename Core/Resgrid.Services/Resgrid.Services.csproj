@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Resgrid.AdminAssist\Resgrid.AdminAssist.csproj" />
+    <ProjectReference Include="..\Resgrid.Ai\Resgrid.Ai.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />

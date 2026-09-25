@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -14,15 +14,15 @@ using Resgrid.Repositories.DataRepository.Queries.Shifts;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class ShiftDaysRepository : RepositoryBase<ShiftDay>, IShiftDaysRepository
+	public class ShiftDaysRepository : AuditedConfigurationRepository<ShiftDay>, IShiftDaysRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public ShiftDaysRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public ShiftDaysRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

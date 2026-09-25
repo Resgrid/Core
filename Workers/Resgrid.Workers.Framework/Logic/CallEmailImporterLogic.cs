@@ -64,8 +64,13 @@ namespace Resgrid.Workers.Framework.Logic
 						retry++;
 					}
 
+					// Sender by message id, for the AI dispatch sender allowlist (never put on the bus).
+					var senders = new Dictionary<string, string>(StringComparer.Ordinal);
 					foreach (var email in emailResult.Emails)
 					{
+						if (!string.IsNullOrWhiteSpace(email.MessageId) && !string.IsNullOrWhiteSpace(email.From))
+							senders[email.MessageId] = email.From;
+
 						var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(item.EmailSettings.Department.DepartmentId);
 						var units = await _unitsService.GetUnitsForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
 						var callTypes = await _callsService.GetCallTypesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
@@ -139,6 +144,24 @@ namespace Resgrid.Workers.Framework.Logic
 									cqi.DepartmentTextNumber = departmentTextNumber;
 
 									await _queueService.EnqueueCallBroadcastAsync(cqi);
+
+									// AI dispatch, Enrich mode: enrichment follows the normal dispatch and can never hold it up.
+									if (item.EmailSettings.FormatType == (int)CallEmailTypes.AI && Config.AiDispatchConfig.EnrichEnabled)
+									{
+										try
+										{
+											var aiDispatchAdmin = Bootstrapper.GetKernel().Resolve<Resgrid.Model.AiDispatch.IAiDispatchAdminService>();
+											await _queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
+											{
+												DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = 3, QueuedOnUtc = DateTime.UtcNow,
+												SenderNotAllowed = !await aiDispatchAdmin.IsSenderAllowedAsync(savedCall.DepartmentId, call.SourceIdentifier == null ? null : senders.GetValueOrDefault(call.SourceIdentifier))
+											});
+										}
+										catch (Exception aiEx)
+										{
+											Logging.LogException(aiEx);
+										}
+									}
 								}
 							}
 							catch (Exception ex)

@@ -14,5 +14,7 @@ namespace Resgrid.Config
 		public static bool DrainDispatchTraceQueue = false;
 		public static string TraceQueueName = "adminassisttraces-v1";
 		public static bool SendAdminDigests = false;
+		public static bool TroubleshootingEnabled = false;
+		public static int DiagnosticRetentionDays = 30;
 	}
 }

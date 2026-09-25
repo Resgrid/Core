@@ -31,6 +31,8 @@ namespace Resgrid.Tests.AdminAssist
 		}
 
 		[TestCase("email-import-failures", "emailImportFailureCount", 1, 0)]
+		[TestCase("notification-channels", "notificationMembersWithoutChannel", 1, 0)]
+		[TestCase("notification-profiles", "notificationMembersMissingProfile", 1, 0)]
 		[TestCase("policy-references", "unavailablePolicyReferences", 1, 0)]
 		[TestCase("policy-expiry", "policyReferencesExpiring30Days", 1, 0)]
 		[TestCase("site-references", "unavailableSiteReferences", 1, 0)]

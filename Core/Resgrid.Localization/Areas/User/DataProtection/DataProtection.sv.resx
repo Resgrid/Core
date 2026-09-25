@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>Varje ändring loggas med vem som gjorde den och när.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>Resgrid-assistenten kan inte använda er avdelnings eget AI-leverantörsabonnemang (egen nyckel); den använder Resgrids egen AI, och en sparad leverantör används inte.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>Jag förstår att Resgrid-assistenten, från att registreringen köas tills skyddet är helt avaktiverat, inte kan använda min avdelnings eget AI-leverantörsabonnemang (egen nyckel) och i stället använder Resgrids egen AI.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>Er avdelning har en egen AI-leverantör sparad för chattboten ({0}). När registreringen har köats slutar chattboten använda den inom fem minuter och använder Resgrids egen AI. Den sparade leverantören tas inte bort.</value>
+  </data>
 </root>

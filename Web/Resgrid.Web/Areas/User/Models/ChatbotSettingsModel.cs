@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Resgrid.Chatbot.NLU;
+using Resgrid.Model.Services;
 using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Models
@@ -26,8 +29,9 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public int? MessagesPerDepartmentPerMinute { get; set; }
 
-		// Department's own LLM/AI provider (optional). When set, the chatbot keeps this department's
-		// processing with their provider instead of the Resgrid system LLM.
+		// Department's own LLM/AI provider (optional, bring your own key). When set and the department has the
+		// Enhanced AI add-on, the chatbot keeps this department's processing with their provider instead of the
+		// Resgrid system LLM.
 		[StringLength(500, ErrorMessage = "API endpoint cannot exceed 500 characters.")]
 		public string LlmApiEndpoint { get; set; }
 
@@ -45,5 +49,21 @@ namespace Resgrid.Web.Areas.User.Models
 
 		/// <summary>True when an LLM API key is already stored (so the UI can indicate it without exposing it).</summary>
 		public bool HasLlmApiKey { get; set; }
+
+		/// <summary>UI helper only: the preset chosen in the provider list. The provider is inferred from the endpoint on read.</summary>
+		public string ProviderId { get; set; }
+
+		/// <summary>Clears the saved endpoint, model and key. Always allowed, with or without the Enhanced AI add-on.</summary>
+		public bool RemoveLlmProvider { get; set; }
+
+		/// <summary>Whether the department may use its own provider, and why not (Enhanced AI add-on, Advanced Data Protection).</summary>
+		public OwnLlmProviderStatus OwnProviderStatus { get; set; } = OwnLlmProviderStatus.Unknown;
+
+		public bool OwnProviderAllowed => OwnProviderStatus == OwnLlmProviderStatus.Allowed;
+
+		/// <summary>The last save kept everything except a provider change the department is not entitled to.</summary>
+		public bool OwnProviderNotApplied { get; set; }
+
+		public IReadOnlyList<LlmProviderPreset> Providers { get; set; } = LlmProviderCatalog.All;
 	}
 }

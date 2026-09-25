@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Checklists;
@@ -41,7 +42,12 @@ namespace Resgrid.Tests.Services
             _store.All<WorkOrderOperationReceipt>().Should().ContainSingle();
             await FluentActions.Awaiting(()=>_service.SavePolicyAsync(_actor,policy)).Should().ThrowAsync<WorkOrderException>();
             await FluentActions.Awaiting(()=>_service.PolicyAsync(new() {DepartmentId=77,UserId="technician"})).Should().ThrowAsync<WorkOrderException>();
-            JsonConvert.SerializeObject(_events.Single().Payload).Should().NotContain("Threshold").And.NotContain("100");
+            // The event carries identifiers and the revision, never the policy: no Threshold field, and no numeric value equal
+            // to the 100 spending threshold. Only numbers are compared, because the PolicyId GUID can contain "100" by chance.
+            var payload = JObject.FromObject(_events.Single().Payload);
+            payload.ToString(Formatting.None).Should().NotContain("Threshold");
+            payload.Descendants().OfType<JValue>().Where(v => v.Type is JTokenType.Integer or JTokenType.Float)
+                .Select(v => v.Value<decimal>()).Should().NotContain(100m);
             _events.Single().Trigger.Should().Be(WorkflowTriggerEventType.WorkOrderPolicyChanged);
         }
         [Test]

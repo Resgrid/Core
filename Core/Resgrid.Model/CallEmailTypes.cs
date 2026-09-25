@@ -23,6 +23,8 @@
 		RandR = 19,
 		Active911 = 20,
 		OttawaCounty = 21,
-		OttawaKingstonToronto = 22
+		OttawaKingstonToronto = 22,
+		/// <summary>AI dispatch (registry §4D). Enrich mode: the call is built by GenericTemplate and dispatched as today, then enriched off-thread by the aidispatchtriage worker.</summary>
+		AI = 23
 	}
 }

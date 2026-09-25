@@ -65,7 +65,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Logging.ClearProviders();
 			builder.WebHost.UseUrls("http://127.0.0.1:0");
 			builder.Services.AddHttpContextAccessor();
-			builder.Services.AddLocalization();
+			builder.Services.AddLocalization(); builder.Services.AddAdminAssistFieldHelpStubs();
 			builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
 			builder.Services.AddAuthentication("hydrant-test").AddScheme<AuthenticationSchemeOptions, TestAuthentication>("hydrant-test", _ => { });
 			builder.Services.AddAuthorization(o => {

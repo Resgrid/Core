@@ -33,7 +33,12 @@ namespace Resgrid.Web.Helpers
 			if (!http.Items.TryGetValue(key, out var cached))
 			{
 				var actor = new AdminAssistActor(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId(), CultureInfo.CurrentUICulture.Name);
-				cached = await access.CanAccessAsync(actor, true, http.RequestAborted) || await access.CanAccessAsync(actor, false, http.RequestAborted);
+				try
+				{
+					cached = await access.CanAccessAsync(actor, true, http.RequestAborted) || await access.CanAccessAsync(actor, false, http.RequestAborted);
+				}
+				catch (OperationCanceledException) { throw; }
+				catch (Exception) { cached = false; } // Optional help never blocks the owning editor; cached so later fields skip the check.
 				http.Items[key] = cached;
 			}
 			if (cached is not true) return;

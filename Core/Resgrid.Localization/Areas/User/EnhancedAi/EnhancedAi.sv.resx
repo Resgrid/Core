@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Tillägget Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>Ett månadstillägg som ger Resgrid AI-svar och AI-utkast. Det körs på servrar som drivs av Resgrid med modeller med öppna vikter. Endast avdelningens ansvariga medlem kan köpa eller avsluta det.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist med AI utan månatligt frågetak</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Svar från assistenten och frågor om insatsen på den aktiva ledningstavlan</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Utkast till insatsrapporter, efteranalyser och ICS-201-genomgångar som en person granskar och signerar</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Larmsammanfattningar byggda från insatsplaner, risker, brandposter, vädervarningar och tidigare larm</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Svar om avdelningens egna dokument och rutiner, med källhänvisningar</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>Kommer senare: AI-stöd för larmhantering, transkribering av larmljud och semantisk sökning.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Innehåller en månatlig AI-användningsbudget. Om er avdelning når den återgår AI-funktionerna till standardupplevelsen fram till nästa månad. Inga extra avgifter tillkommer.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>Er avdelnings data skickas inte till externa AI-leverantörer och används inte för att träna AI-modeller. AI ändrar aldrig er konfiguration eller era poster på egen hand.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Kostnadsfria frågor i Admin Assist</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Varje avdelning kan ställa {0} frågor till Admin Assist under de {1} dagarna efter sin första besvarade fråga och därefter {2} frågor per kalendermånad. Oanvända frågor sparas inte, och endast besvarade frågor räknas.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Enhanced AI är aktivt för er avdelning.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Enhanced AI håller på att aktiveras för er avdelning. Funktionerna visas när de slås på.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Er avdelning har inte Enhanced AI ännu.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Enhanced AI går inte att köpa för er avdelning ännu.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Betald till</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Förnyelsen avbruten; åtkomsten fortsätter till betalperiodens slut.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Köp</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Avbryt förnyelse</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Avbryta förnyelsen av Enhanced AI?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Fakturering är inte tillgänglig just nu. Försök igen senare.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Hantera prenumeration</value></data>
+  <data name="Monthly" xml:space="preserve"><value>månad</value></data>
+  <data name="Links" xml:space="preserve"><value>Länkar</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Hantera Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>per avdelning</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Tillägget Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Ger Resgrid AI-svar och AI-utkast: Admin Assist med AI utan frågetak, frågor om insatser, utkast till rapporter och genomgångar samt larmsammanfattningar. Faktureras månadsvis, separat från er Resgrid-plan. Endast avdelningens ansvariga medlem kan köpa eller avsluta det.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist med AI</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Frågor om insatser</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Utkast till rapporter och genomgångar</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Larmsammanfattningar</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Körs på Resgrids servrar</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>Chattboten med er egen AI-leverantörs abonnemang (egen nyckel), om ni föredrar det framför Resgrids AI</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Egen AI-leverantör</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>Resgrids AI kör modeller med öppna vikter, för närvarande Qwen3, på hårdvara som Resgrid äger och driver. Resgrid skickar aldrig era data till AI-leverantörer i molnet.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Er egen AI-leverantör (egen nyckel)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>Med Enhanced AI kan er avdelning ansluta ett eget abonnemang hos en AI-leverantör som OpenAI, Anthropic, Google Gemini, Azure OpenAI eller Mistral, eller en modellserver som ni själva driver. Chattboten skickar då avdelningens meddelanden till den leverantören enligt ert avtal med den. Lämna fälten tomma för att använda Resgrids egen AI, som aldrig skickar era data till AI-leverantörer i molnet.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>Att använda en egen AI-leverantörs abonnemang kräver tillägget Enhanced AI.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Den sparade leverantören används inte. Chattboten använder Resgrids egen AI tills Enhanced AI är aktivt.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Era övriga inställningar sparades, men inte ändringen av AI-leverantör, eftersom den kräver tillägget Enhanced AI.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Leverantör</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Välj en leverantör</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Annan OpenAI-kompatibel slutpunkt</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>När ni väljer en leverantör fylls dess slutpunkt i. För Azure OpenAI ersätter ni {resource} och {deployment} med era egna värden.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>Den fullständiga URL:en för förfrågan. Den måste använda https och en offentlig adress.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Ange modellnamnet exakt som er leverantör anger det.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Ta bort den sparade leverantören och API-nyckeln</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Er egen AI-leverantör kan inte användas medan Advanced Data Protection är aktiverat för er avdelning, så att skyddade data aldrig lämnar Resgrid. Chattboten använder Resgrids egen AI, och en sparad leverantör används inte.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Ert tillägg Enhanced AI kunde inte bekräftas just nu, så chattboten använder Resgrids egen AI. Försök igen senare.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Era övriga inställningar sparades, men inte ändringen av AI-leverantör.</value></data>
+</root>

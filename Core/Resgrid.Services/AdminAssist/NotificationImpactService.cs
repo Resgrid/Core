@@ -73,7 +73,9 @@ namespace Resgrid.Services.AdminAssist
 			if (rows.Count > 500 || rows.Any(s => s.DepartmentId != departmentId)) throw new InvalidOperationException();
 			var row = rows.SingleOrDefault(s => s.SettingType == (int)DepartmentSettingTypes.StaffingSuppressStaffingLevels);
 			var value = row == null ? new DepartmentSuppressStaffingInfo() : ObjectSerialization.Deserialize<DepartmentSuppressStaffingInfo>(row.Setting) ?? throw new InvalidOperationException();
-			if (value.StaffingLevelsToSupress == null || value.StaffingLevelsToSupress.Count > 1000) throw new InvalidOperationException();
+			// No selected levels is a valid saved state; CommunicationTestService treats a null list the same way.
+			value.StaffingLevelsToSupress ??= new List<int>();
+			if (value.StaffingLevelsToSupress.Count > 1000) throw new InvalidOperationException();
 			return value;
 		}
 		private static bool BroadcastBlocked(int departmentId) => Config.SystemBehaviorConfig.DoNotBroadcast &&

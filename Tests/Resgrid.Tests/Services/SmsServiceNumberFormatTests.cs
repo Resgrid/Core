@@ -25,6 +25,7 @@ namespace Resgrid.Tests.Services
 	{
 		private Mock<ITextMessageProvider> _textMessageProvider;
 		private Mock<IEmailSender> _emailSender;
+		private Mock<ISubscriptionsService> _subscriptions;
 		private SmsService _service;
 
 		[SetUp]
@@ -32,6 +33,7 @@ namespace Resgrid.Tests.Services
 		{
 			_textMessageProvider = new Mock<ITextMessageProvider>();
 			_emailSender = new Mock<IEmailSender>();
+			_subscriptions = new Mock<ISubscriptionsService>();
 
 			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = false;
 			Resgrid.Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Clear();
@@ -42,7 +44,7 @@ namespace Resgrid.Tests.Services
 				_textMessageProvider.Object,
 				new Mock<IDepartmentSettingsService>().Object,
 				_emailSender.Object,
-				new Mock<ISubscriptionsService>().Object,
+				_subscriptions.Object,
 				new Mock<ICacheProvider>().Object,
 				// The real processor: deterministic, no I/O, and the point of the test is that the
 				// service asks it for the correct form.
@@ -68,6 +70,31 @@ namespace Resgrid.Tests.Services
 			(await _service.SendProtectedDispatchChallengeAsync(profile, 7, "+15555550100", "OPEN challenge")).Should().BeFalse();
 			_textMessageProvider.Verify(p => p.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Pin_challenge_honors_the_broadcast_kill_switch_and_the_plan_sms_gate()
+		{
+			var profile = Profile("+12705550101", MobileCarriers.None);
+			profile.SendSms = true;
+			profile.MobileNumberVerified = true;
+			_textMessageProvider.Setup(p => p.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<MobileCarriers>(), It.IsAny<int>(), false, false, 0)).ReturnsAsync(true);
+			_subscriptions.Setup(s => s.CanPlanSendCallSms(1)).Returns(false);
+
+			(await _service.SendProtectedDispatchChallengeAsync(profile, 7, "+15555550100", "OPEN challenge", new Payment { PlanId = 1 })).Should().BeFalse();
+			try
+			{
+				Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = true;
+				(await _service.SendProtectedDispatchChallengeAsync(profile, 7, "+15555550100", "OPEN challenge")).Should().BeFalse();
+			}
+			finally
+			{
+				Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = false;
+			}
+
+			_textMessageProvider.Verify(p => p.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
 		}
 
 		private static UserProfile Profile(string mobileNumber, MobileCarriers carrier) => new UserProfile

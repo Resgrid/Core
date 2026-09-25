@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>KI-Alarmierung</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Einstellungen der KI-Alarmierung</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>Aktivität der KI-Alarmierung</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Anreicherungsmodus: Einsätze werden genau wie bisher angelegt und alarmiert, danach ergänzt die KI noch leere Angaben. Sie ändert nie die Priorität oder die Alarmierten und alarmiert niemanden erneut.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>Die KI-Alarmierung ist für Ihre Abteilung aktiv.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>Die KI-Alarmierung ist in dieser Resgrid-Installation nicht aktiviert.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>Die KI-Alarmierung erfordert das Add-on Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>Wählen Sie zum Start "Generic with AI enrichment (Enhanced AI)" als Format für Alarmierungs-E-Mails.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>Das KI-Modell dieser Installation ist noch nicht konfiguriert.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>Was die KI tun darf</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Leeren Einsatztyp ergänzen</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Leere Adresse und Kartenposition ergänzen</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Leeren Kontaktnamen und leere Kontaktnummer ergänzen</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Leere Einsatznummer ergänzen</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Einsätze umbenennen, die mit dem Titel "Dispatch Email" eingehen</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>KI-Zusammenfassung mit vorgeschlagener Priorität als Notiz hinzufügen</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Mögliche Duplikate und Nachrichten, die keine Alarmierung sind, markieren</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Schutzmaßnahmen</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Mindestsicherheit (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>Unterhalb dieser Sicherheit ändert die KI nichts. Leer lassen, um den Standardwert von {0} % zu verwenden. Zulässiger Bereich: 50–95 %.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Zulässige Absender</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>Eine E-Mail-Adresse oder Domain pro Zeile, zum Beispiel cad.county.gov. Nur Nachrichten dieser Absender werden angereichert; jede Nachricht erzeugt weiterhin einen Einsatz. Leer lassen, um alle Absender zuzulassen.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Monatliches Token-Limit der KI-Alarmierung</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Optionales Limit innerhalb des Enhanced-AI-Budgets Ihrer Abteilung. Leer lassen für kein eigenes Limit. Diesen Monat verbraucht: {0} Tokens.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Aktivitätsverlauf</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Aktivität aufbewahren (Tage)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Zwischen 30 und 1.095 Tagen. Ältere Aktivität wird automatisch entfernt.</value></data>
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Saved" xml:space="preserve"><value>Die Einstellungen der KI-Alarmierung wurden gespeichert.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>Ein anderer Administrator hat diese Einstellungen geändert. Prüfen Sie die aktuellen Werte und speichern Sie erneut.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>Die Mindestsicherheit muss zwischen 50 % und 95 % liegen.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>Die Aufbewahrungsdauer muss zwischen 30 und 1.095 Tagen liegen.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>Das monatliche Token-Limit muss zwischen 8.192 und 50.000.000 liegen.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Jeder zulässige Absender muss eine E-Mail-Adresse oder eine Domain sein.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Geben Sie höchstens 50 zulässige Absender ein.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>Aktivität der KI-Alarmierung anzeigen</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Einstellungen für Alarmierungs-E-Mails</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Zuletzt aktualisiert: {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Hier werden nur Ergebnisse gespeichert, nie die Nachricht oder die Antwort der KI. Öffnen Sie einen Einsatz, um zu sehen, was ergänzt wurde.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>Noch keine Aktivität der KI-Alarmierung.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>Letzte 30 Tage</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>Tokens der KI-Alarmierung in diesem Monat</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Übersprungen oder unverändert</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>Wann</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Ergebnis</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Sicherheit</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Ergänzt</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Abgelehnt</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Möglicherweise verwandt</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>KI-Dauer</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Tokens</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Abgelehnt zählt Werte, die die KI zurückgegeben hat, die aber nicht zulässig waren oder nicht in der Nachricht standen.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Angereichert</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Nichts zu ergänzen</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Geringe Sicherheit</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Unbrauchbare KI-Antwort</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>KI nicht verfügbar</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>KI ausgelastet</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Enhanced-AI-Budget aufgebraucht</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>Limit der KI-Alarmierung erreicht</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Übersprungen: Datenschutz</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Einsatz nicht mehr aktiv</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Absender nicht zulässig</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>In Bearbeitung</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Einsatztyp</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Kartenposition</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Kontaktname</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Kontaktnummer</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Einsatznummer</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Notiz</value></data>
+</root>

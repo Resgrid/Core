@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Add-on Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>Ein monatliches Add-on, das KI-Antworten und KI-Entwürfe in Resgrid bringt. Es läuft auf von Resgrid betriebenen Servern mit Open-Weight-Modellen. Nur das verwaltende Mitglied der Abteilung kann es kaufen oder kündigen.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist mit KI ohne monatliche Fragenbegrenzung</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Antworten des Assistenten und Fragen zum Einsatz auf der aktuellen Einsatzführungstafel</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Entwürfe für Einsatzberichte, Nachbesprechungen und ICS-201-Lagebesprechungen, die eine Person prüft und unterzeichnet</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Einsatzübersichten aus Einsatzplänen, Gefahren, Hydranten, Wetterwarnungen und früheren Einsätzen</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Antworten zu den eigenen Dokumenten und Protokollen Ihrer Abteilung, mit Quellenangaben</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>Demnächst: KI-Unterstützung für die Alarmierung, Transkription von Alarmierungsaudio und semantische Suche.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Enthält ein monatliches KI-Nutzungsbudget. Wenn Ihre Abteilung es erreicht, wechseln die KI-Funktionen bis zum nächsten Monat zur Standardfunktion zurück. Es fallen keine Zusatzkosten an.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>Die Daten Ihrer Abteilung werden nicht an externe KI-Anbieter gesendet und nicht zum Training von KI-Modellen verwendet. Die KI ändert Ihre Konfiguration oder Ihre Datensätze nie eigenständig.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Kostenlose Fragen an Admin Assist</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Jede Abteilung kann Admin Assist in den {1} Tagen nach ihrer ersten beantworteten Frage {0} Fragen stellen, danach {2} Fragen pro Kalendermonat. Nicht genutzte Fragen verfallen, und nur beantwortete Fragen werden gezählt.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Enhanced AI ist für Ihre Abteilung aktiv.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Enhanced AI wird für Ihre Abteilung freigeschaltet. Die Funktionen erscheinen, sobald sie aktiviert werden.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Ihre Abteilung hat Enhanced AI noch nicht.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Enhanced AI kann für Ihre Abteilung noch nicht gekauft werden.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Bezahlt bis</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Verlängerung gekündigt; der Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Kaufen</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Verlängerung kündigen</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Die Verlängerung von Enhanced AI kündigen?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Die Abrechnung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Abonnement verwalten</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Monat</value></data>
+  <data name="Links" xml:space="preserve"><value>Links</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Enhanced AI verwalten</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>pro Abteilung</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Add-on Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Bringt KI-Antworten und KI-Entwürfe in Resgrid: Admin Assist mit KI ohne Fragenbegrenzung, Fragen zu Einsätzen, Entwürfe für Berichte und Lagebesprechungen sowie Einsatzübersichten. Monatliche Abrechnung, getrennt von Ihrem Resgrid-Tarif. Nur das verwaltende Mitglied Ihrer Abteilung kann es kaufen oder kündigen.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist mit KI</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Fragen zu Einsätzen</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Berichts- und Besprechungsentwürfe</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Einsatzübersichten</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Läuft auf Resgrid-Servern</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>Der Chatbot mit dem Abonnement Ihres eigenen KI-Anbieters (eigener Schlüssel), wenn Sie ihn der KI von Resgrid vorziehen</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Eigener KI-Anbieter</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>Die KI von Resgrid nutzt Open-Weight-Modelle, derzeit Qwen3, auf Hardware, die Resgrid besitzt und betreibt. Resgrid sendet Ihre Daten nie an Cloud-KI-Anbieter.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Ihr eigener KI-Anbieter (eigener Schlüssel)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>Mit Enhanced AI kann Ihre Abteilung ein eigenes Abonnement bei einem KI-Anbieter wie OpenAI, Anthropic, Google Gemini, Azure OpenAI oder Mistral oder einen selbst betriebenen Modellserver verbinden. Der Chatbot sendet die Nachrichten dieser Abteilung dann gemäß Ihrer Vereinbarung mit diesem Anbieter an ihn. Lassen Sie diese Felder leer, um die eigene KI von Resgrid zu nutzen, die Ihre Daten nie an Cloud-KI-Anbieter sendet.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>Für das Abonnement eines eigenen KI-Anbieters ist das Add-on Enhanced AI erforderlich.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Ihr gespeicherter Anbieter wird nicht verwendet. Der Chatbot nutzt die eigene KI von Resgrid, bis Enhanced AI aktiv ist.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Ihre übrigen Einstellungen wurden gespeichert, die Änderung des KI-Anbieters jedoch nicht, da sie das Add-on Enhanced AI erfordert.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Anbieter</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Anbieter auswählen</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Anderer OpenAI-kompatibler Endpunkt</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>Bei der Auswahl eines Anbieters wird dessen Endpunkt eingetragen. Ersetzen Sie bei Azure OpenAI {resource} und {deployment} durch Ihre eigenen Werte.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>Die vollständige Anfrage-URL. Sie muss https und eine öffentliche Adresse verwenden.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Geben Sie den Modellnamen genau so ein, wie Ihr Anbieter ihn angibt.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Gespeicherten Anbieter und API-Schlüssel entfernen</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Ihr eigener KI-Anbieter kann nicht verwendet werden, solange Advanced Data Protection für Ihre Abteilung aktiv ist, damit geschützte Daten Resgrid nie verlassen. Der Chatbot nutzt die eigene KI von Resgrid, und ein gespeicherter Anbieter bleibt ungenutzt.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Ihr Add-on Enhanced AI konnte gerade nicht bestätigt werden, daher nutzt der Chatbot die eigene KI von Resgrid. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Ihre übrigen Einstellungen wurden gespeichert, die Änderung des KI-Anbieters jedoch nicht.</value></data>
+</root>

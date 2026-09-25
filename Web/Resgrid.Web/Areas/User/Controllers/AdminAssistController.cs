@@ -4,13 +4,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.AdminAssist;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
 	[Authorize]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-	public sealed class AdminAssistController(IAdminAssistAccessService access, IAdminAssistService service) : SecureBaseController
+	public sealed class AdminAssistController(IAdminAssistAccessService access, IAdminAssistService service,
+		IDepartmentDataProtectionService protection) : SecureBaseController
 	{
 		[HttpGet]
 		public Task<IActionResult> Index(CancellationToken cancellationToken) => PageAsync("overview", false, cancellationToken);
@@ -18,6 +20,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public Task<IActionResult> SetupWizard(CancellationToken cancellationToken) => PageAsync("wizard", true, cancellationToken);
 		[HttpGet]
 		public Task<IActionResult> SetupReport(CancellationToken cancellationToken) => PageAsync("report", true, cancellationToken);
+
+		[HttpGet]
+		public async Task<IActionResult> ReviewCalendar(CancellationToken cancellationToken)
+		{
+			try
+			{
+				var overview = await service.GetOverviewAsync(new AdminAssistActor(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name), true, cancellationToken);
+				if (!overview.Workspace.RevisitOnUtc.HasValue) return NotFound();
+				var resources = new System.Resources.ResourceManager(typeof(Resgrid.Localization.Areas.User.AdminAssist.AdminAssist));
+				var content = Resgrid.AdminAssist.SetupReviewCalendar.Create(DepartmentId, System.DateTime.SpecifyKind(overview.Workspace.RevisitOnUtc.Value, System.DateTimeKind.Utc), System.DateTime.UtcNow,
+					resources.GetString("Ui.SetupReviewReminder", CultureInfo.CurrentUICulture), resources.GetString("Ui.SetupReviewReminderHelp", CultureInfo.CurrentUICulture));
+				return File(System.Text.Encoding.UTF8.GetBytes(content), "text/calendar; charset=utf-8", "resgrid-setup-review.ics");
+			}
+			catch (System.UnauthorizedAccessException) { return Forbid(); }
+		}
 
 		[HttpGet]
 		public async Task<IActionResult> PrintReport(bool setup, CancellationToken cancellationToken)
@@ -56,6 +73,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await access.CanAccessAsync(actor, setup, ct)) return NotFound();
 			ViewBag.AdminAssistPage = page;
 			ViewBag.AdminAssistSetup = setup;
+			ViewBag.AdminAssistProtected = await protection.IsProtectionEnforcedAsync(DepartmentId).WaitAsync(ct);
 			return View("Index");
 		}
 	}

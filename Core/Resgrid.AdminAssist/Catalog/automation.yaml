@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "automation",
@@ -634,7 +634,7 @@
       "Body": "Chatbot Department Config / Is Enabled. Department chatbot availability. Platform feature rollout, account linking and action permissions are separate gates.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-isenabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -645,7 +645,7 @@
       "Body": "Chatbot Department Config / Allowed Platforms. Allowed chatbot platform codes; the stored asterisk represents the platform default. Review each connected provider and its account-linking requirements.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-allowedplatforms",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -656,7 +656,7 @@
       "Body": "Chatbot Department Config / Max Sessions Per User. Maximum chatbot sessions per member in supported consumers. This is separate from authenticated web/mobile session limits.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-maxsessionsperuser",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -667,7 +667,7 @@
       "Body": "Chatbot Department Config / Session Ttl Minutes. Chatbot session lifetime in minutes. Expiry does not revoke an unrelated Resgrid sign-in session.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-sessionttlminutes",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -678,7 +678,7 @@
       "Body": "Chatbot Department Config / Allow Dispatch Via Chatbot. Permits supported chatbot dispatch actions subject to their own authorization and confirmation. Enabling it may allow real calls and pages.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-allowdispatchviachatbot",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -689,7 +689,7 @@
       "Body": "Chatbot Department Config / Require Confirmation For Status Change. Requests confirmation for supported status changes. Review each platform consumer before assuming all commands are covered.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-requireconfirmationforstatuschange",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -700,7 +700,7 @@
       "Body": "Chatbot Department Config / Llm Api Endpoint. Optional existing chatbot model endpoint. Phase 0 Admin Assist does not call it and does not use chatbot configuration as an AI entitlement.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-llmapiendpoint",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -711,7 +711,7 @@
       "Body": "Chatbot Department Config / Llm Api Key. Credential for the chatbot model provider. Never copy it into setup metadata or public reference content.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-llmapikey",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -722,7 +722,7 @@
       "Body": "Chatbot Department Config / Llm Model Name. Model identifier used by the existing chatbot integration. This is separate from the later Admin Assist open-source inference deployment.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-llmmodelname",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -733,7 +733,7 @@
       "Body": "Chatbot Department Config / Messages Per User Per Minute. Optional per-member chatbot rate bound. Review provider limits and burst behavior; this is not a delivery guarantee.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-messagesperuserperminute",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -744,7 +744,7 @@
       "Body": "Chatbot Department Config / Messages Per Department Per Minute. Optional department chatbot rate bound. Consider shared demand and provider quotas before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-messagesperdepartmentperminute",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -755,7 +755,7 @@
       "Body": "Chatbot Department Config / Require Linking Confirmation. Requires confirmation in the supported account-linking flow. Linking must not bypass verified identity or departmental authorization.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-requirelinkingconfirmation",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -766,7 +766,7 @@
       "Body": "Chatbot Department Config / Proactive Notifications Enabled. Allows supported proactive chatbot notifications. Recipient permissions, channel configuration and sending workflows remain authoritative.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-chatbotdepartmentconfig-proactivenotificationsenabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -777,7 +777,7 @@
       "Body": "Workflows Automations triggered by department events Reduce repeated administrative work while retaining ownership and review of external effects. Review a Workflow and its permissions before explicitly enabling it. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "workflows",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -788,7 +788,7 @@
       "Body": "New Workflow Create an automation workflow Reduce repeated administrative work while retaining ownership and review of external effects. Review a Workflow and its permissions before explicitly enabling it. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-workflow",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -799,7 +799,7 @@
       "Body": "Workflow Runs Workflow execution history Reduce repeated administrative work while retaining ownership and review of external effects. Review a Workflow and its permissions before explicitly enabling it. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "workflow-runs",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -810,7 +810,7 @@
       "Body": "Protected workflows Configure approved releases to supported external workflow destinations. Keep protected-data egress scoped, reviewed and auditable. Review a Workflow and its permissions before explicitly enabling it. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "protected-workflows",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -821,7 +821,7 @@
       "Body": "User-defined fields Define additional fields for supported forms and records. Collect the information the department actually needs with appropriate classification. Review a Workflow and its permissions before explicitly enabling it. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "user-defined-fields",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -832,7 +832,7 @@
       "Body": "API and MCP integrations Use supported APIs and MCP with authorized credentials and permissions. Connect approved systems without placing credentials in setup examples. Review a Workflow and its permissions before explicitly enabling it. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "api-mcp",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -843,7 +843,7 @@
       "Body": "Import and migration planning Plan source ownership and review existing import tools before copying data. Avoid duplicate resources and verify resulting configuration in Setup Report. Review a Workflow and its permissions before explicitly enabling it. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "import-migration",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

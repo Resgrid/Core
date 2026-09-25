@@ -71,6 +71,15 @@ namespace Resgrid.Providers.Bus.Rabbit
 				requirePublisherConfirmation: true);
 		}
 
+		public async Task<bool> EnqueueAiDispatchTriage(AiDispatchQueueItem aiDispatchQueue)
+		{
+			string serializedObject = ObjectSerialization.Serialize(aiDispatchQueue);
+
+			// No publisher confirmation: in Enrich mode the call has already been created and dispatched, so a lost
+			// enrichment is never a lost dispatch, and the inbound webhook should not wait on the broker for it.
+			return await SendMessage(ServiceBusConfig.AiDispatchTriageQueueName, serializedObject);
+		}
+
 		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(messageQueue);

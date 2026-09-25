@@ -28,6 +28,12 @@ namespace Resgrid.Web.Areas.User.Models.DataProtection
 		/// <summary>Shallow broker /health probe result (wizard preflight step 4).</summary>
 		public bool BrokerHealthy { get; set; }
 
+		/// <summary>
+		/// The provider the department has saved for the chatbot (bring your own key), for the wizard's warning that
+		/// enrollment turns it off; null when none is saved.
+		/// </summary>
+		public string OwnAiProviderName { get; set; }
+
 		/// <summary>The managing member has an authenticator enrolled (step-up depends on it).</summary>
 		public bool ManagingMemberHasMfa { get; set; }
 

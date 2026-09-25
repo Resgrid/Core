@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
+using Resgrid.Chatbot.NLU;
 using Resgrid.Chatbot.Services;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -229,7 +230,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// Gets this department's chatbot configuration (admin). The LLM API key is never returned;
-		/// callers see only whether one is configured.
+		/// callers see only whether one is configured. ownLlmProviderAllowed says whether a saved
+		/// provider is in use; ownLlmProviderStatus says why not (AddonRequired, DataProtectionEnabled,
+		/// Unknown).
 		/// </summary>
 		[HttpGet("Config")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -241,6 +244,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Unauthorized();
 
 				var config = await _departmentConfigService.GetConfigAsync(DepartmentId);
+				var ownLlmProviderStatus = await _departmentConfigService.GetLlmOverrideStatusAsync(DepartmentId, bypassCache: true);
 
 				return Ok(new
 				{
@@ -257,7 +261,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					messagesPerDepartmentPerMinute = config?.MessagesPerDepartmentPerMinute,
 					llmApiEndpoint = config?.LlmApiEndpoint,
 					llmModelName = config?.LlmModelName,
-					hasLlmApiKey = !string.IsNullOrWhiteSpace(config?.LlmApiKey)
+					hasLlmApiKey = !string.IsNullOrWhiteSpace(config?.LlmApiKey),
+					llmProviderId = string.IsNullOrWhiteSpace(config?.LlmApiEndpoint) ? null : LlmProviderCatalog.Infer(config.LlmApiEndpoint).Id,
+					ownLlmProviderAllowed = ownLlmProviderStatus == OwnLlmProviderStatus.Allowed,
+					ownLlmProviderStatus = ownLlmProviderStatus.ToString()
 				});
 			}
 			catch (Exception ex)
@@ -268,13 +275,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Lists the LLM providers a department can connect with its own subscription (bring your own
+		/// key): preset endpoint, an example model and whether the endpoint has placeholders to fill in.
+		/// </summary>
+		[HttpGet("LlmProviders")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<IActionResult> GetLlmProviders()
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			return Ok(LlmProviderCatalog.All.Select(p => new
+			{
+				id = p.Id,
+				name = p.Name,
+				endpoint = p.Endpoint,
+				exampleModel = p.ExampleModel,
+				format = p.Format.ToString(),
+				isTemplate = p.IsTemplate
+			}));
+		}
+
+		/// <summary>
 		/// Creates or updates this department's chatbot configuration (admin). A department may set
-		/// its own LLM endpoint/key/model so its NLU processing stays with their provider. For the
-		/// key: omit (null) to keep the existing one, send "" to clear it, or send a value to set it.
+		/// its own LLM endpoint/key/model so its NLU processing stays with their provider; that needs
+		/// the Enhanced AI add-on on Resgrid's hosted service and is never allowed under Advanced Data
+		/// Protection (403 otherwise; 503 when entitlement cannot be read). Resending the saved
+		/// endpoint and model, or clearing them, is always allowed. For the key: omit (null) to keep
+		/// the existing one, send "" to clear it, or send a value to set it.
 		/// </summary>
 		[HttpPut("Config")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
 		public async Task<IActionResult> UpdateConfig([FromBody] ChatbotConfigRequest request)
 		{
 			try
@@ -285,8 +319,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 					return Unauthorized();
 
+				var existing = await _departmentConfigService.GetConfigAsync(DepartmentId, bypassCache: true);
+				if (LlmProviderCatalog.SetsNewProvider(existing?.LlmApiEndpoint, existing?.LlmModelName, request.LlmApiEndpoint, request.LlmModelName, request.LlmApiKey))
+				{
+					switch (await _departmentConfigService.GetLlmOverrideStatusAsync(DepartmentId, bypassCache: true))
+					{
+						case OwnLlmProviderStatus.AddonRequired:
+							return StatusCode(StatusCodes.Status403Forbidden, new { error = "Using your own LLM provider requires the Enhanced AI add-on." });
+						case OwnLlmProviderStatus.DataProtectionEnabled:
+							return StatusCode(StatusCodes.Status403Forbidden, new { error = "Your own LLM provider cannot be used while Advanced Data Protection is on for this department." });
+						case OwnLlmProviderStatus.Unknown:
+							return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "Enhanced AI could not be confirmed right now. Try again later." });
+					}
+				}
+
 				if (!string.IsNullOrWhiteSpace(request.LlmApiEndpoint) &&
-					!Resgrid.Chatbot.NLU.LlmEndpointValidator.IsValid(request.LlmApiEndpoint, out var llmEndpointError))
+					!LlmEndpointValidator.IsValid(request.LlmApiEndpoint, out var llmEndpointError))
 					return BadRequest(new { error = llmEndpointError });
 
 				var config = new ChatbotDepartmentConfig

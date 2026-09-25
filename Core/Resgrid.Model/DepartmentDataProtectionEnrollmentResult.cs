@@ -32,6 +32,12 @@ namespace Resgrid.Model
 		/// department has none. Queuing anyway would stall forever: the worker reads an
 		/// unresolvable window time zone as permanently closed (invalid_window).
 		/// </summary>
-		InvalidWindow = 8
+		InvalidWindow = 8,
+
+		/// <summary>
+		/// The acknowledgement record does not acknowledge every current section 12 item, with lock consent, under the
+		/// current version (AdpEnrollmentAcknowledgements; acknowledgements_incomplete).
+		/// </summary>
+		AcknowledgementsIncomplete = 9
 	}
 }

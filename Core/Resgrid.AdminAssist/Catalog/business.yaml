@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "business",
@@ -862,7 +862,7 @@
       "Body": "BusinessOperations availability. Controls availability of business operations. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-businessoperationsdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -873,7 +873,7 @@
       "Body": "Invoices Customer invoices and payments Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "invoices",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -884,7 +884,7 @@
       "Body": "New Invoice Draft an invoice for a customer Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-invoice",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -895,7 +895,7 @@
       "Body": "Rate Cards Billing rates for units, personnel and fees Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "rate-cards",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -906,7 +906,7 @@
       "Body": "Accounts Receivable Aging Outstanding invoice balances by age Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "invoice-aging",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -917,7 +917,7 @@
       "Body": "Billing Settings Legal name, remit-to address and tax registrations printed on invoices Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "billing-settings",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -928,7 +928,7 @@
       "Body": "Online Payment Settings Connect your Stripe account to collect invoice payments online Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "online-payment-settings",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -939,7 +939,7 @@
       "Body": "Deployment Finance Deployments, rosters, daily time reports and expenses Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "deployments",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -950,7 +950,7 @@
       "Body": "New Deployment Create a deployment finance wrapper Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-deployment",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -961,7 +961,7 @@
       "Body": "Deployment From External Order Create a deployment from an open RMS mutual-aid order Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "deployment-from-external-order",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -972,7 +972,7 @@
       "Body": "Bids Priced estimates for customer contacts and contracts Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "bids",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -983,7 +983,7 @@
       "Body": "New Bid Draft a bid for a customer Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-bid",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -994,7 +994,7 @@
       "Body": "Contracts Service contracts, document requirements and compliance Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "contracts",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1005,7 +1005,7 @@
       "Body": "New Contract Create a service contract for a customer Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-contract",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1016,7 +1016,7 @@
       "Body": "Compliance Documents Insurance, workers' comp, SAM, licences and bonds with expiry alerts Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "compliance-documents",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1027,7 +1027,7 @@
       "Body": "Rate Schedules Contractor rate tables: certifications, crews, vehicles, equipment, premiums and policies Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "rate-schedules",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1038,7 +1038,7 @@
       "Body": "Cal OES MARS CFAA cost recovery readiness: agency, F-5 resources, annual rates and agreements Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "cal-oes-mars",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1049,7 +1049,7 @@
       "Body": "MARS Action Queue F-42 and expense claims to prepare, validate and hand off to the MARS portal Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "cal-oes-mars-queue",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1060,7 +1060,7 @@
       "Body": "MARS Annual Rates Salary Survey, Attachment A, Administrative Rate, Rate Letter and Special Equipment snapshots Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "cal-oes-mars-rates",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1071,7 +1071,7 @@
       "Body": "MARS Reconciliation Observed MARS invoices, local approval and payment reconciliation Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "cal-oes-mars-reconciliation",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1082,7 +1082,7 @@
       "Body": "Workforce Employer identity, establishments, workers, employments and job assignments Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "workforce",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1093,7 +1093,7 @@
       "Body": "Compensation Profiles Employee, role-default and department-default compensation with pay and employer-cost components Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "workforce-compensation",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1104,7 +1104,7 @@
       "Body": "Annual Pay Facts W-2 earnings and hours per employment for pay data reporting, with CSV import Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "workforce-annual-facts",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1115,7 +1115,7 @@
       "Body": "Resource Cost Profiles Depreciation, fuel, maintenance and fixed costs per unit or asset Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "resource-costs",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1126,7 +1126,7 @@
       "Body": "Field Cost Runs Internal loaded cost and margin for bids, calls and deployments Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "cost-runs",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1137,7 +1137,7 @@
       "Body": "California Pay Data Reporting CRD pay data report runs: snapshots, aggregation, validation, export and the portal worksheet Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and Advanced Data Protection in the Enabled state. Review regional applicability and protected workforce access.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "pay-data-reporting",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1148,7 +1148,7 @@
       "Body": "My Demographic Response Your voluntary self-identification for California pay data reporting Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "my-demographics",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

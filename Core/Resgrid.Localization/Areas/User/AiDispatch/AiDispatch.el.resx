@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>Διάθεση με τεχνητή νοημοσύνη</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Ρυθμίσεις διάθεσης με τεχνητή νοημοσύνη</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>Δραστηριότητα διάθεσης με τεχνητή νοημοσύνη</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Λειτουργία εμπλουτισμού: οι κλήσεις δημιουργούνται και διατίθενται ακριβώς όπως πριν, και στη συνέχεια η τεχνητή νοημοσύνη συμπληρώνει στοιχεία που είναι ακόμη κενά. Δεν αλλάζει ποτέ την προτεραιότητα ή το ποιοι διατίθενται και δεν ειδοποιεί ποτέ κανέναν ξανά.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>Η διάθεση με τεχνητή νοημοσύνη λειτουργεί για το τμήμα σας.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>Η διάθεση με τεχνητή νοημοσύνη δεν είναι ενεργοποιημένη σε αυτή την εγκατάσταση του Resgrid.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>Η διάθεση με τεχνητή νοημοσύνη απαιτεί το πρόσθετο Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>Για να ξεκινήσετε, επιλέξτε "Generic with AI enrichment (Enhanced AI)" ως μορφή του email διάθεσης.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>Το μοντέλο τεχνητής νοημοσύνης αυτής της εγκατάστασης δεν έχει ρυθμιστεί ακόμη.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>Τι μπορεί να κάνει η τεχνητή νοημοσύνη</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Συμπλήρωση κενού τύπου κλήσης</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Συμπλήρωση κενής διεύθυνσης και θέσης στον χάρτη</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Συμπλήρωση κενού ονόματος και αριθμού επικοινωνίας</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Συμπλήρωση κενού αριθμού συμβάντος</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Μετονομασία κλήσεων που φτάνουν με τίτλο "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>Προσθήκη σημείωσης σύνοψης τεχνητής νοημοσύνης με προτεινόμενη προτεραιότητα</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Επισήμανση πιθανών διπλότυπων και μηνυμάτων που δεν είναι διαθέσεις</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Δικλείδες ασφαλείας</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Ελάχιστη βεβαιότητα (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>Κάτω από αυτή τη βεβαιότητα η τεχνητή νοημοσύνη δεν αλλάζει τίποτα. Αφήστε το κενό για την προεπιλογή {0}%. Επιτρεπτό εύρος: 50–95%.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Επιτρεπόμενοι αποστολείς</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>Μία διεύθυνση email ή ένας τομέας ανά γραμμή, για παράδειγμα cad.county.gov. Εμπλουτίζονται μόνο τα μηνύματα από αυτούς τους αποστολείς· κάθε μήνυμα εξακολουθεί να δημιουργεί κλήση. Αφήστε το κενό για να επιτρέπονται όλοι οι αποστολείς.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Μηνιαίο όριο tokens διάθεσης με τεχνητή νοημοσύνη</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Προαιρετικό όριο μέσα στον προϋπολογισμό Enhanced AI του τμήματός σας. Αφήστε το κενό για κανένα ξεχωριστό όριο. Χρησιμοποιήθηκαν αυτόν τον μήνα: {0} tokens.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Ιστορικό δραστηριότητας</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Διατήρηση δραστηριότητας για (ημέρες)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Από 30 έως 1.095 ημέρες. Η παλαιότερη δραστηριότητα αφαιρείται αυτόματα.</value></data>
+  <data name="Save" xml:space="preserve"><value>Αποθήκευση</value></data>
+  <data name="Saved" xml:space="preserve"><value>Οι ρυθμίσεις διάθεσης με τεχνητή νοημοσύνη αποθηκεύτηκαν.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>Άλλος διαχειριστής άλλαξε αυτές τις ρυθμίσεις. Ελέγξτε τις τρέχουσες τιμές και αποθηκεύστε ξανά.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>Η ελάχιστη βεβαιότητα πρέπει να είναι από 50% έως 95%.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>Η διατήρηση δραστηριότητας πρέπει να είναι από 30 έως 1.095 ημέρες.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>Το μηνιαίο όριο tokens πρέπει να είναι από 8.192 έως 50.000.000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Κάθε επιτρεπόμενος αποστολέας πρέπει να είναι διεύθυνση email ή τομέας.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Εισαγάγετε έως 50 επιτρεπόμενους αποστολείς.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>Προβολή δραστηριότητας διάθεσης με τεχνητή νοημοσύνη</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Ρυθμίσεις email διάθεσης</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Τελευταία ενημέρωση: {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Εδώ διατηρούνται μόνο τα αποτελέσματα, ποτέ το μήνυμα ή η απάντηση της τεχνητής νοημοσύνης. Ανοίξτε μια κλήση για να δείτε τι συμπληρώθηκε.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>Δεν υπάρχει ακόμη δραστηριότητα διάθεσης με τεχνητή νοημοσύνη.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>Τελευταίες 30 ημέρες</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>Tokens διάθεσης με τεχνητή νοημοσύνη αυτόν τον μήνα</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Παραλείφθηκαν ή χωρίς αλλαγή</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>Πότε</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Κλήση</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Αποτέλεσμα</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Βεβαιότητα</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Συμπληρώθηκαν</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Απορρίφθηκαν</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Πιθανώς σχετική</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>Χρόνος ΤΝ</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Tokens</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Τα απορριφθέντα είναι τιμές που επέστρεψε η τεχνητή νοημοσύνη αλλά δεν επιτρέπονταν ή δεν υπήρχαν στο μήνυμα.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Εμπλουτίστηκε</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Τίποτα για προσθήκη</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Χαμηλή βεβαιότητα</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Μη αξιοποιήσιμη απάντηση ΤΝ</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>ΤΝ μη διαθέσιμη</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>ΤΝ απασχολημένη</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Εξαντλήθηκε ο προϋπολογισμός Enhanced AI</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>Επιτεύχθηκε το όριο διάθεσης με ΤΝ</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Παραλείφθηκε: προστασία δεδομένων</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Η κλήση δεν είναι πλέον ενεργή</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Μη επιτρεπόμενος αποστολέας</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>Σε εξέλιξη</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Τύπος κλήσης</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Διεύθυνση</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Θέση στον χάρτη</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Όνομα επικοινωνίας</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Αριθμός επικοινωνίας</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Αριθμός συμβάντος</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Όνομα</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Σημείωση</value></data>
+</root>

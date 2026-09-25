@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Πρόσθετο Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>Μηνιαίο πρόσθετο που φέρνει στο Resgrid απαντήσεις και προσχέδια με τεχνητή νοημοσύνη. Λειτουργεί σε διακομιστές που διαχειρίζεται το Resgrid με μοντέλα ανοιχτών βαρών. Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να το αγοράσει ή να το ακυρώσει.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist με τεχνητή νοημοσύνη χωρίς μηνιαίο όριο ερωτήσεων</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Απαντήσεις του βοηθού και ερωτήσεις για το συμβάν από τον ζωντανό πίνακα διοίκησης</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Προσχέδια αναφορών συμβάντων, αναφορών μετά τη δράση και ενημερώσεων ICS-201 που ελέγχει και υπογράφει ένα άτομο</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Συνόψεις κλήσεων από επιχειρησιακά σχέδια, κινδύνους, κρουνούς, προειδοποιήσεις καιρού και προηγούμενες κλήσεις</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Απαντήσεις για τα έγγραφα και τα πρωτόκολλα του τμήματός σας, με παραπομπές</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>Σύντομα: υποστήριξη διάθεσης με τεχνητή νοημοσύνη, απομαγνητοφώνηση ήχου διάθεσης και σημασιολογική αναζήτηση.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Περιλαμβάνει μηνιαίο προϋπολογισμό χρήσης τεχνητής νοημοσύνης. Αν το τμήμα σας τον εξαντλήσει, οι λειτουργίες τεχνητής νοημοσύνης επιστρέφουν στην τυπική λειτουργία έως τον επόμενο μήνα. Δεν υπάρχουν χρεώσεις υπέρβασης.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>Τα δεδομένα του τμήματός σας δεν αποστέλλονται σε τρίτους παρόχους τεχνητής νοημοσύνης και δεν χρησιμοποιούνται για την εκπαίδευση μοντέλων. Η τεχνητή νοημοσύνη δεν αλλάζει ποτέ μόνη της τη διαμόρφωση ή τις εγγραφές σας.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Δωρεάν ερωτήσεις στο Admin Assist</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Κάθε τμήμα μπορεί να κάνει {0} ερωτήσεις στο Admin Assist τις {1} ημέρες μετά την πρώτη ερώτηση που απαντήθηκε και στη συνέχεια {2} ερωτήσεις κάθε ημερολογιακό μήνα. Οι αχρησιμοποίητες ερωτήσεις δεν μεταφέρονται και μετρούν μόνο οι ερωτήσεις που απαντήθηκαν.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Το Enhanced AI είναι ενεργό για το τμήμα σας.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Το Enhanced AI ενεργοποιείται για το τμήμα σας. Οι λειτουργίες θα εμφανίζονται καθώς ενεργοποιούνται.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Το τμήμα σας δεν διαθέτει ακόμη το Enhanced AI.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Το Enhanced AI δεν είναι ακόμη διαθέσιμο για αγορά για το τμήμα σας.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Πληρωμένο έως</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Η ανανέωση ακυρώθηκε· η πρόσβαση συνεχίζεται μέχρι το τέλος της πληρωμένης περιόδου.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Αγορά</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Ακύρωση ανανέωσης</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Ακύρωση της ανανέωσης του Enhanced AI;</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Η χρέωση δεν είναι διαθέσιμη αυτή τη στιγμή. Δοκιμάστε ξανά αργότερα.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Διαχείριση συνδρομής</value></data>
+  <data name="Monthly" xml:space="preserve"><value>μήνα</value></data>
+  <data name="Links" xml:space="preserve"><value>Σύνδεσμοι</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Διαχείριση Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>ανά τμήμα</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Πρόσθετο Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Φέρνει στο Resgrid απαντήσεις και προσχέδια με τεχνητή νοημοσύνη: Admin Assist με τεχνητή νοημοσύνη χωρίς όριο ερωτήσεων, ερωτήσεις για συμβάντα, προσχέδια αναφορών και ενημερώσεων και συνόψεις κλήσεων. Χρεώνεται μηνιαία, χωριστά από το πρόγραμμα Resgrid σας. Μόνο το διαχειριστικό μέλος του τμήματός σας μπορεί να το αγοράσει ή να το ακυρώσει.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist με τεχνητή νοημοσύνη</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Ερωτήσεις για συμβάντα</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Προσχέδια αναφορών και ενημερώσεων</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Συνόψεις κλήσεων</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Λειτουργεί σε διακομιστές του Resgrid</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>Το chatbot με τη συνδρομή του δικού σας παρόχου τεχνητής νοημοσύνης (δικό σας κλειδί), αν το προτιμάτε από την τεχνητή νοημοσύνη του Resgrid</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Δικός σας πάροχος τεχνητής νοημοσύνης</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>Η τεχνητή νοημοσύνη του Resgrid εκτελεί μοντέλα ανοιχτών βαρών, προς το παρόν το Qwen3, σε υλικό που ανήκει στο Resgrid και το λειτουργεί το ίδιο. Το Resgrid δεν στέλνει ποτέ τα δεδομένα σας σε παρόχους τεχνητής νοημοσύνης στο cloud.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Ο δικός σας πάροχος τεχνητής νοημοσύνης (δικό σας κλειδί)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>Με το Enhanced AI, το τμήμα σας μπορεί να συνδέσει τη δική του συνδρομή σε πάροχο τεχνητής νοημοσύνης όπως OpenAI, Anthropic, Google Gemini, Azure OpenAI ή Mistral, ή έναν διακομιστή μοντέλων που λειτουργείτε εσείς. Το chatbot στέλνει τότε τα μηνύματα αυτού του τμήματος σε αυτόν τον πάροχο βάσει της συμφωνίας σας μαζί του. Αφήστε αυτά τα πεδία κενά για να χρησιμοποιείτε την τεχνητή νοημοσύνη του Resgrid, που δεν στέλνει ποτέ τα δεδομένα σας σε παρόχους τεχνητής νοημοσύνης στο cloud.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>Η χρήση της συνδρομής δικού σας παρόχου τεχνητής νοημοσύνης απαιτεί το πρόσθετο Enhanced AI.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Ο αποθηκευμένος πάροχος δεν χρησιμοποιείται. Το chatbot χρησιμοποιεί την τεχνητή νοημοσύνη του Resgrid μέχρι να ενεργοποιηθεί το Enhanced AI.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Οι υπόλοιπες ρυθμίσεις σας αποθηκεύτηκαν, αλλά όχι η αλλαγή παρόχου τεχνητής νοημοσύνης, επειδή απαιτεί το πρόσθετο Enhanced AI.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Πάροχος</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Επιλέξτε πάροχο</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Άλλο τελικό σημείο συμβατό με OpenAI</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>Η επιλογή παρόχου συμπληρώνει το τελικό σημείο του. Για το Azure OpenAI, αντικαταστήστε τα {resource} και {deployment} με τις δικές σας τιμές.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>Η πλήρης διεύθυνση URL του αιτήματος. Πρέπει να χρησιμοποιεί https και δημόσια διεύθυνση.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Εισαγάγετε το όνομα του μοντέλου ακριβώς όπως το αναφέρει ο πάροχός σας.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Κατάργηση του αποθηκευμένου παρόχου και του κλειδιού API</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Ο δικός σας πάροχος τεχνητής νοημοσύνης δεν μπορεί να χρησιμοποιηθεί όσο το Advanced Data Protection είναι ενεργό για το τμήμα σας, ώστε τα προστατευμένα δεδομένα να μην φεύγουν ποτέ από το Resgrid. Το chatbot χρησιμοποιεί την τεχνητή νοημοσύνη του Resgrid και τυχόν αποθηκευμένος πάροχος μένει αχρησιμοποίητος.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Δεν ήταν δυνατή η επιβεβαίωση του πρόσθετου Enhanced AI αυτή τη στιγμή, οπότε το chatbot χρησιμοποιεί την τεχνητή νοημοσύνη του Resgrid. Δοκιμάστε ξανά αργότερα.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Οι υπόλοιπες ρυθμίσεις σας αποθηκεύτηκαν, αλλά όχι η αλλαγή παρόχου τεχνητής νοημοσύνης.</value></data>
+</root>

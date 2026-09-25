@@ -76,6 +76,14 @@ namespace Resgrid.Services
 			return await _outboundQueueProvider.EnqueueCommunicationTest(item);
 		}
 
+		public async Task<bool> EnqueueAiDispatchTriageAsync(AiDispatchQueueItem item, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (item == null || item.DepartmentId <= 0 || item.CallId <= 0)
+				return false;
+
+			return await _outboundQueueProvider.EnqueueAiDispatchTriage(item);
+		}
+
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();

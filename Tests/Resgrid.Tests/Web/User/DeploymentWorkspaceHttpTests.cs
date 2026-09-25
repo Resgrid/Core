@@ -273,7 +273,7 @@ namespace Resgrid.Tests.Web.User
             while (root != null && !File.Exists(Path.Combine(root.FullName, "Resgrid.sln"))) root = root.Parent;
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions { ContentRootPath = Path.Combine(root.FullName, "Web", "Resgrid.Web"), EnvironmentName = "Testing" });
             builder.Logging.ClearProviders(); builder.WebHost.UseUrls("http://127.0.0.1:0");
-            builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
+            builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddAdminAssistFieldHelpStubs(); builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
             builder.Services.AddAuthentication("test").AddScheme<AuthenticationSchemeOptions, DeploymentAuthentication>("test", _ => { });
             builder.Services.AddAuthorization(options =>
             {

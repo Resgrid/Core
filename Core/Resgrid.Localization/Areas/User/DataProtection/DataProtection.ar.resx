@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>تُسجَّل كل تغييرات مع اسم من أجراها ووقتها.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>لا يستطيع مساعد Resgrid استخدام اشتراك مزوّد الذكاء الاصطناعي الخاص بقسمك (استخدم مفتاحك)؛ بل يستخدم الذكاء الاصطناعي الخاص بـ Resgrid، ويبقى أي مزوّد محفوظ دون استخدام.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>أفهم أنه منذ وضع التسجيل في قائمة الانتظار حتى إيقاف الحماية بالكامل، لا يستطيع مساعد Resgrid استخدام اشتراك مزوّد الذكاء الاصطناعي الخاص بقسمي (استخدم مفتاحك)، ويستخدم بدلًا من ذلك الذكاء الاصطناعي الخاص بـ Resgrid.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>حفظ قسمك مزوّد ذكاء اصطناعي خاصًا به لروبوت الدردشة ({0}). بمجرد وضع التسجيل في قائمة الانتظار، يتوقف روبوت الدردشة عن استخدامه خلال خمس دقائق ويستخدم الذكاء الاصطناعي الخاص بـ Resgrid. لا يُحذف المزوّد المحفوظ.</value>
+  </data>
 </root>

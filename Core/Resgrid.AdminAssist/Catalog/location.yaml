@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "location",
@@ -1633,7 +1633,7 @@
       "Body": "Units Sort Order. Sort order for unit lists; does not change unit eligibility or dispatch recommendation ranking.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitssortorder",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1644,7 +1644,7 @@
       "Body": "Mapping Personnel Location TTL. Maximum personnel location age in minutes. Zero keeps stale positions visible without an age limit; assess actual ping ages.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingpersonnellocationttl",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1655,7 +1655,7 @@
       "Body": "Mapping Unit Location TTL. Maximum unit location age in minutes. Zero retains stale unit locations indefinitely in supported map consumers.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingunitlocationttl",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1666,7 +1666,7 @@
       "Body": "Mapping Personnel Allow Status With No Location To Overwrite. Allow a personnel status without a location to replace the previous location-bearing state. This can remove a marker.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingpersonnelallowstatuswithnolocationtooverwrite",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1677,7 +1677,7 @@
       "Body": "Mapping Unit Allow Status With No Location To Overwrite. Allow a unit status without a location to overwrite earlier location data. Check hardware and app updates together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingunitallowstatuswithnolocationtooverwrite",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1688,7 +1688,7 @@
       "Body": "Personnel On Unit Set Unit Status. Allow personnel status updates to influence their assigned unit status. Review automation and crew assignment together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-personnelonunitsetunitstatus",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1699,7 +1699,7 @@
       "Body": "Weather Alerts Enabled. Enable supported weather-alert processing. Configure zones and communication behavior before relying on it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertsenabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1710,7 +1710,7 @@
       "Body": "Weather Alert Minimum Severity. Minimum severity eligible for the weather-alert view. Severity values come from the weather service, not local incident triage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertminimumseverity",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1721,7 +1721,7 @@
       "Body": "Weather Alert Auto Message Severity. Minimum weather severity eligible for automatic messages. Review recipients, schedule and duplicate suppression.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertautomessageseverity",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1732,7 +1732,7 @@
       "Body": "Weather Alert Call Integration. Include supported weather context in call integration. It does not certify weather or route safety.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertcallintegration",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1743,7 +1743,7 @@
       "Body": "Weather Alert Cache Minutes. Weather cache duration; longer caching changes freshness and provider load.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertcacheminutes",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1754,7 +1754,7 @@
       "Body": "Weather Alert Auto Message Schedule. Schedule for automatic weather messaging. Review the department time zone, overnight periods and daylight-saving changes.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertautomessageschedule",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1765,7 +1765,7 @@
       "Body": "Weather Alert Excluded Events. Weather event types excluded from configured processing. Review exclusions against approved local procedures.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-weatheralertexcludedevents",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1776,7 +1776,7 @@
       "Body": "Mapping Use Mapbox Override. Use the department map provider override. Turning it off on the owning screen removes the stored style and token.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingusemapboxoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1787,7 +1787,7 @@
       "Body": "Mapping Mapbox Style Url. Custom map style reference. Verify the provider style and credential together; disabling the override deletes this value.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingmapboxstyleurl",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1798,7 +1798,7 @@
       "Body": "Mapping Mapbox Access Token. Map-provider access token. Only presence is reported. Disabling the override deletes it and requires re-entry to restore.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingmapboxaccesstoken",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1809,7 +1809,7 @@
       "Body": "Hardware Tracking Stale After Seconds. Age at which a hardware location becomes stale, clamped to at least one second. Review device reporting intervals.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-hardwaretrackingstaleafterseconds",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1820,7 +1820,7 @@
       "Body": "Hardware Tracking Mobile Fallback Enabled. Use supported mobile location fallback when hardware data is stale. Verify each device/source rather than assuming continuous tracking.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-hardwaretrackingmobilefallbackenabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1831,7 +1831,7 @@
       "Body": "Hardware Tracking Location Retention Days. Tracking retention bounded by host configuration and applicable holds. Shortening retention can make data eligible for deletion.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-hardwaretrackinglocationretentiondays",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1842,7 +1842,7 @@
       "Body": "Unit Status Thresholds. Visual warning thresholds for time in a unit status. A highlight does not change the unit status or certify availability.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitstatusthresholds",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1853,7 +1853,7 @@
       "Body": "Mapping availability. Controls availability of maps and location views. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-mappingdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1864,7 +1864,7 @@
       "Body": "Mapping menu name. Optional display name for maps and location views in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-mappingnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1875,7 +1875,7 @@
       "Body": "Unit Status Thresholds / Thresholds. Board highlighting thresholds grouped by base status meaning. An empty list disables highlighting.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthresholds-thresholds",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1886,7 +1886,7 @@
       "Body": "Unit Status Threshold / Base Type. Base status meaning for a threshold, independent of custom status names and colors.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthreshold-basetype",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1897,7 +1897,7 @@
       "Body": "Unit Status Threshold / Warn Seconds. Seconds in this status before a warning highlight; zero disables it. An alert at or before this threshold makes the row alert-only.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthreshold-warnseconds",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1908,7 +1908,7 @@
       "Body": "Unit Status Threshold / Alert Seconds. Seconds in this status before a higher-priority highlight; zero disables it. Highlighting does not send a page or change status.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unitstatusthreshold-alertseconds",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1919,7 +1919,7 @@
       "Body": "Department / Address Id. Department address reference. Review the owning address and mapping consumers; it is separate from station and site addresses.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-addressid",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1930,7 +1930,7 @@
       "Body": "Weather Alert Zone / Name. Administrator-facing label for this weather zone. The name does not define its geographic coverage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-name",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1941,7 +1941,7 @@
       "Body": "Weather Alert Zone / Zone Code. Provider weather-zone identifier. Verify the intended jurisdiction and source coverage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-zonecode",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1952,7 +1952,7 @@
       "Body": "Weather Alert Zone / Center Geo Location. Center point used by supported radius-based weather coverage. Coordinate values stay on their owning map/editor.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-centergeolocation",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1963,7 +1963,7 @@
       "Body": "Weather Alert Zone / Radius Miles. Radius in miles for supported geographic matching. Review actual coverage and provider behavior; larger is not automatically safer.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-radiusmiles",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1974,7 +1974,7 @@
       "Body": "Weather Alert Zone / Is Active. Whether the zone participates in supported weather processing. Department weather settings and worker operation are additional requirements.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-isactive",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1985,7 +1985,7 @@
       "Body": "Weather Alert Zone / Is Primary. Marks the primary zone for consumers that select a default. Review other active zones rather than assuming they are disabled.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-weatheralertzone-isprimary",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1996,7 +1996,7 @@
       "Body": "Units Apparatus, vehicles and teams Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "units",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2007,7 +2007,7 @@
       "Body": "New Unit Add an apparatus, vehicle or team Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-unit",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2018,7 +2018,7 @@
       "Body": "Unit Staffing Assign personnel to units Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "unit-staffing",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2029,7 +2029,7 @@
       "Body": "Mapping Large map with layers, personnel and units Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "mapping",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2040,7 +2040,7 @@
       "Body": "Points of Interest Manage map points of interest Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "pois",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2051,7 +2051,7 @@
       "Body": "Map Layers Manage map layers Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "map-layers",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2062,7 +2062,7 @@
       "Body": "Live Routing Routing and directions for active resources Make resource information easier to find and show when positions are stale. Review an apparatus location and its last update before relying on the map. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "live-routing",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2073,7 +2073,7 @@
       "Body": "Unit types Configure apparatus and resource types and their supported status behavior. Group comparable resources without assuming staffing or qualification. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "unit-types",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2084,7 +2084,7 @@
       "Body": "Hardware location tracking Associate supported tracking devices with department resources. Review device ownership, stale-position behavior and fallback sources. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "hardware-tracking",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2095,7 +2095,7 @@
       "Body": "Custom map layers Manage supported custom map content for the department. Give responders useful reference layers with an identified owner and update process. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "custom-maps",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2106,7 +2106,7 @@
       "Body": "Indoor maps Organize indoor map references and zones where supported. Keep building references available to authorized users without inferring safe routes. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "indoor-maps",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2117,7 +2117,7 @@
       "Body": "Routes Manage configured routes and supported route assignments. Prepare recurring route information with current source ownership. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "routes",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2128,7 +2128,7 @@
       "Body": "Weather zones and alerts Configure monitored zones and weather alert processing. Review alert coverage and automatic-message settings before use. Review an apparatus location and its last update before relying on the map. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "weather",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

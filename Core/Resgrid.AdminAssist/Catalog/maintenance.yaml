@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "maintenance",
@@ -441,7 +441,7 @@
       "Body": "Maintenance availability. Controls availability of maintenance and work orders. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-maintenancedisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -452,7 +452,7 @@
       "Body": "Maintenance menu name. Optional display name for maintenance and work orders in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-maintenancenameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -463,7 +463,7 @@
       "Body": "Checklists availability. Controls availability of checklists. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-checklistsdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -474,7 +474,7 @@
       "Body": "Checklists Apparatus, station and readiness checklists Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "checklists",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -485,7 +485,7 @@
       "Body": "New Checklist Author a checklist definition Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-checklist",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -496,7 +496,7 @@
       "Body": "Checklist Templates Start from a checklist template Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "checklist-templates",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -507,7 +507,7 @@
       "Body": "Work Orders Maintenance and repair work orders Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Checklists do not require Readiness Pro. Maintenance requires the add-on, module access and reviewed repair and approval procedures.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "work-orders",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -518,7 +518,7 @@
       "Body": "New Work Order Open a maintenance work order Connect recorded equipment checks with owned corrective work when maintenance is enabled. Record an equipment defect, assign repair and review return to service through the owning module. Checklists do not require Readiness Pro. Maintenance requires the add-on, module access and reviewed repair and approval procedures.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "new-work-order",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -529,7 +529,7 @@
       "Body": "Checklist schedules and due work Assign recurring checks and review due occurrences. Make recorded equipment and procedure checks visible to their owners. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "checklist-schedules",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -540,7 +540,7 @@
       "Body": "Checklist compliance reports Review expected, completed, skipped and overdue checks. Find missing recorded checks without treating a report as safety certification. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "checklist-reports",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -551,7 +551,7 @@
       "Body": "Preventive maintenance Configure recurring maintenance work and due tasks. Plan equipment upkeep and track corrective responsibility. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "preventive-maintenance",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -562,7 +562,7 @@
       "Body": "Maintenance history and reports Review maintenance work, recorded holds and repair history. Support accountable return-to-service review through the owning workflow. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "maintenance-reports",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -573,7 +573,7 @@
       "Body": "Maintenance policies and approvals Configure supported work-order policies and approval requirements. Make authority and repair completion requirements explicit. Record an equipment defect, assign repair and review return to service through the owning module. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "maintenance-policy",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

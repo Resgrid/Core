@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Interfaces
 {
@@ -16,9 +17,18 @@ namespace Resgrid.Chatbot.Interfaces
 
 		/// <summary>
 		/// Returns the department's own LLM endpoint/key(decrypted)/model when both endpoint and key
-		/// are configured; otherwise null (caller falls back to the system provider).
+		/// are configured and <see cref="GetLlmOverrideStatusAsync"/> is Allowed; otherwise null (caller
+		/// falls back to the system provider).
 		/// </summary>
 		Task<DepartmentLlmOverride> GetLlmOverrideAsync(int departmentId);
+
+		/// <summary>
+		/// Whether the department may use its own LLM provider subscription (bring your own key), and why not:
+		/// blocked under Advanced Data Protection; otherwise an active Enhanced AI add-on on Resgrid's hosted
+		/// service, always on an open-source install (IEnhancedAiAccessService.GetOwnLlmProviderStatusAsync).
+		/// Cached for five minutes unless bypassed; settings pages bypass it.
+		/// </summary>
+		Task<OwnLlmProviderStatus> GetLlmOverrideStatusAsync(int departmentId, bool bypassCache = false);
 
 		/// <summary>
 		/// Inserts or updates the department's config. <paramref name="newPlaintextLlmKey"/>:

@@ -70,6 +70,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ISecurityPinService _securityPinService;
 		private readonly IRunCardsService _runCardsService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService _aiDispatchService;
 		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
 
@@ -81,7 +82,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
 			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService,
 			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
-			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer)
+			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
+			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -116,6 +118,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_featureToggleService = featureToggleService;
 			_departmentProfileMediaService = departmentProfileMediaService;
 			_departmentLocalizer = departmentLocalizer;
+			_aiDispatchService = aiDispatchService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1484,6 +1487,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 						ottawaKingstonToronto.Code = v.ToString();
 						callEmailTypes.Add(ottawaKingstonToronto);
 						break;
+					case CallEmailTypes.AI:
+						// Enhanced AI (Enrich mode): offered only when rollout, module and entitlement allow it. A department that
+						// loses access keeps working, because the AI format builds the same call as Generic.
+						if (await _aiDispatchService.IsAvailableAsync(DepartmentId))
+						{
+							CallEmailTypesForJson ai = new CallEmailTypesForJson();
+							ai.Id = (int)v;
+							ai.Name = "Generic with AI enrichment (Enhanced AI)";
+							ai.Code = v.ToString();
+							callEmailTypes.Add(ai);
+						}
+						break;
 				}
 			}
 
@@ -2785,6 +2800,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.MaintenanceEnabled = !model.Modules.MaintenanceDisabled;
 			model.ChecklistsEnabled = !model.Modules.ChecklistsDisabled;
 			model.BusinessOperationsEnabled = !model.Modules.BusinessOperationsDisabled;
+			model.AiEnabled = !model.Modules.AiDisabled;
 
 			return View(model);
 		}
@@ -2814,6 +2830,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				modules.MaintenanceDisabled = !model.MaintenanceEnabled;
 				modules.ChecklistsDisabled = !model.ChecklistsEnabled;
 				modules.BusinessOperationsDisabled = !model.BusinessOperationsEnabled;
+				modules.AiDisabled = !model.AiEnabled;
 
 				await _departmentSettingsService.SetDepartmentModuleSettingsAsync(DepartmentId, modules, cancellationToken);
 

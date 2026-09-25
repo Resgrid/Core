@@ -12,6 +12,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
   </resheader>
+  <data xml:space="preserve" name="Diagnostic.Cancel">
+    <value>Cancelar</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Member">
+    <value>Persona</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Stage.Excluded">
+    <value>Excluido</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Target">
+    <value>Recurso</value>
+  </data>
+  <data xml:space="preserve" name="Diagnostic.Unit">
+    <value>Unidad</value>
+  </data>
   <data xml:space="preserve" name="Feature.add-person">
     <value>Agregar persona</value>
   </data>
@@ -227,6 +242,9 @@
   </data>
   <data xml:space="preserve" name="Ui.Area">
     <value>Área</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Ask.Question">
+    <value>Pregunta</value>
   </data>
   <data xml:space="preserve" name="Ui.Before">
     <value>Antes</value>

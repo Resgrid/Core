@@ -173,7 +173,13 @@ namespace Resgrid.Web.Services.Controllers
 			var response = new MessagingResponse();
 
 			var pinCommand = request.Body.Trim().Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-			if (pinCommand[0].Equals("OPEN", StringComparison.OrdinalIgnoreCase))
+			// Only something shaped like a PIN reply (a challenge identifier, or a short reply ending in a PIN) is
+			// answered here. Ordinary text such as "OPEN BURN AT 123 MAIN ST" must still reach text-to-call, text
+			// commands and the chatbot. A malformed reply that carries a PIN is still answered here, so the PIN
+			// never lands in the inbound message log.
+			if (pinCommand.Length >= 2 && pinCommand[0].Equals("OPEN", StringComparison.OrdinalIgnoreCase) &&
+				(System.Text.RegularExpressions.Regex.IsMatch(pinCommand[1], "^[A-Fa-f0-9]{24}$") ||
+				 pinCommand.Length <= 3 && System.Text.RegularExpressions.Regex.IsMatch(pinCommand[^1], "^[0-9]{6,12}$")))
 			{
 				var text = Microsoft.AspNetCore.Http.HttpMethods.IsPost(Request.Method) && Request.HasFormContentType && pinCommand.Length == 3
 					? await _adpRelease.ReleaseAsync(pinCommand[1].ToUpperInvariant(), request.From, pinCommand[2], ProtectedDataEgressChannel.Sms) : null;

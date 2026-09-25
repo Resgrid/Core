@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>Répartition par IA</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Paramètres de la répartition par IA</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>Activité de la répartition par IA</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Mode d'enrichissement : les appels sont créés et répartis exactement comme avant, puis l'IA complète les informations encore vides. Elle ne modifie jamais la priorité ni les personnes engagées, et ne réalerte jamais personne.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>La répartition par IA est active pour votre service.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>La répartition par IA n'est pas activée sur ce déploiement Resgrid.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>La répartition par IA nécessite le module Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>Pour commencer, choisissez "Generic with AI enrichment (Enhanced AI)" comme format de l'e-mail d'alerte.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>Le modèle d'IA de ce déploiement n'est pas encore configuré.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>Ce que l'IA peut faire</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Compléter un type d'appel vide</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Compléter une adresse et une position sur la carte vides</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Compléter un nom et un numéro de contact vides</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Compléter un numéro d'intervention vide</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Renommer les appels reçus avec le titre "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>Ajouter une note de synthèse IA avec une priorité suggérée</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Signaler les doublons possibles et les messages qui ne sont pas des alertes</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Garde-fous</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Confiance minimale (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>En dessous de cette confiance, l'IA ne modifie rien. Laissez vide pour utiliser la valeur par défaut de {0} %. Plage autorisée : 50–95 %.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Expéditeurs autorisés</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>Une adresse e-mail ou un domaine par ligne, par exemple cad.county.gov. Seuls les messages de ces expéditeurs sont enrichis ; chaque message crée toujours un appel. Laissez vide pour autoriser tous les expéditeurs.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Limite mensuelle de jetons de la répartition par IA</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Limite facultative dans le budget Enhanced AI de votre service. Laissez vide pour ne pas fixer de limite distincte. Utilisés ce mois-ci : {0} jetons.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Historique d'activité</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Conserver l'activité pendant (jours)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Entre 30 et 1 095 jours. L'activité plus ancienne est supprimée automatiquement.</value></data>
+  <data name="Save" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="Saved" xml:space="preserve"><value>Paramètres de la répartition par IA enregistrés.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>Un autre administrateur a modifié ces paramètres. Vérifiez les valeurs actuelles et enregistrez à nouveau.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>La confiance minimale doit être comprise entre 50 % et 95 %.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>La durée de conservation doit être comprise entre 30 et 1 095 jours.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>La limite mensuelle de jetons doit être comprise entre 8 192 et 50 000 000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Chaque expéditeur autorisé doit être une adresse e-mail ou un domaine.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Saisissez au maximum 50 expéditeurs autorisés.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>Voir l'activité de la répartition par IA</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Paramètres de l'e-mail d'alerte</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Dernière mise à jour : {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Seuls les résultats sont conservés ici, jamais le message ni la réponse de l'IA. Ouvrez un appel pour voir ce qui a été complété.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>Aucune activité de répartition par IA pour l'instant.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>30 derniers jours</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>Jetons de la répartition par IA ce mois-ci</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Ignorés ou inchangés</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>Quand</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Appel</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Résultat</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Confiance</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Complété</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Rejetés</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Peut-être lié</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>Durée IA</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Jetons</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Rejetés compte les valeurs renvoyées par l'IA qui n'étaient pas autorisées ou n'apparaissaient pas dans le message.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Enrichi</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Rien à ajouter</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Confiance faible</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Réponse de l'IA inutilisable</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>IA indisponible</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>IA occupée</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Budget Enhanced AI épuisé</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>Limite de la répartition par IA atteinte</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Ignoré : protection des données</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Appel plus actif</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Expéditeur non autorisé</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>En cours</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Type d'appel</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Position sur la carte</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Nom du contact</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Numéro du contact</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Numéro d'intervention</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Note</value></data>
+</root>

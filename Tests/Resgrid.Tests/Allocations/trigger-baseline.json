@@ -144,5 +144,8 @@
   "TimeReportCreated": 185,
   "TimeReportVoided": 186,
   "DeploymentAttachmentAdded": 187,
-  "InventoryDepartedHolder": 188
+  "InventoryDepartedHolder": 188,
+  "AdminAssistFindingOpened": 189,
+  "AdminAssistFindingResolved": 190,
+  "AdminAssistFindingReopened": 191
 }

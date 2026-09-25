@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Componente Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>Un componente mensile che porta in Resgrid risposte e bozze generate dall'IA. Funziona su server gestiti da Resgrid con modelli a pesi aperti. Solo il membro amministratore del dipartimento può acquistarlo o annullarlo.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist con IA senza limite mensile di domande</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Risposte dell'assistente e domande sull'intervento dal quadro di comando in tempo reale</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Bozze di rapporti d'intervento, rapporti post-azione e briefing ICS-201 che una persona rivede e firma</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Riepiloghi di chiamata basati su piani preliminari, pericoli, idranti, allerte meteo e chiamate precedenti</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Risposte sui documenti e protocolli del tuo dipartimento, con citazioni</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>In arrivo: assistenza IA all'invio delle chiamate, trascrizione dell'audio di allerta e ricerca semantica.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Include un budget mensile di utilizzo dell'IA. Se il tuo dipartimento lo raggiunge, le funzioni IA tornano all'esperienza standard fino al mese successivo. Nessun costo aggiuntivo per il superamento.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>I dati del tuo dipartimento non vengono inviati a fornitori di IA terzi e non vengono usati per addestrare modelli di IA. L'IA non modifica mai autonomamente la tua configurazione o i tuoi record.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Domande gratuite ad Admin Assist</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Ogni dipartimento può porre {0} domande ad Admin Assist nei {1} giorni successivi alla sua prima domanda con risposta, poi {2} domande per mese solare. Le domande non utilizzate non si accumulano e contano solo le domande con risposta.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Enhanced AI è attivo per il tuo dipartimento.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Enhanced AI è in fase di attivazione per il tuo dipartimento. Le funzioni compariranno man mano che vengono attivate.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Il tuo dipartimento non ha ancora Enhanced AI.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Enhanced AI non è ancora acquistabile per il tuo dipartimento.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Pagato fino al</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Rinnovo annullato; l'accesso continua fino alla fine del periodo pagato.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Acquista</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Annulla rinnovo</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Annullare il rinnovo di Enhanced AI?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>La fatturazione non è disponibile al momento. Riprova più tardi.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Gestisci abbonamento</value></data>
+  <data name="Monthly" xml:space="preserve"><value>mese</value></data>
+  <data name="Links" xml:space="preserve"><value>Collegamenti</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Gestisci Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>per dipartimento</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Componente Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Porta in Resgrid risposte e bozze generate dall'IA: Admin Assist con IA senza limite di domande, domande sugli interventi, bozze di rapporti e briefing e riepiloghi di chiamata. Fatturato mensilmente, separatamente dal tuo piano Resgrid. Solo il membro amministratore del tuo dipartimento può acquistarlo o annullarlo.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist con IA</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Domande sugli interventi</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Bozze di rapporti e briefing</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Riepiloghi di chiamata</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Funziona sui server di Resgrid</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>Il chatbot con l'abbonamento del tuo fornitore di IA (usa la tua chiave), se lo preferisci all'IA di Resgrid</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Il tuo fornitore di IA</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>L'IA di Resgrid esegue modelli a pesi aperti, attualmente Qwen3, su hardware che Resgrid possiede e gestisce. Resgrid non invia mai i tuoi dati a fornitori di IA nel cloud.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Il tuo fornitore di IA (usa la tua chiave)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>Con Enhanced AI il tuo dipartimento può collegare il proprio abbonamento a un fornitore di IA come OpenAI, Anthropic, Google Gemini, Azure OpenAI o Mistral, oppure a un server di modelli che gestisci tu. Il chatbot invia quindi i messaggi di questo dipartimento a quel fornitore secondo il tuo accordo con lui. Lascia vuoti questi campi per usare l'IA di Resgrid, che non invia mai i tuoi dati a fornitori di IA nel cloud.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>Per usare l'abbonamento del tuo fornitore di IA serve il componente Enhanced AI.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Il fornitore salvato non è in uso. Il chatbot usa l'IA di Resgrid finché Enhanced AI non è attivo.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Le altre impostazioni sono state salvate, ma non la modifica del fornitore di IA, perché richiede il componente Enhanced AI.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Fornitore</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Scegli un fornitore</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Altro endpoint compatibile con OpenAI</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>Scegliendo un fornitore se ne compila l'endpoint. Per Azure OpenAI, sostituisci {resource} e {deployment} con i tuoi valori.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>L'URL completo della richiesta. Deve usare https e un indirizzo pubblico.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Inserisci il nome del modello esattamente come lo indica il tuo fornitore.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Rimuovi il fornitore e la chiave API salvati</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Il tuo fornitore di IA non può essere usato mentre Advanced Data Protection è attivo per il tuo dipartimento, così i dati protetti non escono mai da Resgrid. Il chatbot usa l'IA di Resgrid e l'eventuale fornitore salvato resta inutilizzato.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Al momento non è stato possibile confermare il tuo componente Enhanced AI, quindi il chatbot usa l'IA di Resgrid. Riprova più tardi.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Le altre impostazioni sono state salvate, ma non la modifica del fornitore di IA.</value></data>
+</root>

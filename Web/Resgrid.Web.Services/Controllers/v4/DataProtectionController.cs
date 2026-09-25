@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -131,7 +132,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					VoiceEgressMode = egress.VoiceMode,
 					IsDepartmentLocked = isLocked,
 					LockReason = isLocked ? activeLock?.Reason : null,
-					LockProjectedEndUtc = isLocked ? activeLock?.ProjectedEndUtc?.ToString("O") : null
+					LockProjectedEndUtc = isLocked ? activeLock?.ProjectedEndUtc?.ToString("O") : null,
+					AcknowledgementVersion = AdpEnrollmentAcknowledgements.Version,
+					AcknowledgementItems = AdpEnrollmentAcknowledgements.Items.ToList()
 				}
 			};
 
@@ -296,7 +299,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// Queues enrollment (Disabled -> EnrollmentQueued). Managing member only; requires an active
-		/// paid ADP addon and an open global admission gate, both re-verified server-side.
+		/// paid ADP addon and an open global admission gate, both re-verified server-side, and an
+		/// acknowledgement record for the current version: <c>{"version": "ADP-ACK-2",
+		/// "acknowledgedItems": [every key], "lockConsent": true}</c>, with the version and keys from
+		/// Capabilities. Anything less is refused with <c>acknowledgements_incomplete</c>.
 		/// </summary>
 		[HttpPost("QueueEnrollment")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -425,6 +431,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				case DepartmentDataProtectionEnrollmentResult.InvalidWindow:
 					return Problem(type: "invalid_window",
 						title: "A valid migration window time zone is required (select one in the wizard, or set the department time zone).",
+						statusCode: StatusCodes.Status400BadRequest);
+
+				case DepartmentDataProtectionEnrollmentResult.AcknowledgementsIncomplete:
+					return Problem(type: "acknowledgements_incomplete",
+						title: "Every Advanced Data Protection disclosure item in the current acknowledgement version must be acknowledged, with lock consent (see Capabilities).",
 						statusCode: StatusCodes.Status400BadRequest);
 
 				default:

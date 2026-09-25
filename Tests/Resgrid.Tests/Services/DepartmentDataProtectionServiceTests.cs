@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,14 @@ namespace Resgrid.Tests.Services
 	{
 		private const int DeptId = 7;
 		private const string ManagingUserId = "managing-user";
+
+		/// <summary>A complete acknowledgement record for the current version, as the web wizard writes it.</summary>
+		private static readonly string Acks = Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			version = AdpEnrollmentAcknowledgements.Version,
+			acknowledgedItems = AdpEnrollmentAcknowledgements.Items,
+			lockConsent = true
+		});
 
 		private Mock<IDepartmentDataProtectionPolicyRepository> _policyRepo;
 		private Mock<IDepartmentProtectedDataEgressPolicyRepository> _egressRepo;
@@ -73,7 +82,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task Enrollment_queues_for_managing_member_with_addon_and_open_gate()
 		{
-			var result = await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", "22:00", "06:00", "America/New_York");
+			var result = await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, Acks, "22:00", "06:00", "America/New_York");
 
 			result.Should().Be(DepartmentDataProtectionEnrollmentResult.Queued);
 			_policyRepo.Verify(x => x.InsertAsync(It.Is<DepartmentDataProtectionPolicy>(p =>
@@ -81,6 +90,17 @@ namespace Resgrid.Tests.Services
 				p.ActiveMigrationKind == (int)DepartmentDataProtectionMigrationKind.Enrollment &&
 				p.EnrollmentFlagEvaluationJson != null),
 				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[TestCase("{}")]
+		[TestCase(null)]
+		[TestCase("not json")]
+		[TestCase("{\"version\":\"ADP-ACK-1\",\"lockConsent\":true,\"acknowledgedItems\":[\"catalog_scope\"]}")]
+		public async Task Enrollment_without_a_complete_current_acknowledgement_record_is_refused_and_nothing_is_written(string record)
+		{
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, record, "22:00", "06:00", "America/New_York"))
+				.Should().Be(DepartmentDataProtectionEnrollmentResult.AcknowledgementsIncomplete);
+			_policyRepo.Invocations.Select(i => i.Method.Name).Should().OnlyContain(name => name.StartsWith("Get"), "the policy is only read, never written");
 		}
 
 		[Test]
@@ -176,7 +196,7 @@ namespace Resgrid.Tests.Services
 					DepartmentDataProtectionState.EnrollmentQueued, It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(0);
 
-			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", null, null, "UTC"))
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, Acks, null, null, "UTC"))
 				.Should().Be(DepartmentDataProtectionEnrollmentResult.InvalidState);
 		}
 
@@ -197,7 +217,7 @@ namespace Resgrid.Tests.Services
 			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DeptId, It.IsAny<bool>()))
 				.ReturnsAsync(new Department { DepartmentId = DeptId, ManagingUserId = ManagingUserId, TimeZone = "UTC" });
 
-			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", null, null, null))
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, Acks, null, null, null))
 				.Should().Be(DepartmentDataProtectionEnrollmentResult.Queued);
 			_policyRepo.Verify(x => x.InsertAsync(It.Is<DepartmentDataProtectionPolicy>(p =>
 				p.MigrationWindowTimeZone == "UTC"), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);

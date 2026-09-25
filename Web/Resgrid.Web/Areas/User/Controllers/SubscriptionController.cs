@@ -808,8 +808,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.PlanAddon == null)
 				return NotFound();
 
-			// Readiness Pro uses a dedicated monthly checkout, not the legacy PTT quantity flow.
-			if (model.PlanAddon.AddonType == (int)PlanAddonTypes.ReadinessPro)
+			// Readiness Pro, Business Operations and Enhanced AI use a dedicated monthly checkout, not the legacy PTT quantity flow.
+			if (PlanAddon.IsDedicatedMonthlyAddon(model.PlanAddon.AddonType))
 				return NotFound();
 
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
@@ -920,7 +920,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				var addonPlan = await _subscriptionsService.GetPlanAddonByIdAsync(model.PlanAddonId);
-				if (addonPlan?.AddonType == (int)PlanAddonTypes.ReadinessPro)
+				if (addonPlan != null && PlanAddon.IsDedicatedMonthlyAddon(addonPlan.AddonType))
 					return NotFound();
 
 				var user = _usersService.GetUserById(UserId);

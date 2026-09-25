@@ -42,7 +42,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 		// InstancePerLifetimeScope, so a per-instance client would leak sockets under load.
 		// Per-request timeouts are enforced via a CancellationToken (see ClassifyAsync) rather
 		// than the shared client's Timeout, which cannot be varied safely across concurrent callers.
-		private static readonly HttpClient _httpClient = new HttpClient();
+
 		private readonly IChatbotDepartmentConfigService _configService;
 
 		private static readonly string IntentSystemPrompt = @"You are a classification engine for emergency service chatbot commands.
@@ -150,8 +150,8 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 
 			try
 			{
-				// A department may supply its own LLM provider so its processing stays with that
-				// provider; otherwise fall back to the Resgrid system-level configuration.
+				// A department may supply its own LLM provider (bring your own key, allowed with the Enhanced AI add-on) so its
+				// processing stays with that provider; otherwise fall back to the operator's system-level configuration.
 				DepartmentLlmOverride departmentLlm = null;
 				if (departmentId > 0 && _configService != null)
 					departmentLlm = await _configService.GetLlmOverrideAsync(departmentId);
@@ -174,99 +174,62 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 					};
 				}
 
-				// Anthropic uses a different request/response schema and auth header than the OpenAI
-				// chat-completions API. Department overrides carry no provider type, so detect Anthropic
-				// from the endpoint URL; otherwise honour the system-level provider setting.
-				var isAnthropic = departmentLlm != null
-					? (!string.IsNullOrWhiteSpace(endpoint) && endpoint.IndexOf("anthropic", StringComparison.OrdinalIgnoreCase) >= 0)
-					: ChatbotConfig.CloudNluProvider == CloudNluProviderType.Anthropic;
+				// The provider (from the endpoint host for a department, from ChatbotConfig for the operator) picks the auth
+				// header, the wire format (OpenAI chat completions or Anthropic Messages) and known request quirks.
+				var provider = departmentLlm != null
+					? LlmProviderCatalog.Infer(endpoint)
+					: LlmProviderCatalog.ForSystem(ChatbotConfig.CloudNluProvider, endpoint);
 
 				var systemPrompt = !string.IsNullOrWhiteSpace(ChatbotConfig.CloudNluSystemPrompt)
 					? ChatbotConfig.CloudNluSystemPrompt
 					: IntentSystemPrompt;
+				if (!string.IsNullOrWhiteSpace(context))
+					systemPrompt = $"{systemPrompt}\n\nConversation context: {context}";
 
 				var maxTokens = ChatbotConfig.CloudNluMaxTokens > 0 ? ChatbotConfig.CloudNluMaxTokens : 256;
+				var turns = new[] { ("user", text) };
+				var compat = LlmWire.CompatFor(provider, endpoint, model);
+				var compatRetried = false;
 
-				object requestBody;
-				if (isAnthropic)
+				// Department endpoints are public https only (SSRF); the operator may opt in to a private or on-prem endpoint.
+				using var httpClient = Resgrid.Llm.OperatorEndpointPolicy.CreateClient(new Uri(endpoint), departmentLlm == null && ChatbotConfig.CloudNluAllowPrivateEndpoint);
+
+				HttpResponseMessage response;
+				string responseBody;
+				while (true)
 				{
-					// Anthropic /v1/messages: the system prompt is a top-level field, messages contain
-					// only user/assistant turns, and there is no response_format option.
-					var anthropicSystem = string.IsNullOrWhiteSpace(context)
-						? systemPrompt
-						: $"{systemPrompt}\n\nConversation context: {context}";
-
-					requestBody = new
+					using var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
 					{
-						model,
-						max_tokens = maxTokens,
-						temperature = ChatbotConfig.CloudNluTemperature,
-						system = anthropicSystem,
-						messages = new[] { new { role = "user", content = text } }
+						Content = new StringContent(LlmWire.Body(provider.Format, compat, model, systemPrompt, turns, maxTokens,
+							Math.Round(ChatbotConfig.CloudNluTemperature, 3), jsonMode: true), Encoding.UTF8, "application/json")
 					};
-				}
-				else
-				{
-					var messages = new List<object>
-					{
-						new { role = "system", content = systemPrompt }
-					};
+					LlmWire.Authorize(request, provider.Auth, apiKey);
 
-					if (!string.IsNullOrWhiteSpace(context))
+					// Enforce the configured timeout per request via a CancellationToken rather than the client's Timeout.
+					using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(
+						ChatbotConfig.CloudNluTimeoutSeconds > 0 ? ChatbotConfig.CloudNluTimeoutSeconds : 10));
+
+					response = await httpClient.SendAsync(request, cts.Token);
+					responseBody = await response.Content.ReadAsStringAsync();
+
+					// A 400 naming a parameter this model does not take (temperature, max_tokens, response_format) is retried once without it.
+					if ((int)response.StatusCode == 400 && !compatRetried && LlmWire.Adjust(compat, provider.Format, responseBody) is { } adjusted)
 					{
-						messages.Add(new { role = "system", content = $"Conversation context: {context}" });
+						response.Dispose();
+						compat = adjusted;
+						compatRetried = true;
+						continue;
 					}
 
-					messages.Add(new { role = "user", content = text });
-
-					requestBody = new
-					{
-						model,
-						messages,
-						temperature = ChatbotConfig.CloudNluTemperature,
-						max_tokens = maxTokens,
-						response_format = new { type = "json_object" }
-					};
+					break;
 				}
 
-				var json = JsonConvert.SerializeObject(requestBody);
-				var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-				using var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
-				{
-					Content = content
-				};
-
-				if (isAnthropic)
-				{
-					// Anthropic authenticates with x-api-key and requires an API version header.
-					request.Headers.Add("x-api-key", apiKey);
-					request.Headers.Add("anthropic-version", "2023-06-01");
-				}
-				else if (departmentLlm == null && ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
-				{
-					// Azure OpenAI uses an api-key header instead of Bearer auth (system config only;
-					// a department override is assumed OpenAI-compatible with Bearer auth).
-					request.Headers.Add("api-key", apiKey);
-				}
-				else
-				{
-					request.Headers.Add("Authorization", $"Bearer {apiKey}");
-				}
-
-				// Enforce the configured timeout per request via a CancellationToken rather than the
-				// shared client's Timeout.
-				using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(
-					ChatbotConfig.CloudNluTimeoutSeconds > 0 ? ChatbotConfig.CloudNluTimeoutSeconds : 10));
-
-				using var response = await _httpClient.SendAsync(request, cts.Token);
-				var responseBody = await response.Content.ReadAsStringAsync();
-
+				using var _ = response;
 				sw.Stop();
 
 				if (!response.IsSuccessStatusCode)
 				{
-					Logging.LogError($"Cloud NLU error from {ProviderName} (HTTP {(int)response.StatusCode}): {responseBody?.Truncate(500)}");
+					Logging.LogError($"Cloud NLU error from {ProviderName}/{provider.Name} (HTTP {(int)response.StatusCode}): {responseBody?.Truncate(500)}");
 					return new NLUResult
 					{
 						IntentName = "unknown",
@@ -278,8 +241,9 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 					};
 				}
 
-				var parsed = ParseOpenAiResponse(responseBody, model, sw.ElapsedMilliseconds, isAnthropic);
-				return parsed;
+				if (compatRetried)
+					LlmWire.Remember(endpoint, model, compat);
+				return ParseOpenAiResponse(responseBody, model, sw.ElapsedMilliseconds, provider.Format);
 			}
 			catch (TaskCanceledException ex)
 			{
@@ -364,57 +328,34 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				CloudNluProviderType.OpenAI => "gpt-4o",
 				CloudNluProviderType.OpenAiCompatible => "gpt-4o",
 				CloudNluProviderType.AzureOpenAI => "gpt-4",
-				CloudNluProviderType.Anthropic => "claude-3-5-sonnet-latest",
+				CloudNluProviderType.Anthropic => "claude-opus-5",
 				_ => "gpt-4o"
 			};
 		}
 
-		private NLUResult ParseOpenAiResponse(string responseBody, string model, long latencyMs, bool isAnthropic = false)
+		private NLUResult ParseOpenAiResponse(string responseBody, string model, long latencyMs, LlmWireFormat format)
 		{
 			try
 			{
 				var root = JObject.Parse(responseBody);
+				var totalTokens = LlmWire.TotalTokens(root, format);
 
-				string contentText;
-				int? totalTokens;
-
-				if (isAnthropic)
+				if (format == LlmWireFormat.OpenAiChat && (root["choices"] as JArray)?.Count is null or 0)
 				{
-					// Anthropic returns content as an array of blocks and reports input/output tokens
-					// separately rather than a single total_tokens value.
-					var contentBlocks = root["content"] as JArray;
-					contentText = contentBlocks != null && contentBlocks.Count > 0
-						? contentBlocks[0]?["text"]?.ToString()
-						: null;
-
-					var usage = root["usage"];
-					totalTokens = usage != null
-						? (usage["input_tokens"]?.Value<int>() ?? 0) + (usage["output_tokens"]?.Value<int>() ?? 0)
-						: (int?)null;
-				}
-				else
-				{
-					var choices = root["choices"] as JArray;
-					if (choices == null || choices.Count == 0)
+					Logging.LogError($"Cloud NLU ({ProviderName}) returned no choices.");
+					return new NLUResult
 					{
-						Logging.LogError($"Cloud NLU ({ProviderName}) returned no choices.");
-						return new NLUResult
-						{
-							IntentName = "unknown",
-							Confidence = 0,
-							ProviderName = ProviderName,
-							RawResponse = "Cloud NLU returned no choices.",
-							LatencyMs = latencyMs,
-							ModelName = model
-						};
-					}
-
-					var message = choices[0]["message"];
-					contentText = message?["content"]?.ToString();
-
-					var usage = root["usage"];
-					totalTokens = usage != null ? usage["total_tokens"]?.Value<int>() : null;
+						IntentName = "unknown",
+						Confidence = 0,
+						ProviderName = ProviderName,
+						RawResponse = "Cloud NLU returned no choices.",
+						LatencyMs = latencyMs,
+						ModelName = model
+					};
 				}
+
+				// Providers without a JSON mode (Anthropic, Perplexity) may fence the object or add a sentence around it.
+				var contentText = LlmWire.JsonObject(LlmWire.Text(root, format));
 
 				if (string.IsNullOrWhiteSpace(contentText))
 				{

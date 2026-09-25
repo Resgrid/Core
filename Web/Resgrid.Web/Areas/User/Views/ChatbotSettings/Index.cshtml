@@ -1,7 +1,11 @@
 @model Resgrid.Web.Areas.User.Models.ChatbotSettingsModel
+@using Resgrid.Chatbot.NLU
+@using Resgrid.Model.Services
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.EnhancedAi.EnhancedAi> aiLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ChatbotSettingsHeader"];
+    var hasSavedProvider = Model.HasLlmApiKey || !string.IsNullOrWhiteSpace(Model.LlmApiEndpoint);
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -111,44 +115,95 @@
 
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>@localizer["ChatbotLlmHeader"]</h5>
+                        <h5>@aiLocalizer["OwnProviderHeader"]</h5>
                     </div>
                     <div class="ibox-content">
-                        <p class="text-muted">@localizer["ChatbotLlmIntro"]</p>
+                        <p class="text-muted">@aiLocalizer["OwnProviderIntro"]</p>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">@localizer["ChatbotLlmEndpoint"]</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" asp-for="LlmApiEndpoint" placeholder="https://api.your-provider.com/v1/chat/completions" maxlength="500">
-                                <span asp-validation-for="LlmApiEndpoint" class="text-danger"></span>
+                        @if (Model.OwnProviderNotApplied)
+                        {
+                            <div class="alert alert-warning" role="alert">@aiLocalizer[Model.OwnProviderStatus == OwnLlmProviderStatus.AddonRequired ? "OwnProviderNotApplied" : "OwnProviderChangeNotSaved"]</div>
+                        }
+                        @if (Model.OwnProviderStatus == OwnLlmProviderStatus.DataProtectionEnabled)
+                        {
+                            <div class="alert alert-info" role="status">@aiLocalizer["OwnProviderBlockedByAdp"]</div>
+                        }
+                        else if (Model.OwnProviderStatus == OwnLlmProviderStatus.AddonRequired)
+                        {
+                            <div class="alert alert-info" role="status">
+                                @aiLocalizer["OwnProviderRequiresAddon"]
+                                <a asp-controller="AiBilling" asp-action="Index" asp-route-area="User">@aiLocalizer["ManageEnhancedAi"]</a>
+                                @if (hasSavedProvider)
+                                {
+                                    <br />@aiLocalizer["OwnProviderSavedInactive"]
+                                }
                             </div>
-                        </div>
+                        }
+                        else if (!Model.OwnProviderAllowed)
+                        {
+                            <div class="alert alert-warning" role="status">@aiLocalizer["OwnProviderStatusUnknown"]</div>
+                        }
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">@localizer["ChatbotLlmModel"]</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" asp-for="LlmModelName" placeholder="gpt-4o, deepseek-chat, ..." maxlength="200">
-                                <span asp-validation-for="LlmModelName" class="text-danger"></span>
+                        <fieldset disabled="@(!Model.OwnProviderAllowed)">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="llm-provider">@aiLocalizer["Provider"]</label>
+                                <div class="col-sm-9">
+                                    <select id="llm-provider" class="form-control" asp-for="ProviderId" aria-describedby="llm-provider-help">
+                                        <option value="">@aiLocalizer["ProviderChoose"]</option>
+                                        @foreach (var provider in Model.Providers)
+                                        {
+                                            <option value="@provider.Id" data-endpoint="@provider.Endpoint" data-model="@provider.ExampleModel">@(provider.Id == LlmProviderCatalog.CustomId ? aiLocalizer["ProviderCustom"].Value : provider.Name)</option>
+                                        }
+                                    </select>
+                                    <span id="llm-provider-help" class="help-block m-b-none">@aiLocalizer["ProviderHelp"]</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">@localizer["ChatbotLlmApiKey"]</label>
-                            <div class="col-sm-9">
-                                <input type="password" class="form-control" asp-for="LlmApiKey" autocomplete="new-password" maxlength="700">
-                                <span asp-validation-for="LlmApiKey" class="text-danger"></span>
-                                <span class="help-block m-b-none">
-                                    @if (Model.HasLlmApiKey)
-                                    {
-                                        <span>@localizer["ChatbotLlmApiKeyHelpHasKey"]</span>
-                                    }
-                                    else
-                                    {
-                                        <span>@localizer["ChatbotLlmApiKeyHelpNoKey"]</span>
-                                    }
-                                </span>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" asp-for="LlmApiEndpoint">@localizer["ChatbotLlmEndpoint"]</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" asp-for="LlmApiEndpoint" placeholder="https://api.your-provider.com/v1/chat/completions" maxlength="500" dir="ltr" spellcheck="false" aria-describedby="llm-endpoint-help">
+                                    <span asp-validation-for="LlmApiEndpoint" class="text-danger"></span>
+                                    <span id="llm-endpoint-help" class="help-block m-b-none">@aiLocalizer["EndpointHelp"]</span>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" asp-for="LlmModelName">@localizer["ChatbotLlmModel"]</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" asp-for="LlmModelName" placeholder="@(LlmProviderCatalog.Infer(Model.LlmApiEndpoint).ExampleModel)" maxlength="200" dir="ltr" spellcheck="false" aria-describedby="llm-model-help">
+                                    <span asp-validation-for="LlmModelName" class="text-danger"></span>
+                                    <span id="llm-model-help" class="help-block m-b-none">@aiLocalizer["ModelHelp"]</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" asp-for="LlmApiKey">@localizer["ChatbotLlmApiKey"]</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" asp-for="LlmApiKey" autocomplete="new-password" maxlength="700" aria-describedby="llm-key-help">
+                                    <span asp-validation-for="LlmApiKey" class="text-danger"></span>
+                                    <span id="llm-key-help" class="help-block m-b-none">
+                                        @if (Model.HasLlmApiKey)
+                                        {
+                                            <span>@localizer["ChatbotLlmApiKeyHelpHasKey"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@localizer["ChatbotLlmApiKeyHelpNoKey"]</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        @if (hasSavedProvider)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <div class="checkbox"><label><input type="checkbox" asp-for="RemoveLlmProvider"> @aiLocalizer["RemoveProvider"]</label></div>
+                                </div>
+                            </div>
+                        }
 
                         <div class="form-group">
                             <div class="col-sm-9 col-sm-offset-3">
@@ -162,3 +217,7 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+<script src="~/js/app/internal/chatbot/chatbot-llm-provider.js" asp-append-version="true"></script>
+}

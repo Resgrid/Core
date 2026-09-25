@@ -53,6 +53,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.WorkflowQueueReceived += OnWorkflowQueueReceived;
 			queue.ChatbotMessageQueueReceived += OnChatbotMessageReceived;
 			queue.CommunicationTestQueueReceived += OnCommunicationTestReceived;
+			queue.AiDispatchTriageQueueReceived += OnAiDispatchTriageReceived;
 
 			try
 			{
@@ -231,6 +232,12 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Communication Test Queue Received for run {ctqi.CommunicationTestRunId} in department {ctqi.DepartmentId}, starting processing...");
 			await CommunicationTestLogic.ProcessCommunicationTestQueueItem(ctqi);
 			_logger.LogInformation($"{Name}: Finished processing communication test run {ctqi.CommunicationTestRunId}.");
+		}
+
+		private async Task OnAiDispatchTriageReceived(AiDispatchQueueItem item)
+		{
+			_logger.LogInformation($"{Name}: AI dispatch enrichment received for call {item.CallId} in department {item.DepartmentId}.");
+			await AiDispatchTriageLogic.ProcessAiDispatchQueueItem(item);
 		}
 	}
 }

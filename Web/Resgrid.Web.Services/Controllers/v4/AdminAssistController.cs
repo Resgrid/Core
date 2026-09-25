@@ -12,14 +12,14 @@ using Labels = Resgrid.Localization.Areas.User.AdminAssist.AdminAssist;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
-	/// <summary>Deterministic department setup and configuration guidance. No configuration mutation or model calls.</summary>
+	/// <summary>Deterministic department setup and configuration guidance. Source configuration remains read-only; Ask is separately gated.</summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public sealed class AdminAssistController(IAdminAssistService service, IAdminAssistAccessService access,
 		IAdminAssistCatalog catalog, IStringLocalizer<Labels> labels, IAdminAssistReferenceSearch referenceSearch,
-		IAdminAssistWorklistService worklist, IAdminAssistMaintenanceStore maintenance, IConfigurationImpactService impacts,
+		IAdminAssistAskService ask, IAdminAssistDiagnostics diagnostics, IAdminAssistWorklistService worklist, IAdminAssistMaintenanceStore maintenance, IConfigurationImpactService impacts,
 		IDispatchImpactService dispatchImpacts, IPermissionImpactService permissionImpacts, IModuleImpactService moduleImpacts, ITextImportImpactService textImportImpacts, IRetentionImpactService retentionImpacts, INotificationImpactService notificationImpacts, ISecurityImpactService securityImpacts) : V4AuthenticatedApiControllerbase
 	{
 		private AdminAssistActor Actor => new(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name);
@@ -40,6 +40,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await access.CanAccessAsync(Actor, setup, cancellationToken)) throw new UnauthorizedAccessException();
 			return new
 			{
+				AskAvailable = !setup && (await ask.GetStatusAsync(Actor, cancellationToken)).Reason is "Available" or "BudgetExhausted" or "FreeAllowanceExhausted" or "FreeAttemptLimit",
+				TroubleshootingAvailable = !setup && Resgrid.Config.AdminAssistConfig.TroubleshootingEnabled,
 				CanSetup = await access.CanAccessAsync(Actor, true, cancellationToken),
 				ImpactSettings = catalog.Settings.Where(s => Resgrid.AdminAssist.ConfigurationImpactEvaluator.Supports(s.Id)).Select(s => s.Id).ToArray(),
 				ModuleImpactTypes = ModuleImpactSelection.Supported,
@@ -49,6 +51,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				RightToLeft = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft
 			};
 		});
+
+		/// <summary>Run an attended, read-only diagnostic within the current department.</summary>
+		[HttpPost("Diagnose")]
+		[RequestSizeLimit(4096)]
+		public Task<IActionResult> Diagnose([FromBody] DiagnosticRequest request, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.RunAsync(Actor, request, ct));
+		/// <summary>Refresh an owned diagnostic using current source permissions and evidence.</summary>
+		[HttpPost("Diagnostic")]
+		[RequestSizeLimit(1024)]
+		public Task<IActionResult> Diagnostic([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.ReadAsync(Actor, command, ct));
+		/// <summary>List recent private diagnostic runs; contains no subject names or identifiers.</summary>
+		[HttpGet("Diagnostics")]
+		public Task<IActionResult> Diagnostics(CancellationToken ct) => ExecuteAsync(async () => await diagnostics.ListAsync(Actor, ct));
+		/// <summary>Preview a reauthorized support bundle without sending it.</summary>
+		[HttpPost("DiagnosticSupportPreview")]
+		[RequestSizeLimit(1024)]
+		public Task<IActionResult> DiagnosticSupportPreview([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.PreviewSupportAsync(Actor, command, ct));
+		/// <summary>Export only when authorized evidence still matches the reviewed preview.</summary>
+		[HttpPost("DiagnosticSupportExport")]
+		[RequestSizeLimit(1024)]
+		public Task<IActionResult> DiagnosticSupportExport([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.ExportSupportAsync(Actor, command, ct));
+		/// <summary>Tombstone an owned diagnostic; protected content follows hold-aware cleanup.</summary>
+		[HttpPost("DeleteDiagnostic")]
+		[RequestSizeLimit(1024)]
+		public Task<IActionResult> DeleteDiagnostic([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => { await diagnostics.DeleteAsync(Actor, command, ct); return new { deleted = true }; });
 
 		/// <summary>Update setup choices and personal learning metadata.</summary>
 		[HttpPost("Setup")]
@@ -168,6 +194,44 @@ namespace Resgrid.Web.Services.Controllers.v4
 			await maintenance.SavePreferencesAsync(Actor, command, cancellationToken);
 			return new { saved = true };
 		});
+
+		/// <summary>Read the current Ask availability and remaining department allowance.</summary>
+		[HttpGet("AskStatus")]
+		public Task<IActionResult> AskStatus(CancellationToken cancellationToken) => ExecuteAsync(async () => {
+			if (!await access.CanAccessAsync(Actor, false, cancellationToken)) throw new UnauthorizedAccessException();
+			return await ask.GetStatusAsync(Actor, cancellationToken);
+		});
+
+		/// <summary>Select freshly authorized evidence cards using the separately gated local model.</summary>
+		[HttpPost("Ask")]
+		[RequestSizeLimit(16384)]
+		public Task<IActionResult> Ask([FromBody] AdminAssistAskRequest request, CancellationToken cancellationToken) =>
+			ExecuteAsync(async () => await ask.AskAsync(Actor, request, cancellationToken));
+
+		/// <summary>List only the current administrator's private conversations.</summary>
+		[HttpGet("Conversations")]
+		public Task<IActionResult> Conversations(CancellationToken cancellationToken) => ExecuteAsync(async () => await ask.ListAsync(Actor, cancellationToken));
+
+		/// <summary>Refresh authorized evidence for the latest private conversation turns.</summary>
+		[HttpGet("Conversation")]
+		public Task<IActionResult> Conversation(string conversationId, CancellationToken cancellationToken) =>
+			ExecuteAsync(async () => await ask.ReadAsync(Actor, conversationId, cancellationToken));
+
+		/// <summary>Export an owned conversation through current protection/grant checks, without replaying model output.</summary>
+		[HttpGet("ConversationExport")]
+		public Task<IActionResult> ConversationExport(string conversationId, CancellationToken cancellationToken) =>
+			ExecuteAsync(async () => await ask.ExportAsync(Actor, conversationId, cancellationToken));
+
+		/// <summary>Tombstone an owned conversation using its expected revision; hold-aware retention handles payload deletion.</summary>
+		[HttpPost("DeleteConversation")]
+		[RequestSizeLimit(1024)]
+		public Task<IActionResult> DeleteConversation([FromBody] DeleteConversationRequest request, CancellationToken cancellationToken) => ExecuteAsync(async () => {
+			if (request == null) throw new ArgumentException("Invalid conversation.");
+			await ask.DeleteAsync(Actor, request.ConversationId, request.ExpectedRevision, cancellationToken);
+			return new { deleted = true };
+		});
+		/// <summary>Only an owned conversation identifier and expected revision are accepted.</summary>
+		public sealed record DeleteConversationRequest(string ConversationId, long ExpectedRevision);
 
 		private async Task<IActionResult> ExecuteAsync(Func<Task<object>> action)
 		{

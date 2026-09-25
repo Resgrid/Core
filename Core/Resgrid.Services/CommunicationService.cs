@@ -329,9 +329,9 @@ namespace Resgrid.Services
 							profile?.MobileNumber, ProtectedDataEgressChannel.Sms);
 						if (challenge != null)
 							pinDelivered = await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Sms, dispatch.UserId, () => _smsService.SendProtectedDispatchChallengeAsync(profile, departmentId, departmentNumber,
-								Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinSmsChallenge", profile?.Language, challenge)));
+								Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinSmsChallenge", profile?.Language, challenge), payment));
 					}
-					catch (Exception) { Logging.LogError($"ADP PIN challenge unavailable for department {departmentId}; sending the safe dispatch notice."); }
+					catch (Exception ex) { Logging.LogException(ex, $"ADP PIN challenge unavailable for department {departmentId}, call {call.CallId}; sending the safe dispatch notice."); }
 					if (!pinDelivered)
 						await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Sms, dispatch.UserId, () => _smsService.SendCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile,
 							ReferenceEquals(smsCall, call) ? (address ?? smsCall.Address) : null, payment));

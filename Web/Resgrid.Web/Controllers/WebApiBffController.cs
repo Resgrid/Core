@@ -141,6 +141,21 @@ namespace Resgrid.Web.Controllers
 				outbound.Headers.TryAddWithoutValidation("Accept-Language", Request.Headers.AcceptLanguage.ToArray());
 				outbound.Headers.TryAddWithoutValidation("X-Resgrid-Client", "web");
 
+				// Admin Assist protection remains attended: forward the caller's grant only to the
+				// validated first-party API, never the inference transport or token-exchange endpoint.
+				var adminAssist = canonicalPath.StartsWith("api/v4/AdminAssist/", StringComparison.OrdinalIgnoreCase);
+				if (adminAssist && Request.Headers.TryGetValue("X-Resgrid-Protected-Grant", out var protectedGrant))
+				{
+					if (protectedGrant.Count != 1 || protectedGrant[0]?.Length > 8192 || protectedGrant[0]?.IndexOfAny(new[] { '\r', '\n' }) >= 0)
+					{
+						Response.StatusCode = StatusCodes.Status400BadRequest;
+						return;
+					}
+					if (!string.IsNullOrWhiteSpace(protectedGrant[0]))
+						outbound.Headers.TryAddWithoutValidation("X-Resgrid-Protected-Grant", protectedGrant[0]);
+				}
+
+
 				// Without this every proxied call reaches the API as the web pod's address, so audit rows
 				// and any per-IP policy upstream record the proxy rather than the person who acted.
 				var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -155,8 +170,14 @@ namespace Resgrid.Web.Controllers
 						outbound.Content.Headers.ContentType = contentType;
 				}
 
-				using var upstream = await _httpClientFactory.CreateClient("ResgridWebBff")
-					.SendAsync(outbound, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+				using var proxyClient = _httpClientFactory.CreateClient("ResgridWebBff");
+				// These handlers own a 90-second deadline plus bounded settlement. Other BFF routes
+				// retain their 30-second timeout; disconnect cancellation still flows to the API.
+				if (new[] { "api/v4/AdminAssist/Ask", "api/v4/AdminAssist/Conversation", "api/v4/AdminAssist/ConversationExport",
+					"api/v4/AdminAssist/Diagnose", "api/v4/AdminAssist/Diagnostic", "api/v4/AdminAssist/DiagnosticSupportPreview", "api/v4/AdminAssist/DiagnosticSupportExport" }
+					.Any(route => canonicalPath.TrimEnd('/').Equals(route, StringComparison.OrdinalIgnoreCase)))
+					proxyClient.Timeout = TimeSpan.FromSeconds(100);
+				using var upstream = await proxyClient.SendAsync(outbound, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 				Response.StatusCode = (int)upstream.StatusCode;
 				if (upstream.Content.Headers.ContentType != null)
 					Response.ContentType = upstream.Content.Headers.ContentType.ToString();

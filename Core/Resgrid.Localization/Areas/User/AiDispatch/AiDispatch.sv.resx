@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>AI-larmhantering</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Inställningar för AI-larmhantering</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>Aktivitet för AI-larmhantering</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Berikningsläge: larm skapas och skickas precis som tidigare, sedan fyller AI i uppgifter som fortfarande är tomma. Den ändrar aldrig prioritet eller vilka som larmas, och den larmar aldrig någon igen.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>AI-larmhantering är igång för er avdelning.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>AI-larmhantering är inte aktiverad i den här Resgrid-installationen.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>AI-larmhantering kräver tillägget Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>Välj "Generic with AI enrichment (Enhanced AI)" som format för larm-e-post för att börja.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>AI-modellen för den här installationen är inte konfigurerad ännu.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>Vad AI får göra</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Fylla i en tom larmtyp</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Fylla i en tom adress och kartposition</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Fylla i ett tomt kontaktnamn och kontaktnummer</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Fylla i ett tomt händelsenummer</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Byta namn på larm som kommer med rubriken "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>Lägga till en AI-sammanfattning med föreslagen prioritet</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Flagga möjliga dubbletter och meddelanden som inte är larm</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Skydd</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Lägsta säkerhet (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>Under denna säkerhet ändrar AI ingenting. Lämna tomt för att använda standardvärdet {0} %. Tillåtet intervall: 50–95 %.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Tillåtna avsändare</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>En e-postadress eller domän per rad, till exempel cad.county.gov. Endast meddelanden från dessa avsändare berikas; varje meddelande skapar fortfarande ett larm. Lämna tomt för att tillåta alla avsändare.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Månadsgräns för tokens i AI-larmhantering</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Valfri gräns inom avdelningens Enhanced AI-budget. Lämna tomt för ingen separat gräns. Använt denna månad: {0} tokens.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Aktivitetshistorik</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Behåll aktivitet i (dagar)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Mellan 30 och 1 095 dagar. Äldre aktivitet tas bort automatiskt.</value></data>
+  <data name="Save" xml:space="preserve"><value>Spara</value></data>
+  <data name="Saved" xml:space="preserve"><value>Inställningarna för AI-larmhantering har sparats.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>En annan administratör har ändrat inställningarna. Granska de aktuella värdena och spara igen.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>Lägsta säkerhet måste vara mellan 50 % och 95 %.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>Behåll aktivitet måste vara mellan 30 och 1 095 dagar.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>Månadsgränsen för tokens måste vara mellan 8 192 och 50 000 000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Varje tillåten avsändare måste vara en e-postadress eller en domän.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Ange högst 50 tillåtna avsändare.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>Visa aktivitet för AI-larmhantering</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Inställningar för larm-e-post</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Senast uppdaterad {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Här sparas endast utfall, aldrig meddelandet eller AI:ns svar. Öppna ett larm för att se vad som fylldes i.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>Ingen aktivitet för AI-larmhantering ännu.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>Senaste 30 dagarna</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>Tokens för AI-larmhantering denna månad</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Hoppades över eller oförändrade</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>När</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Larm</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Utfall</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Säkerhet</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Ifyllt</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Avvisade</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Möjligen relaterat</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>AI-tid</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Tokens</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Avvisade räknar värden som AI returnerade men som inte var tillåtna eller inte fanns i meddelandet.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Berikat</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Inget att lägga till</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Låg säkerhet</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Oanvändbart AI-svar</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>AI otillgänglig</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>AI upptagen</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Enhanced AI-budgeten förbrukad</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>Gränsen för AI-larmhantering nådd</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Hoppades över: dataskydd</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Larmet är inte längre aktivt</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Avsändaren är inte tillåten</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>Pågår</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Larmtyp</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Adress</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Kartposition</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Kontaktnamn</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Kontaktnummer</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Händelsenummer</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Namn</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Anteckning</value></data>
+</root>

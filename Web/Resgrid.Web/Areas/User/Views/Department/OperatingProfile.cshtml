@@ -39,7 +39,7 @@
 		@foreach (var references in new Dictionary<string, List<string>> { ["AuthoritativeSystemReferences"] = Model.AuthoritativeSystemReferences, ["SiteGroupReferences"] = Model.SiteGroupReferences, ["StaffingPolicyReferences"] = Model.StaffingPolicyReferences, ["QualificationPolicyReferences"] = Model.QualificationPolicyReferences, ["ContinuityProcedureReferences"] = Model.ContinuityProcedureReferences })
 		{
 			<fieldset><legend>@aa["Profile." + references.Key]</legend><p>@aa[references.Key == "AuthoritativeSystemReferences" ? "Profile.SystemReferenceHelp" : references.Key == "SiteGroupReferences" ? "Profile.GroupReferenceHelp" : "Profile.DocumentReferenceHelp"]</p>
-			@for (var i = 0; i < Math.Min(25, references.Value.Count + 1); i++) { <label for="@(references.Key + i)">@aa["Profile.Reference"] @(i + 1)</label><input class="form-control" id="@(references.Key + i)" name="@(references.Key + "[" + i + "]")" value="@(i < references.Value.Count ? references.Value[i] : "")" maxlength="128" pattern="[A-Za-z0-9._-]+" /> }
+			@for (var i = 0; i < Math.Min(25, references.Value.Count + 1); i++) { <label for="@(references.Key + i)">@aa["Profile.Reference"] @(i + 1)</label><input class="form-control" id="@(references.Key + i)" name="@(references.Key + "[" + i + "]")" value="@(i < references.Value.Count ? references.Value[i] : "")" maxlength="128" pattern="[A-Za-z0-9._\-]+" /> }
 			</fieldset>
 		}
 		<button type="submit" class="btn btn-primary">@aa["Profile.Save"]</button>

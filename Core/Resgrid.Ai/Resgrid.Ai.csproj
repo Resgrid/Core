@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Configurations>Debug;Release;Docker</Configurations>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Resgrid.Llm/Resgrid.Llm.csproj" />
+    <ProjectReference Include="../Resgrid.Model/Resgrid.Model.csproj" />
+  </ItemGroup>
+</Project>

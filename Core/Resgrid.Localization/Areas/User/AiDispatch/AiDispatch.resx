@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>AI dispatch</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>AI dispatch settings</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>AI dispatch activity</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Enrich mode: calls are created and dispatched exactly as before, then AI fills in details that are still blank. It never changes the priority or who is dispatched, and it never pages anyone again.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>AI dispatch is running for your department.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>AI dispatch is not enabled on this Resgrid deployment.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>AI dispatch needs the Enhanced AI add-on.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>To start, choose "Generic with AI enrichment (Enhanced AI)" as your dispatch email format.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>The AI model for this deployment is not configured yet.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>What AI may do</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Fill in a blank call type</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Fill in a blank address and map location</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Fill in a blank contact name and number</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Fill in a blank incident number</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Rename calls that arrive titled "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>Add an AI summary note with a suggested priority</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Flag possible duplicates and messages that are not dispatches</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Safeguards</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Minimum confidence (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>Below this confidence AI changes nothing. Leave blank to use the default of {0}%. Allowed range: 50–95%.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Allowed senders</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>One email address or domain per line, for example cad.county.gov. Only messages from these senders are enriched; every message still creates a call. Leave blank to allow all senders.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Monthly AI dispatch token limit</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Optional limit inside your department's Enhanced AI budget. Leave blank for no separate limit. Used this month: {0} tokens.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Activity history</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Keep activity for (days)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Between 30 and 1,095 days. Older activity is removed automatically.</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Saved" xml:space="preserve"><value>AI dispatch settings saved.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>Another administrator changed these settings. Review the current values and save again.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>Minimum confidence must be between 50% and 95%.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>Keep activity for must be between 30 and 1,095 days.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>The monthly token limit must be between 8,192 and 50,000,000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Each allowed sender must be an email address or a domain.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Enter at most 50 allowed senders.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>View AI dispatch activity</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Dispatch email settings</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Last updated {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Only outcomes are kept here, never the message or the AI's reply. Open a call to see what was filled in.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>No AI dispatch activity yet.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>Last 30 days</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>AI dispatch tokens this month</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Skipped or not changed</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>When</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Call</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Outcome</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Confidence</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Filled in</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Rejected</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Possibly related</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>AI time</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Tokens</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Rejected counts values the AI returned that were not allowed or did not appear in the message.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Enriched</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Nothing to add</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Low confidence</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Unusable AI reply</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>AI unavailable</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>AI busy</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Enhanced AI budget used up</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>AI dispatch limit reached</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Skipped: data protection</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Call no longer active</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Sender not allowed</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Call type</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Map location</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Contact name</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Contact number</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Incident number</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Note</value></data>
+</root>

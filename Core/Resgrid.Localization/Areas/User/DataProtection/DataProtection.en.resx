@@ -535,4 +535,13 @@
   <data name="StepUpAuditNotice" xml:space="preserve">
     <value>Every change is recorded with who made it and when.</value>
   </data>
+  <data name="Step1LimitOwnAiProvider" xml:space="preserve">
+    <value>The Resgrid assistant cannot use your department's own AI provider subscription (bring your own key); it uses Resgrid's own AI, and a saved provider stays unused.</value>
+  </data>
+  <data name="AckOwnAiProvider" xml:space="preserve">
+    <value>I understand that from the moment enrollment is queued until protection is fully turned off, the Resgrid assistant cannot use my department's own AI provider subscription (bring your own key) and uses Resgrid's own AI instead.</value>
+  </data>
+  <data name="OwnAiProviderInUse" xml:space="preserve">
+    <value>Your department has its own AI provider saved for the chatbot ({0}). Once enrollment is queued, the chatbot stops using it within five minutes and uses Resgrid's own AI. The saved provider is not deleted.</value>
+  </data>
 </root>

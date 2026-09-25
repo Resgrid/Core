@@ -48,6 +48,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly Resgrid.Model.AiDispatch.IAiDispatchAdminService _aiDispatchAdminService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -55,7 +56,8 @@ namespace Resgrid.Web.Services.Controllers
 			IUserStateService userStateService, ICommunicationService communicationService, IDistributionListsService distributionListsService,
 			IUsersService usersService, IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IMessageService messageService,
 			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
-			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService)
+			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
+			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -79,6 +81,7 @@ namespace Resgrid.Web.Services.Controllers
 			_callDispatchStatusService = callDispatchStatusService;
 			_dispatchRecommendationService = dispatchRecommendationService;
 			_featureToggleService = featureToggleService;
+			_aiDispatchAdminService = aiDispatchAdminService;
 		}
 		#endregion Private Readonly Properties and Constructors
 
@@ -383,6 +386,9 @@ namespace Resgrid.Web.Services.Controllers
 
 									await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
+									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken);
+
 									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
 								}
 								else if (call != null && call.CallId > 0)
@@ -572,6 +578,9 @@ namespace Resgrid.Web.Services.Controllers
 									// group, so run card enrichment stays out of it.
 									await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
 
+									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+										await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken);
+
 									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
 								}
 							}
@@ -690,6 +699,30 @@ namespace Resgrid.Web.Services.Controllers
 				await _callDispatchStatusService.ApplyDispatchStatusesAsync(call, cancellationToken: cancellationToken);
 
 			await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+		}
+
+		/// <summary>
+		/// AI dispatch, Enrich mode: the call above is already saved and its broadcast queued exactly as for GenericTemplate.
+		/// Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
+		/// </summary>
+		private async Task QueueAiDispatchEnrichmentAsync(Call savedCall, int channel, string sender, CancellationToken cancellationToken)
+		{
+			if (!Config.AiDispatchConfig.EnrichEnabled || savedCall == null || savedCall.CallId <= 0)
+				return;
+
+			try
+			{
+				// The sender allowlist is checked here so only a yes/no, never an address, travels on the bus.
+				await _queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
+				{
+					DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = channel, QueuedOnUtc = DateTime.UtcNow,
+					SenderNotAllowed = !await _aiDispatchAdminService.IsSenderAllowedAsync(savedCall.DepartmentId, sender)
+				}, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		private static Tuple<int, string> ProcessEmailAddress(string email)

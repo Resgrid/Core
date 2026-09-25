@@ -53,11 +53,22 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				var delivery = await channel.BasicGetAsync(QueueName, false, ct);
 				if (delivery == null) return DispatchTraceReceiveResult.Empty;
-				if (delivery.Body.Length > DispatchTraceEnvelope.MaximumBytes || delivery.BasicProperties.ContentType != DispatchTraceEnvelope.ContentType)
-					throw new ArgumentException("Invalid trace transport envelope.");
-				var row = (JsonSerializer.Deserialize<Envelope>(delivery.Body.Span, Json) ?? throw new ArgumentException("Empty trace envelope.")).ToRow();
-				DispatchTraceEnvelope.Validate(row);
-				if (delivery.BasicProperties.MessageId != row.AdminAssistDispatchTraceId) throw new ArgumentException("Trace message identity mismatch.");
+				AdminAssistDispatchTraceRow row;
+				try
+				{
+					if (delivery.Body.Length > DispatchTraceEnvelope.MaximumBytes || delivery.BasicProperties.ContentType != DispatchTraceEnvelope.ContentType)
+						throw new ArgumentException("Invalid trace transport envelope.");
+					row = (JsonSerializer.Deserialize<Envelope>(delivery.Body.Span, Json) ?? throw new ArgumentException("Empty trace envelope.")).ToRow();
+					DispatchTraceEnvelope.Validate(row);
+					if (delivery.BasicProperties.MessageId != row.AdminAssistDispatchTraceId) throw new ArgumentException("Trace message identity mismatch.");
+				}
+				catch (Exception ex) when (ex is ArgumentException or JsonException)
+				{
+					// A malformed envelope fails the same way on every redelivery. Requeueing it would park it at the
+					// head of the queue and block every department's evidence, so drop it without persisting.
+					await channel.BasicRejectAsync(delivery.DeliveryTag, false, ct);
+					throw;
+				}
 				await persist(row, ct);
 				await channel.BasicAckAsync(delivery.DeliveryTag, false, ct);
 				return DispatchTraceReceiveResult.Persisted;

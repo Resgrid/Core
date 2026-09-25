@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AiDispatch" xml:space="preserve"><value>Диспетчеризація з ШІ</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Налаштування диспетчеризації з ШІ</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>Активність диспетчеризації з ШІ</value></data>
+  <data name="EnrichModeNote" xml:space="preserve"><value>Режим доповнення: виклики створюються та диспетчеризуються точно як раніше, а потім ШІ заповнює дані, що досі порожні. Він ніколи не змінює пріоритет чи те, кого направлено, і ніколи повторно нікого не сповіщає.</value></data>
+  <data name="StatusRunning" xml:space="preserve"><value>Диспетчеризація з ШІ працює для вашого підрозділу.</value></data>
+  <data name="StatusHostDisabled" xml:space="preserve"><value>Диспетчеризацію з ШІ не ввімкнено в цьому розгортанні Resgrid.</value></data>
+  <data name="StatusNotEntitled" xml:space="preserve"><value>Для диспетчеризації з ШІ потрібне доповнення Enhanced AI.</value></data>
+  <data name="StatusFormatNotSelected" xml:space="preserve"><value>Щоб почати, виберіть "Generic with AI enrichment (Enhanced AI)" як формат диспетчерського листа.</value></data>
+  <data name="StatusModelNotConfigured" xml:space="preserve"><value>Модель ШІ для цього розгортання ще не налаштовано.</value></data>
+  <data name="WhatAiMayDo" xml:space="preserve"><value>Що може робити ШІ</value></data>
+  <data name="FillCallType" xml:space="preserve"><value>Заповнювати порожній тип виклику</value></data>
+  <data name="FillAddress" xml:space="preserve"><value>Заповнювати порожню адресу та позицію на мапі</value></data>
+  <data name="FillContact" xml:space="preserve"><value>Заповнювати порожні ім'я та номер контакту</value></data>
+  <data name="FillIncidentNumber" xml:space="preserve"><value>Заповнювати порожній номер інциденту</value></data>
+  <data name="RenamePlaceholder" xml:space="preserve"><value>Перейменовувати виклики, що надходять із заголовком "Dispatch Email"</value></data>
+  <data name="AddSummaryNote" xml:space="preserve"><value>Додавати нотатку-підсумок ШІ із запропонованим пріоритетом</value></data>
+  <data name="FlagRelatedCalls" xml:space="preserve"><value>Позначати можливі дублікати та повідомлення, які не є диспетчеризацією</value></data>
+  <data name="Safeguards" xml:space="preserve"><value>Запобіжники</value></data>
+  <data name="MinimumConfidence" xml:space="preserve"><value>Мінімальна впевненість (%)</value></data>
+  <data name="MinimumConfidenceHelp" xml:space="preserve"><value>Нижче цієї впевненості ШІ нічого не змінює. Залиште порожнім, щоб використати типове значення {0}%. Допустимий діапазон: 50–95%.</value></data>
+  <data name="SenderAllowlist" xml:space="preserve"><value>Дозволені відправники</value></data>
+  <data name="SenderAllowlistHelp" xml:space="preserve"><value>Одна адреса електронної пошти або домен у рядку, наприклад cad.county.gov. Доповнюються лише повідомлення від цих відправників; кожне повідомлення все одно створює виклик. Залиште порожнім, щоб дозволити всіх відправників.</value></data>
+  <data name="MonthlyTokenCap" xml:space="preserve"><value>Місячний ліміт токенів диспетчеризації з ШІ</value></data>
+  <data name="MonthlyTokenCapHelp" xml:space="preserve"><value>Необов'язковий ліміт у межах бюджету Enhanced AI вашого підрозділу. Залиште порожнім, щоб не встановлювати окремий ліміт. Використано цього місяця: {0} токенів.</value></data>
+  <data name="AuditHistory" xml:space="preserve"><value>Історія активності</value></data>
+  <data name="AuditRetentionDays" xml:space="preserve"><value>Зберігати активність (днів)</value></data>
+  <data name="AuditRetentionDaysHelp" xml:space="preserve"><value>Від 30 до 1095 днів. Старіша активність видаляється автоматично.</value></data>
+  <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="Saved" xml:space="preserve"><value>Налаштування диспетчеризації з ШІ збережено.</value></data>
+  <data name="Conflict" xml:space="preserve"><value>Інший адміністратор змінив ці налаштування. Перегляньте поточні значення та збережіть знову.</value></data>
+  <data name="ErrorConfidence" xml:space="preserve"><value>Мінімальна впевненість має бути від 50% до 95%.</value></data>
+  <data name="ErrorRetention" xml:space="preserve"><value>Термін зберігання активності має бути від 30 до 1095 днів.</value></data>
+  <data name="ErrorCap" xml:space="preserve"><value>Місячний ліміт токенів має бути від 8192 до 50 000 000.</value></data>
+  <data name="ErrorAllowlist" xml:space="preserve"><value>Кожен дозволений відправник має бути адресою електронної пошти або доменом.</value></data>
+  <data name="ErrorAllowlistTooLong" xml:space="preserve"><value>Введіть не більше 50 дозволених відправників.</value></data>
+  <data name="ViewActivity" xml:space="preserve"><value>Переглянути активність диспетчеризації з ШІ</value></data>
+  <data name="DispatchEmailSettings" xml:space="preserve"><value>Налаштування диспетчерських листів</value></data>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="LastUpdated" xml:space="preserve"><value>Останнє оновлення: {0}</value></data>
+  <data name="ActivityNote" xml:space="preserve"><value>Тут зберігаються лише результати, ніколи не повідомлення чи відповідь ШІ. Відкрийте виклик, щоб побачити, що було заповнено.</value></data>
+  <data name="NoActivity" xml:space="preserve"><value>Активності диспетчеризації з ШІ ще немає.</value></data>
+  <data name="Last30Days" xml:space="preserve"><value>Останні 30 днів</value></data>
+  <data name="TokensThisMonth" xml:space="preserve"><value>Токени диспетчеризації з ШІ цього місяця</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Пропущено або без змін</value></data>
+  <data name="ColumnWhen" xml:space="preserve"><value>Коли</value></data>
+  <data name="ColumnCall" xml:space="preserve"><value>Виклик</value></data>
+  <data name="ColumnOutcome" xml:space="preserve"><value>Результат</value></data>
+  <data name="ColumnConfidence" xml:space="preserve"><value>Впевненість</value></data>
+  <data name="ColumnFilled" xml:space="preserve"><value>Заповнено</value></data>
+  <data name="ColumnRejected" xml:space="preserve"><value>Відхилено</value></data>
+  <data name="ColumnRelatedCall" xml:space="preserve"><value>Можливо пов'язаний</value></data>
+  <data name="ColumnTime" xml:space="preserve"><value>Час ШІ</value></data>
+  <data name="ColumnTokens" xml:space="preserve"><value>Токени</value></data>
+  <data name="RejectedHelp" xml:space="preserve"><value>Відхилено — це значення, які повернув ШІ, але вони були недозволені або не траплялися в повідомленні.</value></data>
+  <data name="Outcome_Applied" xml:space="preserve"><value>Доповнено</value></data>
+  <data name="Outcome_NoChange" xml:space="preserve"><value>Нічого додати</value></data>
+  <data name="Outcome_LowConfidence" xml:space="preserve"><value>Низька впевненість</value></data>
+  <data name="Outcome_InvalidOutput" xml:space="preserve"><value>Непридатна відповідь ШІ</value></data>
+  <data name="Outcome_Unavailable" xml:space="preserve"><value>ШІ недоступний</value></data>
+  <data name="Outcome_Busy" xml:space="preserve"><value>ШІ зайнятий</value></data>
+  <data name="Outcome_BudgetExhausted" xml:space="preserve"><value>Бюджет Enhanced AI вичерпано</value></data>
+  <data name="Outcome_DispatchCapReached" xml:space="preserve"><value>Досягнуто ліміту диспетчеризації з ШІ</value></data>
+  <data name="Outcome_ProtectionUnsupported" xml:space="preserve"><value>Пропущено: захист даних</value></data>
+  <data name="Outcome_CallNotActive" xml:space="preserve"><value>Виклик більше не активний</value></data>
+  <data name="Outcome_SenderNotAllowed" xml:space="preserve"><value>Відправник не дозволений</value></data>
+  <data name="Outcome_InProgress" xml:space="preserve"><value>Виконується</value></data>
+  <data name="Field_Type" xml:space="preserve"><value>Тип виклику</value></data>
+  <data name="Field_Address" xml:space="preserve"><value>Адреса</value></data>
+  <data name="Field_GeoLocationData" xml:space="preserve"><value>Позиція на мапі</value></data>
+  <data name="Field_ContactName" xml:space="preserve"><value>Контактна особа</value></data>
+  <data name="Field_ContactNumber" xml:space="preserve"><value>Контактний номер</value></data>
+  <data name="Field_IncidentNumber" xml:space="preserve"><value>Номер інциденту</value></data>
+  <data name="Field_Name" xml:space="preserve"><value>Назва</value></data>
+  <data name="Field_Note" xml:space="preserve"><value>Нотатка</value></data>
+</root>

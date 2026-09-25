@@ -48,11 +48,21 @@ namespace Resgrid.Model
 		}
 
 		/// <summary>Verify in stored sequence order; an external tail checkpoint also detects suffix removal.</summary>
-		public static bool Verify(IEnumerable<AdpAuditEvent> rows, long expectedCount, string expectedTailHash)
+		public static bool Verify(IEnumerable<AdpAuditEvent> rows, long expectedCount, string expectedTailHash) =>
+			Walk(rows, 0, Genesis, out var sequence, out var previous) && sequence == expectedCount && previous == expectedTailHash;
+
+		/// <summary>
+		/// Verify one page that must continue the chain from an anchor the caller already holds (0 and
+		/// <see cref="Genesis"/> for the first page, otherwise the previous page's tail sequence and hash).
+		/// </summary>
+		public static bool VerifySegment(IEnumerable<AdpAuditEvent> rows, long anchorSequence, string anchorHash) =>
+			anchorSequence >= 0 && !string.IsNullOrEmpty(anchorHash) && Walk(rows, anchorSequence, anchorHash, out _, out _);
+
+		private static bool Walk(IEnumerable<AdpAuditEvent> rows, long anchorSequence, string anchorHash, out long sequence, out string previous)
 		{
-			long sequence = 0;
+			sequence = anchorSequence;
+			previous = anchorHash;
 			int? department = null;
-			var previous = Genesis;
 			foreach (var row in rows)
 			{
 				department ??= row.DepartmentId;
@@ -60,7 +70,7 @@ namespace Resgrid.Model
 					row.Hash != ComputeHash(row)) return false;
 				previous = row.Hash;
 			}
-			return sequence == expectedCount && previous == expectedTailHash;
+			return true;
 		}
 	}
 }

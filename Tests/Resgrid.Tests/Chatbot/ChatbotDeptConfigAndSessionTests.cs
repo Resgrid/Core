@@ -31,7 +31,71 @@ namespace Resgrid.Tests.Chatbot
 			return cache;
 		}
 
+		private static IEnhancedAiAccessService OwnProvider(bool allowed) =>
+			OwnProvider(allowed ? OwnLlmProviderStatus.Allowed : OwnLlmProviderStatus.AddonRequired);
+
+		private static IEnhancedAiAccessService OwnProvider(OwnLlmProviderStatus status)
+		{
+			var access = new Mock<IEnhancedAiAccessService>();
+			access.Setup(a => a.GetOwnLlmProviderStatusAsync(It.IsAny<int>())).ReturnsAsync(status);
+			return access.Object;
+		}
+
 		// ---- Per-department LLM override ---------------------------------------------------------
+
+		[TestCase(OwnLlmProviderStatus.AddonRequired)]
+		[TestCase(OwnLlmProviderStatus.DataProtectionEnabled)]
+		[TestCase(OwnLlmProviderStatus.Unknown)]
+		public async Task GetLlmOverride_WithoutEnhancedAiOrUnderDataProtection_IsInertAndTheSystemProviderAnswers(OwnLlmProviderStatus status)
+		{
+			var repo = new Mock<IChatbotDepartmentConfigRepository>();
+			repo.Setup(r => r.GetByDepartmentIdAsync(5)).ReturnsAsync(new ChatbotDepartmentConfig
+			{
+				DepartmentId = 5, IsEnabled = true, LlmApiEndpoint = "https://api.openai.com/v1/chat/completions", LlmApiKey = "ENCRYPTED"
+			});
+			var enc = new Mock<IEncryptionService>();
+			enc.Setup(e => e.Decrypt("ENCRYPTED")).Returns("plaintext-key");
+
+			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object, OwnProvider(status));
+
+			(await service.GetLlmOverrideAsync(5)).Should().BeNull();
+			(await service.GetLlmOverrideStatusAsync(5)).Should().Be(status);
+			enc.Verify(e => e.Decrypt(It.IsAny<string>()), Times.Never, "the key is not decrypted when it cannot be used");
+		}
+
+		[Test]
+		public async Task OwnProviderEntitlement_IsCachedBrieflyAndClearedOnSave()
+		{
+			var saved = SystemBehaviorConfig.CacheEnabled;
+			try
+			{
+				SystemBehaviorConfig.CacheEnabled = true;
+				var store = new System.Collections.Generic.Dictionary<string, string>();
+				var cache = new Mock<ICacheProvider>();
+				cache.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync((string k) => store.TryGetValue(k, out var v) ? v : null);
+				cache.Setup(c => c.SetStringAsync(It.IsAny<string>(), It.IsAny<string>(), TimeSpan.FromMinutes(5)))
+					.Callback((string k, string v, TimeSpan _) => store[k] = v).ReturnsAsync(true);
+				cache.Setup(c => c.RemoveAsync(It.IsAny<string>())).Callback((string k) => store.Remove(k)).ReturnsAsync(true);
+				var access = new Mock<IEnhancedAiAccessService>();
+				access.Setup(a => a.GetOwnLlmProviderStatusAsync(9)).ReturnsAsync(OwnLlmProviderStatus.Allowed);
+				var repo = new Mock<IChatbotDepartmentConfigRepository>();
+				repo.Setup(r => r.UpdateAsync(It.IsAny<ChatbotDepartmentConfig>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+					.ReturnsAsync((ChatbotDepartmentConfig c, CancellationToken _, bool __) => c);
+				repo.Setup(r => r.GetByDepartmentIdAsync(9)).ReturnsAsync(new ChatbotDepartmentConfig { Id = "x", DepartmentId = 9 });
+				var service = new ChatbotDepartmentConfigService(repo.Object, cache.Object, Mock.Of<IEncryptionService>(), access.Object);
+
+				(await service.GetLlmOverrideStatusAsync(9)).Should().Be(OwnLlmProviderStatus.Allowed);
+				access.Setup(a => a.GetOwnLlmProviderStatusAsync(9)).ReturnsAsync(OwnLlmProviderStatus.DataProtectionEnabled);
+				(await service.GetLlmOverrideStatusAsync(9)).Should().Be(OwnLlmProviderStatus.Allowed, "the Billing API is not asked on every chatbot message");
+				(await service.GetLlmOverrideStatusAsync(9, bypassCache: true)).Should().Be(OwnLlmProviderStatus.DataProtectionEnabled, "settings pages read it fresh");
+				(await service.GetLlmOverrideStatusAsync(9)).Should().Be(OwnLlmProviderStatus.DataProtectionEnabled, "a fresh read refreshes the cache");
+
+				access.Setup(a => a.GetOwnLlmProviderStatusAsync(9)).ReturnsAsync(OwnLlmProviderStatus.Allowed);
+				await service.SaveConfigAsync(new ChatbotDepartmentConfig { DepartmentId = 9 });
+				(await service.GetLlmOverrideStatusAsync(9)).Should().Be(OwnLlmProviderStatus.Allowed);
+			}
+			finally { SystemBehaviorConfig.CacheEnabled = saved; }
+		}
 
 		[Test]
 		public void DepartmentConfig_SerializesForDistributedCache()
@@ -86,7 +150,7 @@ namespace Resgrid.Tests.Chatbot
 			var enc = new Mock<IEncryptionService>();
 			enc.Setup(e => e.Decrypt("ENCRYPTED")).Returns("plaintext-key");
 
-			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object);
+			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object, OwnProvider(true));
 
 			var ovr = await service.GetLlmOverrideAsync(5);
 
@@ -107,7 +171,7 @@ namespace Resgrid.Tests.Chatbot
 				// no LLM endpoint/key => fall back to system provider
 			});
 
-			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, Mock.Of<IEncryptionService>());
+			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, Mock.Of<IEncryptionService>(), OwnProvider(true));
 
 			var ovr = await service.GetLlmOverrideAsync(5);
 
@@ -125,7 +189,7 @@ namespace Resgrid.Tests.Chatbot
 			var enc = new Mock<IEncryptionService>();
 			enc.Setup(e => e.Encrypt("super-secret")).Returns("CIPHER");
 
-			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object);
+			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object, OwnProvider(true));
 
 			var config = new ChatbotDepartmentConfig { DepartmentId = 7, IsEnabled = true };
 			await service.SaveConfigAsync(config, "super-secret");
@@ -147,7 +211,7 @@ namespace Resgrid.Tests.Chatbot
 
 			var enc = new Mock<IEncryptionService>();
 
-			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object);
+			var service = new ChatbotDepartmentConfigService(repo.Object, CacheMock().Object, enc.Object, OwnProvider(true));
 
 			var config = new ChatbotDepartmentConfig { DepartmentId = 7, IsEnabled = true };
 			await service.SaveConfigAsync(config, null);

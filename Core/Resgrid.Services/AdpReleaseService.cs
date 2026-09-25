@@ -49,7 +49,7 @@ namespace Resgrid.Services
 				PhoneHash = Digest(NormalizePhone(phone)), Channel = channel, Epoch = policy.PolicyEpoch, PinGeneration = credential.Generation,
 				ExpiresUtc = DateTime.UtcNow.AddMinutes(Math.Clamp(egress.PinChallengeExpiryMinutes, 1, 10)) };
 			var id = Convert.ToHexString(RandomNumberGenerator.GetBytes(12));
-			await Audit(departmentId, userId, "pin-challenge", "created", cancellationToken);
+			await Audit(departmentId, userId, "pin-challenge", "created", cancellationToken, callId);
 			return await store.SaveAsync("challenge:" + id, JsonConvert.SerializeObject(challenge), 0, cancellationToken) ? id : null;
 		}
 
@@ -80,7 +80,7 @@ namespace Resgrid.Services
 				if (credential.Failures >= Math.Clamp(egress.PinMaxAttempts, 1, 5))
 					credential.LockedUntilUtc = DateTime.UtcNow.AddMinutes(Math.Clamp(egress.PinLockoutMinutes, 1, 60));
 				if (!await store.SaveAsync(key, JsonConvert.SerializeObject(credential), credentialState.Version, cancellationToken)) { verified = false; continue; }
-				await Audit(dept, challenge.UserId, "pin-verify", verified ? "verified" : "denied", cancellationToken);
+				await Audit(dept, challenge.UserId, "pin-verify", verified ? "verified" : "denied", cancellationToken, challenge.CallId);
 				break;
 			}
 			if (!verified) return null;
@@ -106,7 +106,7 @@ namespace Resgrid.Services
 			if (challenge.ExpiresUtc <= DateTime.UtcNow || finalPolicy?.PolicyEpoch != challenge.Epoch || finalCredential == null ||
 				JsonConvert.DeserializeObject<PinCredential>(finalCredential.Json).Generation != challenge.PinGeneration ||
 				!await Eligible(dept, challenge.CallId, challenge.UserId, phone, channel)) return null;
-			await Audit(dept, challenge.UserId, "pin-release", "disclosed", cancellationToken);
+			await Audit(dept, challenge.UserId, "pin-release", "disclosed", cancellationToken, challenge.CallId);
 			var text = string.Join(". ", fields.Select(f => f.Value).Where(v => !string.IsNullOrWhiteSpace(v)));
 			if (channel == ProtectedDataEgressChannel.Sms && text.Length > 1200)
 			{
@@ -141,8 +141,10 @@ namespace Resgrid.Services
 			return profile != null && (profile.MobileNumberVerified == true && NormalizePhone(profile.MobileNumber) == NormalizePhone(phone) ||
 				channel == ProtectedDataEgressChannel.Voice && profile.HomeNumberVerified == true && NormalizePhone(profile.HomeNumber) == NormalizePhone(phone));
 		}
-		private Task Audit(int dept, string userId, string operation, string outcome, CancellationToken ct) => audit.AppendAsync(
-			new AdpAuditEvent { DepartmentId = dept, ActorId = userId, Layer = "application", Operation = operation, Outcome = outcome }, ct);
+		// The call is the disclosed resource; its identifier is value-free, unlike the challenge identifier or PIN.
+		private Task Audit(int dept, string userId, string operation, string outcome, CancellationToken ct, int? callId = null) => audit.AppendAsync(
+			new AdpAuditEvent { DepartmentId = dept, ActorId = userId, Layer = "application", Operation = operation, Outcome = outcome,
+				ResourceId = callId?.ToString(System.Globalization.CultureInfo.InvariantCulture) }, ct);
 		private static string PinKey(int departmentId, string userId) => "pin:" + departmentId + ":" + Digest(userId);
 		private string NormalizePhone(string phone)
 		{

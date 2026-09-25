@@ -27,19 +27,31 @@ namespace Resgrid.Providers.ProtectedData
 		internal const string WorkloadKeyHeader = "X-Resgrid-Broker-Key";
 		internal const string BrokerUnavailableErrorCode = "broker_unavailable";
 
+		// The client is scoped (its audit repository is), so the connection pool must outlive it: a handler per
+		// scope would open a new TLS connection per request and leave the old sockets in TIME_WAIT.
+		private static readonly HttpMessageHandler SharedHandler = new SocketsHttpHandler
+		{
+			PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+		};
+
 		private readonly HttpClient _httpClient;
 		private readonly IAdpAuditRepository _audit;
 
 		public ProtectedDataBrokerClient(IAdpAuditRepository audit)
-			: this(new HttpClientHandler(), audit)
+			: this(SharedHandler, audit, disposeHandler: false)
 		{
 		}
 
 		/// <summary>Test seam: inject a message handler.</summary>
 		public ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit)
+			: this(handler, audit, disposeHandler: true)
+		{
+		}
+
+		private ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit, bool disposeHandler)
 		{
 			_audit = audit;
-			_httpClient = new HttpClient(handler, disposeHandler: true)
+			_httpClient = new HttpClient(handler, disposeHandler)
 			{
 				Timeout = TimeSpan.FromMilliseconds(DataProtectionConfig.BrokerTimeoutMs > 0
 					? DataProtectionConfig.BrokerTimeoutMs

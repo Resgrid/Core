@@ -53,6 +53,11 @@ namespace Resgrid.Config
 		// USD 250/month (price_0UHEA6qJFDZJcnkVnj0ZaAFw) is seeded on PlanAddons by M0211; the test-mode ids are still empty.
 		public static string PaddleBusinessOperationsAddon = "pri_01m2vrdycmx8kfhys5xxcjgqnx";
 		public static string PaddleBusinessOperationsAddonTest = "";
+
+		// Enhanced AI: EUR 145/month, Paddle product pro_01m3cdgjnjwgzyyg7pe0bz0526 (enhanced-ai-addon-plan.md). Stripe
+		// USD 95/month (price_0UJZXtqJFDZJcnkVbvetyYlx) is seeded on PlanAddons by M0238; the test-mode ids are still empty.
+		public static string PaddleEnhancedAiAddon = "pri_01m3cdhy94qbcmdvjhqk3nkppt";
+		public static string PaddleEnhancedAiAddonTest = "";
 		public static string PaddleProductionEnvironment = "production";
 		public static string PaddleTestEnvironment = "sandbox";
 		public static string PaddleProductionClientToken = "";
@@ -172,6 +177,11 @@ namespace Resgrid.Config
 		public static string GetPaddleBusinessOperationsAddonPriceId()
 		{
 			return NormalizeConfigValue(IsTestMode ? PaddleBusinessOperationsAddonTest : PaddleBusinessOperationsAddon);
+		}
+
+		public static string GetPaddleEnhancedAiAddonPriceId()
+		{
+			return NormalizeConfigValue(IsTestMode ? PaddleEnhancedAiAddonTest : PaddleEnhancedAiAddon);
 		}
 
 		public static string GetPaddleEnvironment()

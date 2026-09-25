@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="EnhancedAi" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiAddon" xml:space="preserve"><value>Module Enhanced AI</value></data>
+  <data name="EnhancedAiAddonIntro" xml:space="preserve"><value>Un module mensuel qui apporte à Resgrid des réponses et des brouillons générés par IA. Il fonctionne sur des serveurs exploités par Resgrid avec des modèles à poids ouverts. Seul le membre gestionnaire du service peut l'acheter ou le résilier.</value></data>
+  <data name="FeatureAdminAssist" xml:space="preserve"><value>Admin Assist avec IA, sans limite mensuelle de questions</value></data>
+  <data name="FeatureAssistant" xml:space="preserve"><value>Réponses de l'assistant et questions sur l'intervention à partir du tableau de commandement en direct</value></data>
+  <data name="FeatureDrafts" xml:space="preserve"><value>Brouillons de rapports d'intervention, de retours d'expérience et de briefings ICS-201, relus et signés par une personne</value></data>
+  <data name="FeatureCallBrief" xml:space="preserve"><value>Synthèses d'appel établies à partir des plans d'intervention, des dangers, des hydrants, des alertes météo et des appels précédents</value></data>
+  <data name="FeatureKnowledge" xml:space="preserve"><value>Réponses sur les documents et protocoles propres à votre service, avec citations</value></data>
+  <data name="ComingLater" xml:space="preserve"><value>Bientôt : assistance IA à la répartition des alertes, transcription de l'audio d'alerte et recherche sémantique.</value></data>
+  <data name="BudgetNote" xml:space="preserve"><value>Comprend un budget mensuel d'utilisation de l'IA. Si votre service l'atteint, les fonctions d'IA reviennent à l'expérience standard jusqu'au mois suivant. Aucun frais de dépassement.</value></data>
+  <data name="DataNote" xml:space="preserve"><value>Les données de votre service ne sont pas envoyées à des fournisseurs d'IA tiers et ne servent pas à entraîner des modèles d'IA. L'IA ne modifie jamais d'elle-même votre configuration ni vos enregistrements.</value></data>
+  <data name="FreeAllowance" xml:space="preserve"><value>Questions gratuites à Admin Assist</value></data>
+  <data name="FreeAllowanceText" xml:space="preserve"><value>Chaque service peut poser {0} questions à Admin Assist pendant les {1} jours qui suivent sa première question ayant reçu une réponse, puis {2} questions par mois civil. Les questions non utilisées ne sont pas reportées, et seules les questions ayant reçu une réponse sont comptées.</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Enhanced AI est actif pour votre service.</value></data>
+  <data name="BeingEnabled" xml:space="preserve"><value>Enhanced AI est en cours d'activation pour votre service. Les fonctions apparaîtront au fur et à mesure de leur activation.</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Votre service ne possède pas encore Enhanced AI.</value></data>
+  <data name="CheckoutNotOpen" xml:space="preserve"><value>Enhanced AI n'est pas encore disponible à l'achat pour votre service.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Payé jusqu'au</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Renouvellement annulé ; l'accès se poursuit jusqu'à la fin de la période payée.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Acheter</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Annuler le renouvellement</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Annuler le renouvellement d'Enhanced AI ?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>La facturation est indisponible pour le moment. Réessayez plus tard.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Gérer l'abonnement</value></data>
+  <data name="Monthly" xml:space="preserve"><value>mois</value></data>
+  <data name="Links" xml:space="preserve"><value>Liens</value></data>
+  <data name="ManageEnhancedAi" xml:space="preserve"><value>Gérer Enhanced AI</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>par service</value></data>
+  <data name="SubscriptionCardHeader" xml:space="preserve"><value>Module Enhanced AI</value></data>
+  <data name="SubscriptionCardText" xml:space="preserve"><value>Apporte à Resgrid des réponses et des brouillons générés par IA : Admin Assist avec IA sans limite de questions, questions sur les interventions, brouillons de rapports et de briefings, et synthèses d'appel. Facturé mensuellement, séparément de votre formule Resgrid. Seul le membre gestionnaire de votre service peut l'acheter ou le résilier.</value></data>
+  <data name="CardBulletAdminAssist" xml:space="preserve"><value>Admin Assist avec IA</value></data>
+  <data name="CardBulletIncident" xml:space="preserve"><value>Questions sur les interventions</value></data>
+  <data name="CardBulletDrafts" xml:space="preserve"><value>Brouillons de rapports et de briefings</value></data>
+  <data name="CardBulletCallBrief" xml:space="preserve"><value>Synthèses d'appel</value></data>
+  <data name="CardBulletPrivate" xml:space="preserve"><value>Fonctionne sur les serveurs de Resgrid</value></data>
+  <data name="FeatureOwnProvider" xml:space="preserve"><value>Le chatbot avec l'abonnement de votre propre fournisseur d'IA (apportez votre clé), si vous le préférez à l'IA de Resgrid</value></data>
+  <data name="CardBulletOwnProvider" xml:space="preserve"><value>Votre propre fournisseur d'IA</value></data>
+  <data name="ModelsNote" xml:space="preserve"><value>L'IA de Resgrid exécute des modèles à poids ouverts, actuellement Qwen3, sur du matériel que Resgrid possède et exploite. Resgrid n'envoie jamais vos données à des fournisseurs d'IA dans le cloud.</value></data>
+  <data name="OwnProviderHeader" xml:space="preserve"><value>Votre propre fournisseur d'IA (apportez votre clé)</value></data>
+  <data name="OwnProviderIntro" xml:space="preserve"><value>Avec Enhanced AI, votre service peut connecter son propre abonnement auprès d'un fournisseur d'IA comme OpenAI, Anthropic, Google Gemini, Azure OpenAI ou Mistral, ou un serveur de modèles que vous exploitez. Le chatbot envoie alors les messages de ce service à ce fournisseur, selon votre accord avec lui. Laissez ces champs vides pour utiliser l'IA de Resgrid, qui n'envoie jamais vos données à des fournisseurs d'IA dans le cloud.</value></data>
+  <data name="OwnProviderRequiresAddon" xml:space="preserve"><value>L'utilisation de l'abonnement de votre propre fournisseur d'IA nécessite le module Enhanced AI.</value></data>
+  <data name="OwnProviderSavedInactive" xml:space="preserve"><value>Le fournisseur enregistré n'est pas utilisé. Le chatbot utilise l'IA de Resgrid jusqu'à ce qu'Enhanced AI soit actif.</value></data>
+  <data name="OwnProviderNotApplied" xml:space="preserve"><value>Vos autres paramètres ont été enregistrés, mais pas le changement de fournisseur d'IA, car il nécessite le module Enhanced AI.</value></data>
+  <data name="Provider" xml:space="preserve"><value>Fournisseur</value></data>
+  <data name="ProviderChoose" xml:space="preserve"><value>Choisir un fournisseur</value></data>
+  <data name="ProviderCustom" xml:space="preserve"><value>Autre point de terminaison compatible OpenAI</value></data>
+  <data name="ProviderHelp" xml:space="preserve"><value>Choisir un fournisseur renseigne son point de terminaison. Pour Azure OpenAI, remplacez {resource} et {deployment} par vos propres valeurs.</value></data>
+  <data name="EndpointHelp" xml:space="preserve"><value>L'URL complète de la requête. Elle doit utiliser https et une adresse publique.</value></data>
+  <data name="ModelHelp" xml:space="preserve"><value>Saisissez le nom du modèle exactement comme votre fournisseur l'indique.</value></data>
+  <data name="RemoveProvider" xml:space="preserve"><value>Supprimer le fournisseur et la clé d'API enregistrés</value></data>
+  <data name="OwnProviderBlockedByAdp" xml:space="preserve"><value>Votre propre fournisseur d'IA ne peut pas être utilisé tant qu'Advanced Data Protection est activé pour votre service, afin que les données protégées ne quittent jamais Resgrid. Le chatbot utilise l'IA de Resgrid, et tout fournisseur enregistré reste inutilisé.</value></data>
+  <data name="OwnProviderStatusUnknown" xml:space="preserve"><value>Votre module Enhanced AI n'a pas pu être confirmé pour le moment, le chatbot utilise donc l'IA de Resgrid. Veuillez réessayer plus tard.</value></data>
+  <data name="OwnProviderChangeNotSaved" xml:space="preserve"><value>Vos autres paramètres ont été enregistrés, mais pas le changement de fournisseur d'IA.</value></data>
+</root>

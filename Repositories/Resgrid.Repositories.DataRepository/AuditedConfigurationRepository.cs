@@ -41,6 +41,22 @@ namespace Resgrid.Repositories.DataRepository
 			DepartmentGroupMember row => ParentDepartmentAsync("DepartmentGroups", "DepartmentGroupId", row.DepartmentGroupId, row.DepartmentId, ct),
 			UnitRole row => ParentDepartmentAsync("Units", "UnitId", row.UnitId, null, ct),
 			Shift row => Task.FromResult(row.DepartmentId),
+			CallType row => Task.FromResult(row.DepartmentId),
+			CallQuickTemplate row => Task.FromResult(row.DepartmentId),
+			UnitType row => Task.FromResult(row.DepartmentId),
+			CustomState row => Task.FromResult(row.DepartmentId),
+			CustomStateDetail row => ParentDepartmentAsync("CustomStates", "CustomStateId", row.CustomStateId, null, ct),
+			RunCard row => Task.FromResult(row.DepartmentId),
+			RunCardTrigger row => ParentDepartmentAsync("RunCards", "RunCardId", row.RunCardId, null, ct),
+			RunCardAlarmLevel row => ParentDepartmentAsync("RunCards", "RunCardId", row.RunCardId, null, ct),
+			RunCardAvailabilitySelection row => ParentDepartmentAsync("RunCards", "RunCardId", row.RunCardId, null, ct),
+			RunCardUnitRequirement row => NestedDepartmentAsync("RunCardAlarmLevels", "RunCardAlarmLevelId", row.RunCardAlarmLevelId, "RunCardId", "RunCards", ct),
+			RunCardRoleRequirement row => NestedDepartmentAsync("RunCardAlarmLevels", "RunCardAlarmLevelId", row.RunCardAlarmLevelId, "RunCardId", "RunCards", ct),
+			ShiftDay row => ParentDepartmentAsync("Shifts", "ShiftId", row.ShiftId, null, ct),
+			ShiftGroup row => ParentDepartmentAsync("Shifts", "ShiftId", row.ShiftId, null, ct),
+			ShiftPerson row => ParentDepartmentAsync("Shifts", "ShiftId", row.ShiftId, null, ct),
+			ShiftGroupRole row => NestedDepartmentAsync("ShiftGroups", "ShiftGroupId", row.ShiftGroupId, "ShiftId", "Shifts", ct),
+			ShiftGroupAssignment row => NestedDepartmentAsync("ShiftGroups", "ShiftGroupId", row.ShiftGroupId, "ShiftId", "Shifts", ct),
 			DepartmentSecurityPolicy row => Task.FromResult(row.DepartmentId),
 			DepartmentSsoConfig row => Task.FromResult(row.DepartmentId),
 			DepartmentCallEmail row => Task.FromResult(row.DepartmentId),
@@ -64,6 +80,8 @@ namespace Resgrid.Repositories.DataRepository
 			return departmentId;
 		}
 		private Task<int> ProtocolDepartmentAsync(int id, CancellationToken ct) => ScalarAsync<int>($"SELECT {Col("DepartmentId")} FROM {Tbl("DispatchProtocols")} WHERE {Col("DispatchProtocolId")}={P}Id", new { Id = id }, ct);
+		private async Task<int> NestedDepartmentAsync(string childTable, string childKey, int childId, string parentKey, string parentTable, CancellationToken ct) =>
+			await ParentDepartmentAsync(parentTable, parentKey, await ScalarAsync<int>($"SELECT {Col(parentKey)} FROM {Tbl(childTable)} WHERE {Col(childKey)}={P}Id", new { Id = childId }, ct), null, ct);
 		private async Task<int> QuestionDepartmentAsync(int id, CancellationToken ct) => await ProtocolDepartmentAsync(await ScalarAsync<int>(
 			$"SELECT {Col("DispatchProtocolId")} FROM {Tbl("DispatchProtocolQuestions")} WHERE {Col("DispatchProtocolQuestionId")}={P}Id", new { Id = id }, ct), ct);
 
@@ -97,6 +115,28 @@ namespace Resgrid.Repositories.DataRepository
 						children.AddRange(await QueryAsync<DepartmentGroupMember>($"SELECT * FROM {Tbl("DepartmentGroupMembers")} WHERE {Col("DepartmentGroupId")}={P}Id", new { Id = group.DepartmentGroupId }, ct)); break;
 					case PersonnelRole role:
 						children.AddRange(await QueryAsync<PersonnelRoleUser>($"SELECT * FROM {Tbl("PersonnelRoleUsers")} WHERE {Col("PersonnelRoleId")}={P}Id", new { Id = role.PersonnelRoleId }, ct)); break;
+					case CustomState state:
+						children.AddRange(await QueryAsync<CustomStateDetail>($"SELECT * FROM {Tbl("CustomStateDetails")} WHERE {Col("CustomStateId")}={P}Id", new { Id = state.CustomStateId }, ct)); break;
+					case RunCard card:
+						children.AddRange(await QueryAsync<RunCardTrigger>($"SELECT * FROM {Tbl("RunCardTriggers")} WHERE {Col("RunCardId")}={P}Id", new { Id = card.RunCardId }, ct));
+						children.AddRange(await QueryAsync<RunCardAvailabilitySelection>($"SELECT * FROM {Tbl("RunCardAvailabilitySelections")} WHERE {Col("RunCardId")}={P}Id", new { Id = card.RunCardId }, ct));
+						children.AddRange(await QueryAsync<RunCardAlarmLevel>($"SELECT * FROM {Tbl("RunCardAlarmLevels")} WHERE {Col("RunCardId")}={P}Id", new { Id = card.RunCardId }, ct));
+						foreach (var level in children.OfType<RunCardAlarmLevel>().ToArray())
+						{
+							children.AddRange(await QueryAsync<RunCardUnitRequirement>($"SELECT * FROM {Tbl("RunCardUnitRequirements")} WHERE {Col("RunCardAlarmLevelId")}={P}Id", new { Id = level.RunCardAlarmLevelId }, ct));
+							children.AddRange(await QueryAsync<RunCardRoleRequirement>($"SELECT * FROM {Tbl("RunCardRoleRequirements")} WHERE {Col("RunCardAlarmLevelId")}={P}Id", new { Id = level.RunCardAlarmLevelId }, ct));
+						}
+						break;
+					case Shift shift:
+						children.AddRange(await QueryAsync<ShiftDay>($"SELECT * FROM {Tbl("ShiftDays")} WHERE {Col("ShiftId")}={P}Id", new { Id = shift.ShiftId }, ct));
+						children.AddRange(await QueryAsync<ShiftPerson>($"SELECT * FROM {Tbl("ShiftPersons")} WHERE {Col("ShiftId")}={P}Id", new { Id = shift.ShiftId }, ct));
+						children.AddRange(await QueryAsync<ShiftGroup>($"SELECT * FROM {Tbl("ShiftGroups")} WHERE {Col("ShiftId")}={P}Id", new { Id = shift.ShiftId }, ct));
+						foreach (var shiftGroup in children.OfType<ShiftGroup>().ToArray())
+						{
+							children.AddRange(await QueryAsync<ShiftGroupRole>($"SELECT * FROM {Tbl("ShiftGroupRoles")} WHERE {Col("ShiftGroupId")}={P}Id", new { Id = shiftGroup.ShiftGroupId }, ct));
+							children.AddRange(await QueryAsync<ShiftGroupAssignment>($"SELECT * FROM {Tbl("ShiftGroupAssignments")} WHERE {Col("ShiftGroupId")}={P}Id", new { Id = shiftGroup.ShiftGroupId }, ct));
+						}
+						break;
 					default: return stamp;
 				}
 				var childStamps = children.OrderBy(c => c.TableName, StringComparer.Ordinal).ThenBy(c => c.IdValue.ToString(), StringComparer.Ordinal).Select(ConfigurationAuditProjection.Project).ToArray();
@@ -140,7 +180,7 @@ namespace Resgrid.Repositories.DataRepository
 			var safe = new SortedDictionary<string, object>(StringComparer.Ordinal);
 			var fingerprint = new SortedDictionary<string, object>(StringComparer.Ordinal);
 			var ignored = entity.IgnoredProperties.ToHashSet(StringComparer.Ordinal);
-			foreach (var property in entity.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !ignored.Contains(p.Name)))
+			foreach (var property in entity.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !ignored.Contains(p.Name) && p.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute>() == null))
 			{
 				var value = property.GetValue(entity);
 				var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;

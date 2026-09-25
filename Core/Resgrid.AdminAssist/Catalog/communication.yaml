@@ -1,5 +1,5 @@
 {
-  "Version": "2026.09.24.1",
+  "Version": "2026.09.25.1",
   "Areas": [
     {
       "Id": "communication",
@@ -824,7 +824,8 @@
       "Requirements": [],
       "SettingIds": [],
       "RuleIds": [
-        "communication-tests"
+        "communication-tests",
+        "notification-channels"
       ]
     },
     {
@@ -860,6 +861,46 @@
     }
   ],
   "Rules": [
+    {
+      "Id": "notification-channels",
+      "AreaId": "communication",
+      "Severity": "Warning",
+      "TitleKey": "Rule.notification-channels",
+      "ExplanationKey": "RuleWhy.notification-channels",
+      "NextActionKey": "RuleNext.notification-channels",
+      "Location": {
+        "Controller": "CommunicationTest",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "notificationMembersWithoutChannel",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "notification-profiles",
+      "AreaId": "communication",
+      "Severity": "Warning",
+      "TitleKey": "Rule.notification-profiles",
+      "ExplanationKey": "RuleWhy.notification-profiles",
+      "NextActionKey": "RuleNext.notification-profiles",
+      "Location": {
+        "Controller": "Personnel",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "notificationMembersMissingProfile",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
     {
       "Id": "command-sources",
       "AreaId": "communication",
@@ -921,7 +962,7 @@
       "Body": "Enable Text Command. Configured text-command preference. Dispatch-source patterns and verified member command identity are different checks. Provider and chatbot paths do not enforce this switch uniformly; review the active consumer before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-enabletextcommand",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -932,7 +973,7 @@
       "Body": "Tts Language. Text-to-speech language for supported voice notifications. Confirm supported voices and pronunciation with a human-run test.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-ttslanguage",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -943,7 +984,7 @@
       "Body": "Enable Modern Notifications. Use supported modern notification behavior. Verify each consumer and channel; provider acceptance is not delivery.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-enablemodernnotifications",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -954,7 +995,7 @@
       "Body": "Messaging availability. Controls availability of messages and announcements. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-messagingdisabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -965,7 +1006,7 @@
       "Body": "Messaging menu name. Optional display name for messages and announcements in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-messagingnameoverride",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -976,7 +1017,7 @@
       "Body": "Department Notification / Event Type. Event that can trigger this notification rule. Match the event to a real administrative responsibility and expected frequency.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-eventtype",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -987,7 +1028,7 @@
       "Body": "Department Notification / Users To Notify. Explicit member recipients. Membership and channel eligibility are evaluated separately at send time.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-userstonotify",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -998,7 +1039,7 @@
       "Body": "Department Notification / Roles To Notify. Personnel-role recipients. Role membership can change; a role label is not a qualification or delivery guarantee.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-rolestonotify",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1009,7 +1050,7 @@
       "Body": "Department Notification / Groups To Notify. Department-group recipients. Review group membership and lock-to-group behavior together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-groupstonotify",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1020,7 +1061,7 @@
       "Body": "Department Notification / Lock To Group. Restricts applicable event processing to group scope. Review the selected event's actual source group and recipient resolver.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-locktogroup",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1031,7 +1072,7 @@
       "Body": "Department Notification / Selected Groups Admins Only. Limits selected-group recipients to their administrators in supported event paths. It does not designate department administrators automatically.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-selectedgroupsadminsonly",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1042,7 +1083,7 @@
       "Body": "Department Notification / Department Admins. Includes department administrators in supported notification processing. Review overlap and channel eligibility before estimating volume.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-departmentadmins",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1053,7 +1094,7 @@
       "Body": "Department Notification / Everyone. Selects the department-wide recipient option. Review actual active membership, suppression and deduplication before use.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-everyone",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1064,7 +1105,7 @@
       "Body": "Department Notification / Disabled. Stored disabled marker. The inspected legacy notification processor does not consult this flag, so it must not be treated as a verified stop switch. Review the active consumer; queued and delivered notifications cannot be recalled.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-disabled",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1075,7 +1116,7 @@
       "Body": "Department Notification / Before Data. Previous-state filter for applicable events. Review valid status IDs and the event-specific interpretation of an empty or wildcard value.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-beforedata",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1086,7 +1127,7 @@
       "Body": "Department Notification / Current Data. Current-state filter for applicable events. Compare it with the previous-state filter to avoid unintended volume.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-currentdata",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1097,7 +1138,7 @@
       "Body": "Department Notification / Upper Limit. Upper threshold for event-specific alerts. Units and comparisons depend on the selected event.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-upperlimit",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1108,7 +1149,7 @@
       "Body": "Department Notification / Lower Limit. Lower threshold for event-specific alerts. Use approved local thresholds and verify the actual event interpretation.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-lowerlimit",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1119,7 +1160,7 @@
       "Body": "Department Notification / Data. Event-specific configuration payload. The owning editor validates its meaning; Admin Assist does not execute arbitrary stored expressions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentnotification-data",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1130,7 +1171,7 @@
       "Body": "Inbox Your messages inbox Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inbox",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1141,7 +1182,7 @@
       "Body": "Sent Messages Messages you sent Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "outbox",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1152,7 +1193,7 @@
       "Body": "New Message Send a message, poll or callback request Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "compose-message",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1163,7 +1204,7 @@
       "Body": "Chat Real-time department chat Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "chat",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1174,7 +1215,7 @@
       "Body": "Voice Voice channels and push-to-talk Choose a communication channel appropriate to the audience and task. Preview recipients and explicitly run a communication test through its own screen. Review supported clients, channel membership and current subscription quantities. Push-to-Talk is distinct from phone voice alerts and department radio requirements.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "voice",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1185,7 +1226,7 @@
       "Body": "Notification rules Select events, recipients and conditions for administrative notifications. Reduce missed follow-up and review unnecessary message volume. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "notifications",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1196,7 +1237,7 @@
       "Body": "Distribution lists Maintain reusable recipient lists for supported communication flows. Keep audience ownership explicit and review recipients before sending. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "distribution-lists",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1207,7 +1248,7 @@
       "Body": "Communication Tests Prepare and explicitly run tests of configured channels. Collect observed test evidence; registration alone does not prove delivery. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "communication-tests",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1218,7 +1259,7 @@
       "Body": "Chatbot and Assistant integration settings Review supported chatbot platforms, account linking, limits and operational actions. Keep automated access and confirmations under administrator control. Preview recipients and explicitly run a communication test through its own screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "chatbot-settings",
-      "PackVersion": "2026.09.24.1",
+      "PackVersion": "2026.09.25.1",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

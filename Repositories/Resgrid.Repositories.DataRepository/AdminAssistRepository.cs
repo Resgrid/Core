@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>Tenant-keyed metadata only. Workspace revision serializes competing setup and learning commands.</summary>
-	public sealed partial class AdminAssistRepository : RmsRepositoryBase<AdminAssistWorkspaceRow>, IAdminAssistRepository, IAdminAssistMaintenanceStore, IAdminAssistTraceStore, IModuleImpactStore, IAdministrativeReferenceStore, IRetentionImpactStore, INotificationImpactStore, ISecurityImpactStore
+	public sealed partial class AdminAssistRepository : RmsRepositoryBase<AdminAssistWorkspaceRow>, IAdminAssistRepository, IAdminAssistMaintenanceStore, IAdminAssistTraceStore, IModuleImpactStore, IAdministrativeReferenceStore, IRetentionImpactStore, INotificationImpactStore, ISecurityImpactStore, IAiUsageMeter, IAdminAssistConversationStore
 	{
 		public AdminAssistRepository(IConnectionProvider connections, SqlConfiguration configuration, IUnitOfWork unit,
 			IQueryFactory queries) : base(connections, configuration, unit, queries) { }

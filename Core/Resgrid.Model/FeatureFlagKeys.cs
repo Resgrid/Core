@@ -10,6 +10,22 @@ namespace Resgrid.Model
 		public const string AdminSetup = "Admin.Setup";
 		public const string AdminAssist = "Admin.Assist";
 		public const string AiAdminAssist = "Ai.AdminAssist";
+		/// <summary>Enhanced AI operator rollout and kill switch for every model call (seeded off by M0237). The purchase is the PlanAddonTypes.EnhancedAi entitlement; the Admin Assist free allowance still needs this flag.</summary>
+		public const string AiEnhanced = "Ai.Enhanced";
+		/// <summary>Enhanced AI child: conversational LLM fallback and incident Q&amp;A. Requires Ai.Enhanced. Seeded off by M0238.</summary>
+		public const string AiAssistant = "Ai.Assistant";
+		/// <summary>Enhanced AI child: incident report, after-action, ICS-201 and call-brief drafts. Requires Ai.Enhanced. Seeded off by M0238.</summary>
+		public const string AiNarratives = "Ai.Narratives";
+		/// <summary>Enhanced AI child: department knowledge answers with citations. Requires Ai.Enhanced. Seeded off by M0238.</summary>
+		public const string AiKnowledge = "Ai.Knowledge";
+		/// <summary>Enhanced AI child: hybrid semantic search beside Lucene (Phase 2, ai-dispatch card). Requires Ai.Enhanced. Seeded off by M0238.</summary>
+		public const string AiSearch = "Ai.Search";
+		/// <summary>Enhanced AI child: dispatch audio and PTT transcription (Phase 2, ai-dispatch card). Requires Ai.Enhanced. Seeded off by M0238.</summary>
+		public const string AiVoice = "Ai.Voice";
+		/// <summary>Enhanced AI child: analytics questions mapped to typed RecordsAnalyticsQuery contracts. Requires Ai.Enhanced. Seeded off by M0238.</summary>
+		public const string AiAnalytics = "Ai.Analytics";
+		/// <summary>AI dispatch (CallEmailTypes.AI). Requires Ai.Enhanced and the Enhanced AI add-on; Enrich mode only until the ai-dispatch GPU is in service. Seeded off by M0240.</summary>
+		public const string AiDispatchTemplate = "Dispatch.AiTemplate";
 		/// <summary>Free checklists rollout gate. Independent of paid plans and Maintenance.WorkOrders. Seeded off by M0189.</summary>
 		public const string ChecklistsSystem = "Checklists.System";
 

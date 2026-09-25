@@ -45,7 +45,12 @@ namespace Resgrid.Tests.Services
 		public void Catalog_27_keeps_only_internal_fields_and_binds_no_customer_facing_table()
 		{
 			var catalog = new ProtectedFieldCatalog();
-			catalog.Version.Should().Be(29, "Phase D rides 26, the completion pass 27, Phase E 28 and the Protected Workflows subject identifiers 29; nothing is deployed on any of them yet");
+			catalog.Version.Should().Be(32, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
+				"(nothing on 26-29 is deployed yet), Admin Assist findings and dispatch traces 30, shared AI generations 31 and Admin Assist " +
+				"diagnostic runs 32 (registry §4G, §4I)");
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 32).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "adminassistdiagnosticruns.content" });
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 31).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "aigenerations.content" });
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 30).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "adminassistfindings.content", "adminassistdispatchtraces.content" });
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 29).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "calls.subjectidentifiers" });
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 28).Select(f => f.FieldId).Should().BeEquivalentTo(WorkforceProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
 			foreach (var table in WorkforceProtectedFields.Tables)

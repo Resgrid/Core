@@ -83,12 +83,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var isNew = previousDefinition == null;
 
 			// A client that does not send Sensitivity keeps each field's current tag (a silent reset would re-open a Part 2 field).
-			var currentSensitivity = isNew
-				? new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
-				: (await _udfService.GetFieldsForActiveDefinitionAsync(DepartmentId, input.EntityType))
-					.Where(f => !string.IsNullOrWhiteSpace(f.Name))
-					.GroupBy(f => f.Name.Trim(), StringComparer.OrdinalIgnoreCase)
-					.ToDictionary(g => g.Key, g => g.First().Sensitivity, StringComparer.OrdinalIgnoreCase);
+			// The field's id is matched first, so renaming the field keeps its tag too; the machine name is the fallback.
+			var currentFields = isNew
+				? new List<UdfField>()
+				: await _udfService.GetFieldsForActiveDefinitionAsync(DepartmentId, input.EntityType) ?? new List<UdfField>();
+			var sensitivityById = currentFields
+				.Where(f => !string.IsNullOrWhiteSpace(f.UdfFieldId))
+				.GroupBy(f => f.UdfFieldId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First().Sensitivity, StringComparer.OrdinalIgnoreCase);
+			var sensitivityByName = currentFields
+				.Where(f => !string.IsNullOrWhiteSpace(f.Name))
+				.GroupBy(f => f.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First().Sensitivity, StringComparer.OrdinalIgnoreCase);
+
+			int CurrentSensitivity(string fieldId, string name) =>
+				fieldId != null && sensitivityById.TryGetValue(fieldId, out var byId) ? byId
+				: name != null && sensitivityByName.TryGetValue(name.Trim(), out var byName) ? byName
+				: 0;
 
 			var fields = input.Fields?.Select(f => new UdfField
 			{
@@ -110,7 +121,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Visibility = f.Visibility,
 				Sensitivity = f.Sensitivity is >= 0 and <= 2
 					? f.Sensitivity.Value
-					: (f.Name != null && currentSensitivity.TryGetValue(f.Name.Trim(), out var tag) ? tag : 0)
+					: CurrentSensitivity(f.UdfFieldId, f.Name)
 			}).ToList() ?? new List<UdfField>();
 
 			UdfDefinition saved;

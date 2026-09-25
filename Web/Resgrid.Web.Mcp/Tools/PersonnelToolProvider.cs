@@ -75,7 +75,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving personnel");
 						return CreateErrorResponse("Failed to retrieve personnel. Please try again later.");
@@ -125,7 +125,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = V4ResponseReader.Project(V4ResponseReader.GetDataArray(result), V4ResponseReader.PersonnelStatusFields)
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving personnel statuses");
 						return CreateErrorResponse("Failed to retrieve personnel statuses. Please try again later.");
@@ -198,7 +198,7 @@ namespace Resgrid.Web.Mcp.Tools
 							message = "Personnel status updated successfully"
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error setting personnel status");
 						return CreateErrorResponse("Failed to set personnel status. Please try again later.");
@@ -250,7 +250,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = V4ResponseReader.GetMapMarkers(result, V4ResponseReader.PersonnelMarkerType, "UserId")
 						};
 					}
-				catch (Exception ex)
+				catch (Exception ex) when (ex is not McpToolErrorException)
 				{
 					_logger.LogError(ex, "Error retrieving personnel locations");
 					return CreateErrorResponse("Failed to retrieve personnel locations. Please try again later.");

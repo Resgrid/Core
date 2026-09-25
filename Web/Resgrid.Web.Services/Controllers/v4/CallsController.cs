@@ -1891,7 +1891,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			var canDoOperation = await _authorizationService.CanUserCloseCallAsync(UserId, int.Parse(callId), DepartmentId);
+			var canDoOperation = await _authorizationService.CanUserDeleteCallAsync(UserId, int.Parse(callId), DepartmentId);
 
 			if (!canDoOperation)
 				return Unauthorized();
@@ -1941,7 +1941,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			var canDoOperation = await _authorizationService.CanUserDeleteCallAsync(UserId, int.Parse(closeCallInput.Id), DepartmentId);
+			var canDoOperation = await _authorizationService.CanUserCloseCallAsync(UserId, int.Parse(closeCallInput.Id), DepartmentId);
 
 			if (!canDoOperation)
 				return Unauthorized();
@@ -2257,7 +2257,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new ActiveCallsResult();
 
-			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn).ToList();
+			// Group-scoped dispatch (off by default) trims this to the caller's area and the calls they are on, as GetCall does.
+			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)))
+				.OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 

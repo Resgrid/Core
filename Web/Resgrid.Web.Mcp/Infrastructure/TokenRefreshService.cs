@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,143 +7,70 @@ using Microsoft.Extensions.Logging;
 namespace Resgrid.Web.Mcp.Infrastructure
 {
 	/// <summary>
-	/// Token refresh service for managing OAuth2 token lifecycle
+	/// Exchanges refresh tokens for new access tokens (the OAuth2 refresh_token grant).
 	/// </summary>
+	/// <remarks>
+	/// The MCP server is stateless: the client holds its tokens and passes the access token to every tool. When the
+	/// access token nears expiry the client calls the refresh_access_token tool with its refresh token, which lands here.
+	/// </remarks>
 	public interface ITokenRefreshService
 	{
-		Task<string> GetValidTokenAsync(string userId, string refreshToken);
-		void CacheToken(string userId, string accessToken, string refreshToken, int expiresIn);
-		void InvalidateToken(string userId);
+		Task<AuthenticationResult> RefreshAsync(string refreshToken, CancellationToken cancellationToken = default);
 	}
 
 	public sealed class TokenRefreshService : ITokenRefreshService
 	{
 		private readonly IApiClient _apiClient;
 		private readonly ILogger<TokenRefreshService> _logger;
-		private readonly ConcurrentDictionary<string, TokenCache> _tokenCache;
-		private readonly Timer _cleanupTimer;
+		private readonly ConcurrentDictionary<string, Lazy<Task<AuthenticationResult>>> _inFlight;
 
 		public TokenRefreshService(IApiClient apiClient, ILogger<TokenRefreshService> logger)
 		{
 			_apiClient = apiClient;
 			_logger = logger;
-			_tokenCache = new ConcurrentDictionary<string, TokenCache>();
-			_cleanupTimer = new Timer(CleanupExpired, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
+			_inFlight = new ConcurrentDictionary<string, Lazy<Task<AuthenticationResult>>>(StringComparer.Ordinal);
 		}
 
-		public async Task<string> GetValidTokenAsync(string userId, string refreshToken)
+		public Task<AuthenticationResult> RefreshAsync(string refreshToken, CancellationToken cancellationToken = default)
 		{
-			if (_tokenCache.TryGetValue(userId, out var cached))
+			if (string.IsNullOrWhiteSpace(refreshToken))
 			{
-				if (cached.ExpiresAt > DateTime.UtcNow.AddMinutes(5))
+				return Task.FromResult(new AuthenticationResult
 				{
-					_logger.LogDebug("Using cached token for user {UserId}", userId);
-					return cached.AccessToken;
-				}
-
-				_logger.LogInformation("Token expired for user {UserId}, refreshing...", userId);
+					IsSuccess = false,
+					ErrorMessage = "Refresh token is required"
+				});
 			}
 
+			// Refresh tokens are single use: each exchange returns a new one, and the API rejects the old one once its
+			// short reuse window has passed. Callers presenting the same refresh token at the same time therefore share
+			// one exchange and all receive the new pair, instead of racing to redeem the token twice.
+			var exchange = _inFlight.GetOrAdd(refreshToken,
+				token => new Lazy<Task<AuthenticationResult>>(() => ExchangeAsync(token)));
+
+			// One caller giving up must not cancel the exchange the others are waiting on.
+			return exchange.Value.WaitAsync(cancellationToken);
+		}
+
+		private async Task<AuthenticationResult> ExchangeAsync(string refreshToken)
+		{
 			try
 			{
-				// Call refresh token endpoint
-				var result = await RefreshTokenAsync(refreshToken);
+				var result = await _apiClient.RefreshTokenAsync(refreshToken, CancellationToken.None);
 
 				if (result.IsSuccess)
-				{
-					CacheToken(userId, result.AccessToken, result.RefreshToken, result.ExpiresIn);
-					return result.AccessToken;
-				}
+					_logger.LogInformation("Access token refreshed, expires in {ExpiresIn} seconds", result.ExpiresIn);
+				else
+					_logger.LogWarning("Token refresh failed: {Error}", result.ErrorMessage);
 
-				_logger.LogError("Failed to refresh token for user {UserId}", userId);
-				return null;
+				return result;
 			}
-			catch (Exception ex)
+			finally
 			{
-				_logger.LogError(ex, "Error refreshing token for user {UserId}", userId);
-				return null;
+				// Only in-flight exchanges are shared. A later call with the same (now redeemed) token goes back to the
+				// API, which decides whether it is still inside the reuse window.
+				_inFlight.TryRemove(refreshToken, out _);
 			}
-		}
-
-		public void CacheToken(string userId, string accessToken, string refreshToken, int expiresIn)
-		{
-			var cache = new TokenCache
-			{
-				AccessToken = accessToken,
-				RefreshToken = refreshToken,
-				ExpiresAt = DateTime.UtcNow.AddSeconds(expiresIn)
-			};
-
-			_tokenCache.AddOrUpdate(userId, cache, (_, __) => cache);
-			_logger.LogDebug("Cached token for user {UserId}, expires at {ExpiresAt}", userId, cache.ExpiresAt);
-		}
-
-		public void InvalidateToken(string userId)
-		{
-			_tokenCache.TryRemove(userId, out _);
-			_logger.LogDebug("Invalidated token for user {UserId}", userId);
-		}
-
-		private async Task<RefreshTokenResult> RefreshTokenAsync(string refreshToken)
-		{
-			try
-			{
-				// This would call the actual refresh token endpoint
-				// For now, returning a placeholder
-				// In real implementation, call: POST /api/v4/connect/token with grant_type=refresh_token
-
-				_logger.LogWarning("Token refresh not fully implemented - requires refresh_token grant type support");
-
-				return new RefreshTokenResult
-				{
-					IsSuccess = false
-				};
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error during token refresh");
-				return new RefreshTokenResult { IsSuccess = false };
-			}
-		}
-
-		private void CleanupExpired(object state)
-		{
-			var keysToRemove = new System.Collections.Generic.List<string>();
-			var now = DateTime.UtcNow;
-
-			foreach (var kvp in _tokenCache)
-			{
-				if (kvp.Value.ExpiresAt < now)
-				{
-					keysToRemove.Add(kvp.Key);
-				}
-			}
-
-			foreach (var key in keysToRemove)
-			{
-				_tokenCache.TryRemove(key, out _);
-			}
-
-			if (keysToRemove.Count > 0)
-			{
-				_logger.LogDebug("Cleaned up {Count} expired tokens", keysToRemove.Count);
-			}
-		}
-
-		private sealed class TokenCache
-		{
-			public string AccessToken { get; set; }
-			public string RefreshToken { get; set; }
-			public DateTime ExpiresAt { get; set; }
-		}
-
-		private sealed class RefreshTokenResult
-		{
-			public bool IsSuccess { get; set; }
-			public string AccessToken { get; set; }
-			public string RefreshToken { get; set; }
-			public int ExpiresIn { get; set; }
 		}
 	}
 }
-

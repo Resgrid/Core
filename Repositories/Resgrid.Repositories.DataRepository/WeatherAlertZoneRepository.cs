@@ -1,4 +1,4 @@
-using Dapper;
+﻿using Dapper;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -13,15 +13,15 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class WeatherAlertZoneRepository : RepositoryBase<WeatherAlertZone>, IWeatherAlertZoneRepository
+	public class WeatherAlertZoneRepository : AuditedConfigurationRepository<WeatherAlertZone>, IWeatherAlertZoneRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public WeatherAlertZoneRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public WeatherAlertZoneRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

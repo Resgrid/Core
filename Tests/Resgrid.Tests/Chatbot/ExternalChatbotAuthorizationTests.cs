@@ -121,6 +121,26 @@ namespace Resgrid.Tests.Chatbot
 		}
 
 		[Test]
+		public async Task UnitsList_LeavesOutUnitsTheUserMayNotView()
+		{
+			var units = new Mock<IUnitsService>();
+			units.Setup(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				State(100, DepartmentId, "MyAreaUnit"),
+				State(101, DepartmentId, "OtherAreaUnit")
+			});
+			var authorization = MemberAuthorization();
+			authorization.Setup(a => a.CanUserViewUnitViaMatrixAsync(101, UserId, DepartmentId)).ReturnsAsync(false);
+			var states = new Mock<ICustomStateService>();
+			states.Setup(s => s.GetCustomUnitStateAsync(It.IsAny<UnitState>())).ReturnsAsync(new CustomStateDetail { ButtonText = "Available" });
+			var handler = new UnitsActionHandler(units.Object, states.Object, Mock.Of<IDepartmentsService>(), authorization.Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.ListUnits }, Session());
+
+			response.Text.Should().Contain("MyAreaUnit").And.NotContain("OtherAreaUnit");
+		}
+
+		[Test]
 		public async Task UnitsList_NonMember_IsDeniedBeforeAnyUnitIsRead()
 		{
 			var units = new Mock<IUnitsService>();
@@ -160,6 +180,29 @@ namespace Resgrid.Tests.Chatbot
 			reporting.Verify(r => r.ClassifyUnitAvailabilityAsync(DepartmentId, It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Exactly(16));
 			authorization.Verify(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
 			authorization.Verify(a => a.CanUserViewUnitAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task AvailableUnits_LeaveOutAndDoNotCountUnitsTheUserMayNotView()
+		{
+			var units = new Mock<IUnitsService>();
+			units.Setup(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				State(100, DepartmentId, "MyAreaUnit"),
+				State(101, DepartmentId, "OtherAreaUnit")
+			});
+			var authorization = MemberAuthorization();
+			authorization.Setup(a => a.CanUserViewUnitViaMatrixAsync(101, UserId, DepartmentId)).ReturnsAsync(false);
+			var states = new Mock<ICustomStateService>();
+			states.Setup(s => s.GetCustomUnitStateAsync(It.IsAny<UnitState>())).ReturnsAsync(new CustomStateDetail { ButtonText = "Available" });
+			var reporting = new Mock<IPlatformReportingService>();
+			reporting.Setup(r => r.ClassifyUnitAvailabilityAsync(DepartmentId, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(AvailabilityClass.Available);
+			var handler = new UnitsAvailableActionHandler(units.Object, states.Object, reporting.Object, authorization.Object);
+
+			var response = await handler.HandleAsync(Message(), new ChatbotIntent { Type = ChatbotIntentType.UnitsAvailable }, Session());
+
+			response.Text.Should().Contain("Available Units (1):").And.Contain("MyAreaUnit").And.NotContain("OtherAreaUnit");
 		}
 
 		[Test]
@@ -285,6 +328,8 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var authorization = new Mock<IAuthorizationService>();
 			authorization.Setup(a => a.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(true);
+			// View Units is open unless a test narrows it.
+			authorization.Setup(a => a.CanUserViewUnitViaMatrixAsync(It.IsAny<int>(), UserId, DepartmentId)).ReturnsAsync(true);
 			return authorization;
 		}
 

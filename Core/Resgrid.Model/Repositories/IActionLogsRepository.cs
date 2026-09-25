@@ -11,6 +11,8 @@ namespace Resgrid.Model.Repositories
 	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.ActionLog}" />
 	public interface IActionLogsRepository: IRepository<ActionLog>
 	{
+		/// <summary>Bounded latest status metadata for administrative previews; no ETA/provider enrichment. Throws on truncation.</summary>
+		Task<IReadOnlyList<ActionLog>> ReadLatestForAdministrationAsync(int departmentId, bool disableAutoAvailable, DateTime asOfUtc, int maximumRows, System.Threading.CancellationToken cancellationToken);
 		/// <summary>
 		/// Gets the last action logs for department asynchronous.
 		/// </summary>

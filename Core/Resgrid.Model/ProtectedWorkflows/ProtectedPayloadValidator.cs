@@ -100,14 +100,22 @@ namespace Resgrid.Model
 			JToken token;
 			try
 			{
-				using var reader = new JsonTextReader(new StringReader(body)) { DateParseHandling = DateParseHandling.None, FloatParseHandling = FloatParseHandling.Decimal };
+				// Comments are not JSON, and the body leaves exactly as rendered. Json.NET would skip them wherever they
+				// sit (inside the value as well as after it), so look at every token before parsing.
+				using (var scan = NewJsonReader(body))
+				{
+					while (scan.Read())
+					{
+						if (scan.TokenType == JsonToken.Comment)
+							return ProtectedPayloadCheck.Invalid(RuleJsonParse, scan.LineNumber, scan.LinePosition);
+					}
+				}
+
+				using var reader = NewJsonReader(body);
 				token = JToken.ReadFrom(reader);
 				// Anything after the first value (a second object, stray text) is malformed.
-				while (reader.Read())
-				{
-					if (reader.TokenType != JsonToken.Comment)
-						return ProtectedPayloadCheck.Invalid(RuleJsonParse, reader.LineNumber, reader.LinePosition);
-				}
+				if (reader.Read())
+					return ProtectedPayloadCheck.Invalid(RuleJsonParse, reader.LineNumber, reader.LinePosition);
 			}
 			catch (JsonReaderException ex)
 			{
@@ -127,6 +135,9 @@ namespace Resgrid.Model
 
 			return ProtectedPayloadCheck.Valid;
 		}
+
+		private static JsonTextReader NewJsonReader(string body) =>
+			new JsonTextReader(new StringReader(body)) { DateParseHandling = DateParseHandling.None, FloatParseHandling = FloatParseHandling.Decimal };
 
 		private static ProtectedPayloadCheck ValidateXml(string body)
 		{

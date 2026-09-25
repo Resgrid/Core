@@ -1,0 +1,1156 @@
+{
+  "Version": "2026.09.24.1",
+  "Areas": [
+    {
+      "Id": "business",
+      "LabelKey": "Area.business",
+      "PurposeKey": "AreaPurpose.business",
+      "Order": 9,
+      "Archetypes": []
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "module.BusinessOperationsDisabled",
+      "AreaId": "business",
+      "LabelKey": "Module.BusinessOperationsDisabled",
+      "HelpKey": "ModuleHelp.BusinessOperationsDisabled",
+      "Binding": "DepartmentModuleSettings.BusinessOperationsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "BusinessOperationsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.business",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.BusinessOperationsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "invoices",
+      "AreaId": "business",
+      "LabelKey": "Feature.invoices",
+      "PurposeKey": "FeaturePurpose.invoices",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.invoices",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Invoicing",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.CustomerInvoicing"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-invoice",
+      "AreaId": "business",
+      "LabelKey": "Feature.new-invoice",
+      "PurposeKey": "FeaturePurpose.new-invoice",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.new-invoice",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Invoicing",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.CustomerInvoicing"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "rate-cards",
+      "AreaId": "business",
+      "LabelKey": "Feature.rate-cards",
+      "PurposeKey": "FeaturePurpose.rate-cards",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.rate-cards",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Invoicing",
+        "Action": "RateCards"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.CustomerInvoicing"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "invoice-aging",
+      "AreaId": "business",
+      "LabelKey": "Feature.invoice-aging",
+      "PurposeKey": "FeaturePurpose.invoice-aging",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.invoice-aging",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Invoicing",
+        "Action": "Aging"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.CustomerInvoicing"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "billing-settings",
+      "AreaId": "business",
+      "LabelKey": "Feature.billing-settings",
+      "PurposeKey": "FeaturePurpose.billing-settings",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.billing-settings",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Invoicing",
+        "Action": "Settings"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.CustomerInvoicing"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "online-payment-settings",
+      "AreaId": "business",
+      "LabelKey": "Feature.online-payment-settings",
+      "PurposeKey": "FeaturePurpose.online-payment-settings",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.online-payment-settings",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Invoicing",
+        "Action": "Settings"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.OnlinePayments"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "deployments",
+      "AreaId": "business",
+      "LabelKey": "Feature.deployments",
+      "PurposeKey": "FeaturePurpose.deployments",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.deployments",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Deployments",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-deployment",
+      "AreaId": "business",
+      "LabelKey": "Feature.new-deployment",
+      "PurposeKey": "FeaturePurpose.new-deployment",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.new-deployment",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Deployments",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "deployment-from-external-order",
+      "AreaId": "business",
+      "LabelKey": "Feature.deployment-from-external-order",
+      "PurposeKey": "FeaturePurpose.deployment-from-external-order",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.deployment-from-external-order",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Deployments",
+        "Action": "FromExternalOrder"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "bids",
+      "AreaId": "business",
+      "LabelKey": "Feature.bids",
+      "PurposeKey": "FeaturePurpose.bids",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.bids",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Bids",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.ContractorBilling"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-bid",
+      "AreaId": "business",
+      "LabelKey": "Feature.new-bid",
+      "PurposeKey": "FeaturePurpose.new-bid",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.new-bid",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Bids",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.ContractorBilling"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "contracts",
+      "AreaId": "business",
+      "LabelKey": "Feature.contracts",
+      "PurposeKey": "FeaturePurpose.contracts",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.contracts",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Contracts",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.ContractorBilling"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-contract",
+      "AreaId": "business",
+      "LabelKey": "Feature.new-contract",
+      "PurposeKey": "FeaturePurpose.new-contract",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.new-contract",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Contracts",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.ContractorBilling"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "compliance-documents",
+      "AreaId": "business",
+      "LabelKey": "Feature.compliance-documents",
+      "PurposeKey": "FeaturePurpose.compliance-documents",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.compliance-documents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Contracts",
+        "Action": "Compliance"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.ContractorBilling"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "rate-schedules",
+      "AreaId": "business",
+      "LabelKey": "Feature.rate-schedules",
+      "PurposeKey": "FeaturePurpose.rate-schedules",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.rate-schedules",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RateSchedules",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Invoicing.ContractorBilling"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "cal-oes-mars",
+      "AreaId": "business",
+      "LabelKey": "Feature.cal-oes-mars",
+      "PurposeKey": "FeaturePurpose.cal-oes-mars",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.cal-oes-mars",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CalOesMars",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "CostRecovery.CalOesMars"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "cal-oes-mars-queue",
+      "AreaId": "business",
+      "LabelKey": "Feature.cal-oes-mars-queue",
+      "PurposeKey": "FeaturePurpose.cal-oes-mars-queue",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.cal-oes-mars-queue",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CalOesMars",
+        "Action": "Queue"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "CostRecovery.CalOesMars"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "cal-oes-mars-rates",
+      "AreaId": "business",
+      "LabelKey": "Feature.cal-oes-mars-rates",
+      "PurposeKey": "FeaturePurpose.cal-oes-mars-rates",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.cal-oes-mars-rates",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CalOesMars",
+        "Action": "Rates"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "CostRecovery.CalOesMars"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "cal-oes-mars-reconciliation",
+      "AreaId": "business",
+      "LabelKey": "Feature.cal-oes-mars-reconciliation",
+      "PurposeKey": "FeaturePurpose.cal-oes-mars-reconciliation",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.cal-oes-mars-reconciliation",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CalOesMars",
+        "Action": "Reconciliation"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "CostRecovery.CalOesMars"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "workforce",
+      "AreaId": "business",
+      "LabelKey": "Feature.workforce",
+      "PurposeKey": "FeaturePurpose.workforce",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.workforce",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.InternalCosting"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "workforce-compensation",
+      "AreaId": "business",
+      "LabelKey": "Feature.workforce-compensation",
+      "PurposeKey": "FeaturePurpose.workforce-compensation",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.workforce-compensation",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "Compensation"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.InternalCosting"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "workforce-annual-facts",
+      "AreaId": "business",
+      "LabelKey": "Feature.workforce-annual-facts",
+      "PurposeKey": "FeaturePurpose.workforce-annual-facts",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.workforce-annual-facts",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "AnnualFacts"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.InternalCosting"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "resource-costs",
+      "AreaId": "business",
+      "LabelKey": "Feature.resource-costs",
+      "PurposeKey": "FeaturePurpose.resource-costs",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.resource-costs",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "ResourceCosts"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.InternalCosting"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "cost-runs",
+      "AreaId": "business",
+      "LabelKey": "Feature.cost-runs",
+      "PurposeKey": "FeaturePurpose.cost-runs",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.cost-runs",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "CostRuns"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.InternalCosting"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "pay-data-reporting",
+      "AreaId": "business",
+      "LabelKey": "Feature.pay-data-reporting",
+      "PurposeKey": "FeaturePurpose.pay-data-reporting",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.pay-data-reporting",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "PayData"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Compliance.CaliforniaPayDataReporting"
+        },
+        {
+          "Kind": "module",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        },
+        {
+          "Kind": "addon",
+          "Id": "ADP"
+        },
+        {
+          "Kind": "protection",
+          "Id": "Enabled"
+        }
+      ],
+      "SettingIds": [
+        "module.BusinessOperationsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "my-demographics",
+      "AreaId": "business",
+      "LabelKey": "Feature.my-demographics",
+      "PurposeKey": "FeaturePurpose.my-demographics",
+      "ValueKey": "AreaValue.business",
+      "ExampleKey": "AreaExample.business",
+      "AdoptionKey": "FeatureAdoption.my-demographics",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Workforce",
+        "Action": "MyDemographics"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Compliance.CaliforniaPayDataReporting"
+        },
+        {
+          "Kind": "addon",
+          "Id": "BusinessOperations"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "module.BusinessOperationsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.BusinessOperationsDisabled",
+      "Body": "BusinessOperations availability. Controls availability of business operations. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-businessoperationsdisabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "invoices",
+      "Locale": "en",
+      "TitleKey": "Feature.invoices",
+      "Body": "Invoices Customer invoices and payments Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "invoices",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-invoice",
+      "Locale": "en",
+      "TitleKey": "Feature.new-invoice",
+      "Body": "New Invoice Draft an invoice for a customer Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-invoice",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "rate-cards",
+      "Locale": "en",
+      "TitleKey": "Feature.rate-cards",
+      "Body": "Rate Cards Billing rates for units, personnel and fees Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "rate-cards",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "invoice-aging",
+      "Locale": "en",
+      "TitleKey": "Feature.invoice-aging",
+      "Body": "Accounts Receivable Aging Outstanding invoice balances by age Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "invoice-aging",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "billing-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.billing-settings",
+      "Body": "Billing Settings Legal name, remit-to address and tax registrations printed on invoices Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "billing-settings",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "online-payment-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.online-payment-settings",
+      "Body": "Online Payment Settings Connect your Stripe account to collect invoice payments online Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "online-payment-settings",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "deployments",
+      "Locale": "en",
+      "TitleKey": "Feature.deployments",
+      "Body": "Deployment Finance Deployments, rosters, daily time reports and expenses Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "deployments",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-deployment",
+      "Locale": "en",
+      "TitleKey": "Feature.new-deployment",
+      "Body": "New Deployment Create a deployment finance wrapper Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-deployment",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "deployment-from-external-order",
+      "Locale": "en",
+      "TitleKey": "Feature.deployment-from-external-order",
+      "Body": "Deployment From External Order Create a deployment from an open RMS mutual-aid order Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "deployment-from-external-order",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "bids",
+      "Locale": "en",
+      "TitleKey": "Feature.bids",
+      "Body": "Bids Priced estimates for customer contacts and contracts Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "bids",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-bid",
+      "Locale": "en",
+      "TitleKey": "Feature.new-bid",
+      "Body": "New Bid Draft a bid for a customer Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-bid",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "contracts",
+      "Locale": "en",
+      "TitleKey": "Feature.contracts",
+      "Body": "Contracts Service contracts, document requirements and compliance Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "contracts",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-contract",
+      "Locale": "en",
+      "TitleKey": "Feature.new-contract",
+      "Body": "New Contract Create a service contract for a customer Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-contract",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "compliance-documents",
+      "Locale": "en",
+      "TitleKey": "Feature.compliance-documents",
+      "Body": "Compliance Documents Insurance, workers' comp, SAM, licences and bonds with expiry alerts Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "compliance-documents",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "rate-schedules",
+      "Locale": "en",
+      "TitleKey": "Feature.rate-schedules",
+      "Body": "Rate Schedules Contractor rate tables: certifications, crews, vehicles, equipment, premiums and policies Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "rate-schedules",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "cal-oes-mars",
+      "Locale": "en",
+      "TitleKey": "Feature.cal-oes-mars",
+      "Body": "Cal OES MARS CFAA cost recovery readiness: agency, F-5 resources, annual rates and agreements Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "cal-oes-mars",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "cal-oes-mars-queue",
+      "Locale": "en",
+      "TitleKey": "Feature.cal-oes-mars-queue",
+      "Body": "MARS Action Queue F-42 and expense claims to prepare, validate and hand off to the MARS portal Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "cal-oes-mars-queue",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "cal-oes-mars-rates",
+      "Locale": "en",
+      "TitleKey": "Feature.cal-oes-mars-rates",
+      "Body": "MARS Annual Rates Salary Survey, Attachment A, Administrative Rate, Rate Letter and Special Equipment snapshots Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "cal-oes-mars-rates",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "cal-oes-mars-reconciliation",
+      "Locale": "en",
+      "TitleKey": "Feature.cal-oes-mars-reconciliation",
+      "Body": "MARS Reconciliation Observed MARS invoices, local approval and payment reconciliation Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "cal-oes-mars-reconciliation",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "workforce",
+      "Locale": "en",
+      "TitleKey": "Feature.workforce",
+      "Body": "Workforce Employer identity, establishments, workers, employments and job assignments Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "workforce",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "workforce-compensation",
+      "Locale": "en",
+      "TitleKey": "Feature.workforce-compensation",
+      "Body": "Compensation Profiles Employee, role-default and department-default compensation with pay and employer-cost components Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "workforce-compensation",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "workforce-annual-facts",
+      "Locale": "en",
+      "TitleKey": "Feature.workforce-annual-facts",
+      "Body": "Annual Pay Facts W-2 earnings and hours per employment for pay data reporting, with CSV import Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "workforce-annual-facts",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "resource-costs",
+      "Locale": "en",
+      "TitleKey": "Feature.resource-costs",
+      "Body": "Resource Cost Profiles Depreciation, fuel, maintenance and fixed costs per unit or asset Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "resource-costs",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "cost-runs",
+      "Locale": "en",
+      "TitleKey": "Feature.cost-runs",
+      "Body": "Field Cost Runs Internal loaded cost and margin for bids, calls and deployments Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "cost-runs",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "pay-data-reporting",
+      "Locale": "en",
+      "TitleKey": "Feature.pay-data-reporting",
+      "Body": "California Pay Data Reporting CRD pay data report runs: snapshots, aggregation, validation, export and the portal worksheet Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and Advanced Data Protection in the Enabled state. Review regional applicability and protected workforce access.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "pay-data-reporting",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "my-demographics",
+      "Locale": "en",
+      "TitleKey": "Feature.my-demographics",
+      "Body": "My Demographic Response Your voluntary self-identification for California pay data reporting Connect deployment records to invoicing, reimbursement or internal cost review when needed. Compare an event standby invoice with its approved deployment documentation. Requires Business Operations and the capability rollout. Certifications and Deployment Finance remain available without this add-on; payment processing needs its own provider setup.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "my-demographics",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

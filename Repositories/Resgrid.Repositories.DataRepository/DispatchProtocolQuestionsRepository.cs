@@ -14,15 +14,15 @@ using Resgrid.Repositories.DataRepository.Queries.Protocols;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DispatchProtocolQuestionsRepository : RepositoryBase<DispatchProtocolQuestion>, IDispatchProtocolQuestionsRepository
+	public class DispatchProtocolQuestionsRepository : AuditedConfigurationRepository<DispatchProtocolQuestion>, IDispatchProtocolQuestionsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public DispatchProtocolQuestionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public DispatchProtocolQuestionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

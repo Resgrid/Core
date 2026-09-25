@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -378,14 +378,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					try
 					{
-						// Department has a TTL setup for units
-						if (unitLocationTTL > 0 && latestLocation != null)
-						{
-							// Unit location TTL has expired the latest unit location we have.
-							if (DateTime.UtcNow.AddMinutes(-unitLocationTTL) > latestLocation.Timestamp)
-								latestLocation = null;
-						}
-
 						if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
 						{
 							var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
@@ -394,42 +386,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 								info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
 						}
 
-						if (latestLocation != null && state != null)
+						var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
+							unitLocationTTL, unitAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
+						if (markerSource == MappingMarkerSource.LocationPing)
 						{
-							if (latestLocation.Timestamp > state.Timestamp)
-							{
-								info.Latitude = double.Parse(latestLocation.Latitude.ToString());
-								info.Longitude = double.Parse(latestLocation.Longitude.ToString());
-
-								result.Data.MapMakerInfos.Add(info);
-							}
-							else if (state.HasLocation())
-							{
-								info.Latitude = double.Parse(state.Latitude.Value.ToString());
-								info.Longitude = double.Parse(state.Longitude.Value.ToString());
-
-								result.Data.MapMakerInfos.Add(info);
-							}
-							else if (!unitAllowStatusWithNoLocationToOverwrite) // State was newer then location ping but did not have a valid location
-							{
-								info.Latitude = double.Parse(latestLocation.Latitude.ToString());
-								info.Longitude = double.Parse(latestLocation.Longitude.ToString());
-
-								result.Data.MapMakerInfos.Add(info);
-							}
-						}
-						else if (latestLocation != null)
-						{
-							info.Latitude = double.Parse(latestLocation.Latitude.ToString());
-							info.Longitude = double.Parse(latestLocation.Longitude.ToString());
-
+							info.Latitude = (double)latestLocation.Latitude;
+							info.Longitude = (double)latestLocation.Longitude;
 							result.Data.MapMakerInfos.Add(info);
 						}
-						else if (state != null && state.HasLocation())
+						else if (markerSource == MappingMarkerSource.Status)
 						{
-							info.Latitude = double.Parse(state.Latitude.Value.ToString());
-							info.Longitude = double.Parse(state.Longitude.Value.ToString());
-
+							info.Latitude = (double)state.Latitude.Value;
+							info.Longitude = (double)state.Longitude.Value;
 							result.Data.MapMakerInfos.Add(info);
 						}
 					}
@@ -457,57 +425,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					try
 					{
-						// Department has a TTL setup for personnel
-						if (personnelLocationTTL > 0 && latestLocation != null)
-						{
-							// Person location TTL has expired the latest personnel location we have.
-							if (DateTime.UtcNow.AddMinutes(-personnelLocationTTL) > latestLocation.Timestamp)
-								latestLocation = null;
-						}
-
-						if (latestLocation != null && state != null)
-						{
-							if (latestLocation.Timestamp > state.Timestamp) // Location ping newer then state
-							{
-								info.Latitude = double.Parse(latestLocation.Latitude.ToString());
-								info.Longitude = double.Parse(latestLocation.Longitude.ToString());
-
-								result.Data.MapMakerInfos.Add(info);
-							}
-							else if (state.HasLocation()) // State is newer then location ping and has a valid location
-							{
-								var location = state.GetCoordinates();
-								info.Latitude = double.Parse(location.Latitude.Value.ToString());
-								info.Longitude = double.Parse(location.Longitude.Value.ToString());
-
-								result.Data.MapMakerInfos.Add(info);
-							}
-							else if (!personnelAllowStatusWithNoLocationToOverwrite) // State was newer then location ping but did not have a valid location
-							{
-								info.Latitude = double.Parse(latestLocation.Latitude.ToString());
-								info.Longitude = double.Parse(latestLocation.Longitude.ToString());
-
-								result.Data.MapMakerInfos.Add(info);
-							}
-						}
-						else if (latestLocation != null)
+						var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
+							personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
+						if (markerSource == MappingMarkerSource.LocationPing)
 						{
 							info.Latitude = (double)latestLocation.Latitude;
 							info.Longitude = (double)latestLocation.Longitude;
-
 							result.Data.MapMakerInfos.Add(info);
 						}
-						else if (state != null)
+						else if (markerSource == MappingMarkerSource.Status)
 						{
-							if (state.HasLocation())
-							{
-								var location = state.GetCoordinates();
-
-								info.Latitude = location.Latitude.Value;
-								info.Longitude = location.Longitude.Value;
-
-								result.Data.MapMakerInfos.Add(info);
-							}
+							var location = state.GetCoordinates();
+							info.Latitude = location.Latitude.Value;
+							info.Longitude = location.Longitude.Value;
+							result.Data.MapMakerInfos.Add(info);
 						}
 					}
 					catch { }

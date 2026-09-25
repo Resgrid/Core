@@ -15,6 +15,7 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<AdminAssistRepository>().As<Resgrid.Model.AdminAssist.IAdminAssistRepository>().As<Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore>().As<Resgrid.Model.AdminAssist.IAdminAssistTraceStore>().As<Resgrid.Model.AdminAssist.IRetentionImpactStore>().As<Resgrid.Model.AdminAssist.INotificationImpactStore>().As<Resgrid.Model.AdminAssist.ISecurityImpactStore>().As<Resgrid.Model.AdminAssist.IModuleImpactStore>().As<Resgrid.Model.AdminAssist.IAdministrativeReferenceStore>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessProBillingRepository>().As<IReadinessProBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().As<IWorkOrderMaintenanceRepository>().InstancePerLifetimeScope();
@@ -359,6 +360,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<WorkflowRunRepository>().As<IWorkflowRunRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowRunLogRepository>().As<IWorkflowRunLogRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowDailyUsageRepository>().As<IWorkflowDailyUsageRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AdpAccessStore>().As<IAdpAccessStore>().InstancePerLifetimeScope();
+			builder.RegisterType<AdpAuditRepository>().As<IAdpAuditRepository>().InstancePerLifetimeScope();
+
 			// Protected Workflows (ADP push model): per-workflow releases and the per-department disclosure hash chain.
 			builder.RegisterType<WorkflowProtectedReleaseRepository>().As<IWorkflowProtectedReleaseRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectedWorkflowDisclosureRepository>().As<IProtectedWorkflowDisclosureRepository>().InstancePerLifetimeScope();

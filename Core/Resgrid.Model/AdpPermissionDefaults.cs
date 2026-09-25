@@ -21,9 +21,9 @@ namespace Resgrid.Model
 	/// - Protected OPERATIONAL data (logs, forms, IC content) defaults to department and group
 	///   admins — command staff read it, the general roster does not, and departments widen it
 	///   per role as needed.
-	/// - Export, egress configuration, break-glass, and ADP settings management default to
-	///   department admins. Break-glass additionally requires the department's policy to enable
-	///   it at all (plan section 12) — the permission alone is never sufficient.
+	/// - Export, egress configuration, and ADP settings management default to department admins.
+	///   The legacy break-glass value is retained for stored-row compatibility only. Staff support
+	///   access is authorized by BackOffice MFA, independent approval and customer consent.
 	/// </summary>
 	public static class AdpPermissionDefaults
 	{

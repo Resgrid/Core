@@ -38,6 +38,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public UnitStatusController(
 			ICallsService callsService,
@@ -48,9 +49,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IMappingService mappingService,
 			IIncidentCommandService incidentCommandService,
 			IDepartmentsService departmentsService,
-			IDispatchScopeService dispatchScopeService
+			IDispatchScopeService dispatchScopeService,
+			Model.Services.IAuthorizationService authorizationService
 			)
 		{
+			_authorizationService = authorizationService;
 			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_unitsService = unitsService;
@@ -97,6 +100,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DateTime timestamp = DateTime.UtcNow;
 				foreach (var unit in sortedUnits)
 				{
+					// Security > View Units, the same filter GetAllUnits applies.
+					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.Unit.UnitId, UserId, DepartmentId))
+						continue;
+
 					var stateFound = unitStates.FirstOrDefault(x => x.UnitId == unit.Unit.UnitId);
 
 					if (stateFound != null)
@@ -105,12 +112,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 						var customState = await CustomStatesHelper.GetCustomUnitState(stateFound);
 						var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
 
-						result.Data.Add(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, customState, unit.Station, TimeZone, activeCalls, groups, pois));
+						result.Data.Add(await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, customState, unit.Station, TimeZone, activeCalls, groups, pois), unit.Unit.UnitId));
 					}
 					else
 					{
 						var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
-						result.Data.Add(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, null, unit.Station, TimeZone, activeCalls, groups, pois));
+						result.Data.Add(await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, null, unit.Station, TimeZone, activeCalls, groups, pois), unit.Unit.UnitId));
 					}
 				}
 
@@ -153,6 +160,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (unit.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// A unit the caller may not see reads as not found, as in GetUnitByName.
+			if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
@@ -169,12 +183,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var customState = await CustomStatesHelper.GetCustomUnitState(status);
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
 
-				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups, pois);
+				result.Data = await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups, pois), unit.UnitId);
 			}
 			else
 			{
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.UnitId, timestamp);
-				result.Data = ConvertUnitStatusData(unit, null, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois);
+				result.Data = await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit, null, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois), unit.UnitId);
 			}
 
 			result.PageSize = 1;
@@ -384,6 +398,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return BadRequest();
 		}
 
+
+		private async Task<UnitStatusResultData> WithLocationIfVisibleAsync(UnitStatusResultData data, int unitId)
+		{
+			if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, unitId, UserId, DepartmentId))
+				UnitLocationVisibility.Withhold(data);
+
+			return data;
+		}
 
 		public static UnitStatusResultData ConvertUnitStatusData(Unit unit, UnitState stateFound, UnitsLocation latestUnitLocation,
 			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups, List<Poi> pois)

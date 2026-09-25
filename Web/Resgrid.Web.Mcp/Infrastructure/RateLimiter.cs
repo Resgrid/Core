@@ -11,7 +11,11 @@ namespace Resgrid.Web.Mcp.Infrastructure
 	/// </summary>
 	public interface IRateLimiter
 	{
-		Task<bool> IsAllowedAsync(string clientId, string operation);
+		/// <summary>
+		/// Counts a request against the client's sliding one-minute window for the operation, and says whether it is
+		/// within <paramref name="maxRequestsPerMinute"/>. A rejected request is not counted.
+		/// </summary>
+		Task<bool> IsAllowedAsync(string clientId, string operation, int maxRequestsPerMinute);
 		void Reset(string clientId);
 	}
 
@@ -22,8 +26,6 @@ namespace Resgrid.Web.Mcp.Infrastructure
 		private readonly Timer _cleanupTimer;
 		private bool _disposed;
 
-		// Rate limits: 100 requests per minute per client
-		private const int MaxRequestsPerMinute = 100;
 		private static readonly TimeSpan Window = TimeSpan.FromMinutes(1);
 
 		public RateLimiter(ILogger<RateLimiter> logger)
@@ -33,13 +35,13 @@ namespace Resgrid.Web.Mcp.Infrastructure
 			_cleanupTimer = new Timer(CleanupExpired, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
 		}
 
-		public Task<bool> IsAllowedAsync(string clientId, string operation)
+		public Task<bool> IsAllowedAsync(string clientId, string operation, int maxRequestsPerMinute)
 		{
 			var key = $"{clientId}:{operation}";
 			var counter = _counters.GetOrAdd(key, _ => new RequestCounter());
 
 			var now = DateTime.UtcNow;
-			var allowed = counter.TryAddIfUnderLimit(now, Window, MaxRequestsPerMinute);
+			var allowed = counter.TryAddIfUnderLimit(now, Window, maxRequestsPerMinute);
 
 			if (!allowed)
 			{

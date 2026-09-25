@@ -135,4 +135,22 @@ Resgrid-teamet</value>
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Din Resgrid-verifieringskod är: {0}. Den upphör att gälla om {1} minuter.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN för skyddade larm</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Välj en personlig PIN med 6–12 siffror. En ny verifiering med autentiseringsappen krävs. Din avdelning måste aktivera utlämning med PIN för att du ska kunna ta emot skyddade larmuppgifter.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>Personlig PIN</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Kod från autentiseringsappen</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Spara</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Sparat.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Det gick inte att lämna ut eller spara skyddade uppgifter. Logga in på Resgrid och försök igen.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Ett skyddat larm är tillgängligt. Svara OPEN {0} följt av ett mellanslag och din personliga PIN.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Ett skyddat larm är tillgängligt. Ange din personliga PIN och avsluta med fyrkant.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Inställningar för utlämning med ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>SMS-leverans</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Röstleverans</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Allmän avisering</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Lämna ut efter PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Tillåt tidsbegränsad åtkomst för Resgrids supportpersonal efter godkännande av en andra medarbetare.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Jag bekräftar att utlämnade uppgifter lämnar Resgrid och kan sparas av telefonoperatörer eller mottagare.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Tillåt skyddat innehåll</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Resgrids personal har begärt åtkomst till det skyddade larmet {0} för supportärende {1}. Åtkomst kräver en oberoende godkännare och upphör inom 15 minuter.</value></data>
 </root>

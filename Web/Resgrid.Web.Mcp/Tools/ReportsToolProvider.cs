@@ -96,7 +96,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error generating {Report}", toolName);
 						return CreateErrorResponse("Failed to generate report. Please try again later.");

@@ -451,6 +451,48 @@ namespace Resgrid.Tests.Services.ProtectedWorkflows
 				_h.Notifications.Should().NotBeEmpty("a final failure alerts the administrators at once");
 		}
 
+		[Test]
+		public async Task a_failure_that_cannot_be_retried_stops_the_run_even_when_another_step_could_be()
+		{
+			var second = ProtectedWorkflowHarness.Clone(_h.Steps[0]);
+			second.WorkflowStepId = "step-2";
+			second.StepOrder = 2;
+			_h.Steps.Add(second);
+			_h.ActivateRelease();
+			_h.Capturing.Respond = ctx => new WorkflowActionResult
+			{
+				Success = false,
+				HttpStatus = ctx.WorkflowStepId == "step-1" ? 400 : 503,
+				ErrorDetail = "detail",
+				ProtectedOutcome = ProtectedWorkflowDisclosureOutcomes.FailedHttp
+			};
+
+			var run = await _h.RunAsync();
+
+			_h.Capturing.Calls.Should().HaveCount(2);
+			run.Status.Should().Be((int)WorkflowRunStatus.Failed, "a retry would send the rejected step again");
+			run.ErrorMessage.Should().Be($"Not retried: {ProtectedWorkflowErrorCodes.HttpFailed}");
+			_h.Notifications.Should().NotBeEmpty();
+		}
+
+		[TestCase(1, WorkflowRunStatus.Retrying)]
+		[TestCase(3, WorkflowRunStatus.Failed)]
+		public async Task an_unreachable_release_store_retries_without_sending_then_alerts(int attempt, WorkflowRunStatus expected)
+		{
+			_h.ActivateRelease();
+			_h.FailReleaseLookups = true;
+
+			var run = await _h.RunAsync(attempt: attempt);
+
+			run.Status.Should().Be((int)expected);
+			run.ErrorMessage.Should().Be("protected_gate_unavailable");
+			_h.Capturing.Calls.Should().BeEmpty();
+			if (expected == WorkflowRunStatus.Failed)
+				_h.Notifications.Should().NotBeEmpty("the last attempt alerts the administrators");
+			else
+				_h.Notifications.Should().BeEmpty();
+		}
+
 		// ── Fingerprint ─────────────────────────────────────────────────────────────────────────────
 
 		private static readonly (string Name, Func<ProtectedFingerprintExtras, ProtectedFingerprintExtras> Change)[] ExtraChanges =

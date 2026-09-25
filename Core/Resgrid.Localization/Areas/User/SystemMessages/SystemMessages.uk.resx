@@ -135,4 +135,22 @@
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Ваш код підтвердження Resgrid: {0}. Діє {1} хв.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN захищених викликів</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Виберіть особистий PIN із 6–12 цифр. Потрібна повторна перевірка в застосунку автентифікації. Ваш підрозділ має ввімкнути надання даних за PIN, щоб ви могли отримувати захищені відомості викликів.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>Особистий PIN</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Код автентифікатора</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Збережено.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Не вдалося надати або зберегти захищені дані. Увійдіть у Resgrid і спробуйте ще раз.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Доступний захищений виклик. Надішліть OPEN {0}, пробіл і свій особистий PIN.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Доступний захищений виклик. Введіть свій особистий PIN і натисніть решітку.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Налаштування надання даних ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>Доставка SMS</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Голосова доставка</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Загальне сповіщення</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Надати після введення PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Дозволити тимчасовий доступ працівникам підтримки Resgrid за схваленням другого працівника.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Я підтверджую, що надані відомості залишають Resgrid і можуть зберігатися телефонними операторами або одержувачами.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Дозволити захищений вміст</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Працівник Resgrid запросив доступ до захищеного виклику {0} для звернення до підтримки {1}. Доступ потребує незалежного схвалення та діє не більше 15 хвилин.</value></data>
 </root>

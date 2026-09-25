@@ -696,6 +696,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Arbetsflödet skapades från mallen med ett utkast till skyddad frisläppning. Ange mottagarens URL och autentiseringsuppgift för steget, välj de frisläppta fälten och begär sedan godkännande. Inget skickas förrän frisläppningen har godkänts.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Arbetsflödet skapades från mallen, men utan ett utkast till skyddad frisläppning (det kräver en administratör för skyddade arbetsflöden). Det är inaktiverat: låt en administratör skapa frisläppningen och begära godkännande innan du aktiverar det.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>Gränsen för arbetsflöden i din plan har nåtts. Uppgradera för att lägga till fler arbetsflöden.</value>
   </data>

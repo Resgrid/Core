@@ -491,8 +491,11 @@ namespace Resgrid.Services
 			{
 				// Unknown protection state: fail closed. Nothing runs; the run fails (and retries) without sending.
 				Logging.LogError($"Protected workflow gate unavailable for run {run.WorkflowRunId}: {gateEx.GetType().FullName}.");
-				run.Status       = (int)WorkflowRunStatus.Failed;
+				var gateMaxRetries = workflow.MaxRetryCount > 0 ? workflow.MaxRetryCount : WorkflowConfig.DefaultMaxRetryCount;
+				run.Status       = attemptNumber < gateMaxRetries ? (int)WorkflowRunStatus.Retrying : (int)WorkflowRunStatus.Failed;
 				run.ErrorMessage = "protected_gate_unavailable";
+				if (run.Status == (int)WorkflowRunStatus.Failed && _protectedWorkflows != null)
+					await _protectedWorkflows.NotifyFinalFailureAsync(departmentId, workflow, run.WorkflowRunId, "protected_gate_unavailable", cancellationToken);
 				run.CompletedOn  = DateTime.UtcNow;
 				await UpdateRunAsync(run, cancellationToken);
 				return run;
@@ -539,9 +542,11 @@ namespace Resgrid.Services
 
 			var steps = await GetStepsByWorkflowIdAsync(workflowId, cancellationToken);
 			var anyFailure = false;
-			var anyRetryable = false;
 			var utcToday = DateTime.UtcNow.Date;
 			string lastProtectedError = null;
+			// The first protected failure another attempt could not fix. A retry runs every step again, so one such
+			// failure stops the whole run even when another step's failure alone would have been retried.
+			string protectedStopError = null;
 
 			foreach (var step in steps.Where(s => s.IsEnabled))
 			{
@@ -563,8 +568,9 @@ namespace Resgrid.Services
 					if (protectedStep.Failed)
 					{
 						anyFailure = true;
-						anyRetryable |= protectedStep.Retryable;
 						lastProtectedError = protectedStep.ErrorCode ?? lastProtectedError;
+						if (!protectedStep.Retryable && protectedStopError == null)
+							protectedStopError = protectedStep.ErrorCode ?? ProtectedWorkflowErrorCodes.StepError;
 					}
 					continue;
 				}
@@ -863,17 +869,18 @@ namespace Resgrid.Services
 
 				// A protected run retries only for failures another attempt could fix (transport, 5xx, 429); a rejected
 				// acknowledgement, a 4xx or a refused send stops at once and alerts.
-				if (attemptNumber < maxRetries && (!protectedGate.IsProtected || anyRetryable))
+				var protectedStopped = protectedGate.IsProtected && protectedStopError != null;
+				if (attemptNumber < maxRetries && !protectedStopped)
 					run.Status = (int)WorkflowRunStatus.Retrying;
 				else
 				{
 					run.Status       = (int)WorkflowRunStatus.Failed;
-					run.ErrorMessage = protectedGate.IsProtected && !anyRetryable && attemptNumber < maxRetries
-						? $"Not retried: {lastProtectedError ?? ProtectedWorkflowErrorCodes.StepError}"
+					run.ErrorMessage = protectedStopped && attemptNumber < maxRetries
+						? $"Not retried: {protectedStopError}"
 						: "Maximum retry attempts exceeded.";
 					if (protectedGate.IsProtected && _protectedWorkflows != null)
 						await _protectedWorkflows.NotifyFinalFailureAsync(departmentId, workflow, run.WorkflowRunId,
-							lastProtectedError ?? ProtectedWorkflowErrorCodes.StepError, cancellationToken);
+							protectedStopError ?? lastProtectedError ?? ProtectedWorkflowErrorCodes.StepError, cancellationToken);
 				}
 			}
 			else

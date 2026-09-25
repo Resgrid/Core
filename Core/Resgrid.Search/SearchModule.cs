@@ -13,6 +13,7 @@ namespace Resgrid.Search
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<AdminAssistReferenceSearch>().As<Resgrid.Model.AdminAssist.IAdminAssistReferenceSearch>().SingleInstance();
 			builder.Register(c =>
 			{
 				var s3 = new S3SearchIndexStore();

@@ -18,5 +18,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+		<ProjectReference Include="..\Resgrid.Web.Common\Resgrid.Web.Common.csproj" />
 	</ItemGroup>
 </Project>

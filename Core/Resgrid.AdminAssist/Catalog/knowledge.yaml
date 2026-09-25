@@ -1,0 +1,658 @@
+{
+  "Version": "2026.09.24.1",
+  "Areas": [
+    {
+      "Id": "knowledge",
+      "LabelKey": "Area.knowledge",
+      "PurposeKey": "AreaPurpose.knowledge",
+      "Order": 5,
+      "Archetypes": []
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "module.DocumentsDisabled",
+      "AreaId": "knowledge",
+      "LabelKey": "Module.DocumentsDisabled",
+      "HelpKey": "ModuleHelp.DocumentsDisabled",
+      "Binding": "DepartmentModuleSettings.DocumentsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "DocumentsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.DocumentsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.DocumentsNameOverride",
+      "AreaId": "knowledge",
+      "LabelKey": "Module.DocumentsNameOverride",
+      "HelpKey": "ModuleHelp.DocumentsNameOverride",
+      "Binding": "DepartmentModuleSettings.DocumentsNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.DocumentsNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "module.NotesDisabled",
+      "AreaId": "knowledge",
+      "LabelKey": "Module.NotesDisabled",
+      "HelpKey": "ModuleHelp.NotesDisabled",
+      "Binding": "DepartmentModuleSettings.NotesDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "NotesEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.NotesDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.NotesNameOverride",
+      "AreaId": "knowledge",
+      "LabelKey": "Module.NotesNameOverride",
+      "HelpKey": "ModuleHelp.NotesNameOverride",
+      "Binding": "DepartmentModuleSettings.NotesNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.NotesNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "contacts",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.contacts",
+      "PurposeKey": "FeaturePurpose.contacts",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.contacts",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Contacts",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-contact",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.new-contact",
+      "PurposeKey": "FeaturePurpose.new-contact",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.new-contact",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Contacts",
+        "Action": "Add"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "contact-categories",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.contact-categories",
+      "PurposeKey": "FeaturePurpose.contact-categories",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.contact-categories",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Contacts",
+        "Action": "Categories"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "documents",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.documents",
+      "PurposeKey": "FeaturePurpose.documents",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.documents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Documents",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Documents"
+        }
+      ],
+      "SettingIds": [
+        "module.DocumentsDisabled"
+      ],
+      "RuleIds": [
+        "policy-expiry"
+      ]
+    },
+    {
+      "Id": "new-document",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.new-document",
+      "PurposeKey": "FeaturePurpose.new-document",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.new-document",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Documents",
+        "Action": "NewDocument"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Documents"
+        }
+      ],
+      "SettingIds": [
+        "module.DocumentsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "notes",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.notes",
+      "PurposeKey": "FeaturePurpose.notes",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.notes",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Notes",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Notes"
+        }
+      ],
+      "SettingIds": [
+        "module.NotesDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-note",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.new-note",
+      "PurposeKey": "FeaturePurpose.new-note",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.new-note",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Notes",
+        "Action": "NewNote"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Notes"
+        }
+      ],
+      "SettingIds": [
+        "module.NotesDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "protocols",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocols",
+      "PurposeKey": "FeaturePurpose.protocols",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.protocols",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-protocol",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.new-protocol",
+      "PurposeKey": "FeaturePurpose.new-protocol",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.new-protocol",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "New"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "forms",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.forms",
+      "PurposeKey": "FeaturePurpose.forms",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.forms",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Forms",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "shared-links",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.shared-links",
+      "PurposeKey": "FeaturePurpose.shared-links",
+      "ValueKey": "FeatureValue.shared-links",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.shared-links",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Links",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "file-library",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.file-library",
+      "PurposeKey": "FeaturePurpose.file-library",
+      "ValueKey": "FeatureValue.file-library",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "FeatureAdoption.file-library",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Documents",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Documents"
+        }
+      ],
+      "SettingIds": [
+        "module.DocumentsDisabled"
+      ],
+      "RuleIds": [
+        "policy-expiry"
+      ]
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "policy-references",
+      "AreaId": "knowledge",
+      "Severity": "Warning",
+      "TitleKey": "Rule.policy-references",
+      "ExplanationKey": "RuleWhy.policy-references",
+      "NextActionKey": "RuleNext.policy-references",
+      "Location": {
+        "Controller": "Department",
+        "Action": "OperatingProfile"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "declaredPolicyReferences",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "unavailablePolicyReferences",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "policy-expiry",
+      "AreaId": "knowledge",
+      "Severity": "Warning",
+      "TitleKey": "Rule.policy-expiry",
+      "ExplanationKey": "RuleWhy.policy-expiry",
+      "NextActionKey": "RuleNext.policy-expiry",
+      "Location": {
+        "Controller": "Documents",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "declaredPolicyReferences",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "policyReferencesExpiring30Days",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "continuity-reference",
+      "AreaId": "knowledge",
+      "Severity": "Information",
+      "TitleKey": "Rule.continuity-reference",
+      "ExplanationKey": "RuleWhy.continuity-reference",
+      "NextActionKey": "RuleNext.continuity-reference",
+      "Location": {
+        "Controller": "Department",
+        "Action": "OperatingProfile"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "operatingProfileReviewed",
+          "Comparison": "IsTrue",
+          "Number": null
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "declaredContinuityReferences",
+          "Comparison": "Equal",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "module.DocumentsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.DocumentsDisabled",
+      "Body": "Documents availability. Controls availability of shared documents. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-documentsdisabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.DocumentsNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.DocumentsNameOverride",
+      "Body": "Documents menu name. Optional display name for shared documents in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-documentsnameoverride",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.NotesDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.NotesDisabled",
+      "Body": "Notes availability. Controls availability of notes. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-notesdisabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.NotesNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.NotesNameOverride",
+      "Body": "Notes menu name. Optional display name for notes in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-notesnameoverride",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "contacts",
+      "Locale": "en",
+      "TitleKey": "Feature.contacts",
+      "Body": "Contacts People and organizations outside the department Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "contacts",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-contact",
+      "Locale": "en",
+      "TitleKey": "Feature.new-contact",
+      "Body": "New Contact Add a person or organization contact Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-contact",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "contact-categories",
+      "Locale": "en",
+      "TitleKey": "Feature.contact-categories",
+      "Body": "Contact Categories Manage contact categories Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "contact-categories",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "documents",
+      "Locale": "en",
+      "TitleKey": "Feature.documents",
+      "Body": "Documents Upload and share documents Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "documents",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-document",
+      "Locale": "en",
+      "TitleKey": "Feature.new-document",
+      "Body": "Upload Document Upload a new document Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-document",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "notes",
+      "Locale": "en",
+      "TitleKey": "Feature.notes",
+      "Body": "Notes Department notes: small bits of shared information Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "notes",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-note",
+      "Locale": "en",
+      "TitleKey": "Feature.new-note",
+      "Body": "New Note Post a department note Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-note",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "protocols",
+      "Locale": "en",
+      "TitleKey": "Feature.protocols",
+      "Body": "Protocols Dispatch protocols and procedures Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocols",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-protocol",
+      "Locale": "en",
+      "TitleKey": "Feature.new-protocol",
+      "Body": "New Protocol Create a dispatch protocol Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-protocol",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "forms",
+      "Locale": "en",
+      "TitleKey": "Feature.forms",
+      "Body": "Forms Custom call and dispatch forms Help authorized members find the current reference and responsible contact. Review a receiving-agency contact and an approved site plan before a planned event. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "forms",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "shared-links",
+      "Locale": "en",
+      "TitleKey": "Feature.shared-links",
+      "Body": "Shared links Configure supported shared views and links. Review exposed data and link access before distribution. Review a receiving-agency contact and an approved site plan before a planned event. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "shared-links",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "file-library",
+      "Locale": "en",
+      "TitleKey": "Feature.file-library",
+      "Body": "Files and attachments Attach and maintain files through their owning documents and records. Keep reference material with its owner, permissions and retention policy. Review a receiving-agency contact and an approved site plan before a planned event. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "file-library",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

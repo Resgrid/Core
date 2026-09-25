@@ -1,0 +1,390 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Feature.add-person">
+    <value>Προσθήκη Ατόμου</value>
+  </data>
+  <data xml:space="preserve" name="Feature.addon-adp">
+    <value>Προηγμένη προστασία δεδομένων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.archived-calls">
+    <value>Αρχειοθετημένες Κλήσεις</value>
+  </data>
+  <data xml:space="preserve" name="Feature.bids">
+    <value>Προσφορές</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calendar">
+    <value>Ημερολόγιο</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calls">
+    <value>Κλήσεις</value>
+  </data>
+  <data xml:space="preserve" name="Feature.certification-types">
+    <value>Τύποι Πιστοποιήσεων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.chat">
+    <value>Συνομιλία</value>
+  </data>
+  <data xml:space="preserve" name="Feature.checklists">
+    <value>Λίστες ελέγχου</value>
+  </data>
+  <data xml:space="preserve" name="Feature.communication-tests">
+    <value>Δοκιμές Επικοινωνίας</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contacts">
+    <value>Επαφές</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contracts">
+    <value>Συμβάσεις</value>
+  </data>
+  <data xml:space="preserve" name="Feature.data-protection">
+    <value>Προστασία δεδομένων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.department-settings">
+    <value>Ρυθμίσεις Τμήματος</value>
+  </data>
+  <data xml:space="preserve" name="Feature.departments">
+    <value>Τα Τμήματά Σας</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-settings">
+    <value>Ρυθμίσεις Αποστολής</value>
+  </data>
+  <data xml:space="preserve" name="Feature.documents">
+    <value>Έγγραφα</value>
+  </data>
+  <data xml:space="preserve" name="Feature.forms">
+    <value>Φόρμες</value>
+  </data>
+  <data xml:space="preserve" name="Feature.inbox">
+    <value>Εισερχόμενα</value>
+  </data>
+  <data xml:space="preserve" name="Feature.incident-reports">
+    <value>Αναφορές συμβάντων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invites">
+    <value>Διαχείριση Προσκλήσεων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invoices">
+    <value>Τιμολόγια</value>
+  </data>
+  <data xml:space="preserve" name="Feature.live-routing">
+    <value>Ζωντανή Δρομολόγηση</value>
+  </data>
+  <data xml:space="preserve" name="Feature.logs">
+    <value>Καταγραφές</value>
+  </data>
+  <data xml:space="preserve" name="Feature.mapping">
+    <value>Χαρτογράφηση</value>
+  </data>
+  <data xml:space="preserve" name="Feature.module-settings">
+    <value>Ρυθμίσεις ενοτήτων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-call">
+    <value>Νέα Κλήση</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-contact">
+    <value>Νέα Επαφή</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-deployment">
+    <value>Νέα αποστολή</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-group">
+    <value>Νέα Ομάδα</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-log">
+    <value>Νέα Καταγραφή</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-note">
+    <value>Νέα Σημείωση</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-protocol">
+    <value>Νέο Πρωτόκολλο</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-training">
+    <value>Νέα Εκπαίδευση</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-unit">
+    <value>Νέα Μονάδα</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-workflow">
+    <value>Νέα Ροή Εργασίας</value>
+  </data>
+  <data xml:space="preserve" name="Feature.notes">
+    <value>Σημειώσεις</value>
+  </data>
+  <data xml:space="preserve" name="Feature.outbox">
+    <value>Απεσταλμένα Μηνύματα</value>
+  </data>
+  <data xml:space="preserve" name="Feature.personnel">
+    <value>Προσωπικό</value>
+  </data>
+  <data xml:space="preserve" name="Feature.preventive-maintenance">
+    <value>Προληπτική συντήρηση</value>
+  </data>
+  <data xml:space="preserve" name="Feature.protocols">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data xml:space="preserve" name="Feature.rate-cards">
+    <value>Τιμοκατάλογοι</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-holds">
+    <value>Δεσμεύσεις διατήρησης αρχείων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-inspections">
+    <value>Επιθεωρήσεις</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-investigations">
+    <value>Έρευνες</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-permits">
+    <value>Άδειες</value>
+  </data>
+  <data xml:space="preserve" name="Feature.records-settings">
+    <value>Ρυθμίσεις αρχείων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.reports">
+    <value>Αναφορές</value>
+  </data>
+  <data xml:space="preserve" name="Feature.routes">
+    <value>Διαδρομές</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shifts">
+    <value>Βάρδιες</value>
+  </data>
+  <data xml:space="preserve" name="Feature.trainings">
+    <value>Εκπαιδεύσεις</value>
+  </data>
+  <data xml:space="preserve" name="Feature.two-factor">
+    <value>Έλεγχος Ταυτότητας Δύο Παραγόντων</value>
+  </data>
+  <data xml:space="preserve" name="Feature.unit-staffing">
+    <value>Στελέχωση Μονάδας</value>
+  </data>
+  <data xml:space="preserve" name="Feature.units">
+    <value>Μονάδες</value>
+  </data>
+  <data xml:space="preserve" name="Feature.voice">
+    <value>Φωνή</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workflow-runs">
+    <value>Εκτελέσεις Ροής Εργασίας</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workforce">
+    <value>Εργατικό δυναμικό</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionAction3">
+    <value>Όλοι</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionType">
+    <value>Δικαίωμα</value>
+  </data>
+  <data xml:space="preserve" name="Pack.sar">
+    <value>Έρευνα και διάσωση</value>
+  </data>
+  <data xml:space="preserve" name="Permission.AdjustInventory">
+    <value>Προσαρμογή Αποθέματος</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveRecords">
+    <value>Έγκριση αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.CloseCall">
+    <value>Κλείσιμο Κλήσης</value>
+  </data>
+  <data xml:space="preserve" name="Permission.CommandAppLogin">
+    <value>Σύνδεση στην Εφαρμογή Command</value>
+  </data>
+  <data xml:space="preserve" name="Permission.CreateWorkflow">
+    <value>Δημιουργία Ροής Εργασίας</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteCall">
+    <value>Διαγραφή Κλήσης</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteLog">
+    <value>Διαγραφή Καταγραφής</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DispatchAppLogin">
+    <value>Σύνδεση στην Εφαρμογή Dispatch</value>
+  </data>
+  <data xml:space="preserve" name="Permission.FinalizeRecords">
+    <value>Οριστικοποίηση αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDefinitions">
+    <value>Διαχείριση ορισμών αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDisclosures">
+    <value>Διαχείριση γνωστοποιήσεων αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordReports">
+    <value>Διαχείριση συγκεντρωτικών αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
+    <value>Δημοσίευση ορισμών αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewRecords">
+    <value>Έλεγχος αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="Permission.UseCalendarSync">
+    <value>Χρήση Συγχρονισμού Ημερολογίου</value>
+  </data>
+  <data xml:space="preserve" name="Profile.No">
+    <value>Όχι</value>
+  </data>
+  <data xml:space="preserve" name="Profile.OperatingHours">
+    <value>Ώρες λειτουργίας</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Yes">
+    <value>Ναι</value>
+  </data>
+  <data xml:space="preserve" name="Profile.contract">
+    <value>Σύμβαση</value>
+  </data>
+  <data xml:space="preserve" name="Profile.volunteer">
+    <value>Εθελοντής</value>
+  </data>
+  <data xml:space="preserve" name="ProfileField.OperatingHours">
+    <value>Ώρες λειτουργίας</value>
+  </data>
+  <data xml:space="preserve" name="Setting.EnableModernNotifications">
+    <value>Ενεργοποίηση Σύγχρονων Ειδοποιήσεων</value>
+  </data>
+  <data xml:space="preserve" name="Ui.After">
+    <value>Μετά</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Area">
+    <value>Περιοχή</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Before">
+    <value>Πριν</value>
+  </data>
+  <data xml:space="preserve" name="Ui.CatalogVersion">
+    <value>Έκδοση καταλόγου</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Configure">
+    <value>Άνοιγμα της αντίστοιχης σελίδας ρυθμίσεων</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Critical">
+    <value>Κρίσιμο</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Fail">
+    <value>Χρειάζεται προσοχή</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featureplanned">
+    <value>Προγραμματισμένη</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featurepreview">
+    <value>Προεπισκόπηση</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Freshness">
+    <value>Στοιχεία έως</value>
+  </data>
+  <data xml:space="preserve" name="Ui.HistoryTime">
+    <value>Πότε</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Info">
+    <value>Πληροφορίες</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Information">
+    <value>Πληροφορίες</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Interested">
+    <value>Με ενδιαφέρει αυτή η λειτουργία</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Known">
+    <value>Διαθέσιμο</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LearnLater">
+    <value>Ενημέρωση αργότερα</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Learned">
+    <value>Κατανοώ αυτή τη λειτουργία</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Loading">
+    <value>Φόρτωση ρυθμίσεων τμήματος…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NotApplicable">
+    <value>Δεν εφαρμόζεται</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Pass">
+    <value>Επαληθεύτηκε</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Print">
+    <value>Εκτύπωση</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReadSource">
+    <value>Ανάγνωση του κειμένου πηγής</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Redacted">
+    <value>Τα προστατευμένα στοιχεία δεν είναι διαθέσιμα</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReportBoundary">
+    <value>Ο έλεγχος ρυθμίσεων παρέχει διοικητική καθοδήγηση. Η κατανόηση μιας λειτουργίας ή η αποθήκευση μιας ρύθμισης δεν αποδεικνύει επιχειρησιακή ετοιμότητα ή παράδοση μηνυμάτων.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Retry">
+    <value>Δοκιμάστε ξανά</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReviewDate">
+    <value>Προθεσμία ελέγχου</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Saving">
+    <value>Αποθήκευση…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Search">
+    <value>Αναζήτηση τομέων και λειτουργιών</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SearchReference">
+    <value>Αναζήτηση στην τεκμηρίωση αναφοράς</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unassigned">
+    <value>Μη ανατεθειμένο</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unavailable">
+    <value>Μη διαθέσιμο</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unknown">
+    <value>Άγνωστο</value>
+  </data>
+  <data xml:space="preserve" name="Ui.UseNow">
+    <value>Χρήση τώρα</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Verify">
+    <value>Επαλήθευση ξανά</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Warning">
+    <value>Προειδοποίηση</value>
+  </data>
+  <data xml:space="preserve" name="Ui.explore">
+    <value>Εξερεύνηση του Resgrid και των πρόσθετων</value>
+  </data>
+  <data xml:space="preserve" name="Ui.health">
+    <value>Έλεγχοι ρυθμίσεων</value>
+  </data>
+  <data xml:space="preserve" name="Ui.history">
+    <value>Ιστορικό αλλαγών</value>
+  </data>
+  <data xml:space="preserve" name="Ui.overview">
+    <value>Επισκόπηση</value>
+  </data>
+  <data xml:space="preserve" name="Ui.reference">
+    <value>Οδηγός αναφοράς ρυθμίσεων</value>
+  </data>
+  <data xml:space="preserve" name="Ui.report">
+    <value>Αναφορά ρύθμισης</value>
+  </data>
+  <data xml:space="preserve" name="Ui.wizard">
+    <value>Οδηγός ρύθμισης</value>
+  </data>
+  <data xml:space="preserve" name="Ui.worklist">
+    <value>Λίστα εργασιών διαχειριστή</value>
+  </data>
+</root>

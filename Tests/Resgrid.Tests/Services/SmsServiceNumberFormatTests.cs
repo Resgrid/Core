@@ -49,6 +49,27 @@ namespace Resgrid.Tests.Services
 				new PhoneNumberProcesserProvider());
 		}
 
+		[Test]
+		public async Task Pin_challenge_uses_dispatch_preferences_and_a_reply_capable_direct_number()
+		{
+			var profile = Profile("+12705550101", MobileCarriers.None);
+			profile.SendSms = true;
+			profile.SendNotificationSms = false;
+			profile.MobileNumberVerified = true;
+			_textMessageProvider.Setup(p => p.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<MobileCarriers>(), It.IsAny<int>(), false, false, 0)).ReturnsAsync(true);
+			(await _service.SendProtectedDispatchChallengeAsync(profile, 7, "+15555550100", "OPEN challenge" )).Should().BeTrue();
+			_textMessageProvider.Verify(p => p.SendTextMessage("+12705550101", It.Is<string>(s => s.Contains("OPEN challenge")),
+				"+15555550100", MobileCarriers.None, 7, false, false, 0), Times.Once);
+			profile.SendSms = false;
+			(await _service.SendProtectedDispatchChallengeAsync(profile, 7, "+15555550100", "OPEN challenge")).Should().BeFalse();
+			profile.SendSms = true;
+			profile.MobileNumberVerified = false;
+			(await _service.SendProtectedDispatchChallengeAsync(profile, 7, "+15555550100", "OPEN challenge")).Should().BeFalse();
+			_textMessageProvider.Verify(p => p.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Once);
+		}
+
 		private static UserProfile Profile(string mobileNumber, MobileCarriers carrier) => new UserProfile
 		{
 			UserId = "user-1",

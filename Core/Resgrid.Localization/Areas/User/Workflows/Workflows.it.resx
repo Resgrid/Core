@@ -696,6 +696,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Flusso di lavoro creato dal modello con un'autorizzazione protetta in bozza. Imposta l'URL di destinazione e la credenziale del passaggio, scegli i campi autorizzati e richiedi l'approvazione. Non invia nulla finché l'autorizzazione non è approvata.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Flusso di lavoro creato dal modello, ma senza un'autorizzazione protetta in bozza (per crearla serve un amministratore dei flussi di lavoro protetti). È disattivato: chiedi a un amministratore di creare l'autorizzazione e di richiederne l'approvazione prima di attivarlo.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>È stato raggiunto il limite di flussi di lavoro del tuo piano. Passa a un piano superiore per aggiungerne altri.</value>
   </data>

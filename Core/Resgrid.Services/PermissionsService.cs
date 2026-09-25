@@ -7,6 +7,7 @@ using CommonServiceLocator;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -17,11 +18,13 @@ namespace Resgrid.Services
 	{
 		private readonly IUsersService _usersService;
 		private readonly IPermissionsRepository _permissionsRepository;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
 
-		public PermissionsService(IPermissionsRepository permissionsRepository, IUsersService usersService)
+		public PermissionsService(IPermissionsRepository permissionsRepository, IUsersService usersService, IDepartmentGroupsService departmentGroupsService)
 		{
 			_permissionsRepository = permissionsRepository;
 			_usersService = usersService;
+			_departmentGroupsService = departmentGroupsService;
 		}
 
 		public async Task<List<Permission>> GetAllPermissionsForDepartmentAsync(int departmentId)
@@ -260,16 +263,13 @@ namespace Resgrid.Services
 			{
 				return allUsers.Select(x => x.UserId).ToList();
 			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isUserDepartmentAdmin)
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isUserGroupAdmin)
 			{
+				// Locked: the admin's group and every group beneath it, the same reach the visibility matrices give.
 				if (permission.LockToGroup)
-				{
-					return allUsers.Where(x => x.DepartmentGroupId == sourceGroupId).Select(x => x.UserId).ToList();
-				}
-				else
-				{
-					return allUsers.Select(x => x.UserId).ToList();
-				}
+					return await UsersInGroupAndBelowAsync(allUsers, departmentId, sourceGroupId);
+
+				return allUsers.Select(x => x.UserId).ToList();
 			}
 			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles &&
 			         isUserDepartmentAdmin)
@@ -279,21 +279,12 @@ namespace Resgrid.Services
 			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles &&
 			         !isUserDepartmentAdmin)
 			{
-				var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
-				var role = from r in roles
-					where roleIds.Contains(r.PersonnelRoleId)
-					select r;
-
-				if (role.Any())
+				if (HasSelectedRole(permission.Data, roles))
 				{
 					if (permission.LockToGroup)
-					{
-						return allUsers.Where(x => x.DepartmentGroupId == sourceGroupId).Select(x => x.UserId).ToList();
-					}
-					else
-					{
-						return allUsers.Select(x => x.UserId).ToList();
-					}
+						return UsersInGroup(allUsers, sourceGroupId);
+
+					return allUsers.Select(x => x.UserId).ToList();
 				}
 			}
 			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
@@ -301,17 +292,45 @@ namespace Resgrid.Services
 				if (isUserDepartmentAdmin || isUserGroupAdmin || HasSelectedRole(permission.Data, roles))
 				{
 					if (permission.LockToGroup && !isUserDepartmentAdmin)
-						return allUsers.Where(x => x.DepartmentGroupId == sourceGroupId).Select(x => x.UserId).ToList();
+						return UsersInGroup(allUsers, sourceGroupId);
 
 					return allUsers.Select(x => x.UserId).ToList();
 				}
 			}
 			else if (permission.Action == (int)PermissionActions.Everyone)
 			{
+				if (permission.LockToGroup && !isUserDepartmentAdmin)
+					return UsersInGroup(allUsers, sourceGroupId);
+
 				return allUsers.Select(x => x.UserId).ToList();
 			}
 
 			return new List<string>();
+		}
+
+		/// <summary>
+		/// The members of the caller's group, for a permission locked to group. A caller in no group shares a
+		/// group with nobody, so gets nobody -- not every other ungrouped member.
+		/// </summary>
+		private static List<string> UsersInGroup(List<UserGroupRole> allUsers, int? sourceGroupId)
+		{
+			if (!sourceGroupId.HasValue)
+				return new List<string>();
+
+			return allUsers.Where(x => x.DepartmentGroupId == sourceGroupId).Select(x => x.UserId).ToList();
+		}
+
+		/// <summary>Members of the caller's group and of every group beneath it; nobody when the caller is in no group.</summary>
+		private async Task<List<string>> UsersInGroupAndBelowAsync(List<UserGroupRole> allUsers, int departmentId, int? sourceGroupId)
+		{
+			if (!sourceGroupId.HasValue)
+				return new List<string>();
+
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedAsync(departmentId) ?? new List<DepartmentGroup>();
+			var groupIds = DepartmentGroupHierarchy.GetSelfAndDescendantIds(groups, sourceGroupId.Value);
+			groupIds.Add(sourceGroupId.Value);
+
+			return allUsers.Where(x => x.DepartmentGroupId.HasValue && groupIds.Contains(x.DepartmentGroupId.Value)).Select(x => x.UserId).ToList();
 		}
 
 		/// <summary>Null-safe role-CSV membership check used by the DepartmentAndGroupAdminsAndSelectRoles (4) branches.</summary>

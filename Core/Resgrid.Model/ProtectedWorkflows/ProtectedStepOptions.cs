@@ -86,7 +86,8 @@ namespace Resgrid.Model
 
 		public static readonly Regex SubjectKeyPattern = new Regex("^[a-z0-9_]{1,64}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 		private static readonly Regex HeaderToken = new Regex("^[A-Za-z0-9!#$%&'*+.^_`|~-]{1,64}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-		private static readonly Regex Hl7FieldReference = new Regex(@"^[A-Z0-9]{3}-\d{1,3}(\.\d{1,3}){0,2}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+		// [0-9], not \d: \d also matches non-ASCII digits, which the response rules' int.Parse would throw on after the send.
+		private static readonly Regex Hl7FieldReference = new Regex(@"^[A-Z0-9]{3}-[0-9]{1,3}(\.[0-9]{1,3}){0,2}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
 		/// <summary>The declared content type exactly as configured (null when absent).</summary>
 		public string ContentType { get; set; }

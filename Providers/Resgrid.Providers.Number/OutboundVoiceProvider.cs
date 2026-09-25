@@ -45,6 +45,9 @@ namespace Resgrid.Providers.NumberProvider
 					// a voicemail simply records the dispatch prompt.
 
 					var phoneCall = await CallResource.CreateAsync(options);
+					Resgrid.Model.AdminAssist.DispatchTraceTelemetry.ProviderResult(
+						Resgrid.Model.AdminAssist.DispatchTraceProvider.Twilio, Resgrid.Model.AdminAssist.DispatchTraceChannel.Voice,
+						phoneCall?.Sid, Resgrid.Model.AdminAssist.DispatchProviderOutcome.CreationStatus(phoneCall?.Status?.ToString()));
 					return true;
 				}
 			}
@@ -59,6 +62,9 @@ namespace Resgrid.Providers.NumberProvider
 					// No machine detection — see the mobile branch above.
 
 					var phoneCall = await CallResource.CreateAsync(options);
+					Resgrid.Model.AdminAssist.DispatchTraceTelemetry.ProviderResult(
+						Resgrid.Model.AdminAssist.DispatchTraceProvider.Twilio, Resgrid.Model.AdminAssist.DispatchTraceChannel.Voice,
+						phoneCall?.Sid, Resgrid.Model.AdminAssist.DispatchProviderOutcome.CreationStatus(phoneCall?.Status?.ToString()));
 					return true;
 				}
 			}

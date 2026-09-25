@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Queries.Sso;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DepartmentSecurityPolicyRepository : RepositoryBase<DepartmentSecurityPolicy>, IDepartmentSecurityPolicyRepository
+	public class DepartmentSecurityPolicyRepository : AuditedConfigurationRepository<DepartmentSecurityPolicy>, IDepartmentSecurityPolicyRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -23,8 +23,8 @@ namespace Resgrid.Repositories.DataRepository
 			IConnectionProvider connectionProvider,
 			SqlConfiguration sqlConfiguration,
 			IUnitOfWork unitOfWork,
-			IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+			IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;

@@ -87,7 +87,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving active calls");
 						transaction.Status = SpanStatus.InternalError;
@@ -166,7 +166,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving call details");
 						transaction.Status = SpanStatus.InternalError;
@@ -273,7 +273,7 @@ namespace Resgrid.Web.Mcp.Tools
 							message = "Call created successfully"
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error creating call");
 						return CreateErrorResponse("Failed to create call. Please try again later.");
@@ -348,7 +348,7 @@ namespace Resgrid.Web.Mcp.Tools
 							message = "Call closed successfully"
 						};
 					}
-				catch (Exception ex)
+				catch (Exception ex) when (ex is not McpToolErrorException)
 				{
 					_logger.LogError(ex, "Error closing call");
 					return CreateErrorResponse("Failed to close call. Please try again later.");

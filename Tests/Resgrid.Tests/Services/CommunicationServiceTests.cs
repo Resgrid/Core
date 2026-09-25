@@ -75,7 +75,7 @@ namespace Resgrid.Tests.Services
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
 					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object,
-					_departmentsServiceMock.Object, _protectedProjectionServiceMock.Object);
+					_departmentsServiceMock.Object, _protectedProjectionServiceMock.Object, new System.Lazy<IAdpReleaseService>(() => Mock.Of<IAdpReleaseService>()));
 			}
 		}
 

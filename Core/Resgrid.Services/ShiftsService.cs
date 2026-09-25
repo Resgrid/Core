@@ -282,7 +282,7 @@ namespace Resgrid.Services
 			if (trade?.Users == null)
 				return false;
 
-			var userTradeRequest = trade.Users.FirstOrDefault(x => x.UserId == userId);
+			var userTradeRequest = trade.Users.FirstOrDefault(x => SameUser(x.UserId, userId));
 
 			if (userTradeRequest != null)
 			{
@@ -305,7 +305,7 @@ namespace Resgrid.Services
 			if (trade?.Users == null)
 				return false;
 
-			var userTradeRequest = trade.Users.FirstOrDefault(x => x.UserId == userId);
+			var userTradeRequest = trade.Users.FirstOrDefault(x => SameUser(x.UserId, userId));
 
 			if (userTradeRequest != null)
 			{
@@ -330,7 +330,7 @@ namespace Resgrid.Services
 						var signup = await GetShiftSignupByIdAsync(i);
 
 						// Only the proposer's own live signups can be offered back, never the day being traded.
-						if (signup != null && signup.UserId == userId && signup.IsActive() && signup.ShiftSignupId != trade.SourceShiftSignupId)
+						if (signup != null && SameUser(signup.UserId, userId) && signup.IsActive() && signup.ShiftSignupId != trade.SourceShiftSignupId)
 						{
 							var shift = new ShiftSignupTradeUserShift();
 							shift.ShiftSignupTradeUserId = userTradeRequest.ShiftSignupTradeUserId;

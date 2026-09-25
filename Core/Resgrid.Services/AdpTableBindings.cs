@@ -66,7 +66,7 @@ namespace Resgrid.Services
 				AdpTableBinding.Direct("AuditLogs", "AuditLogId", true, "DepartmentId", new[] { Text("AuditLogs", "Data") })
 					with { Discriminator = new AdpRowDiscriminator("LogType", Resgrid.Model.Checklists.ReadinessHistoryFields.AuditTypes) },
 				AdpTableBinding.Direct("DomainEventOutbox", "DomainEventOutboxId", true, "DepartmentId", new[] { Text("DomainEventOutbox", "PayloadJson"), Text("DomainEventOutbox", "LastError") })
-					with { Discriminator = new AdpRowDiscriminator("ProducerSubsystem", Texts: new[] { "Checklists", "WorkOrders", "Inventory" }) },
+					with { Discriminator = new AdpRowDiscriminator("ProducerSubsystem", Texts: Resgrid.Model.Checklists.ChecklistWorkflowPayload.ReadinessProducers) },
 				AdpTableBinding.Direct("WorkflowRuns", "WorkflowRunId", false, "DepartmentId", new[] { Text("WorkflowRuns", "InputPayload"), Text("WorkflowRuns", "ErrorMessage") })
 					with { Discriminator = new AdpRowDiscriminator("TriggerEventType", Resgrid.Model.Checklists.ChecklistWorkflowPayload.Triggers) },
 				AdpTableBinding.ViaParent("WorkflowRunLogs", "WorkflowRunLogId", false, "WorkflowRunId", "WorkflowRuns", "WorkflowRunId", new[] { Text("WorkflowRunLogs", "RenderedOutput"), Text("WorkflowRunLogs", "ActionResult"), Text("WorkflowRunLogs", "ErrorMessage") })
@@ -201,6 +201,9 @@ namespace Resgrid.Services
 				{
 					Binary("PayDataExportArtifacts", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("AdminAssistFindings", "AdminAssistFindingId", pkIsNumeric: false, "DepartmentId", new[] { Text("AdminAssistFindings", "Content") }) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("AdminAssistDispatchTraces", "AdminAssistDispatchTraceId", pkIsNumeric: false, "DepartmentId", new[] { Text("AdminAssistDispatchTraces", "Content") }) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("Contacts", "ContactId", pkIsNumeric: false, "DepartmentId", new[]
 				{

@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Providers
 		{
 			DataProtectionConfig.BrokerBaseUrl = "http://broker.test:8080";
 			var handler = new RefusingHandler();
-			using var client = new ProtectedDataBrokerClient(handler);
+			using var client = new ProtectedDataBrokerClient(handler, Moq.Mock.Of<Resgrid.Model.Repositories.IAdpAuditRepository>());
 
 			client.IsConfigured.Should().BeFalse();
 			(await client.IsHealthyAsync()).Should().BeFalse();
@@ -63,7 +63,7 @@ namespace Resgrid.Tests.Providers
 		public void Https_broker_url_is_configured()
 		{
 			DataProtectionConfig.BrokerBaseUrl = "https://broker.test:8443";
-			using var client = new ProtectedDataBrokerClient(new RefusingHandler());
+			using var client = new ProtectedDataBrokerClient(new RefusingHandler(), Moq.Mock.Of<Resgrid.Model.Repositories.IAdpAuditRepository>());
 
 			client.IsConfigured.Should().BeTrue();
 		}
@@ -72,7 +72,7 @@ namespace Resgrid.Tests.Providers
 		public async Task Empty_broker_url_reads_as_unconfigured()
 		{
 			DataProtectionConfig.BrokerBaseUrl = "";
-			using var client = new ProtectedDataBrokerClient(new RefusingHandler());
+			using var client = new ProtectedDataBrokerClient(new RefusingHandler(), Moq.Mock.Of<Resgrid.Model.Repositories.IAdpAuditRepository>());
 
 			client.IsConfigured.Should().BeFalse();
 			(await client.IsHealthyAsync()).Should().BeFalse();

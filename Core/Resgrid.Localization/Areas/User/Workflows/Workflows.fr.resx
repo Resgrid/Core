@@ -696,6 +696,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Flux de travail créé à partir du modèle avec une autorisation protégée en brouillon. Définissez l'URL de destination et l'identifiant de l'étape, choisissez les champs autorisés, puis demandez l'approbation. Rien n'est envoyé avant l'approbation de l'autorisation.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Flux de travail créé à partir du modèle, mais sans autorisation protégée en brouillon (sa création nécessite un administrateur des flux de travail protégés). Il est désactivé : demandez à un administrateur de créer l'autorisation et d'en demander l'approbation avant de l'activer.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>La limite de flux de travail de votre forfait est atteinte. Passez à un forfait supérieur pour en ajouter.</value>
   </data>

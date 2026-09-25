@@ -81,6 +81,7 @@ namespace Resgrid.Workers.Console
 
 					services.AddSingleton<IHostedService, QueuesProcessingService>();
 					services.AddSingleton<IHostedService, ScheduledJobsService>();
+					services.AddSingleton<IHostedService, AdminAssistTraceService>();
 
 				})
 				.ConfigureLogging((hostingContext, logging) => {
@@ -531,6 +532,7 @@ namespace Resgrid.Workers.Console
 				// Worker ID 71 (ADP Protected Workflows): release expiry, ADP-offboarding revocation, toggle-off suspension
 				// and the 30/7-day expiry notices. Daily; the run-time check blocks an expired release between ticks.
 				_logger.Log(LogLevel.Information, "Scheduling Protected Workflow Sweep");
+				await Client.ScheduleAsync("Admin Assist Maintenance", new Commands.AdminAssistMaintenanceCommand(72), Cron.MinuteIntervals(15), stoppingToken);
 				await Client.ScheduleAsync("Protected Workflow Sweep",
 					new Commands.ProtectedWorkflowSweepCommand(71),
 					Cron.Daily(5, 15),

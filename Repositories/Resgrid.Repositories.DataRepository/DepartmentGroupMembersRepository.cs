@@ -14,15 +14,15 @@ using Resgrid.Repositories.DataRepository.Queries.DepartmentGroups;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DepartmentGroupMembersRepository : RepositoryBase<DepartmentGroupMember>, IDepartmentGroupMembersRepository
+	public class DepartmentGroupMembersRepository : AuditedConfigurationRepository<DepartmentGroupMember>, IDepartmentGroupMembersRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public DepartmentGroupMembersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public DepartmentGroupMembersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 			_connectionProvider = connectionProvider;
 			_sqlConfiguration = sqlConfiguration;
@@ -116,6 +116,22 @@ namespace Resgrid.Repositories.DataRepository
 		}
 
 		public async Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (!HasConfigurationJournal) return await DeleteGroupMembersCoreAsync(groupId, departmentId, cancellationToken);
+			var owner = await ScalarAsync<int>($"SELECT {Col("DepartmentId")} FROM {Tbl("DepartmentGroups")} WHERE {Col("DepartmentGroupId")}={P}Id", new { Id = groupId }, cancellationToken);
+			if (owner == 0) return false;
+			if (owner != departmentId) throw new UnauthorizedAccessException();
+			async Task<Resgrid.Model.AdminAssist.ConfigurationChangeStamp> Read()
+			{
+				var count = await ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl("DepartmentGroupMembers")} WHERE {Col("DepartmentGroupId")}={P}Id AND {Col("DepartmentId")}={P}DepartmentId", new { Id = groupId, DepartmentId = departmentId }, cancellationToken);
+				var value = count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				return new(value, "{\"members\":" + value + "}");
+			}
+			return await ExecuteConfigurationMutationAsync(departmentId, "DepartmentGroupMembers.BulkDelete", Read,
+				() => DeleteGroupMembersCoreAsync(groupId, departmentId, cancellationToken), cancellationToken);
+		}
+
+		private async Task<bool> DeleteGroupMembersCoreAsync(int groupId, int departmentId, CancellationToken cancellationToken)
 		{
 			try
 			{

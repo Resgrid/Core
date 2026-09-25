@@ -23,6 +23,7 @@ namespace Resgrid.Tests.Web.Services
 
 		private Mock<IUnitsService> _unitsService;
 		private Mock<IUnitLocationEventProvider> _unitLocationEventProvider;
+		private Mock<IAuthorizationService> _authorizationService;
 		private UnitLocationController _controller;
 
 		[SetUp]
@@ -30,6 +31,10 @@ namespace Resgrid.Tests.Web.Services
 		{
 			_unitsService = new Mock<IUnitsService>();
 			_unitLocationEventProvider = new Mock<IUnitLocationEventProvider>();
+			_authorizationService = new Mock<IAuthorizationService>();
+			_authorizationService
+				.Setup(x => x.CanUserViewUnitLocationViaMatrixAsync(UnitId, "unit-location-user", DepartmentId))
+				.ReturnsAsync(true);
 
 			_unitsService
 				.Setup(service => service.GetUnitByIdAsync(UnitId))
@@ -45,7 +50,7 @@ namespace Resgrid.Tests.Web.Services
 			};
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
 
-			_controller = new UnitLocationController(_unitsService.Object, _unitLocationEventProvider.Object)
+			_controller = new UnitLocationController(_unitsService.Object, _unitLocationEventProvider.Object, _authorizationService.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -73,6 +78,32 @@ namespace Resgrid.Tests.Web.Services
 
 			response.Result.Should().BeOfType<StatusCodeResult>()
 				.Which.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+		}
+
+		[Test]
+		public async Task GetLatestUnitLocation_IsRefused_WhenTheCallerMayNotSeeTheUnitsLocation()
+		{
+			_authorizationService
+				.Setup(x => x.CanUserViewUnitLocationViaMatrixAsync(UnitId, "unit-location-user", DepartmentId))
+				.ReturnsAsync(false);
+
+			var response = await _controller.GetLatestUnitLocation(UnitId.ToString());
+
+			response.Result.Should().BeOfType<UnauthorizedResult>();
+			_unitsService.Verify(x => x.GetLatestUnitLocationAsync(It.IsAny<int>(), It.IsAny<System.DateTime?>()), Times.Never);
+		}
+
+		[Test]
+		public async Task GetLatestUnitLocation_ReturnsTheLocation_WhenTheCallerMaySeeIt()
+		{
+			_unitsService
+				.Setup(x => x.GetLatestUnitLocationAsync(UnitId, It.IsAny<System.DateTime?>()))
+				.ReturnsAsync(new UnitsLocation { UnitId = UnitId, Latitude = 47.6062m, Longitude = -122.3321m, Timestamp = System.DateTime.UtcNow });
+
+			var response = await _controller.GetLatestUnitLocation(UnitId.ToString());
+
+			response.Value.Data.Should().NotBeNull();
+			response.Value.Data.Latitude.Should().NotBeNullOrEmpty();
 		}
 	}
 }

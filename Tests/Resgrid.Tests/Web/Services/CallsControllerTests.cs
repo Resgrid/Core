@@ -33,6 +33,9 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IProtocolsService> _protocolsService;
 		private Mock<IDepartmentDataProtectionService> _dataProtectionService;
 		private Mock<IProtectedReadService> _protectedCallReadService;
+		private Mock<IProtectedWriteService> _protectedWriteService;
+		private Mock<IDispatchScopeService> _dispatchScope;
+		private Mock<IMappingService> _mappingService;
 		private CallsController _controller;
 		private Activity _activity;
 
@@ -58,6 +61,16 @@ namespace Resgrid.Tests.Web.Services
 					It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.Returns<int, Call, string, string, CancellationToken>((d, call, g, u, ct) =>
 					Task.FromResult(new ProtectedReadResult { Call = call }));
+
+			// Unprotected department: every write goes through unchanged.
+			_protectedWriteService = new Mock<IProtectedWriteService>();
+			_protectedWriteService
+				.Setup(x => x.PrepareCallWriteAsync(It.IsAny<int>(), It.IsAny<Call>(), It.IsAny<Call>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedWriteResult { Success = true });
+
+			_dispatchScope = PassThroughDispatchScope();
+			_mappingService = new Mock<IMappingService>();
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -87,7 +100,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<ICustomStateService>(),
 				Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<IShiftsService>(),
-				Mock.Of<IMappingService>(),
+				_mappingService.Object,
 				Mock.Of<IUserDefinedFieldsService>(),
 				Mock.Of<ICommunicationService>(),
 				Mock.Of<IWeatherAlertService>(),
@@ -96,9 +109,9 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IFeatureToggleService>(),
 				_dataProtectionService.Object,
 				_protectedCallReadService.Object,
-				Mock.Of<IProtectedWriteService>(),
+				_protectedWriteService.Object,
 				Mock.Of<IContactsService>(),
-				PassThroughDispatchScope())
+				_dispatchScope.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -126,14 +139,35 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		/// <summary>Group-scoped dispatch off: every call list comes back unchanged.</summary>
-		private static IDispatchScopeService PassThroughDispatchScope()
+		private static Mock<IDispatchScopeService> PassThroughDispatchScope()
 		{
 			var scope = new Mock<IDispatchScopeService>();
 			scope.Setup(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()))
 				.ReturnsAsync((int departmentId, string userId, List<Call> calls) => calls);
 			scope.Setup(x => x.CanUserAccessCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Call>()))
 				.ReturnsAsync(true);
-			return scope.Object;
+			return scope;
+		}
+
+		[Test]
+		public async Task GetCalls_LeavesOut_CallsOutsideTheCallersDispatchScope()
+		{
+			var departmentCalls = new List<Call>
+			{
+				new Call { CallId = 1, DepartmentId = DepartmentId, Name = "Out of area", LoggedOn = DateTime.UtcNow }
+			};
+			_callsService.Setup(x => x.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+				.ReturnsAsync(departmentCalls);
+			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, departmentCalls))
+				.ReturnsAsync(new List<Call>());
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Poi>());
+
+			var response = await _controller.GetCalls(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow);
+
+			var result = (response.Result as OkObjectResult)?.Value as ActiveCallsResult;
+			result.Should().NotBeNull();
+			result.Data.Should().BeEmpty();
+			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(DepartmentId, UserId, departmentCalls), Times.Once);
 		}
 
 		[Test]
@@ -287,5 +321,83 @@ namespace Resgrid.Tests.Web.Services
 				service => service.CanUserEditCallAsync(It.IsAny<string>(), It.IsAny<int>()),
 				Times.Never);
 		}
+
+		#region Delete and close each check their own permission
+
+		private const int ManagedCallId = 77;
+
+		/// <summary>An undispatched call in the caller's department (a dispatched call can't be deleted at all).</summary>
+		private void SetupManagedCall()
+		{
+			var call = new Call { CallId = ManagedCallId, DepartmentId = DepartmentId, Name = "Welfare check", HasBeenDispatched = false };
+
+			_callsService.Setup(x => x.GetCallByIdAsync(ManagedCallId, It.IsAny<bool>())).ReturnsAsync(call);
+			_callsService.Setup(x => x.PopulateCallData(call, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((Call saved, CancellationToken ct) => saved);
+		}
+
+		private void SetupPermissions(bool canClose, bool canDelete)
+		{
+			_authorizationService.Setup(x => x.CanUserCloseCallAsync(UserId, ManagedCallId, DepartmentId)).ReturnsAsync(canClose);
+			_authorizationService.Setup(x => x.CanUserDeleteCallAsync(UserId, ManagedCallId, DepartmentId)).ReturnsAsync(canDelete);
+		}
+
+		[Test]
+		public async Task DeleteCall_IsRefused_WhenTheCallerMayCloseButNotDelete()
+		{
+			SetupManagedCall();
+			SetupPermissions(canClose: true, canDelete: false);
+
+			var response = await _controller.DeleteCall(ManagedCallId.ToString());
+
+			response.Result.Should().BeOfType<UnauthorizedResult>();
+			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_authorizationService.Verify(x => x.CanUserCloseCallAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task DeleteCall_Succeeds_WhenTheCallerMayDeleteButNotClose()
+		{
+			SetupManagedCall();
+			SetupPermissions(canClose: false, canDelete: true);
+
+			var response = await _controller.DeleteCall(ManagedCallId.ToString());
+
+			response.Result.Should().BeOfType<OkObjectResult>();
+			_callsService.Verify(x => x.SaveCallAsync(It.Is<Call>(c => c.CallId == ManagedCallId && c.IsDeleted), It.IsAny<CancellationToken>()), Times.Once);
+			_authorizationService.Verify(x => x.CanUserCloseCallAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task CloseCall_IsRefused_WhenTheCallerMayDeleteButNotClose()
+		{
+			SetupManagedCall();
+			SetupPermissions(canClose: false, canDelete: true);
+
+			var response = await _controller.CloseCall(new CloseCallInput { Id = ManagedCallId.ToString(), Type = (int)CallStates.Closed }, CancellationToken.None);
+
+			response.Result.Should().BeOfType<UnauthorizedResult>();
+			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_authorizationService.Verify(x => x.CanUserDeleteCallAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task CloseCall_Succeeds_WhenTheCallerMayCloseButNotDelete()
+		{
+			SetupManagedCall();
+			SetupPermissions(canClose: true, canDelete: false);
+
+			var response = await _controller.CloseCall(new CloseCallInput { Id = ManagedCallId.ToString(), Type = (int)CallStates.Closed, Notes = "Resolved on scene" }, CancellationToken.None);
+
+			response.Result.Should().BeOfType<OkObjectResult>();
+			_callsService.Verify(x => x.SaveCallAsync(It.Is<Call>(c => c.CallId == ManagedCallId && c.State == (int)CallStates.Closed && c.ClosedByUserId == UserId),
+				It.IsAny<CancellationToken>()), Times.Once);
+			_authorizationService.Verify(x => x.CanUserDeleteCallAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		#endregion
 	}
 }

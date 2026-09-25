@@ -54,7 +54,6 @@ using Resgrid.WebCore.Middleware;
 using Sentry.Extensibility;
 using StackExchange.Redis;
 using Stripe;
-using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using Microsoft.Extensions.Http.Logging;
 using Resgrid.Web.Middleware;
 
@@ -438,11 +437,7 @@ namespace Resgrid.Web
 			services.AddRazorPages();
 
 			services.Configure<ForwardedHeadersOptions>(options =>
-			{
-				options.ForwardedHeaders =
-					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
-			});
+				Resgrid.Web.Helpers.ForwardedHeadersSetup.Configure(options, WebConfig.IngressProxyNetwork, WebConfig.IngressProxyNetworkCidr));
 
 			services.AddWebOptimizer(pipeline =>
 			{

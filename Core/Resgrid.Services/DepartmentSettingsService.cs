@@ -46,16 +46,20 @@ namespace Resgrid.Services
 		private readonly IAddressService _addressService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly Resgrid.Model.AdminAssist.IAdminAssistRepository _operatingProfileRepository;
+		private readonly Lazy<IRecordsAuthorizationService> _operatingProfileAuthorization;
 
 		public DepartmentSettingsService(IDepartmentSettingsRepository departmentSettingsRepository, IAddressService addressService,
 			IGeoLocationProvider geoLocationProvider, ICacheProvider cacheProvider,
-			Resgrid.Model.Repositories.Queries.IUnitOfWork moduleUnit = null, IFeatureFlagMutationObserver moduleObserver = null, Lazy<IFeatureToggleService> moduleFlags = null)
+			Resgrid.Model.Repositories.Queries.IUnitOfWork moduleUnit = null, IFeatureFlagMutationObserver moduleObserver = null, Lazy<IFeatureToggleService> moduleFlags = null,
+			Resgrid.Model.AdminAssist.IAdminAssistRepository operatingProfileRepository = null, Lazy<IRecordsAuthorizationService> operatingProfileAuthorization = null)
 		{
 			_departmentSettingsRepository = departmentSettingsRepository;
 			_addressService = addressService;
 			_geoLocationProvider = geoLocationProvider;
 			_cacheProvider = cacheProvider;
 			_moduleUnit = moduleUnit; _moduleObserver = moduleObserver; _moduleFlags = moduleFlags;
+			_operatingProfileRepository = operatingProfileRepository; _operatingProfileAuthorization = operatingProfileAuthorization;
 		}
 
 		public async Task<DepartmentSetting> SaveOrUpdateSettingAsync(int departmentId, string setting, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
@@ -1466,6 +1470,16 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.UnitStatusThresholds:
 					cacheKey = string.Format(UnitStatusThresholdsCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.RecordsDefaultLifecyclePreset:
+				case DepartmentSettingTypes.RecordsReviewDueHours:
+				case DepartmentSettingTypes.RecordsNumberingConfig:
+				case DepartmentSettingTypes.RecordsSearchConfig:
+				case DepartmentSettingTypes.RecordsRetentionPolicy:
+				case DepartmentSettingTypes.RecordsGroupVisibilityMode:
+				case DepartmentSettingTypes.RecordsGroupScopeConfig:
+				case DepartmentSettingTypes.RecordsDisclosureConfig:
+					cacheKey = string.Format(RecordsSettingCacheKey, (int)type, departmentId);
 					break;
 			}
 

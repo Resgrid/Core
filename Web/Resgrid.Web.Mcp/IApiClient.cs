@@ -9,9 +9,15 @@ namespace Resgrid.Web.Mcp
 	public interface IApiClient
 	{
 		/// <summary>
-		/// Authenticates a user and returns an access token
+		/// Authenticates a user and returns an access token and a refresh token
 		/// </summary>
 		Task<AuthenticationResult> AuthenticateAsync(string username, string password, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Exchanges a refresh token for a new access token and a new refresh token. The refresh token presented is
+		/// single use: the API rejects it once its short reuse window has passed.
+		/// </summary>
+		Task<AuthenticationResult> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Makes an authenticated GET request to the API
@@ -43,6 +49,7 @@ namespace Resgrid.Web.Mcp
 		public string AccessToken { get; init; }
 		public string TokenType { get; init; }
 		public int ExpiresIn { get; init; }
+		public string RefreshToken { get; init; }
 		public string ErrorMessage { get; init; }
 	}
 }

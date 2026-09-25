@@ -75,7 +75,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving units");
 						return CreateErrorResponse("Failed to retrieve units. Please try again later.");
@@ -125,7 +125,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = result
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving unit statuses");
 						return CreateErrorResponse("Failed to retrieve unit statuses. Please try again later.");
@@ -203,7 +203,7 @@ namespace Resgrid.Web.Mcp.Tools
 							message = "Unit status updated successfully"
 						};
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error setting unit status");
 						return CreateErrorResponse("Failed to set unit status. Please try again later.");
@@ -255,7 +255,7 @@ namespace Resgrid.Web.Mcp.Tools
 							data = V4ResponseReader.GetMapMarkers(result, V4ResponseReader.UnitMarkerType, "UnitId")
 						};
 					}
-				catch (Exception ex)
+				catch (Exception ex) when (ex is not McpToolErrorException)
 				{
 					_logger.LogError(ex, "Error retrieving unit locations");
 					return CreateErrorResponse("Failed to retrieve unit locations. Please try again later.");

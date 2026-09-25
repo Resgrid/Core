@@ -89,7 +89,7 @@ namespace Resgrid.Tests.Services
 			_container = builder.Build();
 
 			_service = new BrokerOperationService(_container, _grantService, _cryptoService,
-				_keyWrappingProvider, new MemoryCache(new MemoryCacheOptions()));
+				_keyWrappingProvider, new MemoryCache(new MemoryCacheOptions()), Mock.Of<IAdpAuditRepository>());
 		}
 
 		private string IssueGrantToken(params string[] scopes)

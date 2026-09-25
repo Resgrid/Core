@@ -706,7 +706,11 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public async Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId)
+		public Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId) => ReadLatestLocationsAsync(departmentId, false);
+
+		public Task<List<UnitsLocation>> ReadLatestLocationsForAdministrationAsync(int departmentId) => ReadLatestLocationsAsync(departmentId, true);
+
+		private async Task<List<UnitsLocation>> ReadLatestLocationsAsync(int departmentId, bool requireComplete)
 		{
 			try
 			{
@@ -752,6 +756,7 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
+				if (requireComplete) throw;
 				Logging.LogException(ex);
 			}
 

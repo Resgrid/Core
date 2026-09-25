@@ -52,7 +52,6 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication;
 using Sentry.Extensibility;
 using Resgrid.Web.ServicesCore.Middleware;
-using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using System.Net.Http;
 using Resgrid.Providers.Messaging;
 using Resgrid.Web.Services;
@@ -229,10 +228,7 @@ namespace Resgrid.Web.ServicesCore
 			});
 
 			services.Configure<ForwardedHeadersOptions>(options =>
-			{
-				options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse($"::ffff:{WebConfig.IngressProxyNetwork}"), WebConfig.IngressProxyNetworkCidr));
-			});
+				Resgrid.Web.Helpers.ForwardedHeadersSetup.Configure(options, WebConfig.IngressProxyNetwork, WebConfig.IngressProxyNetworkCidr));
 
 			#region Auth Roles
 			services.AddAuthorization(options =>

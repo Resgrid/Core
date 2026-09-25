@@ -1,0 +1,50 @@
+@model Resgrid.Web.Areas.User.Models.DataProtection.AdpReleaseSettingsView
+@using Resgrid.Localization.Areas.User.SystemMessages
+@{ ViewBag.Title = SystemMessagesResources.GetCurrent("AdpReleaseSettings"); }
+<h2>@SystemMessagesResources.GetCurrent("AdpReleaseSettings")</h2>
+<form id="adp-release-settings" autocomplete="off">
+    @Html.AntiForgeryToken()
+    <label for="SmsMode">@SystemMessagesResources.GetCurrent("AdpSmsMode")</label>
+    @Html.DropDownListFor(m => m.SmsMode, new SelectList(new[] {
+        new { Value = 0, Text = SystemMessagesResources.GetCurrent("AdpGeneric") },
+        new { Value = 1, Text = SystemMessagesResources.GetCurrent("AdpAfterPin") },
+        new { Value = 2, Text = SystemMessagesResources.GetCurrent("AdpAllowed") }
+    }, "Value", "Text", Model.SmsMode), new { @class = "form-control" })
+    <label for="VoiceMode">@SystemMessagesResources.GetCurrent("AdpVoiceMode")</label>
+    @Html.DropDownListFor(m => m.VoiceMode, new SelectList(new[] {
+        new { Value = 0, Text = SystemMessagesResources.GetCurrent("AdpGeneric") },
+        new { Value = 1, Text = SystemMessagesResources.GetCurrent("AdpAfterPin") },
+        new { Value = 2, Text = SystemMessagesResources.GetCurrent("AdpAllowed") }
+    }, "Value", "Text", Model.VoiceMode), new { @class = "form-control" })
+    <p><label>@Html.CheckBoxFor(m => m.SupportEnabled) @SystemMessagesResources.GetCurrent("AdpSupportConsent")</label></p>
+    <p><label><input type="checkbox" id="adp-acknowledged" /> @SystemMessagesResources.GetCurrent("AdpEgressWarning")</label></p>
+    <label for="adp-totp">@SystemMessagesResources.GetCurrent("AdpPinMfa")</label>
+    <input id="adp-totp" class="form-control" inputmode="numeric" maxlength="8" required autocomplete="one-time-code" />
+    <button type="submit" class="btn btn-primary">@SystemMessagesResources.GetCurrent("AdpPinSave")</button>
+    <p id="adp-release-result" role="status"></p>
+</form>
+<script>
+document.getElementById('adp-release-settings').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const button = this.querySelector('button');
+    const result = document.getElementById('adp-release-result');
+    const token = this.querySelector('input[name="__RequestVerificationToken"]').value;
+    const post = async (url, fields) => {
+        const response = await fetch(url, { method: 'POST', cache: 'no-store',
+            body: new URLSearchParams({ ...fields, __RequestVerificationToken: token }) });
+        if (!response.ok) throw new Error('request_failed');
+        return response.json();
+    };
+    button.disabled = true;
+    try {
+        const grant = await post('@Url.Action("VerifyStepUp", "DataProtection")', { code: document.getElementById('adp-totp').value });
+        if (!grant.success) throw new Error('step_up_failed');
+        const saved = await post('@Url.Action("SaveReleaseSettings", "DataProtection")', {
+            smsMode: document.getElementById('SmsMode').value, voiceMode: document.getElementById('VoiceMode').value,
+            supportEnabled: document.getElementById('SupportEnabled').checked,
+            acknowledged: document.getElementById('adp-acknowledged').checked, grantToken: grant.grantToken });
+        result.textContent = saved.success ? @Html.Raw(System.Text.Json.JsonSerializer.Serialize(SystemMessagesResources.GetCurrent("AdpPinSaved"))) : @Html.Raw(System.Text.Json.JsonSerializer.Serialize(SystemMessagesResources.GetCurrent("AdpPinDenied")));
+    } catch (_) { result.textContent = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(SystemMessagesResources.GetCurrent("AdpPinDenied"))); }
+    finally { document.getElementById('adp-totp').value = ''; button.disabled = false; }
+});
+</script>

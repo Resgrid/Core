@@ -1,11 +1,14 @@
 ﻿﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Resgrid.Web.Mcp.ModelContextProtocol;
 
 namespace Resgrid.Web.Mcp
 {
@@ -23,28 +26,46 @@ namespace Resgrid.Web.Mcp
 			_logger = logger;
 		}
 
-		public async Task<AuthenticationResult> AuthenticateAsync(
+		public Task<AuthenticationResult> AuthenticateAsync(
 			string username,
 			string password,
 			CancellationToken cancellationToken = default)
+		{
+			return RequestTokenAsync(new[]
+			{
+				new KeyValuePair<string, string>("grant_type", "password"),
+				new KeyValuePair<string, string>("username", username),
+				new KeyValuePair<string, string>("password", password),
+				// offline_access is what makes the API issue a refresh token alongside the access token.
+				new KeyValuePair<string, string>("scope", "openid profile email offline_access")
+			}, "Authentication", cancellationToken);
+		}
+
+		public Task<AuthenticationResult> RefreshTokenAsync(
+			string refreshToken,
+			CancellationToken cancellationToken = default)
+		{
+			return RequestTokenAsync(new[]
+			{
+				new KeyValuePair<string, string>("grant_type", "refresh_token"),
+				new KeyValuePair<string, string>("refresh_token", refreshToken)
+			}, "Token refresh", cancellationToken);
+		}
+
+		private async Task<AuthenticationResult> RequestTokenAsync(
+			IEnumerable<KeyValuePair<string, string>> form,
+			string operation,
+			CancellationToken cancellationToken)
 		{
 			try
 			{
 				var client = _httpClientFactory.CreateClient("ResgridApi");
 
-				var formContent = new FormUrlEncodedContent(new[]
-				{
-					new KeyValuePair<string, string>("grant_type", "password"),
-					new KeyValuePair<string, string>("username", username),
-					new KeyValuePair<string, string>("password", password),
-					new KeyValuePair<string, string>("scope", "openid profile email")
-				});
-
-				var response = await client.PostAsync(V4Routes.Post.Token, formContent, cancellationToken);
+				var response = await client.PostAsync(V4Routes.Post.Token, new FormUrlEncodedContent(form), cancellationToken);
+				var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
 				if (response.IsSuccessStatusCode)
 				{
-					var content = await response.Content.ReadAsStringAsync(cancellationToken);
 					var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
 
 					if (tokenResponse is null)
@@ -62,29 +83,42 @@ namespace Resgrid.Web.Mcp
 						IsSuccess = true,
 						AccessToken = tokenResponse.AccessToken,
 						TokenType = tokenResponse.TokenType,
-						ExpiresIn = tokenResponse.ExpiresIn
+						ExpiresIn = tokenResponse.ExpiresIn,
+						RefreshToken = tokenResponse.RefreshToken
 					};
 				}
-				else
-				{
-					var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-					_logger.LogWarning("Authentication failed: {StatusCode} - {Error}", response.StatusCode, errorContent);
 
-					return new AuthenticationResult
-					{
-						IsSuccess = false,
-						ErrorMessage = $"Authentication failed: {response.StatusCode}"
-					};
-				}
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error during authentication");
+				_logger.LogWarning("{Operation} failed: {StatusCode} - {Error}", operation, response.StatusCode, content);
+
+				// The token endpoint explains a refused grant in error_description (for example "The refresh token is no
+				// longer valid."), which tells the caller whether to retry or sign in again.
 				return new AuthenticationResult
 				{
 					IsSuccess = false,
-					ErrorMessage = "An error occurred during authentication"
+					ErrorMessage = TryReadErrorDescription(content) ?? $"{operation} failed: {response.StatusCode}"
 				};
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error during {Operation}", operation);
+				return new AuthenticationResult
+				{
+					IsSuccess = false,
+					ErrorMessage = $"An error occurred during {operation.ToLowerInvariant()}"
+				};
+			}
+		}
+
+		private static string TryReadErrorDescription(string content)
+		{
+			try
+			{
+				var error = JsonConvert.DeserializeObject<TokenErrorResponse>(content);
+				return string.IsNullOrWhiteSpace(error?.ErrorDescription) ? null : error.ErrorDescription;
+			}
+			catch (JsonException)
+			{
+				return null;
 			}
 		}
 
@@ -98,6 +132,7 @@ namespace Resgrid.Web.Mcp
 			try
 			{
 				var response = await client.GetAsync(endpoint, cancellationToken);
+				ThrowIfNotAuthorized(response, endpoint);
 				response.EnsureSuccessStatusCode();
 
 				var content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -111,7 +146,7 @@ namespace Resgrid.Web.Mcp
 
 				return result;
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (ex is not McpToolErrorException)
 			{
 				_logger.LogError(ex, "Error making GET request to {Endpoint}", endpoint);
 				throw;
@@ -132,6 +167,7 @@ namespace Resgrid.Web.Mcp
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 				var response = await client.PostAsync(endpoint, content, cancellationToken);
+				ThrowIfNotAuthorized(response, endpoint);
 				response.EnsureSuccessStatusCode();
 
 				var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -145,7 +181,7 @@ namespace Resgrid.Web.Mcp
 
 				return result;
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (ex is not McpToolErrorException)
 			{
 				_logger.LogError(ex, "Error making POST request to {Endpoint}", endpoint);
 				throw;
@@ -166,6 +202,7 @@ namespace Resgrid.Web.Mcp
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 				var response = await client.PutAsync(endpoint, content, cancellationToken);
+				ThrowIfNotAuthorized(response, endpoint);
 				response.EnsureSuccessStatusCode();
 
 				var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -179,7 +216,7 @@ namespace Resgrid.Web.Mcp
 
 				return result;
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (ex is not McpToolErrorException)
 			{
 				_logger.LogError(ex, "Error making PUT request to {Endpoint}", endpoint);
 				throw;
@@ -196,13 +233,45 @@ namespace Resgrid.Web.Mcp
 			try
 			{
 				var response = await client.DeleteAsync(endpoint, cancellationToken);
+				ThrowIfNotAuthorized(response, endpoint);
 				return response.IsSuccessStatusCode;
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (ex is not McpToolErrorException)
 			{
 				_logger.LogError(ex, "Error making DELETE request to {Endpoint}", endpoint);
 				throw;
 			}
+		}
+
+		/// <summary>
+		/// Turns an authorization failure into an error the MCP client can act on. The API marks a rejected access token
+		/// (expired, or its session revoked) with a Bearer invalid_token challenge. Any other 401, which v4 actions return
+		/// when the user may not touch a record, and any 403 mean the user is signed in but not permitted: a new token
+		/// will not help.
+		/// </summary>
+		private void ThrowIfNotAuthorized(HttpResponseMessage response, string endpoint)
+		{
+			if (response.StatusCode == HttpStatusCode.Unauthorized && IsInvalidTokenChallenge(response))
+			{
+				_logger.LogInformation("API rejected the access token for {Endpoint}", endpoint);
+				throw new McpToolErrorException(McpToolErrorException.AccessTokenExpired,
+					"The access token has expired or is no longer valid. Call refresh_access_token with your refresh token, " +
+					"then call this tool again with the new access token. If the refresh fails, call authenticate.");
+			}
+
+			if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
+			{
+				_logger.LogInformation("API refused {Endpoint} with {StatusCode}", endpoint, response.StatusCode);
+				throw new McpToolErrorException(McpToolErrorException.Forbidden,
+					"The signed-in user is not permitted to do this. A new access token will not change that.");
+			}
+		}
+
+		private static bool IsInvalidTokenChallenge(HttpResponseMessage response)
+		{
+			return response.Headers.TryGetValues("WWW-Authenticate", out var challenges)
+				&& challenges.Any(x => x.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase)
+					&& x.Contains("error=\"invalid_token\"", StringComparison.OrdinalIgnoreCase));
 		}
 
 		private HttpClient CreateAuthenticatedClient(string accessToken)
@@ -223,6 +292,18 @@ namespace Resgrid.Web.Mcp
 
 			[JsonProperty("expires_in")]
 			public int ExpiresIn { get; set; }
+
+			[JsonProperty("refresh_token")]
+			public string RefreshToken { get; set; }
+		}
+
+		private sealed class TokenErrorResponse
+		{
+			[JsonProperty("error")]
+			public string Error { get; set; }
+
+			[JsonProperty("error_description")]
+			public string ErrorDescription { get; set; }
 		}
 	}
 }

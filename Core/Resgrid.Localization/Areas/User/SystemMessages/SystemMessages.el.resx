@@ -135,4 +135,22 @@
   <data name="VerificationCodeSmsBody" xml:space="preserve">
     <value>Ο κωδικός επαλήθευσης Resgrid είναι: {0}. Λήγει σε {1} λεπτά.</value>
   </data>
+  <data name="AdpPinTitle" xml:space="preserve"><value>PIN προστατευμένων συμβάντων</value></data>
+  <data name="AdpPinInstructions" xml:space="preserve"><value>Επιλέξτε προσωπικό PIN 6–12 ψηφίων. Απαιτείται νέα επαλήθευση με την εφαρμογή ελέγχου ταυτότητας. Το τμήμα σας πρέπει να ενεργοποιήσει την παροχή στοιχείων μέσω PIN για να λαμβάνετε προστατευμένες λεπτομέρειες.</value></data>
+  <data name="AdpPinLabel" xml:space="preserve"><value>Προσωπικό PIN</value></data>
+  <data name="AdpPinMfa" xml:space="preserve"><value>Κωδικός εφαρμογής ελέγχου ταυτότητας</value></data>
+  <data name="AdpPinSave" xml:space="preserve"><value>Αποθήκευση</value></data>
+  <data name="AdpPinSaved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
+  <data name="AdpPinDenied" xml:space="preserve"><value>Δεν ήταν δυνατή η παροχή ή αποθήκευση προστατευμένων δεδομένων. Συνδεθείτε στο Resgrid και δοκιμάστε ξανά.</value></data>
+  <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Υπάρχει προστατευμένο συμβάν. Απαντήστε OPEN {0}, ένα κενό και το προσωπικό σας PIN.</value></data>
+  <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Υπάρχει προστατευμένο συμβάν. Πληκτρολογήστε το προσωπικό σας PIN και πατήστε δίεση.</value></data>
+  <data name="AdpReleaseSettings" xml:space="preserve"><value>Ρυθμίσεις παροχής δεδομένων ADP</value></data>
+  <data name="AdpSmsMode" xml:space="preserve"><value>Παράδοση SMS</value></data>
+  <data name="AdpVoiceMode" xml:space="preserve"><value>Φωνητική παράδοση</value></data>
+  <data name="AdpGeneric" xml:space="preserve"><value>Γενική ειδοποίηση</value></data>
+  <data name="AdpAfterPin" xml:space="preserve"><value>Παροχή μετά το PIN</value></data>
+  <data name="AdpSupportConsent" xml:space="preserve"><value>Να επιτρέπεται προσωρινή πρόσβαση στο προσωπικό υποστήριξης Resgrid με έγκριση δεύτερου υπαλλήλου.</value></data>
+  <data name="AdpEgressWarning" xml:space="preserve"><value>Αναγνωρίζω ότι τα παρεχόμενα στοιχεία εξέρχονται από το Resgrid και μπορεί να διατηρηθούν από τηλεφωνικούς παρόχους ή παραλήπτες.</value></data>
+  <data name="AdpAllowed" xml:space="preserve"><value>Να επιτρέπεται προστατευμένο περιεχόμενο</value></data>
+  <data name="AdpSupportNotice" xml:space="preserve"><value>Το προσωπικό Resgrid ζήτησε πρόσβαση στο προστατευμένο συμβάν {0} για την υπόθεση υποστήριξης {1}. Η πρόσβαση απαιτεί ανεξάρτητη έγκριση και λήγει εντός 15 λεπτών.</value></data>
 </root>

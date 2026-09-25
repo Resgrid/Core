@@ -183,7 +183,7 @@ namespace Resgrid.Services
 					var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(
 						session.DepartmentId.Value, cancellationToken);
 					if (policy?.SessionTimeoutMinutes > 0 &&
-						session.LastActiveOn <= DateTime.UtcNow.AddMinutes(-policy.SessionTimeoutMinutes))
+						DepartmentSecurityPolicyDecisions.IdleExpired(policy.SessionTimeoutMinutes, session.LastActiveOn, DateTime.UtcNow))
 						return SessionValidationResult.Invalid("session_idle_timeout");
 				}
 			}
@@ -349,19 +349,7 @@ namespace Resgrid.Services
 		private static string CanonicalIp(string value) =>
 			IPAddress.TryParse(value, out var address) ? address.ToString() : null;
 
-		private static bool TryGetDepartmentPolicyGate(out DateTime gateUtc)
-		{
-			if (DateTimeOffset.TryParse(SessionSecurityConfig.DepartmentSessionPolicyEnforcementAfterUtc,
-				System.Globalization.CultureInfo.InvariantCulture,
-				System.Globalization.DateTimeStyles.AssumeUniversal |
-				System.Globalization.DateTimeStyles.AdjustToUniversal, out var parsed))
-			{
-				gateUtc = parsed.UtcDateTime;
-				return true;
-			}
-
-			gateUtc = default;
-			return false;
-		}
+		private static bool TryGetDepartmentPolicyGate(out DateTime gateUtc) =>
+			DepartmentSecurityPolicyDecisions.TryGetSessionGate(SessionSecurityConfig.DepartmentSessionPolicyEnforcementAfterUtc, out gateUtc);
 	}
 }

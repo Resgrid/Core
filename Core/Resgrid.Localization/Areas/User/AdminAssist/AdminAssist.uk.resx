@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Feature.addon-adp">
+    <value>Розширений захист даних</value>
+  </data>
+  <data xml:space="preserve" name="Feature.archived-calls">
+    <value>Архівні виклики</value>
+  </data>
+  <data xml:space="preserve" name="Feature.bids">
+    <value>Пропозиції</value>
+  </data>
+  <data xml:space="preserve" name="Feature.big-board">
+    <value>Велика дошка</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calendar">
+    <value>Календар</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calls">
+    <value>Виклики</value>
+  </data>
+  <data xml:space="preserve" name="Feature.chat">
+    <value>Чат</value>
+  </data>
+  <data xml:space="preserve" name="Feature.checklists">
+    <value>Контрольні списки</value>
+  </data>
+  <data xml:space="preserve" name="Feature.communication-tests">
+    <value>Тести зв’язку</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contacts">
+    <value>Контакти</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contracts">
+    <value>Договори</value>
+  </data>
+  <data xml:space="preserve" name="Feature.data-protection">
+    <value>Захист даних</value>
+  </data>
+  <data xml:space="preserve" name="Feature.department-settings">
+    <value>Налаштування підрозділу</value>
+  </data>
+  <data xml:space="preserve" name="Feature.departments">
+    <value>Ваші підрозділи</value>
+  </data>
+  <data xml:space="preserve" name="Feature.documents">
+    <value>Документи</value>
+  </data>
+  <data xml:space="preserve" name="Feature.forms">
+    <value>Форми</value>
+  </data>
+  <data xml:space="preserve" name="Feature.incident-reports">
+    <value>Звіти про інциденти</value>
+  </data>
+  <data xml:space="preserve" name="Feature.inventory">
+    <value>Інвентар</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invoices">
+    <value>Рахунки</value>
+  </data>
+  <data xml:space="preserve" name="Feature.logs">
+    <value>Журнали</value>
+  </data>
+  <data xml:space="preserve" name="Feature.mapping">
+    <value>Картографування</value>
+  </data>
+  <data xml:space="preserve" name="Feature.module-settings">
+    <value>Налаштування модулів</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-deployment">
+    <value>Нове розгортання</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-group">
+    <value>Нова Група</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-protocol">
+    <value>Новий Протокол</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-training">
+    <value>Нове навчання</value>
+  </data>
+  <data xml:space="preserve" name="Feature.preventive-maintenance">
+    <value>Профілактичне обслуговування</value>
+  </data>
+  <data xml:space="preserve" name="Feature.protocols">
+    <value>Протоколи</value>
+  </data>
+  <data xml:space="preserve" name="Feature.rate-cards">
+    <value>Тарифи</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-holds">
+    <value>Утримання записів для збереження</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-inspections">
+    <value>Перевірки</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-investigations">
+    <value>Розслідування</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-permits">
+    <value>Дозволи</value>
+  </data>
+  <data xml:space="preserve" name="Feature.records-settings">
+    <value>Налаштування записів</value>
+  </data>
+  <data xml:space="preserve" name="Feature.routes">
+    <value>Маршрути</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shifts">
+    <value>Зміни</value>
+  </data>
+  <data xml:space="preserve" name="Feature.trainings">
+    <value>Навчання</value>
+  </data>
+  <data xml:space="preserve" name="Feature.voice">
+    <value>Голосовий виклик</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workflows">
+    <value>Робочі процеси</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workforce">
+    <value>Персонал</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionAction3">
+    <value>Усі</value>
+  </data>
+  <data xml:space="preserve" name="Pack.sar">
+    <value>Пошук і порятунок</value>
+  </data>
+  <data xml:space="preserve" name="Permission.AdjustInventory">
+    <value>Коригувати інвентар</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveRecords">
+    <value>Затвердження звітів</value>
+  </data>
+  <data xml:space="preserve" name="Permission.FinalizeRecords">
+    <value>Завершення звітів</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDefinitions">
+    <value>Керування визначеннями звітів</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDisclosures">
+    <value>Керування розкриттям звітів</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordReports">
+    <value>Керування зведеннями звітів</value>
+  </data>
+  <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
+    <value>Публікація визначень звітів</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewRecords">
+    <value>Перевірка звітів</value>
+  </data>
+  <data xml:space="preserve" name="Profile.No">
+    <value>Ні</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Yes">
+    <value>Так</value>
+  </data>
+  <data xml:space="preserve" name="Profile.contract">
+    <value>Договір</value>
+  </data>
+  <data xml:space="preserve" name="Profile.volunteer">
+    <value>Волонтер</value>
+  </data>
+  <data xml:space="preserve" name="Ui.After">
+    <value>Після</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Before">
+    <value>До</value>
+  </data>
+  <data xml:space="preserve" name="Ui.CatalogVersion">
+    <value>Версія каталогу</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Configure">
+    <value>Відкрити відповідну сторінку налаштувань</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Critical">
+    <value>Критично</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Fail">
+    <value>Потребує уваги</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featureplanned">
+    <value>Заплановано</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featurepreview">
+    <value>Попередній перегляд</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Freshness">
+    <value>Дані станом на</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Information">
+    <value>Інформація</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Interested">
+    <value>Мене цікавить ця функція</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Known">
+    <value>Доступно</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LearnLater">
+    <value>Ознайомитися пізніше</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Learned">
+    <value>Я розумію цю функцію</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Loading">
+    <value>Завантаження налаштувань підрозділу…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NotApplicable">
+    <value>Не застосовується</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Pass">
+    <value>Перевірено</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Print">
+    <value>Друк</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReadSource">
+    <value>Читати вихідний текст</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Redacted">
+    <value>Захищені підтверджувальні дані недоступні</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReportBoundary">
+    <value>Перевірка налаштувань надає адміністративні рекомендації. Розуміння функції або збереження налаштування не підтверджує оперативної готовності чи доставки повідомлень.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Retry">
+    <value>Повторити спробу</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReviewDate">
+    <value>Термін перевірки</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Saving">
+    <value>Збереження…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Search">
+    <value>Пошук розділів і функцій</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SearchReference">
+    <value>Пошук у довідковій документації</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unassigned">
+    <value>Не призначено</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unavailable">
+    <value>Недоступно</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unknown">
+    <value>Невідомо</value>
+  </data>
+  <data xml:space="preserve" name="Ui.UseNow">
+    <value>Використовувати зараз</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Verify">
+    <value>Перевірити знову</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Warning">
+    <value>Попередження</value>
+  </data>
+  <data xml:space="preserve" name="Ui.explore">
+    <value>Огляд Resgrid і доповнень</value>
+  </data>
+  <data xml:space="preserve" name="Ui.health">
+    <value>Перевірки налаштувань</value>
+  </data>
+  <data xml:space="preserve" name="Ui.history">
+    <value>Історія змін</value>
+  </data>
+  <data xml:space="preserve" name="Ui.overview">
+    <value>Огляд</value>
+  </data>
+  <data xml:space="preserve" name="Ui.reference">
+    <value>Довідник налаштувань</value>
+  </data>
+  <data xml:space="preserve" name="Ui.report">
+    <value>Звіт про налаштування</value>
+  </data>
+  <data xml:space="preserve" name="Ui.wizard">
+    <value>Майстер налаштування</value>
+  </data>
+  <data xml:space="preserve" name="Ui.worklist">
+    <value>Список завдань адміністратора</value>
+  </data>
+</root>

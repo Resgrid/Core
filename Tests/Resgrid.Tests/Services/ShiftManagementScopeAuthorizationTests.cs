@@ -77,6 +77,16 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Managing_user_without_a_member_record_supervises_every_group()
+		{
+			_departmentsService.Setup(x => x.GetDepartmentMemberAsync("owner", DepartmentId, It.IsAny<bool>())).ReturnsAsync((DepartmentMember)null);
+
+			var scope = await _service.GetShiftManagementScopeAsync("owner", DepartmentId);
+
+			scope.AllGroups.Should().BeTrue();
+		}
+
+		[Test]
 		public async Task Group_admin_supervises_their_group_and_its_child_teams_only()
 		{
 			var scope = await _service.GetShiftManagementScopeAsync("provider-lead", DepartmentId);

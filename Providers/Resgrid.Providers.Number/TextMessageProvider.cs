@@ -156,6 +156,10 @@ namespace Resgrid.Providers.NumberProvider
 					to: new PhoneNumber(number),
 					body: message);
 
+				Resgrid.Model.AdminAssist.DispatchTraceTelemetry.ProviderResult(
+					Resgrid.Model.AdminAssist.DispatchTraceProvider.Twilio, Resgrid.Model.AdminAssist.DispatchTraceChannel.Sms,
+					messageResource?.Sid, Resgrid.Model.AdminAssist.DispatchProviderOutcome.CreationStatus(messageResource?.Status?.ToString()));
+
 				if (messageResource != null)
 					return true;
 				else
@@ -211,6 +215,10 @@ namespace Resgrid.Providers.NumberProvider
 				});
 
 				var response = await client.ExecuteAsync<SignalWireMessageResponse>(request);
+				Resgrid.Model.AdminAssist.DispatchTraceTelemetry.ProviderResult(
+					Resgrid.Model.AdminAssist.DispatchTraceProvider.SignalWire, Resgrid.Model.AdminAssist.DispatchTraceChannel.Sms,
+					response.Data?.sid, response.ResponseStatus == ResponseStatus.Completed && response.StatusCode == HttpStatusCode.Created && response.Data != null && response.Data.error_code == null
+						? Resgrid.Model.AdminAssist.DispatchProviderOutcome.CreationStatus(response.Data.status) : null);
 
 				if (response.ResponseStatus == ResponseStatus.Completed)
 				{

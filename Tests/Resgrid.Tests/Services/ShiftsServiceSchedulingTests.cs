@@ -344,6 +344,21 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Answering_a_trade_matches_the_participant_whatever_the_user_id_case()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			var bob = new ShiftSignupTradeUser { ShiftSignupTradeUserId = 3, ShiftSignupTradeId = 50, UserId = "bob" };
+			SetupTrade(new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5 }, bob);
+
+			var result = await _service.RespondToTradeAsync(50, "BOB", false, "busy", null);
+
+			result.Success.Should().BeTrue();
+			bob.Declined.Should().BeTrue();
+			_shiftSignupTradeUserRepository.Verify(x => x.SaveOrUpdateAsync(bob, It.IsAny<CancellationToken>(), true), Times.Once);
+			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<ShiftTradeRejectedEvent>()), Times.Once);
+		}
+
+		[Test]
 		public async Task Approving_a_pending_trade_makes_it_take_effect()
 		{
 			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });

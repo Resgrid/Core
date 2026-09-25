@@ -161,6 +161,13 @@ namespace Resgrid.Services
 					if (eventType == WorkflowTriggerEventType.ContractStatusChanged) sampleContract["old_status"] = 0;
 					if (eventType == WorkflowTriggerEventType.ContractExpiring) sampleContract["days_until_end"] = 21;
 					break;
+				case WorkflowTriggerEventType.AdminAssistFindingOpened:
+				case WorkflowTriggerEventType.AdminAssistFindingResolved:
+				case WorkflowTriggerEventType.AdminAssistFindingReopened:
+					obj["admin_assist"] = new ScriptObject { ["id"] = "00000000-0000-0000-0000-000000000001", ["rule_id"] = "admin-mfa", ["episode"] = 1,
+						["result"] = eventType == WorkflowTriggerEventType.AdminAssistFindingResolved ? (int)Resgrid.Model.AdminAssist.RuleResult.Pass : (int)Resgrid.Model.AdminAssist.RuleResult.Fail,
+						["severity"] = 2, ["review_status"] = 0, ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/AdminAssist/Index" };
+					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

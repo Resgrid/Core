@@ -81,3 +81,15 @@ defineReactElement<ChatModerationElementProps>(
   () => import('./components/chat/ChatModerationElement'),
   [{ attribute: 'departmentadmin', property: 'departmentAdmin', type: 'boolean', defaultValue: false }],
 );
+
+
+defineReactElement<import('./components/adminAssist/AdminAssistElement').AdminAssistElementProps>(
+  'rg-admin-assist',
+  () => import('./components/adminAssist/AdminAssistElement'),
+  [
+    { attribute: 'page', property: 'page', type: 'string', defaultValue: 'overview' },
+    { attribute: 'setup', property: 'setup', type: 'boolean', defaultValue: false },
+    { attribute: 'loadinglabel', property: 'loadingLabel', type: 'string' },
+    { attribute: 'errorlabel', property: 'errorLabel', type: 'string' },
+  ],
+);

@@ -719,6 +719,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Workflow created from the template with a draft protected release. Set the destination URL and credential on the step, choose the released fields, then request approval. It never sends until the release is approved.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Workflow created from the template, but without a draft protected release (creating one needs a Protected Workflows administrator). It is disabled: have an administrator create the release and request approval before you enable it.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>Workflow limit reached for your plan. Please upgrade to add more workflows.</value>
   </data>

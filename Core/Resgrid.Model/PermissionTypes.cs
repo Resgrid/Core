@@ -77,8 +77,8 @@ namespace Resgrid.Model
 		ConfigureProtectedDataEgress = 38,
 
 		/// <summary>
-		/// Emergency break-glass access to protected data. Off by default; every use requires a reason,
-		/// produces notifications, and is subject to review (ADP plan section 12).
+		/// Legacy stored permission identifier. Does not authorize staff support access; that flow
+		/// is managed by BackOffice with customer consent, fresh MFA and independent approval.
 		/// </summary>
 		BreakGlassProtectedData = 39,
 

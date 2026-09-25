@@ -363,5 +363,7 @@ namespace Resgrid.Model.Services
 		Task<Dictionary<int, UnitRoleStaffingResult>> GetUnitStaffingForDepartmentAsync(int departmentId);
 
 		Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId);
+		/// <summary>Uncached location read that propagates failure instead of returning an empty set.</summary>
+		Task<List<UnitsLocation>> ReadLatestLocationsForAdministrationAsync(int departmentId);
 	}
 }

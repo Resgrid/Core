@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -7,6 +7,7 @@ using Autofac;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.AdminAssist;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -37,6 +38,8 @@ namespace Resgrid.Workers.Framework.Logic
 
 			if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
 			{
+				using var trace = DispatchTraceTelemetry.Begin(cqi.Call.DepartmentId, cqi.Call.CallId, cqi.QueueItem?.QueueItemId, Config.AdminAssistConfig.CaptureDispatchTraces);
+				DispatchTraceTelemetry.Observe(DispatchTraceStage.BroadcastStarted);
 				List<int> groupIds = new List<int>();
 
 				/* Trying to see if I can eek out a little perf here now that profiles are in Redis. Previously the
@@ -75,214 +78,104 @@ namespace Resgrid.Workers.Framework.Logic
 
 				StartDispatchVoicePreWarm(cqi);
 
-				// Dispatch Personnel
-				if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
+				// Resolve one route at a time: first sends retain their existing position relative to database
+				// reads. A preview supplies all routes to the same pure resolver without calling this sender.
+				var routingTimeUtc = DateTime.UtcNow;
+				async Task SendExpandedAsync(DispatchRoute route)
 				{
-					foreach (var d in cqi.Call.Dispatches)
+					var selection = DispatchRecipientResolver.Resolve(routingTimeUtc, new[] { route }, dispatchedUsers);
+					foreach (var decision in selection.Decisions)
+						DispatchTraceTelemetry.Observe(decision.Selected ? DispatchTraceStage.Selected : DispatchTraceStage.Excluded, reason: !decision.Selected ? DispatchTraceReason.DuplicateRoute : decision.EmptyShiftFallback ? DispatchTraceReason.EmptyShiftFallback : DispatchTraceReason.None,
+							recipientId: decision.UserId, routeKind: decision.Kind, sourceId: decision.SourceId, inputAsOfUtc: selection.AsOfUtc);
+					foreach (var userId in selection.SelectedUserIds)
+					{
+						dispatchedUsers.Add(userId);
+						try
+						{
+							var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == userId);
+							await _communicationService.SendCallAsync(cqi.Call, new CallDispatch { UserId = userId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+						}
+						catch (SocketException) { }
+						catch (Exception ex) { Logging.LogException(ex); }
+					}
+				}
+
+				if (cqi.Call.Dispatches != null)
+					foreach (var dispatch in cqi.Call.Dispatches)
 					{
 						try
 						{
-							dispatchedUsers.Add(d.UserId);
-
-							var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == d.UserId);
-
-							if (profile != null)
+							var selection = DispatchRecipientResolver.Resolve(routingTimeUtc,
+								new[] { new DispatchRoute(DispatchRouteKind.Direct, "direct", new[] { dispatch.UserId }) }, dispatchedUsers);
+							foreach (var decision in selection.Decisions)
+								DispatchTraceTelemetry.Observe(decision.Selected ? DispatchTraceStage.Selected : DispatchTraceStage.Excluded, reason: !decision.Selected ? DispatchTraceReason.DuplicateRoute : decision.EmptyShiftFallback ? DispatchTraceReason.EmptyShiftFallback : DispatchTraceReason.None,
+									recipientId: decision.UserId, routeKind: decision.Kind, sourceId: decision.SourceId, inputAsOfUtc: selection.AsOfUtc);
+							foreach (var userId in selection.SelectedUserIds)
 							{
-								await _communicationService.SendCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+								dispatchedUsers.Add(userId);
+								var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == userId);
+								if (profile != null)
+									await _communicationService.SendCallAsync(cqi.Call, dispatch, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+								else DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, reason: DispatchTraceReason.ProfileMissing, recipientId: userId);
 							}
 						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-						}
+						catch (Exception ex) { Logging.LogException(ex); }
 					}
-				}
 
 				if (_departmentGroupsService == null)
 					_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
 
-				// Dispatch Groups
 				if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
 				{
-					if (_shiftsService == null)
-						_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
-
-					var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(cqi.Call.DepartmentId);
-
-					// Whoever is on duty for each group right now, from the resolved shift roster (assigned staff, approved
-					// signups, single-day edits and trades). A group with nobody on shift falls back to all its members.
-					var onDutyByGroup = dispatchShiftInsteadOfGroup
-						? await _shiftsService.GetOnDutyUserIdsForGroupsAsync(cqi.Call.DepartmentId, cqi.Call.GroupDispatches.Select(x => x.DepartmentGroupId), DateTime.UtcNow)
+					if (_shiftsService == null) _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
+					var useShift = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(cqi.Call.DepartmentId);
+					routingTimeUtc = DateTime.UtcNow;
+					var onDuty = useShift
+						? await _shiftsService.GetOnDutyUserIdsForGroupsAsync(cqi.Call.DepartmentId, cqi.Call.GroupDispatches.Select(x => x.DepartmentGroupId), routingTimeUtc)
 						: null;
-					onDutyByGroup = onDutyByGroup ?? new Dictionary<int, List<string>>();
-
-					foreach (var d in cqi.Call.GroupDispatches)
+					onDuty ??= new Dictionary<int, List<string>>();
+					foreach (var dispatch in cqi.Call.GroupDispatches)
 					{
-						if (!groupIds.Contains(d.DepartmentGroupId))
-							groupIds.Add(d.DepartmentGroupId);
-
-						onDutyByGroup.TryGetValue(d.DepartmentGroupId, out var onDutyUserIds);
-
-						if (dispatchShiftInsteadOfGroup && (onDutyUserIds != null && onDutyUserIds.Any()))
-						{
-							foreach (var onDutyUserId in onDutyUserIds)
-							{
-								if (!dispatchedUsers.Contains(onDutyUserId))
-								{
-									dispatchedUsers.Add(onDutyUserId);
-									try
-									{
-										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == onDutyUserId);
-										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = onDutyUserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
-									}
-									catch (SocketException sex)
-									{
-									}
-									catch (Exception ex)
-									{
-										Logging.LogException(ex);
-									}
-								}
-							}
-
-							continue;
-						}
-
-						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(d.DepartmentGroupId);
-
-						foreach (var member in members)
-						{
-							if (!dispatchedUsers.Contains(member.UserId))
-							{
-								dispatchedUsers.Add(member.UserId);
-								try
-								{
-									var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-									await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
-								}
-								catch (SocketException sex)
-								{
-								}
-								catch (Exception ex)
-								{
-									Logging.LogException(ex);
-								}
-
-							}
-						}
+						if (!groupIds.Contains(dispatch.DepartmentGroupId)) groupIds.Add(dispatch.DepartmentGroupId);
+						onDuty.TryGetValue(dispatch.DepartmentGroupId, out var roster);
+						roster ??= new List<string>();
+						// Do not add a new group-members read when the resolved roster is sufficient.
+						var members = useShift && roster.Count > 0 ? Array.Empty<string>() :
+							(await _departmentGroupsService.GetAllMembersForGroupAsync(dispatch.DepartmentGroupId)).Select(x => x.UserId).ToArray();
+						await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.Group, dispatch.DepartmentGroupId.ToString(), members, useShift, roster));
 					}
 				}
 
-				// Dispatch Units
 				if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
 				{
-					if (_unitsService == null)
-						_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
-
-					bool alsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
-					bool alsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
-
-					foreach (var d in cqi.Call.UnitDispatches)
+					if (_unitsService == null) _unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+					var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
+					var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
+					foreach (var dispatch in cqi.Call.UnitDispatches)
 					{
-						var unit = await _unitsService.GetUnitByIdAsync(d.UnitId);
-
-						if (unit != null && unit.StationGroupId.HasValue)
-							if (!groupIds.Contains(unit.StationGroupId.Value))
-								groupIds.Add(unit.StationGroupId.Value);
-
-						await _communicationService.SendUnitCallAsync(cqi.Call, d, cqi.DepartmentTextNumber, cqi.Address);
-
-						if (alsoDispatchToAssignedPersonnel)
+						var unit = await _unitsService.GetUnitByIdAsync(dispatch.UnitId);
+						if (unit?.StationGroupId != null && !groupIds.Contains(unit.StationGroupId.Value)) groupIds.Add(unit.StationGroupId.Value);
+						await _communicationService.SendUnitCallAsync(cqi.Call, dispatch, cqi.DepartmentTextNumber, cqi.Address);
+						if (crew)
 						{
-							var unitAssignedMembers = await _unitsService.GetCurrentRolesForUnitAsync(d.UnitId);
-							if (unitAssignedMembers != null && unitAssignedMembers.Count() > 0)
-							{
-								foreach (var member in unitAssignedMembers)
-								{
-									if (!dispatchedUsers.Contains(member.UserId))
-									{
-										dispatchedUsers.Add(member.UserId);
-										try
-										{
-											var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-											await _communicationService.SendCallAsync(cqi.Call,
-												new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber,
-												cqi.Call.DepartmentId, profile, cqi.Address);
-										}
-										catch (SocketException sex)
-										{
-										}
-										catch (Exception ex)
-										{
-											Logging.LogException(ex);
-										}
-
-									}
-								}
-							}
+							var members = await _unitsService.GetCurrentRolesForUnitAsync(dispatch.UnitId);
+							if (members != null) await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.UnitCrew, dispatch.UnitId.ToString(), members.Select(x => x.UserId).ToArray()));
 						}
-
-						if (alsoDispatchToGroup)
+						if (group && unit?.StationGroupId != null)
 						{
-							if (unit.StationGroupId.HasValue)
-							{
-								var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value);
-
-								foreach (var member in members)
-								{
-									if (!dispatchedUsers.Contains(member.UserId))
-									{
-										dispatchedUsers.Add(member.UserId);
-										try
-										{
-											var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-											await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
-										}
-										catch (SocketException sex)
-										{
-										}
-										catch (Exception ex)
-										{
-											Logging.LogException(ex);
-										}
-
-									}
-								}
-							}
+							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value);
+							await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()));
 						}
 					}
 				}
 
-				// Dispatch Roles
 				if (cqi.Call.RoleDispatches != null && cqi.Call.RoleDispatches.Any())
 				{
-					if (_rolesService == null)
-						_rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
-
-					foreach (var d in cqi.Call.RoleDispatches)
+					if (_rolesService == null) _rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
+					foreach (var dispatch in cqi.Call.RoleDispatches)
 					{
-						var members = await _rolesService.GetAllMembersOfRoleAsync(d.RoleId);
-
-						foreach (var member in members)
-						{
-							if (!dispatchedUsers.Contains(member.UserId))
-							{
-								dispatchedUsers.Add(member.UserId);
-								try
-								{
-									var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == member.UserId);
-									await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = member.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
-								}
-								catch (SocketException sex)
-								{
-								}
-								catch (Exception ex)
-								{
-									Logging.LogException(ex);
-								}
-
-							}
-						}
+						var members = await _rolesService.GetAllMembersOfRoleAsync(dispatch.RoleId);
+						await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.Role, dispatch.RoleId.ToString(), members.Select(x => x.UserId).ToArray()));
 					}
 				}
 
@@ -332,6 +225,7 @@ namespace Resgrid.Workers.Framework.Logic
 						Logging.LogException(ex);
 					}
 				}
+				DispatchTraceTelemetry.Observe(DispatchTraceStage.BroadcastCompleted);
 			}
 
 			return true;

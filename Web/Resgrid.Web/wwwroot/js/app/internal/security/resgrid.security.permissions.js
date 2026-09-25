@@ -897,7 +897,6 @@ var resgrid;
                     { sel: '#ViewProtectedOperationalData', type: 36, roles: '#adpViewOperationalRoles', span: '#adpViewOperationalNoRolesSpan', div: '#adpViewOperationalRolesDiv' },
                     { sel: '#ExportProtectedData', type: 37, roles: '#adpExportRoles', span: '#adpExportNoRolesSpan', div: '#adpExportRolesDiv' },
                     { sel: '#ConfigureProtectedDataEgress', type: 38, roles: '#adpEgressRoles', span: '#adpEgressNoRolesSpan', div: '#adpEgressRolesDiv' },
-                    { sel: '#BreakGlassProtectedData', type: 39, roles: '#adpBreakGlassRoles', span: '#adpBreakGlassNoRolesSpan', div: '#adpBreakGlassRolesDiv' }
                 ];
                 adpPermissions.forEach(function (p) {
                     var toggleRoles = function () {

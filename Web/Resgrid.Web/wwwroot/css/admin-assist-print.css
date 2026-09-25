@@ -1,0 +1,9 @@
+body { font: 16px/1.5 system-ui, sans-serif; color: #17202a; background: white; margin: 2rem auto; max-width: 64rem; padding: 0 1rem; }
+.print-controls { display: flex; gap: 1rem; align-items: center; }
+button { padding: .5rem 1rem; font: inherit; }
+section { border-block-end: 1px solid #adb5bd; margin-block: 1rem; padding-block-end: .5rem; break-inside: avoid; }
+.warning { border: 2px solid #704600; padding: .5rem; }
+dt { font-weight: bold; } dd { margin-inline-start: 0; margin-block-end: .5rem; }
+table { width: 100%; border-collapse: collapse; } th, td { text-align: start; padding: .5rem; border-block-end: 1px solid #adb5bd; }
+a { color: #17458f; overflow-wrap: anywhere; }
+@media print { body { max-width: none; margin: 0; font-size: 11pt; } .print-controls { display: none; } h1, h2, h3 { break-after: avoid; } thead { display: table-header-group; } }

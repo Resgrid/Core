@@ -33,9 +33,9 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
-				// Layer 2 for a list: every active member may list their department's units, so the
-				// permission is decided once per request against session.DepartmentId. A per-row
-				// CanUserViewUnitAsync answers the same membership question with two lookups per unit.
+				// Layer 2 for a list: membership is decided once per request against session.DepartmentId;
+				// View Units is then applied per row from the cached visibility matrix, as the v4 unit lists do,
+				// rather than CanUserViewUnitAsync's database lookups per unit.
 				if (!await _authorizationService.IsUserValidWithinLimitsAsync(session.UserId, session.DepartmentId))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Units_NoPermission", culture), Processed = false };
 
@@ -56,6 +56,9 @@ namespace Resgrid.Chatbot.Handlers
 					// The department boundary is the per-row rule.
 					var unit = unitState?.Unit;
 					if (unit == null || unit.DepartmentId != session.DepartmentId)
+						continue;
+
+					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, session.UserId, session.DepartmentId))
 						continue;
 
 					var status = await _customStateService.GetCustomUnitStateAsync(unitState);

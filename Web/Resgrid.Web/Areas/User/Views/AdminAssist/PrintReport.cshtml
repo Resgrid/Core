@@ -1,0 +1,58 @@
+@model Resgrid.Model.AdminAssist.AdminAssistOverview
+@using Resgrid.Model.AdminAssist
+@using System.Globalization
+@inject IAdminAssistCatalog catalog
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aa
+@{
+	Layout = null;
+	var report = Model.Report;
+	var findings = report.Findings.Where(f => f.Result != RuleResult.NotApplicable && (f.AreaId == "security" || f.ScopeIndependent || report.SelectedAreas.Contains(f.AreaId))).ToArray();
+}
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.Name" dir="@(CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? "rtl" : "ltr")">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Resgrid — @aa["Ui.report"]</title><link rel="stylesheet" href="~/css/admin-assist-print.css" asp-append-version="true" /></head>
+<body>
+	<nav class="print-controls"><button type="button" id="admin-assist-print">@aa["Ui.Print"]</button><a href="/User/Help/SetupReport">@aa["Ui.report"]</a></nav>
+	<main>
+		<h1>Resgrid — @aa["Ui.report"]</h1>
+		<p>@aa["Ui.DepartmentId"]: @report.Snapshot.DepartmentId · @aa["Ui.CatalogVersion"]: @Model.CatalogVersion · @aa["Ui.EvidenceRevision"]: @report.Snapshot.Revision</p>
+		<p>@aa["Ui.Freshness"]: <time datetime="@report.Snapshot.AsOfUtc.ToString("O")">@report.Snapshot.AsOfUtc.ToString("u")</time></p>
+		<p>@aa["Ui.PrintNotice"]</p><p>@aa["Ui.ReportBoundary"]</p>
+		@if (!report.Snapshot.Consistent) { <p class="warning">@aa["Ui.Inconsistent"]</p> }
+		@if (report.HasCriticalUncertainty) { <p class="warning">@aa["Ui.CriticalUnknown"]</p> }
+		<dl><dt>@aa["Ui.Checks"]</dt><dd>@report.Verified / @report.Required</dd><dt>@aa["Ui.Failures"]</dt><dd>@report.Failed</dd><dt>@aa["Ui.UnknownChecks"]</dt><dd>@report.Unknown</dd><dt>@aa["Ui.Learning"]</dt><dd>@Model.Workspace.LearnedCapabilityIds.Count / @catalog.Capabilities.Count</dd></dl>
+		<p>@aa["Ui.VerificationCoverage"]</p>
+		@if (Model.Workspace.ReviewEvidence is { } reviewed)
+		{
+			<p>@aa["Ui.ReviewEvidence"]: @reviewed.Verified / @reviewed.Required · @aa["Ui.Failures"]: @reviewed.Failed · @aa["Ui.UnknownChecks"]: @reviewed.Unknown · @reviewed.AsOfUtc.ToString("u")</p>
+			@if (reviewed.CatalogVersion != Model.CatalogVersion || reviewed.SnapshotRevision != report.Snapshot.Revision || reviewed.ScopeRevision != Model.Workspace.ScopeRevision) { <p>@aa["Ui.ReviewChanged"]</p> }
+		}
+		@if (Model.Workspace.RevisitOnUtc.HasValue) { <p>@aa["Ui.RevisitDate"]: @Model.Workspace.RevisitOnUtc.Value.ToString("yyyy-MM-dd")</p> }
+		@if (report.UncheckedAreaIds.Count > 0) { <p class="warning">@aa["Ui.UncheckedAreas"]: @string.Join(", ", report.UncheckedAreaIds.Select(id => aa[catalog.Areas.FirstOrDefault(a => a.Id == id)?.LabelKey ?? id].Value))</p> }
+		<h2>@aa["Ui.Checks"]</h2>
+		@foreach (var finding in findings)
+		{
+			<section><h3>@aa[finding.TitleKey]</h3><p><strong>@aa["Ui." + finding.Result]</strong> · @aa["Ui." + finding.Severity]</p><p>@aa[finding.ExplanationKey]</p><p><a href="@finding.Destination">@aa[finding.NextActionKey]</a></p></section>
+		}
+		<h2>@aa["Ui.Learning"]</h2>
+		<table><thead><tr><th>@aa["Ui.Area"]</th><th>@aa["Ui.SetupChoice"]</th></tr></thead><tbody>@foreach (var area in catalog.Areas) { <tr><th scope="row">@aa[area.LabelKey]</th><td>@aa["Ui." + (Model.Workspace.Areas.TryGetValue(area.Id, out var choice) ? choice : SetupAreaChoice.LearnLater)]</td></tr> }</tbody></table>
+		<h2>@aa["Ui.SelectedWorkflows"]</h2><p>@aa["Ui.WorkflowProgressHelp"]</p>
+		@foreach (var interest in catalog.Capabilities.Where(c => Model.Workspace.InterestedCapabilityIds.Contains(c.Id)))
+		{
+			var availability = Model.Access.FirstOrDefault(a => a.CapabilityId == interest.Id);
+			var progress = Model.CapabilitySetup?.FirstOrDefault(s => s.CapabilityId == interest.Id);
+			<section><h3>@aa[interest.LabelKey]</h3><p>@aa[Model.Workspace.LearnedCapabilityIds.Contains(interest.Id) ? "Ui.LearningComplete" : "Ui.LearningPending"]</p>
+			<p>@aa[availability?.State == EvidenceState.Known ? "Ui.AvailableForSetup" : availability?.State == EvidenceState.Unavailable ? "Ui.WorkflowBlocked" : "Ui.WorkflowAccessUnknown"]</p>
+			@if (availability != null) { foreach (var reason in availability.ReasonCodes) { <p>@aa["Ui." + reason]</p> } }
+			<p>@aa["Ui.SetupState." + (progress?.State ?? CapabilitySetupState.NotAssessed)]</p><p>@aa[progress?.GuidanceKey ?? "Ui.ConfigurationNotAssessed"]</p><p>@aa[interest.AdoptionKey]</p></section>
+		}
+		<h2>@aa["Ui.OptionalCapabilities"]</h2><p>@aa["Ui.Optional"]</p>
+		@foreach (var capability in catalog.Capabilities.Where(c => c.Id.StartsWith("addon-", StringComparison.Ordinal)))
+		{
+			var availability = Model.Access.FirstOrDefault(a => a.CapabilityId == capability.Id);
+			<section><h3>@aa[capability.LabelKey]</h3><p>@aa[capability.PurposeKey]</p><p>@aa[capability.ValueKey]</p><p>@aa[capability.AdoptionKey]</p><p>@aa["Ui.AvailableReasons"]: @aa["Ui." + (availability?.State.ToString() ?? "Unknown")]</p></section>
+		}
+	</main>
+	<script src="~/js/app/internal/admin-assist-print.js" asp-append-version="true"></script>
+</body>
+</html>

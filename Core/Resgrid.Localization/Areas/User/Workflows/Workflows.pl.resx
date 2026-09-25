@@ -696,6 +696,9 @@
   <data name="GalleryCreatedProtected" xml:space="preserve">
     <value>Przepływ pracy utworzono z szablonu wraz z roboczym chronionym zezwoleniem. Ustaw docelowy adres URL i poświadczenie kroku, wybierz udostępniane pola i poproś o zatwierdzenie. Nic nie zostanie wysłane przed zatwierdzeniem zezwolenia.</value>
   </data>
+  <data name="GalleryCreatedWithoutProtectedDraft" xml:space="preserve">
+    <value>Przepływ pracy utworzono z szablonu, ale bez roboczego chronionego zezwolenia (do jego utworzenia potrzebny jest administrator chronionych przepływów pracy). Jest wyłączony: przed włączeniem poproś administratora o utworzenie zezwolenia i wysłanie prośby o zatwierdzenie.</value>
+  </data>
   <data name="WorkflowLimitReached" xml:space="preserve">
     <value>Osiągnięto limit przepływów pracy w Twoim planie. Przejdź na wyższy plan, aby dodać więcej.</value>
   </data>

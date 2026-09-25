@@ -10,10 +10,10 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class ChatbotDepartmentConfigRepository : RepositoryBase<ChatbotDepartmentConfig>, IChatbotDepartmentConfigRepository
+	public class ChatbotDepartmentConfigRepository : AuditedConfigurationRepository<ChatbotDepartmentConfig>, IChatbotDepartmentConfigRepository
 	{
-		public ChatbotDepartmentConfigRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
-			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		public ChatbotDepartmentConfigRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory, Resgrid.Model.AdminAssist.IConfigurationChangeJournal configurationJournal = null)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory, configurationJournal)
 		{
 		}
 

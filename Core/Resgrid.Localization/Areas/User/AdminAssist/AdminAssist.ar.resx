@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Feature.add-person">
+    <value>إضافة شخص</value>
+  </data>
+  <data xml:space="preserve" name="Feature.addon-adp">
+    <value>حماية البيانات المتقدمة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.bids">
+    <value>العروض</value>
+  </data>
+  <data xml:space="preserve" name="Feature.big-board">
+    <value>اللوحة الكبيرة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.calendar">
+    <value>التقويم</value>
+  </data>
+  <data xml:space="preserve" name="Feature.certification-types">
+    <value>أنواع الشهادات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.chat">
+    <value>الدردشة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.checklists">
+    <value>قوائم التحقق</value>
+  </data>
+  <data xml:space="preserve" name="Feature.communication-tests">
+    <value>اختبارات الاتصال</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contacts">
+    <value>جهات الاتصال</value>
+  </data>
+  <data xml:space="preserve" name="Feature.contracts">
+    <value>العقود</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard">
+    <value>لوحة المعلومات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.data-protection">
+    <value>حماية البيانات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.department-settings">
+    <value>إعدادات القسم</value>
+  </data>
+  <data xml:space="preserve" name="Feature.departments">
+    <value>أقسامك</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-settings">
+    <value>إعدادات التوزيع</value>
+  </data>
+  <data xml:space="preserve" name="Feature.documents">
+    <value>المستندات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.forms">
+    <value>النماذج</value>
+  </data>
+  <data xml:space="preserve" name="Feature.inbox">
+    <value>صندوق الوارد</value>
+  </data>
+  <data xml:space="preserve" name="Feature.incident-reports">
+    <value>تقارير الحوادث</value>
+  </data>
+  <data xml:space="preserve" name="Feature.inventory">
+    <value>المخزون</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invites">
+    <value>إدارة الدعوات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.invoices">
+    <value>الفواتير</value>
+  </data>
+  <data xml:space="preserve" name="Feature.live-routing">
+    <value>التوجيه المباشر</value>
+  </data>
+  <data xml:space="preserve" name="Feature.mapping">
+    <value>الخرائط</value>
+  </data>
+  <data xml:space="preserve" name="Feature.module-settings">
+    <value>إعدادات الوحدات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-contact">
+    <value>جهة اتصال جديدة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-deployment">
+    <value>انتشار جديد</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-group">
+    <value>مجموعة جديدة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-note">
+    <value>ملاحظة جديدة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-protocol">
+    <value>بروتوكول جديد</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-training">
+    <value>تدريب جديد</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-unit">
+    <value>وحدة جديدة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.new-workflow">
+    <value>سير عمل جديد</value>
+  </data>
+  <data xml:space="preserve" name="Feature.outbox">
+    <value>الرسائل المرسلة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.preventive-maintenance">
+    <value>الصيانة الوقائية</value>
+  </data>
+  <data xml:space="preserve" name="Feature.protocols">
+    <value>البروتوكولات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.rate-cards">
+    <value>بطاقات الأسعار</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-holds">
+    <value>حالات حفظ السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-inspections">
+    <value>عمليات التفتيش</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-investigations">
+    <value>التحقيقات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.record-permits">
+    <value>التصاريح</value>
+  </data>
+  <data xml:space="preserve" name="Feature.records">
+    <value>السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.records-settings">
+    <value>إعدادات السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.routes">
+    <value>المسارات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shifts">
+    <value>الورديات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.trainings">
+    <value>التدريبات</value>
+  </data>
+  <data xml:space="preserve" name="Feature.two-factor">
+    <value>المصادقة الثنائية</value>
+  </data>
+  <data xml:space="preserve" name="Feature.unit-staffing">
+    <value>تأهيل الوحدة</value>
+  </data>
+  <data xml:space="preserve" name="Feature.voice">
+    <value>مكالمة صوتية</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workflow-runs">
+    <value>تشغيلات سير العمل</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workflows">
+    <value>سير العمل</value>
+  </data>
+  <data xml:space="preserve" name="Feature.workforce">
+    <value>القوى العاملة</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionAction3">
+    <value>الجميع</value>
+  </data>
+  <data xml:space="preserve" name="Impact.PermissionType">
+    <value>الصلاحية</value>
+  </data>
+  <data xml:space="preserve" name="Pack.sar">
+    <value>البحث والإنقاذ</value>
+  </data>
+  <data xml:space="preserve" name="Permission.AdjustInventory">
+    <value>تعديل المخزون</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveRecords">
+    <value>اعتماد السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Permission.CloseCall">
+    <value>إغلاق البلاغ</value>
+  </data>
+  <data xml:space="preserve" name="Permission.CreateWorkflow">
+    <value>إنشاء سير عمل</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteCall">
+    <value>حذف البلاغ</value>
+  </data>
+  <data xml:space="preserve" name="Permission.FinalizeRecords">
+    <value>إنهاء السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDefinitions">
+    <value>إدارة تعريفات السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordDisclosures">
+    <value>إدارة إفصاحات السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordReports">
+    <value>إدارة تقارير السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
+    <value>نشر تعريفات السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewRecords">
+    <value>مراجعة السجلات</value>
+  </data>
+  <data xml:space="preserve" name="Profile.No">
+    <value>لا</value>
+  </data>
+  <data xml:space="preserve" name="Profile.OperatingHours">
+    <value>ساعات التشغيل</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Yes">
+    <value>نعم</value>
+  </data>
+  <data xml:space="preserve" name="Profile.contract">
+    <value>العقد</value>
+  </data>
+  <data xml:space="preserve" name="Profile.volunteer">
+    <value>متطوع</value>
+  </data>
+  <data xml:space="preserve" name="ProfileField.OperatingHours">
+    <value>ساعات التشغيل</value>
+  </data>
+  <data xml:space="preserve" name="Ui.After">
+    <value>بعد</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Area">
+    <value>المنطقة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Before">
+    <value>قبل</value>
+  </data>
+  <data xml:space="preserve" name="Ui.CatalogVersion">
+    <value>إصدار الفهرس</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Configure">
+    <value>افتح صفحة الإعداد المعنية</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Critical">
+    <value>حرج</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Fail">
+    <value>يحتاج إلى متابعة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featureplanned">
+    <value>مخطط</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Featurepreview">
+    <value>معاينة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Freshness">
+    <value>الأدلة حتى</value>
+  </data>
+  <data xml:space="preserve" name="Ui.HistorySubject">
+    <value>الموضوع</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Info">
+    <value>معلومات</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Information">
+    <value>معلومات</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Interested">
+    <value>مهتم بهذه الميزة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Known">
+    <value>متاح</value>
+  </data>
+  <data xml:space="preserve" name="Ui.LearnLater">
+    <value>تعرّف عليه لاحقًا</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Learned">
+    <value>أفهم هذه الميزة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Loading">
+    <value>جارٍ تحميل إعداد القسم…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.NotApplicable">
+    <value>لا ينطبق</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Pass">
+    <value>تم التحقق</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Print">
+    <value>طباعة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReadSource">
+    <value>اقرأ النص المصدر</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Redacted">
+    <value>الأدلة المحمية غير متاحة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReportBoundary">
+    <value>فحص الإعدادات إرشاد إداري. فهم ميزة أو حفظ إعداد لا يثبت الجاهزية التشغيلية أو تسليم الرسائل.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Retry">
+    <value>إعادة المحاولة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ReviewDate">
+    <value>موعد المراجعة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Saving">
+    <value>جارٍ الحفظ…</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Search">
+    <value>ابحث عن المجالات والميزات</value>
+  </data>
+  <data xml:space="preserve" name="Ui.SearchReference">
+    <value>ابحث في الوثائق المرجعية</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unassigned">
+    <value>غير مُسند</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unavailable">
+    <value>غير متاح</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Unknown">
+    <value>غير معروف</value>
+  </data>
+  <data xml:space="preserve" name="Ui.UseNow">
+    <value>استخدم الآن</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Verify">
+    <value>تحقق مجددًا</value>
+  </data>
+  <data xml:space="preserve" name="Ui.Warning">
+    <value>تحذير</value>
+  </data>
+  <data xml:space="preserve" name="Ui.explore">
+    <value>استكشف Resgrid والإضافات</value>
+  </data>
+  <data xml:space="preserve" name="Ui.health">
+    <value>فحوص الإعداد</value>
+  </data>
+  <data xml:space="preserve" name="Ui.history">
+    <value>سجل التغييرات</value>
+  </data>
+  <data xml:space="preserve" name="Ui.overview">
+    <value>نظرة عامة</value>
+  </data>
+  <data xml:space="preserve" name="Ui.reference">
+    <value>مرجع الإعدادات</value>
+  </data>
+  <data xml:space="preserve" name="Ui.report">
+    <value>تقرير الإعداد</value>
+  </data>
+  <data xml:space="preserve" name="Ui.wizard">
+    <value>معالج الإعداد</value>
+  </data>
+  <data xml:space="preserve" name="Ui.worklist">
+    <value>قائمة مهام المسؤول</value>
+  </data>
+</root>

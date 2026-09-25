@@ -1,11 +1,16 @@
 ﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using Resgrid.Config;
+using Resgrid.Web.Mcp.Infrastructure;
 
 namespace Resgrid.Web.Mcp.ModelContextProtocol
 {
@@ -14,17 +19,21 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 	/// </summary>
 	public sealed class McpServer : IMcpRequestHandler
 	{
+		private const string ToolCallOperation = "tools/call";
+
 		private readonly string _serverName;
 		private readonly string _serverVersion;
 		private readonly Dictionary<string, ToolDefinition> _tools;
 		private readonly ILogger _logger;
+		private readonly IRateLimiter _rateLimiter;
 
-		public McpServer(string serverName, string serverVersion, ILogger logger = null)
+		public McpServer(string serverName, string serverVersion, ILogger logger = null, IRateLimiter rateLimiter = null)
 		{
 			_serverName = serverName;
 			_serverVersion = serverVersion;
 			_tools = new Dictionary<string, ToolDefinition>();
 			_logger = logger;
+			_rateLimiter = rateLimiter;
 		}
 
 		public void AddTool(string name, string description, Dictionary<string, object> inputSchema, Func<object, Task<object>> handler)
@@ -39,14 +48,25 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 		}
 
 		/// <summary>
+		/// Handles a JSON-RPC request string from a caller whose address is unknown
+		/// </summary>
+		public Task<string> HandleRequestAsync(string requestJson, CancellationToken cancellationToken)
+		{
+			return HandleRequestAsync(requestJson, null, cancellationToken);
+		}
+
+		/// <summary>
 		/// Handles a JSON-RPC request string and returns a JSON-RPC response string
 		/// </summary>
-		public async Task<string> HandleRequestAsync(string requestJson, CancellationToken cancellationToken)
+		/// <param name="requestJson">The JSON-RPC request</param>
+		/// <param name="clientAddress">The caller's address, used to rate limit tool calls made without an access token</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public async Task<string> HandleRequestAsync(string requestJson, string clientAddress, CancellationToken cancellationToken)
 		{
 			try
 			{
 				var request = JsonSerializer.Deserialize<JsonRpcRequest>(requestJson);
-				var response = await HandleRequestAsync(request, cancellationToken);
+				var response = await HandleRequestAsync(request, clientAddress, cancellationToken);
 				return JsonSerializer.Serialize(response);
 			}
 			catch (Exception ex)
@@ -101,7 +121,8 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 
 					try
 					{
-						var responseJson = await HandleRequestAsync(line, cancellationToken);
+						// The stdio transport has a single local client.
+						var responseJson = await HandleRequestAsync(line, "stdio", cancellationToken);
 						await Console.Out.WriteLineAsync(responseJson);
 						await Console.Out.FlushAsync();
 					}
@@ -131,7 +152,7 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 			}
 		}
 
-		private async Task<JsonRpcResponse> HandleRequestAsync(JsonRpcRequest request, CancellationToken cancellationToken)
+		private async Task<JsonRpcResponse> HandleRequestAsync(JsonRpcRequest request, string clientAddress, CancellationToken cancellationToken)
 		{
 			var response = new JsonRpcResponse
 			{
@@ -188,7 +209,24 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 							return response;
 						}
 
-						var result = await toolDef.Handler(toolCallParams.Arguments);
+						object result;
+						try
+						{
+							await EnforceRateLimitAsync(toolCallParams.Arguments, clientAddress);
+							result = await toolDef.Handler(toolCallParams.Arguments);
+						}
+						catch (McpToolErrorException ex)
+						{
+							// Something the caller can act on (e.g. refresh an expired token): report it as the tool's
+							// result, in the shape tools use for their own errors, not as a JSON-RPC internal error.
+							_logger?.LogInformation("Tool {Tool} returned {ErrorCode}", toolCallParams.Name, ex.ErrorCode);
+							result = new { success = false, errorCode = ex.ErrorCode, error = ex.Message };
+						}
+
+						// Newtonsoft, not System.Text.Json: tool results carry the JObject/JArray payloads ApiClient
+						// deserializes, which System.Text.Json writes out as nested empty arrays.
+						var resultJson = result == null ? JValue.CreateNull() : JToken.FromObject(result);
+
 						response.Result = new
 						{
 							content = new[]
@@ -196,11 +234,10 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 								new
 								{
 									type = "text",
-									// Newtonsoft, not System.Text.Json: tool results carry the JObject/JArray payloads
-									// ApiClient deserializes, which System.Text.Json writes out as nested empty arrays.
-									text = Newtonsoft.Json.JsonConvert.SerializeObject(result)
+									text = resultJson.ToString(Newtonsoft.Json.Formatting.None)
 								}
-							}
+							},
+							isError = IsFailedToolResult(resultJson)
 						};
 						break;
 
@@ -230,6 +267,57 @@ namespace Resgrid.Web.Mcp.ModelContextProtocol
 			}
 
 			return response;
+		}
+
+		/// <summary>
+		/// Limits tool calls per signed-in session, keyed by access token so that callers sharing an address (such as a
+		/// hosted AI client's egress) do not share a limit. Calls made without a token, in practice authenticate and
+		/// refresh_access_token, are keyed by client address and held to a tighter limit.
+		/// </summary>
+		private async Task EnforceRateLimitAsync(object arguments, string clientAddress)
+		{
+			if (_rateLimiter == null)
+				return;
+
+			var accessToken = ReadAccessToken(arguments);
+			var clientId = accessToken != null ? $"token:{Fingerprint(accessToken)}" : $"address:{clientAddress ?? "unknown"}";
+			var limit = accessToken != null ? McpConfig.ToolCallsPerMinute : McpConfig.UnauthenticatedCallsPerMinute;
+
+			if (!await _rateLimiter.IsAllowedAsync(clientId, ToolCallOperation, limit))
+			{
+				throw new McpToolErrorException(McpToolErrorException.RateLimited,
+					$"Rate limit reached: at most {limit} tool calls per minute. Wait before calling again.");
+			}
+		}
+
+		private static string ReadAccessToken(object arguments)
+		{
+			if (arguments is JsonElement { ValueKind: JsonValueKind.Object } element
+				&& element.TryGetProperty("accessToken", out var token)
+				&& token.ValueKind == JsonValueKind.String
+				&& !string.IsNullOrWhiteSpace(token.GetString()))
+			{
+				return token.GetString();
+			}
+
+			return null;
+		}
+
+		/// <summary>A short hash identifying a token, so the token itself is never used as a key or written to a log.</summary>
+		private static string Fingerprint(string accessToken)
+		{
+			return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(accessToken)), 0, 8);
+		}
+
+		/// <summary>
+		/// Tools report a failure as { success = false, error }. MCP clients rely on isError instead, to tell a failed
+		/// call from data the model should use.
+		/// </summary>
+		private static bool IsFailedToolResult(JToken result)
+		{
+			return result is JObject obj
+				&& obj["success"]?.Type == JTokenType.Boolean
+				&& !obj.Value<bool>("success");
 		}
 
 		private sealed class ToolDefinition

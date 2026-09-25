@@ -15,7 +15,7 @@ using Resgrid.Repositories.DataRepository.Queries.ActionLogs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class ActionLogsRepository : RepositoryBase<ActionLog>, IActionLogsRepository
+	public partial class ActionLogsRepository : RepositoryBase<ActionLog>, IActionLogsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;

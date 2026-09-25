@@ -7,6 +7,9 @@ namespace Resgrid.Model
 	/// </summary>
 	public static class FeatureFlagKeys
 	{
+		public const string AdminSetup = "Admin.Setup";
+		public const string AdminAssist = "Admin.Assist";
+		public const string AiAdminAssist = "Ai.AdminAssist";
 		/// <summary>Free checklists rollout gate. Independent of paid plans and Maintenance.WorkOrders. Seeded off by M0189.</summary>
 		public const string ChecklistsSystem = "Checklists.System";
 

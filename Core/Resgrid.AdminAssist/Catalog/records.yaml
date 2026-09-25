@@ -1,0 +1,2267 @@
+{
+  "Version": "2026.09.24.1",
+  "Areas": [
+    {
+      "Id": "records",
+      "LabelKey": "Area.records",
+      "PurposeKey": "AreaPurpose.records",
+      "Order": 6,
+      "Archetypes": []
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "setting.RecordsDefaultLifecyclePreset",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsDefaultLifecyclePreset",
+      "HelpKey": "SettingHelp.RecordsDefaultLifecyclePreset",
+      "Binding": "DepartmentSettingTypes.RecordsDefaultLifecyclePreset",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsDefaultLifecyclePreset"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsDefaultLifecyclePreset",
+      "DefaultValue": "owning records default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.RecordsReviewDueHours",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsReviewDueHours",
+      "HelpKey": "SettingHelp.RecordsReviewDueHours",
+      "Binding": "DepartmentSettingTypes.RecordsReviewDueHours",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsReviewDueHours"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsReviewDueHours",
+      "DefaultValue": "owning records default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.RecordsNumberingConfig",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsNumberingConfig",
+      "HelpKey": "SettingHelp.RecordsNumberingConfig",
+      "Binding": "DepartmentSettingTypes.RecordsNumberingConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsNumberingConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsNumberingConfig",
+      "DefaultValue": "RecordsNumberingConfig constructor",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.RecordsSearchConfig",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsSearchConfig",
+      "HelpKey": "SettingHelp.RecordsSearchConfig",
+      "Binding": "DepartmentSettingTypes.RecordsSearchConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsSearchConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsSearchConfig",
+      "DefaultValue": "RecordsSearchConfig constructor",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.RecordsRetentionPolicy",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsRetentionPolicy",
+      "HelpKey": "SettingHelp.RecordsRetentionPolicy",
+      "Binding": "DepartmentSettingTypes.RecordsRetentionPolicy",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsRetentionPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsRetentionPolicy",
+      "DefaultValue": "class defaults, no department override",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.RecordsGroupVisibilityMode",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsGroupVisibilityMode",
+      "HelpKey": "SettingHelp.RecordsGroupVisibilityMode",
+      "Binding": "DepartmentSettingTypes.RecordsGroupVisibilityMode",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsGroupVisibilityMode"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsGroupVisibilityMode",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.RecordsGroupScopeConfig",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsGroupScopeConfig",
+      "HelpKey": "SettingHelp.RecordsGroupScopeConfig",
+      "Binding": "DepartmentSettingTypes.RecordsGroupScopeConfig",
+      "ValueType": "reserved",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsGroupScopeConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsGroupScopeConfig",
+      "DefaultValue": "unused",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "retired"
+    },
+    {
+      "Id": "setting.RecordsDisclosureConfig",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsDisclosureConfig",
+      "HelpKey": "SettingHelp.RecordsDisclosureConfig",
+      "Binding": "DepartmentSettingTypes.RecordsDisclosureConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsDisclosureConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsDisclosureConfig",
+      "DefaultValue": "RecordsDisclosureConfig constructor",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.LogsDisabled",
+      "AreaId": "records",
+      "LabelKey": "Module.LogsDisabled",
+      "HelpKey": "ModuleHelp.LogsDisabled",
+      "Binding": "DepartmentModuleSettings.LogsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "LogsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.LogsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.LogsNameOverride",
+      "AreaId": "records",
+      "LabelKey": "Module.LogsNameOverride",
+      "HelpKey": "ModuleHelp.LogsNameOverride",
+      "Binding": "DepartmentModuleSettings.LogsNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.LogsNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "module.ReportsDisabled",
+      "AreaId": "records",
+      "LabelKey": "Module.ReportsDisabled",
+      "HelpKey": "ModuleHelp.ReportsDisabled",
+      "Binding": "DepartmentModuleSettings.ReportsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "ReportsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.ReportsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.ReportsNameOverride",
+      "AreaId": "records",
+      "LabelKey": "Module.ReportsNameOverride",
+      "HelpKey": "ModuleHelp.ReportsNameOverride",
+      "Binding": "DepartmentModuleSettings.ReportsNameOverride",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.ReportsNameOverride",
+      "DefaultValue": "unset",
+      "AllowedValues": "owning serializer and consuming UI",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.NumberAssignment",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.NumberAssignment",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.NumberAssignment",
+      "Binding": "RecordsNumberingConfig.NumberAssignment",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.NumberAssignment",
+      "DefaultValue": "OnFinalize",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.ResetYearly",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.ResetYearly",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.ResetYearly",
+      "Binding": "RecordsNumberingConfig.ResetYearly",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.ResetYearly",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.SequenceWidth",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.SequenceWidth",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.SequenceWidth",
+      "Binding": "RecordsNumberingConfig.SequenceWidth",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "SequenceWidth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.SequenceWidth",
+      "DefaultValue": "4",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.IncludeYear",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.IncludeYear",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.IncludeYear",
+      "Binding": "RecordsNumberingConfig.IncludeYear",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "IncludeYear"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.IncludeYear",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.PerGroupSequence",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.PerGroupSequence",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.PerGroupSequence",
+      "Binding": "RecordsNumberingConfig.PerGroupSequence",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "PerGroupSequence"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.PerGroupSequence",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsSearchConfig.IndexNarrative",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsSearchConfig.IndexNarrative",
+      "HelpKey": "FieldHelp.RecordsSearchConfig.IndexNarrative",
+      "Binding": "RecordsSearchConfig.IndexNarrative",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsSearchConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsSearchConfig.IndexNarrative",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsSearchConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsSearchConfig.IncludeLegacyHistory",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsSearchConfig.IncludeLegacyHistory",
+      "HelpKey": "FieldHelp.RecordsSearchConfig.IncludeLegacyHistory",
+      "Binding": "RecordsSearchConfig.IncludeLegacyHistory",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsSearchConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsSearchConfig.IncludeLegacyHistory",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsSearchConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.DepartmentDefaultYears",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicy.DepartmentDefaultYears",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicy.DepartmentDefaultYears",
+      "Binding": "RecordsRetentionPolicy.DepartmentDefaultYears",
+      "ValueType": "nullable-integer",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "DepartmentDefaultYears"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicy.DepartmentDefaultYears",
+      "DefaultValue": "system class default",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicy",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.Overrides",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicy.Overrides",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicy.Overrides",
+      "Binding": "RecordsRetentionPolicy.Overrides",
+      "ValueType": "list",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicy.Overrides",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicy",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.LastChangedByUserId",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicy.LastChangedByUserId",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicy.LastChangedByUserId",
+      "Binding": "RecordsRetentionPolicy.LastChangedByUserId",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicy.LastChangedByUserId",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicy",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.LastChangedOn",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicy.LastChangedOn",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicy.LastChangedOn",
+      "Binding": "RecordsRetentionPolicy.LastChangedOn",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicy.LastChangedOn",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicy",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.History",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicy.History",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicy.History",
+      "Binding": "RecordsRetentionPolicy.History",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicy.History",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicy",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "field.RecordsRetentionOverride.DefinitionKey",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionOverride.DefinitionKey",
+      "HelpKey": "FieldHelp.RecordsRetentionOverride.DefinitionKey",
+      "Binding": "RecordsRetentionOverride.DefinitionKey",
+      "ValueType": "reference",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionOverride.DefinitionKey",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsRetentionOverride.RetentionYears",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionOverride.RetentionYears",
+      "HelpKey": "FieldHelp.RecordsRetentionOverride.RetentionYears",
+      "Binding": "RecordsRetentionOverride.RetentionYears",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionOverride.RetentionYears",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsRetentionOverride.AppliesFrom",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionOverride.AppliesFrom",
+      "HelpKey": "FieldHelp.RecordsRetentionOverride.AppliesFrom",
+      "Binding": "RecordsRetentionOverride.AppliesFrom",
+      "ValueType": "date",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionOverride.AppliesFrom",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicyVersion.EffectiveOn",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicyVersion.EffectiveOn",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicyVersion.EffectiveOn",
+      "Binding": "RecordsRetentionPolicyVersion.EffectiveOn",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicyVersion.EffectiveOn",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicyVersion",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicyVersion.Policy",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsRetentionPolicyVersion.Policy",
+      "HelpKey": "FieldHelp.RecordsRetentionPolicyVersion.Policy",
+      "Binding": "RecordsRetentionPolicyVersion.Policy",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsRetentionPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsRetentionPolicyVersion.Policy",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsRetentionPolicyVersion",
+      "Availability": "read-only"
+    },
+    {
+      "Id": "field.RecordsDisclosureConfig.StatutoryClockDays",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsDisclosureConfig.StatutoryClockDays",
+      "HelpKey": "FieldHelp.RecordsDisclosureConfig.StatutoryClockDays",
+      "Binding": "RecordsDisclosureConfig.StatutoryClockDays",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "DisclosureStatutoryClockDays"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsDisclosureConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsDisclosureConfig.StatutoryClockDays",
+      "DefaultValue": "10",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsDisclosureConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsDisclosureConfig.DefaultRedactionProfile",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsDisclosureConfig.DefaultRedactionProfile",
+      "HelpKey": "FieldHelp.RecordsDisclosureConfig.DefaultRedactionProfile",
+      "Binding": "RecordsDisclosureConfig.DefaultRedactionProfile",
+      "ValueType": "reference",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "DisclosureDefaultRedactionProfile"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsDisclosureConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsDisclosureConfig.DefaultRedactionProfile",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsDisclosureConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsDisclosureConfig.ReleaseApproverUserId",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsDisclosureConfig.ReleaseApproverUserId",
+      "HelpKey": "FieldHelp.RecordsDisclosureConfig.ReleaseApproverUserId",
+      "Binding": "RecordsDisclosureConfig.ReleaseApproverUserId",
+      "ValueType": "reference",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "DisclosureReleaseApproverUserId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsDisclosureConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsDisclosureConfig.ReleaseApproverUserId",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsDisclosureConfig",
+      "Availability": "available"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "logs",
+      "AreaId": "records",
+      "LabelKey": "Feature.logs",
+      "PurposeKey": "FeaturePurpose.logs",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.logs",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Logs",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Logs"
+        }
+      ],
+      "SettingIds": [
+        "module.LogsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "new-log",
+      "AreaId": "records",
+      "LabelKey": "Feature.new-log",
+      "PurposeKey": "FeaturePurpose.new-log",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.new-log",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Logs",
+        "Action": "NewLog"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Logs"
+        }
+      ],
+      "SettingIds": [
+        "module.LogsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "records",
+      "AreaId": "records",
+      "LabelKey": "Feature.records",
+      "PurposeKey": "FeaturePurpose.records",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.records",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Records",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "module",
+          "Id": "Logs"
+        }
+      ],
+      "SettingIds": [
+        "module.LogsDisabled"
+      ],
+      "RuleIds": [
+        "record-review"
+      ]
+    },
+    {
+      "Id": "records-dashboard",
+      "AreaId": "records",
+      "LabelKey": "Feature.records-dashboard",
+      "PurposeKey": "FeaturePurpose.records-dashboard",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.records-dashboard",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Records",
+        "Action": "Dashboard"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "module",
+          "Id": "Logs"
+        }
+      ],
+      "SettingIds": [
+        "module.LogsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "records-settings",
+      "AreaId": "records",
+      "LabelKey": "Feature.records-settings",
+      "PurposeKey": "FeaturePurpose.records-settings",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.records-settings",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "module",
+          "Id": "Logs"
+        }
+      ],
+      "SettingIds": [
+        "field.RecordsDisclosureConfig.DefaultRedactionProfile",
+        "field.RecordsDisclosureConfig.ReleaseApproverUserId",
+        "field.RecordsDisclosureConfig.StatutoryClockDays",
+        "field.RecordsNumberingConfig.IncludeYear",
+        "field.RecordsNumberingConfig.NumberAssignment",
+        "field.RecordsNumberingConfig.PerGroupSequence",
+        "field.RecordsNumberingConfig.ResetYearly",
+        "field.RecordsNumberingConfig.SequenceWidth",
+        "field.RecordsRetentionOverride.AppliesFrom",
+        "field.RecordsRetentionOverride.DefinitionKey",
+        "field.RecordsRetentionOverride.RetentionYears",
+        "field.RecordsRetentionPolicy.DepartmentDefaultYears",
+        "field.RecordsRetentionPolicy.History",
+        "field.RecordsRetentionPolicy.LastChangedByUserId",
+        "field.RecordsRetentionPolicy.LastChangedOn",
+        "field.RecordsRetentionPolicy.Overrides",
+        "field.RecordsRetentionPolicyVersion.EffectiveOn",
+        "field.RecordsRetentionPolicyVersion.Policy",
+        "field.RecordsSearchConfig.IncludeLegacyHistory",
+        "field.RecordsSearchConfig.IndexNarrative",
+        "module.LogsDisabled",
+        "setting.RecordsDefaultLifecyclePreset",
+        "setting.RecordsDisclosureConfig",
+        "setting.RecordsGroupScopeConfig",
+        "setting.RecordsGroupVisibilityMode",
+        "setting.RecordsNumberingConfig",
+        "setting.RecordsRetentionPolicy",
+        "setting.RecordsReviewDueHours",
+        "setting.RecordsSearchConfig"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "reports",
+      "AreaId": "records",
+      "LabelKey": "Feature.reports",
+      "PurposeKey": "FeaturePurpose.reports",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.reports",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Reports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Reports"
+        }
+      ],
+      "SettingIds": [
+        "module.ReportsDisabled"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-definitions",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-definitions",
+      "PurposeKey": "FeaturePurpose.record-definitions",
+      "ValueKey": "FeatureValue.record-definitions",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-definitions",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordDefinitions",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "permission",
+          "Id": "ManageRecordDefinitions"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageRecordDefinitions"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "incident-reports",
+      "AreaId": "records",
+      "LabelKey": "Feature.incident-reports",
+      "PurposeKey": "FeaturePurpose.incident-reports",
+      "ValueKey": "FeatureValue.incident-reports",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.incident-reports",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentReports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-occupancies",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-occupancies",
+      "PurposeKey": "FeaturePurpose.record-occupancies",
+      "ValueKey": "FeatureValue.record-occupancies",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-occupancies",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordOccupancies",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Records.Prevention.Occupancy"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-inspections",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-inspections",
+      "PurposeKey": "FeaturePurpose.record-inspections",
+      "ValueKey": "FeatureValue.record-inspections",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-inspections",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordInspections",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Records.Prevention.Inspections"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-hydrants",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-hydrants",
+      "PurposeKey": "FeaturePurpose.record-hydrants",
+      "ValueKey": "FeatureValue.record-hydrants",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-hydrants",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordHydrants",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Records.Prevention.Hydrants"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-permits",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-permits",
+      "PurposeKey": "FeaturePurpose.record-permits",
+      "ValueKey": "FeatureValue.record-permits",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-permits",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordPermits",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Records.Prevention.Permits"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-investigations",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-investigations",
+      "PurposeKey": "FeaturePurpose.record-investigations",
+      "ValueKey": "FeatureValue.record-investigations",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-investigations",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordInvestigations",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Records.Investigations"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-evidence",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-evidence",
+      "PurposeKey": "FeaturePurpose.record-evidence",
+      "ValueKey": "FeatureValue.record-evidence",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-evidence",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Records",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [
+        "record-review"
+      ]
+    },
+    {
+      "Id": "record-holds",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-holds",
+      "PurposeKey": "FeaturePurpose.record-holds",
+      "ValueKey": "FeatureValue.record-holds",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-holds",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordLegalHolds",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "permission",
+          "Id": "ManageRecordLegalHold"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageRecordLegalHold"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-submissions",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-submissions",
+      "PurposeKey": "FeaturePurpose.record-submissions",
+      "ValueKey": "FeatureValue.record-submissions",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-submissions",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentReports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "permission",
+          "Id": "SubmitRecords"
+        }
+      ],
+      "SettingIds": [
+        "permission.SubmitRecords"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-analytics",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-analytics",
+      "PurposeKey": "FeaturePurpose.record-analytics",
+      "ValueKey": "FeatureValue.record-analytics",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-analytics",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordsAnalytics",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Records.Analytics"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-saved-reports",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-saved-reports",
+      "PurposeKey": "FeaturePurpose.record-saved-reports",
+      "ValueKey": "FeatureValue.record-saved-reports",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-saved-reports",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordSavedReports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "permission",
+          "Id": "ManageRecordReports"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageRecordReports"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-exports",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-exports",
+      "PurposeKey": "FeaturePurpose.record-exports",
+      "ValueKey": "FeatureValue.record-exports",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-exports",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordsExportTemplates",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "permission",
+          "Id": "ManageRecordReports"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageRecordReports"
+      ],
+      "RuleIds": []
+    },
+    {
+      "Id": "record-disclosures",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-disclosures",
+      "PurposeKey": "FeaturePurpose.record-disclosures",
+      "ValueKey": "FeatureValue.record-disclosures",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureAdoption.record-disclosures",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Disclosures",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": []
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "record-review",
+      "AreaId": "records",
+      "Severity": "Warning",
+      "TitleKey": "Rule.record-review",
+      "ExplanationKey": "RuleWhy.record-review",
+      "NextActionKey": "RuleNext.record-review",
+      "Location": {
+        "Controller": "Records",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "overdueRecordReviewCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "setting.RecordsDefaultLifecyclePreset",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsDefaultLifecyclePreset",
+      "Body": "Records Default Lifecycle Preset. Default lifecycle for new department-owned definitions. Locked definitions retain their own lifecycle.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsdefaultlifecyclepreset",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsReviewDueHours",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsReviewDueHours",
+      "Body": "Records Review Due Hours. Default administrative review deadline; a definition-level override takes precedence. This is not a statutory deadline inference.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsreviewduehours",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsNumberingConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsNumberingConfig",
+      "Body": "Records Numbering Config. Number assignment, year reset and sequence formatting for definitions that do not override the department configuration.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsnumberingconfig",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsSearchConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsSearchConfig",
+      "Body": "Records Search Config. Allowed record search scope and protected-data behavior. Search access remains bounded by current source permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordssearchconfig",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsRetentionPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsRetentionPolicy",
+      "Body": "Records Retention Policy. Default and definition-specific retention, including prior-policy history. Holds and restricted-class rules can prevent purge eligibility.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsretentionpolicy",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsGroupVisibilityMode",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsGroupVisibilityMode",
+      "Body": "Records Group Visibility Mode. Whether record visibility is department-wide or group scoped. Group scope narrows existing permission and never grants access.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsgroupvisibilitymode",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsGroupScopeConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsGroupScopeConfig",
+      "Body": "Records Group Scope Config. Reserved identifier with no editable behavior in this release. Do not present it as a shipped setting.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsgroupscopeconfig",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsDisclosureConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsDisclosureConfig",
+      "Body": "Records Disclosure Config. Disclosure review clock, redaction profile and release approver. Review local obligations through the authorized disclosure workflow.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsdisclosureconfig",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.LogsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.LogsDisabled",
+      "Body": "Logs availability. Controls availability of legacy logs. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-logsdisabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.LogsNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.LogsNameOverride",
+      "Body": "Logs menu name. Optional display name for legacy logs in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-logsnameoverride",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.ReportsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.ReportsDisabled",
+      "Body": "Reports availability. Controls availability of reports. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-reportsdisabled",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.ReportsNameOverride",
+      "Locale": "en",
+      "TitleKey": "Module.ReportsNameOverride",
+      "Body": "Reports menu name. Optional display name for reports in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-reportsnameoverride",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.NumberAssignment",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.NumberAssignment",
+      "Body": "Records Numbering Config / Number Assignment. Choose when numbers are assigned for definitions using department defaults. Review existing references before changing numbering behavior.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-numberassignment",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.ResetYearly",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.ResetYearly",
+      "Body": "Records Numbering Config / Reset Yearly. Restart record sequences each calendar year in the department time zone.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-resetyearly",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.SequenceWidth",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.SequenceWidth",
+      "Body": "Records Numbering Config / Sequence Width. Zero-padded sequence width for definitions using department defaults. The Records editor validates the supported width.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-sequencewidth",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.IncludeYear",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.IncludeYear",
+      "Body": "Records Numbering Config / Include Year. Include the year between the record prefix and sequence number.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-includeyear",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.PerGroupSequence",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.PerGroupSequence",
+      "Body": "Records Numbering Config / Per Group Sequence. Use separate station/group sequences. This changes numbering, not record visibility.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-pergroupsequence",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsSearchConfig.IndexNarrative",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsSearchConfig.IndexNarrative",
+      "Body": "Records Search Config / Index Narrative. Include unprotected narrative in search. Advanced Data Protection enrollment withdraws narrative indexing; this preference cannot override protection.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordssearchconfig-indexnarrative",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsSearchConfig.IncludeLegacyHistory",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsSearchConfig.IncludeLegacyHistory",
+      "Body": "Records Search Config / Include Legacy History. Include supported legacy personnel and unit logs in the Records search scope. Source permissions still apply.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordssearchconfig-includelegacyhistory",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.DepartmentDefaultYears",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicy.DepartmentDefaultYears",
+      "Body": "Records Retention Policy / Department Default Years. Department retention for standard record classes. Zero means permanent; protected classes, prior policy and holds can retain records longer.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicy-departmentdefaultyears",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.Overrides",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicy.Overrides",
+      "Body": "Records Retention Policy / Overrides. Definition-specific prospective retention overrides. Use the Records workflow and its confirmations; Admin Assist never purges records.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicy-overrides",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.LastChangedByUserId",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicy.LastChangedByUserId",
+      "Body": "Records Retention Policy / Last Changed By User Id. Recorded policy-change actor. It is not an editable retention rule and is not exposed as raw identity in this reference.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicy-lastchangedbyuserid",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.LastChangedOn",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicy.LastChangedOn",
+      "Body": "Records Retention Policy / Last Changed On. Policy effective timestamp used with prior policy versions. It is not the record's retention expiry date.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicy-lastchangedon",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicy.History",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicy.History",
+      "Body": "Records Retention Policy / History. Prior policy versions retained by the owning lifecycle so current changes do not silently rewrite historical retention.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicy-history",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionOverride.DefinitionKey",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionOverride.DefinitionKey",
+      "Body": "Records Retention Override / Definition Key. Stable record-definition key to which this override applies. Display names do not identify a retention policy.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionoverride-definitionkey",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionOverride.RetentionYears",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionOverride.RetentionYears",
+      "Body": "Records Retention Override / Retention Years. Years retained under this definition override; zero means permanent. Holds and prospective policy resolution still apply.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionoverride-retentionyears",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionOverride.AppliesFrom",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionOverride.AppliesFrom",
+      "Body": "Records Retention Override / Applies From. Prospective boundary for revisions eligible for the override, evaluated by the Records lifecycle.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionoverride-appliesfrom",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicyVersion.EffectiveOn",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicyVersion.EffectiveOn",
+      "Body": "Records Retention Policy Version / Effective On. Effective timestamp of a stored historical retention policy version.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicyversion-effectiveon",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsRetentionPolicyVersion.Policy",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsRetentionPolicyVersion.Policy",
+      "Body": "Records Retention Policy Version / Policy. Historical policy snapshot used to resolve retention for older revisions. Never edit this as an ordinary preference.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsretentionpolicyversion-policy",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsDisclosureConfig.StatutoryClockDays",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsDisclosureConfig.StatutoryClockDays",
+      "Body": "Records Disclosure Config / Statutory Clock Days. Configured disclosure review clock. Verify local obligations with the responsible owner; the default does not establish a legal deadline.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsdisclosureconfig-statutoryclockdays",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsDisclosureConfig.DefaultRedactionProfile",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsDisclosureConfig.DefaultRedactionProfile",
+      "Body": "Records Disclosure Config / Default Redaction Profile. Default redaction profile in the owning disclosure workflow. Review the actual proposed release before approval.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsdisclosureconfig-defaultredactionprofile",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsDisclosureConfig.ReleaseApproverUserId",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsDisclosureConfig.ReleaseApproverUserId",
+      "Body": "Records Disclosure Config / Release Approver User Id. Authorized member responsible for disclosure release approval. Selecting an approver does not grant missing permissions or protected-data access.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsdisclosureconfig-releaseapproveruserid",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "logs",
+      "Locale": "en",
+      "TitleKey": "Feature.logs",
+      "Body": "Logs Run, training, work and meeting logs Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "logs",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-log",
+      "Locale": "en",
+      "TitleKey": "Feature.new-log",
+      "Body": "New Log Create a run report, training log or work log Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-log",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "records",
+      "Locale": "en",
+      "TitleKey": "Feature.records",
+      "Body": "Records Records queue: run reports, training and operational records Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "records",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "records-dashboard",
+      "Locale": "en",
+      "TitleKey": "Feature.records-dashboard",
+      "Body": "Records Dashboard Records due, submissions and quality at a glance Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "records-dashboard",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "records-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.records-settings",
+      "Body": "Records Settings Lifecycle, numbering, search, retention and visibility settings for Records Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "records-settings",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "reports",
+      "Locale": "en",
+      "TitleKey": "Feature.reports",
+      "Body": "Reports Generate reports from department data Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "reports",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-definitions",
+      "Locale": "en",
+      "TitleKey": "Feature.record-definitions",
+      "Body": "Record definitions and templates Configure record forms, lifecycle, numbering and review requirements. Fit reporting to approved local procedures while preserving built-in definitions. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-definitions",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "incident-reports",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-reports",
+      "Body": "Incident reports Prepare incident reports linked to authorized call evidence. Review source completeness before finalization or external submission. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-reports",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-occupancies",
+      "Locale": "en",
+      "TitleKey": "Feature.record-occupancies",
+      "Body": "Occupancies and preplans Maintain premises, contacts, hazards and review metadata. Keep site knowledge owned and current; recorded hazards do not certify safety. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-occupancies",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-inspections",
+      "Locale": "en",
+      "TitleKey": "Feature.record-inspections",
+      "Body": "Inspections Schedule and record authorized inspection work and corrections. Track administrative follow-up against configured inspection procedures. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-inspections",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-hydrants",
+      "Locale": "en",
+      "TitleKey": "Feature.record-hydrants",
+      "Body": "Hydrants and water sources Maintain hydrant and water-source records and their review history. Identify records needing verification without claiming current flow or availability. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-hydrants",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-permits",
+      "Locale": "en",
+      "TitleKey": "Feature.record-permits",
+      "Body": "Permits Manage supported permit records and lifecycle. Assign review responsibility; a software state is not a hazardous-work safety clearance. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-permits",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-investigations",
+      "Locale": "en",
+      "TitleKey": "Feature.record-investigations",
+      "Body": "Investigations Manage authorized investigation records and their controlled workflow. Keep case responsibility and access separate from general department visibility. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-investigations",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-evidence",
+      "Locale": "en",
+      "TitleKey": "Feature.record-evidence",
+      "Body": "Evidence capture and provenance Capture supported source evidence from the owning record workflow. Preserve evidence context and access restrictions without copying it into setup guidance. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-evidence",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-holds",
+      "Locale": "en",
+      "TitleKey": "Feature.record-holds",
+      "Body": "Legal holds Place and release holds through the authorized Records lifecycle. Retain affected evidence while a hold remains active. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-holds",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-submissions",
+      "Locale": "en",
+      "TitleKey": "Feature.record-submissions",
+      "Body": "Reporting submissions Prepare and reconcile supported reporting submissions from an authorized incident report. Review destination requirements and actual submission outcomes. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-submissions",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-analytics",
+      "Locale": "en",
+      "TitleKey": "Feature.record-analytics",
+      "Body": "Records analytics Review supported aggregate response, workload and readiness reports. Use measured source data with its scope and completeness limits. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-analytics",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-saved-reports",
+      "Locale": "en",
+      "TitleKey": "Feature.record-saved-reports",
+      "Body": "Saved record reports Create reusable report selections over authorized record data. Make repeatable administrative reviews easier. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-saved-reports",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-exports",
+      "Locale": "en",
+      "TitleKey": "Feature.record-exports",
+      "Body": "Record exports and templates Configure supported export templates and review their runs. Keep release destinations, protected access and output handling explicit. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-exports",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-disclosures",
+      "Locale": "en",
+      "TitleKey": "Feature.record-disclosures",
+      "Body": "Disclosure requests Manage disclosure scope, redaction and release approval. Assign review ownership and verify the material approved for release. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-disclosures",
+      "PackVersion": "2026.09.24.1",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

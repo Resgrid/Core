@@ -275,7 +275,7 @@ namespace Resgrid.Services
 					_ => (int)ProtectedDataEgressMode.GenericOnly
 				};
 
-				// ProtectedAfterPin degrades to GenericOnly until the PIN-release flow ships.
+				// ProtectedAfterPin stays generic here; only the recipient-bound AdpReleaseService can release it.
 				return mode == (int)ProtectedDataEgressMode.AllowProtectedContent;
 			}
 			catch (Exception ex)

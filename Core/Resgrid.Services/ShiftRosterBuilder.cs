@@ -15,8 +15,9 @@ namespace Resgrid.Services
 	/// 2. A completed trade moves a signup's slot: the source slot goes to the accepted user (or the owner of the
 	///    swap-back signup), and a swap-back slot goes to the requester. The original owner is off for that day.
 	/// 3. The standing roster (ShiftPersons) is on every day, except a person who has a denied signup for the day
-	///    (a supervisor took them off that day) or whose slot was traded away. Someone who also has an active signup
-	///    for the day is represented by that signup instead.
+	///    (a supervisor took them off that day) or whose slot was traded away. Someone who also has an on-duty signup
+	///    for the day in the same group is represented by that signup instead; a signup for another group, or one still
+	///    waiting for approval, leaves their standing slot alone.
 	/// </summary>
 	public static class ShiftRosterBuilder
 	{
@@ -40,8 +41,8 @@ namespace Resgrid.Services
 
 			// People on the standing roster who are off for this day.
 			var standingExclusions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			// People already represented by one of their own signups for the day.
-			var usersWithActiveSignup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			// Group slots already filled, on duty, by the person's own signup for the day.
+			var onDutySignupSlots = new HashSet<(string UserId, int? GroupId)>();
 
 			foreach (var signup in daySignups.Where(x => x.Denied))
 				standingExclusions.Add(signup.UserId);
@@ -51,7 +52,8 @@ namespace Resgrid.Services
 
 			foreach (var signup in daySignups.Where(x => !x.Denied).OrderBy(x => x.ShiftSignupId))
 			{
-				usersWithActiveSignup.Add(signup.UserId);
+				if (!signup.ApprovalPending)
+					onDutySignupSlots.Add(SlotKey(signup.UserId, signup.DepartmentGroupId));
 
 				if (replacements.TryGetValue(signup.ShiftSignupId, out var replacement))
 				{
@@ -85,7 +87,7 @@ namespace Resgrid.Services
 			{
 				foreach (var person in shift.Personnel.Where(x => x != null && !String.IsNullOrWhiteSpace(x.UserId)))
 				{
-					if (standingExclusions.Contains(person.UserId) || usersWithActiveSignup.Contains(person.UserId))
+					if (standingExclusions.Contains(person.UserId) || onDutySignupSlots.Contains(SlotKey(person.UserId, person.GroupId)))
 						continue;
 
 					AddEntry(entries, new ShiftDayRosterEntry
@@ -173,6 +175,11 @@ namespace Resgrid.Services
 			}
 
 			return needs;
+		}
+
+		private static (string UserId, int? GroupId) SlotKey(string userId, int? groupId)
+		{
+			return (userId?.ToUpperInvariant(), groupId);
 		}
 
 		private static ShiftRosterSources GetSignupSource(ShiftSignup signup, HashSet<string> standingRoster)

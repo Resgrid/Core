@@ -77,7 +77,7 @@ namespace Resgrid.Web.Mcp.Tools
 
 						return new { success = true, data = result };
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not McpToolErrorException)
 					{
 						_logger.LogError(ex, "Error retrieving calendar items");
 						return CreateErrorResponse("Failed to retrieve calendar items. Please try again later.");

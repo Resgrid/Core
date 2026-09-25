@@ -34,6 +34,7 @@ reviews:
   enable_prompt_for_ai_agents: true
   path_filters:
     - "!**/*.resx"
+    - "!**/*.json"
     - "!**/*.yaml"
     - "!**/*.Designer.cs"
     - "!**/bin/**"

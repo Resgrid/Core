@@ -1,15 +1,57 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "security",
       "LabelKey": "Area.security",
       "PurposeKey": "AreaPurpose.security",
-      "Order": 11,
-      "Archetypes": []
+      "Order": 1,
+      "Archetypes": [],
+      "Tier": "Core",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.security",
+      "ExampleKey": "AreaExample.security",
+      "AdoptionKey": "ModuleAdoption.security",
+      "MinimumMinutes": 20,
+      "MaximumMinutes": 60,
+      "DocsPath": "/web-app/security-permissions/"
     }
   ],
   "Settings": [
+    {
+      "Id": "table.Department.AddressId",
+      "AreaId": "security",
+      "LabelKey": "TableField.Department.AddressId",
+      "HelpKey": "TableHelp.Department.AddressId",
+      "Binding": "Department.AddressId",
+      "ValueType": "reference",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Profile",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "table.Department.AddressId",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
+      "EvidenceSource": "Department",
+      "Availability": "reference-only"
+    },
     {
       "Id": "setting.TestEnabled",
       "AreaId": "security",
@@ -4809,47 +4851,13 @@
   ],
   "Capabilities": [
     {
-      "Id": "two-factor",
-      "AreaId": "security",
-      "LabelKey": "Feature.two-factor",
-      "PurposeKey": "FeaturePurpose.two-factor",
-      "ValueKey": "AreaValue.security",
-      "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.two-factor",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "TwoFactor",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "invites",
-      "AreaId": "security",
-      "LabelKey": "Feature.invites",
-      "PurposeKey": "FeaturePurpose.invites",
-      "ValueKey": "AreaValue.security",
-      "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.invites",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Department",
-        "Action": "Invites"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
       "Id": "department-settings",
       "AreaId": "security",
       "LabelKey": "Feature.department-settings",
       "PurposeKey": "FeaturePurpose.department-settings",
       "ValueKey": "AreaValue.security",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.department-settings",
+      "AdoptionKey": "FeatureSetup.department-settings",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -4888,118 +4896,11 @@
         "table.Department.TimeZone",
         "table.Department.Use24HourTime"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "call-settings",
-      "AreaId": "security",
-      "LabelKey": "Feature.call-settings",
-      "PurposeKey": "FeaturePurpose.call-settings",
-      "ValueKey": "AreaValue.security",
-      "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.call-settings",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Department",
-        "Action": "CallSettings"
-      },
-      "Requirements": [],
-      "SettingIds": [
-        "setting.InternalDispatchEmail",
-        "setting.RssFeedKeyForActiveCalls",
-        "table.DepartmentCallEmail.ErrorMessage",
-        "table.DepartmentCallEmail.FormatType",
-        "table.DepartmentCallEmail.Hostname",
-        "table.DepartmentCallEmail.IsFailure",
-        "table.DepartmentCallEmail.LastCheck",
-        "table.DepartmentCallEmail.Password",
-        "table.DepartmentCallEmail.Port",
-        "table.DepartmentCallEmail.UseSsl",
-        "table.DepartmentCallEmail.Username"
-      ],
       "RuleIds": [
-        "email-import-failures",
-        "import-heartbeat"
-      ]
-    },
-    {
-      "Id": "dispatch-settings",
-      "AreaId": "security",
-      "LabelKey": "Feature.dispatch-settings",
-      "PurposeKey": "FeaturePurpose.dispatch-settings",
-      "ValueKey": "AreaValue.security",
-      "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.dispatch-settings",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Department",
-        "Action": "DispatchSettings"
-      },
-      "Requirements": [],
-      "SettingIds": [
-        "field.DispatchRecommendationConfig.EtaShortlistSize",
-        "field.DispatchRecommendationConfig.IncludeStaleLocations",
-        "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
-        "field.DispatchRecommendationConfig.MaxRadiusMeters",
-        "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
-        "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
-        "field.DispatchRecommendationConfig.RestPeriodMinutes",
-        "field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
-        "field.DispatchRecommendationConfig.UseRoutedEta",
-        "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
-        "field.GroupDispatchScopeConfig.Enabled",
-        "field.NewCallFieldPolicy.Rules",
-        "field.NewCallFieldRule.Key",
-        "field.NewCallFieldRule.Required",
-        "field.NewCallFieldRule.Visible",
-        "field.UnitTypeCallStatusOverride.DispatchStatus",
-        "field.UnitTypeCallStatusOverride.ReleaseStatus",
-        "field.UnitTypeCallStatusOverride.UnitTypeId",
-        "field.UnitTypeCallStatusOverrideSetting.Overrides",
-        "setting.AutoSetStatusForShiftDispatchPersonnel",
-        "setting.CheckInTimersAutoEnableForNewCalls",
-        "setting.DispatchRecommendationAutoDispatch",
-        "setting.DispatchRecommendationConfig",
-        "setting.DispatchRecommendationMode",
-        "setting.DispatchShiftInsteadOfGroup",
-        "setting.GroupDispatchScopeConfig",
-        "setting.NewCallFieldPolicy",
-        "setting.PersonnelOnUnitSetUnitStatus",
-        "setting.ShiftCallDispatchPersonnelStatusToSet",
-        "setting.ShiftCallReleasePersonnelStatusToSet",
-        "setting.UnitCallDispatchStatusToSet",
-        "setting.UnitCallReleaseStatusToSet",
-        "setting.UnitCallStatusOverridesByUnitType",
-        "setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
-        "setting.UnitDispatchAlsoDispatchToGroup"
+        "password-recovery"
       ],
-      "RuleIds": [
-        "checkin-timers",
-        "shift-auto-without-dispatch",
-        "shift-coverage"
-      ]
-    },
-    {
-      "Id": "data-protection",
-      "AreaId": "security",
-      "LabelKey": "Feature.data-protection",
-      "PurposeKey": "FeaturePurpose.data-protection",
-      "ValueKey": "AreaValue.security",
-      "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.data-protection",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "DataProtection",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "addon",
-          "Id": "ADP"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": []
+      "Prominence": "Key",
+      "DocsPath": "/web-app/department-settings/"
     },
     {
       "Id": "module-settings",
@@ -5008,7 +4909,7 @@
       "PurposeKey": "FeaturePurpose.module-settings",
       "ValueKey": "FeatureValue.module-settings",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.module-settings",
+      "AdoptionKey": "FeatureSetup.module-settings",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -5043,7 +4944,9 @@
         "module.TrainingNameOverride",
         "setting.ModuleSettings"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/department-settings/#module-settings"
     },
     {
       "Id": "permissions",
@@ -5052,7 +4955,7 @@
       "PurposeKey": "FeaturePurpose.permissions",
       "ValueKey": "FeatureValue.permissions",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.permissions",
+      "AdoptionKey": "FeatureSetup.permissions",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Security",
@@ -5146,9 +5049,58 @@
       "RuleIds": [
         "admin-enrollment",
         "admin-mfa",
-        "admin-succession",
-        "password-recovery"
-      ]
+        "admin-succession"
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/security-permissions/"
+    },
+    {
+      "Id": "two-factor",
+      "AreaId": "security",
+      "LabelKey": "Feature.two-factor",
+      "PurposeKey": "FeaturePurpose.two-factor",
+      "ValueKey": "AreaValue.security",
+      "ExampleKey": "AreaExample.security",
+      "AdoptionKey": "FeatureSetup.two-factor",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "TwoFactor",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/security-permissions/#two-factor-enforcement"
+    },
+    {
+      "Id": "security-policy",
+      "AreaId": "security",
+      "LabelKey": "Feature.security-policy",
+      "PurposeKey": "FeaturePurpose.security-policy",
+      "ValueKey": "FeatureValue.security-policy",
+      "ExampleKey": "AreaExample.security",
+      "AdoptionKey": "FeatureSetup.security-policy",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Security",
+        "Action": "SecurityPolicy"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "table.DepartmentSecurityPolicy.AllowedIpRanges",
+        "table.DepartmentSecurityPolicy.DataClassificationLevel",
+        "table.DepartmentSecurityPolicy.MaxConcurrentSessions",
+        "table.DepartmentSecurityPolicy.MinPasswordLength",
+        "table.DepartmentSecurityPolicy.PasswordExpirationDays",
+        "table.DepartmentSecurityPolicy.RequireMfa",
+        "table.DepartmentSecurityPolicy.RequirePasswordComplexity",
+        "table.DepartmentSecurityPolicy.RequireSso",
+        "table.DepartmentSecurityPolicy.SessionTimeoutMinutes"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/enterprise/security-policies/"
     },
     {
       "Id": "sso",
@@ -5157,7 +5109,7 @@
       "PurposeKey": "FeaturePurpose.sso",
       "ValueKey": "FeatureValue.sso",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.sso",
+      "AdoptionKey": "ModuleAdoption.security",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Security",
@@ -5182,34 +5134,9 @@
         "table.DepartmentSsoConfig.ScimEnabled",
         "table.DepartmentSsoConfig.SsoProviderType"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "security-policy",
-      "AreaId": "security",
-      "LabelKey": "Feature.security-policy",
-      "PurposeKey": "FeaturePurpose.security-policy",
-      "ValueKey": "FeatureValue.security-policy",
-      "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.security-policy",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Security",
-        "Action": "SecurityPolicy"
-      },
-      "Requirements": [],
-      "SettingIds": [
-        "table.DepartmentSecurityPolicy.AllowedIpRanges",
-        "table.DepartmentSecurityPolicy.DataClassificationLevel",
-        "table.DepartmentSecurityPolicy.MaxConcurrentSessions",
-        "table.DepartmentSecurityPolicy.MinPasswordLength",
-        "table.DepartmentSecurityPolicy.PasswordExpirationDays",
-        "table.DepartmentSecurityPolicy.RequireMfa",
-        "table.DepartmentSecurityPolicy.RequirePasswordComplexity",
-        "table.DepartmentSecurityPolicy.RequireSso",
-        "table.DepartmentSecurityPolicy.SessionTimeoutMinutes"
-      ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/enterprise/sso-overview/"
     },
     {
       "Id": "audit-history",
@@ -5218,7 +5145,7 @@
       "PurposeKey": "FeaturePurpose.audit-history",
       "ValueKey": "FeatureValue.audit-history",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.audit-history",
+      "AdoptionKey": "ModuleAdoption.security",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Security",
@@ -5226,7 +5153,9 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/security-permissions/#audit-logs"
     },
     {
       "Id": "account-sessions",
@@ -5235,7 +5164,7 @@
       "PurposeKey": "FeaturePurpose.account-sessions",
       "ValueKey": "FeatureValue.account-sessions",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.account-sessions",
+      "AdoptionKey": "ModuleAdoption.security",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "AccountSecurity",
@@ -5243,7 +5172,9 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/account-security/"
     },
     {
       "Id": "setup-help",
@@ -5252,7 +5183,7 @@
       "PurposeKey": "FeaturePurpose.setup-help",
       "ValueKey": "FeatureValue.setup-help",
       "ExampleKey": "AreaExample.security",
-      "AdoptionKey": "FeatureAdoption.setup-help",
+      "AdoptionKey": "ModuleAdoption.security",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -5260,7 +5191,9 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/help-setup/"
     }
   ],
   "Rules": [
@@ -5332,8 +5265,8 @@
       "ExplanationKey": "RuleWhy.password-recovery",
       "NextActionKey": "RuleNext.password-recovery",
       "Location": {
-        "Controller": "Security",
-        "Action": "Index"
+        "Controller": "Department",
+        "Action": "Settings"
       },
       "AppliesWhen": [],
       "FailsWhen": [
@@ -5348,13 +5281,24 @@
   "Packs": [],
   "Articles": [
     {
+      "Id": "table.Department.AddressId",
+      "Locale": "en",
+      "TitleKey": "TableField.Department.AddressId",
+      "Body": "Department / Address ID. Department address reference. Review the owning address and mapping consumers; it is separate from station and site addresses.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "table-department-addressid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
       "Id": "setting.TestEnabled",
       "Locale": "en",
       "TitleKey": "Setting.TestEnabled",
       "Body": "Test Enabled. Department testing behavior. Do not treat enabling a test setting as proof of production readiness.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-testenabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5365,7 +5309,7 @@
       "Body": "Update Timestamp. Internal configuration timestamp. Read-only metadata, not an administrator-editable preference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-updatetimestamp",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5376,7 +5320,7 @@
       "Body": "Module Settings. Controls module navigation and supported feature gates. Hiding a module does not delete its records or prove independent dispatch settings are disabled.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-modulesettings",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5387,7 +5331,7 @@
       "Body": "Require2 FAFor Admins. Administrator MFA requirement mode. Verify actual factors and recovery for each administrator before enforcement changes.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-require2faforadmins",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5398,7 +5342,7 @@
       "Body": "Force Chatbot Security Pin. Require the member security PIN for sensitive supported chatbot and SMS actions, including members who have not opted in.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-forcechatbotsecuritypin",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5409,7 +5353,7 @@
       "Body": "Require Password Reset Via Email. Use single-use recovery links for administrator-initiated member password resets, instead of selecting a replacement password.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-requirepasswordresetviaemail",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5420,7 +5364,7 @@
       "Body": "Department Operating Profile. Declared organization, workforce, dispatch, seasonal, language and policy context. Recommendations never infer licenses or clinical scope from this profile.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-departmentoperatingprofile",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5431,7 +5375,7 @@
       "Body": "Operating sectors. Choose all sectors served by the department. A pack suggests administrative reviews; it does not establish qualification or clinical scope.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-archetypes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5442,7 +5386,7 @@
       "Body": "Workforce mix. Describe the workforce so setup guidance can reflect career, volunteer, contract or combined operations.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-workforcemix",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5453,7 +5397,7 @@
       "Body": "Declared member count. Optional planning estimate; actual membership and subscription counts come from their owning sources.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-declaredmembercount",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5464,7 +5408,7 @@
       "Body": "Authoritative system references. Short declared source-system labels. Saving this list does not verify a connection, an import or the freshness of external data.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-authoritativesystemreferences",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5475,7 +5419,7 @@
       "Body": "Dispatch model. Record whether dispatch is central, self-directed, external or a combination. Verify each routing path through its owning settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-dispatchmodel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5486,7 +5430,7 @@
       "Body": "Operating hours. Describe continuous, scheduled, on-call or seasonal operation. This is context and does not create shifts or guarantee coverage.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-operatinghours",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5497,7 +5441,7 @@
       "Body": "Sites and groups. Reference existing numeric group IDs in this department. This does not grant group access or change dispatch scope.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-sitegroupreferences",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5508,7 +5452,7 @@
       "Body": "Mutual aid participation. Declare whether mutual aid is part of operations. Agreements, access and response eligibility require separate review.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-mutualaid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5519,7 +5463,7 @@
       "Body": "Working languages. Languages used by the team. This preference does not prove interpreter availability or translate operational records.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-languagecodes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5530,7 +5474,7 @@
       "Body": "Accessibility preferences. Record screen-reader, caption, large-text or plain-language needs for setup planning. Verify client behavior with the people who use it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-accessibilityneeds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5541,7 +5485,7 @@
       "Body": "Staffing policy documents. Reference existing department document IDs for approved staffing policies. The save checks existence and expiry, not policy approval or adequacy.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-staffingpolicyreferences",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5552,7 +5496,7 @@
       "Body": "Qualification policy documents. Reference existing department document IDs for approved qualification policies. Do not infer a license, scope of practice or deployment qualification from a role label.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-qualificationpolicyreferences",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5563,7 +5507,7 @@
       "Body": "Continuity procedure documents. Reference existing department document IDs for approved continuity procedures. Test fallback communications and ownership through the approved procedure.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-continuityprocedurereferences",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5574,7 +5518,7 @@
       "Body": "Season start. Start of a declared seasonal period, in MM-DD format. Provide both start and end; this does not enable or disable resources on those dates.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-seasonstartmonthday",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5585,7 +5529,7 @@
       "Body": "Season end. End of a declared seasonal period, in MM-DD format. A period can cross a calendar year; verify actual rosters separately.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-seasonendmonthday",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5596,7 +5540,7 @@
       "Body": "Profile review time. Server-recorded time of the most recent validated profile save; it does not certify operational readiness.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-reviewedonutc",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5607,7 +5551,7 @@
       "Body": "Profile revision. Server revision used to reject concurrent overwrites. Reload when another administrator has saved a newer profile.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-revision",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5618,7 +5562,7 @@
       "Body": "Expected email polling interval (minutes). Optional maximum time between recorded mailbox polls, from 1 to 10080 minutes. Blank means no declared polling expectation. This checks configured email connectors, not how often calls arrive; it does not measure SMS, CAD push or API health. Review the host polling schedule before setting it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "profile-expectedemailpollintervalminutes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5629,7 +5573,7 @@
       "Body": "Create calls. Allows starting a call. The department-level action uses each member’s actual administrator state and personnel roles; later dispatch validation remains authoritative.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createcall",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5640,7 +5584,7 @@
       "Body": "Create notes. Allows creating a department note. The action does not grant access to protected note contents or another department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createnote",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5651,7 +5595,7 @@
       "Body": "View personal information. Controls the personal-information permission gate. Protected fields still require their own current authorization and data protection grant.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewpersonalinfo",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5662,7 +5606,7 @@
       "Body": "View personnel. Controls visibility of personnel targets. A group lock can narrow target scope; administrators of a target group or its ancestors use the owning visibility policy.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewgroupusers",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5673,7 +5617,7 @@
       "Body": "View units. Controls visibility of unit targets and their assigned stations. Ungrouped viewers and unassigned units do not share a group.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewgroupunits",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5684,7 +5628,7 @@
       "Body": "View personnel locations. Controls the location visibility gate for each viewer and person. The preview counts access pairs, not current map markers, tracking consent or GPS availability.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-canseepersonnellocations",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5695,7 +5639,7 @@
       "Body": "View unit locations. Controls the location visibility gate for each viewer and unit. A group lock refers to the unit’s station and the owning group hierarchy, not any station a viewer can otherwise see.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-canseeunitlocations",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5706,7 +5650,7 @@
       "Body": "Add Personnel. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-addpersonnel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5717,7 +5661,7 @@
       "Body": "Remove Personnel. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-removepersonnel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5728,7 +5672,7 @@
       "Body": "Create Training. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createtraining",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5739,7 +5683,7 @@
       "Body": "Create Document. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createdocument",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5750,7 +5694,7 @@
       "Body": "Create Calendar Entry. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createcalendarentry",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5761,7 +5705,7 @@
       "Body": "Create Log. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createlog",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5772,7 +5716,7 @@
       "Body": "Create Shift. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createshift",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5783,7 +5727,7 @@
       "Body": "Adjust Inventory. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-adjustinventory",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5794,7 +5738,7 @@
       "Body": "Create Message. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createmessage",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5805,7 +5749,7 @@
       "Body": "Delete Call. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-deletecall",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5816,7 +5760,7 @@
       "Body": "Close Call. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-closecall",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5827,7 +5771,7 @@
       "Body": "Add Call Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-addcalldata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5838,7 +5782,7 @@
       "Body": "Contact Edit. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-contactedit",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5849,7 +5793,7 @@
       "Body": "Contact View. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-contactview",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5860,7 +5804,7 @@
       "Body": "Contact Delete. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-contactdelete",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5871,7 +5815,7 @@
       "Body": "Create Workflow. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createworkflow",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5882,7 +5826,7 @@
       "Body": "Manage Workflow Credentials. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-manageworkflowcredentials",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5893,7 +5837,7 @@
       "Body": "View Workflow Runs. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewworkflowruns",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5904,7 +5848,7 @@
       "Body": "View custom field Fields. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewudffields",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5915,7 +5859,7 @@
       "Body": "Manage Routes. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-manageroutes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5926,7 +5870,7 @@
       "Body": "Delete Log. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-deletelog",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5937,7 +5881,7 @@
       "Body": "Use Calendar Sync. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-usecalendarsync",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5948,7 +5892,7 @@
       "Body": "Dispatch App Login. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-dispatchapplogin",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5959,7 +5903,7 @@
       "Body": "Command App Login. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-commandapplogin",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5970,7 +5914,7 @@
       "Body": "Manage Department Data Protection. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managedepartmentdataprotection",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5981,7 +5925,7 @@
       "Body": "View Protected Call Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewprotectedcalldata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -5992,7 +5936,7 @@
       "Body": "Edit Protected Call Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-editprotectedcalldata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6003,7 +5947,7 @@
       "Body": "View Protected Personnel Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewprotectedpersonneldata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6014,7 +5958,7 @@
       "Body": "View Protected Contact Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewprotectedcontactdata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6025,7 +5969,7 @@
       "Body": "View Protected Operational Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewprotectedoperationaldata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6036,7 +5980,7 @@
       "Body": "Export Protected Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-exportprotecteddata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6047,7 +5991,7 @@
       "Body": "Configure Protected Data Egress. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-configureprotecteddataegress",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6058,7 +6002,7 @@
       "Body": "Break Glass Protected Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-breakglassprotecteddata",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6069,7 +6013,7 @@
       "Body": "Create Record. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-createrecord",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6080,7 +6024,7 @@
       "Body": "Delete Record. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-deleterecord",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6091,7 +6035,7 @@
       "Body": "Review Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-reviewrecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6102,7 +6046,7 @@
       "Body": "Approve Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-approverecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6113,7 +6057,7 @@
       "Body": "Finalize Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-finalizerecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6124,7 +6068,7 @@
       "Body": "Amend Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-amendrecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6135,7 +6079,7 @@
       "Body": "Submit Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-submitrecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6146,7 +6090,7 @@
       "Body": "Export Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-exportrecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6157,7 +6101,7 @@
       "Body": "Share Records Externally. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-sharerecordsexternally",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6168,7 +6112,7 @@
       "Body": "View Restricted Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewrestrictedrecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6179,7 +6123,7 @@
       "Body": "View Legacy Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewlegacyrecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6190,7 +6134,7 @@
       "Body": "View Group Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewgrouprecords",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6201,7 +6145,7 @@
       "Body": "Manage Record Definitions. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managerecorddefinitions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6212,7 +6156,7 @@
       "Body": "Publish Record Definitions. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-publishrecorddefinitions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6223,7 +6167,7 @@
       "Body": "Manage Record Reports. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managerecordreports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6234,7 +6178,7 @@
       "Body": "Manage Record Disclosures. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managerecorddisclosures",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6245,7 +6189,7 @@
       "Body": "Manage Record Legal Hold. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managerecordlegalhold",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6256,7 +6200,7 @@
       "Body": "Reassign Record Drafts. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-reassignrecorddrafts",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6267,7 +6211,7 @@
       "Body": "Records Prevention Admin. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-recordspreventionadmin",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6278,7 +6222,7 @@
       "Body": "Manage Checklists. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managechecklists",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6289,7 +6233,7 @@
       "Body": "View Checklist Results. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewchecklistresults",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6300,7 +6244,7 @@
       "Body": "Manage Work Orders. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-manageworkorders",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6311,7 +6255,7 @@
       "Body": "View All Work Orders. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewallworkorders",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6322,7 +6266,7 @@
       "Body": "Transfer Inventory. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-transferinventory",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6333,7 +6277,7 @@
       "Body": "Issue Inventory. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-issueinventory",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6344,7 +6288,7 @@
       "Body": "Manage Controlled Substances. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managecontrolledsubstances",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6355,7 +6299,7 @@
       "Body": "Manage Invoicing. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-manageinvoicing",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6366,7 +6310,7 @@
       "Body": "View Invoicing. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewinvoicing",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6377,7 +6321,7 @@
       "Body": "Manage Certifications. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managecertifications",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6388,7 +6332,7 @@
       "Body": "View Certifications. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewcertifications",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6399,7 +6343,7 @@
       "Body": "Manage Certification Setup. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managecertificationsetup",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6410,7 +6354,7 @@
       "Body": "Manage Bids. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managebids",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6421,7 +6365,7 @@
       "Body": "Manage Contracts. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managecontracts",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6432,7 +6376,7 @@
       "Body": "Manage Deployments. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managedeployments",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6443,7 +6387,7 @@
       "Body": "Approve Time Reports. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-approvetimereports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6454,7 +6398,7 @@
       "Body": "Manage Mutual Aid Reimbursement. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managemutualaidreimbursement",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6465,7 +6409,7 @@
       "Body": "View Internal Costs. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewinternalcosts",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6476,7 +6420,7 @@
       "Body": "Manage Workforce Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-manageworkforcecompensation",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6487,7 +6431,7 @@
       "Body": "View Workforce Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-viewworkforcecompensation",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6498,7 +6442,7 @@
       "Body": "Manage Pay Data Reporting. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-managepaydatareporting",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6509,7 +6453,7 @@
       "Body": "Export Pay Data Reporting. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permission-exportpaydatareporting",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6520,7 +6464,7 @@
       "Body": "Department / Name. Department display name. Review member-facing labels and documents that snapshot the name; changing it does not rename historical artifacts.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-name",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6531,7 +6475,7 @@
       "Body": "Department / Department Type. Legacy organization-type label. The operating profile provides multiple sectors; neither establishes clinical scope or response qualifications.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-departmenttype",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6542,7 +6486,7 @@
       "Body": "Department / Time Zone. Department time zone used by scheduling and local-date reports. Review overnight shifts and daylight-saving transitions before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-timezone",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6553,7 +6497,7 @@
       "Body": "Department / Use24 Hour Time. Preferred time display. This does not change stored timestamps or the department time zone.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-use24hourtime",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6561,10 +6505,10 @@
       "Id": "table.Department.ManagingUserId",
       "Locale": "en",
       "TitleKey": "TableField.Department.ManagingUserId",
-      "Body": "Department / Managing User Id. Managing-member identity. Subscription and high-risk account operations may require this member; change ownership through its explicit owning workflow.",
+      "Body": "Department / Managing User ID. Managing-member identity. Subscription and high-risk account operations may require this member; change ownership through its explicit owning workflow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-managinguserid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6575,7 +6519,7 @@
       "Body": "Department / Code. Department code used by supported identification and access flows. Review those consumers before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-code",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6583,10 +6527,10 @@
       "Id": "table.Department.ApiKey",
       "Locale": "en",
       "TitleKey": "TableField.Department.ApiKey",
-      "Body": "Department / Api Key. Department API credential. Never place it in setup notes or model input; manage and rotate it through the authorized workflow.",
+      "Body": "Department / API Key. Department API credential. Never place it in setup notes or model input; manage and rotate it through the authorized workflow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-apikey",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6594,10 +6538,10 @@
       "Id": "table.Department.PublicApiKey",
       "Locale": "en",
       "TitleKey": "TableField.Department.PublicApiKey",
-      "Body": "Department / Public Api Key. Credential used by supported public API consumers. Public in the field name does not make credential disclosure safe.",
+      "Body": "Department / Public API Key. Credential used by supported public API consumers. Public in the field name does not make credential disclosure safe.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-publicapikey",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6608,7 +6552,7 @@
       "Body": "Department / Shared Secret. Department integration secret. Rotation can affect integrations and needs coordinated verification.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-sharedsecret",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6619,7 +6563,7 @@
       "Body": "Department / Link Code. Department linking code. Review who can use a link and rotate it using the owning workflow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-linkcode",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6630,7 +6574,7 @@
       "Body": "Department / Show Welcome. Legacy welcome flag. Restored setup dismissal is per administrator and does not use this flag as evidence of setup completion.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-showwelcome",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6638,10 +6582,10 @@
       "Id": "table.DepartmentSecurityPolicy.RequireMfa",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSecurityPolicy.RequireMfa",
-      "Body": "Department Security Policy / Require Mfa. Department-wide MFA policy, distinct from the administrator-only setting. Review enrollment, supported factors and recovery before enforcement.",
+      "Body": "Department Security Policy / Require MFA. Department-wide MFA policy, distinct from the administrator-only setting. Review enrollment, supported factors and recovery before enforcement.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-requiremfa",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6649,10 +6593,10 @@
       "Id": "table.DepartmentSecurityPolicy.RequireSso",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSecurityPolicy.RequireSso",
-      "Body": "Department Security Policy / Require Sso. Requires the supported SSO policy gate. Verify the active identity provider and local recovery arrangements before removing a sign-in path.",
+      "Body": "Department Security Policy / Require SSO. Requires the supported SSO policy gate. Verify the active identity provider and local recovery arrangements before removing a sign-in path.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-requiresso",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6663,7 +6607,7 @@
       "Body": "Department Security Policy / Session Timeout Minutes. Idle timeout in minutes; zero defers to host behavior. Verify policy-managed sessions and each supported client rather than assuming immediate global logout.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-sessiontimeoutminutes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6674,7 +6618,7 @@
       "Body": "Department Security Policy / Max Concurrent Sessions. Maximum policy-managed concurrent sessions per user; zero means unlimited for this setting. Existing sessions and enforcement rollout must be checked separately.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-maxconcurrentsessions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6682,10 +6626,10 @@
       "Id": "table.DepartmentSecurityPolicy.AllowedIpRanges",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSecurityPolicy.AllowedIpRanges",
-      "Body": "Department Security Policy / Allowed Ip Ranges. Allowed login network ranges. Empty adds no range restriction. Review legitimate responder networks and recovery access before narrowing it.",
+      "Body": "Department Security Policy / Allowed IP Ranges. Allowed login network ranges. Empty adds no range restriction. Review legitimate responder networks and recovery access before narrowing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-allowedipranges",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6696,7 +6640,7 @@
       "Body": "Department Security Policy / Password Expiration Days. Password age in days; zero disables this policy's age limit. Verify local-password and SSO behavior separately.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-passwordexpirationdays",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6707,7 +6651,7 @@
       "Body": "Department Security Policy / Min Password Length. Minimum length offered by the policy editor. Actual password validators and supported credential-change paths remain authoritative.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-minpasswordlength",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6718,7 +6662,7 @@
       "Body": "Department Security Policy / Require Password Complexity. Stored complexity preference. Consumer and editor coverage must be verified before relying on this field; it is not proof that an existing password meets a rule.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-requirepasswordcomplexity",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6729,7 +6673,7 @@
       "Body": "Department Security Policy / Data Classification Level. Department classification label. Selecting it does not enroll ADP, establish compliance or automatically classify every record correctly.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentsecuritypolicy-dataclassificationlevel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6737,10 +6681,10 @@
       "Id": "table.DepartmentSsoConfig.SsoProviderType",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.SsoProviderType",
-      "Body": "Department Sso Config / Sso Provider Type. Selects the identity protocol and provider configuration. OIDC and SAML have different metadata, certificates and callback requirements.",
+      "Body": "Department SSO Config / SSO Provider Type. Selects the identity protocol and provider configuration. OIDC and SAML have different metadata, certificates and callback requirements.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-ssoprovidertype",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6748,10 +6692,10 @@
       "Id": "table.DepartmentSsoConfig.IsEnabled",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.IsEnabled",
-      "Body": "Department Sso Config / Is Enabled. Makes this provider configuration available to the supported SSO flow. A saved enabled flag is not a successful sign-in test.",
+      "Body": "Department SSO Config / Is Enabled. Makes this provider configuration available to the supported SSO flow. A saved enabled flag is not a successful sign-in test.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-isenabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6759,10 +6703,10 @@
       "Id": "table.DepartmentSsoConfig.ClientId",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.ClientId",
-      "Body": "Department Sso Config / Client Id. Client registration identifier from the identity provider. Keep tenant and audience registration consistent with the owning SSO flow.",
+      "Body": "Department SSO Config / Client ID. Client registration identifier from the identity provider. Keep tenant and audience registration consistent with the owning SSO flow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-clientid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6770,10 +6714,10 @@
       "Id": "table.DepartmentSsoConfig.EncryptedClientSecret",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.EncryptedClientSecret",
-      "Body": "Department Sso Config / Encrypted Client Secret. Encrypted provider client secret. The secret is entered and rotated on the authorized provider editor; Admin Assist only describes its purpose.",
+      "Body": "Department SSO Config / Encrypted Client Secret. Encrypted provider client secret. The secret is entered and rotated on the authorized provider editor; Admin Assist only describes its purpose.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-encryptedclientsecret",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6781,10 +6725,10 @@
       "Id": "table.DepartmentSsoConfig.Authority",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.Authority",
-      "Body": "Department Sso Config / Authority. OIDC issuer or authority. Verify the intended tenant, discovery metadata and callback registration before enabling it.",
+      "Body": "Department SSO Config / Authority. OIDC issuer or authority. Verify the intended tenant, discovery metadata and callback registration before enabling it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-authority",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6792,10 +6736,10 @@
       "Id": "table.DepartmentSsoConfig.MetadataUrl",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.MetadataUrl",
-      "Body": "Department Sso Config / Metadata Url. SAML provider metadata location. Review the trusted provider and its current signing material through the SSO editor.",
+      "Body": "Department SSO Config / Metadata URL. SAML provider metadata location. Review the trusted provider and its current signing material through the SSO editor.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-metadataurl",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6803,10 +6747,10 @@
       "Id": "table.DepartmentSsoConfig.EntityId",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.EntityId",
-      "Body": "Department Sso Config / Entity Id. SAML service-provider identifier registered at the identity provider. It must agree with the configured integration.",
+      "Body": "Department SSO Config / Entity ID. SAML service-provider identifier registered at the identity provider. It must agree with the configured integration.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-entityid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6814,10 +6758,10 @@
       "Id": "table.DepartmentSsoConfig.AssertionConsumerServiceUrl",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.AssertionConsumerServiceUrl",
-      "Body": "Department Sso Config / Assertion Consumer Service Url. Stored SAML callback configuration. Use the endpoint supplied by the owning SSO setup and verify the provider registration.",
+      "Body": "Department SSO Config / Assertion Consumer Service URL. Stored SAML callback configuration. Use the endpoint supplied by the owning SSO setup and verify the provider registration.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-assertionconsumerserviceurl",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6825,10 +6769,10 @@
       "Id": "table.DepartmentSsoConfig.EncryptedIdpCertificate",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.EncryptedIdpCertificate",
-      "Body": "Department Sso Config / Encrypted Idp Certificate. Encrypted provider verification certificate material. Review expiry and rotation through SSO; this description is not certificate validation.",
+      "Body": "Department SSO Config / Encrypted IdP Certificate. Encrypted provider verification certificate material. Review expiry and rotation through SSO; this description is not certificate validation.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-encryptedidpcertificate",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6836,10 +6780,10 @@
       "Id": "table.DepartmentSsoConfig.EncryptedSigningCertificate",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.EncryptedSigningCertificate",
-      "Body": "Department Sso Config / Encrypted Signing Certificate. Encrypted signing certificate and private-key material. Do not copy it into notes, logs or assistant messages.",
+      "Body": "Department SSO Config / Encrypted Signing Certificate. Encrypted signing certificate and private-key material. Do not copy it into notes, logs or assistant messages.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-encryptedsigningcertificate",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6847,10 +6791,10 @@
       "Id": "table.DepartmentSsoConfig.AttributeMappingJson",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.AttributeMappingJson",
-      "Body": "Department Sso Config / Attribute Mapping Json. Maps provider attributes to supported member fields. Validate identity matching and missing attributes with an approved test account.",
+      "Body": "Department SSO Config / Attribute Mapping JSON. Maps provider attributes to supported member fields. Validate identity matching and missing attributes with an approved test account.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-attributemappingjson",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6858,10 +6802,10 @@
       "Id": "table.DepartmentSsoConfig.AllowLocalLogin",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.AllowLocalLogin",
-      "Body": "Department Sso Config / Allow Local Login. Allows a local-password path alongside this provider where policy permits. Review the department-wide SSO requirement and recovery plan together.",
+      "Body": "Department SSO Config / Allow Local Login. Allows a local-password path alongside this provider where policy permits. Review the department-wide SSO requirement and recovery plan together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-allowlocallogin",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6869,10 +6813,10 @@
       "Id": "table.DepartmentSsoConfig.AutoProvisionUsers",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.AutoProvisionUsers",
-      "Body": "Department Sso Config / Auto Provision Users. Allows the supported sign-in flow to create members. Review identity matching, capacity and default assignments before enabling it.",
+      "Body": "Department SSO Config / Auto Provision Users. Allows the supported sign-in flow to create members. Review identity matching, capacity and default assignments before enabling it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-autoprovisionusers",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6880,10 +6824,10 @@
       "Id": "table.DepartmentSsoConfig.DefaultRankId",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.DefaultRankId",
-      "Body": "Department Sso Config / Default Rank Id. Department rank assigned by supported automatic provisioning. It does not grant permissions or prove qualifications.",
+      "Body": "Department SSO Config / Default Rank ID. Department rank assigned by supported automatic provisioning. It does not grant permissions or prove qualifications.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-defaultrankid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6891,10 +6835,10 @@
       "Id": "table.DepartmentSsoConfig.ScimEnabled",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.ScimEnabled",
-      "Body": "Department Sso Config / Scim Enabled. Enables supported SCIM provisioning for this configuration. Review identity lifecycle, deactivation and token access separately from interactive sign-in.",
+      "Body": "Department SSO Config / SCIM Enabled. Enables supported SCIM provisioning for this configuration. Review identity lifecycle, deactivation and token access separately from interactive sign-in.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-scimenabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6902,32 +6846,10 @@
       "Id": "table.DepartmentSsoConfig.EncryptedScimBearerToken",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentSsoConfig.EncryptedScimBearerToken",
-      "Body": "Department Sso Config / Encrypted Scim Bearer Token. Encrypted credential for inbound SCIM requests. Rotate through the explicit token workflow and update the provider before retiring an old credential.",
+      "Body": "Department SSO Config / Encrypted SCIM Bearer Token. Encrypted credential for inbound SCIM requests. Rotate through the explicit token workflow and update the provider before retiring an old credential.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentssoconfig-encryptedscimbearertoken",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "two-factor",
-      "Locale": "en",
-      "TitleKey": "Feature.two-factor",
-      "Body": "Two-Factor Authentication Set up or manage two-factor sign-in Keep administrative access recoverable and limited to authorized people. Verify an additional administrator and review MFA and recovery procedures. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "two-factor",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "invites",
-      "Locale": "en",
-      "TitleKey": "Feature.invites",
-      "Body": "Manage Invites Send email invites so people create their own accounts Keep administrative access recoverable and limited to authorized people. Verify an additional administrator and review MFA and recovery procedures. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "invites",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6935,43 +6857,10 @@
       "Id": "department-settings",
       "Locale": "en",
       "TitleKey": "Feature.department-settings",
-      "Body": "Department Settings Department profile, address, API keys and module settings Keep administrative access recoverable and limited to authorized people. Verify an additional administrator and review MFA and recovery procedures. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Department Settings Department address, time zone and core settings. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Confirm the address and time zone; dates, maps and schedules depend on them.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "department-settings",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "call-settings",
-      "Locale": "en",
-      "TitleKey": "Feature.call-settings",
-      "Body": "Call Settings Call types, priorities, email import and dispatch settings Keep administrative access recoverable and limited to authorized people. Verify an additional administrator and review MFA and recovery procedures. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "call-settings",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "dispatch-settings",
-      "Locale": "en",
-      "TitleKey": "Feature.dispatch-settings",
-      "Body": "Dispatch Settings Dispatch behaviour and notification settings Keep administrative access recoverable and limited to authorized people. Verify an additional administrator and review MFA and recovery procedures. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "dispatch-settings",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "data-protection",
-      "Locale": "en",
-      "TitleKey": "Feature.data-protection",
-      "Body": "Data Protection Advanced Data Protection enrollment and policies Keep administrative access recoverable and limited to authorized people. Verify an additional administrator and review MFA and recovery procedures. Purchase and enrollment are separate. Review MFA, key recovery and effects on search, exports, integrations and notifications before enrollment.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "data-protection",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6979,10 +6868,10 @@
       "Id": "module-settings",
       "Locale": "en",
       "TitleKey": "Feature.module-settings",
-      "Body": "Module settings Choose which optional modules appear and operate for the department. Reduce navigation clutter while understanding retained data and add-on prerequisites. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Module settings Turn optional modules on or off for the department. Reduce navigation clutter while understanding retained data and add-on prerequisites. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Hide modules you will not use so members see a simpler menu.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-settings",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -6990,21 +6879,21 @@
       "Id": "permissions",
       "Locale": "en",
       "TitleKey": "Feature.permissions",
-      "Body": "Permissions Configure action permissions, roles and supported group restrictions. Review who can perform sensitive work and which resources they may see. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Permissions Who can create calls, see personal information and perform other sensitive actions. Review who can perform sensitive work and which resources they may see. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Review each permission; some default to every member.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "permissions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "sso",
+      "Id": "two-factor",
       "Locale": "en",
-      "TitleKey": "Feature.sso",
-      "Body": "Single sign-on and provisioning Configure supported identity providers and provisioning. Review identity mapping, local fallback and recovery before enforcing SSO. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "TitleKey": "Feature.two-factor",
+      "Body": "Two-Factor Authentication Two-factor sign-in for member accounts. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Enroll every administrator in two-factor sign-in.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "sso",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "two-factor",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -7012,10 +6901,21 @@
       "Id": "security-policy",
       "Locale": "en",
       "TitleKey": "Feature.security-policy",
-      "Body": "Security and session policy Configure supported MFA, password, session and network restrictions. Review lockout and recovery risks with an enrolled administrator. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Security and session policy Two-factor requirements, password rules and session limits. Review lockout and recovery risks with an enrolled administrator. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Require two-factor sign-in for administrators and review password and session rules.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "security-policy",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "sso",
+      "Locale": "en",
+      "TitleKey": "Feature.sso",
+      "Body": "Single sign-on and provisioning Let members sign in through your identity provider, with optional automatic account provisioning. Review identity mapping, local fallback and recovery before enforcing SSO. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "sso",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -7023,10 +6923,10 @@
       "Id": "audit-history",
       "Locale": "en",
       "TitleKey": "Feature.audit-history",
-      "Body": "Audit history Review recorded administrative changes and available source details. Identify what changed and who should verify the effect. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Audit history See who changed department settings and when. Identify what changed and who should verify the effect. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "audit-history",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -7034,10 +6934,10 @@
       "Id": "account-sessions",
       "Locale": "en",
       "TitleKey": "Feature.account-sessions",
-      "Body": "Account sessions and recovery Review the current member's sessions and account security controls. Keep personal account recovery distinct from department-wide settings. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Account sessions and recovery Your own sign-in sessions, password and two-factor settings. Keep personal account recovery distinct from department-wide settings. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "account-sessions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -7045,10 +6945,10 @@
       "Id": "setup-help",
       "Locale": "en",
       "TitleKey": "Feature.setup-help",
-      "Body": "Setup help and support Resume orientation and review current configuration evidence. Keep learning, configuration and verification as separate steps. Verify an additional administrator and review MFA and recovery procedures. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Setup help and support Setup Wizard, Setup Report and Admin Assist. Keep learning, configuration and verification as separate steps. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setup-help",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

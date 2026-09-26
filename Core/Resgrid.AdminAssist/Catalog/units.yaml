@@ -1,0 +1,284 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "units",
+      "LabelKey": "Area.units",
+      "PurposeKey": "AreaPurpose.units",
+      "Order": 3,
+      "Archetypes": [],
+      "Tier": "Core",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.units",
+      "ExampleKey": "AreaExample.units",
+      "AdoptionKey": "ModuleAdoption.units",
+      "MinimumMinutes": 15,
+      "MaximumMinutes": 60,
+      "DocsPath": "/web-app/units/"
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "setting.UnitsSortOrder",
+      "AreaId": "units",
+      "LabelKey": "Setting.UnitsSortOrder",
+      "HelpKey": "SettingHelp.UnitsSortOrder",
+      "Binding": "DepartmentSettingTypes.UnitsSortOrder",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Settings",
+        "Field": "UnitsSortOrder"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.units",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.UnitsSortOrder",
+      "DefaultValue": "owning view default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "units",
+      "AreaId": "units",
+      "LabelKey": "Feature.units",
+      "PurposeKey": "FeaturePurpose.units",
+      "ValueKey": "AreaValue.units",
+      "ExampleKey": "AreaExample.units",
+      "AdoptionKey": "FeatureSetup.units",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Units",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [
+        "unit-group",
+        "unit-type"
+      ],
+      "Setup": {
+        "EvidenceId": "unitCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "unit-type",
+          "unit-group"
+        ],
+        "GuidanceKey": "SetupEvidence.units"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/units/"
+    },
+    {
+      "Id": "unit-types",
+      "AreaId": "units",
+      "LabelKey": "Feature.unit-types",
+      "PurposeKey": "FeaturePurpose.unit-types",
+      "ValueKey": "FeatureValue.unit-types",
+      "ExampleKey": "AreaExample.units",
+      "AdoptionKey": "FeatureSetup.unit-types",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "Types"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "unitTypeCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "unit-type"
+        ],
+        "GuidanceKey": "SetupEvidence.unit-types"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/types-configuration/#unit-types"
+    },
+    {
+      "Id": "hardware-tracking",
+      "AreaId": "units",
+      "LabelKey": "Feature.hardware-tracking",
+      "PurposeKey": "FeaturePurpose.hardware-tracking",
+      "ValueKey": "FeatureValue.hardware-tracking",
+      "ExampleKey": "AreaExample.units",
+      "AdoptionKey": "FeatureSetup.hardware-tracking",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "UnitTracking",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/unit-tracking/"
+    },
+    {
+      "Id": "new-unit",
+      "AreaId": "units",
+      "LabelKey": "Feature.new-unit",
+      "PurposeKey": "FeaturePurpose.new-unit",
+      "ValueKey": "AreaValue.units",
+      "ExampleKey": "AreaExample.units",
+      "AdoptionKey": "ModuleAdoption.units",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Units",
+        "Action": "NewUnit"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/units/"
+    },
+    {
+      "Id": "unit-staffing",
+      "AreaId": "units",
+      "LabelKey": "Feature.unit-staffing",
+      "PurposeKey": "FeaturePurpose.unit-staffing",
+      "ValueKey": "AreaValue.units",
+      "ExampleKey": "AreaExample.units",
+      "AdoptionKey": "ModuleAdoption.units",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Units",
+        "Action": "UnitStaffing"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/units/"
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "unit-type",
+      "AreaId": "units",
+      "Severity": "Warning",
+      "TitleKey": "Rule.unit-type",
+      "ExplanationKey": "RuleWhy.unit-type",
+      "NextActionKey": "RuleNext.unit-type",
+      "Location": {
+        "Controller": "Units",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "unitsWithoutType",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "unit-group",
+      "AreaId": "units",
+      "Severity": "Warning",
+      "TitleKey": "Rule.unit-group",
+      "ExplanationKey": "RuleWhy.unit-group",
+      "NextActionKey": "RuleNext.unit-group",
+      "Location": {
+        "Controller": "Units",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "unitsWithoutGroup",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "setting.UnitsSortOrder",
+      "Locale": "en",
+      "TitleKey": "Setting.UnitsSortOrder",
+      "Body": "Units Sort Order. Sort order for unit lists; does not change unit eligibility or dispatch recommendation ranking.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-unitssortorder",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "units",
+      "Locale": "en",
+      "TitleKey": "Feature.units",
+      "Body": "Units Your apparatus, vehicles and response teams. Units let dispatchers send the right resources and let everyone see which apparatus is available. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Add each unit with its type and home station group.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "units",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "unit-types",
+      "Locale": "en",
+      "TitleKey": "Feature.unit-types",
+      "Body": "Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "unit-types",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "hardware-tracking",
+      "Locale": "en",
+      "TitleKey": "Feature.hardware-tracking",
+      "Body": "Hardware location tracking GPS devices that report unit locations. Review device ownership, stale-position behavior and fallback sources. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Register each tracking device and link it to its unit.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "hardware-tracking",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-unit",
+      "Locale": "en",
+      "TitleKey": "Feature.new-unit",
+      "Body": "New Unit Add an apparatus, vehicle or team. Units let dispatchers send the right resources and let everyone see which apparatus is available. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. List your apparatus or response teams with their types and home stations. Teams that respond only as individuals can mark this module not applicable.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-unit",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "unit-staffing",
+      "Locale": "en",
+      "TitleKey": "Feature.unit-staffing",
+      "Body": "Unit Staffing Assign crew members to units. Units let dispatchers send the right resources and let everyone see which apparatus is available. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. List your apparatus or response teams with their types and home stations. Teams that respond only as individuals can mark this module not applicable.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "unit-staffing",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

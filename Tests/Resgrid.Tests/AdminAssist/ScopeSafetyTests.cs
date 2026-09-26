@@ -37,6 +37,38 @@ namespace Resgrid.Tests.AdminAssist
 			var report = new ConfigurationReport(snapshot, new[] { finding }, new[] { "maintenance" });
 			Assert.That(report.Required, Is.Zero); Assert.That(report.HasCriticalUncertainty, Is.False);
 		}
+		[Test]
+		public void Fixing_a_deferred_critical_failure_raises_verified_instead_of_shrinking_required()
+		{
+			var rule = new ConfigurationRule(Catalog.Rules.Single(r => r.Id == "text-sources"));
+			ConfigurationReport Report(bool sourcePresent)
+			{
+				var snapshot = Snapshot(new("EnableTextToCall", EvidenceState.Known, "test", "1", _now, Boolean: true), new("textSourcePresent", EvidenceState.Known, "test", "1", _now, Boolean: sourcePresent));
+				return new ConfigurationReport(snapshot, new[] { rule.Evaluate(snapshot, _now, TimeSpan.FromMinutes(1)) }, new[] { "security" });
+			}
+			var failing = Report(false); var repaired = Report(true);
+			Assert.That((failing.Required, failing.Failed, failing.Verified), Is.EqualTo((1, 1, 0)));
+			Assert.That((repaired.Required, repaired.Failed, repaired.Verified), Is.EqualTo((1, 0, 1)));
+		}
+		[TestCase("person-location-age", "MappingPersonnelLocationTTL")]
+		[TestCase("unit-location-age", "MappingUnitLocationTTL")]
+		public void Product_default_location_lifetime_is_a_suggestion_not_a_failure(string ruleId, string setting)
+		{
+			var snapshot = Snapshot(new ConfigurationEvidence(setting, EvidenceState.Known, "test", "1", _now, Number: 0));
+			var finding = new ConfigurationRule(Catalog.Rules.Single(r => r.Id == ruleId)).Evaluate(snapshot, _now, TimeSpan.FromMinutes(1));
+			Assert.That(finding.Result, Is.EqualTo(RuleResult.Fail)); Assert.That(finding.Severity, Is.EqualTo(FindingSeverity.Information));
+			var report = new ConfigurationReport(snapshot, new[] { finding }, new[] { "mapping" });
+			Assert.That((report.Required, report.Failed, report.Suggestions), Is.EqualTo((0, 0, 1)));
+		}
+		[Test]
+		public void Combined_text_intake_and_commands_count_one_failure_for_one_missing_source()
+		{
+			var snapshot = Snapshot(new("EnableTextToCall", EvidenceState.Known, "test", "1", _now, Boolean: true), new("EnableTextCommand", EvidenceState.Known, "test", "1", _now, Boolean: true),
+				new("textSourcePresent", EvidenceState.Known, "test", "1", _now, Boolean: false));
+			var findings = new[] { "text-sources", "command-sources" }.Select(id => new ConfigurationRule(Catalog.Rules.Single(r => r.Id == id)).Evaluate(snapshot, _now, TimeSpan.FromMinutes(1))).ToArray();
+			var report = new ConfigurationReport(snapshot, findings, new[] { "calls", "communication" });
+			Assert.That((report.Failed, report.Suggestions), Is.EqualTo((1, 1)));
+		}
 		[TestCase(EvidenceState.Unavailable, "AddonRequired.ReadinessPro", EvidenceState.Known)]
 		[TestCase(EvidenceState.Unknown, "SubscriptionStatusUnavailable", EvidenceState.Unknown)]
 		[TestCase(EvidenceState.Unavailable, "SourceAccessUnavailable", EvidenceState.Unknown)]

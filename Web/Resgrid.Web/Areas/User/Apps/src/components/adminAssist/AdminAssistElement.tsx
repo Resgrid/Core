@@ -10,9 +10,12 @@ import TextImportPreview from './TextImportPreview';
 import RetentionPreview from './RetentionPreview';
 import NotificationPreview from './NotificationPreview';
 import SecurityPreview from './SecurityPreview';
+import SetupWizard from './SetupWizard';
 import AreaSetupChoice from './AreaSetupChoice';
-import SetupJourney from './SetupJourney';
+import { ModuleCard, ModuleReadiness, isKey, tiers, type Module } from './ModuleViews';
+import { Chip, FindingGroups, FindingRow, Ibox, MetricRow, ResultChip, SeverityChip, byPriority, format, isSuggestion, type Finding } from './SetupVisuals';
 import AskPanel from './AskPanel';
+import PlansPanel, { type PlanSource } from './PlansPanel';
 import TroubleshootPanel from './TroubleshootPanel';
 import SetupChecklist, { type SetupPlan } from './SetupChecklist';
 
@@ -21,17 +24,17 @@ export interface AdminAssistElementProps {
   setup: boolean;
   loadingLabel: string;
   errorLabel: string;
+  retryLabel?: string;
 }
 type AreaChoice = 'UseNow' | 'LearnLater' | 'NotApplicable';
 type Workspace = { scopeRevision?: number; revision: number; mode: string; areas: Record<string, AreaChoice>; areaReasons?: Record<string, string>; learnedCapabilityIds: string[]; interestedCapabilityIds: string[]; reviewedOnUtc: string | null; revisitOnUtc?: string | null;
   reviewEvidence?: { scopeRevision?: number; catalogVersion: string; snapshotRevision: string; asOfUtc: string; required: number; verified: number; failed: number; unknown: number } | null };
 type Location = { url: string; field: string | null };
-type Capability = { id: string; areaId: string; labelKey: string; purposeKey: string; valueKey: string; exampleKey: string; adoptionKey: string; releaseStatus: string; requirements: { kind: string; id: string }[] };
-type Finding = { ruleId: string; areaId: string; severity: string; result: string; titleKey: string; explanationKey: string; nextActionKey: string; destination: string; reasonCode: string | null; scopeIndependent: boolean };
+type Capability = { id: string; areaId: string; prominence?: string; labelKey: string; purposeKey: string; valueKey: string; exampleKey: string; adoptionKey: string; releaseStatus: string; requirements: { kind: string; id: string }[] };
 type Catalog = {
-  askAvailable?: boolean; troubleshootingAvailable?: boolean;
+  plansAvailable?: boolean; askAvailable?: boolean; troubleshootingAvailable?: boolean;
   moduleImpactTypes: string[]; permissionImpactTypes: string[]; impactSettings: string[]; version: string; strings: Record<string, string>; rightToLeft: boolean; canSetup: boolean;
-  areas: { id: string; labelKey: string; purposeKey: string }[];
+  areas: Module[];
   capabilities: Capability[];
   settings: { id: string; valueType: string; labelKey: string; helpKey: string; location: Location; impact: { risk: string; timingKey: string; reversibilityKey: string } }[];
   articles: { id: string; locale: string; body: string; sourcePath: string; anchor: string; packVersion: string }[];
@@ -52,8 +55,9 @@ const endpoint = 'api/v4/AdminAssist/';
 // No external URLs, scheme-relative links or redirects from catalog data.
 const safeLocalLink = (url: string | null | undefined) => url && /^\/User\/[A-Za-z0-9]+\/[A-Za-z0-9]+(?:\?aa=[A-Za-z0-9._-]+)?$/.test(url) ? url : undefined;
 
-export default function AdminAssistElement({ page, setup, loadingLabel, errorLabel }: AdminAssistElementProps) {
+export default function AdminAssistElement({ page, setup, loadingLabel, errorLabel, retryLabel = 'Retry' }: AdminAssistElementProps) {
   const [tab, setTab] = useState(page);
+  const [planSource, setPlanSource] = useState<PlanSource | null>(null);
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [overview, setOverview] = useState<Overview | null>(null);
   const localLink = (url: string | null | undefined) => {
@@ -62,6 +66,8 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   };
   const [query, setQuery] = useState('');
   const [addonsOnly, setAddonsOnly] = useState(false);
+  const [healthArea, setHealthArea] = useState('');
+  const [healthResult, setHealthResult] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [history, setHistory] = useState<History[]>([]);
@@ -104,6 +110,7 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     window.addEventListener('resgrid:adp-reveal-changed', refreshProtection);
     return () => window.removeEventListener('resgrid:adp-reveal-changed', refreshProtection);
   }, [reload]);
+  useEffect(() => { if (catalog && !catalog.plansAvailable && tab === 'plans') setTab('overview'); }, [catalog, tab]);
   useEffect(() => { if (catalog && !catalog.troubleshootingAvailable && tab === 'troubleshoot') setTab('overview'); }, [catalog, tab]);
   useEffect(() => { if (catalog && !catalog.askAvailable && tab === 'ask') setTab('overview'); }, [catalog, tab]);
 
@@ -191,160 +198,205 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   }
 
   if (!catalog || !overview) return <section className="rgaa" aria-busy={busy}>
-    <p role={error ? 'alert' : 'status'}>{error || loadingLabel}</p>
-    {error && <button type="button" onClick={() => void reload()}>{catalog ? ui('Retry') : errorLabel}</button>}
+    {error ? <div className="alert alert-danger" role="alert">{error}</div>
+      : <p className="rgaa-muted" role="status"><i className="fa fa-spinner fa-spin" aria-hidden="true" /> {loadingLabel}</p>}
+    {error && <button type="button" className="btn btn-white btn-sm" onClick={() => void reload()}><i className="fa fa-refresh" aria-hidden="true" /> {catalog ? ui('Retry') : retryLabel}</button>}
   </section>;
   const { workspace, report } = overview;
+  const areas = [...catalog.areas].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const areaLabel = (id: string) => t(areas.find(area => area.id === id)?.labelKey ?? id);
   const operatingPacks = overview.report.snapshot.evidence?.operatingPackIds;
   const selectedPackIds = operatingPacks?.state === 'Known' ? (operatingPacks.code ?? '').split(',').filter(Boolean) : [];
   const suggestedAreas = new Set(catalog.packs.filter(pack => selectedPackIds.includes(pack.id)).flatMap(pack => pack.areaIds));
-  const tabs = setup ? ['wizard', 'report', 'explore'] : ['overview', ...(catalog.canSetup ? ['wizard'] : []), 'report', 'explore', 'health', 'worklist', 'reference', 'history', ...(catalog.troubleshootingAvailable ? ['troubleshoot'] : []), ...(catalog.askAvailable ? ['ask'] : [])];
+  const tabs = setup ? ['wizard', 'report', 'explore'] : ['overview', ...(catalog.canSetup ? ['wizard'] : []), 'report', 'explore', 'health', 'worklist', 'reference', 'history', ...(catalog.plansAvailable ? ['plans'] : []), ...(catalog.troubleshootingAvailable ? ['troubleshoot'] : []), ...(catalog.askAvailable ? ['ask'] : [])];
   const selected = (finding: Finding) => finding.areaId === 'security' || finding.scopeIndependent || report.selectedAreas.includes(finding.areaId);
-  const next = report.findings.filter(f => selected(f) && f.result === 'Fail').sort((a, b) => Number(b.severity === 'Critical') - Number(a.severity === 'Critical')).slice(0, 3);
-  const filtered = catalog.capabilities.filter(c => (!addonsOnly || c.id.startsWith('addon-')) && `${t(c.labelKey)} ${t(c.purposeKey)} ${t(catalog.areas.find(a => a.id === c.areaId)?.labelKey ?? "")}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
-  const interests = catalog.capabilities.filter(c => workspace.interestedCapabilityIds.includes(c.id));
-  const addonNames = (capability: Capability) => capability.requirements.filter(r => r.kind === 'addon').map(r => {
-    const addon = catalog.capabilities.find(c => c.id.startsWith('addon-') && c.requirements.some(a => a.kind === 'addon' && a.id === r.id));
-    return addon ? t(addon.labelKey) : ui('Unknown');
-  });
-  const selectedWorkflows = <>{overview.setupPlan && <SetupChecklist plan={overview.setupPlan} t={t} capabilities={catalog.capabilities} areas={catalog.areas} localLink={localLink} />}<h3>{ui('SelectedWorkflows')}</h3><p>{ui('WorkflowProgressHelp')}</p>
-    {interests.length === 0 && <p>{ui('SelectWorkflowHelp')}</p>}
-    <div className="rgaa-grid">{interests.map(capability => {
-      const availability = overview.access.find(a => a.capabilityId === capability.id);
-      return <article className="rgaa-card" key={capability.id}>
-        <h4>{t(capability.labelKey)}</h4>
-        <p>{workspace.learnedCapabilityIds.includes(capability.id) ? ui('LearningComplete') : ui('LearningPending')}</p>
-        <p><strong>{availability?.state === 'Known' ? ui('AvailableForSetup') : availability?.state === 'Unavailable' ? ui('WorkflowBlocked') : ui('WorkflowAccessUnknown')}</strong></p>
-        {availability?.reasonCodes.map(reason => <p key={reason}>{ui(reason)}</p>)}
-        {addonNames(capability).length > 0 && <p>{ui('RequiredAddons')}: {addonNames(capability).join(', ')}</p>}
-        {(() => { const progress = overview.capabilitySetup?.find(s => s.capabilityId === capability.id); return <>
-          <p>{ui(`SetupState.${progress?.state ?? 'NotAssessed'}`)}</p>
-          <p>{t(progress?.guidanceKey ?? 'Ui.ConfigurationNotAssessed')}</p>
-        </>; })()}
-        <p>{t(capability.adoptionKey)}</p>
-        {availability?.canConfigure && localLink(availability.destination) && <p><a href={localLink(availability.destination)}>{ui('Configure')}</a></p>}
-        {availability?.subscriptionDestination && localLink(availability.subscriptionDestination) && <p><a href={localLink(availability.subscriptionDestination)}>{ui('SubscriptionOptions')}</a></p>}
-        <button type="button" onClick={() => { setQuery(t(capability.labelKey)); setAddonsOnly(false); setTab('explore'); }}>{ui('LearnMore')}</button>
-      </article>;
-    })}</div>
-  </>;
-  const findingCard = (finding: Finding) => <article className="rgaa-card" key={finding.ruleId}>
-    <p className={`rgaa-state rgaa-state-${finding.result}`}><strong>{ui(finding.result)}</strong> · {ui(finding.severity)}</p>
-    <h3>{t(finding.titleKey)}</h3><p>{t(finding.explanationKey)}</p>
-    <a href={localLink(finding.destination)}>{t(finding.nextActionKey)}</a>
-  </article>;
+  const scoped = report.findings.filter(selected);
+  const next = scoped.filter(f => f.result === 'Fail' && !isSuggestion(f)).sort(byPriority).slice(0, 5);
+  const criticalFailures = scoped.filter(f => f.result === 'Fail' && f.severity === 'Critical').length;
+  const reportCounts = { ok: report.verified, fail: report.failed, unknown: report.unknown, total: report.required };
+  const lower = (keys: string[]) => keys.map(k => t(k)).join(' ').toLocaleLowerCase();
+  const needle = query.trim().toLocaleLowerCase();
+  // A module matches its own text or any of its features, including detail features that are not listed on the card.
+  const exploreModules = areas.filter(m => (!addonsOnly || m.tier === 'AddOn') && (!needle || lower([m.labelKey, m.purposeKey, m.valueKey]).includes(needle) ||
+    catalog.capabilities.some(c => c.areaId === m.id && lower([c.labelKey, c.purposeKey]).includes(needle))));
+  const reviewState: 'current' | 'changed' | 'none' = !workspace.reviewEvidence ? 'none'
+    : workspace.reviewEvidence.catalogVersion !== catalog.version || workspace.reviewEvidence.snapshotRevision !== report.snapshot.revision || (workspace.reviewEvidence.scopeRevision ?? 0) !== (workspace.scopeRevision ?? 0) ? 'changed' : 'current';
+  const showTab = (id: string) => { setTab(id); if (id === 'history') void loadHistory(true); if (id === 'worklist') void loadWorklist(); };
+  const explore = (search = '', addons = false) => { setQuery(search); setAddonsOnly(addons); setTab('explore'); };
+  const planFrom = catalog.plansAvailable ? (finding: Finding) => { setPlanSource({ source: 'finding', sourceId: finding.ruleId, goal: t(finding.titleKey) }); setTab('plans'); } : undefined;
+  const link = (url: string) => localLink(url);
+
+  // Setup teaches key features only; detail features (and older learned ids) are left to Explore and Ask.
+  const keyFeatureIds = new Set(catalog.capabilities.filter(isKey).map(c => c.id));
   const summary = <>
-    <p>{ui('ReportBoundary')}</p>
-    <div className="rgaa-metrics">
-      <p><strong>{report.verified} / {report.required}</strong>{ui('Checks')}</p>
-      <p><strong>{report.failed}</strong>{ui('Failures')}</p><p><strong>{report.unknown}</strong>{ui('UnknownChecks')}</p>
-      <p><strong>{workspace.learnedCapabilityIds.length} / {catalog.capabilities.length}</strong>{ui('Learning')}</p>
-    </div>
-    {report.hasCriticalUncertainty && <p className="rgaa-warning" role="status">{ui('CriticalUnknown')}</p>}
-    {!report.snapshot.consistent && <p role="alert">{ui('Inconsistent')}</p>}
-    {(report.uncheckedAreaIds?.length ?? 0) > 0 && <p className="rgaa-warning" role="status">{ui('UncheckedAreas')}: {report.uncheckedAreaIds.map(id => t(catalog.areas.find(area => area.id === id)?.labelKey ?? id)).join(', ')}.</p>}
-    <p>{ui('VerificationCoverage')}</p>
-    <p>{ui('Freshness')}: <time dateTime={report.snapshot.asOfUtc}>{new Date(report.snapshot.asOfUtc).toLocaleString()}</time></p>
-    <p>{ui('Optional')}</p>
+    <MetricRow counts={reportCounts} critical={criticalFailures} learned={workspace.learnedCapabilityIds.filter(id => keyFeatureIds.has(id)).length} totalCapabilities={keyFeatureIds.size} ui={ui} />
+    {report.hasCriticalUncertainty && <div className="alert alert-warning" role="status"><i className="fa fa-exclamation-triangle" aria-hidden="true" /> {ui('CriticalUnknown')}</div>}
+    {!report.snapshot.consistent && <div className="alert alert-danger" role="alert"><i className="fa fa-refresh" aria-hidden="true" /> {ui('Inconsistent')}</div>}
+    {(report.uncheckedAreaIds?.length ?? 0) > 0 && <div className="alert alert-info" role="status"><i className="fa fa-info-circle" aria-hidden="true" /> {ui('UncheckedAreas')}: {report.uncheckedAreaIds.map(areaLabel).join(', ')}.</div>}
+    <p className="rgaa-small rgaa-muted"><i className="fa fa-clock-o" aria-hidden="true" /> {ui('Freshness')}: <time dateTime={report.snapshot.asOfUtc}>{new Date(report.snapshot.asOfUtc).toLocaleString()}</time>. {ui('ReportBoundary')} {ui('VerificationCoverage')}</p>
   </>;
+  const nextActions = <Ibox title={ui('Next')} tools={next.length > 0 && <button type="button" className="btn btn-white btn-xs" onClick={() => { setHealthArea(''); setHealthResult('Fail'); setTab(setup ? 'report' : 'health'); }}>{ui('ViewAll')}</button>}>
+    {next.length > 0 ? <ul className="rgaa-findings">{next.map(f => <FindingRow key={f.ruleId} finding={f} t={t} ui={ui} areaLabel={areaLabel(f.areaId)} link={link} onPlan={planFrom} />)}</ul>
+      : <p className="rgaa-muted"><i className="fa fa-check-circle rgaa-icon--ok" aria-hidden="true" /> {ui('NoNextActions')}</p>}
+  </Ibox>;
+  const areaPanel = <Ibox title={ui('AreaReadiness')}>
+    <p className="rgaa-small rgaa-muted">{ui('AreaReadinessHelp')}</p>
+    <ModuleReadiness modules={areas} features={catalog.capabilities} setup={overview.capabilitySetup ?? []} findings={report.findings} choices={workspace.areas}
+      reasons={workspace.areaReasons} t={t} ui={ui} onShowModule={setup ? undefined : moduleId => { setHealthArea(moduleId); setHealthResult(''); setTab('health'); }} />
+    {catalog.canSetup && <p><button type="button" className="btn btn-white btn-xs" onClick={() => setTab('wizard')}><i className="fa fa-sliders" aria-hidden="true" /> {ui('ChangeScope')}</button></p>}
+  </Ibox>;
+  const reviewPanel = <Ibox title={ui('SetupReview')}>
+    <p><strong>{ui('Reviewed')}:</strong> {workspace.reviewedOnUtc ? new Date(workspace.reviewedOnUtc).toLocaleString() : ui('NoReview')}
+      {' '}{reviewState === 'current' && <Chip tone="ok" icon="fa-check">{ui('StepReviewed')}</Chip>}{reviewState === 'changed' && <Chip tone="unknown" icon="fa-exclamation">{ui('StepReviewChanged')}</Chip>}</p>
+    {workspace.reviewEvidence && <p className="rgaa-small rgaa-muted">{ui('ReviewEvidence')}: {workspace.reviewEvidence.verified} / {workspace.reviewEvidence.required} · {ui('Failures')}: {workspace.reviewEvidence.failed} · {ui('UnknownChecks')}: {workspace.reviewEvidence.unknown} · {new Date(workspace.reviewEvidence.asOfUtc).toLocaleString()}</p>}
+    {reviewState === 'changed' && <p className="rgaa-warning rgaa-small" role="status">{ui('ReviewChanged')}</p>}
+    {catalog.canSetup && <p><button type="button" className="btn btn-primary btn-sm" disabled={busy || !report.snapshot.consistent} onClick={() => void save('review')}><i className="fa fa-check-square-o" aria-hidden="true" /> {ui('MarkReviewed')}</button></p>}
+    {catalog.canSetup && <form key={`revisit-${workspace.revision}`} onSubmit={event => { event.preventDefault(); const value = new FormData(event.currentTarget).get('revisit')?.toString(); void save('revisit', null, null, null, value ? `${value}T12:00:00.000Z` : null); }}>
+      <p className="rgaa-small rgaa-muted">{ui('RevisitHelp')}</p>
+      <div className="form-inline"><div className="form-group"><label htmlFor="rgaa-revisit" className="control-label">{ui('RevisitDate')}</label>{' '}
+        <input id="rgaa-revisit" className="form-control input-sm" type="date" name="revisit" min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)} max={new Date(Date.now() + 364 * 86400000).toISOString().slice(0, 10)} defaultValue={workspace.revisitOnUtc?.slice(0, 10) ?? ''} /></div>{' '}
+        <button type="submit" className="btn btn-white btn-sm" disabled={busy}>{ui('SaveRevisit')}</button></div>
+    </form>}
+    <p className="rgaa-actions" style={{ marginTop: 12 }}>
+      {catalog.canSetup && workspace.revisitOnUtc && <><a className="btn btn-white btn-xs" href="/User/AdminAssist/ReviewCalendar"><i className="fa fa-calendar" aria-hidden="true" /> {ui('DownloadReminder')}</a>{' '}</>}
+      <a className="btn btn-white btn-xs" href={`/User/AdminAssist/PrintReport?setup=${setup ? 'true' : 'false'}`} target="_blank" rel="noopener noreferrer"><i className="fa fa-print" aria-hidden="true" /> {ui('PrintableReport')}</a>
+    </p>
+  </Ibox>;
+  const previews = !setup && <Ibox title={ui('ImpactPreviews')}>
+    <p className="rgaa-small rgaa-muted">{ui('ImpactPreviewsHelp')}</p>
+    <div className="rgaa-grid">
+      <CapacityPreview key={report.snapshot.asOfUtc} revision={report.snapshot.revision} t={t} />
+      <SecurityPreview key={`security-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />
+      <NotificationPreview key={`notification-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />
+      <RetentionPreview key={`retention-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />
+      <TextImportPreview key={`text-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />
+      <ModulePreview key={`module-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} types={catalog.moduleImpactTypes ?? []} t={t} />
+      <PermissionPreview key={`permission-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} types={catalog.permissionImpactTypes ?? []} t={t} />
+      <DispatchPreview key={`dispatch-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />
+    </div>
+  </Ibox>;
+  const healthFindings = report.findings.filter(f => (!healthArea || f.areaId === healthArea) && (!healthResult || f.result === healthResult));
+
   return <section className="rgaa" dir={catalog.rightToLeft ? 'rtl' : 'ltr'} aria-busy={busy}>
-    <nav aria-label={ui('Title')} className="rgaa-nav">{tabs.map(id => <button key={id} type="button" disabled={busy} aria-current={tab === id ? 'page' : undefined} onClick={() => { setTab(id); if (id === 'history') void loadHistory(true); if (id === 'worklist') void loadWorklist(); }}>{ui(id)}</button>)}</nav>
-    <div className="rgaa-toolbar"><h2>{ui(tab)}</h2><button type="button" disabled={busy} onClick={() => void verify()}>{ui('Verify')}</button></div>
-    {busy && <p role="status">{ui('Loading')}</p>}{error && <p role="alert" className="rgaa-warning">{error}</p>}
-    {(tab === 'overview' || tab === 'report') && <>{summary}<h3>{ui('Next')}</h3><div className="rgaa-grid">{next.map(findingCard)}{next.length === 0 && <p>{ui('None')}</p>}</div>
-      <p>{ui('Reviewed')}: {workspace.reviewedOnUtc ? new Date(workspace.reviewedOnUtc).toLocaleString() : ui('NoReview')}</p>
-      {workspace.reviewEvidence && <p>{ui('ReviewEvidence')}: {workspace.reviewEvidence.verified} / {workspace.reviewEvidence.required} · {ui('Failures')}: {workspace.reviewEvidence.failed} · {ui('UnknownChecks')}: {workspace.reviewEvidence.unknown} · {new Date(workspace.reviewEvidence.asOfUtc).toLocaleString()}</p>}
-      {workspace.reviewEvidence && (workspace.reviewEvidence.catalogVersion !== catalog.version || workspace.reviewEvidence.snapshotRevision !== report.snapshot.revision || (workspace.reviewEvidence.scopeRevision ?? 0) !== (workspace.scopeRevision ?? 0)) && <p role="status">{ui('ReviewChanged')}</p>}
-      {catalog.canSetup && <button type="button" disabled={busy || !report.snapshot.consistent} onClick={() => void save('review')}>{ui('MarkReviewed')}</button>}
-      {catalog.canSetup && <form key={`revisit-${workspace.revision}`} onSubmit={event => { event.preventDefault(); const value = new FormData(event.currentTarget).get('revisit')?.toString(); void save('revisit', null, null, null, value ? `${value}T12:00:00.000Z` : null); }}>
-        <p>{ui('RevisitHelp')}</p><label>{ui('RevisitDate')} <input type="date" name="revisit" min={new Date(Date.now() + 86400000).toISOString().slice(0,10)} max={new Date(Date.now() + 364 * 86400000).toISOString().slice(0,10)} defaultValue={workspace.revisitOnUtc?.slice(0,10) ?? ''} /></label><button type="submit" disabled={busy}>{ui('SaveRevisit')}</button>
-      </form>}
-      {catalog.canSetup && workspace.revisitOnUtc && <p><a href="/User/AdminAssist/ReviewCalendar">{ui('DownloadReminder')}</a></p>}
-      {!setup && <CapacityPreview key={report.snapshot.asOfUtc} revision={report.snapshot.revision} t={t} />}
-      {!setup && <SecurityPreview key={`security-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
-      {!setup && <NotificationPreview key={`notification-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
-      {!setup && <RetentionPreview key={`retention-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
-      {!setup && <TextImportPreview key={`text-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
-      {!setup && <ModulePreview key={`module-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} types={catalog.moduleImpactTypes ?? []} t={t} />}
-      {!setup && <PermissionPreview key={`permission-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} types={catalog.permissionImpactTypes ?? []} t={t} />}
-      {!setup && <DispatchPreview key={`dispatch-${report.snapshot.asOfUtc}`} revision={report.snapshot.revision} t={t} />}
-      {tab === 'report' && <p><a href={`/User/AdminAssist/PrintReport?setup=${setup ? 'true' : 'false'}`} target="_blank" rel="noopener noreferrer">{ui('PrintableReport')}</a></p>}
-      {selectedWorkflows}
-      {tab === 'report' && <details><summary>{ui('CapabilitySetupTitle')}</summary><p>{ui('CapabilitySetupHelp')}</p><div className="rgaa-grid">{catalog.capabilities.filter(c => !c.id.startsWith('addon-')).map(capability => {
-        const progress = overview.capabilitySetup?.find(s => s.capabilityId === capability.id);
-        const availability = overview.access.find(a => a.capabilityId === capability.id);
-        return <article className="rgaa-card" key={capability.id}><h4>{t(capability.labelKey)}</h4>
-          <p>{t(progress?.opportunityKey ?? 'Ui.OpportunityUnknown')}</p><p><strong>{ui(`SetupState.${progress?.state ?? 'NotAssessed'}`)}</strong></p>
-          <p>{t(progress?.guidanceKey ?? 'Ui.ConfigurationNotAssessed')}</p>
-          {(progress?.ruleIds.length ?? 0) > 0 && <p>{ui('ConfigurationChecks')}: {progress!.ruleIds.map(id => t(report.findings.find(f => f.ruleId === id)?.titleKey ?? id)).join(', ')}</p>}
-          {availability?.canConfigure && localLink(availability.destination) && <p><a href={localLink(availability.destination)}>{ui('Configure')}</a></p>}
-          {availability?.subscriptionDestination && localLink(availability.subscriptionDestination) && <p><a href={localLink(availability.subscriptionDestination)}>{ui('SubscriptionOptions')}</a></p>}
-          <button type="button" onClick={() => { setQuery(t(capability.labelKey)); setAddonsOnly(false); setTab('explore'); }}>{ui('LearnMore')}</button>
-        </article>;
-      })}</div></details>}
-      {tab === 'report' && <div className="rgaa-grid">{report.findings.filter(f => selected(f) && f.result !== 'NotApplicable').map(findingCard)}</div>}
+    <nav aria-label={ui('Title')}><ul className="nav nav-tabs rgaa-tabs">{tabs.map(id => <li key={id} className={tab === id ? 'active' : undefined}>
+      <a href={`#${id}`} role="button" aria-current={tab === id ? 'page' : undefined} aria-disabled={busy || undefined} onClick={event => { event.preventDefault(); if (!busy) showTab(id); }}>{ui(id)}</a>
+    </li>)}</ul></nav>
+    <h2 className="sr-only">{ui(tab)}</h2>
+    <div className="rgaa-toolbar">
+      {busy && <span className="rgaa-muted rgaa-small" role="status"><i className="fa fa-spinner fa-spin" aria-hidden="true" /> {ui('Loading')}</span>}
+      <button type="button" className="btn btn-white btn-sm" disabled={busy} onClick={() => void verify()}><i className="fa fa-refresh" aria-hidden="true" /> {ui('Verify')}</button>
+    </div>
+    {error && <div role="alert" className="alert alert-danger">{error}</div>}
+    {tab === 'overview' && <>{summary}
+      <div className="rgaa-columns"><div>{nextActions}{areaPanel}</div><div>{reviewPanel}
+        {catalog.canSetup && <Ibox title={ui('wizard')}><p>{ui('SetupPrompt')}</p><button type="button" className="btn btn-primary btn-sm" onClick={() => setTab('wizard')}><i className="fa fa-magic" aria-hidden="true" /> {ui('ResumeSetup')}</button></Ibox>}
+      </div></div>
+      {previews}
     </>}
-    {tab === 'wizard' && <>
-      <p>{ui('Welcome')}</p><p>{ui('NoAutomaticActions')}</p>
-      <label>{ui('Mode')} <select value={workspace.mode} disabled={busy || !catalog.canSetup} onChange={e => void save('mode', null, e.target.value)}>{['Fresh', 'Review', 'Import'].map(mode => <option key={mode} value={mode}>{ui(mode)}</option>)}</select></label>
-      {workspace.mode === 'Import' && <p>{ui('ImportHelp')}</p>}
-      <SetupJourney t={t} capabilities={catalog.capabilities} access={overview.access} localLink={localLink} learned={workspace.learnedCapabilityIds.length} total={catalog.capabilities.length}
-        show={page => { setTab(page); if (page === 'explore') { setQuery(''); setAddonsOnly(false); } }} showAddons={() => { setQuery(''); setAddonsOnly(true); setTab('explore'); }} />
-      <h3>{ui('OperatingProfile')}</h3>{operatingPacks?.state !== 'Known' && <p>{ui('ProfileUnavailable')}</p>}<p>{ui('ProfileHelp')}</p><a href={localLink("/User/Department/OperatingProfile")}>{ui('OperatingProfile')}</a>
-      <details><summary>{ui('Packs')}</summary><div className="rgaa-grid">{catalog.packs.map(pack => <article key={pack.id}><h4>{t(pack.labelKey)}</h4>{selectedPackIds.includes(pack.id) && <p><strong>{ui('SelectedPack')}</strong></p>}<p>{t(pack.purposeKey)}</p>{pack.prerequisiteKeys.map(key => <p key={key}>{t(key)}</p>)}</article>)}</div></details>
-      <div className="rgaa-grid">{catalog.areas.map(area => <article className="rgaa-card" key={area.id}><h3>{t(area.labelKey)}</h3>{suggestedAreas.has(area.id) && <p><strong>{ui('SuggestedArea')}</strong></p>}<p>{t(area.purposeKey)}</p>
-        <AreaSetupChoice key={`${area.id}:${workspace.revision}`} areaId={area.id} label={t(area.labelKey)} choice={workspace.areas[area.id] ?? 'LearnLater'} reason={workspace.areaReasons?.[area.id]} disabled={busy || !catalog.canSetup} t={t} save={(choice, reason) => void save('area', area.id, choice, reason)} />
-        <button type="button" onClick={() => { setQuery(t(area.labelKey)); setAddonsOnly(false); setTab('explore'); }}>{ui('explore')}</button>
-      </article>)}</div>
+    {tab === 'report' && <>{summary}
+      <div className="rgaa-columns"><div>{nextActions}{areaPanel}</div><div>{reviewPanel}</div></div>
+      {overview.setupPlan && overview.setupPlan.tasks.length > 0 && <Ibox title={ui('SetupChecklist')}><SetupChecklist plan={overview.setupPlan} t={t} capabilities={catalog.capabilities} areas={areas} localLink={localLink} /></Ibox>}
+      <Ibox title={ui('AllChecks')}><FindingGroups findings={scoped.filter(f => f.result !== 'NotApplicable')} t={t} ui={ui} areas={areas} link={link} onPlan={planFrom} /></Ibox>
     </>}
+    {tab === 'wizard' && <SetupWizard t={t} mode={workspace.mode} canSetup={catalog.canSetup} busy={busy} modules={areas} features={catalog.capabilities} access={overview.access}
+      capabilitySetup={overview.capabilitySetup ?? []} packs={catalog.packs} choices={workspace.areas} reasons={workspace.areaReasons} learned={workspace.learnedCapabilityIds}
+      findings={report.findings} selectedAreas={report.selectedAreas} profileKnown={operatingPacks?.state === 'Known'}
+      selectedPackIds={selectedPackIds} suggestedAreas={suggestedAreas} reviewed={reviewState} localLink={localLink}
+      reportCounts={{ failed: report.failed, unknown: report.unknown, required: report.required, verified: report.verified, criticalUnknown: report.hasCriticalUncertainty }}
+      save={(operation, targetId = null, choice = null, reasonCode = null) => void save(operation, targetId, choice, reasonCode)}
+      show={(page, search, addons) => page === 'explore' ? explore(search ?? '', addons ?? false) : setTab(page)} reviewPanel={reviewPanel} summary={summary} />}
     {tab === 'explore' && <>
-      <p>{ui('NoAutomaticActions')}</p><label><input type="checkbox" checked={addonsOnly} onChange={e => setAddonsOnly(e.target.checked)} /> {ui('AddonsOnly')}</label><label>{ui('Search')} <input type="search" value={query} onChange={e => setQuery(e.target.value)} /></label>
-      <div className="rgaa-grid">{filtered.map(capability => {
-        const access = overview.access.find(a => a.capabilityId === capability.id);
-        return <article className="rgaa-card" key={capability.id}>
-          <h3>{t(capability.labelKey)}</h3><p>{t(capability.purposeKey)}</p>
-          <h4>{ui('Value')}</h4><p>{t(capability.valueKey)}</p><h4>{ui('Example')}</h4><p>{t(capability.exampleKey)}</p><h4>{ui('Adoption')}</h4><p>{t(capability.adoptionKey)}</p>
-          {addonNames(capability).length > 0 && <p>{ui('RequiredAddons')}: {addonNames(capability).join(', ')}</p>}
-          {capability.id.startsWith('addon-') && <details><summary>{ui('AddonFeatures')}</summary><ul>{catalog.capabilities.filter(child => !child.id.startsWith('addon-') && child.requirements.some(r => r.kind === 'addon' && capability.requirements.some(a => a.kind === 'addon' && a.id === r.id))).map(child => <li key={child.id}><button type="button" onClick={() => { setQuery(t(child.labelKey)); setAddonsOnly(false); }}>{t(child.labelKey)}</button></li>)}</ul></details>}
-          <p>{ui('AvailableReasons')}: {ui(access?.state ?? 'Unknown')}</p>{access?.reasonCodes.map(reason => <p key={reason}>{ui(reason)}</p>)}
-          {access?.canConfigure && localLink(access.destination) && <p><a href={localLink(access.destination)}>{ui('Configure')}</a></p>}
-          {access?.subscriptionDestination && localLink(access.subscriptionDestination) && <p><a href={localLink(access.subscriptionDestination)}>{ui('SubscriptionOptions')}</a></p>}
-          {catalog.canSetup && <><label><input type="checkbox" disabled={busy} checked={workspace.learnedCapabilityIds.includes(capability.id)} onChange={e => void save('learn', capability.id, String(e.target.checked))} /> {ui('Learned')}</label><label><input type="checkbox" disabled={busy} checked={workspace.interestedCapabilityIds.includes(capability.id)} onChange={e => void save('interest', capability.id, String(e.target.checked))} /> {ui('Interested')}</label></>}
-        </article>;
-      })}</div>{filtered.length === 0 && <p>{ui('NoResults')}</p>}
+      <p className="rgaa-lead">{ui('ExploreHelp')}</p>
+      <div className="rgaa-explore-controls">
+        <div className="form-group"><label htmlFor="rgaa-explore-search">{ui('Search')}</label><input id="rgaa-explore-search" className="form-control input-sm" type="search" value={query} onChange={e => setQuery(e.target.value)} /></div>
+        <label className="rgaa-check"><input type="checkbox" checked={addonsOnly} onChange={e => setAddonsOnly(e.target.checked)} />{ui('AddonsOnly')}</label>
+      </div>
+      <p className="rgaa-small rgaa-muted"><i className="fa fa-info-circle" aria-hidden="true" /> {ui('NoAutomaticActions')}</p>
+      {tiers.map(tier => {
+        const modules = exploreModules.filter(m => m.tier === tier);
+        if (modules.length === 0) return null;
+        return <section key={tier} aria-labelledby={`rgaa-tier-${tier}`}>
+          <div className="rgaa-area-heading"><h3 id={`rgaa-tier-${tier}`}>{ui(`Tier.${tier}`)}</h3><span className="rgaa-muted rgaa-small">{ui(`TierHelp.${tier}`)}</span></div>
+          <div className="rgaa-module-grid">{modules.map(module => <ModuleCard key={module.id} module={module} features={catalog.capabilities} t={t} ui={ui}
+            access={overview.access} setup={overview.capabilitySetup ?? []} findings={report.findings} choice={module.id === 'security' ? 'UseNow' : workspace.areas[module.id]}
+            learned={workspace.learnedCapabilityIds} canLearn={catalog.canSetup} busy={busy} onLearn={(id, value) => void save('learn', id, String(value))} link={localLink} showStatus
+            scopeControl={catalog.canSetup ? <div className="rgaa-module__scope">
+              {suggestedAreas.has(module.id) && <p><Chip tone="info" icon="fa-star">{ui('SuggestedArea')}</Chip></p>}
+              <AreaSetupChoice key={`${module.id}:${workspace.areas[module.id] ?? ''}:${workspace.areaReasons?.[module.id] ?? ''}`} areaId={module.id} label={t(module.labelKey)}
+                choice={module.id === 'security' ? 'UseNow' : workspace.areas[module.id]} reason={workspace.areaReasons?.[module.id]} disabled={busy} t={t}
+                save={(choice, reason) => void save('area', module.id, choice, reason)} />
+            </div> : undefined} />)}</div>
+        </section>;
+      })}
+      {exploreModules.length === 0 && <p>{ui('NoResults')}</p>}
     </>}
-    {tab === 'health' && <>{summary}<div className="rgaa-grid">{report.findings.map(findingCard)}</div></>}
+    {tab === 'health' && <>{summary}
+      <Ibox title={ui('health')} tools={<form className="form-inline" onSubmit={e => e.preventDefault()}>
+        <label className="sr-only" htmlFor="rgaa-health-area">{ui('Area')}</label>
+        <select id="rgaa-health-area" className="form-control input-sm" value={healthArea} onChange={e => setHealthArea(e.target.value)}><option value="">{ui('AllAreas')}</option>{areas.map(area => <option key={area.id} value={area.id}>{t(area.labelKey)}</option>)}</select>{' '}
+        <label className="sr-only" htmlFor="rgaa-health-result">{ui('Filter')}</label>
+        <select id="rgaa-health-result" className="form-control input-sm" value={healthResult} onChange={e => setHealthResult(e.target.value)}><option value="">{ui('AllResults')}</option>{['Fail', 'Unknown', 'Pass', 'NotApplicable'].map(result => <option key={result} value={result}>{ui(result)}</option>)}</select>
+      </form>}>
+        <FindingGroups findings={healthFindings} t={t} ui={ui} areas={areas} link={link} onPlan={planFrom} showArea={!healthArea} />
+      </Ibox>
+    </>}
     {tab === 'worklist' && <>
-      <p>{ui('WorklistHelp')}</p><label>{ui('Filter')} <select value={workFilter} onChange={e => setWorkFilter(e.target.value)}><option value="active">{ui('ActiveFindings')}</option><option value="all">{ui('AllFindings')}</option><option value="exceptions">{ui('AcceptedException')}</option><option value="unknown">{ui('Unknown')}</option></select></label>
-      {followup && <details><summary>{ui('Preferences')}</summary><p>{followup.worker.lastEvaluatedOn ? `${ui('WorkerLastRun')}: ${new Date(followup.worker.lastEvaluatedOn).toLocaleString()}` : ui('WorkerNever')}</p><p>{ui('DigestHelp')}</p>{!followup.digestsAvailable && <p>{ui('DigestUnavailable')}</p>}
+      <p className="rgaa-lead">{ui('WorklistHelp')}</p>
+      <div className="rgaa-explore-controls"><div className="form-group"><label htmlFor="rgaa-work-filter">{ui('Filter')}</label>
+        <select id="rgaa-work-filter" className="form-control input-sm" value={workFilter} onChange={e => setWorkFilter(e.target.value)}><option value="active">{ui('ActiveFindings')}</option><option value="all">{ui('AllFindings')}</option><option value="exceptions">{ui('AcceptedException')}</option><option value="unknown">{ui('Unknown')}</option></select></div></div>
+      {followup && <Ibox title={ui('Preferences')}><details><summary className="rgaa-small">{followup.worker.lastEvaluatedOn ? `${ui('WorkerLastRun')}: ${new Date(followup.worker.lastEvaluatedOn).toLocaleString()}` : ui('WorkerNever')}</summary>
+        <p className="rgaa-small">{ui('DigestHelp')}</p>{!followup.digestsAvailable && <div className="alert alert-warning">{ui('DigestUnavailable')}</div>}
         <form key={followup.preferences.revision} onSubmit={e => { e.preventDefault(); void savePreferences(e.currentTarget); }}>
-          <label><input name="digest" type="checkbox" defaultChecked={followup.preferences.digestEnabled} /> {ui('DigestOptIn')}</label>
-          <label>{ui('QuietStart')} <input name="start" type="number" min={0} max={23} required defaultValue={followup.preferences.quietStartHour} /></label>
-          <label>{ui('QuietEnd')} <input name="end" type="number" min={0} max={23} required defaultValue={followup.preferences.quietEndHour} /></label>
-          <button type="submit" disabled={busy}>{ui('SavePreferences')}</button>
-        </form>{followup.preferences.lastAttemptOutcome && <p>{ui('DigestOutcome')}: {followup.preferences.lastAttemptOutcome}</p>}
-      </details>}
+          <label className="rgaa-check"><input name="digest" type="checkbox" defaultChecked={followup.preferences.digestEnabled} />{ui('DigestOptIn')}</label>
+          <div className="form-inline"><div className="form-group"><label htmlFor="rgaa-quiet-start">{ui('QuietStart')}</label> <input id="rgaa-quiet-start" className="form-control input-sm" name="start" type="number" min={0} max={23} required defaultValue={followup.preferences.quietStartHour} /></div>{' '}
+            <div className="form-group"><label htmlFor="rgaa-quiet-end">{ui('QuietEnd')}</label> <input id="rgaa-quiet-end" className="form-control input-sm" name="end" type="number" min={0} max={23} required defaultValue={followup.preferences.quietEndHour} /></div>{' '}
+            <button type="submit" className="btn btn-white btn-sm" disabled={busy}>{ui('SavePreferences')}</button></div>
+        </form>{followup.preferences.lastAttemptOutcome && <p className="rgaa-small">{ui('DigestOutcome')}: {followup.preferences.lastAttemptOutcome}</p>}
+      </details></Ibox>}
       <div className="rgaa-grid">{worklist.filter(item => workFilter === 'all' || (workFilter === 'exceptions' ? item.reviewStatus === 3 : workFilter === 'unknown' ? item.result === 2 : item.result === 1)).map(item => {
         const finding = report.findings.find(f => f.ruleId === item.ruleId);
-        return <article className="rgaa-card" key={item.adminAssistFindingId}>
-          <h3>{finding ? t(finding.titleKey) : item.ruleId}</h3><p>{ui(['Pass', 'Fail', 'Unknown', 'NotApplicable'][item.result])} · {ui(['Unassigned', 'Assigned', 'InReview', 'AcceptedException', 'Resolved'][item.reviewStatus])}</p>
-          <p>{ui('Freshness')}: {new Date(item.lastObservedOn).toLocaleString()}</p>
-          {item.reviewOn && <p>{ui('ReviewDate')}: {new Date(item.reviewOn).toLocaleString()}</p>}{item.exceptionUntil && <p>{ui('ExceptionExpiry')}: {new Date(item.exceptionUntil).toLocaleString()}</p>}
+        const result = ['Pass', 'Fail', 'Unknown', 'NotApplicable'][item.result] ?? 'Unknown';
+        return <article className="rgaa-card rgaa-feature" key={item.adminAssistFindingId}>
+          <div className="rgaa-finding__meta"><ResultChip result={result} ui={ui} /><Chip tone={item.reviewStatus === 3 ? 'info' : item.reviewStatus === 4 ? 'ok' : 'muted'}>{ui(['Unassigned', 'Assigned', 'InReview', 'AcceptedException', 'Resolved'][item.reviewStatus])}</Chip>{finding && <SeverityChip severity={finding.severity} ui={ui} />}</div>
+          <h4>{finding ? t(finding.titleKey) : item.ruleId}</h4>
+          <p className="rgaa-small rgaa-muted">{ui('Freshness')}: {new Date(item.lastObservedOn).toLocaleString()}
+            {item.reviewOn && <><br />{ui('ReviewDate')}: {new Date(item.reviewOn).toLocaleString()}</>}{item.exceptionUntil && <><br />{ui('ExceptionExpiry')}: {new Date(item.exceptionUntil).toLocaleString()}</>}</p>
           {item.content && <p className="rgaa-note">{item.content}</p>}
-          {finding && <p><a href={localLink(finding.destination)}>{t(finding.nextActionKey)}</a></p>}
-          {item.reviewStatus !== 4 && (item.result === 1 || item.result === 2) && <><button type="button" disabled={busy} onClick={() => void review(item, 'review')}>{ui('StartReview')}</button>
-          <form onSubmit={e => { e.preventDefault(); void review(item, 'claim', e.currentTarget); }}><label>{ui('ReviewDate')} <input type="datetime-local" name="date" /></label><button type="submit" disabled={busy}>{ui('AssignMe')}</button></form></>}
-          {item.result === 1 && item.reviewStatus !== 4 && <details><summary>{ui('AcceptException')}</summary><form onSubmit={e => { e.preventDefault(); void review(item, 'exception', e.currentTarget); }}>
-            <label>{ui('Reason')} <textarea name="note" required maxLength={2000} /></label><label>{ui('ExceptionExpiry')} <input type="datetime-local" name="date" required /></label><p>{ui('ExceptionHelp')}</p><button type="submit" disabled={busy}>{ui('AcceptException')}</button>
+          {finding && <p>{localLink(finding.destination) && <a className="btn btn-white btn-xs" href={localLink(finding.destination)}><i className="fa fa-external-link" aria-hidden="true" /> {t(finding.nextActionKey)}</a>}
+            {planFrom && <> <button type="button" className="btn btn-white btn-xs" onClick={() => planFrom(finding)}>{t('Plan.New')}</button></>}</p>}
+          {item.reviewStatus !== 4 && (item.result === 1 || item.result === 2) && <div className="rgaa-feature__foot">
+            <button type="button" className="btn btn-white btn-xs" disabled={busy} onClick={() => void review(item, 'review')}>{ui('StartReview')}</button>
+            <form className="form-inline" onSubmit={e => { e.preventDefault(); void review(item, 'claim', e.currentTarget); }}><label className="sr-only" htmlFor={`rgaa-claim-${item.adminAssistFindingId}`}>{ui('ReviewDate')}</label>
+              <input id={`rgaa-claim-${item.adminAssistFindingId}`} className="form-control input-sm" type="datetime-local" name="date" title={ui('ReviewDate')} /> <button type="submit" className="btn btn-white btn-xs" disabled={busy}>{ui('AssignMe')}</button></form>
+          </div>}
+          {item.result === 1 && item.reviewStatus !== 4 && <details className="rgaa-small"><summary>{ui('AcceptException')}</summary><form onSubmit={e => { e.preventDefault(); void review(item, 'exception', e.currentTarget); }}>
+            <div className="form-group"><label htmlFor={`rgaa-note-${item.adminAssistFindingId}`}>{ui('Reason')}</label><textarea id={`rgaa-note-${item.adminAssistFindingId}`} className="form-control" name="note" required maxLength={2000} /></div>
+            <div className="form-group"><label htmlFor={`rgaa-exp-${item.adminAssistFindingId}`}>{ui('ExceptionExpiry')}</label><input id={`rgaa-exp-${item.adminAssistFindingId}`} className="form-control input-sm" type="datetime-local" name="date" required /></div>
+            <p className="help-block">{ui('ExceptionHelp')}</p><button type="submit" className="btn btn-warning btn-xs" disabled={busy}>{ui('AcceptException')}</button>
           </form></details>}
         </article>;
-      })}</div>{worklist.length === 0 && <p>{ui('VerifyToPopulate')}</p>}
+      })}</div>{worklist.length === 0 && <p className="rgaa-muted">{ui('VerifyToPopulate')}</p>}
     </>}
-    {tab === 'reference' && <><form onSubmit={e => { e.preventDefault(); void searchReference(); }}><label>{ui('Search')} <input type="search" value={query} maxLength={256} onChange={e => setQuery(e.target.value)} /></label><button type="submit" disabled={busy}>{ui('SearchReference')}</button></form>
-      {hits.map(hit => <article key={hit.id} className="rgaa-card"><h3>{t(hit.titleKey)}</h3><p lang={hit.locale}>{hit.excerpt}</p><small>{hit.sourcePath}#{hit.anchor} · {hit.packVersion} · {hit.locale}</small>{catalog.articles.filter(a => a.id === hit.id && a.locale === hit.locale && a.packVersion === hit.packVersion).map(article => <details key={article.id}><summary>{ui('ReadSource')}</summary><div className="rgaa-source" lang={article.locale}>{article.body}</div></details>)}</article>)}
-      <div className="rgaa-grid">{catalog.settings.filter(s => `${t(s.labelKey)} ${t(s.helpKey)}`.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(setting => <article className="rgaa-card" key={setting.id}><h3>{t(setting.labelKey)}</h3><p>{t(setting.helpKey)}</p><p>{t(setting.impact.timingKey)}</p><p>{t(setting.impact.reversibilityKey)}</p><a href={localLink(setting.location.url)}>{ui('Configure')}</a>{!setup && catalog.impactSettings.includes(setting.id) && <ImpactPreview key={`${setting.id}:${report.snapshot.asOfUtc}`} settingId={setting.id} valueType={setting.valueType} revision={report.snapshot.revision} t={t} />}</article>)}</div></>}
+    {tab === 'reference' && <>
+      <form className="rgaa-explore-controls" onSubmit={e => { e.preventDefault(); void searchReference(); }}>
+        <div className="form-group"><label htmlFor="rgaa-reference-search">{ui('Search')}</label><input id="rgaa-reference-search" className="form-control input-sm" type="search" value={query} maxLength={256} onChange={e => setQuery(e.target.value)} /></div>
+        <button type="submit" className="btn btn-primary btn-sm" disabled={busy}><i className="fa fa-search" aria-hidden="true" /> {ui('SearchReference')}</button>
+      </form>
+      {hits.length > 0 && <Ibox title={ui('ReferenceResults')}>{hits.map(hit => <article key={hit.id} className="rgaa-finding"><span className="rgaa-finding__icon rgaa-muted"><i className="fa fa-file-text-o" aria-hidden="true" /></span><div className="rgaa-finding__body">
+        <p className="rgaa-finding__title">{t(hit.titleKey)}</p><p lang={hit.locale}>{hit.excerpt}</p><p className="rgaa-small rgaa-muted">{hit.sourcePath}#{hit.anchor} · {hit.packVersion} · {hit.locale}</p>
+        {catalog.articles.filter(a => a.id === hit.id && a.locale === hit.locale && a.packVersion === hit.packVersion).map(article => <details key={article.id}><summary>{ui('ReadSource')}</summary><div className="rgaa-source" lang={article.locale}>{article.body}</div></details>)}
+      </div></article>)}</Ibox>}
+      <div className="rgaa-grid">{catalog.settings.filter(s => `${t(s.labelKey)} ${t(s.helpKey)}`.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(setting => <article className="rgaa-card rgaa-feature" key={setting.id}>
+        <h4>{t(setting.labelKey)}</h4><p>{t(setting.helpKey)}</p><p className="rgaa-small rgaa-muted"><i className="fa fa-clock-o" aria-hidden="true" /> {t(setting.impact.timingKey)}<br /><i className="fa fa-undo" aria-hidden="true" /> {t(setting.impact.reversibilityKey)}</p>
+        {!setup && catalog.impactSettings.includes(setting.id) && <ImpactPreview key={`${setting.id}:${report.snapshot.asOfUtc}`} settingId={setting.id} valueType={setting.valueType} revision={report.snapshot.revision} t={t} />}
+        <div className="rgaa-feature__foot">{localLink(setting.location.url) && <a className="btn btn-white btn-xs" href={localLink(setting.location.url)}>{ui('Configure')}</a>}</div>
+      </article>)}</div></>}
+    {tab === 'plans' && catalog.plansAvailable && <PlansPanel askAvailable={catalog.askAvailable} t={t} settings={catalog.settings.filter(s => catalog.impactSettings.includes(s.id))} capabilities={catalog.capabilities} source={planSource} />}
     {tab === 'troubleshoot' && catalog.troubleshootingAvailable && <TroubleshootPanel t={t} localLink={localLink} capabilities={catalog.capabilities} />}
-    {tab === 'ask' && catalog.askAvailable && <AskPanel t={t} localLink={localLink} settings={catalog.settings.filter(s => catalog.impactSettings.includes(s.id))} />}
-    {tab === 'history' && <><p>{ui('HistoryBoundary')}</p><table><thead><tr><th>{ui('HistoryTime')}</th><th>{ui('HistoryAction')}</th><th>{ui('HistorySubject')}</th><th>{ui('Before')}</th><th>{ui('After')}</th></tr></thead><tbody>{history.map(row => <tr key={row.id}><td>{new Date(row.occurredOnUtc).toLocaleString()}</td><td>{row.action}</td><td>{row.subjectId}</td><td><code>{row.beforeCode}</code></td><td><code>{row.afterCode}</code></td></tr>)}</tbody></table>{hasMore && <button type="button" disabled={busy} onClick={() => void loadHistory()}>{ui('More')}</button>}</>}
+    {tab === 'ask' && catalog.askAvailable && <AskPanel onPlan={catalog.plansAvailable ? source => { setPlanSource(source); setTab('plans'); } : undefined} t={t} localLink={localLink} settings={catalog.settings.filter(s => catalog.impactSettings.includes(s.id))} />}
+    {tab === 'history' && <Ibox title={ui('history')}><p className="rgaa-small rgaa-muted">{ui('HistoryBoundary')}</p><div className="table-responsive"><table className="table table-striped table-hover"><thead><tr><th>{ui('HistoryTime')}</th><th>{ui('HistoryAction')}</th><th>{ui('HistorySubject')}</th><th>{ui('Before')}</th><th>{ui('After')}</th></tr></thead>
+      <tbody>{history.map(row => <tr key={row.id}><td>{new Date(row.occurredOnUtc).toLocaleString()}</td><td>{row.action}</td><td>{row.subjectId}</td><td><code>{row.beforeCode}</code></td><td><code>{row.afterCode}</code></td></tr>)}</tbody></table></div>
+      {history.length === 0 && !busy && <p className="rgaa-muted">{ui('None')}</p>}
+      {hasMore && history.length > 0 && <button type="button" className="btn btn-white btn-sm" disabled={busy} onClick={() => void loadHistory()}>{ui('More')}</button>}</Ibox>}
   </section>;
 }

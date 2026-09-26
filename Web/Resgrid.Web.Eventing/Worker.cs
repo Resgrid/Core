@@ -15,6 +15,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Microsoft.AspNetCore.SignalR;
 using Resgrid.Web.Eventing.Hubs;
+using Resgrid.Web.Eventing.Services;
 
 namespace Resgrid.Web.Eventing
 {
@@ -25,9 +26,12 @@ namespace Resgrid.Web.Eventing
 		private readonly IHubContext<ChatHub> _chatHub;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IRabbitInboundEventProvider _rabbitInboundEventProvider;
+		private readonly GeolocationBroadcaster _geolocationBroadcaster;
 
-		public Worker(IServiceProvider serviceProvider, IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub, IHubContext<ChatHub> chatHub)
+		public Worker(IServiceProvider serviceProvider, IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub, IHubContext<ChatHub> chatHub,
+			GeolocationBroadcaster geolocationBroadcaster)
 		{
+			_geolocationBroadcaster = geolocationBroadcaster;
 			_serviceProvider = serviceProvider;
 			_eventingHub = eventingHub;
 			_geolocationHub = geolocationHub;
@@ -232,7 +236,8 @@ namespace Resgrid.Web.Eventing
 
 		public async Task PersonnelLocationUpdated(int departmentId, PersonnelLocationUpdatedEvent update)
 		{
-			var group = _geolocationHub.Clients.Group(departmentId.ToString());
+			if (update == null || String.IsNullOrWhiteSpace(update.UserId))
+				return;
 
 			var location = new PersonnelLocationUpdate();
 			location.DepartmentId = update.DepartmentId;
@@ -240,14 +245,16 @@ namespace Resgrid.Web.Eventing
 			location.Latitude = update.Latitude;
 			location.Longitude = update.Longitude;
 			location.RecordId = update.RecordId;
+			location.Timestamp = AsUtc(update.Timestamp);
 
-			if (group != null)
-				await group.SendAsync("onPersonnelLocationUpdated", location);
+			// Only to viewers the location visibility matrix allows, like the REST map.
+			await _geolocationBroadcaster.SendPersonnelLocationAsync(_geolocationHub.Clients, departmentId, location);
 		}
 
 		public async Task UnitLocationUpdated(int departmentId, UnitLocationUpdatedEvent update)
 		{
-			var group = _geolocationHub.Clients.Group(departmentId.ToString());
+			if (update == null || String.IsNullOrWhiteSpace(update.UnitId))
+				return;
 
 			var location = new UnitLocationUpdate();
 			location.DepartmentId = update.DepartmentId;
@@ -255,9 +262,22 @@ namespace Resgrid.Web.Eventing
 			location.Latitude = update.Latitude;
 			location.Longitude = update.Longitude;
 			location.RecordId = update.RecordId;
+			location.Timestamp = AsUtc(update.Timestamp);
 
-			if (group != null)
-				await group.SendAsync("onUnitLocationUpdated", location);
+			// Only to viewers the location visibility matrix allows, like the REST map.
+			await _geolocationBroadcaster.SendUnitLocationAsync(_geolocationHub.Clients, departmentId, location);
+		}
+
+		// Location timestamps are stored as UTC but can come back from the document store and the
+		// Rabbit JSON hop as Unspecified; without a "Z" the browser would parse them as local time.
+		private static DateTime? AsUtc(DateTime? timestamp)
+		{
+			if (!timestamp.HasValue)
+				return null;
+
+			return timestamp.Value.Kind == DateTimeKind.Unspecified
+				? DateTime.SpecifyKind(timestamp.Value, DateTimeKind.Utc)
+				: timestamp.Value.ToUniversalTime();
 		}
 
 		/// <summary>

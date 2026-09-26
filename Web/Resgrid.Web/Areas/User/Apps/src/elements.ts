@@ -91,5 +91,6 @@ defineReactElement<import('./components/adminAssist/AdminAssistElement').AdminAs
     { attribute: 'setup', property: 'setup', type: 'boolean', defaultValue: false },
     { attribute: 'loadinglabel', property: 'loadingLabel', type: 'string' },
     { attribute: 'errorlabel', property: 'errorLabel', type: 'string' },
+    { attribute: 'retrylabel', property: 'retryLabel', type: 'string' },
   ],
 );

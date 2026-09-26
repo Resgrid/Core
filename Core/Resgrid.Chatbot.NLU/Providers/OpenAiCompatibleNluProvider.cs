@@ -38,10 +38,10 @@ namespace Resgrid.Chatbot.NLU.Providers
 		public string ProviderName => "CloudLLM";
 		public int Priority => 100;
 
-		// A single shared HttpClient avoids socket exhaustion. This provider is registered
-		// InstancePerLifetimeScope, so a per-instance client would leak sockets under load.
-		// Per-request timeouts are enforced via a CancellationToken (see ClassifyAsync) rather
-		// than the shared client's Timeout, which cannot be varied safely across concurrent callers.
+		// HTTP clients come from OperatorEndpointPolicy.GetSharedClient, one pooled client per endpoint, which avoids
+		// socket exhaustion. This provider is registered InstancePerLifetimeScope, so a per-instance or per-request
+		// client would leak sockets under load. Per-request timeouts are enforced via a CancellationToken (see
+		// ClassifyAsync) rather than the shared client's Timeout, which cannot be varied safely across concurrent callers.
 
 		private readonly IChatbotDepartmentConfigService _configService;
 
@@ -192,7 +192,7 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				var compatRetried = false;
 
 				// Department endpoints are public https only (SSRF); the operator may opt in to a private or on-prem endpoint.
-				using var httpClient = Resgrid.Llm.OperatorEndpointPolicy.CreateClient(new Uri(endpoint), departmentLlm == null && ChatbotConfig.CloudNluAllowPrivateEndpoint);
+				var httpClient = Resgrid.Llm.OperatorEndpointPolicy.GetSharedClient(new Uri(endpoint), departmentLlm == null && ChatbotConfig.CloudNluAllowPrivateEndpoint);
 
 				HttpResponseMessage response;
 				string responseBody;

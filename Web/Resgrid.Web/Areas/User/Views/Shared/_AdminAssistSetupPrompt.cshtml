@@ -1,12 +1,14 @@
 @model Resgrid.Model.AdminAssist.SetupWorkspace
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aaLabels
 <aside class="alert alert-info" aria-label="@aaLabels["Ui.wizard"]">
-    <p><strong>@aaLabels["Ui.wizard"]</strong> — @aaLabels["Ui.SetupPrompt"]</p>
-    <p><a asp-area="User" asp-controller="AdminAssist" asp-action="SetupWizard">@aaLabels["Ui.ResumeSetup"]</a>
-        · <a asp-area="User" asp-controller="AdminAssist" asp-action="SetupReport">@aaLabels["Ui.report"]</a></p>
+    <p><i class="fa fa-magic" aria-hidden="true"></i> <strong>@aaLabels["Ui.wizard"]</strong> — @aaLabels["Ui.SetupPrompt"]</p>
+    <p style="margin-top: 8px;">
+        <a class="btn btn-primary btn-xs" asp-area="User" asp-controller="AdminAssist" asp-action="SetupWizard">@aaLabels["Ui.ResumeSetup"]</a>
+        <a class="btn btn-white btn-xs" asp-area="User" asp-controller="AdminAssist" asp-action="SetupReport">@aaLabels["Ui.report"]</a>
+    </p>
     <form asp-area="User" asp-controller="AdminAssist" asp-action="DismissSetup" method="post">
         <input type="hidden" name="revision" value="@Model.Revision" />
         <input type="hidden" name="catalogVersion" value="@Model.CatalogVersion" />
-        <button type="submit" class="btn btn-link">@aaLabels["Ui.DismissSetup"]</button>
+        <button type="submit" class="btn btn-link btn-xs" style="padding-left: 0;">@aaLabels["Ui.DismissSetup"]</button>
     </form>
 </aside>

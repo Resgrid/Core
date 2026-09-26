@@ -1,12 +1,21 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "inventory",
       "LabelKey": "Area.inventory",
       "PurposeKey": "AreaPurpose.inventory",
-      "Order": 8,
-      "Archetypes": []
+      "Order": 13,
+      "Archetypes": [],
+      "Tier": "Optional",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.inventory",
+      "ExampleKey": "AreaExample.inventory",
+      "AdoptionKey": "ModuleAdoption.inventory",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 120,
+      "DocsPath": "/web-app/inventory/"
     }
   ],
   "Settings": [
@@ -89,7 +98,7 @@
       "PurposeKey": "FeaturePurpose.inventory",
       "ValueKey": "AreaValue.inventory",
       "ExampleKey": "AreaExample.inventory",
-      "AdoptionKey": "FeatureAdoption.inventory",
+      "AdoptionKey": "FeatureSetup.inventory",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Inventory",
@@ -106,109 +115,9 @@
       ],
       "RuleIds": [
         "stock-expiry"
-      ]
-    },
-    {
-      "Id": "inventory-status",
-      "AreaId": "inventory",
-      "LabelKey": "Feature.inventory-status",
-      "PurposeKey": "FeaturePurpose.inventory-status",
-      "ValueKey": "AreaValue.inventory",
-      "ExampleKey": "AreaExample.inventory",
-      "AdoptionKey": "FeatureAdoption.inventory-status",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Inventory",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Inventory"
-        }
       ],
-      "SettingIds": [
-        "module.InventoryDisabled"
-      ],
-      "RuleIds": [
-        "stock-expiry"
-      ]
-    },
-    {
-      "Id": "inventory-transfer",
-      "AreaId": "inventory",
-      "LabelKey": "Feature.inventory-transfer",
-      "PurposeKey": "FeaturePurpose.inventory-transfer",
-      "ValueKey": "AreaValue.inventory",
-      "ExampleKey": "AreaExample.inventory",
-      "AdoptionKey": "FeatureAdoption.inventory-transfer",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Inventory",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Inventory"
-        }
-      ],
-      "SettingIds": [
-        "module.InventoryDisabled"
-      ],
-      "RuleIds": [
-        "stock-expiry"
-      ]
-    },
-    {
-      "Id": "inventory-issue",
-      "AreaId": "inventory",
-      "LabelKey": "Feature.inventory-issue",
-      "PurposeKey": "FeaturePurpose.inventory-issue",
-      "ValueKey": "AreaValue.inventory",
-      "ExampleKey": "AreaExample.inventory",
-      "AdoptionKey": "FeatureAdoption.inventory-issue",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Inventory",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Inventory"
-        }
-      ],
-      "SettingIds": [
-        "module.InventoryDisabled"
-      ],
-      "RuleIds": [
-        "stock-expiry"
-      ]
-    },
-    {
-      "Id": "inventory-purchasing",
-      "AreaId": "inventory",
-      "LabelKey": "Feature.inventory-purchasing",
-      "PurposeKey": "FeaturePurpose.inventory-purchasing",
-      "ValueKey": "FeatureValue.inventory-purchasing",
-      "ExampleKey": "AreaExample.inventory",
-      "AdoptionKey": "FeatureAdoption.inventory-purchasing",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Inventory",
-        "Action": "Purchasing"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Inventory"
-        }
-      ],
-      "SettingIds": [
-        "module.InventoryDisabled"
-      ],
-      "RuleIds": []
+      "Prominence": "Key",
+      "DocsPath": "/web-app/inventory/"
     },
     {
       "Id": "inventory-operations",
@@ -217,7 +126,7 @@
       "PurposeKey": "FeaturePurpose.inventory-operations",
       "ValueKey": "FeatureValue.inventory-operations",
       "ExampleKey": "AreaExample.inventory",
-      "AdoptionKey": "FeatureAdoption.inventory-operations",
+      "AdoptionKey": "FeatureSetup.inventory-operations",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Inventory",
@@ -232,7 +141,119 @@
       "SettingIds": [
         "module.InventoryDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/inventory/"
+    },
+    {
+      "Id": "inventory-status",
+      "AreaId": "inventory",
+      "LabelKey": "Feature.inventory-status",
+      "PurposeKey": "FeaturePurpose.inventory-status",
+      "ValueKey": "AreaValue.inventory",
+      "ExampleKey": "AreaExample.inventory",
+      "AdoptionKey": "ModuleAdoption.inventory",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Inventory",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Inventory"
+        }
+      ],
+      "SettingIds": [
+        "module.InventoryDisabled"
+      ],
+      "RuleIds": [
+        "stock-expiry"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/inventory/"
+    },
+    {
+      "Id": "inventory-transfer",
+      "AreaId": "inventory",
+      "LabelKey": "Feature.inventory-transfer",
+      "PurposeKey": "FeaturePurpose.inventory-transfer",
+      "ValueKey": "AreaValue.inventory",
+      "ExampleKey": "AreaExample.inventory",
+      "AdoptionKey": "ModuleAdoption.inventory",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Inventory",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Inventory"
+        }
+      ],
+      "SettingIds": [
+        "module.InventoryDisabled"
+      ],
+      "RuleIds": [
+        "stock-expiry"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/inventory/"
+    },
+    {
+      "Id": "inventory-issue",
+      "AreaId": "inventory",
+      "LabelKey": "Feature.inventory-issue",
+      "PurposeKey": "FeaturePurpose.inventory-issue",
+      "ValueKey": "AreaValue.inventory",
+      "ExampleKey": "AreaExample.inventory",
+      "AdoptionKey": "ModuleAdoption.inventory",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Inventory",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Inventory"
+        }
+      ],
+      "SettingIds": [
+        "module.InventoryDisabled"
+      ],
+      "RuleIds": [
+        "stock-expiry"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/inventory/"
+    },
+    {
+      "Id": "inventory-purchasing",
+      "AreaId": "inventory",
+      "LabelKey": "Feature.inventory-purchasing",
+      "PurposeKey": "FeaturePurpose.inventory-purchasing",
+      "ValueKey": "FeatureValue.inventory-purchasing",
+      "ExampleKey": "AreaExample.inventory",
+      "AdoptionKey": "ModuleAdoption.inventory",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Inventory",
+        "Action": "Purchasing"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Inventory"
+        }
+      ],
+      "SettingIds": [
+        "module.InventoryDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/inventory/"
     }
   ],
   "Rules": [
@@ -266,7 +287,7 @@
       "Body": "Inventory availability. Controls availability of inventory. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-inventorydisabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -277,7 +298,7 @@
       "Body": "Inventory menu name. Optional display name for inventory in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-inventorynameoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -285,54 +306,10 @@
       "Id": "inventory",
       "Locale": "en",
       "TitleKey": "Feature.inventory",
-      "Body": "Inventory Inventory for stations and units See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Inventory Items, stock levels and storage locations. Know what you have, where it is and what is about to expire. Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members. Add the supplies and equipment you track and where they are stored.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "inventory-status",
-      "Locale": "en",
-      "TitleKey": "Feature.inventory-status",
-      "Body": "Inventory Status On-hand, low-stock and expiring inventory See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "inventory-status",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "inventory-transfer",
-      "Locale": "en",
-      "TitleKey": "Feature.inventory-transfer",
-      "Body": "Transfer Inventory Move inventory between locations See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "inventory-transfer",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "inventory-issue",
-      "Locale": "en",
-      "TitleKey": "Feature.inventory-issue",
-      "Body": "Issue Equipment Issue or return equipment to personnel See recorded shortages and due dates before they become an administrative surprise. Review an expiring supply lot and arrange restocking through the inventory screen. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "inventory-issue",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "inventory-purchasing",
-      "Locale": "en",
-      "TitleKey": "Feature.inventory-purchasing",
-      "Body": "Inventory purchasing Manage suppliers, purchase orders and receipts. Connect replenishment to recorded stock needs and authorized receipt. Review an expiring supply lot and arrange restocking through the inventory screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "inventory-purchasing",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -340,10 +317,54 @@
       "Id": "inventory-operations",
       "Locale": "en",
       "TitleKey": "Feature.inventory-operations",
-      "Body": "Inventory counts, expiry and alerts Review stock counts, expiry and configured inventory alerts. Identify inventory data and supplies that need owner follow-up. Review an expiring supply lot and arrange restocking through the inventory screen. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Inventory counts, expiry and alerts Counts, expiry dates and low-stock alerts. Identify inventory data and supplies that need owner follow-up. Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members. Set minimum levels and expiry alerts for critical supplies.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "inventory-operations",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "inventory-status",
+      "Locale": "en",
+      "TitleKey": "Feature.inventory-status",
+      "Body": "Inventory Status What is on hand, running low or expiring. Know what you have, where it is and what is about to expire. Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members. Decide which supplies and equipment are worth tracking and where they are stored.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "inventory-status",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "inventory-transfer",
+      "Locale": "en",
+      "TitleKey": "Feature.inventory-transfer",
+      "Body": "Transfer Inventory Move stock between locations. Know what you have, where it is and what is about to expire. Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members. Decide which supplies and equipment are worth tracking and where they are stored.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "inventory-transfer",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "inventory-issue",
+      "Locale": "en",
+      "TitleKey": "Feature.inventory-issue",
+      "Body": "Issue Equipment Issue equipment to members and record returns. Know what you have, where it is and what is about to expire. Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members. Decide which supplies and equipment are worth tracking and where they are stored.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "inventory-issue",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "inventory-purchasing",
+      "Locale": "en",
+      "TitleKey": "Feature.inventory-purchasing",
+      "Body": "Inventory purchasing Suppliers, purchase orders and deliveries. Connect replenishment to recorded stock needs and authorized receipt. Medical supplies are tracked by lot with expiry alerts, and turnout gear is issued to members. Decide which supplies and equipment are worth tracking and where they are stored.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "inventory-purchasing",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

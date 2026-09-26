@@ -263,12 +263,13 @@ namespace Resgrid.Services
 						await _personnelLocationRepository.Value.ReplaceOneAsync(personnelLocation, cancellationToken);
 				}
 
-				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
+				await _eventAggregator.SendMessageAsync(new PersonnelLocationUpdatedEvent() {
 					DepartmentId = personnelLocation.DepartmentId,
 					UserId = personnelLocation.UserId,
 					Latitude = personnelLocation.Latitude,
 					Longitude = personnelLocation.Longitude,
 					RecordId = personnelLocation.GetId(),
+					Timestamp = personnelLocation.Timestamp,
 				});
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

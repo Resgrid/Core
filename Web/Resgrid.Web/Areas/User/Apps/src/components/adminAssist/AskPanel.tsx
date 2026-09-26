@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { type PlanSource } from './PlansPanel';
 import { apiFetchJson, ApiError } from '../../runtime/api';
 
 type Evidence = { kind: string; id: string; titleKey: string; textKeys: string[]; numbers: Record<string, number>; state: string; destination?: string; citationId: string; catalogVersion: string; asOfUtc: string; publicText?: string };
@@ -7,7 +8,7 @@ type Conversation = { id: string; revision: number; modifiedOnUtc: string };
 type Status = { available: boolean; reason: string; tokensRemaining: number; tier?: string; freeQuestionsRemaining?: number; freeQuestionsAllowance?: number; freeWindowEndsUtc?: string };
 const endpoint = 'api/v4/AdminAssist/';
 
-export default function AskPanel({ t, localLink, settings }: { settings: { id: string; labelKey: string; valueType: string }[]; t: (key: string) => string; localLink: (url?: string | null) => string | undefined }) {
+export default function AskPanel({ t, localLink, settings, onPlan }: { onPlan?: (source: PlanSource) => void; settings: { id: string; labelKey: string; valueType: string }[]; t: (key: string) => string; localLink: (url?: string | null) => string | undefined }) {
   const ui = (key: string) => t(`Ui.${key}`);
   const [question, setQuestion] = useState('');
   const [topic, setTopic] = useState('setup');
@@ -75,6 +76,7 @@ export default function AskPanel({ t, localLink, settings }: { settings: { id: s
     </form>
     {notice && <p role="status">{ui(notice)}</p>}
     <button type="button" disabled={busy} onClick={reset}>{ui('Ask.New')}</button>
+    {conversation && onPlan && <button disabled={busy} onClick={() => onPlan({ source: 'conversation', sourceId: conversation.id, goal: question })}>{t('Plan.New')}</button>}
     {conversation && <button type="button" disabled={busy} onClick={() => void run(async signal => {
       await apiFetchJson(`${endpoint}DeleteConversation`, { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: conversation.id, expectedRevision: conversation.revision }) });
       if (!signal.aborted) { reset(); setNotice('Ask.Deleted'); }

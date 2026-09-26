@@ -19,7 +19,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public sealed class AdminAssistController(IAdminAssistService service, IAdminAssistAccessService access,
 		IAdminAssistCatalog catalog, IStringLocalizer<Labels> labels, IAdminAssistReferenceSearch referenceSearch,
-		IAdminAssistAskService ask, IAdminAssistDiagnostics diagnostics, IAdminAssistWorklistService worklist, IAdminAssistMaintenanceStore maintenance, IConfigurationImpactService impacts,
+		IAdminAssistAskService ask, IAdminAssistDiagnostics diagnostics, IAdminAssistPlans plans, IAdminAssistPlanQueries planQueries, IAdminAssistWorklistService worklist, IAdminAssistMaintenanceStore maintenance, IConfigurationImpactService impacts,
 		IDispatchImpactService dispatchImpacts, IPermissionImpactService permissionImpacts, IModuleImpactService moduleImpacts, ITextImportImpactService textImportImpacts, IRetentionImpactService retentionImpacts, INotificationImpactService notificationImpacts, ISecurityImpactService securityImpacts) : V4AuthenticatedApiControllerbase
 	{
 		private AdminAssistActor Actor => new(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name);
@@ -41,6 +41,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return new
 			{
 				AskAvailable = !setup && (await ask.GetStatusAsync(Actor, cancellationToken)).Reason is "Available" or "BudgetExhausted" or "FreeAllowanceExhausted" or "FreeAttemptLimit",
+				PlansAvailable = !setup && Resgrid.Config.AdminAssistConfig.PlansEnabled,
 				TroubleshootingAvailable = !setup && Resgrid.Config.AdminAssistConfig.TroubleshootingEnabled,
 				CanSetup = await access.CanAccessAsync(Actor, true, cancellationToken),
 				ImpactSettings = catalog.Settings.Where(s => Resgrid.AdminAssist.ConfigurationImpactEvaluator.Supports(s.Id)).Select(s => s.Id).ToArray(),
@@ -51,6 +52,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 				RightToLeft = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft
 			};
 		});
+
+		/// <summary>Read reviewed proposal templates; no configuration is applied.</summary>
+		[HttpGet("PlanTemplates")]
+		public Task<IActionResult> PlanTemplates(CancellationToken ct) => ExecuteAsync(async () => await plans.TemplatesAsync(Actor, ct));
+		/// <summary>Build a transient proposal from authorized live evidence.</summary>
+		[HttpPost("PlanDraft"), RequestSizeLimit(16384)]
+		public Task<IActionResult> PlanDraft([FromBody] PlanDraftRequest request, CancellationToken ct) => ExecuteAsync(async () => await planQueries.DraftAsync(Actor, request, ct));
+		/// <summary>Explicitly save a reviewed proposal as private metadata.</summary>
+		[HttpPost("PlanCreate"), RequestSizeLimit(16384)]
+		public Task<IActionResult> PlanCreate([FromBody] PlanCreateCommand command, CancellationToken ct) => ExecuteAsync(async () => await plans.CreateAsync(Actor, command, ct));
+		/// <summary>Read a plan with fresh source authorization and verification.</summary>
+		[HttpPost("Plan"), RequestSizeLimit(1024)]
+		public Task<IActionResult> Plan([FromBody] PlanReference reference, CancellationToken ct) => ExecuteAsync(async () => await plans.ReadAsync(Actor, reference, ct));
+		/// <summary>List currently authorized private and deliberately shared plans.</summary>
+		[HttpGet("Plans")]
+		public Task<IActionResult> Plans(CancellationToken ct) => ExecuteAsync(async () => await plans.ListAsync(Actor, ct));
+		/// <summary>Update owned plan metadata only, using expected revision and preview digest.</summary>
+		[HttpPost("PlanCommand"), RequestSizeLimit(4096)]
+		public Task<IActionResult> PlanCommand([FromBody] PlanCommand command, CancellationToken ct) => ExecuteAsync(async () => await plans.CommandAsync(Actor, command, ct));
+		/// <summary>Export a freshly reauthorized and escaped as-of PDF.</summary>
+		[HttpPost("PlanExport"), RequestSizeLimit(1024)]
+		public Task<IActionResult> PlanExport([FromBody] PlanCommand command, CancellationToken ct) => ExecuteAsync(async () => await plans.ExportAsync(Actor, command, ct));
 
 		/// <summary>Run an attended, read-only diagnostic within the current department.</summary>
 		[HttpPost("Diagnose")]
@@ -241,6 +264,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (UnauthorizedAccessException) { return StatusCode(403); }
 			catch (AdminAssistConcurrencyException) { return Conflict(new { code = "WorkspaceChanged" }); }
 			catch (ArgumentException) { return BadRequest(new { code = "InvalidSetupChoice" }); }
+			// The bounded evidence read expired (for example a slow billing source); the client may retry. Not a server fault.
+			catch (OperationCanceledException) when (HttpContext?.RequestAborted.IsCancellationRequested != true) { return StatusCode(503, new { code = "EvidenceTimeout" }); }
 		}
 	}
 }

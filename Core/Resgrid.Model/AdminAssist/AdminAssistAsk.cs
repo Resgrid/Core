@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.AdminAssist
 {
-	public sealed record AdminAssistAskRequest(string Question, string ConversationId = null, long ExpectedRevision = 0, string Topic = "setup", string SettingId = null, string ProposedValue = null);
+	public sealed record AdminAssistAskRequest(string Question, string ConversationId = null, long ExpectedRevision = 0, string Topic = "setup", string SettingId = null, string ProposedValue = null, string PlanTemplateId = null, string PlanId = null, string PlanStepId = null);
 	/// <summary>
 	/// Conversation admission state. Tier is an <see cref="AdminAssistAskTiers"/> value once an entitlement path applies;
 	/// the Free* fields are set only on the free allowance (questions remaining in the current window and when it ends).

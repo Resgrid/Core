@@ -141,6 +141,17 @@ namespace Resgrid.Tests.AdminAssist
 			f.Protection.Verify(p => p.ReadAsync(f.Actor, It.IsAny<AdminAssistDiagnosticRun>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 		[Test]
+		public async Task A_retained_run_stays_readable_after_its_window_ages_past_ninety_days()
+		{
+			var f = new Fixture(); var run = await f.Service.RunAsync(f.Actor, f.Request, CancellationToken.None);
+			// Created two days ago with the oldest window allowed then: valid at creation, 91 days old today, still retained.
+			f.Row.CreatedOnUtc = DateTime.UtcNow.AddDays(-2);
+			var from = f.Row.CreatedOnUtc.AddDays(-89);
+			f.Protection.Setup(s => s.ReadAsync(f.Actor, It.IsAny<AdminAssistDiagnosticRun>(), It.IsAny<CancellationToken>())).ReturnsAsync(f.Request with { FromUtc = from, UntilUtc = from.AddHours(1) });
+			var report = await f.Service.ReadAsync(f.Actor, new(run.RunId), CancellationToken.None);
+			Assert.That(report.RunId, Is.EqualTo(run.RunId));
+		}
+		[Test]
 		public async Task Export_requires_a_preview_of_current_evidence_and_audits_the_download()
 		{
 			var f = new Fixture(); var run = await f.Service.RunAsync(f.Actor, f.Request, CancellationToken.None);

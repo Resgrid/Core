@@ -63,15 +63,14 @@ namespace Resgrid.Services.AdminAssist
 			var local = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById(department.TimeZone));
 			var qualified = await qualifications.EvaluateRoleRequirementsAsync(actor.DepartmentId, r.RoleId.Value, local.Date).WaitAsync(ct);
 			if (qualified == null || qualified.Count > 2000) throw new InvalidOperationException();
-			foreach (var person in qualified)
-				if (!await visibility.CanUserViewPersonAsync(actor.UserId, person.UserId, actor.DepartmentId).WaitAsync(ct)) throw new UnauthorizedAccessException();
+			// Qualified people are authorized before any schedule is read, each once, with one department-scoped check.
+			if (!await CanViewAllAsync(actor, qualified.Select(p => p.UserId), ct)) throw new UnauthorizedAccessException();
 			var schedule = await shifts.ReadSchedulesForAdministrationAsync(actor.DepartmentId, local.Date.AddDays(-3), local.Date.AddDays(1), now, 2000, ct);
 			if (schedule == null) throw new InvalidOperationException();
 			var active = schedule.Where(s => s.Day.Start <= local && s.Day.End > local).ToArray();
 			var roster = active.SelectMany(s => s.Roster).Where(p => p.IsOnDuty() && (!r.GroupId.HasValue || p.DepartmentGroupId == r.GroupId)).ToArray();
 			if (roster.Length > 2000) throw new InvalidOperationException();
-			foreach (var person in roster)
-				if (!await visibility.CanUserViewPersonAsync(actor.UserId, person.UserId, actor.DepartmentId).WaitAsync(ct) || !await membership.IsAssignableMemberAsync(person.UserId, actor.DepartmentId).WaitAsync(ct)) throw new UnauthorizedAccessException();
+			if (!await CanViewAllAsync(actor, roster.Select(p => p.UserId), ct) || !await AreAllAssignableAsync(actor, roster.Select(p => p.UserId), ct)) throw new UnauthorizedAccessException();
 			var eligible = qualified.Where(p => p.Qualified).Select(p => p.UserId).Intersect(roster.Select(p => p.UserId), StringComparer.OrdinalIgnoreCase).Count();
 			checks.Add(Check("QualifiedRoster", eligible == 0, now, value: eligible, source: "RosterAndQualifications"));
 			var gaps = qualified.Count(p => !p.Qualified);
@@ -81,6 +80,22 @@ namespace Resgrid.Services.AdminAssist
 			var overlap = roster.GroupBy(p => p.UserId).Count(g => g.Count() > 1);
 			checks.Add(Check("RosterOverlap", overlap > 0, now, value: overlap, source: "ResolvedRoster"));
 			checks.Add(Check("LocalMinimum", null, now)); checks.Add(Check("ResponseAvailability", null, now));
+		}
+		// Bulk forms of CanUserViewPersonAsync and IsAssignableMemberAsync: a few queries for up to 2,000 people instead of one
+		// or more per person, which kept large departments inside the 60-second diagnostic deadline. Every person must pass.
+		private async Task<bool> CanViewAllAsync(AdminAssistActor actor, IEnumerable<string> userIds, CancellationToken ct)
+		{
+			var ids = userIds.Distinct(StringComparer.Ordinal).ToArray();
+			if (ids.Length == 0) return true;
+			var viewable = await visibility.GetViewablePersonIdsAsync(actor.UserId, ids, actor.DepartmentId).WaitAsync(ct);
+			return ids.All(id => viewable?.Contains(id) == true);
+		}
+		private async Task<bool> AreAllAssignableAsync(AdminAssistActor actor, IEnumerable<string> userIds, CancellationToken ct)
+		{
+			var ids = userIds.Distinct(StringComparer.Ordinal).ToArray();
+			if (ids.Length == 0) return true;
+			var assignable = await membership.GetAssignableMemberIdsAsync(ids, actor.DepartmentId).WaitAsync(ct);
+			return ids.All(id => assignable?.Contains(id) == true);
 		}
 		private async Task EquipmentChecksAsync(AdminAssistActor actor, DiagnosticRequest r, DateTime now, List<DiagnosticCheck> checks, CancellationToken ct)
 		{

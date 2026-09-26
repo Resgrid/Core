@@ -1931,16 +1931,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
+		// The legacy modal and its untyped multi-entity SubmitSetupWizard writer were removed; each change is
+		// made on its owning, validated screen from the Setup Wizard journey.
 		public IActionResult SetupWizard() => RedirectToAction("SetupWizard", "AdminAssist", new { Area = "User" });
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Department_Update)]
-		public IActionResult SubmitSetupWizard([FromBody] SetupWizardFormPayload payload, CancellationToken cancellationToken)
-		{
-			// The legacy dictionary form performed unvalidated multi-entity writes. Resume the typed,
-			// persisted journey; each operational change now belongs to its existing validated editor.
-			return StatusCode(410, new { code = "SetupWizardReplaced", url = "/User/Department/SetupWizard" });
-		}
 
 		#endregion Setup Wizard
 
@@ -2849,10 +2842,5 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			return Json(await _printerProvider.GetPrinters(key));
 		}
-	}
-
-	public class SetupWizardFormPayload
-	{
-		public string setupWizardForm { get; set; }
 	}
 }

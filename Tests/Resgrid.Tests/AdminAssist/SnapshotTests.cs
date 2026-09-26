@@ -66,5 +66,26 @@ namespace Resgrid.Tests.AdminAssist
 			var snapshot = await provider.ReadAsync(Actor);
 			Assert.That(snapshot.Consistent, Is.False); Assert.That(snapshot.Revision, Is.EqualTo("4"));
 		}
+		[TestCase(false)] [TestCase(true)]
+		public async Task A_slow_or_internally_timed_out_source_becomes_unknown_without_failing_the_snapshot(bool internalTimeout)
+		{
+			var saved = Resgrid.Config.AdminAssistConfig.EvidenceSourceTimeoutSeconds;
+			Resgrid.Config.AdminAssistConfig.EvidenceSourceTimeoutSeconds = 1;
+			try
+			{
+				// Never completes (a hung billing call), or cancels on its own clock (a provider's HTTP timeout).
+				var slow = Source(() => internalTimeout ? throw new TaskCanceledException("provider timeout") : new TaskCompletionSource<IReadOnlyList<ConfigurationEvidence>>().Task);
+				var fast = new Mock<IAdminAssistEvidenceSource>(); fast.SetupGet(s => s.SourceId).Returns("fast");
+				fast.SetupGet(s => s.EvidenceIds).Returns(new[] { "groupCount" });
+				fast.Setup(s => s.ReadAsync(Actor, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).Returns((AdminAssistActor _, DateTime now, CancellationToken _) =>
+					Task.FromResult<IReadOnlyList<ConfigurationEvidence>>(new[] { new ConfigurationEvidence("groupCount", EvidenceState.Known, "fast", "1", now, Number: 2) }));
+				var provider = new ConfigurationSnapshotProvider(new[] { slow.Object, fast.Object }, Mock.Of<IAdminAssistRepository>(), Authorize().Object, new ConfigurationCatalog(), TimeProvider.System);
+				var snapshot = await provider.ReadAsync(Actor);
+				Assert.That(snapshot.Find("unitCount").State, Is.EqualTo(EvidenceState.Unknown));
+				Assert.That(snapshot.Find("unitCount").ReasonCode, Is.EqualTo("SourceTimeout"));
+				Assert.That(snapshot.Find("groupCount").Number, Is.EqualTo(2m), "Later sources still run after a slow one.");
+			}
+			finally { Resgrid.Config.AdminAssistConfig.EvidenceSourceTimeoutSeconds = saved; }
+		}
 	}
 }

@@ -1,0 +1,70 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "ai",
+      "LabelKey": "Area.ai",
+      "PurposeKey": "AreaPurpose.ai",
+      "Order": 20,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "EnhancedAi",
+      "Global": true,
+      "ValueKey": "AreaValue.ai",
+      "ExampleKey": "AreaExample.ai",
+      "AdoptionKey": "ModuleAdoption.ai",
+      "MinimumMinutes": 5,
+      "MaximumMinutes": 15,
+      "DocsPath": "/web-app/help-setup/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "addon-ai",
+      "AreaId": "ai",
+      "LabelKey": "Feature.addon-ai",
+      "PurposeKey": "FeaturePurpose.addon-ai",
+      "ValueKey": "FeatureValue.addon-ai",
+      "ExampleKey": "FeatureExample.addon-ai",
+      "AdoptionKey": "FeatureSetup.addon-ai",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "Subscription",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        }
+      ],
+      "SettingIds": [
+        "setting.BrainTreeCustomerId",
+        "setting.PaddleCustomerId",
+        "setting.StripeCustomerId"
+      ],
+      "RuleIds": [
+        "personnel-limit",
+        "unit-limit"
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/help-setup/"
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "addon-ai",
+      "Locale": "en",
+      "TitleKey": "Feature.addon-ai",
+      "Body": "Enhanced AI AI assistance beyond the free Admin Assist allowance. Help explain approved evidence and prepare drafts for human review when released. Ask for an explanation of a configuration finding when the conversational feature is available. Nothing to set up yet; your free Admin Assist allowance works without it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "addon-ai",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

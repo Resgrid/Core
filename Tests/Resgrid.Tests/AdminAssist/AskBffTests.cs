@@ -43,6 +43,12 @@ namespace Resgrid.Tests.AdminAssist
 			ApiConfig.BackendInternalApikey = _internalKey;
 		}
 
+		[TestCase("api/v4/AdminAssist/PlanDraft", 100, true)]
+		[TestCase("api/v4/AdminAssist/PlanCreate", 100, true)]
+		[TestCase("api/v4/AdminAssist/Plan", 100, true)]
+		[TestCase("api/v4/AdminAssist/PlanCommand", 100, true)]
+		[TestCase("api/v4/AdminAssist/PlanExport", 100, true)]
+		[TestCase("api/v4/AdminAssist/Plans", 100, true)]
 		[TestCase("api/v4/AdminAssist/Ask", 100, true)]
 		[TestCase("api/v4/AdminAssist/Conversation", 100, true)]
 		[TestCase("api/v4/AdminAssist/ConversationExport", 100, true)]

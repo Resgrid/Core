@@ -146,6 +146,8 @@ namespace Resgrid.Model.AiDispatch
 		/// <summary>Returns validation error codes, "Conflict" when another admin saved first, or an empty list on success.</summary>
 		Task<IReadOnlyList<string>> SaveSettingsAsync(int departmentId, DepartmentAiDispatchConfig settings, long expectedRevision, string userId, CancellationToken cancellationToken);
 		Task<List<AiDispatchAuditListItem>> GetAuditAsync(int departmentId, int take, CancellationToken cancellationToken);
+		/// <summary>Audit row counts per outcome over the last <paramref name="days"/> days, independent of how many rows the activity list shows.</summary>
+		Task<Dictionary<string, int>> GetRecentOutcomeCountsAsync(int departmentId, int days, CancellationToken cancellationToken);
 		/// <summary>AI dispatch tokens used by the department this calendar month (UTC).</summary>
 		Task<long> GetMonthlyUsageAsync(int departmentId, CancellationToken cancellationToken);
 		/// <summary>Whether a message from <paramref name="sender"/> may be enriched (the call is created regardless).</summary>

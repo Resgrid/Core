@@ -76,6 +76,59 @@ namespace Resgrid.Tests.AdminAssist
 		}
 
 		[Test]
+		public void Setup_teaches_modules_through_a_short_list_of_key_features()
+		{
+			// Every paid add-on is its own module, so setup can separate included work from optional purchases.
+			Assert.That(Catalog.Areas.Where(m => m.Tier == ProductArea.AddOn).Select(m => m.Addon), Is.EquivalentTo(Enum.GetNames<PlanAddonTypes>()));
+			Assert.That(Catalog.Areas.Where(m => m.Tier == ProductArea.Core).Select(m => m.Id), Does.Contain("people").And.Contain("security").And.Contain("calls"));
+			Assert.That(Catalog.Areas.Single(m => m.Addon == nameof(PlanAddonTypes.ADP)).Global, Is.True);
+			// Setup stays digestible: most catalog entries are detail features that Ask and Settings reference explain.
+			var key = Catalog.Capabilities.Where(c => c.IsKey).ToArray();
+			Assert.That(key.Length, Is.InRange(40, 70));
+			Assert.That(key.Length * 2, Is.LessThan(Catalog.Capabilities.Count));
+			var resources = new ResourceManager(typeof(Resgrid.Localization.Areas.User.AdminAssist.AdminAssist));
+			foreach (var feature in key)
+				Assert.That(feature.AdoptionKey, Does.StartWith("FeatureSetup.").Or.StartWith("FeatureAdoption.addon"), "Key features carry a specific first step: " + feature.Id);
+			// Each module has its own example; no two modules reuse the same guidance.
+			var examples = Catalog.Areas.Select(m => resources.GetString(m.ExampleKey, CultureInfo.GetCultureInfo("en"))).ToArray();
+			Assert.That(examples.Distinct().Count(), Is.EqualTo(examples.Length));
+			// Every module and feature links to its page on the public documentation site.
+			Assert.That(Catalog.Areas.Where(m => m.DocsPath == null).Select(m => m.Id), Is.Empty);
+			Assert.That(Catalog.Capabilities.Where(c => c.DocsPath == null).Select(c => c.Id), Is.Empty);
+		}
+
+		private static string[] NonEnglishLocales => Resgrid.Localization.SupportedLocales.SupportedLanguagesMap.Keys.Where(l => l != "en").ToArray();
+		[TestCaseSource(nameof(NonEnglishLocales))]
+		public void Every_supported_language_has_every_Admin_Assist_string_with_its_placeholders(string locale)
+		{
+			// Machine translations are acceptable until reviewed; falling back to English is not.
+			var resources = new ResourceManager(typeof(Resgrid.Localization.Areas.User.AdminAssist.AdminAssist));
+			System.Collections.Generic.Dictionary<string, string> Read(string culture) => resources.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)
+				.Cast<System.Collections.DictionaryEntry>().ToDictionary(e => (string)e.Key, e => (string)e.Value);
+			var english = Read("en");
+			var local = Read(locale);
+			Assert.That(english.Keys.Except(local.Keys), Is.Empty, locale + " is missing strings");
+			var token = new System.Text.RegularExpressions.Regex(@"\{\d+[^}]*\}");
+			foreach (var (key, value) in english)
+			{
+				Assert.That(local[key], Is.Not.Null.And.Not.Empty, locale + ": " + key);
+				Assert.That(token.Matches(local[key]).Select(m => m.Value).OrderBy(v => v), Is.EqualTo(token.Matches(value).Select(m => m.Value).OrderBy(v => v)), locale + ": " + key);
+			}
+		}
+		[Test]
+		public void Resource_names_differ_by_more_than_case()
+		{
+			// MSBuild keeps the first of two resource names that differ only by case (MSB3568) and silently drops the other.
+			var root = new System.IO.DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (root != null && !System.IO.File.Exists(System.IO.Path.Combine(root.FullName, "Resgrid.sln"))) root = root.Parent;
+			Assert.That(root, Is.Not.Null);
+			foreach (var file in System.IO.Directory.GetFiles(System.IO.Path.Combine(root.FullName, "Core", "Resgrid.Localization", "Areas", "User", "AdminAssist"), "*.resx"))
+			{
+				var names = System.Xml.Linq.XDocument.Load(file).Root.Elements("data").Select(d => (string)d.Attribute("name"));
+				Assert.That(names.GroupBy(n => n, System.StringComparer.OrdinalIgnoreCase).Where(g => g.Count() > 1).Select(g => string.Join(", ", g)), Is.Empty, file);
+			}
+		}
+		[Test]
 		public void Source_destinations_are_existing_GET_actions()
 		{
 			var assembly = typeof(Resgrid.Web.Areas.User.Controllers.DepartmentController).Assembly;

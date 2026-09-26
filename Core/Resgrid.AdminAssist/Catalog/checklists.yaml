@@ -1,0 +1,285 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "checklists",
+      "LabelKey": "Area.checklists",
+      "PurposeKey": "AreaPurpose.checklists",
+      "Order": 12,
+      "Archetypes": [],
+      "Tier": "Optional",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.checklists",
+      "ExampleKey": "AreaExample.checklists",
+      "AdoptionKey": "ModuleAdoption.checklists",
+      "MinimumMinutes": 20,
+      "MaximumMinutes": 60,
+      "DocsPath": "/web-app/checklists/"
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "module.ChecklistsDisabled",
+      "AreaId": "checklists",
+      "LabelKey": "Module.ChecklistsDisabled",
+      "HelpKey": "ModuleHelp.ChecklistsDisabled",
+      "Binding": "DepartmentModuleSettings.ChecklistsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "ChecklistsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.checklists",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.ChecklistsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "checklist-templates",
+      "AreaId": "checklists",
+      "LabelKey": "Feature.checklist-templates",
+      "PurposeKey": "FeaturePurpose.checklist-templates",
+      "ValueKey": "AreaValue.checklists",
+      "ExampleKey": "AreaExample.checklists",
+      "AdoptionKey": "FeatureSetup.checklist-templates",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "Templates"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Checklists.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/checklists/"
+    },
+    {
+      "Id": "checklists",
+      "AreaId": "checklists",
+      "LabelKey": "Feature.checklists",
+      "PurposeKey": "FeaturePurpose.checklists",
+      "ValueKey": "AreaValue.checklists",
+      "ExampleKey": "AreaExample.checklists",
+      "AdoptionKey": "FeatureSetup.checklists",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Checklists.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [
+        "checklist-overdue"
+      ],
+      "Setup": {
+        "EvidenceId": "checklistCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "checklist-overdue"
+        ],
+        "GuidanceKey": "SetupEvidence.checklists"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/checklists/"
+    },
+    {
+      "Id": "checklist-schedules",
+      "AreaId": "checklists",
+      "LabelKey": "Feature.checklist-schedules",
+      "PurposeKey": "FeaturePurpose.checklist-schedules",
+      "ValueKey": "FeatureValue.checklist-schedules",
+      "ExampleKey": "AreaExample.checklists",
+      "AdoptionKey": "FeatureSetup.checklist-schedules",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "Due"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Checklists"
+        }
+      ],
+      "SettingIds": [
+        "module.ChecklistsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/checklists/"
+    },
+    {
+      "Id": "new-checklist",
+      "AreaId": "checklists",
+      "LabelKey": "Feature.new-checklist",
+      "PurposeKey": "FeaturePurpose.new-checklist",
+      "ValueKey": "AreaValue.checklists",
+      "ExampleKey": "AreaExample.checklists",
+      "AdoptionKey": "ModuleAdoption.checklists",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Checklists.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/checklists/"
+    },
+    {
+      "Id": "checklist-reports",
+      "AreaId": "checklists",
+      "LabelKey": "Feature.checklist-reports",
+      "PurposeKey": "FeaturePurpose.checklist-reports",
+      "ValueKey": "FeatureValue.checklist-reports",
+      "ExampleKey": "AreaExample.checklists",
+      "AdoptionKey": "ModuleAdoption.checklists",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "Compliance"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Checklists"
+        }
+      ],
+      "SettingIds": [
+        "module.ChecklistsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/checklists/"
+    }
+  ],
+  "Rules": [
+    {
+      "Id": "checklist-overdue",
+      "AreaId": "checklists",
+      "Severity": "Warning",
+      "TitleKey": "Rule.checklist-overdue",
+      "ExplanationKey": "RuleWhy.checklist-overdue",
+      "NextActionKey": "RuleNext.checklist-overdue",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "overdueChecklistCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    }
+  ],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "module.ChecklistsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.ChecklistsDisabled",
+      "Body": "Checklists availability. Controls availability of checklists. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-checklistsdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checklist-templates",
+      "Locale": "en",
+      "TitleKey": "Feature.checklist-templates",
+      "Body": "Checklist Templates Ready-made checklists for common checks. Recorded checks show what was inspected and what was missed. A daily apparatus check is scheduled for each engine, and the weekly compliance report shows any missed checks. Start from a template or build a checklist for each apparatus.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checklist-templates",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checklists",
+      "Locale": "en",
+      "TitleKey": "Feature.checklists",
+      "Body": "Checklists Checklists members complete. Recorded checks show what was inspected and what was missed. A daily apparatus check is scheduled for each engine, and the weekly compliance report shows any missed checks. Create the checklists members complete on paper today.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checklists",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checklist-schedules",
+      "Locale": "en",
+      "TitleKey": "Feature.checklist-schedules",
+      "Body": "Checklist schedules and due work Recurring schedules and due checks. Make recorded equipment and procedure checks visible to their owners. A daily apparatus check is scheduled for each engine, and the weekly compliance report shows any missed checks. Schedule each checklist and choose who completes it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checklist-schedules",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-checklist",
+      "Locale": "en",
+      "TitleKey": "Feature.new-checklist",
+      "Body": "New Checklist Create a checklist. Recorded checks show what was inspected and what was missed. A daily apparatus check is scheduled for each engine, and the weekly compliance report shows any missed checks. Pick the checks you do on paper today and who completes them.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-checklist",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checklist-reports",
+      "Locale": "en",
+      "TitleKey": "Feature.checklist-reports",
+      "Body": "Checklist compliance reports Completed, skipped and overdue checks over time. Find missing recorded checks without treating a report as safety certification. A daily apparatus check is scheduled for each engine, and the weekly compliance report shows any missed checks. Pick the checks you do on paper today and who completes them.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checklist-reports",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

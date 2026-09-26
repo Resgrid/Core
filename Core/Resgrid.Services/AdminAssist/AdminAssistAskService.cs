@@ -81,6 +81,12 @@ namespace Resgrid.Services.AdminAssist
 				if (request.Topic != "settings" || !Resgrid.AdminAssist.ConfigurationImpactEvaluator.Supports(request.SettingId) || request.ProposedValue?.Length is not (>= 1 and <= 128)) throw new ArgumentException("Invalid impact context.");
 				reads.Add(new("evaluate_impact", Id: request.SettingId, Value: request.ProposedValue));
 			}
+			if (request.Topic == "plans") {
+				if (request.PlanTemplateId != null && Resgrid.AdminAssist.ChangePlanPolicy.Templates(catalog).Any(t => t.Id == request.PlanTemplateId)) reads.Add(new("draft_plan", Id: request.PlanTemplateId));
+				else if (Guid.TryParseExact(request.PlanId, "D", out _) && Resgrid.AdminAssist.ChangePlanPolicy.IsId(request.PlanStepId)) reads.Add(new("verify_step", Id: request.PlanId, Value: request.PlanStepId));
+				else throw new ArgumentException("Select a plan template or step.");
+				return reads;
+			}
 			if (request.Topic == "setup") { reads.Add(new("get_setup_report")); reads.Add(new("get_setup_next_steps")); }
 			else if (request.Topic == "permissions") reads.Add(new("get_permissions", Id: "all"));
 			else if (request.Topic == "settings") {
@@ -108,6 +114,9 @@ namespace Resgrid.Services.AdminAssist
 					using var tool = CancellationTokenSource.CreateLinkedTokenSource(deadline.Token); tool.CancelAfter(TimeSpan.FromSeconds(20));
 					try { foreach (var current in await queries.ReadAsync(actor, read, tool.Token)) evidence[current.Id] = current; }
 					catch (ArgumentException) { /* A removed catalog entry is no longer evidence. */ }
+					// A deleted, unshared or closed plan, a disabled plans feature or a busy/inconsistent plan read only drops
+					// that card. Actor access is still enforced by the RequireAsync below.
+					catch (Exception ex) when (read.Name is "draft_plan" or "verify_step" && ex is UnauthorizedAccessException or AdminAssistConcurrencyException) { }
 				}
 				var selected = stored?.EvidenceIds?.Where(evidence.ContainsKey).Select(id => evidence[id]).ToArray() ?? Array.Empty<AskEvidence>();
 				answers.Add(new(conversationId, row.Revision, selected.Length > 0 ? "Refreshed" : "Unavailable", selected, row.PromptVersion, row.ModelRevision, row.InputTokens, row.OutputTokens));

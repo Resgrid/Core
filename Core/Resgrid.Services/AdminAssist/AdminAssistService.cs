@@ -18,7 +18,7 @@ namespace Resgrid.Services.AdminAssist
 			timeout.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(AdminAssistConfig.SnapshotTimeoutSeconds, 1, 60)));
 			ct = timeout.Token;
 			await RequireAccessAsync(actor, setup, ct);
-			var workspace = await repository.GetWorkspaceAsync(actor.DepartmentId, actor.UserId, catalog.Version, ct).WaitAsync(ct);
+			var workspace = CurrentCatalogOnly(await repository.GetWorkspaceAsync(actor.DepartmentId, actor.UserId, catalog.Version, ct).WaitAsync(ct));
 			var snapshot = await snapshots.ReadAsync(actor, ct).WaitAsync(ct);
 			var now = clock.GetUtcNow().UtcDateTime;
 			var findings = catalog.Rules.Select(r => new ConfigurationRule(r).Evaluate(snapshot, now,
@@ -62,7 +62,18 @@ namespace Resgrid.Services.AdminAssist
 					overview.Report.Snapshot.AsOfUtc, overview.Report.Required, overview.Report.Verified, overview.Report.Failed, overview.Report.Unknown, overview.Workspace.ScopeRevision) };
 			}
 			await RequireAccessAsync(actor, true, ct);
-			return await repository.UpdateWorkspaceAsync(actor, command, ct);
+			return CurrentCatalogOnly(await repository.UpdateWorkspaceAsync(actor, command, ct));
+		}
+
+		/// <summary>Learning carries across catalog releases; choices for capabilities no longer in the catalog are not shown or counted.</summary>
+		private SetupWorkspace CurrentCatalogOnly(SetupWorkspace workspace)
+		{
+			var current = catalog.Capabilities.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
+			return workspace with
+			{
+				LearnedCapabilityIds = workspace.LearnedCapabilityIds.Where(current.Contains).ToArray(),
+				InterestedCapabilityIds = workspace.InterestedCapabilityIds.Where(current.Contains).ToArray()
+			};
 		}
 
 		public async Task<IReadOnlyList<AdminAssistHistoryItem>> GetHistoryAsync(AdminAssistActor actor, int skip, int take, CancellationToken ct = default)

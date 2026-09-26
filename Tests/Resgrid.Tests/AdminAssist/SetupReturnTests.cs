@@ -12,7 +12,7 @@ namespace Resgrid.Tests.AdminAssist
 		private readonly IDataProtectionProvider _protection = new EphemeralDataProtectionProvider();
 		private readonly AdminAssistActor _actor = new(7, "admin");
 		private readonly DateTimeOffset _now = new(2026,9,24,12,0,0,TimeSpan.Zero);
-		[TestCase("wizard")] [TestCase("report")]
+		[TestCase("wizard")] [TestCase("report")] [TestCase("plans")]
 		public void Return_context_is_actor_and_department_bound_and_expires(string page)
 		{
 			var token = AdminAssistReturnLink.Create(_protection,_actor,page,_now);

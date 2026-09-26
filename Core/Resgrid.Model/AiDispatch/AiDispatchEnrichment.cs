@@ -112,6 +112,8 @@ namespace Resgrid.Model.AiDispatch
 		Task CompleteAsync(AiDispatchAuditRow row, CancellationToken cancellationToken);
 		/// <summary>Newest first, with the numbers of the calls each row refers to.</summary>
 		Task<List<AiDispatchAuditListItem>> GetRecentAsync(int departmentId, int take, CancellationToken cancellationToken);
+		/// <summary>Row counts per outcome for the department's rows created at or after <paramref name="sinceUtc"/>.</summary>
+		Task<Dictionary<string, int>> GetOutcomeCountsAsync(int departmentId, DateTime sinceUtc, CancellationToken cancellationToken);
 		/// <summary>Removes the department's rows created before <paramref name="cutoffUtc"/> (its audit retention setting).</summary>
 		Task<int> PruneAsync(int departmentId, DateTime cutoffUtc, CancellationToken cancellationToken);
 	}

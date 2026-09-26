@@ -15,6 +15,7 @@ using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Controllers;
+using Resgrid.Web.Areas.User.Models.Profile;
 using Resgrid.Web.Helpers;
 
 namespace Resgrid.Tests.Web.User
@@ -27,6 +28,9 @@ namespace Resgrid.Tests.Web.User
 		private const string UserId = "report-owner";
 		private Mock<IScheduledTasksService> _tasks;
 		private Mock<Resgrid.Model.Services.IAuthorizationService> _authorization;
+		private Mock<ICustomStateService> _customStates;
+		private Mock<IDepartmentsService> _departments;
+		private Mock<IUsersService> _users;
 		private ProfileController _controller;
 		private IHttpContextAccessor _previousAccessor;
 
@@ -47,10 +51,13 @@ namespace Resgrid.Tests.Web.User
 			_tasks = new Mock<IScheduledTasksService>(MockBehavior.Strict);
 			_authorization = new Mock<Resgrid.Model.Services.IAuthorizationService>(MockBehavior.Strict);
 			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, UserId)).ReturnsAsync(true);
+			_customStates = new Mock<ICustomStateService>();
+			_departments = new Mock<IDepartmentsService>();
+			_users = new Mock<IUsersService>();
 			_controller = new ProfileController(
-				departmentsService: null, usersService: null, authorizationService: _authorization.Object,
+				departmentsService: _departments.Object, usersService: _users.Object, authorizationService: _authorization.Object,
 				userProfileService: null, scheduledTasksService: _tasks.Object, certificationService: null,
-				customStateService: null, imageService: null, appOptionsAccessor: null,
+				customStateService: _customStates.Object, imageService: null, appOptionsAccessor: null,
 				emailService: null, userManager: null, signInManager: null,
 				departmentSsoService: null, secLocalizer: null, deleteService: null,
 				externalIdentityLinkService: null, userSessionService: null, systemAuditsService: null,
@@ -151,7 +158,7 @@ namespace Resgrid.Tests.Web.User
 
 		private static IEnumerable<TestCaseData> RejectedStaffingTargets()
 		{
-			foreach (var action in new[] { nameof(ProfileController.ActivateSchedule), nameof(ProfileController.DeactivateSchedule), nameof(ProfileController.DeleteSchedule) })
+			foreach (var action in new[] { nameof(ProfileController.ActivateSchedule), nameof(ProfileController.DeactivateSchedule), nameof(ProfileController.DeleteSchedule), EditStaffingGet, EditStaffingPost })
 				foreach (var target in new[] { "missing", "department", "owner", "empty-owner", "task-type" })
 					yield return new TestCaseData(action, target);
 		}
@@ -188,6 +195,163 @@ namespace Resgrid.Tests.Web.User
 			_tasks.VerifyAll();
 		}
 
+		[Test]
+		public async Task Edit_staffing_schedule_get_loads_a_delegated_members_schedule()
+		{
+			var schedule = OwnedReport(); schedule.TaskType = (int)TaskTypes.UserStaffingLevel; schedule.UserId = "managed-member";
+			schedule.ScheduleType = (int)ScheduleTypes.Weekly; schedule.Time = "07:30"; schedule.Tuesday = true; schedule.Data = "2";
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, schedule.UserId)).ReturnsAsync(true);
+			_tasks.Setup(s => s.GetScheduledTaskByIdAsync(ScheduleId)).ReturnsAsync(schedule);
+
+			var model = (await InvokeAsync(EditStaffingGet)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<EditStaffingLevelView>().Which;
+
+			model.ScheduleId.Should().Be(ScheduleId);
+			model.Time.Should().Be("07:30");
+			model.Tuesday.Should().BeTrue();
+			model.StaffingLevel.Should().Be(2);
+			VerifyNoMutation();
+		}
+
+		[Test]
+		public async Task Edit_staffing_schedule_post_saves_a_delegated_members_schedule_and_passes_cancellation()
+		{
+			using var cancellation = new CancellationTokenSource();
+			var schedule = OwnedReport(); schedule.TaskType = (int)TaskTypes.UserStaffingLevel; schedule.UserId = "managed-member";
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, schedule.UserId)).ReturnsAsync(true);
+			_tasks.Setup(s => s.GetScheduledTaskByIdAsync(ScheduleId)).ReturnsAsync(schedule);
+			_tasks.Setup(s => s.SaveScheduledTaskAsync(schedule, cancellation.Token)).ReturnsAsync(schedule);
+
+			var redirect = (await InvokeAsync(EditStaffingPost, cancellation.Token)).Should().BeOfType<RedirectToActionResult>().Which;
+
+			redirect.ActionName.Should().Be(nameof(ProfileController.ViewSchedules));
+			redirect.RouteValues["userId"].Should().Be("managed-member");
+			schedule.UserId.Should().Be("managed-member");
+			schedule.DepartmentId.Should().Be(DepartmentId);
+			schedule.Time.Should().Be("08:00");
+			schedule.Data.Should().Be("3");
+			_tasks.VerifyAll();
+		}
+
+		[TestCase(nameof(ProfileController.EditStaffingSchedule), typeof(EditStaffingLevelView))]
+		[TestCase(nameof(ProfileController.AddNewStaffingSchedule), typeof(NewStaffingLevelView))]
+		public void Staffing_form_posts_require_csrf_and_profile_update(string action, Type modelType)
+		{
+			var method = typeof(ProfileController).GetMethod(action, new[] { modelType, typeof(CancellationToken) });
+			method.Should().NotBeNull();
+			method.GetCustomAttribute<HttpPostAttribute>().Should().NotBeNull();
+			method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>().Should().NotBeNull();
+			method.GetCustomAttributes<AuthorizeAttribute>().Should().Contain(a => a.Policy == ResgridResources.Profile_Update);
+		}
+
+		private static readonly string[] StaffingSubjectActions =
+		{
+			nameof(ProfileController.ViewSchedules), nameof(ProfileController.GetScheduledStaffingTasksForGrid), AddStaffingGet, AddStaffingPost
+		};
+
+		[TestCaseSource(nameof(StaffingSubjectActions))]
+		public async Task Staffing_subject_actions_reject_members_the_caller_cannot_manage_before_touching_data(string action)
+		{
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, "another-member")).ReturnsAsync(false);
+
+			var result = await InvokeForSubjectAsync(action, "another-member");
+
+			if (action == nameof(ProfileController.GetScheduledStaffingTasksForGrid))
+				result.Should().BeOfType<NotFoundResult>();
+			else
+				result.Should().BeOfType<RedirectResult>().Which.Url.Should().Be("/Public/Unauthorized");
+			_authorization.Verify(a => a.CanUserEditProfileAsync(UserId, DepartmentId, "another-member"), Times.Once);
+			_tasks.Invocations.Should().BeEmpty();
+			_customStates.Invocations.Should().BeEmpty();
+			_departments.Invocations.Should().BeEmpty();
+			_users.Invocations.Should().BeEmpty();
+		}
+
+		[TestCaseSource(nameof(StaffingSubjectActions))]
+		public async Task Staffing_subject_actions_treat_a_missing_user_as_the_caller(string action)
+		{
+			// The task mock is strict, so reading or saving schedules for anyone but the caller throws.
+			_tasks.Setup(s => s.GetScheduledStaffingTasksForUserAsync(UserId)).ReturnsAsync(new List<ScheduledTask>());
+			_tasks.Setup(s => s.SaveScheduledTaskAsync(It.Is<ScheduledTask>(t => t.UserId == UserId), CancellationToken.None)).ReturnsAsync(new ScheduledTask());
+
+			(await InvokeForSubjectAsync(action, null)).Should().BeOfType(action switch
+			{
+				nameof(ProfileController.GetScheduledStaffingTasksForGrid) => typeof(JsonResult),
+				AddStaffingPost => typeof(RedirectToActionResult),
+				_ => typeof(ViewResult)
+			});
+
+			_authorization.Verify(a => a.CanUserEditProfileAsync(UserId, DepartmentId, UserId), Times.Once);
+		}
+
+		// ViewSchedules is left out of the delegated cases: naming another member goes through the static
+		// UserHelper, which resolves its services from the container rather than the controller.
+		[Test]
+		public async Task Staffing_grid_lists_a_delegated_members_schedules()
+		{
+			var schedule = OwnedReport(); schedule.TaskType = (int)TaskTypes.UserStaffingLevel; schedule.UserId = ManagedMember;
+			schedule.ScheduleType = (int)ScheduleTypes.Weekly; schedule.Monday = true; schedule.Time = "06:00"; schedule.Data = "2";
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, ManagedMember)).ReturnsAsync(true);
+			_tasks.Setup(s => s.GetScheduledStaffingTasksForUserAsync(ManagedMember)).ReturnsAsync(new List<ScheduledTask> { schedule });
+
+			var rows = (await InvokeForSubjectAsync(nameof(ProfileController.GetScheduledStaffingTasksForGrid), ManagedMember))
+				.Should().BeOfType<JsonResult>().Which.Value.Should().BeAssignableTo<IEnumerable<ScheduledTasksForJson>>().Which;
+
+			rows.Select(r => r.ScheduleId).Should().Equal(ScheduleId);
+			_tasks.VerifyAll();
+		}
+
+		[Test]
+		public async Task Add_staffing_schedule_get_prepares_the_form_for_a_delegated_member()
+		{
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, ManagedMember)).ReturnsAsync(true);
+
+			var model = (await InvokeForSubjectAsync(AddStaffingGet, ManagedMember)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<NewStaffingLevelView>().Which;
+
+			model.UserId.Should().Be(ManagedMember);
+		}
+
+		[Test]
+		public async Task Add_staffing_schedule_post_creates_a_delegated_members_schedule_in_the_callers_department()
+		{
+			using var cancellation = new CancellationTokenSource();
+			ScheduledTask saved = null;
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, ManagedMember)).ReturnsAsync(true);
+			_tasks.Setup(s => s.SaveScheduledTaskAsync(It.IsAny<ScheduledTask>(), cancellation.Token))
+				.Callback<ScheduledTask, CancellationToken>((t, _) => saved = t).ReturnsAsync(new ScheduledTask());
+
+			var redirect = (await InvokeForSubjectAsync(AddStaffingPost, ManagedMember, cancellation.Token)).Should().BeOfType<RedirectToActionResult>().Which;
+
+			redirect.ActionName.Should().Be(nameof(ProfileController.ViewSchedules));
+			redirect.RouteValues["userId"].Should().Be(ManagedMember);
+			saved.UserId.Should().Be(ManagedMember);
+			saved.DepartmentId.Should().Be(DepartmentId);
+			saved.TaskType.Should().Be((int)TaskTypes.UserStaffingLevel);
+			saved.Time.Should().Be("08:00");
+			saved.Data.Should().Be("3");
+		}
+
+		private const string EditStaffingGet = "EditStaffingSchedule(GET)";
+		private const string EditStaffingPost = "EditStaffingSchedule(POST)";
+		private const string AddStaffingGet = "AddNewStaffingSchedule(GET)";
+		private const string AddStaffingPost = "AddNewStaffingSchedule(POST)";
+		private const string ManagedMember = "managed-member";
+
+		private static NewStaffingLevelView ValidWeeklyAdd(string userId) => new()
+		{
+			UserId = userId,
+			Time = "08:00",
+			Monday = true,
+			StaffingLevel = 3
+		};
+
+		private static EditStaffingLevelView ValidWeeklyEdit() => new()
+		{
+			ScheduleId = ScheduleId,
+			Time = "08:00",
+			Monday = true,
+			StaffingLevel = 3
+		};
+
 		private static ScheduledTask OwnedReport() => new()
 		{
 			ScheduledTaskId = ScheduleId,
@@ -206,6 +370,17 @@ namespace Resgrid.Tests.Web.User
 			nameof(ProfileController.ActivateSchedule) => _controller.ActivateSchedule(ScheduleId, cancellation),
 			nameof(ProfileController.DeactivateSchedule) => _controller.DeactivateSchedule(ScheduleId, cancellation),
 			nameof(ProfileController.DeleteSchedule) => _controller.DeleteSchedule(ScheduleId, cancellation),
+			EditStaffingGet => _controller.EditStaffingSchedule(ScheduleId),
+			EditStaffingPost => _controller.EditStaffingSchedule(ValidWeeklyEdit(), cancellation),
+			_ => throw new ArgumentOutOfRangeException(nameof(action))
+		};
+
+		private Task<IActionResult> InvokeForSubjectAsync(string action, string userId, CancellationToken cancellation = default) => action switch
+		{
+			nameof(ProfileController.ViewSchedules) => _controller.ViewSchedules(userId),
+			nameof(ProfileController.GetScheduledStaffingTasksForGrid) => _controller.GetScheduledStaffingTasksForGrid(userId),
+			AddStaffingGet => _controller.AddNewStaffingSchedule(userId),
+			AddStaffingPost => _controller.AddNewStaffingSchedule(ValidWeeklyAdd(userId), cancellation),
 			_ => throw new ArgumentOutOfRangeException(nameof(action))
 		};
 

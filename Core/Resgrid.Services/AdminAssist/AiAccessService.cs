@@ -35,10 +35,10 @@ namespace Resgrid.Services.AdminAssist
 				if (paid == null) return new(false, "EntitlementUnavailable", 0);
 				var tier = local ? AdminAssistAskTiers.SelfHosted : paid == true ? AdminAssistAskTiers.EnhancedAi : AiAddonConfig.AdminAssistFreeEnabled ? AdminAssistAskTiers.Free : null;
 				if (tier == null) return new(false, "EntitlementUnavailable", 0);
-				if (await protection.ShouldEncryptNewWritesAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < 31) return new(false, "ProtectionUpgradeRequired", 0);
+				if (await protection.ShouldEncryptNewWritesAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < ProtectedFieldCatalog.AiGenerationsCatalogVersion) return new(false, "ProtectionUpgradeRequired", 0);
 				Resgrid.Llm.OperatorEndpointPolicy.ValidateUri(AiConfig.Endpoint, AiConfig.AllowPrivateEndpoint);
 				if (string.IsNullOrWhiteSpace(SecurityConfig.EncryptionKey) || SecurityConfig.EncryptionKey.Length < 32 || SecurityConfig.EncryptionKey.Contains("CHANGEME", StringComparison.Ordinal) || string.IsNullOrWhiteSpace(SecurityConfig.EncryptionSaltValue) || SecurityConfig.EncryptionSaltValue.Contains("CHANGEME", StringComparison.Ordinal) || string.IsNullOrWhiteSpace(AiConfig.ApiKey) || !Resgrid.Ai.AiOperatorSettings.IsReviewedModel(AiConfig.Model) || !Regex.IsMatch(AiConfig.ModelRevision ?? "", "\\A[0-9a-f]{40}\\z") ||
-					!Regex.IsMatch(AiConfig.RuntimeDigest ?? "", "\\Asha256:[0-9a-f]{64}\\z") || Convert.FromBase64String(AiConfig.AuditHmacKey ?? "").Length < 32) return new(false, "Unconfigured", 0);
+					!Regex.IsMatch(AiConfig.RuntimeDigest ?? "", "\\Asha256:[0-9a-f]{64}\\z") || !HasAuditKey(AiConfig.AuditHmacKey)) return new(false, "Unconfigured", 0);
 				if (await usage.IsDisabledAsync(actor.DepartmentId, ct)) return new(false, "Disabled", 0);
 				var now = clock.GetUtcNow().UtcDateTime;
 				var turnTokens = Math.Clamp(AiConfig.TurnTokenLimit, 8192, 32768);
@@ -74,5 +74,12 @@ namespace Resgrid.Services.AdminAssist
 		private async Task<AdminAssistFreeWindow> FreeWindowAsync(int departmentId, DateTime now, CancellationToken ct) =>
 			AdminAssistFreeAllowance.Current(await allowance.GetFirstAnsweredAsync(departmentId, ct), now,
 				AiAddonConfig.AdminAssistFreeStarterQuestions, AiAddonConfig.AdminAssistFreeStarterDays, AiAddonConfig.AdminAssistFreeMonthlyQuestions);
+
+		// A mistyped key is a configuration problem, not an outage: parse without throwing so it reports Unconfigured.
+		private static bool HasAuditKey(string value)
+		{
+			var buffer = new byte[(value?.Length ?? 0) * 3 / 4 + 3];
+			return Convert.TryFromBase64String(value ?? "", buffer, out var written) && written >= 32;
+		}
 	}
 }

@@ -1,12 +1,21 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "people",
       "LabelKey": "Area.people",
       "PurposeKey": "AreaPurpose.people",
-      "Order": 2,
-      "Archetypes": []
+      "Order": 0,
+      "Archetypes": [],
+      "Tier": "Core",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.people",
+      "ExampleKey": "AreaExample.people",
+      "AdoptionKey": "ModuleAdoption.people",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 90,
+      "DocsPath": "/web-app/personnel/"
     }
   ],
   "Settings": [
@@ -110,39 +119,6 @@
       "Availability": "available"
     },
     {
-      "Id": "setting.AllowSignupsForMultipleShiftGroups",
-      "AreaId": "people",
-      "LabelKey": "Setting.AllowSignupsForMultipleShiftGroups",
-      "HelpKey": "SettingHelp.AllowSignupsForMultipleShiftGroups",
-      "Binding": "DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ShiftSettings",
-        "Field": "AllowSignupsForMultipleShiftGroups"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "Medium",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "setting.AllowSignupsForMultipleShiftGroups",
-      "DefaultValue": "false",
-      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
-      "EvidenceSource": "DepartmentSettings",
-      "Availability": "available"
-    },
-    {
       "Id": "setting.StaffingSuppressStaffingLevels",
       "AreaId": "people",
       "LabelKey": "Setting.StaffingSuppressStaffingLevels",
@@ -174,216 +150,6 @@
       "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
       "EvidenceSource": "DepartmentSettings",
       "Availability": "available"
-    },
-    {
-      "Id": "module.ShiftsDisabled",
-      "AreaId": "people",
-      "LabelKey": "Module.ShiftsDisabled",
-      "HelpKey": "ModuleHelp.ShiftsDisabled",
-      "Binding": "DepartmentModuleSettings.ShiftsDisabled",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": "ShiftsEnabled"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.ShiftsDisabled",
-      "DefaultValue": "false",
-      "AllowedValues": "true or false",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "available"
-    },
-    {
-      "Id": "module.ShiftsNameOverride",
-      "AreaId": "people",
-      "LabelKey": "Module.ShiftsNameOverride",
-      "HelpKey": "ModuleHelp.ShiftsNameOverride",
-      "Binding": "DepartmentModuleSettings.ShiftsNameOverride",
-      "ValueType": "string",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": null
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.ShiftsNameOverride",
-      "DefaultValue": "unset",
-      "AllowedValues": "owning serializer and consuming UI",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "reference-only"
-    },
-    {
-      "Id": "module.CalendarDisabled",
-      "AreaId": "people",
-      "LabelKey": "Module.CalendarDisabled",
-      "HelpKey": "ModuleHelp.CalendarDisabled",
-      "Binding": "DepartmentModuleSettings.CalendarDisabled",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": "CalendarEnabled"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.CalendarDisabled",
-      "DefaultValue": "false",
-      "AllowedValues": "true or false",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "available"
-    },
-    {
-      "Id": "module.CalendarNameOverride",
-      "AreaId": "people",
-      "LabelKey": "Module.CalendarNameOverride",
-      "HelpKey": "ModuleHelp.CalendarNameOverride",
-      "Binding": "DepartmentModuleSettings.CalendarNameOverride",
-      "ValueType": "string",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": null
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.CalendarNameOverride",
-      "DefaultValue": "unset",
-      "AllowedValues": "owning serializer and consuming UI",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "reference-only"
-    },
-    {
-      "Id": "module.TrainingDisabled",
-      "AreaId": "people",
-      "LabelKey": "Module.TrainingDisabled",
-      "HelpKey": "ModuleHelp.TrainingDisabled",
-      "Binding": "DepartmentModuleSettings.TrainingDisabled",
-      "ValueType": "boolean",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": "TrainingEnabled"
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.TrainingDisabled",
-      "DefaultValue": "false",
-      "AllowedValues": "true or false",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "available"
-    },
-    {
-      "Id": "module.TrainingNameOverride",
-      "AreaId": "people",
-      "LabelKey": "Module.TrainingNameOverride",
-      "HelpKey": "ModuleHelp.TrainingNameOverride",
-      "Binding": "DepartmentModuleSettings.TrainingNameOverride",
-      "ValueType": "string",
-      "Classification": "Internal",
-      "Secret": false,
-      "Location": {
-        "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": null
-      },
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
-      "Impact": {
-        "Risk": "High",
-        "AudienceKey": "Impact.Audience",
-        "OperationKey": "Area.people",
-        "TimingKey": "Impact.Timing",
-        "ReversibilityKey": "Impact.Reversal",
-        "VerificationKey": "Impact.Verify"
-      },
-      "Requires": [
-        "setting.ModuleSettings"
-      ],
-      "Affects": [],
-      "Conflicts": [],
-      "DocumentationId": "module.TrainingNameOverride",
-      "DefaultValue": "unset",
-      "AllowedValues": "owning serializer and consuming UI",
-      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
-      "Availability": "reference-only"
     },
     {
       "Id": "field.PersonnelListStatusOrderSetting.Orders",
@@ -569,7 +335,7 @@
       "PurposeKey": "FeaturePurpose.personnel",
       "ValueKey": "AreaValue.people",
       "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.personnel",
+      "AdoptionKey": "FeatureSetup.personnel",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Personnel",
@@ -585,24 +351,28 @@
         "Minimum": 1,
         "RuleIds": [],
         "GuidanceKey": "SetupEvidence.personnel"
-      }
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/personnel/"
     },
     {
-      "Id": "add-person",
+      "Id": "invites",
       "AreaId": "people",
-      "LabelKey": "Feature.add-person",
-      "PurposeKey": "FeaturePurpose.add-person",
+      "LabelKey": "Feature.invites",
+      "PurposeKey": "FeaturePurpose.invites",
       "ValueKey": "AreaValue.people",
       "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.add-person",
+      "AdoptionKey": "FeatureSetup.invites",
       "ReleaseStatus": "available",
       "Location": {
-        "Controller": "Personnel",
-        "Action": "AddPerson"
+        "Controller": "Department",
+        "Action": "Invites"
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/department-settings/#invites"
     },
     {
       "Id": "groups",
@@ -611,7 +381,7 @@
       "PurposeKey": "FeaturePurpose.groups",
       "ValueKey": "AreaValue.people",
       "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.groups",
+      "AdoptionKey": "FeatureSetup.groups",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Groups",
@@ -631,222 +401,9 @@
           "station-address"
         ],
         "GuidanceKey": "SetupEvidence.groups"
-      }
-    },
-    {
-      "Id": "new-group",
-      "AreaId": "people",
-      "LabelKey": "Feature.new-group",
-      "PurposeKey": "FeaturePurpose.new-group",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.new-group",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Groups",
-        "Action": "NewGroup"
       },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "shifts",
-      "AreaId": "people",
-      "LabelKey": "Feature.shifts",
-      "PurposeKey": "FeaturePurpose.shifts",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.shifts",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Shifts",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Shifts"
-        }
-      ],
-      "SettingIds": [
-        "module.ShiftsDisabled"
-      ],
-      "RuleIds": [
-        "shift-open-slots",
-        "shift-overlaps",
-        "shift-trades"
-      ]
-    },
-    {
-      "Id": "calendar",
-      "AreaId": "people",
-      "LabelKey": "Feature.calendar",
-      "PurposeKey": "FeaturePurpose.calendar",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.calendar",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Calendar",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Calendar"
-        }
-      ],
-      "SettingIds": [
-        "module.CalendarDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "new-calendar-item",
-      "AreaId": "people",
-      "LabelKey": "Feature.new-calendar-item",
-      "PurposeKey": "FeaturePurpose.new-calendar-item",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.new-calendar-item",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Calendar",
-        "Action": "New"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Calendar"
-        }
-      ],
-      "SettingIds": [
-        "module.CalendarDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "trainings",
-      "AreaId": "people",
-      "LabelKey": "Feature.trainings",
-      "PurposeKey": "FeaturePurpose.trainings",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.trainings",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Trainings",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Training"
-        }
-      ],
-      "SettingIds": [
-        "module.TrainingDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "new-training",
-      "AreaId": "people",
-      "LabelKey": "Feature.new-training",
-      "PurposeKey": "FeaturePurpose.new-training",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.new-training",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Trainings",
-        "Action": "New"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Training"
-        }
-      ],
-      "SettingIds": [
-        "module.TrainingDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "certification-dashboard",
-      "AreaId": "people",
-      "LabelKey": "Feature.certification-dashboard",
-      "PurposeKey": "FeaturePurpose.certification-dashboard",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.certification-dashboard",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Certifications",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": [
-        "credential-expiry",
-        "qualified-coverage"
-      ]
-    },
-    {
-      "Id": "certification-types",
-      "AreaId": "people",
-      "LabelKey": "Feature.certification-types",
-      "PurposeKey": "FeaturePurpose.certification-types",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.certification-types",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Certifications",
-        "Action": "Types"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "certification-settings",
-      "AreaId": "people",
-      "LabelKey": "Feature.certification-settings",
-      "PurposeKey": "FeaturePurpose.certification-settings",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.certification-settings",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Certifications",
-        "Action": "Settings"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "my-certifications",
-      "AreaId": "people",
-      "LabelKey": "Feature.my-certifications",
-      "PurposeKey": "FeaturePurpose.my-certifications",
-      "ValueKey": "AreaValue.people",
-      "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.my-certifications",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Certifications",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": [
-        "credential-expiry",
-        "qualified-coverage"
-      ]
+      "Prominence": "Key",
+      "DocsPath": "/web-app/groups-stations/"
     },
     {
       "Id": "personnel-roles",
@@ -855,7 +412,7 @@
       "PurposeKey": "FeaturePurpose.personnel-roles",
       "ValueKey": "FeatureValue.personnel-roles",
       "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.personnel-roles",
+      "AdoptionKey": "FeatureSetup.personnel-roles",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Personnel",
@@ -863,48 +420,53 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "personnelRoleCount",
+        "Minimum": 1,
+        "RuleIds": [],
+        "GuidanceKey": "SetupEvidence.personnel-roles"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/configuration/personnel-roles/"
     },
     {
-      "Id": "custom-statuses",
+      "Id": "add-person",
       "AreaId": "people",
-      "LabelKey": "Feature.custom-statuses",
-      "PurposeKey": "FeaturePurpose.custom-statuses",
-      "ValueKey": "FeatureValue.custom-statuses",
+      "LabelKey": "Feature.add-person",
+      "PurposeKey": "FeaturePurpose.add-person",
+      "ValueKey": "AreaValue.people",
       "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.custom-statuses",
+      "AdoptionKey": "ModuleAdoption.people",
       "ReleaseStatus": "available",
       "Location": {
-        "Controller": "CustomStatuses",
-        "Action": "Index"
+        "Controller": "Personnel",
+        "Action": "AddPerson"
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/configuration/adding-personnel/"
     },
     {
-      "Id": "workshifts",
+      "Id": "new-group",
       "AreaId": "people",
-      "LabelKey": "Feature.workshifts",
-      "PurposeKey": "FeaturePurpose.workshifts",
-      "ValueKey": "FeatureValue.workshifts",
+      "LabelKey": "Feature.new-group",
+      "PurposeKey": "FeaturePurpose.new-group",
+      "ValueKey": "AreaValue.people",
       "ExampleKey": "AreaExample.people",
-      "AdoptionKey": "FeatureAdoption.workshifts",
+      "AdoptionKey": "ModuleAdoption.people",
       "ReleaseStatus": "available",
       "Location": {
-        "Controller": "Workshifts",
-        "Action": "Index"
+        "Controller": "Groups",
+        "Action": "NewGroup"
       },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Shifts"
-        }
-      ],
-      "SettingIds": [
-        "module.ShiftsDisabled"
-      ],
-      "RuleIds": []
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/groups-stations/"
     }
   ],
   "Rules": [
@@ -929,118 +491,20 @@
       ]
     },
     {
-      "Id": "qualified-coverage",
+      "Id": "station-address",
       "AreaId": "people",
-      "Severity": "Critical",
-      "TitleKey": "Rule.qualified-coverage",
-      "ExplanationKey": "RuleWhy.qualified-coverage",
-      "NextActionKey": "RuleNext.qualified-coverage",
+      "Severity": "Warning",
+      "TitleKey": "Rule.station-address",
+      "ExplanationKey": "RuleWhy.station-address",
+      "NextActionKey": "RuleNext.station-address",
       "Location": {
-        "Controller": "Certifications",
+        "Controller": "Groups",
         "Action": "Index"
       },
       "AppliesWhen": [],
       "FailsWhen": [
         {
-          "EvidenceId": "uncoveredQualificationCount",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
-      "Id": "credential-expiry",
-      "AreaId": "people",
-      "Severity": "Warning",
-      "TitleKey": "Rule.credential-expiry",
-      "ExplanationKey": "RuleWhy.credential-expiry",
-      "NextActionKey": "RuleNext.credential-expiry",
-      "Location": {
-        "Controller": "Certifications",
-        "Action": "Index"
-      },
-      "AppliesWhen": [],
-      "FailsWhen": [
-        {
-          "EvidenceId": "qualificationsExpiring30Days",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
-      "Id": "shift-open-slots",
-      "AreaId": "people",
-      "Severity": "Warning",
-      "TitleKey": "Rule.shift-open-slots",
-      "ExplanationKey": "RuleWhy.shift-open-slots",
-      "NextActionKey": "RuleNext.shift-open-slots",
-      "Location": {
-        "Controller": "Shifts",
-        "Action": "Index"
-      },
-      "AppliesWhen": [
-        {
-          "EvidenceId": "upcomingShiftCount",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ],
-      "FailsWhen": [
-        {
-          "EvidenceId": "upcomingOpenShiftSlots",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
-      "Id": "shift-overlaps",
-      "AreaId": "people",
-      "Severity": "Warning",
-      "TitleKey": "Rule.shift-overlaps",
-      "ExplanationKey": "RuleWhy.shift-overlaps",
-      "NextActionKey": "RuleNext.shift-overlaps",
-      "Location": {
-        "Controller": "Shifts",
-        "Action": "Index"
-      },
-      "AppliesWhen": [
-        {
-          "EvidenceId": "upcomingShiftCount",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ],
-      "FailsWhen": [
-        {
-          "EvidenceId": "overlappingShiftPersonnel",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ]
-    },
-    {
-      "Id": "shift-trades",
-      "AreaId": "people",
-      "Severity": "Warning",
-      "TitleKey": "Rule.shift-trades",
-      "ExplanationKey": "RuleWhy.shift-trades",
-      "NextActionKey": "RuleNext.shift-trades",
-      "Location": {
-        "Controller": "Shifts",
-        "Action": "Index"
-      },
-      "AppliesWhen": [
-        {
-          "EvidenceId": "upcomingShiftCount",
-          "Comparison": "Greater",
-          "Number": 0
-        }
-      ],
-      "FailsWhen": [
-        {
-          "EvidenceId": "unfilledShiftTrades",
+          "EvidenceId": "stationsWithoutLocation",
           "Comparison": "Greater",
           "Number": 0
         }
@@ -1056,7 +520,7 @@
       "Body": "Disabled Auto Available. Disables automatic availability behavior. Review staffing/status reset interactions before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-disabledautoavailable",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1067,7 +531,7 @@
       "Body": "Personnel Sort Order. Sort order for personnel lists; does not change availability, access or dispatch priority.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-personnelsortorder",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1078,18 +542,7 @@
       "Body": "Personnel List Status Sort Order. Custom ordering of personnel statuses in lists. Review all configured statuses before replacing the order.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-personnelliststatussortorder",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "setting.AllowSignupsForMultipleShiftGroups",
-      "Locale": "en",
-      "TitleKey": "Setting.AllowSignupsForMultipleShiftGroups",
-      "Body": "Allow Signups For Multiple Shift Groups. Allow a member to sign up for multiple shift groups. Review overlaps and local coverage rules separately.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "setting-allowsignupsformultipleshiftgroups",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1100,73 +553,7 @@
       "Body": "Staffing Suppress Staffing Levels. Staffing levels suppressed in supported notifications. Suppression can change who hears an alert and is not evidence of delivery.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-staffingsuppressstaffinglevels",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.ShiftsDisabled",
-      "Locale": "en",
-      "TitleKey": "Module.ShiftsDisabled",
-      "Body": "Shifts availability. Controls availability of shift scheduling. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-shiftsdisabled",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.ShiftsNameOverride",
-      "Locale": "en",
-      "TitleKey": "Module.ShiftsNameOverride",
-      "Body": "Shifts menu name. Optional display name for shift scheduling in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-shiftsnameoverride",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.CalendarDisabled",
-      "Locale": "en",
-      "TitleKey": "Module.CalendarDisabled",
-      "Body": "Calendar availability. Controls availability of calendar events. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-calendardisabled",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.CalendarNameOverride",
-      "Locale": "en",
-      "TitleKey": "Module.CalendarNameOverride",
-      "Body": "Calendar menu name. Optional display name for calendar events in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-calendarnameoverride",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.TrainingDisabled",
-      "Locale": "en",
-      "TitleKey": "Module.TrainingDisabled",
-      "Body": "Training availability. Controls availability of training. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-trainingdisabled",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "module.TrainingNameOverride",
-      "Locale": "en",
-      "TitleKey": "Module.TrainingNameOverride",
-      "Body": "Training menu name. Optional display name for training in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "module-trainingnameoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1177,7 +564,7 @@
       "Body": "Personnel List Status Order Setting / Orders. Ordered status weights for supported personnel lists. This does not set availability or dispatch priority.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-personnelliststatusordersetting-orders",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1188,7 +575,7 @@
       "Body": "Personnel List Status Order / Weight. Relative list order for this status. Confirm all configured statuses remain represented.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-personnelliststatusorder-weight",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1196,10 +583,10 @@
       "Id": "field.PersonnelListStatusOrder.StatusId",
       "Locale": "en",
       "TitleKey": "Field.PersonnelListStatusOrder.StatusId",
-      "Body": "Personnel List Status Order / Status Id. Existing personnel-status identifier whose list position is being configured.",
+      "Body": "Personnel List Status Order / Status ID. Existing personnel-status identifier whose list position is being configured.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-personnelliststatusorder-statusid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1207,10 +594,10 @@
       "Id": "field.DepartmentSuppressStaffingInfo.EnableSupressStaffing",
       "Locale": "en",
       "TitleKey": "Field.DepartmentSuppressStaffingInfo.EnableSupressStaffing",
-      "Body": "Department Suppress Staffing Info / Enable Supress Staffing. Enables the configured staffing-level suppression in supported notification consumers; review reachability before changing it.",
+      "Body": "Department Suppress Staffing Info / Enable Suppress Staffing. Enables the configured staffing-level suppression in supported notification consumers; review reachability before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-departmentsuppressstaffinginfo-enablesupressstaffing",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1218,10 +605,10 @@
       "Id": "field.DepartmentSuppressStaffingInfo.StaffingLevelsToSupress",
       "Locale": "en",
       "TitleKey": "Field.DepartmentSuppressStaffingInfo.StaffingLevelsToSupress",
-      "Body": "Department Suppress Staffing Info / Staffing Levels To Supress. Existing staffing levels to suppress. A suppressed level is not proof that another channel reaches the member.",
+      "Body": "Department Suppress Staffing Info / Staffing Levels To Suppress. Existing staffing levels to suppress. A suppressed level is not proof that another channel reaches the member.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-departmentsuppressstaffinginfo-staffinglevelstosupress",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1229,21 +616,21 @@
       "Id": "personnel",
       "Locale": "en",
       "TitleKey": "Feature.personnel",
-      "Body": "Personnel People in the department, status and staffing Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Personnel Member accounts, contact details and status. Dispatch, notifications, permissions and reports all start from who belongs to which group, so set this up first. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Invite members or add them directly, then check that each has a mobile number or email address.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "personnel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "add-person",
+      "Id": "invites",
       "Locale": "en",
-      "TitleKey": "Feature.add-person",
-      "Body": "Add Person Manually create a user account in the department Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "Feature.invites",
+      "Body": "Manage Invites Email invitations for new members to join the department. Dispatch, notifications, permissions and reports all start from who belongs to which group, so set this up first. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Send invitations and follow up on any that have not been accepted.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "add-person",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "invites",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1251,120 +638,10 @@
       "Id": "groups",
       "Locale": "en",
       "TitleKey": "Feature.groups",
-      "Body": "Groups & Stations Department groups and stations Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Groups & Stations Stations and groups that organize members and units. Dispatch, notifications, permissions and reports all start from who belongs to which group, so set this up first. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Create a station group for each station with its address, and organizational groups for teams, then add members.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "groups",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-group",
-      "Locale": "en",
-      "TitleKey": "Feature.new-group",
-      "Body": "New Group Create a group or station Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-group",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "shifts",
-      "Locale": "en",
-      "TitleKey": "Feature.shifts",
-      "Body": "Shifts Shift signups, recurring shifts and trades Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "shifts",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "calendar",
-      "Locale": "en",
-      "TitleKey": "Feature.calendar",
-      "Body": "Calendar Events, meetings and trainings you can sign up for Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "calendar",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-calendar-item",
-      "Locale": "en",
-      "TitleKey": "Feature.new-calendar-item",
-      "Body": "New Calendar Event Create a calendar event Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-calendar-item",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "trainings",
-      "Locale": "en",
-      "TitleKey": "Feature.trainings",
-      "Body": "Trainings Trainings, study guides and procedures Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "trainings",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-training",
-      "Locale": "en",
-      "TitleKey": "Feature.new-training",
-      "Body": "New Training Create a training with optional quiz Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-training",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "certification-dashboard",
-      "Locale": "en",
-      "TitleKey": "Feature.certification-dashboard",
-      "Body": "Certification Dashboard Expiring and expired certifications for people and units Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "certification-dashboard",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "certification-types",
-      "Locale": "en",
-      "TitleKey": "Feature.certification-types",
-      "Body": "Certification Types The department's certification catalog and template gallery Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "certification-types",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "certification-settings",
-      "Locale": "en",
-      "TitleKey": "Feature.certification-settings",
-      "Body": "Certification Settings Enforcement mode, grace period and expiry notifications Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "certification-settings",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "my-certifications",
-      "Locale": "en",
-      "TitleKey": "Feature.my-certifications",
-      "Body": "My Certifications Your own certification records Keep access and responsibilities aligned with the people doing the work. Check that the next shift has the locally required qualified crew. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "my-certifications",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1372,32 +649,32 @@
       "Id": "personnel-roles",
       "Locale": "en",
       "TitleKey": "Feature.personnel-roles",
-      "Body": "Personnel roles Organize department-defined role assignments. Describe responsibility consistently without assuming that a role proves qualification. Check that the next shift has the locally required qualified crew. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Personnel roles Roles such as Firefighter, EMT or Officer. Describe responsibility consistently without assuming that a role proves qualification. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Create the roles you dispatch or report on, and assign them to members.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "personnel-roles",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "custom-statuses",
+      "Id": "add-person",
       "Locale": "en",
-      "TitleKey": "Feature.custom-statuses",
-      "Body": "Personnel and unit statuses Configure status names, base meanings and supported behavior. Use terminology familiar to the department while preserving automation meaning. Check that the next shift has the locally required qualified crew. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "TitleKey": "Feature.add-person",
+      "Body": "Add Person Create a member account directly instead of sending an invitation. Dispatch, notifications, permissions and reports all start from who belongs to which group, so set this up first. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Have your member list with email addresses or mobile numbers, and decide how stations or teams are grouped.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "custom-statuses",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "add-person",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "workshifts",
+      "Id": "new-group",
       "Locale": "en",
-      "TitleKey": "Feature.workshifts",
-      "Body": "Workshifts Configure repeating workforce schedules supported by Workshifts. Review schedule ownership and local time separately from dispatch eligibility. Check that the next shift has the locally required qualified crew. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "TitleKey": "Feature.new-group",
+      "Body": "New Group Create a station or group. Dispatch, notifications, permissions and reports all start from who belongs to which group, so set this up first. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Have your member list with email addresses or mobile numbers, and decide how stations or teams are grouped.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "workshifts",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "new-group",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

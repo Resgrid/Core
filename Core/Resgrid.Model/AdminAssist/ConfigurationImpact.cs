@@ -19,6 +19,11 @@ namespace Resgrid.Model.AdminAssist
 		Task<ConfigurationImpactReport> PreviewCapacityAsync(AdminAssistActor actor, CapacityImpactRequest request, CancellationToken cancellationToken = default);
 	}
 	public sealed record OperationalImpact(IReadOnlyList<ConfigurationImpactMetric> Metrics, IReadOnlyList<string> LimitKeys, string Version);
+	public interface IComposedOperationalImpactProvider
+	{
+		bool AppliesTo(IReadOnlyList<string> settingIds);
+		Task<OperationalImpact> EvaluateComposedAsync(AdminAssistActor actor, ConfigurationSnapshot before, ConfigurationSnapshot after, IReadOnlyList<string> settingIds, CancellationToken ct);
+	}
 	public interface IOperationalImpactProvider
 	{
 		bool Supports(string settingId);

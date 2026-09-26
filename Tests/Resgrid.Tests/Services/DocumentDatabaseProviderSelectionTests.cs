@@ -80,13 +80,14 @@ namespace Resgrid.Tests.Services
 				new Lazy<IMongoRepository<UnitsLocation>>(() => throw new InvalidOperationException("Mongo repository should not be resolved in Postgres mode.")),
 				unitLocationsDocRepository.Object);
 
+			var fixTime = new DateTime(2026, 9, 25, 14, 3, 11, DateTimeKind.Utc);
 			var location = new UnitsLocation
 			{
 				DepartmentId = 7,
 				UnitId = 12,
 				Latitude = 39.7392m,
 				Longitude = -104.9903m,
-				Timestamp = DateTime.UtcNow
+				Timestamp = fixTime
 			};
 
 			using var cancellationTokenSource = new System.Threading.CancellationTokenSource();
@@ -95,8 +96,9 @@ namespace Resgrid.Tests.Services
 			result.Status.Should().Be(UnitLocationWriteStatus.Inserted);
 			result.Location.PgId.Should().Be("314");
 			unitLocationsDocRepository.Verify(x => x.InsertAsync(location, cancellationTokenSource.Token), Times.Once);
+			// The fix time travels with the realtime update so map clients can drop out-of-order fixes.
 			eventAggregator.Verify(
-				x => x.SendMessageAsync(It.Is<UnitLocationUpdatedEvent>(e => e.RecordId == "314" && e.UnitId == "12")),
+				x => x.SendMessageAsync(It.Is<UnitLocationUpdatedEvent>(e => e.RecordId == "314" && e.UnitId == "12" && e.Timestamp == fixTime)),
 				Times.Once);
 		}
 
@@ -207,13 +209,14 @@ namespace Resgrid.Tests.Services
 				new Lazy<IMongoRepository<PersonnelLocation>>(() => throw new InvalidOperationException("Mongo repository should not be resolved in Postgres mode.")),
 				personnelLocationsDocRepository.Object);
 
+			var fixTime = new DateTime(2026, 9, 25, 14, 3, 11, DateTimeKind.Utc);
 			var location = new PersonnelLocation
 			{
 				DepartmentId = 7,
 				UserId = "user-1",
 				Latitude = 39.7392m,
 				Longitude = -104.9903m,
-				Timestamp = DateTime.UtcNow
+				Timestamp = fixTime
 			};
 
 			using var cancellationTokenSource = new System.Threading.CancellationTokenSource();
@@ -221,9 +224,11 @@ namespace Resgrid.Tests.Services
 
 			result.PgId.Should().Be("512");
 			personnelLocationsDocRepository.Verify(x => x.InsertAsync(location, cancellationTokenSource.Token), Times.Once);
+			// Awaited like the Unit path, so a failed realtime publish is observed instead of lost in an async void.
 			eventAggregator.Verify(
-				x => x.SendMessage<PersonnelLocationUpdatedEvent>(It.Is<PersonnelLocationUpdatedEvent>(e => e.RecordId == "512" && e.UserId == "user-1")),
+				x => x.SendMessageAsync(It.Is<PersonnelLocationUpdatedEvent>(e => e.RecordId == "512" && e.UserId == "user-1" && e.Timestamp == fixTime)),
 				Times.Once);
+			eventAggregator.Verify(x => x.SendMessage(It.IsAny<PersonnelLocationUpdatedEvent>()), Times.Never);
 		}
 
 		[Test]

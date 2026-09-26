@@ -44,5 +44,18 @@ namespace Resgrid.Tests.AdminAssist
 			Assert.That(calendar.Replace("\r\n ", ""), Does.Contain("SUMMARY:" + title));
 			Assert.That(calendar, Does.Contain("DTSTART:20260925T120000Z"));
 		}
+		[Test]
+		public void Setup_checklist_lists_only_key_features_of_selected_modules_with_module_effort()
+		{
+			var workspace = new SetupWorkspace(7, 1, SetupMode.Fresh, new Dictionary<string, SetupAreaChoice> { ["calls"] = SetupAreaChoice.UseNow, ["records"] = SetupAreaChoice.LearnLater },
+				Array.Empty<string>(), Array.Empty<string>(), _catalog.Version, null);
+			var plan = SetupPlanBuilder.Build(_catalog, workspace, Array.Empty<CapabilityAccess>(), Array.Empty<CapabilitySetupAssessment>(), "1", Now);
+			var planned = plan.Tasks.Select(t => t.CapabilityId).Distinct().ToArray();
+			// Page actions such as New Call and Archived Calls are left to Ask and reference.
+			Assert.That(planned, Is.EquivalentTo(_catalog.Capabilities.Where(c => c.AreaId == "calls" && c.IsKey).Select(c => c.Id)));
+			Assert.That(planned, Does.Not.Contain("new-call").And.Not.Contain("archived-calls"));
+			var calls = _catalog.Areas.Single(a => a.Id == "calls");
+			Assert.That(plan.Effort.Single(), Is.EqualTo(new SetupEffort("calls", calls.MinimumMinutes, calls.MaximumMinutes, "Ui.EffortAssumptions")));
+		}
 	}
 }

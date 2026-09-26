@@ -28,6 +28,14 @@ namespace Resgrid.Model.Repositories
 			int departmentId);
 
 		/// <summary>
+		/// Gets every group membership row in the department whose group exists: the same rows as
+		/// <see cref="GetAllGroupMembersByUserAndDepartmentAsync"/> for each user, in one query.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;DepartmentGroupMember&gt;&gt;.</returns>
+		Task<IEnumerable<DepartmentGroupMember>> GetAllGroupMembersByDepartmentAsync(int departmentId);
+
+		/// <summary>
 		/// Delete group by group identifier asynchronous.
 		/// </summary>
 		/// <param name="groupId">The group identifier.</param>

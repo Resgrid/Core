@@ -12,6 +12,8 @@
         model.placeholder = option ? option.getAttribute('data-model') || '' : '';
         if (!presetEndpoint) return;
         endpoint.value = presetEndpoint;
+        // The previous provider's model would not exist at the new endpoint; the placeholder shows an example to type.
+        model.value = '';
         var start = presetEndpoint.indexOf('{');
         if (start >= 0) {
             endpoint.focus();

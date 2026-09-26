@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
 {
@@ -273,6 +274,17 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> CanUserViewPersonAsync(string userId, string targetUserId, int departmentId);
+
+		/// <summary>
+		/// The subset of <paramref name="targetUserIds"/> the user may view, decided exactly as <see cref="CanUserViewPersonAsync"/>
+		/// decides each one, but with the permission, the viewer's group, roles and department, and every target's group read
+		/// once for the whole set.
+		/// </summary>
+		/// <param name="userId">The current user identifier.</param>
+		/// <param name="targetUserIds">The target user identifiers.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>The viewable target user identifiers.</returns>
+		Task<HashSet<string>> GetViewablePersonIdsAsync(string userId, IEnumerable<string> targetUserIds, int departmentId);
 
 		Task<bool> CanUserDeleteCallAsync(string userId, int callId, int departmentId);
 

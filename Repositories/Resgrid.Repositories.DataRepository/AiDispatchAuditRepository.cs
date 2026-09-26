@@ -55,9 +55,23 @@ namespace Resgrid.Repositories.DataRepository
 			return rows.Select(r => new AiDispatchAuditListItem { Audit = r, CallNumber = r.CallNumber, RelatedCallNumber = r.RelatedCallNumber }).ToList();
 		}
 
+		public async Task<Dictionary<string, int>> GetOutcomeCountsAsync(int departmentId, DateTime sinceUtc, CancellationToken cancellationToken)
+		{
+			var rows = await QueryAsync<OutcomeCount>($"SELECT {Col("Outcome")},CAST(COUNT(*) AS INT) AS {Col("Total")} FROM {Tbl("AiDispatchAudits")} " +
+				$"WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("CreatedOnUtc")}>={P}Since GROUP BY {Col("Outcome")}",
+				new { DepartmentId = departmentId, Since = DatabaseTimestamp(sinceUtc) }, cancellationToken);
+			return rows.ToDictionary(r => r.Outcome ?? "", r => r.Total);
+		}
+
 		public Task<int> PruneAsync(int departmentId, DateTime cutoffUtc, CancellationToken cancellationToken) =>
 			ExecuteAsync($"DELETE FROM {Tbl("AiDispatchAudits")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("CreatedOnUtc")}<{P}Cutoff",
 				new { DepartmentId = departmentId, Cutoff = DatabaseTimestamp(cutoffUtc) }, cancellationToken);
+
+		private sealed class OutcomeCount
+		{
+			public string Outcome { get; set; }
+			public int Total { get; set; }
+		}
 
 		private sealed class AuditWithNumbers
 		{

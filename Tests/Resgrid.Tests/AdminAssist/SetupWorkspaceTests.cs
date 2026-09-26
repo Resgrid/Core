@@ -38,8 +38,14 @@ namespace Resgrid.Tests.AdminAssist
 		[Test]
 		public void Legacy_area_choices_upgrade_without_resetting_department_scope()
 		{
-			var state = SetupWorkspaceMetadata.Read("{\"home\":0,\"security\":0,\"people\":1}");
-			Assert.That(state.Areas["people"], Is.EqualTo(SetupAreaChoice.LearnLater));
+			var state = SetupWorkspaceMetadata.Read("{\"home\":0,\"security\":0,\"people\":1,\"location\":2}");
+			Assert.That(state.Areas["people"], Is.EqualTo(SetupAreaChoice.LearnLater), "An explicit choice wins over the core-module default.");
+			// Areas became modules: home is now Apps and devices; location split into Units and Mapping.
+			Assert.That(state.Areas.ContainsKey("home") || state.Areas.ContainsKey("location"), Is.False);
+			Assert.That(state.Areas["apps"], Is.EqualTo(SetupAreaChoice.UseNow));
+			Assert.That((state.Areas["units"], state.Areas["mapping"]), Is.EqualTo((SetupAreaChoice.NotApplicable, SetupAreaChoice.NotApplicable)));
+			Assert.That(state.Areas["calls"], Is.EqualTo(SetupAreaChoice.UseNow), "Unchosen core modules default to Use now.");
+			state.AreaReasons["units"] = state.AreaReasons["mapping"] = SetupAreaReason.NoCurrentNeed;
 			state.Areas["inventory"] = SetupAreaChoice.NotApplicable; state.AreaReasons["inventory"] = SetupAreaReason.OtherSystem;
 			state.ReviewEvidence = new("version","12",_now,4,1,1,2); state.RevisitOnUtc = _now.AddDays(30);
 			var restored = SetupWorkspaceMetadata.Read(state.Serialize());

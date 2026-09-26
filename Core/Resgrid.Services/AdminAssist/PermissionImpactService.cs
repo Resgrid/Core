@@ -31,6 +31,21 @@ namespace Resgrid.Services.AdminAssist
 		private sealed record Inputs(Person[] People, Group[] Groups, Target[] Targets, int[] OwnedRoles, Permission Current);
 		private static bool Scoped(PermissionTypes type) => type is PermissionTypes.ViewGroupUsers or PermissionTypes.ViewGroupUnits or PermissionTypes.CanSeePersonnelLocations or PermissionTypes.CanSeeUnitLocations;
 		private static bool UnitScope(PermissionTypes type) => type is PermissionTypes.ViewGroupUnits or PermissionTypes.CanSeeUnitLocations;
+		public async Task<IReadOnlyDictionary<string, bool>> EvaluateCurrentTargetsAsync(AdminAssistActor administrator, string permissionType, IReadOnlyList<string> targetIds, CancellationToken ct)
+		{
+			if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
+			if (!Supported.Contains(permissionType) || !Enum.TryParse<PermissionTypes>(permissionType, out var type) || !Scoped(type) || targetIds == null || targetIds.Count > Math.Clamp(Config.AdminAssistConfig.MaxEvidenceRows, 1, 10000) || targetIds.Any(string.IsNullOrWhiteSpace)) throw new ArgumentException("Invalid visibility scope.");
+			try {
+				// One viewer against at most MaxEvidenceRows targets, so the department-wide comparison bound does not apply.
+				var input = await ReadAsync(administrator, type, ct, boundComparisons: false);
+				var requested = targetIds.ToHashSet(StringComparer.Ordinal);
+				var selected = input with { People = input.People.Where(p => p.Id == administrator.UserId).ToArray(), Targets = input.Targets.Where(t => requested.Contains(t.Id)).ToArray() };
+				var allowed = Evaluate(selected, input.Current, true, ct);
+				if (Fingerprint(input) != Fingerprint(await ReadAsync(administrator, type, ct, boundComparisons: false))) return null;
+				if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
+				return requested.ToDictionary(id => id, id => allowed.Contains((administrator.UserId, id)), StringComparer.Ordinal);
+			} catch (OperationCanceledException) { throw; } catch (UnauthorizedAccessException) { throw; } catch (Exception) { return null; }
+		}
 		public async Task<bool?> EvaluateCurrentAsync(AdminAssistActor administrator, string memberId, string permissionType, string targetId, CancellationToken ct)
 		{
 			if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
@@ -38,13 +53,13 @@ namespace Resgrid.Services.AdminAssist
 			if (Scoped(type) && string.IsNullOrWhiteSpace(targetId)) return null;
 			try
 			{
-				var input = await ReadAsync(administrator, type, ct);
+				var input = await ReadAsync(administrator, type, ct, boundComparisons: false);
 				var target = Scoped(type) ? targetId : "department-action";
 				// Evaluate a single edge from fresh repository inputs. Do not trust the legacy
 				// visibility cache: a missing matrix currently fails open in that API.
 				var selected = input with { People = input.People.Where(p => p.Id == memberId).ToArray(), Targets = input.Targets.Where(t => t.Id == target).ToArray() };
 				var allowed = Evaluate(selected, input.Current, Scoped(type), ct).Contains((memberId, target));
-				if (Fingerprint(input) != Fingerprint(await ReadAsync(administrator, type, ct))) return null;
+				if (Fingerprint(input) != Fingerprint(await ReadAsync(administrator, type, ct, boundComparisons: false))) return null;
 				if (!await access.CanAccessAsync(administrator, false, ct).WaitAsync(ct)) throw new UnauthorizedAccessException();
 				return allowed;
 			}
@@ -139,7 +154,7 @@ namespace Resgrid.Services.AdminAssist
 			}
 			return result;
 		}
-		private async Task<Inputs> ReadAsync(AdminAssistActor actor, PermissionTypes type, CancellationToken ct)
+		private async Task<Inputs> ReadAsync(AdminAssistActor actor, PermissionTypes type, CancellationToken ct, bool boundComparisons = true)
 		{
 			var department = await departments.GetDepartmentByIdAsync(actor.DepartmentId, true).WaitAsync(ct) ?? throw new InvalidOperationException();
 			var memberRows = (await members.GetAllDepartmentMembersUnlimitedAsync(actor.DepartmentId).WaitAsync(ct))?.ToArray() ?? throw new InvalidOperationException();
@@ -172,7 +187,8 @@ namespace Resgrid.Services.AdminAssist
 				targets = unitRows.OrderBy(u => u.UnitId).Select(u => new Target(u.UnitId.ToString(CultureInfo.InvariantCulture), u.StationGroupId)).ToArray();
 			}
 			else targets = Scoped(type) ? people.Select(p => new Target(p.Id, p.Group)).ToArray() : new[] { new Target("department-action", null) };
-			if ((long)people.Length * targets.Length > 100000) throw new InvalidOperationException("Permission comparison bound exceeded.");
+			// Bounds the department-wide matrix PreviewAsync evaluates; single-viewer callers opt out and stay under the row bound.
+			if (boundComparisons && (long)people.Length * targets.Length > 100000) throw new InvalidOperationException("Permission comparison bound exceeded.");
 			var current = permissionRows.SingleOrDefault(p => p.PermissionType == (int)type);
 			if (current != null && (!Enum.IsDefined(typeof(PermissionActions), current.Action) || (!string.IsNullOrWhiteSpace(current.Data) &&
 				current.Action == 2 && current.Data.Split(',').Any(id => !int.TryParse(id, out var parsed) || !ownedRoles.Contains(parsed))))) throw new InvalidOperationException("Invalid current permission.");

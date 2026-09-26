@@ -1,0 +1,105 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "ptt",
+      "LabelKey": "Area.ptt",
+      "PurposeKey": "AreaPurpose.ptt",
+      "Order": 18,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "PTT",
+      "Global": false,
+      "ValueKey": "AreaValue.ptt",
+      "ExampleKey": "AreaExample.ptt",
+      "AdoptionKey": "ModuleAdoption.ptt",
+      "MinimumMinutes": 15,
+      "MaximumMinutes": 45,
+      "DocsPath": "/web-app/voice-audio/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "voice",
+      "AreaId": "ptt",
+      "LabelKey": "Feature.voice",
+      "PurposeKey": "FeaturePurpose.voice",
+      "ValueKey": "AreaValue.ptt",
+      "ExampleKey": "AreaExample.ptt",
+      "AdoptionKey": "FeatureSetup.voice",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Voice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/voice-audio/"
+    },
+    {
+      "Id": "addon-ptt",
+      "AreaId": "ptt",
+      "LabelKey": "Feature.addon-ptt",
+      "PurposeKey": "FeaturePurpose.addon-ptt",
+      "ValueKey": "FeatureValue.addon-ptt",
+      "ExampleKey": "FeatureExample.addon-ptt",
+      "AdoptionKey": "FeatureAdoption.addon-ptt",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Subscription",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "PTT"
+        }
+      ],
+      "SettingIds": [
+        "setting.BrainTreeCustomerId",
+        "setting.PaddleCustomerId",
+        "setting.StripeCustomerId"
+      ],
+      "RuleIds": [
+        "personnel-limit",
+        "unit-limit"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/voice-audio/"
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "voice",
+      "Locale": "en",
+      "TitleKey": "Feature.voice",
+      "Body": "Voice Push-to-Talk voice channels. Coordinate field teams through app-based voice channels. A search team uses its team channel during a training exercise. Create channels and add the members who use them.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "voice",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "addon-ptt",
+      "Locale": "en",
+      "TitleKey": "Feature.addon-ptt",
+      "Body": "Push-to-Talk The Push-to-Talk add-on: voice channels in the Resgrid apps. Coordinate field teams through configured voice channels. A SAR coordinator uses a team channel during a training exercise. Review seats, supported clients and channel setup. PTT does not provide phone dispatch alerts or certify radio replacement.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "addon-ptt",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    }
+  ]
+}

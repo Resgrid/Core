@@ -348,6 +348,7 @@ ChecklistReminderSettingsUpdated,
 		AdminAssistReviewChanged,
 		AdminAssistDiagnosticAccess,
 		/// <summary>AI dispatch department settings saved (enhanced-ai-addon-plan.md §4). Append-only.</summary>
-		AiDispatchSettingsUpdated
+		AiDispatchSettingsUpdated,
+		AdminAssistPlanAccess
 	}
 }

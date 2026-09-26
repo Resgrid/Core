@@ -1,12 +1,21 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "records",
       "LabelKey": "Area.records",
       "PurposeKey": "AreaPurpose.records",
-      "Order": 6,
-      "Archetypes": []
+      "Order": 11,
+      "Archetypes": [],
+      "Tier": "Optional",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "ModuleAdoption.records",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 120,
+      "DocsPath": "/web-app/records/overview/"
     }
   ],
   "Settings": [
@@ -1123,7 +1132,7 @@
       "PurposeKey": "FeaturePurpose.logs",
       "ValueKey": "AreaValue.records",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.logs",
+      "AdoptionKey": "FeatureSetup.logs",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Logs",
@@ -1138,31 +1147,9 @@
       "SettingIds": [
         "module.LogsDisabled"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "new-log",
-      "AreaId": "records",
-      "LabelKey": "Feature.new-log",
-      "PurposeKey": "FeaturePurpose.new-log",
-      "ValueKey": "AreaValue.records",
-      "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.new-log",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Logs",
-        "Action": "NewLog"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Logs"
-        }
-      ],
-      "SettingIds": [
-        "module.LogsDisabled"
-      ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/logs/"
     },
     {
       "Id": "records",
@@ -1171,7 +1158,7 @@
       "PurposeKey": "FeaturePurpose.records",
       "ValueKey": "AreaValue.records",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.records",
+      "AdoptionKey": "FeatureSetup.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Records",
@@ -1192,7 +1179,115 @@
       ],
       "RuleIds": [
         "record-review"
-      ]
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/records/overview/"
+    },
+    {
+      "Id": "incident-reports",
+      "AreaId": "records",
+      "LabelKey": "Feature.incident-reports",
+      "PurposeKey": "FeaturePurpose.incident-reports",
+      "ValueKey": "FeatureValue.incident-reports",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureSetup.incident-reports",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentReports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/records/incident-reports/"
+    },
+    {
+      "Id": "record-definitions",
+      "AreaId": "records",
+      "LabelKey": "Feature.record-definitions",
+      "PurposeKey": "FeaturePurpose.record-definitions",
+      "ValueKey": "FeatureValue.record-definitions",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureSetup.record-definitions",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecordDefinitions",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Records.System"
+        },
+        {
+          "Kind": "permission",
+          "Id": "ManageRecordDefinitions"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageRecordDefinitions"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/records/definitions/"
+    },
+    {
+      "Id": "reports",
+      "AreaId": "records",
+      "LabelKey": "Feature.reports",
+      "PurposeKey": "FeaturePurpose.reports",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "FeatureSetup.reports",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Reports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Reports"
+        }
+      ],
+      "SettingIds": [
+        "module.ReportsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/reports/"
+    },
+    {
+      "Id": "new-log",
+      "AreaId": "records",
+      "LabelKey": "Feature.new-log",
+      "PurposeKey": "FeaturePurpose.new-log",
+      "ValueKey": "AreaValue.records",
+      "ExampleKey": "AreaExample.records",
+      "AdoptionKey": "ModuleAdoption.records",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Logs",
+        "Action": "NewLog"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Logs"
+        }
+      ],
+      "SettingIds": [
+        "module.LogsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/logs/"
     },
     {
       "Id": "records-dashboard",
@@ -1201,7 +1296,7 @@
       "PurposeKey": "FeaturePurpose.records-dashboard",
       "ValueKey": "AreaValue.records",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.records-dashboard",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Records",
@@ -1220,7 +1315,9 @@
       "SettingIds": [
         "module.LogsDisabled"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/dashboard-and-queue/"
     },
     {
       "Id": "records-settings",
@@ -1229,7 +1326,7 @@
       "PurposeKey": "FeaturePurpose.records-settings",
       "ValueKey": "AreaValue.records",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.records-settings",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Records",
@@ -1276,81 +1373,9 @@
         "setting.RecordsReviewDueHours",
         "setting.RecordsSearchConfig"
       ],
-      "RuleIds": []
-    },
-    {
-      "Id": "reports",
-      "AreaId": "records",
-      "LabelKey": "Feature.reports",
-      "PurposeKey": "FeaturePurpose.reports",
-      "ValueKey": "AreaValue.records",
-      "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.reports",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Reports",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "module",
-          "Id": "Reports"
-        }
-      ],
-      "SettingIds": [
-        "module.ReportsDisabled"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "record-definitions",
-      "AreaId": "records",
-      "LabelKey": "Feature.record-definitions",
-      "PurposeKey": "FeaturePurpose.record-definitions",
-      "ValueKey": "FeatureValue.record-definitions",
-      "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-definitions",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "RecordDefinitions",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "flag",
-          "Id": "Records.System"
-        },
-        {
-          "Kind": "permission",
-          "Id": "ManageRecordDefinitions"
-        }
-      ],
-      "SettingIds": [
-        "permission.ManageRecordDefinitions"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "incident-reports",
-      "AreaId": "records",
-      "LabelKey": "Feature.incident-reports",
-      "PurposeKey": "FeaturePurpose.incident-reports",
-      "ValueKey": "FeatureValue.incident-reports",
-      "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.incident-reports",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "IncidentReports",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "flag",
-          "Id": "Records.System"
-        }
-      ],
-      "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/settings/"
     },
     {
       "Id": "record-occupancies",
@@ -1359,7 +1384,7 @@
       "PurposeKey": "FeaturePurpose.record-occupancies",
       "ValueKey": "FeatureValue.record-occupancies",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-occupancies",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordOccupancies",
@@ -1376,7 +1401,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/occupancies/"
     },
     {
       "Id": "record-inspections",
@@ -1385,7 +1412,7 @@
       "PurposeKey": "FeaturePurpose.record-inspections",
       "ValueKey": "FeatureValue.record-inspections",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-inspections",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordInspections",
@@ -1402,7 +1429,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/inspections/"
     },
     {
       "Id": "record-hydrants",
@@ -1411,7 +1440,7 @@
       "PurposeKey": "FeaturePurpose.record-hydrants",
       "ValueKey": "FeatureValue.record-hydrants",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-hydrants",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordHydrants",
@@ -1428,7 +1457,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/hydrants/"
     },
     {
       "Id": "record-permits",
@@ -1437,7 +1468,7 @@
       "PurposeKey": "FeaturePurpose.record-permits",
       "ValueKey": "FeatureValue.record-permits",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-permits",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordPermits",
@@ -1454,7 +1485,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/permits/"
     },
     {
       "Id": "record-investigations",
@@ -1463,7 +1496,7 @@
       "PurposeKey": "FeaturePurpose.record-investigations",
       "ValueKey": "FeatureValue.record-investigations",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-investigations",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordInvestigations",
@@ -1480,7 +1513,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/investigations/"
     },
     {
       "Id": "record-evidence",
@@ -1489,7 +1524,7 @@
       "PurposeKey": "FeaturePurpose.record-evidence",
       "ValueKey": "FeatureValue.record-evidence",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-evidence",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Records",
@@ -1504,7 +1539,9 @@
       "SettingIds": [],
       "RuleIds": [
         "record-review"
-      ]
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/investigations/"
     },
     {
       "Id": "record-holds",
@@ -1513,7 +1550,7 @@
       "PurposeKey": "FeaturePurpose.record-holds",
       "ValueKey": "FeatureValue.record-holds",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-holds",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordLegalHolds",
@@ -1532,7 +1569,9 @@
       "SettingIds": [
         "permission.ManageRecordLegalHold"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/legal-holds-and-disclosures/"
     },
     {
       "Id": "record-submissions",
@@ -1541,7 +1580,7 @@
       "PurposeKey": "FeaturePurpose.record-submissions",
       "ValueKey": "FeatureValue.record-submissions",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-submissions",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "IncidentReports",
@@ -1560,7 +1599,9 @@
       "SettingIds": [
         "permission.SubmitRecords"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/incident-reports/"
     },
     {
       "Id": "record-analytics",
@@ -1569,7 +1610,7 @@
       "PurposeKey": "FeaturePurpose.record-analytics",
       "ValueKey": "FeatureValue.record-analytics",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-analytics",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordsAnalytics",
@@ -1586,7 +1627,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/analytics/"
     },
     {
       "Id": "record-saved-reports",
@@ -1595,7 +1638,7 @@
       "PurposeKey": "FeaturePurpose.record-saved-reports",
       "ValueKey": "FeatureValue.record-saved-reports",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-saved-reports",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordSavedReports",
@@ -1614,7 +1657,9 @@
       "SettingIds": [
         "permission.ManageRecordReports"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/reports-and-exports/"
     },
     {
       "Id": "record-exports",
@@ -1623,7 +1668,7 @@
       "PurposeKey": "FeaturePurpose.record-exports",
       "ValueKey": "FeatureValue.record-exports",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-exports",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RecordsExportTemplates",
@@ -1642,7 +1687,9 @@
       "SettingIds": [
         "permission.ManageRecordReports"
       ],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/reports-and-exports/"
     },
     {
       "Id": "record-disclosures",
@@ -1651,7 +1698,7 @@
       "PurposeKey": "FeaturePurpose.record-disclosures",
       "ValueKey": "FeatureValue.record-disclosures",
       "ExampleKey": "AreaExample.records",
-      "AdoptionKey": "FeatureAdoption.record-disclosures",
+      "AdoptionKey": "ModuleAdoption.records",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Disclosures",
@@ -1664,7 +1711,9 @@
         }
       ],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/records/legal-holds-and-disclosures/"
     }
   ],
   "Rules": [
@@ -1698,7 +1747,7 @@
       "Body": "Records Default Lifecycle Preset. Default lifecycle for new department-owned definitions. Locked definitions retain their own lifecycle.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsdefaultlifecyclepreset",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1709,7 +1758,7 @@
       "Body": "Records Review Due Hours. Default administrative review deadline; a definition-level override takes precedence. This is not a statutory deadline inference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsreviewduehours",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1720,7 +1769,7 @@
       "Body": "Records Numbering Config. Number assignment, year reset and sequence formatting for definitions that do not override the department configuration.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsnumberingconfig",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1731,7 +1780,7 @@
       "Body": "Records Search Config. Allowed record search scope and protected-data behavior. Search access remains bounded by current source permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordssearchconfig",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1742,7 +1791,7 @@
       "Body": "Records Retention Policy. Default and definition-specific retention, including prior-policy history. Holds and restricted-class rules can prevent purge eligibility.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsretentionpolicy",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1753,7 +1802,7 @@
       "Body": "Records Group Visibility Mode. Whether record visibility is department-wide or group scoped. Group scope narrows existing permission and never grants access.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsgroupvisibilitymode",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1764,7 +1813,7 @@
       "Body": "Records Group Scope Config. Reserved identifier with no editable behavior in this release. Do not present it as a shipped setting.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsgroupscopeconfig",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1775,7 +1824,7 @@
       "Body": "Records Disclosure Config. Disclosure review clock, redaction profile and release approver. Review local obligations through the authorized disclosure workflow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsdisclosureconfig",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1786,7 +1835,7 @@
       "Body": "Logs availability. Controls availability of legacy logs. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-logsdisabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1797,7 +1846,7 @@
       "Body": "Logs menu name. Optional display name for legacy logs in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-logsnameoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1808,7 +1857,7 @@
       "Body": "Reports availability. Controls availability of reports. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-reportsdisabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1819,7 +1868,7 @@
       "Body": "Reports menu name. Optional display name for reports in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "module-reportsnameoverride",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1830,7 +1879,7 @@
       "Body": "Records Numbering Config / Number Assignment. Choose when numbers are assigned for definitions using department defaults. Review existing references before changing numbering behavior.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-numberassignment",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1841,7 +1890,7 @@
       "Body": "Records Numbering Config / Reset Yearly. Restart record sequences each calendar year in the department time zone.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-resetyearly",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1852,7 +1901,7 @@
       "Body": "Records Numbering Config / Sequence Width. Zero-padded sequence width for definitions using department defaults. The Records editor validates the supported width.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-sequencewidth",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1863,7 +1912,7 @@
       "Body": "Records Numbering Config / Include Year. Include the year between the record prefix and sequence number.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-includeyear",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1874,7 +1923,7 @@
       "Body": "Records Numbering Config / Per Group Sequence. Use separate station/group sequences. This changes numbering, not record visibility.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-pergroupsequence",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1885,7 +1934,7 @@
       "Body": "Records Search Config / Index Narrative. Include unprotected narrative in search. Advanced Data Protection enrollment withdraws narrative indexing; this preference cannot override protection.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordssearchconfig-indexnarrative",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1896,7 +1945,7 @@
       "Body": "Records Search Config / Include Legacy History. Include supported legacy personnel and unit logs in the Records search scope. Source permissions still apply.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordssearchconfig-includelegacyhistory",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1907,7 +1956,7 @@
       "Body": "Records Retention Policy / Department Default Years. Department retention for standard record classes. Zero means permanent; protected classes, prior policy and holds can retain records longer.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-departmentdefaultyears",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1918,7 +1967,7 @@
       "Body": "Records Retention Policy / Overrides. Definition-specific prospective retention overrides. Use the Records workflow and its confirmations; Admin Assist never purges records.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-overrides",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1926,10 +1975,10 @@
       "Id": "field.RecordsRetentionPolicy.LastChangedByUserId",
       "Locale": "en",
       "TitleKey": "Field.RecordsRetentionPolicy.LastChangedByUserId",
-      "Body": "Records Retention Policy / Last Changed By User Id. Recorded policy-change actor. It is not an editable retention rule and is not exposed as raw identity in this reference.",
+      "Body": "Records Retention Policy / Last Changed By User ID. Recorded policy-change actor. It is not an editable retention rule and is not exposed as raw identity in this reference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-lastchangedbyuserid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1940,7 +1989,7 @@
       "Body": "Records Retention Policy / Last Changed On. Policy effective timestamp used with prior policy versions. It is not the record's retention expiry date.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-lastchangedon",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1951,7 +2000,7 @@
       "Body": "Records Retention Policy / History. Prior policy versions retained by the owning lifecycle so current changes do not silently rewrite historical retention.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicy-history",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1962,7 +2011,7 @@
       "Body": "Records Retention Override / Definition Key. Stable record-definition key to which this override applies. Display names do not identify a retention policy.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionoverride-definitionkey",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1973,7 +2022,7 @@
       "Body": "Records Retention Override / Retention Years. Years retained under this definition override; zero means permanent. Holds and prospective policy resolution still apply.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionoverride-retentionyears",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1984,7 +2033,7 @@
       "Body": "Records Retention Override / Applies From. Prospective boundary for revisions eligible for the override, evaluated by the Records lifecycle.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionoverride-appliesfrom",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -1995,7 +2044,7 @@
       "Body": "Records Retention Policy Version / Effective On. Effective timestamp of a stored historical retention policy version.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicyversion-effectiveon",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2006,7 +2055,7 @@
       "Body": "Records Retention Policy Version / Policy. Historical policy snapshot used to resolve retention for older revisions. Never edit this as an ordinary preference.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsretentionpolicyversion-policy",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2017,7 +2066,7 @@
       "Body": "Records Disclosure Config / Statutory Clock Days. Configured disclosure review clock. Verify local obligations with the responsible owner; the default does not establish a legal deadline.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsdisclosureconfig-statutoryclockdays",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2028,7 +2077,7 @@
       "Body": "Records Disclosure Config / Default Redaction Profile. Default redaction profile in the owning disclosure workflow. Review the actual proposed release before approval.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsdisclosureconfig-defaultredactionprofile",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2036,10 +2085,10 @@
       "Id": "field.RecordsDisclosureConfig.ReleaseApproverUserId",
       "Locale": "en",
       "TitleKey": "Field.RecordsDisclosureConfig.ReleaseApproverUserId",
-      "Body": "Records Disclosure Config / Release Approver User Id. Authorized member responsible for disclosure release approval. Selecting an approver does not grant missing permissions or protected-data access.",
+      "Body": "Records Disclosure Config / Release Approver User ID. Authorized member responsible for disclosure release approval. Selecting an approver does not grant missing permissions or protected-data access.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsdisclosureconfig-releaseapproveruserid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2047,21 +2096,10 @@
       "Id": "logs",
       "Locale": "en",
       "TitleKey": "Feature.logs",
-      "Body": "Logs Run, training, work and meeting logs Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Logs Activity logs for calls, training and work. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Choose the log types members complete.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "logs",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "new-log",
-      "Locale": "en",
-      "TitleKey": "Feature.new-log",
-      "Body": "New Log Create a run report, training log or work log Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-log",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2069,54 +2107,10 @@
       "Id": "records",
       "Locale": "en",
       "TitleKey": "Feature.records",
-      "Body": "Records Records queue: run reports, training and operational records Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "Body": "Records Incident and activity records. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Turn on Records if it is available to you and review the record settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "records",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "records-dashboard",
-      "Locale": "en",
-      "TitleKey": "Feature.records-dashboard",
-      "Body": "Records Dashboard Records due, submissions and quality at a glance Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "records-dashboard",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "records-settings",
-      "Locale": "en",
-      "TitleKey": "Feature.records-settings",
-      "Body": "Records Settings Lifecycle, numbering, search, retention and visibility settings for Records Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "records-settings",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "reports",
-      "Locale": "en",
-      "TitleKey": "Feature.reports",
-      "Body": "Reports Generate reports from department data Keep administrative follow-up and reporting evidence connected to the source record. Review an incident report and its outstanding corrections using the Records workflow. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "reports",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "record-definitions",
-      "Locale": "en",
-      "TitleKey": "Feature.record-definitions",
-      "Body": "Record definitions and templates Configure record forms, lifecycle, numbering and review requirements. Fit reporting to approved local procedures while preserving built-in definitions. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "record-definitions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2124,10 +2118,65 @@
       "Id": "incident-reports",
       "Locale": "en",
       "TitleKey": "Feature.incident-reports",
-      "Body": "Incident reports Prepare incident reports linked to authorized call evidence. Review source completeness before finalization or external submission. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Incident reports Incident reports linked to calls. Review source completeness before finalization or external submission. After each call, the officer completes an incident report from the call and a supervisor reviews it. Decide who completes and who reviews each report.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "incident-reports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "record-definitions",
+      "Locale": "en",
+      "TitleKey": "Feature.record-definitions",
+      "Body": "Record definitions and templates The forms and fields records use. Fit reporting to approved local procedures while preserving built-in definitions. After each call, the officer completes an incident report from the call and a supervisor reviews it. Start from the built-in forms and add only the fields you need.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "record-definitions",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "reports",
+      "Locale": "en",
+      "TitleKey": "Feature.reports",
+      "Body": "Reports Department reports on calls, personnel and activity. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Run the reports you use for meetings or compliance.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "reports",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-log",
+      "Locale": "en",
+      "TitleKey": "Feature.new-log",
+      "Body": "New Log Record a run report, training log or work log. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-log",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "records-dashboard",
+      "Locale": "en",
+      "TitleKey": "Feature.records-dashboard",
+      "Body": "Records Dashboard Records that are due, awaiting review or ready to submit. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "records-dashboard",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "records-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.records-settings",
+      "Body": "Records Settings Numbering, retention, search and visibility rules for records. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "records-settings",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2135,10 +2184,10 @@
       "Id": "record-occupancies",
       "Locale": "en",
       "TitleKey": "Feature.record-occupancies",
-      "Body": "Occupancies and preplans Maintain premises, contacts, hazards and review metadata. Keep site knowledge owned and current; recorded hazards do not certify safety. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Occupancies and preplans Buildings and sites with their contacts, hazards and preplans. Keep site knowledge owned and current; recorded hazards do not certify safety. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-occupancies",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2146,10 +2195,10 @@
       "Id": "record-inspections",
       "Locale": "en",
       "TitleKey": "Feature.record-inspections",
-      "Body": "Inspections Schedule and record authorized inspection work and corrections. Track administrative follow-up against configured inspection procedures. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Inspections Schedule inspections and track violations and corrections. Track administrative follow-up against configured inspection procedures. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-inspections",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2157,10 +2206,10 @@
       "Id": "record-hydrants",
       "Locale": "en",
       "TitleKey": "Feature.record-hydrants",
-      "Body": "Hydrants and water sources Maintain hydrant and water-source records and their review history. Identify records needing verification without claiming current flow or availability. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Hydrants and water sources Hydrants and water sources with their inspection and flow history. Identify records needing verification without claiming current flow or availability. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-hydrants",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2168,10 +2217,10 @@
       "Id": "record-permits",
       "Locale": "en",
       "TitleKey": "Feature.record-permits",
-      "Body": "Permits Manage supported permit records and lifecycle. Assign review responsibility; a software state is not a hazardous-work safety clearance. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Permits Permits and their approval status. Assign review responsibility; a software state is not a hazardous-work safety clearance. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-permits",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2179,10 +2228,10 @@
       "Id": "record-investigations",
       "Locale": "en",
       "TitleKey": "Feature.record-investigations",
-      "Body": "Investigations Manage authorized investigation records and their controlled workflow. Keep case responsibility and access separate from general department visibility. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Investigations Restricted case records, such as fire investigations. Keep case responsibility and access separate from general department visibility. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-investigations",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2190,10 +2239,10 @@
       "Id": "record-evidence",
       "Locale": "en",
       "TitleKey": "Feature.record-evidence",
-      "Body": "Evidence capture and provenance Capture supported source evidence from the owning record workflow. Preserve evidence context and access restrictions without copying it into setup guidance. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Evidence capture and provenance Collect and track evidence attached to a record. Preserve evidence context and access restrictions without copying it into setup guidance. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-evidence",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2201,10 +2250,10 @@
       "Id": "record-holds",
       "Locale": "en",
       "TitleKey": "Feature.record-holds",
-      "Body": "Legal holds Place and release holds through the authorized Records lifecycle. Retain affected evidence while a hold remains active. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Legal holds Legal holds that stop records from being deleted. Retain affected evidence while a hold remains active. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-holds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2212,10 +2261,10 @@
       "Id": "record-submissions",
       "Locale": "en",
       "TitleKey": "Feature.record-submissions",
-      "Body": "Reporting submissions Prepare and reconcile supported reporting submissions from an authorized incident report. Review destination requirements and actual submission outcomes. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Reporting submissions Submit incident reports to state or national reporting systems. Review destination requirements and actual submission outcomes. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-submissions",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2223,10 +2272,10 @@
       "Id": "record-analytics",
       "Locale": "en",
       "TitleKey": "Feature.record-analytics",
-      "Body": "Records analytics Review supported aggregate response, workload and readiness reports. Use measured source data with its scope and completeness limits. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Records analytics Response, workload and readiness trends from your records. Use measured source data with its scope and completeness limits. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-analytics",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2234,10 +2283,10 @@
       "Id": "record-saved-reports",
       "Locale": "en",
       "TitleKey": "Feature.record-saved-reports",
-      "Body": "Saved record reports Create reusable report selections over authorized record data. Make repeatable administrative reviews easier. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Saved record reports Saved record reports you can run again. Make repeatable administrative reviews easier. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-saved-reports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2245,10 +2294,10 @@
       "Id": "record-exports",
       "Locale": "en",
       "TitleKey": "Feature.record-exports",
-      "Body": "Record exports and templates Configure supported export templates and review their runs. Keep release destinations, protected access and output handling explicit. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Record exports and templates Export records to files using templates. Keep release destinations, protected access and output handling explicit. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-exports",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2256,10 +2305,10 @@
       "Id": "record-disclosures",
       "Locale": "en",
       "TitleKey": "Feature.record-disclosures",
-      "Body": "Disclosure requests Manage disclosure scope, redaction and release approval. Assign review ownership and verify the material approved for release. Review an incident report and its outstanding corrections using the Records workflow. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Disclosure requests Requests to release records, with redaction and approval. Assign review ownership and verify the material approved for release. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "record-disclosures",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

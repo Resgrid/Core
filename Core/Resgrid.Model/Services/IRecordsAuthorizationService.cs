@@ -19,6 +19,11 @@ namespace Resgrid.Model.Services
 		/// may still read and act, and which a hidden member passes.
 		/// </summary>
 		Task<bool> IsAssignableMemberAsync(string userId, int departmentId);
+		/// <summary>
+		/// The subset of <paramref name="userIds"/> that <see cref="IsAssignableMemberAsync"/> would accept, from one uncached read
+		/// of the department's membership rows.
+		/// </summary>
+		Task<HashSet<string>> GetAssignableMemberIdsAsync(IEnumerable<string> userIds, int departmentId);
 		Task<bool> IsDepartmentAdminAsync(string userId, int departmentId);
 		Task<bool> HasPermissionAsync(string userId, int departmentId, PermissionTypes permissionType);
 		Task<bool> CanReadSourceCallAsync(string userId, int departmentId, Call call);

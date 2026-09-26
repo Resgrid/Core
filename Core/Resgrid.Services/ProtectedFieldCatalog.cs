@@ -94,6 +94,24 @@ namespace Resgrid.Services
 		/// </summary>
 		public const int SubjectIdentifiersCatalogVersion = 29;
 
+		/// <summary>
+		/// Admin Assist Ask (catalog 31): AiGenerations.Content, the stored grounded-answer turns. A department that encrypts new
+		/// writes and is pinned below 31 cannot use Ask until the catalog upgrade sweep reaches it.
+		/// </summary>
+		public const int AiGenerationsCatalogVersion = 31;
+
+		/// <summary>
+		/// Admin Assist troubleshooting (catalog 32): AdminAssistDiagnosticRuns.Content, the stored diagnostic request. A department
+		/// that encrypts new writes and is pinned below 32 cannot save diagnostic runs until the catalog upgrade sweep reaches it.
+		/// </summary>
+		public const int AdminAssistDiagnosticsCatalogVersion = 32;
+
+		/// <summary>
+		/// Admin Assist change plans (catalog 33): AdminAssistPlans.Content, the stored plan. A department that encrypts new writes
+		/// and is pinned below 33 cannot save plans until the catalog upgrade sweep reaches it.
+		/// </summary>
+		public const int AdminAssistPlansCatalogVersion = 33;
+
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
 			Entries.ToDictionary(e => e.FieldId, StringComparer.OrdinalIgnoreCase);
@@ -720,9 +738,11 @@ namespace Resgrid.Services
 						_ => Resgrid.Model.Inventories.InventoryTables.CatalogVersion }));
 
 			list.Add(new ProtectedFieldDefinition("aigenerations.content", OperationalFamily, "AiGenerations", "Content", ProtectedFieldStorageKind.Text,
-				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 31));
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, AiGenerationsCatalogVersion));
+			list.Add(new ProtectedFieldDefinition("adminassistplans.content", OperationalFamily, "AdminAssistPlans", "Content", ProtectedFieldStorageKind.Text,
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, AdminAssistPlansCatalogVersion));
 			list.Add(new ProtectedFieldDefinition("adminassistdiagnosticruns.content", OperationalFamily, "AdminAssistDiagnosticRuns", "Content", ProtectedFieldStorageKind.Text,
-				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 32));
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, AdminAssistDiagnosticsCatalogVersion));
 
 			// Admin Assist Phase 0, registry §4G: review notes and dispatch evidence are protected derived copies.
 			foreach (var table in new[] { "AdminAssistFindings", "AdminAssistDispatchTraces" })

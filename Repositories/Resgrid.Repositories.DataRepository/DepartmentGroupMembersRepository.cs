@@ -115,6 +115,12 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public Task<IEnumerable<DepartmentGroupMember>> GetAllGroupMembersByDepartmentAsync(int departmentId) =>
+			// SelectGroupMembersByUserDidQuery without the user filter, so each user's rows are the ones the single lookup reads.
+			QueryAsync<DepartmentGroupMember>($"SELECT dgm.* FROM {Tbl("DepartmentGroupMembers")} dgm " +
+				$"INNER JOIN {Tbl("DepartmentGroups")} dg ON dg.{Col("DepartmentGroupId")}=dgm.{Col("DepartmentGroupId")} WHERE dgm.{Col("DepartmentId")}={P}DepartmentId",
+				new { DepartmentId = departmentId });
+
 		public async Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (!HasConfigurationJournal) return await DeleteGroupMembersCoreAsync(groupId, departmentId, cancellationToken);

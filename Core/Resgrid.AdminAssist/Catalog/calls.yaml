@@ -1,12 +1,21 @@
 {
-  "Version": "2026.09.25.1",
+  "Version": "2026.09.25.2",
   "Areas": [
     {
       "Id": "calls",
       "LabelKey": "Area.calls",
       "PurposeKey": "AreaPurpose.calls",
-      "Order": 1,
-      "Archetypes": []
+      "Order": 2,
+      "Archetypes": [],
+      "Tier": "Core",
+      "Addon": null,
+      "Global": false,
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "MinimumMinutes": 30,
+      "MaximumMinutes": 120,
+      "DocsPath": "/web-app/dispatch-calls/"
     }
   ],
   "Settings": [
@@ -1705,101 +1714,108 @@
       "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
       "EvidenceSource": "DepartmentCallEmail",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "setting.PersonnelOnUnitSetUnitStatus",
+      "AreaId": "calls",
+      "LabelKey": "Setting.PersonnelOnUnitSetUnitStatus",
+      "HelpKey": "SettingHelp.PersonnelOnUnitSetUnitStatus",
+      "Binding": "DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "PersonnelOnUnitSetUnitStatus"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.PersonnelOnUnitSetUnitStatus",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.EnableTextCommand",
+      "AreaId": "calls",
+      "LabelKey": "Setting.EnableTextCommand",
+      "HelpKey": "SettingHelp.EnableTextCommand",
+      "Binding": "DepartmentSettingTypes.EnableTextCommand",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "EnableTextCommand"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.EnableTextCommand",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.TtsLanguage",
+      "AreaId": "calls",
+      "LabelKey": "Setting.TtsLanguage",
+      "HelpKey": "SettingHelp.TtsLanguage",
+      "Binding": "DepartmentSettingTypes.TtsLanguage",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "TextSettings",
+        "Field": "TtsLanguage"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.TtsLanguage",
+      "DefaultValue": "owning voice default",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
-    {
-      "Id": "calls",
-      "AreaId": "calls",
-      "LabelKey": "Feature.calls",
-      "PurposeKey": "FeaturePurpose.calls",
-      "ValueKey": "AreaValue.calls",
-      "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.calls",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Dispatch",
-        "Action": "Dashboard"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "new-call",
-      "AreaId": "calls",
-      "LabelKey": "Feature.new-call",
-      "PurposeKey": "FeaturePurpose.new-call",
-      "ValueKey": "AreaValue.calls",
-      "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.new-call",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Dispatch",
-        "Action": "NewCall"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "archived-calls",
-      "AreaId": "calls",
-      "LabelKey": "Feature.archived-calls",
-      "PurposeKey": "FeaturePurpose.archived-calls",
-      "ValueKey": "AreaValue.calls",
-      "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.archived-calls",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Dispatch",
-        "Action": "ArchivedCalls"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
-    {
-      "Id": "incident-command",
-      "AreaId": "calls",
-      "LabelKey": "Feature.incident-command",
-      "PurposeKey": "FeaturePurpose.incident-command",
-      "ValueKey": "FeatureValue.incident-command",
-      "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.incident-command",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Command",
-        "Action": "Index"
-      },
-      "Requirements": [
-        {
-          "Kind": "permission",
-          "Id": "CommandAppLogin"
-        }
-      ],
-      "SettingIds": [
-        "permission.CommandAppLogin"
-      ],
-      "RuleIds": []
-    },
-    {
-      "Id": "call-templates",
-      "AreaId": "calls",
-      "LabelKey": "Feature.call-templates",
-      "PurposeKey": "FeaturePurpose.call-templates",
-      "ValueKey": "FeatureValue.call-templates",
-      "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.call-templates",
-      "ReleaseStatus": "available",
-      "Location": {
-        "Controller": "Templates",
-        "Action": "Index"
-      },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": []
-    },
     {
       "Id": "call-types-priorities",
       "AreaId": "calls",
@@ -1807,7 +1823,7 @@
       "PurposeKey": "FeaturePurpose.call-types-priorities",
       "ValueKey": "FeatureValue.call-types-priorities",
       "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.call-types-priorities",
+      "AdoptionKey": "FeatureSetup.call-types-priorities",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -1815,7 +1831,136 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": []
+      "RuleIds": [],
+      "Setup": {
+        "EvidenceId": "callTypeCount",
+        "Minimum": 1,
+        "RuleIds": [],
+        "GuidanceKey": "SetupEvidence.call-types-priorities"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/types-configuration/"
+    },
+    {
+      "Id": "custom-statuses",
+      "AreaId": "calls",
+      "LabelKey": "Feature.custom-statuses",
+      "PurposeKey": "FeaturePurpose.custom-statuses",
+      "ValueKey": "FeatureValue.custom-statuses",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureSetup.custom-statuses",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CustomStatuses",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/custom-statuses/"
+    },
+    {
+      "Id": "dispatch-settings",
+      "AreaId": "calls",
+      "LabelKey": "Feature.dispatch-settings",
+      "PurposeKey": "FeaturePurpose.dispatch-settings",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureSetup.dispatch-settings",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "field.DispatchRecommendationConfig.EtaShortlistSize",
+        "field.DispatchRecommendationConfig.IncludeStaleLocations",
+        "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
+        "field.DispatchRecommendationConfig.MaxRadiusMeters",
+        "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
+        "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
+        "field.DispatchRecommendationConfig.RestPeriodMinutes",
+        "field.DispatchRecommendationConfig.UnitMinimumStaffingLevel",
+        "field.DispatchRecommendationConfig.UseRoutedEta",
+        "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
+        "field.GroupDispatchScopeConfig.Enabled",
+        "field.NewCallFieldPolicy.Rules",
+        "field.NewCallFieldRule.Key",
+        "field.NewCallFieldRule.Required",
+        "field.NewCallFieldRule.Visible",
+        "field.UnitTypeCallStatusOverride.DispatchStatus",
+        "field.UnitTypeCallStatusOverride.ReleaseStatus",
+        "field.UnitTypeCallStatusOverride.UnitTypeId",
+        "field.UnitTypeCallStatusOverrideSetting.Overrides",
+        "setting.AutoSetStatusForShiftDispatchPersonnel",
+        "setting.CheckInTimersAutoEnableForNewCalls",
+        "setting.DispatchRecommendationAutoDispatch",
+        "setting.DispatchRecommendationConfig",
+        "setting.DispatchRecommendationMode",
+        "setting.DispatchShiftInsteadOfGroup",
+        "setting.GroupDispatchScopeConfig",
+        "setting.NewCallFieldPolicy",
+        "setting.PersonnelOnUnitSetUnitStatus",
+        "setting.ShiftCallDispatchPersonnelStatusToSet",
+        "setting.ShiftCallReleasePersonnelStatusToSet",
+        "setting.UnitCallDispatchStatusToSet",
+        "setting.UnitCallReleaseStatusToSet",
+        "setting.UnitCallStatusOverridesByUnitType",
+        "setting.UnitDispatchAlsoDispatchToAssignedPersonnel",
+        "setting.UnitDispatchAlsoDispatchToGroup"
+      ],
+      "RuleIds": [
+        "checkin-timers",
+        "shift-auto-without-dispatch",
+        "shift-coverage"
+      ],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/department-settings/#call--dispatch-settings"
+    },
+    {
+      "Id": "email-intake",
+      "AreaId": "calls",
+      "LabelKey": "Feature.email-intake",
+      "PurposeKey": "FeaturePurpose.email-intake",
+      "ValueKey": "FeatureValue.email-intake",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureSetup.email-intake",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.InternalDispatchEmail",
+        "setting.RssFeedKeyForActiveCalls",
+        "table.DepartmentCallEmail.ErrorMessage",
+        "table.DepartmentCallEmail.FormatType",
+        "table.DepartmentCallEmail.Hostname",
+        "table.DepartmentCallEmail.IsFailure",
+        "table.DepartmentCallEmail.LastCheck",
+        "table.DepartmentCallEmail.Password",
+        "table.DepartmentCallEmail.Port",
+        "table.DepartmentCallEmail.UseSsl",
+        "table.DepartmentCallEmail.Username"
+      ],
+      "RuleIds": [
+        "email-import-failures",
+        "import-heartbeat"
+      ],
+      "Setup": {
+        "EvidenceId": "emailImportSourceCount",
+        "Minimum": 1,
+        "RuleIds": [
+          "email-import-failures",
+          "import-heartbeat"
+        ],
+        "GuidanceKey": "SetupEvidence.email-intake"
+      },
+      "Prominence": "Key",
+      "DocsPath": "/configuration/call-import/"
     },
     {
       "Id": "run-cards",
@@ -1824,7 +1969,7 @@
       "PurposeKey": "FeaturePurpose.run-cards",
       "ValueKey": "FeatureValue.run-cards",
       "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.run-cards",
+      "AdoptionKey": "FeatureSetup.run-cards",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "RunCards",
@@ -1847,7 +1992,85 @@
           "run-cards"
         ],
         "GuidanceKey": "SetupEvidence.run-cards"
-      }
+      },
+      "Prominence": "Key",
+      "DocsPath": "/web-app/run-cards/"
+    },
+    {
+      "Id": "calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.calls",
+      "PurposeKey": "FeaturePurpose.calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "Dashboard"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/dispatch-calls/"
+    },
+    {
+      "Id": "new-call",
+      "AreaId": "calls",
+      "LabelKey": "Feature.new-call",
+      "PurposeKey": "FeaturePurpose.new-call",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "NewCall"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/dispatch-calls/#creating-a-call"
+    },
+    {
+      "Id": "archived-calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.archived-calls",
+      "PurposeKey": "FeaturePurpose.archived-calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "ArchivedCalls"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/dispatch-calls/#archived-and-scheduled-calls"
+    },
+    {
+      "Id": "call-templates",
+      "AreaId": "calls",
+      "LabelKey": "Feature.call-templates",
+      "PurposeKey": "FeaturePurpose.call-templates",
+      "ValueKey": "FeatureValue.call-templates",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Templates",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/templates/"
     },
     {
       "Id": "checkin-setup",
@@ -1856,7 +2079,7 @@
       "PurposeKey": "FeaturePurpose.checkin-setup",
       "ValueKey": "FeatureValue.checkin-setup",
       "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.checkin-setup",
+      "AdoptionKey": "ModuleAdoption.calls",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -1912,7 +2135,9 @@
           "checkin-timers"
         ],
         "GuidanceKey": "SetupEvidence.checkin-setup"
-      }
+      },
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/call-checkin-timers/"
     },
     {
       "Id": "text-intake",
@@ -1921,7 +2146,7 @@
       "PurposeKey": "FeaturePurpose.text-intake",
       "ValueKey": "FeatureValue.text-intake",
       "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.text-intake",
+      "AdoptionKey": "ModuleAdoption.calls",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -1939,16 +2164,18 @@
       "RuleIds": [
         "command-sources",
         "text-sources"
-      ]
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/configuration/text-messaging/"
     },
     {
-      "Id": "email-intake",
+      "Id": "call-settings",
       "AreaId": "calls",
-      "LabelKey": "Feature.email-intake",
-      "PurposeKey": "FeaturePurpose.email-intake",
-      "ValueKey": "FeatureValue.email-intake",
+      "LabelKey": "Feature.call-settings",
+      "PurposeKey": "FeaturePurpose.call-settings",
+      "ValueKey": "AreaValue.calls",
       "ExampleKey": "AreaExample.calls",
-      "AdoptionKey": "FeatureAdoption.email-intake",
+      "AdoptionKey": "ModuleAdoption.calls",
       "ReleaseStatus": "available",
       "Location": {
         "Controller": "Department",
@@ -1972,15 +2199,8 @@
         "email-import-failures",
         "import-heartbeat"
       ],
-      "Setup": {
-        "EvidenceId": "emailImportSourceCount",
-        "Minimum": 1,
-        "RuleIds": [
-          "email-import-failures",
-          "import-heartbeat"
-        ],
-        "GuidanceKey": "SetupEvidence.email-intake"
-      }
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/department-settings/#call-import-settings"
     }
   ],
   "Rules": [
@@ -2176,7 +2396,7 @@
       "Body": "Rss Feed Key For Active Calls. Credential for the active-call feed. Treat the feed and its key as sensitive; rotate through its owning screen.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-rssfeedkeyforactivecalls",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2187,7 +2407,7 @@
       "Body": "Text To Call Number. Provisioned inbound text number. Provisioning has external effects and must use the normal text settings flow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-texttocallnumber",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2198,7 +2418,7 @@
       "Body": "Text To Call Import Format. Parser used for inbound text call creation. Verify the sender format with a controlled example on the owning screen.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-texttocallimportformat",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2209,7 +2429,7 @@
       "Body": "Text To Call Source Numbers. Allowed inbound source numbers for text calls and commands. Empty sources prevent accepted intake; never display raw numbers in Admin Assist.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-texttocallsourcenumbers",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2220,7 +2440,7 @@
       "Body": "Enable Text To Call. Configured text-call preference. Enforcement differs by provider and chatbot path; the stored value alone does not prove intake is stopped or accepted. Review sender classification and perform an explicit controlled verification on the owning screen.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-enabletexttocall",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2231,7 +2451,7 @@
       "Body": "Internal Dispatch Email. Assigned internal dispatch email address. Presence can be shown; the address stays on the authorized import screen.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-internaldispatchemail",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2242,7 +2462,7 @@
       "Body": "Calls Sort Order. Sort order for displayed calls; does not reorder provider delivery or change call priority.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-callssortorder",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2253,7 +2473,7 @@
       "Body": "Dispatch Shift Instead Of Group. Expand dispatched groups using the resolved on-duty roster. An empty shift result falls back to group members; preview both cases.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-dispatchshiftinsteadofgroup",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2264,7 +2484,7 @@
       "Body": "Auto Set Status For Shift Dispatch Personnel. Apply the configured status to shift-dispatched personnel. This only takes effect with shift dispatch enabled.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-autosetstatusforshiftdispatchpersonnel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2275,7 +2495,7 @@
       "Body": "Shift Call Dispatch Personnel Status To Set. Personnel status applied when shift dispatch occurs. Minus one leaves status unchanged; use an existing approved status.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-shiftcalldispatchpersonnelstatustoset",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2286,7 +2506,7 @@
       "Body": "Shift Call Release Personnel Status To Set. Personnel status applied on call release for the shift-dispatch path. Minus one leaves status unchanged.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-shiftcallreleasepersonnelstatustoset",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2297,7 +2517,7 @@
       "Body": "Unit Dispatch Also Dispatch To Assigned Personnel. Expand unit dispatch to its assigned crew. Review duplicate routes, current assignments and recipient permissions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitdispatchalsodispatchtoassignedpersonnel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2308,7 +2528,7 @@
       "Body": "Unit Dispatch Also Dispatch To Group. Expand unit dispatch to the station group. This can substantially increase the recipient audience.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitdispatchalsodispatchtogroup",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2319,7 +2539,7 @@
       "Body": "Check In Timers Auto Enable For New Calls. Automatically start configured check-in timers for new calls. Review timer targets and escalation before enabling it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-checkintimersautoenablefornewcalls",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2330,7 +2550,7 @@
       "Body": "Unit Call Dispatch Status To Set. Unit status applied during call dispatch. Minus one or an invalid built-in unit status leaves the status unchanged.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitcalldispatchstatustoset",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2341,7 +2561,7 @@
       "Body": "Unit Call Release Status To Set. Unit status applied at call release. Review unit-type overrides before assuming one department-wide effect.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitcallreleasestatustoset",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2352,7 +2572,7 @@
       "Body": "Unit Call Status Overrides By Unit Type. Per-unit-type call status overrides. Existing type-specific values take precedence over department defaults.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitcallstatusoverridesbyunittype",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2363,7 +2583,7 @@
       "Body": "Dispatch Recommendation Mode. Dispatch recommendation selection mode. Review run cards, eligible resources and human dispatch responsibility.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-dispatchrecommendationmode",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2374,7 +2594,7 @@
       "Body": "Dispatch Recommendation Auto Dispatch. Allow the recommendation path to dispatch automatically where enabled. Preview recipients and verify local procedures first.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-dispatchrecommendationautodispatch",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2385,7 +2605,7 @@
       "Body": "Dispatch Recommendation Config. Location, ETA, rest, crew and move-up settings used by recommendation consumers. External ETA calls occur only in the owning operational flow.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-dispatchrecommendationconfig",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2396,7 +2616,7 @@
       "Body": "New Call Field Policy. Controls optional new-call fields across supported clients. Hidden fields cannot be required; core dispatch fields remain mandatory.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-newcallfieldpolicy",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2407,7 +2627,7 @@
       "Body": "Group Dispatch Scope Config. Group-subtree dispatch visibility with explicit role exceptions. Preview each actor and target scope before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-groupdispatchscopeconfig",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2418,7 +2638,7 @@
       "Body": "Unit Type Call Status Override Setting / Overrides. Per-unit-type dispatch and release status overrides. The owning consumer resolves these before department defaults.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unittypecallstatusoverridesetting-overrides",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2426,10 +2646,10 @@
       "Id": "field.UnitTypeCallStatusOverride.UnitTypeId",
       "Locale": "en",
       "TitleKey": "Field.UnitTypeCallStatusOverride.UnitTypeId",
-      "Body": "Unit Type Call Status Override / Unit Type Id. Existing unit type receiving this override. A unit type name is not a qualification or staffing clearance.",
+      "Body": "Unit Type Call Status Override / Unit Type ID. Existing unit type receiving this override. A unit type name is not a qualification or staffing clearance.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unittypecallstatusoverride-unittypeid",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2440,7 +2660,7 @@
       "Body": "Unit Type Call Status Override / Dispatch Status. Status applied to this unit type on dispatch; minus one leaves it unchanged.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unittypecallstatusoverride-dispatchstatus",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2451,7 +2671,7 @@
       "Body": "Unit Type Call Status Override / Release Status. Status applied to this unit type on release; minus one leaves it unchanged.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unittypecallstatusoverride-releasestatus",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2462,7 +2682,7 @@
       "Body": "New Call Field Policy / Rules. Per-field visibility and requiredness for optional call-creation fields. Unconfigured fields remain visible and optional.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldpolicy-rules",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2473,7 +2693,7 @@
       "Body": "New Call Field Rule / Key. One supported built-in call-field key. Name, nature, priority and type cannot be removed through this policy.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldrule-key",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2484,7 +2704,7 @@
       "Body": "New Call Field Rule / Visible. Whether the optional call field is shown on supported creation surfaces. Hidden fields cannot be required.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldrule-visible",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2495,7 +2715,7 @@
       "Body": "New Call Field Rule / Required. Whether a visible optional field must be supplied. Review imports and each supported client before making a field mandatory.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldrule-required",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2506,7 +2726,7 @@
       "Body": "Group Dispatch Scope Config / Enabled. Limit supported dispatch views to the member's group subtree. Department administrators and configured department-wide roles keep department-wide access.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-groupdispatchscopeconfig-enabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2514,10 +2734,10 @@
       "Id": "field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
       "Locale": "en",
       "TitleKey": "Field.GroupDispatchScopeConfig.DepartmentWideRoleIds",
-      "Body": "Group Dispatch Scope Config / Department Wide Role Ids. Existing roles allowed department-wide dispatch views while group scoping is enabled. This changes view scope, not licensing or operational qualification.",
+      "Body": "Group Dispatch Scope Config / Department Wide Role IDs. Existing roles allowed department-wide dispatch views while group scoping is enabled. This changes view scope, not licensing or operational qualification.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-groupdispatchscopeconfig-departmentwideroleids",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2528,7 +2748,7 @@
       "Body": "Dispatch Recommendation Config / Max Location Age Seconds. Exclude older unit positions from closest-unit candidates; zero removes the age limit. IncludeStaleLocations changes this behavior.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-maxlocationageseconds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2539,7 +2759,7 @@
       "Body": "Dispatch Recommendation Config / Max Radius Meters. Maximum candidate distance in meters; zero removes the radius cap. This is not a response-time or route-safety guarantee.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-maxradiusmeters",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2550,7 +2770,7 @@
       "Body": "Dispatch Recommendation Config / Include Stale Locations. Permit positions beyond the configured age limit in closest-unit selection, marked stale. Review the risk of outdated positions.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-includestalelocations",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2561,7 +2781,7 @@
       "Body": "Dispatch Recommendation Config / Personnel Max Location Age Seconds. Maximum age of personnel positions for closest-unit candidate selection; zero removes the age limit.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-personnelmaxlocationageseconds",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2569,10 +2789,10 @@
       "Id": "field.DispatchRecommendationConfig.UseRoutedEta",
       "Locale": "en",
       "TitleKey": "Field.DispatchRecommendationConfig.UseRoutedEta",
-      "Body": "Dispatch Recommendation Config / Use Routed Eta. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not.",
+      "Body": "Dispatch Recommendation Config / Use Routed ETA. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-useroutedeta",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2580,10 +2800,10 @@
       "Id": "field.DispatchRecommendationConfig.EtaShortlistSize",
       "Locale": "en",
       "TitleKey": "Field.DispatchRecommendationConfig.EtaShortlistSize",
-      "Body": "Dispatch Recommendation Config / Eta Shortlist Size. Number of straight-line candidates per requirement sent for routed ETA when enabled. The owning validator caps provider work.",
+      "Body": "Dispatch Recommendation Config / ETA Shortlist Size. Number of straight-line candidates per requirement sent for routed ETA when enabled. The owning validator caps provider work.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-etashortlistsize",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2594,7 +2814,7 @@
       "Body": "Dispatch Recommendation Config / Rest Period Minutes. Deprioritize recently dispatched resources for this duration; zero disables rotation. This does not infer fatigue or medical fitness.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-restperiodminutes",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2605,7 +2825,7 @@
       "Body": "Dispatch Recommendation Config / Unit Minimum Staffing Level. Minimum configured unit staffing level for recommendation eligibility; zero disables the gate. Units without defined seats pass, and run cards may override it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-unitminimumstaffinglevel",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2616,7 +2836,7 @@
       "Body": "Dispatch Recommendation Config / Move Up Recommendations Enabled. Run the station coverage move-up pass after selection. Recommendations remain subject to approved local dispatch procedures.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-moveuprecommendationsenabled",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2627,7 +2847,7 @@
       "Body": "Department Call Email / Hostname. Mailbox host for email intake. Review the approved provider and network reachability without exposing credentials in setup guidance.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-hostname",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2638,7 +2858,7 @@
       "Body": "Department Call Email / Port. Mailbox connection port. It must match the selected provider and TLS mode.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-port",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2646,10 +2866,10 @@
       "Id": "table.DepartmentCallEmail.UseSsl",
       "Locale": "en",
       "TitleKey": "TableField.DepartmentCallEmail.UseSsl",
-      "Body": "Department Call Email / Use Ssl. Mailbox transport encryption option. Verify actual provider compatibility and successful polling; a stored flag alone does not prove transport protection.",
+      "Body": "Department Call Email / Use SSL. Mailbox transport encryption option. Verify actual provider compatibility and successful polling; a stored flag alone does not prove transport protection.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-usessl",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2660,7 +2880,7 @@
       "Body": "Department Call Email / Username. Mailbox account identifier used for intake. It remains on the authorized configuration screen.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-username",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2671,7 +2891,7 @@
       "Body": "Department Call Email / Password. Mailbox credential. Do not copy it into Admin Assist; rotate it through the mailbox and owning editor together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-password",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2682,7 +2902,7 @@
       "Body": "Department Call Email / Format Type. Selects the inbound email parser. Verify representative permitted source messages without sending an operational page unintentionally.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-formattype",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2693,7 +2913,7 @@
       "Body": "Department Call Email / Last Check. Last recorded polling timestamp. Missing or future timestamps are unknown; quiet call volume is not proof of a poll failure.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-lastcheck",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2704,7 +2924,7 @@
       "Body": "Department Call Email / Is Failure. Latest recorded mailbox failure flag. Verify a new poll before treating it as a continuing outage or a resolved problem.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-isfailure",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2715,62 +2935,40 @@
       "Body": "Department Call Email / Error Message. Provider/import error details on the authorized screen. Admin Assist uses a normalized failure indication and does not copy provider bodies.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-departmentcallemail-errormessage",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "calls",
+      "Id": "setting.PersonnelOnUnitSetUnitStatus",
       "Locale": "en",
-      "TitleKey": "Feature.calls",
-      "Body": "Calls View calls and dispatches Make call intake and recipient selection consistent across shifts. Review a test scenario before enabling CAD intake or changing dispatch routing. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "Setting.PersonnelOnUnitSetUnitStatus",
+      "Body": "Personnel On Unit Set Unit Status. Allow personnel status updates to influence their assigned unit status. Review automation and crew assignment together.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "calls",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "setting-personnelonunitsetunitstatus",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "new-call",
+      "Id": "setting.EnableTextCommand",
       "Locale": "en",
-      "TitleKey": "Feature.new-call",
-      "Body": "New Call Create and dispatch a new call Make call intake and recipient selection consistent across shifts. Review a test scenario before enabling CAD intake or changing dispatch routing. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "Setting.EnableTextCommand",
+      "Body": "Enable Text Command. Configured text-command preference. Dispatch-source patterns and verified member command identity are different checks. Provider and chatbot paths do not enforce this switch uniformly; review the active consumer before changing it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "new-call",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "setting-enabletextcommand",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "archived-calls",
+      "Id": "setting.TtsLanguage",
       "Locale": "en",
-      "TitleKey": "Feature.archived-calls",
-      "Body": "Archived Calls Closed and historical calls Make call intake and recipient selection consistent across shifts. Review a test scenario before enabling CAD intake or changing dispatch routing. Review permissions and setup requirements on the owning screen; saving or sending remains an explicit action.",
+      "TitleKey": "Setting.TtsLanguage",
+      "Body": "Tts Language. Text-to-speech language for supported voice notifications. Confirm supported voices and pronunciation with a human-run test.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "archived-calls",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "incident-command",
-      "Locale": "en",
-      "TitleKey": "Feature.incident-command",
-      "Body": "Incident command and accountability Command tools organize incident roles and accountability for authorized commanders. Prepare command structures and access before an exercise or response. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "incident-command",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "call-templates",
-      "Locale": "en",
-      "TitleKey": "Feature.call-templates",
-      "Body": "Call templates Maintain reusable call information and note templates. Reduce repeated entry while keeping dispatch decisions explicit. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "call-templates",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "setting-ttslanguage",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2778,43 +2976,32 @@
       "Id": "call-types-priorities",
       "Locale": "en",
       "TitleKey": "Feature.call-types-priorities",
-      "Body": "Call types and priorities Maintain the department's call classifications and priorities. Use consistent reporting and run-card matching terms. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "call-types-priorities",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "run-cards",
+      "Id": "custom-statuses",
       "Locale": "en",
-      "TitleKey": "Feature.run-cards",
-      "Body": "Run cards and recommendations Configure matching rules, resource requirements and supported dispatch recommendations. Review candidate coverage before enabling operational use. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "TitleKey": "Feature.custom-statuses",
+      "Body": "Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "run-cards",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "custom-statuses",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
-      "Id": "checkin-setup",
+      "Id": "dispatch-settings",
       "Locale": "en",
-      "TitleKey": "Feature.checkin-setup",
-      "Body": "Check-in timers Configure supported check-in targets and escalation behavior. Review lone-worker and response follow-up with approved local procedures. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "TitleKey": "Feature.dispatch-settings",
+      "Body": "Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "checkin-setup",
-      "PackVersion": "2026.09.25.1",
-      "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
-    },
-    {
-      "Id": "text-intake",
-      "Locale": "en",
-      "TitleKey": "Feature.text-intake",
-      "Body": "Text call intake and commands Configure source numbers, parsing and supported inbound text actions. Make approved inbound sources and their operational effects explicit. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
-      "SourcePath": "docs/admin-assist/settings-reference.md",
-      "Anchor": "text-intake",
-      "PackVersion": "2026.09.25.1",
+      "Anchor": "dispatch-settings",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
@@ -2822,10 +3009,98 @@
       "Id": "email-intake",
       "Locale": "en",
       "TitleKey": "Feature.email-intake",
-      "Body": "Email and CAD call intake Configure supported email and CAD import formats and source credentials. Review parsing, routing and observed integration failures before activation. Review a test scenario before enabling CAD intake or changing dispatch routing. Review the owning screen, current access and source-specific requirements. Configuration, provisioning, exports and messages require explicit actions; learning about a capability does not activate it.",
+      "Body": "Email and CAD call intake Create calls automatically from CAD, paging or email dispatches. Review parsing, routing and observed integration failures before activation. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose your CAD or paging format and connect the mailbox that receives dispatches.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "email-intake",
-      "PackVersion": "2026.09.25.1",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "run-cards",
+      "Locale": "en",
+      "TitleKey": "Feature.run-cards",
+      "Body": "Run cards and recommendations Recommended resources for each call type or area. Review candidate coverage before enabling operational use. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Build run cards for your most common calls, then turn on recommendations.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "run-cards",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "calls",
+      "Locale": "en",
+      "TitleKey": "Feature.calls",
+      "Body": "Calls Active calls and their dispatch status. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "calls",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "new-call",
+      "Locale": "en",
+      "TitleKey": "Feature.new-call",
+      "Body": "New Call Create and dispatch a call. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "new-call",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "archived-calls",
+      "Locale": "en",
+      "TitleKey": "Feature.archived-calls",
+      "Body": "Archived Calls Closed and past calls. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "archived-calls",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "call-templates",
+      "Locale": "en",
+      "TitleKey": "Feature.call-templates",
+      "Body": "Call templates Reusable call text and note templates that speed up call entry. Reduce repeated entry while keeping dispatch decisions explicit. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-templates",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checkin-setup",
+      "Locale": "en",
+      "TitleKey": "Feature.checkin-setup",
+      "Body": "Check-in timers Timers that remind responders on a call to check in, with escalation when they do not. Review lone-worker and response follow-up with approved local procedures. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checkin-setup",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "text-intake",
+      "Locale": "en",
+      "TitleKey": "Feature.text-intake",
+      "Body": "Text call intake and commands Create calls and accept member commands by text message. Make approved inbound sources and their operational effects explicit. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "text-intake",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "call-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.call-settings",
+      "Body": "Call Settings The mailbox and format used to import calls from CAD or paging email. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-settings",
+      "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
     }

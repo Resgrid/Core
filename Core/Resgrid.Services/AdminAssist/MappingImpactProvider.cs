@@ -12,12 +12,32 @@ namespace Resgrid.Services.AdminAssist
 {
 	/// <summary>Counts the same v4 marker choices at one captured time. Coordinates and identities never leave this request.</summary>
 	public sealed class MappingImpactProvider(IUsersService users, IUnitsService units, IUnitsRepository unitRows,
-		IUnitStatesRepository unitStates, IActionLogsRepository actions, IAuthorizationService authorization,
-		IRecordsAuthorizationService membership) : IOperationalImpactProvider
+		IUnitStatesRepository unitStates, IActionLogsRepository actions, IAdminAssistPermissionEvaluator authorization,
+		IRecordsAuthorizationService membership) : IOperationalImpactProvider, IComposedOperationalImpactProvider
 	{
 		private static readonly string[] Ids = { "setting.MappingPersonnelLocationTTL", "setting.MappingUnitLocationTTL",
 			"setting.MappingPersonnelAllowStatusWithNoLocationToOverwrite", "setting.MappingUnitAllowStatusWithNoLocationToOverwrite" };
 		public bool Supports(string settingId) => Ids.Contains(settingId, StringComparer.Ordinal);
+		public bool AppliesTo(IReadOnlyList<string> settingIds) => settingIds.Any(Supports);
+		public async Task<OperationalImpact> EvaluateComposedAsync(AdminAssistActor actor, ConfigurationSnapshot before, ConfigurationSnapshot after, IReadOnlyList<string> settingIds, CancellationToken ct)
+		{
+			var metrics = new List<ConfigurationImpactMetric>(); var limits = new List<string>();
+			foreach (var personnel in new[] { true, false }) {
+				var prefix = personnel ? "MappingPersonnel" : "MappingUnit";
+				if (!settingIds.Any(id => id.StartsWith("setting." + prefix, StringComparison.Ordinal))) continue;
+				// Evaluate both endpoints with the complete setting vector. Values are projected in memory,
+				// so auto-status and TTL/overwrite interactions participate in the final result.
+				var request = new ConfigurationImpactRequest("setting." + prefix + "LocationTTL", before.Revision, Number: before.Find(prefix + "LocationTTL").Number);
+				var first = await EvaluateAsync(actor, before, request, ct);
+				var last = await EvaluateAsync(actor, after, request with { Number = after.Find(prefix + "LocationTTL").Number }, ct);
+				var key = personnel ? "Impact.PersonnelMarkers" : "Impact.UnitMarkers";
+				var old = first.Metrics.SingleOrDefault(m => m.LabelKey == key); var next = last.Metrics.SingleOrDefault(m => m.LabelKey == key);
+				var known = old?.State == EvidenceState.Known && next?.State == EvidenceState.Known;
+				metrics.Add(new(key, known ? EvidenceState.Known : EvidenceState.Unknown, known ? old.Before : null, known ? next.After : null));
+				limits.AddRange(first.LimitKeys); limits.AddRange(last.LimitKeys);
+			}
+			return new(metrics, limits.Distinct().ToArray(), "composed-map-v1");
+		}
 		private sealed record Marker(DateTime? PingOn, DateTime? StatusOn, Func<bool> HasStatusLocation);
 		public async Task<OperationalImpact> EvaluateAsync(AdminAssistActor actor, ConfigurationSnapshot snapshot, ConfigurationImpactRequest request, CancellationToken ct)
 		{
@@ -71,10 +91,11 @@ namespace Resgrid.Services.AdminAssist
 			if (owned.Any(u => u.DepartmentId != actor.DepartmentId) || pings.Any(p => p.DepartmentId != actor.DepartmentId)) throw new InvalidOperationException();
 			var pingByUnit = pings.ToDictionary(p => p.UnitId); var stateByUnit = statuses.ToDictionary(s => s.UnitId);
 			var result = new List<Marker>();
+			var allowed = await authorization.EvaluateCurrentTargetsAsync(actor, nameof(PermissionTypes.CanSeeUnitLocations), owned.Select(u => u.UnitId.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray(), ct);
 			foreach (var unit in owned)
 			{
 				ct.ThrowIfCancellationRequested();
-				if (!await authorization.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, actor.UserId, actor.DepartmentId)) throw new UnauthorizedAccessException();
+				if (allowed == null || !allowed.TryGetValue(unit.UnitId.ToString(System.Globalization.CultureInfo.InvariantCulture), out var canView) || !canView) throw new UnauthorizedAccessException();
 				pingByUnit.TryGetValue(unit.UnitId, out var ping); stateByUnit.TryGetValue(unit.UnitId, out var status);
 				// The map's owning service supplies a current Available state when a unit has no status.
 				result.Add(new Marker(ping?.Timestamp, status?.Timestamp ?? now, () => status?.HasLocation() == true));
@@ -95,11 +116,12 @@ namespace Resgrid.Services.AdminAssist
 			var stateByPerson = statuses.GroupBy(s => s.UserId).ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.ActionLogId).First(), StringComparer.Ordinal);
 			if (people.Select(p => p.UserId).Distinct(StringComparer.Ordinal).Count() != people.Count) throw new InvalidOperationException();
 			var result = new List<Marker>();
+			var allowed = await authorization.EvaluateCurrentTargetsAsync(actor, nameof(PermissionTypes.CanSeePersonnelLocations), people.Select(p => p.UserId).ToArray(), ct);
 			foreach (var person in people)
 			{
 				ct.ThrowIfCancellationRequested();
 				if (!await membership.IsAssignableMemberAsync(person.UserId, actor.DepartmentId) ||
-					!await authorization.CanUserViewPersonLocationViaMatrixAsync(person.UserId, actor.UserId, actor.DepartmentId)) throw new UnauthorizedAccessException();
+					(allowed == null || !allowed.TryGetValue(person.UserId, out var canView) || !canView)) throw new UnauthorizedAccessException();
 				pingByPerson.TryGetValue(person.UserId, out var ping); stateByPerson.TryGetValue(person.UserId, out var status);
 				result.Add(new Marker(ping?.Timestamp, status?.Timestamp, () => status?.HasLocation() == true));
 			}

@@ -281,3 +281,8 @@ opencode.json
 /Web/Resgrid.Web/wwwroot/js/ng
 /tmp
 /artifacts
+/Tools/AdminAssist
+# Internal notes stay local; docs/admin-assist is the cited source for the Admin Assist catalog
+# articles (CatalogTests checks their anchors), so it must be committed.
+/docs/*
+!/docs/admin-assist/

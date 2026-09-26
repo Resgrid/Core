@@ -14,7 +14,7 @@ namespace Resgrid.Web.ViewComponents
 		{
 			var requested = HttpContext.Request.Query["aaReturn"].ToString();
 			var token = HttpContext.Request.Cookies[AdminAssistReturnLink.CookieName];
-			if (requested is not ("wizard" or "report") && token == null) return Content(string.Empty);
+			if (requested is not ("wizard" or "report" or "plans") && token == null) return Content(string.Empty);
 			var options = new CookieOptions { Path = "/User", HttpOnly = true, Secure = HttpContext.Request.IsHttps, SameSite = SameSiteMode.Lax };
 			try
 			{
@@ -22,17 +22,18 @@ namespace Resgrid.Web.ViewComponents
 				var action = ViewContext.RouteData.Values["action"]?.ToString();
 				var actor = new AdminAssistActor(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId());
 				if (controller == "AdminAssist" || controller == "Department" && action == "SetupWizard" || controller == "Help" && action == "SetupReport" ||
-					!await access.CanAccessAsync(actor, true, HttpContext.RequestAborted))
+					!await access.CanAccessAsync(actor, requested != "plans" && AdminAssistReturnLink.Read(protection, actor, token, clock.GetUtcNow()) != "plans", HttpContext.RequestAborted))
 				{
 					HttpContext.Response.Cookies.Delete(AdminAssistReturnLink.CookieName, options); return Content(string.Empty);
 				}
 				var now = clock.GetUtcNow();
 				var page = AdminAssistReturnLink.Read(protection, actor, token, now);
-				if (requested is "wizard" or "report")
+				if (requested is "wizard" or "report" or "plans")
 				{
 					page = requested; options.Expires = now.AddMinutes(30);
 					HttpContext.Response.Cookies.Append(AdminAssistReturnLink.CookieName, AdminAssistReturnLink.Create(protection, actor, page, now), options);
 				}
+				if (page == "plans" && !Resgrid.Config.AdminAssistConfig.PlansEnabled) page = null;
 				if (page == null) { HttpContext.Response.Cookies.Delete(AdminAssistReturnLink.CookieName, options); return Content(string.Empty); }
 				return View("~/Areas/User/Views/Shared/_AdminAssistReturn.cshtml", page);
 			}

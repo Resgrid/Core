@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import type { HubConnection } from '@microsoft/signalr';
 import LoadingIndicator from '../shared/LoadingIndicator';
 import { apiFetchJson } from '../../runtime/api';
@@ -17,6 +17,7 @@ import {
   type GetMapDataResult,
   type GetMapLayersResult,
   type MapElementProps,
+  type MapMarkerInfo,
   type MapRendererProps,
 } from './mapTypes';
 import './map.css';
@@ -24,6 +25,55 @@ import './map.css';
 export type { MapElementProps } from './mapTypes';
 
 type MapRendererComponent = ComponentType<MapRendererProps>;
+
+interface LivePosition {
+  latitude: number;
+  longitude: number;
+  /** Fix time in ms, or null when the server did not send one. */
+  timestamp: number | null;
+  receivedAt: number;
+}
+
+// Coalesces reloads triggered by realtime traffic into one request.
+const MARKER_RELOAD_DEBOUNCE_MS = 5000;
+// A pushed marker the REST data does not contain (location older than the TTL, or hidden from this
+// viewer by the visibility matrix) may trigger a reload at most this often.
+const UNKNOWN_MARKER_RELOAD_INTERVAL_MS = 5 * 60 * 1000;
+const CONNECT_RETRY_DELAYS_MS = [2000, 5000, 10000, 30000];
+
+function getMarkerKey(markerId: string | number): string {
+  return String(markerId).toLowerCase();
+}
+
+function parseTimestamp(value: string | null | undefined): number | null {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function isValidCoordinate(latitude: number, longitude: number): boolean {
+  return (
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    Math.abs(latitude) <= 90 &&
+    Math.abs(longitude) <= 180 &&
+    !(latitude === 0 && longitude === 0)
+  );
+}
+
+// A REST snapshot can be older than a push that arrived while it was in flight, so only
+// positions received after the fetch started survive a reload.
+function keepPositionsReceivedSince(
+  positions: Record<string, LivePosition>,
+  since: number,
+): Record<string, LivePosition> {
+  return Object.fromEntries(
+    Object.entries(positions).filter(([, position]) => position.receivedAt >= since),
+  );
+}
 
 function getErrorMessage(error: unknown, fallbackMessage: string): string {
   if (error instanceof Error && error.message.trim().length > 0) {
@@ -65,8 +115,15 @@ function writeBooleanPreference(storageKey: string, value: boolean): void {
 
 export default function MapElement(props: MapElementProps) {
   const connectionRef = useRef<HubConnection | null>(null);
+  const initialLoadCompleteRef = useRef(false);
+  const knownMarkerKeysRef = useRef<Set<string>>(new Set());
+  const unknownMarkerReloadsRef = useRef<Map<string, number>>(new Map());
+  const reloadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reloadInFlightRef = useRef(false);
 
   const [mapData, setMapData] = useState<GetMapDataResult['Data'] | null>(null);
+  // Kept apart from mapData so a background marker reload does not re-fit the camera.
+  const [markerInfos, setMarkerInfos] = useState<MapMarkerInfo[]>([]);
   const [layers, setLayers] = useState<MapRendererProps['layers']>([]);
   const [layerVisibility, setLayerVisibility] = useState<Record<string, boolean>>({});
   const [filterText, setFilterText] = useState('');
@@ -81,9 +138,7 @@ export default function MapElement(props: MapElementProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState(() => new Date().toString());
-  const [markerPositionOverrides, setMarkerPositionOverrides] = useState<
-    Record<string, { latitude: number; longitude: number }>
-  >({});
+  const [markerPositionOverrides, setMarkerPositionOverrides] = useState<Record<string, LivePosition>>({});
   const [MapRenderer, setMapRenderer] = useState<MapRendererComponent | null>(null);
   const [rendererLoading, setRendererLoading] = useState(true);
   const [rendererError, setRendererError] = useState<string | null>(null);
@@ -111,9 +166,9 @@ export default function MapElement(props: MapElementProps) {
   const visibleMarkers = useMemo(() => {
     const normalizedFilter = filterText.trim().toLowerCase();
 
-    return (mapData?.MapMakerInfos ?? [])
+    return markerInfos
       .map((marker) => {
-        const positionOverride = markerPositionOverrides[marker.Id];
+        const positionOverride = markerPositionOverrides[getMarkerKey(marker.Id)];
 
         if (!positionOverride) {
           return marker;
@@ -155,7 +210,7 @@ export default function MapElement(props: MapElementProps) {
       });
   }, [
     filterText,
-    mapData,
+    markerInfos,
     markerPositionOverrides,
     poiLayerVisibility,
     showCalls,
@@ -234,6 +289,8 @@ export default function MapElement(props: MapElementProps) {
       setLoading(true);
       setError(null);
 
+      const fetchStartedAt = Date.now();
+
       try {
         const [mapResponse, layerResponse] = await Promise.all([
           apiFetchJson<GetMapDataResult>('/api/v4/Mapping/GetMapDataAndMarkers'),
@@ -244,8 +301,12 @@ export default function MapElement(props: MapElementProps) {
           return;
         }
 
-        setMarkerPositionOverrides({});
+        const markers = mapResponse.Data?.MapMakerInfos ?? [];
+        knownMarkerKeysRef.current = new Set(markers.map((marker) => getMarkerKey(marker.Id)));
+        setMarkerPositionOverrides((currentOverrides) => keepPositionsReceivedSince(currentOverrides, fetchStartedAt));
         setMapData(mapResponse.Data);
+        setMarkerInfos(markers);
+        initialLoadCompleteRef.current = true;
 
         const normalizedLayers = normalizeMapLayers(layerResponse);
         setLayers(normalizedLayers);
@@ -283,42 +344,144 @@ export default function MapElement(props: MapElementProps) {
     };
   }, []);
 
+  // Background marker reload (after a reconnect, or for a pushed marker the map does not have yet).
+  // Only the markers are replaced; map center/zoom stay put.
+  const reloadMarkersAsync = useCallback(async () => {
+    if (reloadInFlightRef.current) {
+      return;
+    }
+
+    reloadInFlightRef.current = true;
+    const fetchStartedAt = Date.now();
+
+    try {
+      const mapResponse = await apiFetchJson<GetMapDataResult>('/api/v4/Mapping/GetMapDataAndMarkers');
+      const markers = mapResponse.Data?.MapMakerInfos ?? [];
+
+      knownMarkerKeysRef.current = new Set(markers.map((marker) => getMarkerKey(marker.Id)));
+      setMarkerInfos(markers);
+      setMarkerPositionOverrides((currentOverrides) => keepPositionsReceivedSince(currentOverrides, fetchStartedAt));
+      setLastUpdated(new Date().toString());
+    } catch (reloadError) {
+      console.error('Unable to reload map markers.', reloadError);
+    } finally {
+      reloadInFlightRef.current = false;
+    }
+  }, []);
+
+  const requestMarkerReload = useCallback(
+    (unknownMarkerKey?: string) => {
+      if (!initialLoadCompleteRef.current) {
+        return;
+      }
+
+      if (unknownMarkerKey) {
+        const now = Date.now();
+        const lastReload = unknownMarkerReloadsRef.current.get(unknownMarkerKey);
+
+        if (lastReload !== undefined && now - lastReload < UNKNOWN_MARKER_RELOAD_INTERVAL_MS) {
+          return;
+        }
+
+        unknownMarkerReloadsRef.current.set(unknownMarkerKey, now);
+      }
+
+      if (reloadTimerRef.current) {
+        return;
+      }
+
+      const fireReload = () => {
+        // A reload that started earlier cannot satisfy this request (e.g. a catch-up after reconnect).
+        if (reloadInFlightRef.current) {
+          reloadTimerRef.current = setTimeout(fireReload, MARKER_RELOAD_DEBOUNCE_MS);
+          return;
+        }
+
+        reloadTimerRef.current = null;
+        void reloadMarkersAsync();
+      };
+
+      reloadTimerRef.current = setTimeout(fireReload, MARKER_RELOAD_DEBOUNCE_MS);
+    },
+    [reloadMarkersAsync],
+  );
+
   useEffect(() => {
     let disposed = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const updateMarkerPosition = (id: string, latitude: number, longitude: number) => {
+    // The push only moves a marker the REST data already returned: the server sends every
+    // location in the department, while the REST data applies this viewer's visibility rules.
+    const updateMarkerPosition = (
+      markerId: string,
+      latitude: unknown,
+      longitude: unknown,
+      timestamp: string | null | undefined,
+    ) => {
+      const nextLatitude = Number(latitude);
+      const nextLongitude = Number(longitude);
+
+      if (!isValidCoordinate(nextLatitude, nextLongitude)) {
+        return;
+      }
+
+      const markerKey = getMarkerKey(markerId);
+      const fixTime = parseTimestamp(timestamp);
+
       setMarkerPositionOverrides((currentOverrides) => {
-        const existingOverride = currentOverrides[id];
+        const existingOverride = currentOverrides[markerKey];
+
+        // Trackers replay buffered fixes and queue consumers can reorder them; never move back.
+        if (
+          existingOverride &&
+          fixTime !== null &&
+          existingOverride.timestamp !== null &&
+          fixTime < existingOverride.timestamp
+        ) {
+          return currentOverrides;
+        }
 
         if (
           existingOverride &&
-          existingOverride.latitude === latitude &&
-          existingOverride.longitude === longitude
+          existingOverride.latitude === nextLatitude &&
+          existingOverride.longitude === nextLongitude &&
+          existingOverride.timestamp === fixTime
         ) {
           return currentOverrides;
         }
 
         return {
           ...currentOverrides,
-          [id]: {
-            latitude,
-            longitude,
+          [markerKey]: {
+            latitude: nextLatitude,
+            longitude: nextLongitude,
+            timestamp: fixTime,
+            receivedAt: Date.now(),
           },
         };
       });
 
+      if (!knownMarkerKeysRef.current.has(markerKey)) {
+        requestMarkerReload(markerKey);
+      }
+
       setLastUpdated(new Date().toString());
     };
 
-    const connectAsync = async () => {
+    const connectAsync = async (attempt: number) => {
       try {
         const connection = await connectGeolocationHub({
           onPersonnelLocationUpdated: (update: PersonnelLocationUpdate) => {
-            updateMarkerPosition(`p${update.userId}`, update.latitude, update.longitude);
+            if (update?.userId) {
+              updateMarkerPosition(`p${update.userId}`, update.latitude, update.longitude, update.timestamp);
+            }
           },
           onUnitLocationUpdated: (update: UnitLocationUpdate) => {
-            updateMarkerPosition(`u${update.unitId}`, update.latitude, update.longitude);
+            if (update?.unitId !== undefined && update.unitId !== null && `${update.unitId}` !== '') {
+              updateMarkerPosition(`u${update.unitId}`, update.latitude, update.longitude, update.timestamp);
+            }
           },
+          onResubscribed: () => requestMarkerReload(),
         });
 
         if (disposed) {
@@ -327,31 +490,81 @@ export default function MapElement(props: MapElementProps) {
         }
 
         connectionRef.current = connection;
+
+        // Positions sent before a late first connection were missed.
+        if (attempt > 0) {
+          requestMarkerReload();
+        }
       } catch (connectionError) {
         console.error('Unable to connect to realtime geolocation updates.', connectionError);
+
+        // Automatic reconnect only covers a connection that was once established.
+        if (!disposed) {
+          const delay = CONNECT_RETRY_DELAYS_MS[Math.min(attempt, CONNECT_RETRY_DELAYS_MS.length - 1)];
+          retryTimer = setTimeout(() => {
+            retryTimer = null;
+            void connectAsync(attempt + 1);
+          }, delay);
+        }
       }
     };
 
-    void connectAsync();
+    void connectAsync(0);
 
     return () => {
       disposed = true;
+
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+      }
+
+      if (reloadTimerRef.current) {
+        clearTimeout(reloadTimerRef.current);
+        reloadTimerRef.current = null;
+      }
 
       if (connectionRef.current) {
         void connectionRef.current.stop();
         connectionRef.current = null;
       }
     };
-  }, []);
+  }, [requestMarkerReload]);
 
+  // Re-fit when the user changes what is shown, not when realtime traffic or a background reload
+  // changes the marker set: that would pull the camera away from wherever the user has panned.
   const fitBoundsKey = useMemo(() => {
-    const visibleMarkerIds = visibleMarkers
-      .map((marker) => marker.Id)
+    const hiddenPoiLayerIds = Object.entries(poiLayerVisibility)
+      .filter(([, isVisible]) => !isVisible)
+      .map(([layerId]) => layerId)
       .sort()
       .join('|');
 
-    return `${mapData?.CenterLat ?? ''}:${mapData?.CenterLon ?? ''}:${mapData?.ZoomLevel ?? ''}:${visibleMarkerIds}`;
-  }, [mapData?.CenterLat, mapData?.CenterLon, mapData?.ZoomLevel, visibleMarkers]);
+    return [
+      mapData?.CenterLat ?? '',
+      mapData?.CenterLon ?? '',
+      mapData?.ZoomLevel ?? '',
+      showCalls,
+      showStations,
+      showUnits,
+      showPersonnel,
+      showHydrants,
+      showPois,
+      hiddenPoiLayerIds,
+      filterText.trim().toLowerCase(),
+    ].join(':');
+  }, [
+    filterText,
+    mapData?.CenterLat,
+    mapData?.CenterLon,
+    mapData?.ZoomLevel,
+    poiLayerVisibility,
+    showCalls,
+    showHydrants,
+    showPersonnel,
+    showPois,
+    showStations,
+    showUnits,
+  ]);
 
   const missingSourceMessage = useMemo(() => {
     if (resolvedMapConfig.mapProvider === 'mapbox') {

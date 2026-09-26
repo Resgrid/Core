@@ -54,12 +54,52 @@ RUN dotnet publish "Resgrid.Web.Services.csproj" -c Release -o /app/publish -p:V
 ADD --checksum=sha256:2241be671073520e028b2f12df1e9ef0419014cffb5670b7a80b2080804be17d https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
+## Install wkhtmltopdf and capture its runtime libraries. IPdfProvider (NRecoProvider) shells out to
+## /usr/local/bin/wkhtmltopdf for the API's PDF endpoints (invoices, bids, time reports, records
+## export templates, bulk packets).
+## glibc is left out of the copy so the binary runs against the final image's own loader/libc, and the
+## library dir is set as the binary's RPATH rather than a global LD_LIBRARY_PATH so the dotnet process
+## keeps loading the base image's libssl/libstdc++.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        patchelf \
+        fontconfig \
+        fonts-dejavu-core \
+        init-system-helpers \
+        libfontconfig1 \
+        libfreetype6 \
+        libjpeg62-turbo \
+        libpng16-16 \
+        libssl3 \
+        libx11-6 \
+        libxext6 \
+        libxrender1 \
+        zlib1g \
+    && wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+    && (dpkg -i wkhtmltox_0.12.6.1-3.bookworm_amd64.deb || apt-get install -fy) \
+    && rm -f wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+    && ! ldd /usr/local/bin/wkhtmltopdf | grep -q 'not found' \
+    && mkdir -p /tmp/wkdeps \
+    && ldd /usr/local/bin/wkhtmltopdf | awk '/=>/ {print $3}' \
+        | grep -vE '/(libc|libm|libdl|libpthread|librt)\.so' \
+        | while read lib; do cp "$lib" /tmp/wkdeps/; done \
+    && patchelf --force-rpath --set-rpath /usr/local/lib/wkhtmltopdf /usr/local/bin/wkhtmltopdf \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 FROM base AS final
 WORKDIR /app
 ## Copy the IANA timezone database. DHI/distroless bases ship without tzdata,
 ## so TimeZoneInfo (and TZConvert) can't resolve any zone -> TimeZoneNotFoundException.
 COPY --from=publish /usr/share/zoneinfo /usr/share/zoneinfo
 ENV TZ=Etc/UTC
+## Copy wkhtmltopdf binary + runtime libraries + fonts from publish stage
+COPY --from=publish /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
+COPY --from=publish /tmp/wkdeps/ /usr/local/lib/wkhtmltopdf/
+COPY --from=publish /etc/fonts/ /etc/fonts/
+COPY --from=publish /usr/share/fonts/ /usr/share/fonts/
+## Fail the build, not the first PDF request, if the binary can't load here (exec form: no shell).
+RUN ["/usr/local/bin/wkhtmltopdf", "--version"]
 COPY --from=publish /app/publish .
 # docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
 # These hardened (distroless) images have no shell, so we can't chain with "sh -c".

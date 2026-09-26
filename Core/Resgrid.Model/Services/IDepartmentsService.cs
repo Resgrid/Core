@@ -129,6 +129,12 @@ namespace Resgrid.Model.Services
 
 		Task<DepartmentMember> GetDepartmentMemberAsync(string userId, int departmentId, bool bypassCache = true);
 
+		/// <summary>
+		/// Every membership row for the department, deleted rows included, read uncached: the same rows
+		/// <see cref="GetDepartmentMemberAsync"/> reads for each user, in one query.
+		/// </summary>
+		Task<List<DepartmentMember>> GetAllMembersForDepartmentIncludingDeletedAsync(int departmentId);
+
 		Task<DepartmentMember> SaveDepartmentMemberAsync(DepartmentMember departmentMember,
 			CancellationToken cancellationToken = default(CancellationToken));
 
@@ -178,8 +184,6 @@ namespace Resgrid.Model.Services
 		Task<DepartmentReport> GetDepartmentSetupReportAsync(int departmentId);
 
 		string ConvertDepartmentCodeToDigitPin(string departmentCode);
-
-		decimal GenerateSetupScore(DepartmentReport report);
 
 		/// <summary>
 		/// Gets user department stats by department id and user id asynchronous.

@@ -12,7 +12,7 @@ namespace Resgrid.Web.Helpers
 		public const string CookieName = "Resgrid.AdminAssist.Return";
 		public static string Create(IDataProtectionProvider protection, AdminAssistActor actor, string page, DateTimeOffset now)
 		{
-			if (page is not ("wizard" or "report")) throw new ArgumentException("Unsupported return page.");
+			if (page is not ("wizard" or "report" or "plans")) throw new ArgumentException("Unsupported return page.");
 			return Protector(protection, actor).Protect(page + "|" + now.AddMinutes(30).ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture));
 		}
 		public static string Read(IDataProtectionProvider protection, AdminAssistActor actor, string token, DateTimeOffset now)
@@ -21,7 +21,7 @@ namespace Resgrid.Web.Helpers
 			try
 			{
 				var fields = Protector(protection, actor).Unprotect(token).Split('|');
-				if (fields.Length != 2 || fields[0] is not ("wizard" or "report") ||
+				if (fields.Length != 2 || fields[0] is not ("wizard" or "report" or "plans") ||
 					!long.TryParse(fields[1], NumberStyles.None, CultureInfo.InvariantCulture, out var expiry) ||
 					expiry <= now.ToUnixTimeSeconds() || expiry > now.AddMinutes(30).ToUnixTimeSeconds()) return null;
 				return fields[0];

@@ -20,7 +20,7 @@ namespace Resgrid.Services.AdminAssist
 		{
 			if (string.IsNullOrWhiteSpace(SecurityConfig.EncryptionKey) || SecurityConfig.EncryptionKey.Length < 32 || SecurityConfig.EncryptionKey.Contains("CHANGEME", StringComparison.Ordinal) ||
 				string.IsNullOrWhiteSpace(SecurityConfig.EncryptionSaltValue) || SecurityConfig.EncryptionSaltValue.Contains("CHANGEME", StringComparison.Ordinal)) throw new UnauthorizedAccessException();
-			if (await protection.ShouldEncryptNewWritesAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < 32) throw new UnauthorizedAccessException();
+			if (await protection.ShouldEncryptNewWritesAsync(actor.DepartmentId).WaitAsync(ct) && await protection.GetPinnedCatalogVersionAsync(actor.DepartmentId).WaitAsync(ct) < ProtectedFieldCatalog.AdminAssistDiagnosticsCatalogVersion) throw new UnauthorizedAccessException();
 			if ((await write.PreflightWriteAsync(actor.DepartmentId, grant.GrantToken, actor.UserId, false, ct))?.Success != true) throw new UnauthorizedAccessException();
 		}
 		public async Task ProtectAsync(AdminAssistActor actor, AdminAssistDiagnosticRun row, DiagnosticRequest request, CancellationToken ct)

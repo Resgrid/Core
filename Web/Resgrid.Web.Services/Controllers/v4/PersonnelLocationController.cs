@@ -48,6 +48,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<ActionResult<SaveUnitLocationResult>> SetPersonLocation(PersonnelLocationInput locationInput)
 		{
@@ -79,7 +80,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var location = new PersonnelLocationEvent();
 				location.DepartmentId = DepartmentId;
-				location.UserId = locationInput.UserId;
+				// The stored id, not the caller's spelling: map markers and the realtime feed key
+				// personnel by UserId with ordinal comparisons, so a differently-cased GUID would
+				// never match the person's marker.
+				location.UserId = user.UserId;
 
 				if (locationInput.Timestamp.HasValue)
 					location.Timestamp = locationInput.Timestamp.Value;
@@ -109,7 +113,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						if (!String.IsNullOrWhiteSpace(locationInput.Heading) && locationInput.Heading != "NaN" && decimal.TryParse(locationInput.Heading, out var hdn))
 							location.Heading = hdn;
 
-						await _personnelLocationEventProvider.EnqueuePersonnelLocationEventAsync(location);
+						if (!await _personnelLocationEventProvider.EnqueuePersonnelLocationEventAsync(location))
+							return StatusCode(StatusCodes.Status503ServiceUnavailable);
 
 						result.Id = "";
 						result.PageSize = 0;

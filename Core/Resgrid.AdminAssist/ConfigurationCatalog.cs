@@ -26,14 +26,17 @@ namespace Resgrid.AdminAssist
 
 		public ConfigurationCatalog() : this(ReadEmbedded()) { }
 
-		public ConfigurationCatalog(IEnumerable<string> documents)
+		// Private so Autofac cannot choose it: IEnumerable<string> always resolves (empty), and the container prefers the widest constructor.
+		private ConfigurationCatalog(IEnumerable<string> documents)
 		{
 			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true,
 				UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
 			options.Converters.Add(new JsonStringEnumConverter());
 			var packs = documents.Select(document => JsonSerializer.Deserialize<CatalogDocument>(document, options)
 				?? throw new InvalidDataException("Empty Admin Assist catalog document.")).ToList();
-			if (packs.Count == 0 || packs.Select(p => p.Version).Distinct().Count() != 1 || string.IsNullOrWhiteSpace(packs[0].Version))
+			if (packs.Count == 0)
+				throw new InvalidDataException("No Admin Assist catalog documents were supplied.");
+			if (packs.Select(p => p.Version).Distinct().Count() != 1 || string.IsNullOrWhiteSpace(packs[0].Version))
 				throw new InvalidDataException("Admin Assist catalog versions must agree.");
 			Version = packs[0].Version;
 			Areas = Freeze(packs.SelectMany(p => p.Areas).OrderBy(a => a.Order).Select(a => a with { Archetypes = Freeze(a.Archetypes) }));

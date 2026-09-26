@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using Autofac;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using Resgrid.AdminAssist;
@@ -188,6 +189,15 @@ namespace Resgrid.Tests.AdminAssist
 			}
 			using var search = new AdminAssistReferenceSearch(Catalog);
 			Assert.That(search.Search("resume setup", "en").Any(hit => hit.Id.StartsWith("guide.")), Is.True);
+		}
+		[Test]
+		public void Container_builds_the_catalog_from_the_embedded_documents()
+		{
+			// Autofac picks the widest public constructor it can satisfy and always satisfies IEnumerable<T> (empty when
+			// nothing is registered), so a public documents constructor would be handed an empty catalog.
+			var builder = new ContainerBuilder(); builder.RegisterModule<Resgrid.Services.ServicesModule>();
+			using var container = builder.Build(Autofac.Builder.ContainerBuildOptions.IgnoreStartableComponents);
+			Assert.That(container.Resolve<IAdminAssistCatalog>().Settings, Is.Not.Empty);
 		}
 	}
 }

@@ -122,6 +122,26 @@ namespace Resgrid.Tests.AdminAssist
 		}
 
 		[Test]
+		public async Task A_stalled_name_read_is_bounded_and_leaves_the_finding_without_names()
+		{
+			var saved = Resgrid.Config.AdminAssistConfig.EvidenceSourceTimeoutSeconds;
+			Resgrid.Config.AdminAssistConfig.EvidenceSourceTimeoutSeconds = 1;
+			try
+			{
+				var (service, access, source) = Service();
+				// Never completes: a group or member lookup that hangs while the request stays open.
+				source.Setup(s => s.ReadAsync(Actor, "empty-groups", It.IsAny<CancellationToken>())).Returns(new TaskCompletionSource<IReadOnlyList<FindingSubject>>().Task);
+
+				var read = service.GetFindingSubjectsAsync(Actor, true, Report(("empty-groups", RuleResult.Fail)));
+				Assert.That(await Task.WhenAny(read, Task.Delay(TimeSpan.FromSeconds(30))), Is.SameAs(read), "The name read has its own deadline.");
+				Assert.That(await read, Is.Empty);
+				// The closing access check still runs on the caller's token, not the spent name-read bound.
+				access.Verify(a => a.CanAccessAsync(Actor, true, It.Is<CancellationToken>(t => !t.IsCancellationRequested)), Times.Exactly(2));
+			}
+			finally { Resgrid.Config.AdminAssistConfig.EvidenceSourceTimeoutSeconds = saved; }
+		}
+
+		[Test]
 		public void Caller_cancellation_is_not_swallowed()
 		{
 			var (service, _, source) = Service();

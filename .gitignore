@@ -282,4 +282,7 @@ opencode.json
 /tmp
 /artifacts
 /Tools/AdminAssist
-/docs
+# Internal notes stay local; docs/admin-assist is the cited source for the Admin Assist catalog
+# articles (CatalogTests checks their anchors), so it must be committed.
+/docs/*
+!/docs/admin-assist/

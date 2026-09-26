@@ -166,6 +166,10 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddCors();
 
+			// v4 controllers (Admin Assist, Checklists, Inventory, Work Orders) take IStringLocalizer<T>. Without this
+			// registration none of them can be constructed and every request to them fails with a 500.
+			services.AddLocalization();
+
 			services.AddControllers(options =>
 			{
 				// ADP department operation lock: refuses department-scoped mutations with 423 Locked

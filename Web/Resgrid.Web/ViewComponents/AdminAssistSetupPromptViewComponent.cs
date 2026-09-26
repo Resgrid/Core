@@ -14,6 +14,8 @@ namespace Resgrid.Web.ViewComponents
 		{
 			try
 			{
+				// Setup guidance is for department administrators only. Members get nothing, before any flag or workspace read.
+				if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin()) return Content(string.Empty);
 				var actor = new AdminAssistActor(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId());
 				if (!await access.CanAccessAsync(actor, true, HttpContext.RequestAborted)) return Content(string.Empty);
 				var workspace = await repository.GetWorkspaceAsync(actor.DepartmentId, actor.UserId, catalog.Version, HttpContext.RequestAborted);

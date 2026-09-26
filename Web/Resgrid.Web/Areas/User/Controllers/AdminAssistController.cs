@@ -12,7 +12,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	[Authorize]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public sealed class AdminAssistController(IAdminAssistAccessService access, IAdminAssistService service,
-		IDepartmentDataProtectionService protection) : SecureBaseController
+		IDepartmentDataProtectionService protection, IFeatureToggleService flags) : SecureBaseController
 	{
 		[HttpGet]
 		public Task<IActionResult> Index(CancellationToken cancellationToken) => PageAsync("overview", false, cancellationToken);
@@ -48,6 +48,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Response.Headers["Referrer-Policy"] = "no-referrer";
 			try
 			{
+				if (!setup && !await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(flags, DepartmentId, cancellationToken)) return NotFound();
 				// A new authorized read: no previously rendered worklist content or browser snapshot is reused.
 				var overview = await service.GetOverviewAsync(new AdminAssistActor(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name), setup, cancellationToken);
 				return View("PrintReport", overview);
@@ -75,6 +76,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var actor = new AdminAssistActor(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name);
 			if (!await access.CanAccessAsync(actor, setup, ct)) return NotFound();
+			// The workspace launches after the Setup Wizard and Setup Report; it stays hidden until its AI is on.
+			if (!setup && !await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(flags, DepartmentId, ct)) return NotFound();
 			ViewBag.AdminAssistPage = page;
 			ViewBag.AdminAssistSetup = setup;
 			ViewBag.AdminAssistProtected = await protection.IsProtectionEnforcedAsync(DepartmentId).WaitAsync(ct);

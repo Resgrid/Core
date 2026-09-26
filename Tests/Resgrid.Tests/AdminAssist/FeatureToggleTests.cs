@@ -42,6 +42,22 @@ namespace Resgrid.Tests.AdminAssist
 			Assert.That(await AdminAssistFeatureAvailability.CanConfigureOperatingProfileAsync(_flags.Object,7), Is.EqualTo(setup || assist));
 			_flags.Verify(f => f.EvaluateFreshAsync(FeatureFlagKeys.AiAdminAssist,7), Times.Never);
 		}
+		[TestCase(false,false)] [TestCase(true,false)] [TestCase(false,true)] [TestCase(true,true)]
+		public async Task Workspace_launches_only_with_both_assist_and_AI(bool assist, bool ai)
+		{
+			Set(FeatureFlagKeys.AdminAssist,assist); Set(FeatureFlagKeys.AiAdminAssist,ai);
+			Assert.That(await AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(_flags.Object,7), Is.EqualTo(assist && ai));
+			// Field help, previews and digests keep following Admin.Assist alone.
+			Assert.That(await _access.CanAccessAsync(Actor,false), Is.EqualTo(assist));
+		}
+		[Test]
+		public async Task Workspace_fails_closed_when_the_AI_flag_is_missing_or_unavailable()
+		{
+			Set(FeatureFlagKeys.AdminAssist,true);
+			Assert.That(await AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(_flags.Object,7), Is.False);
+			_flags.Setup(f => f.EvaluateFreshAsync(FeatureFlagKeys.AiAdminAssist,7)).ThrowsAsync(new InvalidOperationException("Store unavailable"));
+			Assert.That(await AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(_flags.Object,7), Is.False);
+		}
 		[TestCase(true)] [TestCase(false)]
 		public async Task Missing_flag_and_store_outage_fail_closed(bool setup)
 		{

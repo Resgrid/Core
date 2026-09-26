@@ -465,6 +465,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		public async Task<IActionResult> AddNewStaffingSchedule(string userId)
 		{
+			string userToGet = StaffingScheduleSubject(userId);
+			if (!await CanManageStaffingSchedulesForAsync(userToGet)) return Unauthorized();
+
 			var model = new NewStaffingLevelView();
 
 			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
@@ -477,7 +480,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 			}
 
-			model.UserId = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
+			model.UserId = userToGet;
 
 			return View(model);
 		}
@@ -486,7 +489,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		public async Task<IActionResult> ViewSchedules(string userId)
 		{
-			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
+			string userToGet = StaffingScheduleSubject(userId);
+			if (!await CanManageStaffingSchedulesForAsync(userToGet)) return Unauthorized();
 
 			var model = new EditProfileModel();
 			model.Department= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
@@ -502,8 +506,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  AddNewStaffingSchedule(NewStaffingLevelView model, CancellationToken cancellationToken)
 		{
+			// The subject comes from a hidden form field, so it is checked before anything is read or written.
+			if (model == null) return BadRequest();
+			model.UserId = StaffingScheduleSubject(model.UserId);
+			if (!await CanManageStaffingSchedulesForAsync(model.UserId)) return Unauthorized();
+
 			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
 			{
@@ -599,7 +609,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		public async Task<IActionResult>  GetScheduledStaffingTasksForGrid(string userId)
 		{
-			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
+			string userToGet = StaffingScheduleSubject(userId);
+			// Called by the grid's ajax loader, so deny like the other ajax schedule actions instead of redirecting.
+			if (!await CanManageStaffingSchedulesForAsync(userToGet)) return NotFound();
+
 			var scheduleJson = new List<ScheduledTasksForJson>();
 
 			var dep= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
@@ -669,6 +682,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult>  EditStaffingSchedule(int scheduleId)
 		{
+			// A stale grid row or old link can point at a deleted schedule, and the id is caller-supplied.
+			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (!await CanManageStaffingScheduleAsync(schedule)) return NotFound();
+
 			var model = new EditStaffingLevelView();
 
 			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
@@ -681,7 +698,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
 			}
 
-			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (schedule.ScheduleType == (int)ScheduleTypes.SpecifcDateTime)
 			{
 				model.SpecificDatetime = true;
@@ -707,6 +723,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  EditStaffingSchedule(EditStaffingLevelView model, CancellationToken cancellationToken)
 		{
 			var staffingLevels= await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
@@ -759,6 +776,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				ScheduledTask task= await _scheduledTasksService.GetScheduledTaskByIdAsync(model.ScheduleId);
+				if (!await CanManageStaffingScheduleAsync(task)) return NotFound();
 
 				if (model.SpecificDatetime)
 				{
@@ -830,8 +848,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (task == null || task.DepartmentId != DepartmentId || task.TaskType != (int)TaskTypes.UserStaffingLevel || string.IsNullOrWhiteSpace(task.UserId))
 				return Task.FromResult(false);
-			return _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, task.UserId);
+			return CanManageStaffingSchedulesForAsync(task.UserId);
 		}
+
+		/// <summary>The member a staffing schedule request is about; no user id means the caller's own schedules.</summary>
+		private string StaffingScheduleSubject(string userId) => !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
+
+		/// <summary>
+		/// Listing, creating and editing a member's staffing schedules is profile management, so it follows the
+		/// same rule as EditUserProfile (the only page that links to another member's schedules).
+		/// </summary>
+		private Task<bool> CanManageStaffingSchedulesForAsync(string subjectUserId) =>
+			_authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, subjectUserId);
 		#endregion Staffing Schedules
 
 		#region Certifications

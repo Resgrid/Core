@@ -425,6 +425,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return result;
 		}
 
+		/// <summary>
+		/// Create is only the new-record form's POST target, but a failed save re-renders the form at this address, so
+		/// a GET can still arrive here (an address-bar reload, a sign-in return URL, a Referer redirect). Send it to a
+		/// new form rather than a bare 404.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public IActionResult Create(string definitionKey, int? callId) => RedirectToAction("New", new { definitionKey, callId });
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_Create)]
@@ -447,35 +456,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CarryGrant(model);
 			model.ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId);
 
+			string createdId = null;
 			try
 			{
 				var aggregate = await _recordsService.CreateDraftAsync(DepartmentId, UserId, BuildInput(model, definitionVersion?.Schema), cancellationToken);
-				await SaveUploadsAsync(aggregate.Record.RmsOperationalRecordId, files, cancellationToken, model.AttachmentClassification);
+				createdId = aggregate.Record.RmsOperationalRecordId;
+				await SaveUploadsAsync(createdId, files, cancellationToken, model.AttachmentClassification);
 
 				if (model.FinalizeAfterSave && model.CanFinalize)
 				{
 					if (!model.Attested)
-					{
-						model.RecordId = aggregate.Record.RmsOperationalRecordId;
-						model.RowVersion = aggregate.Record.RowVersion;
-						return await EditErrorAsync(model, aggregate, definitionVersion, _localizer["Attestation"]);
-					}
+						return await CreatedDraftErrorAsync(model, createdId, definitionVersion, _localizer["Attestation"]);
 
-					var fresh = await _recordsService.GetAsync(DepartmentId, aggregate.Record.RmsOperationalRecordId);
-					await _recordsService.FinalizeAsync(DepartmentId, UserId, fresh.Record.RmsOperationalRecordId, fresh.Record.RowVersion, "1", null, null, cancellationToken);
+					var fresh = await _recordsService.GetAsync(DepartmentId, createdId);
+					await _recordsService.FinalizeAsync(DepartmentId, UserId, createdId, fresh.Record.RowVersion, "1", null, null, cancellationToken);
 				}
 
-				return RedirectToAction("Details", new { id = aggregate.Record.RmsOperationalRecordId });
+				return RedirectToAction("Details", new { id = createdId });
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }
-			catch (ArgumentException ex)
+			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException)
 			{
-				return await EditErrorAsync(model, null, definitionVersion, ex.Message);
+				return createdId == null
+					? await EditErrorAsync(model, null, definitionVersion, ex.Message)
+					: await CreatedDraftErrorAsync(model, createdId, definitionVersion, ex.Message);
 			}
-			catch (RecordTransitionException ex)
-			{
-				return await EditErrorAsync(model, null, definitionVersion, ex.Message);
-			}
+		}
+
+		/// <summary>
+		/// Save-and-finalize stopped after Create already saved the draft (attestation missing, finalize validation):
+		/// re-render bound to that draft so the retry saves it through Edit rather than creating another one, at its
+		/// current row version (attachments bump it).
+		/// </summary>
+		private async Task<IActionResult> CreatedDraftErrorAsync(RecordEditView model, string recordId, RmsRecordDefinitionVersion definitionVersion, string error)
+		{
+			var draft = await _recordsService.GetAsync(DepartmentId, recordId);
+			model.RecordId = recordId;
+			model.RowVersion = draft?.Record?.RowVersion ?? model.RowVersion;
+			return await EditErrorAsync(model, draft, definitionVersion, error);
 		}
 
 		[HttpGet]

@@ -50,7 +50,7 @@ namespace Resgrid.Model.AdminAssist
 			if (AccessibilityNeeds == null || AccessibilityNeeds.Count > 4 || AccessibilityNeeds.Any(value => !new[] { "captions", "screen-reader", "large-text", "plain-language" }.Contains(value)))
 				yield return new ValidationResult("Invalid accessibility preference.", new[] { nameof(AccessibilityNeeds) });
 			if ((SeasonStartMonthDay != null || SeasonEndMonthDay != null) && (!ValidDay(SeasonStartMonthDay) || !ValidDay(SeasonEndMonthDay)))
-				yield return new ValidationResult("Season dates must both use MM-DD.");
+				yield return new ValidationResult("Choose a valid month and day for both the season start and the season end, or leave the season blank.");
 		}
 		private static bool ValidDay(string value) => DateTime.TryParseExact("2000-" + value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out _);
 	}

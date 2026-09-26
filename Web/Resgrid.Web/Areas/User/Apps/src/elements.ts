@@ -87,7 +87,7 @@ defineReactElement<import('./components/adminAssist/AdminAssistElement').AdminAs
   'rg-admin-assist',
   () => import('./components/adminAssist/AdminAssistElement'),
   [
-    { attribute: 'page', property: 'page', type: 'string', defaultValue: 'overview' },
+    { attribute: 'page', property: 'page', type: 'string', defaultValue: 'wizard' },
     { attribute: 'setup', property: 'setup', type: 'boolean', defaultValue: false },
     { attribute: 'loadinglabel', property: 'loadingLabel', type: 'string' },
     { attribute: 'errorlabel', property: 'errorLabel', type: 'string' },

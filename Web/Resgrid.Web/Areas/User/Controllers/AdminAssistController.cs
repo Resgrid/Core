@@ -14,14 +14,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public sealed class AdminAssistController(IAdminAssistAccessService access, IAdminAssistService service,
 		IDepartmentDataProtectionService protection, IFeatureToggleService flags) : SecureBaseController
 	{
+		// One Admin Assist page; each route only picks the tab it opens on.
 		[HttpGet]
-		public Task<IActionResult> Index(CancellationToken cancellationToken) => PageAsync("overview", false, cancellationToken);
+		public Task<IActionResult> Index(CancellationToken cancellationToken) => PageAsync("wizard", cancellationToken);
 		[HttpGet]
-		public Task<IActionResult> Plans(CancellationToken cancellationToken) => Resgrid.Config.AdminAssistConfig.PlansEnabled ? PageAsync("plans", false, cancellationToken) : Task.FromResult<IActionResult>(NotFound());
+		public Task<IActionResult> Plans(CancellationToken cancellationToken) => Resgrid.Config.AdminAssistConfig.PlansEnabled ? PageAsync("plans", cancellationToken) : Task.FromResult<IActionResult>(NotFound());
 		[HttpGet]
-		public Task<IActionResult> SetupWizard(CancellationToken cancellationToken) => PageAsync("wizard", true, cancellationToken);
+		public Task<IActionResult> SetupWizard(CancellationToken cancellationToken) => PageAsync("wizard", cancellationToken);
 		[HttpGet]
-		public Task<IActionResult> SetupReport(CancellationToken cancellationToken) => PageAsync("report", true, cancellationToken);
+		public Task<IActionResult> SetupReport(CancellationToken cancellationToken) => PageAsync("report", cancellationToken);
 
 		[HttpGet]
 		public async Task<IActionResult> ReviewCalendar(CancellationToken cancellationToken)
@@ -50,8 +51,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (!setup && !await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(flags, DepartmentId, cancellationToken)) return NotFound();
 				// A new authorized read: no previously rendered worklist content or browser snapshot is reused.
-				var overview = await service.GetOverviewAsync(new AdminAssistActor(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name), setup, cancellationToken);
-				return View("PrintReport", overview);
+				var actor = new AdminAssistActor(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name);
+				var overview = await service.GetOverviewAsync(actor, setup, cancellationToken);
+				return View("PrintReport", overview with { FindingSubjects = await service.GetFindingSubjectsAsync(actor, setup, overview.Report, cancellationToken) });
 			}
 			catch (System.UnauthorizedAccessException) { return Forbid(); }
 			catch (System.OperationCanceledException) when (!HttpContext.RequestAborted.IsCancellationRequested) { return StatusCode(503); }
@@ -72,14 +74,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Home");
 		}
 
-		private async Task<IActionResult> PageAsync(string page, bool setup, CancellationToken ct)
+		private async Task<IActionResult> PageAsync(string page, CancellationToken ct)
 		{
 			var actor = new AdminAssistActor(DepartmentId, UserId, CultureInfo.CurrentUICulture.Name);
-			if (!await access.CanAccessAsync(actor, setup, ct)) return NotFound();
-			// The workspace launches after the Setup Wizard and Setup Report; it stays hidden until its AI is on.
-			if (!setup && !await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(flags, DepartmentId, ct)) return NotFound();
+			// Setup Wizard, Setup Report and Explore follow Admin.Setup. The Admin AI tab launches after them and needs the
+			// workspace (Admin.Assist and Ai.AdminAssist); until then the page reads in setup mode and that tab is disabled.
+			var ai = await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(flags, DepartmentId, ct) &&
+				await access.CanAccessAsync(actor, false, ct);
+			if (!ai && (page == "plans" || !await access.CanAccessAsync(actor, true, ct))) return NotFound();
 			ViewBag.AdminAssistPage = page;
-			ViewBag.AdminAssistSetup = setup;
+			ViewBag.AdminAssistSetup = !ai;
 			ViewBag.AdminAssistProtected = await protection.IsProtectionEnforcedAsync(DepartmentId).WaitAsync(ct);
 			return View("Index");
 		}

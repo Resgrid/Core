@@ -24,6 +24,10 @@
 .rgaa-tabs { margin-bottom: 20px; }
 .rgaa-tabs > li > a { cursor: pointer; }
 .rgaa-tabs > li > a[aria-disabled=true] { cursor: wait; opacity: .7; }
+/* Admin AI before it launches: shown, not selectable. */
+.rgaa-tabs > li.disabled > a[aria-disabled=true] { cursor: not-allowed; opacity: 1; }
+.rgaa-subtabs { margin: -8px 0 16px; }
+.rgaa-subtabs > li > a { cursor: pointer; padding: 6px 12px; }
 .rgaa-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; margin: -10px 0 12px; }
 
 /* Fallback for controls in panels that do not carry Bootstrap classes (previews, Ask, Plans, Troubleshoot). */
@@ -92,6 +96,8 @@
 .rgaa-finding__meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .rgaa-finding__body p { margin: 0 0 6px; }
 .rgaa-finding__actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.rgaa-subjects { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: -4px 0 10px; padding: 0; list-style: none; }
+.rgaa-subjects .rgaa-chip { white-space: normal; }
 /* Guidance links are sentences; Bootstrap buttons are nowrap by default. */
 .rgaa .btn-xs { white-space: normal; text-align: start; }
 .rgaa-columns { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 20px; align-items: start; }
@@ -204,7 +210,7 @@
 @media (max-width: 1199px) { .rgaa-columns { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 991px) { .rgaa-wizard { grid-template-columns: minmax(0, 1fr); } }
 @media print {
-  .rgaa-tabs, .rgaa-toolbar, .rgaa button, .rgaa .btn { display: none !important; }
+  .rgaa-tabs, .rgaa-subtabs, .rgaa-toolbar, .rgaa button, .rgaa .btn { display: none !important; }
   .rgaa-card, .rgaa .ibox, .rgaa-finding { break-inside: avoid; }
   .rgaa-bar > span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Sistemas de origen autorizados</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Elija documentos</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Elija grupos</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Borrar temporada</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Otro administrador cambió este perfil. Sus valores propuestos aún se muestran. Vuelva a cargar el perfil actual antes de guardar de nuevo.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Procedimientos de continuidad aprobados</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Día</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Número aproximado de miembros (opcional)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Modelo de despacho</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Elija documentos vigentes de este departamento. No se pueden referenciar documentos vencidos. Guardar verifica la existencia, no la aprobación ni la idoneidad.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Ingrese los ID numéricos de documentos existentes para las políticas aprobadas en este departamento. No se pueden referenciar documentos vencidos. Guardar verifica la existencia, no la aprobación ni la idoneidad.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Elija grupos de este departamento. Esto no otorga acceso al grupo ni cambia el alcance del despacho.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Ingrese los ID numéricos de grupos existentes de este departamento. Guardar agrega otra fila opcional.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Idiomas de trabajo</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (ya no está disponible)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Mes</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Participa en ayuda mutua</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Guardar perfil operativo</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Perfil operativo guardado.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Fin de temporada (MM-DD, opcional)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Si el departamento opera por temporadas, elija el mes y el día en que empieza y termina la temporada. De lo contrario, deje la temporada en blanco. Una temporada puede extenderse más allá del año nuevo.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Inicio de temporada (MM-DD, opcional)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organización y operaciones</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Idiomas y accesibilidad</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Sitios, políticas y sistemas</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Operación estacional</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Sitios y grupos de área de servicio</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Políticas de dotación aprobadas</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Escriba una etiqueta y pulse Intro</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Use una etiqueta de referencia breve para el sistema de origen. Estas etiquetas son declaraciones; guardar no verifica una conexión ni una importación.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Verificar la evidencia actual y los procedimientos locales</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} más</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Acceso a la fuente actual no disponible</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>La verificación actualiza los hallazgos. La asignación y las excepciones aceptadas no resuelven una verificación fallida. Una verificación nueva que se apruebe la resuelve.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Preguntar a Admin Assist</value>

@@ -31,7 +31,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Read fresh, authorized configuration evidence and setup progress.</summary>
 		[HttpGet("Overview")]
 		public Task<IActionResult> Overview(bool setup, CancellationToken cancellationToken) => ExecuteAsync(async () =>
-			await service.GetOverviewAsync(Actor, setup, cancellationToken));
+		{
+			var overview = await service.GetOverviewAsync(Actor, setup, cancellationToken);
+			// Names for failing findings (e.g. which groups are empty) are for this attended page only.
+			return overview with { FindingSubjects = await service.GetFindingSubjectsAsync(Actor, setup, overview.Report, cancellationToken) };
+		});
 
 		/// <summary>Read the release-pinned public setup and feature catalog.</summary>
 		[HttpGet("Catalog")]

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,12 @@ namespace Resgrid.Services
 			var row = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(departmentId, DepartmentSettingTypes.DepartmentOperatingProfile);
 			return row == null ? new DepartmentOperatingProfile() : ObjectSerialization.Deserialize<DepartmentOperatingProfile>(row.Setting)
 				?? throw new InvalidOperationException("Operating profile could not be read.");
+		}
+
+		public async Task<IReadOnlyList<Document>> GetOperatingProfileDocumentOptionsAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || _operatingProfileRepository == null) return Array.Empty<Document>();
+			return await _operatingProfileRepository.GetOperatingProfileDocumentOptionsAsync(departmentId, DateTime.UtcNow, cancellationToken);
 		}
 
 		public async Task<DepartmentSetting> SetOperatingProfileAsync(int departmentId, DepartmentOperatingProfile profile, string actingUserId, CancellationToken cancellationToken = default)

@@ -71,7 +71,7 @@ CREATE TABLE {Q("FeatureFlagPrerequisites")} ({Q("FeatureFlagId")} int,{Q("Requi
 CREATE TABLE {Q("PlanAddons")} ({Q("PlanAddonId")} {text}(36) PRIMARY KEY,{Q("AddonType")} int,{Q("Cost")} decimal(18,2),{Q("ExternalId")} {text}(128),{Q("TestExternalId")} {text}(128));
 CREATE TABLE {Q("RmsRecordLegalHolds")} ({Q("DepartmentId")} int,{Q("ReleasedOn")} {date},{Q("RmsRecordLegalHoldId")} {text}(128),{Q("RecordId")} {text}(128),{Q("DefinitionKey")} {text}(128));
 CREATE TABLE {Q("DepartmentGroups")} ({Q("DepartmentId")} int,{Q("DepartmentGroupId")} int);
-CREATE TABLE {Q("Documents")} ({Q("DepartmentId")} int,{Q("DocumentId")} int,{Q("RemoveOn")} {date});
+CREATE TABLE {Q("Documents")} ({Q("DepartmentId")} int,{Q("DocumentId")} int,{Q("RemoveOn")} {date},{Q("Name")} {text}(256),{Q("Category")} {text}(256),{Q("IsProtected")} {boolean},{Q("Data")} {(type == DatabaseTypes.Postgres ? "bytea" : "varbinary(max)")});
 CREATE TABLE {Q("DepartmentMembers")} ({Q("DepartmentMemberId")} int,{Q("DepartmentId")} int,{Q("UserId")} {text}(128),{Q("IsDeleted")} {boolean},{Q("IsDisabled")} {boolean},{Q("IsHidden")} {boolean},{Q("PasswordLastSetOn")} {date});
 CREATE TABLE {Q("AspNetUsers")} ({Q("Id")} {text}(128) PRIMARY KEY,{Q("TwoFactorEnabled")} {boolean},{Q("AuthenticationGeneration")} bigint);
 CREATE TABLE {Q("ActionLogs")} ({Q("ActionLogId")} int PRIMARY KEY,{Q("UserId")} {text}(128),{Q("DepartmentId")} int,{Q("ActionTypeId")} int,{Q("Timestamp")} {date},{Q("GeoLocationData")} {text}(128));
@@ -416,6 +416,22 @@ INSERT INTO {Q("Departments")} VALUES (7),(8),(9),(10),(11),(12),(13);");
 			var counts = await Repository(unit).ReadAdministrativeReferencesAsync(703, new[] { 9101,9102,9103,9104,9105 }, new[] { 9101,9102 }, now, CancellationToken.None);
 			Assert.That(counts.PolicyReferences, Is.EqualTo(5)); Assert.That(counts.UnavailablePolicies, Is.EqualTo(3));
 			Assert.That(counts.ExpiringPolicies, Is.EqualTo(1)); Assert.That(counts.UnavailableSites, Is.EqualTo(1));
+		}
+
+		[Test]
+		public async Task Operating_profile_document_options_are_this_departments_unexpired_documents_without_contents()
+		{
+			await using var db = Connect(_connection); var now = new DateTime(2026, 9, 24, 12, 0, 0);
+			await db.ExecuteAsync($"INSERT INTO {Q("Documents")} ({Q("DepartmentId")},{Q("DocumentId")},{Q("Name")},{Q("Category")},{Q("IsProtected")},{Q("RemoveOn")},{Q("Data")}) " +
+				"VALUES (705,9201,'Staffing policy','Policies',@False,NULL,@Data),(705,9202,'Expired policy','Policies',@False,@Expired,@Data),(705,9203,'Protected procedure',NULL,@True,@Later,@Data),(706,9204,'Other department',NULL,@False,NULL,@Data)",
+				new { False = false, True = true, Expired = now.AddDays(-1), Later = now.AddDays(3), Data = new byte[] { 1, 2, 3 } });
+			using var unit = new UnitOfWork(Connections());
+			var options = await Repository(unit).GetOperatingProfileDocumentOptionsAsync(705, now, CancellationToken.None);
+			Assert.That(options.Select(d => d.DocumentId).OrderBy(id => id), Is.EqualTo(new[] { 9201, 9203 }));
+			var policy = options.Single(d => d.DocumentId == 9201);
+			Assert.That((policy.Name, policy.Category, policy.IsProtected), Is.EqualTo(("Staffing policy", "Policies", false)));
+			Assert.That(options.Single(d => d.DocumentId == 9203).IsProtected, Is.True);
+			Assert.That(options.All(d => d.Data == null), Is.True, "A picker never reads file contents.");
 		}
 
 		[Test]

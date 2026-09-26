@@ -10,8 +10,31 @@ using Resgrid.Model.AdminAssist;
 namespace Resgrid.Services.AdminAssist
 {
 	public sealed class AdminAssistService(IAdminAssistAccessService access, IAdminAssistCatalog catalog,
-		IConfigurationSnapshotProvider snapshots, IAdminAssistRepository repository, TimeProvider clock) : IAdminAssistService
+		IConfigurationSnapshotProvider snapshots, IAdminAssistRepository repository, TimeProvider clock,
+		IEnumerable<IAdminAssistFindingSubjectSource> subjectSources = null) : IAdminAssistService
 	{
+		public async Task<IReadOnlyDictionary<string, IReadOnlyList<FindingSubject>>> GetFindingSubjectsAsync(AdminAssistActor actor, bool setup,
+			ConfigurationReport report, CancellationToken ct = default)
+		{
+			await RequireAccessAsync(actor, setup, ct);
+			var subjects = new Dictionary<string, IReadOnlyList<FindingSubject>>(StringComparer.Ordinal);
+			foreach (var finding in report?.Findings?.Where(f => f.Result == RuleResult.Fail) ?? Enumerable.Empty<ConfigurationFinding>())
+			{
+				var source = subjectSources?.FirstOrDefault(s => s.RuleIds.Contains(finding.RuleId, StringComparer.Ordinal));
+				if (source == null || subjects.ContainsKey(finding.RuleId)) continue;
+				try
+				{
+					var names = await source.ReadAsync(actor, finding.RuleId, ct).WaitAsync(ct);
+					if (names?.Count > 0) subjects[finding.RuleId] = names;
+				}
+				catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+				// Names are an aid to the finding, not evidence: when they cannot be read the finding still shows without them.
+				catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex, "Admin Assist finding subjects unavailable for " + finding.RuleId); }
+			}
+			await RequireAccessAsync(actor, setup, ct);
+			return subjects;
+		}
+
 		public async Task<AdminAssistOverview> GetOverviewAsync(AdminAssistActor actor, bool setup, CancellationToken ct = default)
 		{
 			using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);

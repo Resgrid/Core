@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Офіційні системи-джерела</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Виберіть документи</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Виберіть групи</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Очистити сезон</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Інший адміністратор змінив цей профіль. Запропоновані вами значення все ще відображаються. Перш ніж зберігати знову, перезавантажте поточний профіль.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Затверджені процедури безперервності</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>День</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Приблизна кількість учасників (необов'язково)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Модель диспетчеризації</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Виберіть чинні документи з цього підрозділу. На прострочені документи посилатися не можна. Збереження перевіряє лише наявність, а не затвердження чи придатність.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Введіть наявні числові ID документів для затверджених політик у цьому підрозділі. На прострочені документи посилатися не можна. Збереження перевіряє лише наявність, а не затвердження чи придатність.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Виберіть групи з цього підрозділу. Це не надає доступу до групи та не змінює область диспетчеризації.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Введіть наявні числові ID груп цього підрозділу. Збереження додає ще один необов'язковий рядок.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Робочі мови</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (більше не доступно)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Місяць</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Бере участь у взаємній допомозі</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Зберегти операційний профіль</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Операційний профіль збережено.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Закінчення сезону (ММ-ДД, необов'язково)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Якщо підрозділ працює сезонно, виберіть місяць і день початку та завершення сезону. Інакше залиште сезон порожнім. Сезон може тривати й після початку нового року.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Початок сезону (ММ-ДД, необов'язково)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Організація та діяльність</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Мови та доступність</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Об’єкти, політики та системи</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Сезонна робота</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Об'єкти та групи зон обслуговування</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Затверджені політики укомплектованості</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Введіть мітку й натисніть Enter</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Використовуйте коротку позначку системи-джерела. Ці позначки є декларативними; збереження не перевіряє з'єднання чи імпорт.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Перевірте поточні дані та місцеві процедури</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>ще {0}</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Поточний доступ до джерела недоступний</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Перевірка оновлює висновки. Призначення та прийняті винятки не вирішують проблему в невдалій перевірці. Її вирішує нова успішна перевірка.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Запитати Admin Assist</value>

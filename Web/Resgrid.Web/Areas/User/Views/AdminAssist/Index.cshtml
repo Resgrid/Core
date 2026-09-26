@@ -1,10 +1,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> adminAssistLocalizer
 @{
-	// Standalone setup routes keep their own names; they must not read as Admin Assist when that shell is off.
-	bool standaloneSetup = ViewBag.AdminAssistSetup == true;
-	string entryPage = ViewBag.AdminAssistPage as string;
-	string titleKey = standaloneSetup ? (entryPage == "report" ? "Ui.report" : "Ui.wizard") : "Ui.Title";
-	string title = adminAssistLocalizer[titleKey];
+	// Every entry route is the one Admin Assist page; Setup Wizard, Setup Report, Explore and Admin AI are its tabs.
+	string title = adminAssistLocalizer["Ui.Title"];
 	ViewBag.Title = "Resgrid | " + title;
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView { BannerTitle = title };

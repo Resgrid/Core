@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Sistemi di origine autorevoli</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Scegli i documenti</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Scegli i gruppi</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Cancella stagione</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Un altro amministratore ha modificato questo profilo. I tuoi valori proposti sono ancora mostrati. Ricarica il profilo attuale prima di salvare di nuovo.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Procedure di continuità approvate</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Giorno</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Numero approssimativo di membri (opzionale)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Modello di centrale operativa</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Scegli i documenti validi di questo dipartimento. I documenti scaduti non possono essere referenziati. Il salvataggio verifica l'esistenza, non l'approvazione o l'idoneità.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Inserisci gli ID numerici dei documenti esistenti per le policy approvate in questo dipartimento. I documenti scaduti non possono essere referenziati. Il salvataggio verifica l'esistenza, non l'approvazione o l'idoneità.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Scegli i gruppi di questo dipartimento. Questo non concede l'accesso al gruppo né modifica l'ambito della centrale operativa.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Inserisci gli ID numerici dei gruppi esistenti in questo dipartimento. Il salvataggio aggiunge un'altra riga opzionale.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Lingue di lavoro</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (non più disponibile)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Mese</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Partecipa al mutuo soccorso</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Salva profilo operativo</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Profilo operativo salvato.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Fine stagione (MM-GG, opzionale)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Se il dipartimento opera stagionalmente, scegli il mese e il giorno di inizio e di fine della stagione. Altrimenti lascia la stagione vuota. Una stagione può proseguire oltre il nuovo anno.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Inizio stagione (MM-GG, opzionale)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organizzazione e operazioni</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Lingue e accessibilità</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Sedi, policy e sistemi</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Operatività stagionale</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Sedi e gruppi di area di servizio</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Policy di personale approvate</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Digita un'etichetta e premi Invio</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Usa un'etichetta breve di riferimento per il sistema di origine. Queste etichette sono dichiarazioni; il salvataggio non verifica una connessione o un'importazione.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Verifica le evidenze attuali e le procedure locali</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} altri</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Accesso alla fonte attuale non disponibile</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>La verifica aggiorna i rilievi. Assegnazione ed eccezioni accettate non risolvono un controllo non superato. Un nuovo controllo superato lo risolve.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Chiedi ad Admin Assist</value>

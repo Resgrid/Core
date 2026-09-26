@@ -10,6 +10,8 @@ namespace Resgrid.Model.Services
 	{
 		Task<AdminAssist.DepartmentOperatingProfile> GetOperatingProfileAsync(int departmentId);
 		Task<DepartmentSetting> SetOperatingProfileAsync(int departmentId, AdminAssist.DepartmentOperatingProfile profile, string actingUserId, CancellationToken cancellationToken = default);
+		/// <summary>Documents the operating profile's policy pickers offer: this department's unexpired documents, without file contents.</summary>
+		Task<IReadOnlyList<Document>> GetOperatingProfileDocumentOptionsAsync(int departmentId, CancellationToken cancellationToken = default);
 		/// <summary>
 		/// Saves the or update setting asynchronous.
 		/// </summary>

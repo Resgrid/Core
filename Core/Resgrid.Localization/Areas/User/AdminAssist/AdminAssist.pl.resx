@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Wiążące systemy źródłowe</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Wybierz dokumenty</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Wybierz grupy</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Wyczyść sezon</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Inny administrator zmienił ten profil. Twoje proponowane wartości są nadal wyświetlane. Przed ponownym zapisaniem wczytaj ponownie bieżący profil.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Zatwierdzone procedury ciągłości działania</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Dzień</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Przybliżona liczba członków (opcjonalnie)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Model dyspozytorski</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Wybierz aktualne dokumenty z tego oddziału. Nie można odwołać się do dokumentów, które utraciły ważność. Zapisanie potwierdza istnienie dokumentu, a nie jego zatwierdzenie ani przydatność.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Wprowadź istniejące numeryczne identyfikatory dokumentów zatwierdzonych zasad w tym oddziale. Nie można odwołać się do dokumentów, które utraciły ważność. Zapisanie potwierdza istnienie dokumentu, a nie jego zatwierdzenie ani przydatność.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Wybierz grupy z tego oddziału. Nie powoduje to przyznania dostępu do grupy ani zmiany zakresu dyspozytorskiego.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Wprowadź istniejące numeryczne identyfikatory grup z tego oddziału. Zapisanie dodaje kolejny opcjonalny wiersz.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Języki robocze</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (już niedostępne)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Miesiąc</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Uczestniczy we wzajemnej pomocy</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Zapisz profil operacyjny</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Profil operacyjny został zapisany.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Koniec sezonu (MM-DD, opcjonalnie)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Jeśli oddział działa sezonowo, wybierz miesiąc i dzień rozpoczęcia oraz zakończenia sezonu. W przeciwnym razie pozostaw sezon pusty. Sezon może obejmować przełom roku.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Początek sezonu (MM-DD, opcjonalnie)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organizacja i działania</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Języki i dostępność</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Lokalizacje, zasady i systemy</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Działalność sezonowa</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Lokalizacje i grupy obszarów działania</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Zatwierdzone zasady obsady</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Wpisz etykietę i naciśnij Enter</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Użyj krótkiej etykiety odwołania do systemu źródłowego. Te etykiety są deklaracjami — zapisanie nie weryfikuje połączenia ani importu.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Zweryfikuj bieżące dane oraz lokalne procedury</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} więcej</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Bieżący dostęp do źródła niedostępny</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Weryfikacja aktualizuje ustalenia. Przypisanie oraz zaakceptowane wyjątki nie rozwiązują nieudanej kontroli. Rozwiązuje ją dopiero nowa, zakończona powodzeniem kontrola.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Zapytaj Admin Assist</value>

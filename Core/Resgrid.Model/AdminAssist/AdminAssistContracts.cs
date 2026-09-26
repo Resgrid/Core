@@ -20,6 +20,16 @@ namespace Resgrid.Model.AdminAssist
 		IReadOnlyList<string> EvidenceIds { get; }
 		Task<IReadOnlyList<ConfigurationEvidence>> ReadAsync(AdminAssistActor actor, DateTime asOfUtc, CancellationToken cancellationToken);
 	}
+	/// <summary>
+	/// Names the items a failing finding counts, such as the groups with no active members. Evidence stays scalar; these are
+	/// read fresh only to show an administrator on an attended page, and are never persisted, sent in a digest or given to a model.
+	/// </summary>
+	public interface IAdminAssistFindingSubjectSource
+	{
+		IReadOnlyList<string> RuleIds { get; }
+		Task<IReadOnlyList<FindingSubject>> ReadAsync(AdminAssistActor actor, string ruleId, CancellationToken cancellationToken);
+	}
+	public sealed record FindingSubject(string Id, string Name);
 	public interface IAdminAssistAccessService
 	{
 		Task<bool> CanAccessAsync(AdminAssistActor actor, bool setup, CancellationToken cancellationToken = default);
@@ -34,6 +44,8 @@ namespace Resgrid.Model.AdminAssist
 	public interface IAdminAssistService
 	{
 		Task<AdminAssistOverview> GetOverviewAsync(AdminAssistActor actor, bool setup, CancellationToken cancellationToken = default);
+		/// <summary>Display-only names for the report's failing findings, keyed by rule id. Only attended pages call this.</summary>
+		Task<IReadOnlyDictionary<string, IReadOnlyList<FindingSubject>>> GetFindingSubjectsAsync(AdminAssistActor actor, bool setup, ConfigurationReport report, CancellationToken cancellationToken = default);
 		Task<SetupWorkspace> UpdateSetupAsync(AdminAssistActor actor, SetupProgressCommand command, CancellationToken cancellationToken = default);
 		Task<IReadOnlyList<AdminAssistHistoryItem>> GetHistoryAsync(AdminAssistActor actor, int skip, int take, CancellationToken cancellationToken = default);
 	}
@@ -50,7 +62,8 @@ namespace Resgrid.Model.AdminAssist
 	public enum SetupAreaReason { OutsideMission, OtherSystem, PartnerManaged, NoCurrentNeed }
 	public sealed record SetupReviewEvidence(string CatalogVersion, string SnapshotRevision, DateTime AsOfUtc, int Required, int Verified, int Failed, int Unknown, long ScopeRevision = 0);
 	public sealed record AdminAssistOverview(string CatalogVersion, SetupWorkspace Workspace,
-		ConfigurationReport Report, IReadOnlyList<CapabilityAccess> Access, IReadOnlyList<CapabilitySetupAssessment> CapabilitySetup = null, SetupPlan SetupPlan = null);
+		ConfigurationReport Report, IReadOnlyList<CapabilityAccess> Access, IReadOnlyList<CapabilitySetupAssessment> CapabilitySetup = null, SetupPlan SetupPlan = null,
+		IReadOnlyDictionary<string, IReadOnlyList<FindingSubject>> FindingSubjects = null);
 	public enum CapabilitySetupState { NotAssessed, NotConfigured, ConfigurationPresent, ChecksPassed, NeedsAttention }
 	public sealed record CapabilitySetupAssessment(string CapabilityId, CapabilitySetupState State, string OpportunityKey,
 		string GuidanceKey, IReadOnlyList<string> RuleIds, string SnapshotRevision, DateTime AsOfUtc);
@@ -63,6 +76,8 @@ namespace Resgrid.Model.AdminAssist
 		Task SaveDailySummaryAsync(int departmentId, ConfigurationReport report, string catalogVersion, CancellationToken cancellationToken);
 		Task LockConfigurationAsync(int departmentId, CancellationToken cancellationToken);
 		Task<bool> ValidateOperatingProfileReferencesAsync(int departmentId, DepartmentOperatingProfile profile, DateTime asOfUtc, CancellationToken cancellationToken);
+		/// <summary>The documents a profile policy reference may name (this department's, unexpired): id, name, category and protection marker only, never file contents.</summary>
+		Task<IReadOnlyList<Document>> GetOperatingProfileDocumentOptionsAsync(int departmentId, DateTime asOfUtc, CancellationToken cancellationToken);
 		Task<long> AppendConfigurationChangeAsync(int departmentId, string actorId, string binding, string before, string after, string correlationId, CancellationToken cancellationToken);
 		Task<long> GetConfigurationRevisionAsync(int departmentId, CancellationToken cancellationToken);
 		Task<SetupWorkspace> GetWorkspaceAsync(int departmentId, string userId, string catalogVersion, CancellationToken cancellationToken);

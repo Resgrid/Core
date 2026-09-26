@@ -34,7 +34,7 @@
 		<h2>@aa["Ui.Checks"]</h2>
 		@foreach (var finding in findings)
 		{
-			<section><h3>@aa[finding.TitleKey]</h3><p>@if (finding.Severity == FindingSeverity.Information && finding.Result != RuleResult.Pass) { <strong>@aa["Ui.Suggestion"]</strong> } else { <strong>@aa["Ui." + finding.Result]</strong> <text>· @aa["Ui." + finding.Severity]</text> }</p><p>@aa[finding.ExplanationKey]</p><p><a href="@finding.Destination">@aa[finding.NextActionKey]</a></p></section>
+			<section><h3>@aa[finding.TitleKey]</h3><p>@if (finding.Severity == FindingSeverity.Information && finding.Result != RuleResult.Pass) { <strong>@aa["Ui.Suggestion"]</strong> } else { <strong>@aa["Ui." + finding.Result]</strong> <text>· @aa["Ui." + finding.Severity]</text> }</p><p>@aa[finding.ExplanationKey]</p>@if (finding.Result == RuleResult.Fail && Model.FindingSubjects != null && Model.FindingSubjects.TryGetValue(finding.RuleId, out var subjects)) { <p class="finding-subjects">@string.Join(", ", subjects.Select(s => s.Name))</p> }<p><a href="@finding.Destination">@aa[finding.NextActionKey]</a></p></section>
 		}
 		<h2>@aa["Ui.Learning"]</h2>
 		<table><thead><tr><th>@aa["Ui.Area"]</th><th>@aa["Ui.SetupChoice"]</th></tr></thead><tbody>@foreach (var area in catalog.Areas) { <tr><th scope="row">@aa[area.LabelKey]</th><td>@aa["Ui." + (Model.Workspace.Areas.TryGetValue(area.Id, out var choice) ? choice : SetupAreaChoice.LearnLater)]</td></tr> }</tbody></table>

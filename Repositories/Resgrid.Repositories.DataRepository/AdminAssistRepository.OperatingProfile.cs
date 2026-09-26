@@ -29,5 +29,11 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			return true;
 		}
+
+		public async Task<System.Collections.Generic.IReadOnlyList<Resgrid.Model.Document>> GetOperatingProfileDocumentOptionsAsync(int departmentId, DateTime asOfUtc, CancellationToken ct) =>
+			// The same unexpired documents the save accepts; the file bytes are never read for a picker.
+			(await QueryAsync<Resgrid.Model.Document>($"SELECT {Cols("DocumentId", "DepartmentId", "Name", "Category", "IsProtected")} FROM {Tbl("Documents")} " +
+				$"WHERE {Col("DepartmentId")}={P}DepartmentId AND ({Col("RemoveOn")} IS NULL OR {Col("RemoveOn")}>{P}AsOfUtc)",
+				new { DepartmentId = departmentId, AsOfUtc = DatabaseTimestamp(asOfUtc) }, ct)).ToList();
 	}
 }

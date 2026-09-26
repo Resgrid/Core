@@ -2,11 +2,10 @@
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aaLocalizer
 @{
-	var adminSetupVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
-        await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsEnabledAsync(featureToggleService, ClaimsAuthorizationHelper.GetDepartmentId(), true, Context.RequestAborted);
-    // The workspace launches after Setup Wizard and Setup Report: it also needs Ai.AdminAssist, not just Admin.Assist.
-    var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
-        await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(featureToggleService, ClaimsAuthorizationHelper.GetDepartmentId(), Context.RequestAborted);
+	// Admin Assist opens on its setup tabs (Admin.Setup), or on its Admin AI tab once Admin.Assist and Ai.AdminAssist are on.
+	var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
+		(await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsEnabledAsync(featureToggleService, ClaimsAuthorizationHelper.GetDepartmentId(), true, Context.RequestAborted) ||
+		 await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(featureToggleService, ClaimsAuthorizationHelper.GetDepartmentId(), Context.RequestAborted));
 	// Chat.System gates the moderation console link; it is only useful to department or group admins.
 	var chatModerationVisible = ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(0) &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
@@ -22,28 +21,15 @@
             </div>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-            @if (adminAssistVisible || adminSetupVisible)
-            {
-                <li class="btn dropdown" id="menu-admin-assist">
-                    <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@aaLocalizer["Ui.Title"]</span>&nbsp;<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        @if (adminAssistVisible)
-                        {
-                            <li><a asp-controller="AdminAssist" asp-action="Index" asp-route-area="User">@aaLocalizer["Ui.Title"]</a></li>
-                        }
-                        @if (adminSetupVisible)
-                        {
-                            <li><a asp-controller="Department" asp-action="SetupWizard" asp-route-area="User">@aaLocalizer["Ui.wizard"]</a></li>
-                            <li><a asp-controller="Help" asp-action="SetupReport" asp-route-area="User">@aaLocalizer["Ui.report"]</a></li>
-                        }
-                    </ul>
-                </li>
-            }
             <li class="btn dropdown" id="menu-department">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                     {
+                        @if (adminAssistVisible)
+                        {
+                            <li class="@Html.IsSelected(controller: "AdminAssist")"><a asp-controller="AdminAssist" asp-action="Index" asp-route-area="User">@aaLocalizer["Ui.Title"]</a></li>
+                        }
                         <li class="@Html.IsSelected(controller: "Department", action: "Settings")"><a asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["DepartmentSettings"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "Profile")"><a asp-controller="Department" asp-action="Profile" asp-route-area="User">@commonLocalizer["DepartmentProfile"]</a></li>
                         <li class="@Html.IsSelected(controller: "Groups", action: "Index")"><a asp-controller="Groups" asp-action="Index" asp-route-area="User">@commonLocalizer["StationAndGroups"]</a></li>

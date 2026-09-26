@@ -493,6 +493,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var draft = await _recordsService.GetAsync(DepartmentId, recordId);
 			model.RecordId = recordId;
 			model.RowVersion = draft?.Record?.RowVersion ?? model.RowVersion;
+			// Edit.cshtml renders these through HiddenFor, which prefers the posted (blank) values in ModelState.
+			ModelState.Remove(nameof(RecordEditView.RecordId));
+			ModelState.Remove(nameof(RecordEditView.RowVersion));
 			return await EditErrorAsync(model, draft, definitionVersion, error);
 		}
 
@@ -631,6 +634,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (!model.Attested)
 					{
 						model.RowVersion = saved.Record.RowVersion;
+						ModelState.Remove(nameof(RecordEditView.RowVersion));
 						return await EditErrorAsync(model, saved, definitionVersion, _localizer["Attestation"]);
 					}
 

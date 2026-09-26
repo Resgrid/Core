@@ -114,6 +114,9 @@ namespace Resgrid.Services.AdminAssist
 					using var tool = CancellationTokenSource.CreateLinkedTokenSource(deadline.Token); tool.CancelAfter(TimeSpan.FromSeconds(20));
 					try { foreach (var current in await queries.ReadAsync(actor, read, tool.Token)) evidence[current.Id] = current; }
 					catch (ArgumentException) { /* A removed catalog entry is no longer evidence. */ }
+					// A deleted, unshared or closed plan, a disabled plans feature or a busy/inconsistent plan read only drops
+					// that card. Actor access is still enforced by the RequireAsync below.
+					catch (Exception ex) when (read.Name is "draft_plan" or "verify_step" && ex is UnauthorizedAccessException or AdminAssistConcurrencyException) { }
 				}
 				var selected = stored?.EvidenceIds?.Where(evidence.ContainsKey).Select(id => evidence[id]).ToArray() ?? Array.Empty<AskEvidence>();
 				answers.Add(new(conversationId, row.Revision, selected.Length > 0 ? "Refreshed" : "Unavailable", selected, row.PromptVersion, row.ModelRevision, row.InputTokens, row.OutputTokens));

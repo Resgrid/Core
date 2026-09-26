@@ -27,6 +27,7 @@ namespace Resgrid.Tests.Web.User
         private IHttpContextAccessor _previousAccessor;
         private Mock<IDepartmentsService> _departments;
         private Mock<IRecordsService> _records;
+        private Mock<IRecordsAuthorizationService> _authorization;
         private ClaimsIdentity _identity;
         private RecordsController _controller;
 
@@ -50,7 +51,8 @@ namespace Resgrid.Tests.Web.User
             var definitions = new Mock<IRecordDefinitionsService>();
             definitions.Setup(x => x.ListAsync(DepartmentId, false)).ReturnsAsync(new List<RecordDefinitionSummary>());
             _records = new Mock<IRecordsService>();
-            _controller = new RecordsController(_records.Object, cutover.Object, Mock.Of<IRecordsAuthorizationService>(),
+            _authorization = new Mock<IRecordsAuthorizationService>();
+            _controller = new RecordsController(_records.Object, cutover.Object, _authorization.Object,
                 _departments.Object, Mock.Of<IDepartmentGroupsService>(), Mock.Of<IUnitsService>(), Mock.Of<ICallsService>(),
                 Mock.Of<IDepartmentSettingsService>(), null, Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records>>(),
                 null, null, null, null, null, null, null, null, Mock.Of<IRecordsUdfService>(),
@@ -133,6 +135,9 @@ namespace Resgrid.Tests.Web.User
                 .ReturnsAsync(new RecordAggregate { Record = new RmsOperationalRecord { RmsOperationalRecordId = "draft-1", RowVersion = 3 } });
             _records.Setup(x => x.FinalizeAsync(DepartmentId, It.IsAny<string>(), "draft-1", 3, "1", null, null, It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new ArgumentException("Narrative is required to finalize."));
+            // What model binding records for the new form's blank hidden fields.
+            _controller.ModelState.SetModelValue(nameof(RecordEditView.RecordId), string.Empty, string.Empty);
+            _controller.ModelState.SetModelValue(nameof(RecordEditView.RowVersion), "0", "0");
 
             var result = (ViewResult)await _controller.Create(new RecordEditView
             {
@@ -145,7 +150,38 @@ namespace Resgrid.Tests.Web.User
             model.RecordId.Should().Be("draft-1");
             model.RowVersion.Should().Be(3);
             model.IsNew.Should().BeFalse("the re-rendered form must post to Edit, not create a second draft");
+            // HiddenFor prefers ModelState, so the posted blanks would otherwise render over the draft identity.
+            result.ViewData.ModelState.ContainsKey(nameof(RecordEditView.RecordId)).Should().BeFalse();
+            result.ViewData.ModelState.ContainsKey(nameof(RecordEditView.RowVersion)).Should().BeFalse();
             _records.Verify(x => x.CreateDraftAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<RecordDraftInput>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Edit_refused_attestation_renders_the_saved_row_version()
+        {
+            _identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Create));
+            _identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Finalize));
+            _departments.Setup(x => x.GetAllMembersForDepartmentUnlimitedAsync(DepartmentId, true)).ReturnsAsync(new List<DepartmentMember>());
+            _departments.Setup(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName>());
+            _authorization.Setup(x => x.CanUserViewRecordAsync("author", "draft-1", DepartmentId)).ReturnsAsync(true);
+            _records.Setup(x => x.GetAsync(DepartmentId, "draft-1", false)).ReturnsAsync(new RecordAggregate { Record = new RmsOperationalRecord
+            {
+                RmsOperationalRecordId = "draft-1", RowVersion = 4, OwnerUserId = "author", RecordType = (int)RmsOperationalRecordType.Training,
+                DefinitionKey = RmsDefinitionKeys.Training
+            } });
+            _records.Setup(x => x.SaveDraftAsync(DepartmentId, "author", "draft-1", 4, It.IsAny<RecordDraftInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RecordAggregate { Record = new RmsOperationalRecord { RmsOperationalRecordId = "draft-1", RowVersion = 5 } });
+            _controller.ModelState.SetModelValue(nameof(RecordEditView.RecordId), "draft-1", "draft-1");
+            _controller.ModelState.SetModelValue(nameof(RecordEditView.RowVersion), "4", "4");
+
+            var result = (ViewResult)await _controller.Edit(new RecordEditView
+            {
+                RecordId = "draft-1", RowVersion = 4, FinalizeAfterSave = true, Attested = false
+            }, null, CancellationToken.None);
+
+            result.ViewName.Should().Be("Edit");
+            ((RecordEditView)result.Model).RowVersion.Should().Be(5);
+            result.ViewData.ModelState.ContainsKey(nameof(RecordEditView.RowVersion)).Should().BeFalse("the retry must carry the saved row version, not the posted one");
         }
     }
 }

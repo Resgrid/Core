@@ -97,5 +97,37 @@ namespace Resgrid.Tests.AdminAssist
 			Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await f.Service.AskAsync(Actor, new("Setup", id, 1), CancellationToken.None));
 			f.Usage.VerifyNoOtherCalls(); f.Client.VerifyNoOtherCalls();
 		}
+		[TestCase(typeof(UnauthorizedAccessException))]
+		[TestCase(typeof(AdminAssistConcurrencyException))]
+		public async Task Unavailable_plan_reads_drop_only_their_card_when_a_conversation_is_reopened(Type failure)
+		{
+			// Arrange: the stored turn cited a plan step that has since been deleted, unshared or locked.
+			var f = new Fixture(); var id = Guid.NewGuid().ToString("D"); var row = new AiGenerationRow { Id = Guid.NewGuid().ToString("D"), ConversationId = id, Revision = 1 };
+			f.Store.Setup(s => s.ReadAsync(Actor, id, It.IsAny<CancellationToken>())).ReturnsAsync(new[] { row });
+			f.Store.Setup(s => s.GetRevisionAsync(Actor, id, It.IsAny<CancellationToken>())).ReturnsAsync(1);
+			f.Protection.Setup(p => p.ReadAsync(Actor, row, It.IsAny<CancellationToken>())).ReturnsAsync(new AskStoredContent("Plan help",
+				new[] { new AskToolInput("verify_step", Id: Guid.NewGuid().ToString("D"), Value: "personnel"), new AskToolInput("get_setup_report") }, new[] { "verify:plan", "setup:report" }));
+			f.Queries.Setup(q => q.ReadAsync(Actor, It.Is<AskToolInput>(t => t.Name == "verify_step"), It.IsAny<CancellationToken>())).ThrowsAsync((Exception)Activator.CreateInstance(failure));
+			// Act
+			var answers = await f.Service.ReadAsync(Actor, id, CancellationToken.None);
+			// Assert
+			Assert.That(answers, Has.Count.EqualTo(1)); Assert.That(answers[0].Outcome, Is.EqualTo("Refreshed"));
+			Assert.That(answers[0].Evidence, Has.Count.EqualTo(1)); Assert.That(answers[0].Evidence[0].Id, Is.EqualTo("setup:report"));
+		}
+		[Test]
+		public void Plan_read_failures_do_not_skip_the_final_access_check()
+		{
+			// Arrange: access is revoked while the history refresh is running.
+			var f = new Fixture(); var id = Guid.NewGuid().ToString("D"); var row = new AiGenerationRow { Id = Guid.NewGuid().ToString("D"), ConversationId = id, Revision = 1 };
+			var access = new Mock<IAdminAssistAccessService>(); access.SetupSequence(a => a.CanAccessAsync(Actor, false, It.IsAny<CancellationToken>())).ReturnsAsync(true).ReturnsAsync(false);
+			var service = new AdminAssistAskService(f.Access.Object, access.Object, f.Usage.Object, f.Queries.Object, new ConfigurationCatalog(), f.Store.Object, f.Protection.Object, new Lazy<ILlmClient>(() => f.Client.Object), TimeProvider.System);
+			f.Store.Setup(s => s.ReadAsync(Actor, id, It.IsAny<CancellationToken>())).ReturnsAsync(new[] { row });
+			f.Protection.Setup(p => p.ReadAsync(Actor, row, It.IsAny<CancellationToken>())).ReturnsAsync(new AskStoredContent("Plan help",
+				new[] { new AskToolInput("draft_plan", Id: "map-freshness") }, new[] { "draft:map-freshness:personnel" }));
+			f.Queries.Setup(q => q.ReadAsync(Actor, It.IsAny<AskToolInput>(), It.IsAny<CancellationToken>())).ThrowsAsync(new UnauthorizedAccessException());
+			// Act / Assert
+			Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await service.ReadAsync(Actor, id, CancellationToken.None));
+			f.Store.Verify(s => s.GetRevisionAsync(It.IsAny<AdminAssistActor>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
 	}
 }

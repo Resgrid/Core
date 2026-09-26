@@ -62,6 +62,20 @@ namespace Resgrid.Tests.AdminAssist
 			Assert.That(await f.Service.EvaluateCurrentTargetsAsync(actor, "CanSeeUnitLocations", new[] { "1" }, CancellationToken.None), Is.Null);
 		}
 		[Test]
+		public async Task Single_viewer_checks_are_not_limited_by_the_department_wide_comparison_bound()
+		{
+			// 324 current members compare 104,976 viewer/target pairs department-wide, but a single viewer compares at most 324.
+			var f = new Fixture(); var actor = new AdminAssistActor(7, "member");
+			for (var i = 0; i < 320; i++) f.People.Add(new DepartmentMember { DepartmentId = 7, UserId = "extra-" + i });
+			f.Permissions.Setup(p => p.GetAllByDepartmentIdAsync(7)).ReturnsAsync(new[] { new Permission { DepartmentId = 7, PermissionType = (int)PermissionTypes.CanSeePersonnelLocations, Action = (int)PermissionActions.Everyone } });
+			var result = await f.Service.EvaluateCurrentTargetsAsync(actor, "CanSeePersonnelLocations", new[] { "owner", "extra-319" }, CancellationToken.None);
+			Assert.That(result, Is.Not.Null); Assert.That(result["owner"], Is.True); Assert.That(result["extra-319"], Is.True);
+			Assert.That(await f.Service.EvaluateCurrentAsync(actor, "member", "CanSeePersonnelLocations", "extra-319", CancellationToken.None), Is.True);
+			// The department-wide preview keeps its bound and reports the source as unavailable.
+			var report = await f.Service.PreviewAsync(new(7, "owner"), new("0", "CanSeePersonnelLocations", (int)PermissionActions.Everyone, false, Array.Empty<int>()));
+			Assert.That(report.Metrics.Single().State, Is.EqualTo(EvidenceState.Unknown));
+		}
+		[Test]
 		public async Task Diagnostic_permission_reads_fresh_roles_and_does_not_use_a_visibility_cache()
 		{
 			var f = new Fixture(); var actor = new AdminAssistActor(7, "owner");

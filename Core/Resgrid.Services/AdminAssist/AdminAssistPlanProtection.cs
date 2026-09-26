@@ -28,8 +28,12 @@ namespace Resgrid.Services.AdminAssist
 			if (row.DepartmentId != actor.DepartmentId || row.UserId != actor.UserId) throw new UnauthorizedAccessException();
 			await RequireAsync(actor, ct);
 			row.Content = encryption.EncryptForDepartment(JsonSerializer.Serialize(request), actor.DepartmentId, Binding(row));
+			// An updated row arrives with its stored markers. Only this write's protection decides them, so a department that
+			// stopped encrypting new writes saves enc2: content unmarked instead of failing the envelope check.
+			row.IsProtected = false;
+			row.ProtectedCatalogVersion = null;
 			var result = await write.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, null, row.Id, Fields,
-				() => { row.IsProtected = true; row.ProtectedCatalogVersion = 33; }, grant.GrantToken, actor.UserId, false, ct);
+				() => { row.IsProtected = true; row.ProtectedCatalogVersion = ProtectedFieldCatalog.AdminAssistPlansCatalogVersion; }, grant.GrantToken, actor.UserId, false, ct);
 			if (result?.Success != true || (result.IsProtected ? !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content) : !row.Content.StartsWith("enc2:", StringComparison.Ordinal))) throw new UnauthorizedAccessException();
 		}
 		public async Task<PlanContent> ReadAsync(AdminAssistActor actor, AdminAssistPlanRow row, CancellationToken ct)

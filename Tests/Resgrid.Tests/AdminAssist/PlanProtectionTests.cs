@@ -44,5 +44,27 @@ namespace Resgrid.Tests.AdminAssist
 			}
 			finally { SecurityConfig.EncryptionKey = key; SecurityConfig.EncryptionSaltValue = salt; }
 		}
+		[Test]
+		public async Task Rewrite_takes_its_protection_markers_from_this_write_not_the_stored_row()
+		{
+			var key = SecurityConfig.EncryptionKey; var salt = SecurityConfig.EncryptionSaltValue;
+			SecurityConfig.EncryptionKey = Guid.NewGuid().ToString("N"); SecurityConfig.EncryptionSaltValue = Guid.NewGuid().ToString("N");
+			try
+			{
+				var actor = new AdminAssistActor(7, "admin"); var writer = new Mock<IProtectedWriteService>(); Action markProtected = null;
+				writer.Setup(w => w.PreflightWriteAsync(7, null, "admin", false, It.IsAny<CancellationToken>())).ReturnsAsync(ProtectedWriteResult.Allowed());
+				// The department no longer encrypts new writes, so the protected write never calls markProtected.
+				writer.Setup(w => w.PrepareRecordsEntityWriteAsync(7, It.IsAny<AdminAssistPlanRow>(), null, It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, (Func<AdminAssistPlanRow, string>, Action<AdminAssistPlanRow, string>)>>(), It.IsAny<Action>(), null, "admin", false, It.IsAny<CancellationToken>()))
+					.Callback(new InvocationAction(i => markProtected = (Action)i.Arguments[5])).ReturnsAsync(ProtectedWriteResult.Allowed());
+				var service = new AdminAssistPlanProtection(new EncryptionService(), writer.Object, Mock.Of<IProtectedReadService>(), Mock.Of<IDepartmentDataProtectionService>(), Mock.Of<IProtectedGrantContext>());
+				var row = new AdminAssistPlanRow { Id = Guid.NewGuid().ToString("D"), DepartmentId = 7, UserId = "admin", IsProtected = true, ProtectedCatalogVersion = ProtectedFieldCatalog.AdminAssistPlansCatalogVersion };
+				var request = new PlanContent(new PlanDraftRequest("goal", "admin-security"), Array.Empty<string>(), new Dictionary<string, string>(), new Dictionary<string, string>(), Array.Empty<PlanAttestation>());
+				await service.ProtectAsync(actor, row, request, CancellationToken.None);
+				Assert.That(row.Content, Does.StartWith("enc2:")); Assert.That(row.IsProtected, Is.False); Assert.That(row.ProtectedCatalogVersion, Is.Null);
+				markProtected();
+				Assert.That(row.IsProtected, Is.True); Assert.That(row.ProtectedCatalogVersion, Is.EqualTo(ProtectedFieldCatalog.AdminAssistPlansCatalogVersion));
+			}
+			finally { SecurityConfig.EncryptionKey = key; SecurityConfig.EncryptionSaltValue = salt; }
+		}
 	}
 }

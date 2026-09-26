@@ -4,7 +4,8 @@ namespace Resgrid.Config
 	public static class AdminAssistConfig
 	{
 		public static int SnapshotTimeoutSeconds = 20;
-		// A slower evidence source is reported unknown instead of failing the whole overview.
+		// A slower evidence source is reported unknown instead of failing the whole overview. Finding-subject names (which
+		// groups are empty, ...) share one such bound per read and are left off once it runs out.
 		public static int EvidenceSourceTimeoutSeconds = 8;
 		// Shared bound for billing-dependent entitlement reads in one availability pass; once spent, the rest are unknown.
 		public static int BillingEvidenceTimeoutSeconds = 5;

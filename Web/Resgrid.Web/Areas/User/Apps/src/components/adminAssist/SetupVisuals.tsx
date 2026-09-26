@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react';
+import { createContext, useContext, useId, useState, type ReactNode } from 'react';
 
 export type Translate = (key: string) => string;
 export type Finding = { ruleId: string; areaId: string; severity: string; result: string; titleKey: string; explanationKey: string; nextActionKey: string; destination: string; reasonCode: string | null; scopeIndependent: boolean };
@@ -105,6 +105,23 @@ export function MetricRow({ counts, critical, learned, totalCapabilities, ui }: 
   </div>;
 }
 
+export type FindingSubject = { id: string; name: string };
+/** Names behind failing findings (for example which groups are empty), keyed by rule id. Shown to the administrator only. */
+export const FindingSubjectsContext = createContext<Record<string, FindingSubject[]>>({});
+const subjectIcons: Record<string, string> = { 'empty-groups': 'fa-users' };
+const subjectPreview = 12;
+
+function FindingSubjects({ finding, t, ui }: { finding: Finding; t: Translate; ui: Translate }) {
+  const subjects = useContext(FindingSubjectsContext)[finding.ruleId];
+  const [expanded, setExpanded] = useState(false);
+  if (finding.result !== 'Fail' || !subjects?.length) return null;
+  const shown = expanded ? subjects : subjects.slice(0, subjectPreview);
+  return <ul className="rgaa-subjects" aria-label={t(finding.titleKey)}>
+    {shown.map(subject => <li key={subject.id}><Chip tone="muted" icon={subjectIcons[finding.ruleId]}>{subject.name}</Chip></li>)}
+    {!expanded && subjects.length > subjectPreview && <li><button type="button" className="btn btn-link btn-xs" onClick={() => setExpanded(true)}>{format(ui('ShowMoreSubjects'), subjects.length - subjectPreview)}</button></li>}
+  </ul>;
+}
+
 export function FindingRow({ finding, t, ui, areaLabel, link, onPlan }: { finding: Finding; t: Translate; ui: Translate; areaLabel?: string; link: (url: string) => string | undefined; onPlan?: (finding: Finding) => void }) {
   const visual = resultVisual[displayResult(finding)] ?? resultVisual.Unknown;
   const destination = link(finding.destination);
@@ -114,6 +131,7 @@ export function FindingRow({ finding, t, ui, areaLabel, link, onPlan }: { findin
       <div className="rgaa-finding__meta">{isSuggestion(finding) ? <Chip tone="info" icon="fa-lightbulb-o">{ui('Suggestion')}</Chip> : <><ResultChip result={finding.result} ui={ui} /><SeverityChip severity={finding.severity} ui={ui} /></>}{areaLabel && <span className="rgaa-muted rgaa-small">{areaLabel}</span>}</div>
       <p className="rgaa-finding__title">{t(finding.titleKey)}</p>
       <p>{t(finding.explanationKey)}</p>
+      <FindingSubjects finding={finding} t={t} ui={ui} />
       <div className="rgaa-finding__actions">
         {destination && <a className="btn btn-white btn-xs" href={destination}><i className="fa fa-external-link" aria-hidden="true" /> {t(finding.nextActionKey)}</a>}
         {onPlan && <button type="button" className="btn btn-white btn-xs" onClick={() => onPlan(finding)}>{t('Plan.New')}</button>}

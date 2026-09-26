@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Επίσημα συστήματα πηγής</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Επιλέξτε έγγραφα</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Επιλέξτε ομάδες</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Εκκαθάριση περιόδου</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Ένας άλλος διαχειριστής άλλαξε αυτό το προφίλ. Οι προτεινόμενες τιμές σας εξακολουθούν να εμφανίζονται. Φορτώστε ξανά το τρέχον προφίλ πριν αποθηκεύσετε ξανά.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Εγκεκριμένες διαδικασίες συνέχειας λειτουργίας</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Ημέρα</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Κατά προσέγγιση αριθμός μελών (προαιρετικό)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Μοντέλο αποστολής</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Επιλέξτε τρέχοντα έγγραφα από αυτό το τμήμα. Τα ληγμένα έγγραφα δεν μπορούν να αναφερθούν. Η αποθήκευση επαληθεύει την ύπαρξη, όχι την έγκριση ή την καταλληλότητα.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Εισαγάγετε υπάρχοντα αριθμητικά αναγνωριστικά εγγράφων για εγκεκριμένες πολιτικές σε αυτό το τμήμα. Τα ληγμένα έγγραφα δεν μπορούν να αναφερθούν. Η αποθήκευση επαληθεύει την ύπαρξη, όχι την έγκριση ή την καταλληλότητα.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Επιλέξτε ομάδες από αυτό το τμήμα. Αυτό δεν παραχωρεί πρόσβαση ομάδας ούτε αλλάζει το εύρος αποστολής.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Εισαγάγετε υπάρχοντα αριθμητικά αναγνωριστικά ομάδων από αυτό το τμήμα. Η αποθήκευση προσθέτει άλλη μία προαιρετική γραμμή.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Γλώσσες εργασίας</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (δεν είναι πλέον διαθέσιμο)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Μήνας</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Συμμετέχει σε αμοιβαία βοήθεια</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Αποθήκευση προφίλ λειτουργίας</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Το προφίλ λειτουργίας αποθηκεύτηκε.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Λήξη περιόδου (ΜΜ-ΗΗ, προαιρετικό)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Αν το τμήμα λειτουργεί εποχικά, επιλέξτε τον μήνα και την ημέρα έναρξης και λήξης της περιόδου. Διαφορετικά, αφήστε την περίοδο κενή. Μια περίοδος μπορεί να εκτείνεται πέρα από την αλλαγή του έτους.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Έναρξη περιόδου (ΜΜ-ΗΗ, προαιρετικό)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Οργάνωση και λειτουργίες</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Γλώσσες και προσβασιμότητα</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Τοποθεσίες, πολιτικές και συστήματα</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Εποχική λειτουργία</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Ομάδες εγκαταστάσεων και περιοχών εξυπηρέτησης</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Εγκεκριμένες πολιτικές στελέχωσης</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Πληκτρολογήστε μια ετικέτα και πατήστε Enter</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Χρησιμοποιήστε μια σύντομη ετικέτα αναφοράς συστήματος πηγής. Αυτές οι ετικέτες είναι δηλώσεις· η αποθήκευση δεν επαληθεύει σύνδεση ή εισαγωγή δεδομένων.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Επαλήθευση τρεχόντων στοιχείων και τοπικών διαδικασιών</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} ακόμη</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Η τρέχουσα πρόσβαση πηγής δεν είναι διαθέσιμη</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Η επαλήθευση ενημερώνει τα ευρήματα. Η ανάθεση και οι αποδεκτές εξαιρέσεις δεν επιλύουν έναν αποτυχημένο έλεγχο. Ένας νέος επιτυχής έλεγχος τον επιλύει.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Ρωτήστε το Admin Assist</value>

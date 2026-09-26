@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Maßgebliche Quellsysteme</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Dokumente auswählen</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Gruppen auswählen</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Saison löschen</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Ein anderer Administrator hat dieses Profil geändert. Ihre vorgeschlagenen Werte werden weiterhin angezeigt. Laden Sie das aktuelle Profil neu, bevor Sie erneut speichern.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Genehmigte Kontinuitätsverfahren</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Tag</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Ungefähre Mitgliederzahl (optional)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Dispositionsmodell</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Wählen Sie aktuelle Dokumente dieser Abteilung aus. Abgelaufene Dokumente können nicht referenziert werden. Das Speichern prüft die Existenz, nicht die Genehmigung oder Eignung.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Geben Sie vorhandene numerische Dokument-IDs für genehmigte Richtlinien dieser Abteilung ein. Abgelaufene Dokumente können nicht referenziert werden. Das Speichern prüft die Existenz, nicht die Genehmigung oder Eignung.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Wählen Sie Gruppen dieser Abteilung aus. Dies gewährt keinen Gruppenzugriff und ändert nicht den Dispositionsumfang.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Geben Sie vorhandene numerische Gruppen-IDs dieser Abteilung ein. Das Speichern fügt eine weitere optionale Zeile hinzu.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Arbeitssprachen</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (nicht mehr verfügbar)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Monat</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Beteiligt sich an gegenseitiger Unterstützung</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Betriebsprofil speichern</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Betriebsprofil gespeichert.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Saisonende (MM-TT, optional)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Wenn die Abteilung saisonal arbeitet, wählen Sie Monat und Tag für Beginn und Ende der Saison. Andernfalls lassen Sie die Saison leer. Eine Saison kann über den Jahreswechsel reichen.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Saisonbeginn (MM-TT, optional)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organisation und Betrieb</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Sprachen und Barrierefreiheit</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Standorte, Richtlinien und Systeme</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Saisonaler Betrieb</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Standorte und Einsatzgebiets-Gruppen</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Genehmigte Besetzungsrichtlinien</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Bezeichnung eingeben und Enter drücken</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Verwenden Sie eine kurze Bezeichnung für das Quellsystem. Diese Bezeichnungen sind Angaben; das Speichern prüft keine Verbindung oder keinen Import.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Aktuelle Nachweise und örtliche Verfahren verifizieren</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} weitere</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Aktueller Quellzugriff nicht verfügbar</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Die Verifizierung aktualisiert Befunde. Zuweisung und akzeptierte Ausnahmen lösen keine fehlgeschlagene Prüfung. Eine neue bestandene Prüfung löst sie.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Admin Assist fragen</value>

@@ -3,7 +3,7 @@
 <a id="start-setup"></a>
 ## Start or resume setup
 
-Department administrators can open **Setup Wizard** from the Department or Help menu when setup is enabled for the deployment. An unfinished setup also appears on the dashboard. Dismissing that prompt affects only your account; the menu remains available. Setup Wizard and Setup Report are available independently of Admin Assist and do not require an AI add-on.
+Department administrators can open **Admin Assist** from the top of the Department menu when setup is enabled for the deployment. It opens on **Setup Wizard**, with **Setup Report**, **Explore Resgrid & Addons** and **Admin AI** beside it. An unfinished setup also appears on the dashboard. Dismissing that prompt affects only your account; the menu remains available. Setup Wizard, Setup Report and Explore do not require Admin AI or an AI add-on; the Admin AI tab stays disabled until Admin AI is enabled for the department.
 
 Choose **Fresh setup**, **Review existing setup**, or **Import or migration**. The choice records your intent; it does not import or overwrite data. Use the department operating profile to describe your organization and link approved local policies. Fire, EMS, mental health, SAR, emergency response, Hazmat, industrial, security and mutual-aid packs suggest areas to review. They do not establish qualifications or authorize clinical, tactical or hazardous work.
 

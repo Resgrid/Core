@@ -73,6 +73,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService _aiDispatchService;
 		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -83,7 +84,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService,
 			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
 			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
-			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService)
+			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService, IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -119,6 +120,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentProfileMediaService = departmentProfileMediaService;
 			_departmentLocalizer = departmentLocalizer;
 			_aiDispatchService = aiDispatchService;
+			_protectedReadService = protectedReadService;
 		}
 
 		#endregion Private Members and Constructors

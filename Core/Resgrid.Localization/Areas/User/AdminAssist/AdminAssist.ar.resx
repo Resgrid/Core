@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>الأنظمة المصدر المعتمدة</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>اختر المستندات</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>اختر المجموعات</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>مسح الموسم</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>قام مسؤول آخر بتغيير هذا الملف. لا تزال القيم المقترحة منك معروضة. أعد تحميل الملف الحالي قبل الحفظ مرة أخرى.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>إجراءات استمرارية العمل المعتمدة</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>اليوم</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>العدد التقريبي للأعضاء (اختياري)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>نموذج الإرسال</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>اختر مستندات سارية من هذا القسم. لا يمكن الإشارة إلى مستندات منتهية الصلاحية. يتحقق الحفظ من وجود المستند فقط، وليس من اعتماده أو ملاءمته.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>أدخل معرّفات مستندات رقمية موجودة للسياسات المعتمدة في هذا القسم. لا يمكن الإشارة إلى مستندات منتهية الصلاحية. يتحقق الحفظ من وجود المستند فقط، وليس من اعتماده أو ملاءمته.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>اختر مجموعات من هذا القسم. لا يمنح هذا وصولًا إلى المجموعة ولا يغيّر نطاق الإرسال.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>أدخل معرّفات مجموعات رقمية موجودة من هذا القسم. يضيف الحفظ صفًا اختياريًا آخر.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>لغات العمل</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (لم يعد متاحًا)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>الشهر</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>يشارك في المساعدة المتبادلة</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>حفظ ملف التشغيل</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>تم حفظ ملف التشغيل.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>نهاية الموسم (شهر-يوم، اختياري)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>إذا كان القسم يعمل موسميًا، فاختر الشهر واليوم اللذين يبدأ فيهما الموسم وينتهي. اترك الموسم فارغًا إن لم يكن كذلك. يمكن أن يمتد الموسم عبر بداية العام الجديد.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>بداية الموسم (شهر-يوم، اختياري)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>التنظيم والعمليات</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>اللغات وإمكانية الوصول</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>المواقع والسياسات والأنظمة</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>التشغيل الموسمي</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>المواقع ومجموعات مناطق الخدمة</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>سياسات التأمين المعتمدة</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>اكتب تسمية واضغط Enter</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>استخدم تسمية مرجعية قصيرة للنظام المصدر. هذه التسميات هي إقرارات فقط؛ ولا يتحقق الحفظ من وجود اتصال أو استيراد.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>التحقق من الأدلة الحالية والإجراءات المحلية</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} أخرى</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>الوصول إلى المصدر الحالي غير متاح</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>يُحدّث التحقق النتائج. لا يحل التعيين أو الاستثناءات المقبولة فحصًا فاشلًا. يحله فحص ناجح جديد.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>اسأل Admin Assist</value>

@@ -23,6 +23,7 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.AdministrativeReferenceEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.OperatingProfileEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.OrganizationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.OrganizationFindingSubjects>().As<Resgrid.Model.AdminAssist.IAdminAssistFindingSubjectSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminIdentityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.DispatchEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ImportEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();

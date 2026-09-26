@@ -58,8 +58,11 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task Scoring_is_weighted_complete_and_never_by_the_author_and_trends_aggregate()
 		{
-			var rubric = await Rubric();
+			// The draw is ordered by a hash of the rubric id, a new GUID each run, so which records are sampled varies. A sample one
+			// larger than any author's record count always holds a second author to score; five of twelve was one author 1.5% of runs.
+			var rubric = await Rubric(size: _finalized.GroupBy(r => r.AuthorUserId).Max(g => g.Count()) + 1);
 			var sample = await _h.QualityService.SampleAsync(Dept, Admin, rubric.RmsQualityRubricId, DateTime.UtcNow.AddDays(-30));
+			sample.Select(r => r.AuthorUserId).Distinct().Should().HaveCount(2, "the author trend compares two authors");
 			var review = sample.First();
 			Func<Task> partial = () => _h.QualityService.ScoreAsync(Dept, Admin, review.RmsQualityReviewId, new List<RmsQualityFinding> { new RmsQualityFinding { Key = "times", Score = 100 } }, null, false);
 			await partial.Should().ThrowAsync<ArgumentException>();

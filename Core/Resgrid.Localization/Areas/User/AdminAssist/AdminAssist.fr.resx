@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Systèmes sources faisant autorité</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Choisir des documents</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Choisir des groupes</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Effacer la saison</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Un autre administrateur a modifié ce profil. Vos valeurs proposées restent affichées. Rechargez le profil actuel avant d’enregistrer à nouveau.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Procédures de continuité approuvées</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Jour</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Nombre approximatif de membres (facultatif)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Modèle de régulation</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Choisissez des documents en vigueur de ce département. Les documents expirés ne peuvent pas être référencés. L’enregistrement vérifie l’existence, mais pas l’approbation ni la pertinence.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Saisissez les identifiants numériques de documents existants pour les politiques approuvées de ce département. Les documents expirés ne peuvent pas être référencés. L’enregistrement vérifie l’existence, mais pas l’approbation ni la pertinence.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Choisissez des groupes de ce département. Cela n’accorde pas l’accès au groupe et ne modifie pas la portée de la régulation.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Saisissez les identifiants numériques de groupes existants de ce département. L’enregistrement ajoute une autre ligne facultative.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Langues de travail</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (n’est plus disponible)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Mois</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Participe à l’entraide</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Enregistrer le profil d’exploitation</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Profil d’exploitation enregistré.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Fin de saison (MM-DD, facultatif)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Si le département fonctionne de façon saisonnière, choisissez le mois et le jour de début et de fin de la saison. Sinon, laissez la saison vide. Une saison peut chevaucher le nouvel an.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Début de saison (MM-DD, facultatif)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organisation et opérations</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Langues et accessibilité</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Sites, politiques et systèmes</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Activité saisonnière</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Sites et groupes de zones de service</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Politiques de dotation en personnel approuvées</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Saisissez un libellé et appuyez sur Entrée</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Utilisez un libellé court de référence du système source. Ces libellés sont des déclarations ; l’enregistrement ne vérifie ni une connexion ni un import.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Vérifier les éléments de preuve actuels et les procédures locales</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} de plus</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Accès à la source actuel indisponible</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>La vérification met à jour les constats. L’attribution et les exceptions acceptées ne résolvent pas une vérification en échec. Une nouvelle vérification réussie la résout.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Poser une question à Admin Assist</value>

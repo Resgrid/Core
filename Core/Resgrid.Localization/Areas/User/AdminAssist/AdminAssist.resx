@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Authoritative source systems</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Choose documents</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Choose groups</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Clear season</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>Another administrator changed this profile. Your proposed values are still shown. Reload the current profile before saving again.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Approved continuity procedures</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Day</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Approximate member count (optional)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Dispatch model</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Choose current documents from this department. Expired documents cannot be referenced. Saving verifies existence, not approval or suitability.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Enter existing numeric document IDs for approved policies in this department. Expired documents cannot be referenced. Saving verifies existence, not approval or suitability.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Choose groups from this department. This does not grant group access or change dispatch scope.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Enter existing numeric group IDs from this department. Saving adds another optional row.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Working languages</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (no longer available)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Month</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Participates in mutual aid</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Save operating profile</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Operating profile saved.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Season ends (MM-DD, optional)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>If the department operates seasonally, choose the month and day the season starts and ends. Leave the season blank if it does not. A season can run across the new year.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Season starts (MM-DD, optional)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organization and operations</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Languages and accessibility</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Sites, policies and systems</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Seasonal operation</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Sites and service-area groups</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Approved staffing policies</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Type a label and press Enter</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Use a short source-system reference label. These labels are declarations; saving does not verify a connection or import.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Verify current evidence and local procedures</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} more</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Current source access unavailable</value>
   </data>
@@ -6495,11 +6543,14 @@
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Verification updates findings. Assignment and accepted exceptions do not resolve a failed check. A fresh passing check resolves it.</value>
   </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
+  </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Ask Admin Assist</value>
   </data>
   <data xml:space="preserve" name="Ui.explore">
-    <value>Explore Resgrid and add-ons</value>
+    <value>Explore Resgrid &amp; Addons</value>
   </data>
   <data xml:space="preserve" name="Ui.health">
     <value>Health checks</value>

@@ -1,48 +1,320 @@
 @model Resgrid.Model.AdminAssist.DepartmentOperatingProfile
+@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.Rendering
 @using Resgrid.Model.AdminAssist
+@using Resgrid.Web.Helpers
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aa
 @{
-	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 	ViewBag.Title = "Resgrid | " + aa["Ui.OperatingProfile"];
-}
-<div class="wrapper wrapper-content">
-	<h1>@aa["Ui.OperatingProfile"]</h1>
-	<p>@aa["Ui.ProfileHelp"]</p>
-	@if (ViewBag.ProfileErrorKey is string errorKey)
+	var groups = ViewBag.ProfileGroups as List<SelectListItem> ?? new List<SelectListItem>();
+	var documents = ViewBag.ProfileDocuments as List<SelectListItem> ?? new List<SelectListItem>();
+	var months = SeasonMonthDay.MonthNames(CultureInfo.CurrentUICulture);
+	var saved = TempData["OperatingProfileSaved"] is true;
+	var languages = new[] { "ar", "de", "el", "en", "es", "fr", "it", "pl", "sv", "uk" };
+	var accessibility = new[] { "captions", "screen-reader", "large-text", "plain-language" };
+	// Admin Assist links name a field with ?aa=. Fields bound with asp-for are highlighted by the field-help tag helper; the
+	// grouped and picker fields on this page are highlighted here the same way.
+	var linkedField = Context.Request.Query["aa"].ToString();
+	bool Linked(string field) => string.Equals(linkedField, field, StringComparison.Ordinal);
+	string Highlight(string field) => Linked(field) ? " admin-assist-field-highlight" : string.Empty;
+	string Capitalized(string text, CultureInfo culture) => string.IsNullOrEmpty(text) ? text : culture.TextInfo.ToUpper(text[0]) + text[1..];
+
+	async Task MonthDay(string prefix, string field, string label, (int Month, int Day) value)
 	{
-		<p role="alert" class="alert alert-danger">@aa[errorKey] <a asp-action="OperatingProfile">@aa["Profile.Reload"]</a></p>
+		var dayLabel = label + ", " + aa["Profile.Day"];
+		<div class="form-group@(Highlight(field))">
+			<label class="col-sm-4 control-label" for="@(prefix)Month">@label</label>
+			<div class="col-sm-8">
+				<div class="op-monthday">
+					<select id="@(prefix)Month" name="@(prefix)Month" class="form-control" data-part="month" autofocus="@(Linked(field) ? "autofocus" : null)">
+						<option value="">@aa["Profile.Month"]</option>
+						@for (var month = 1; month <= 12; month++)
+						{
+							<option value="@month.ToString("00", CultureInfo.InvariantCulture)" selected="@(value.Month == month)">@months[month - 1]</option>
+						}
+					</select>
+					<select id="@(prefix)Day" name="@(prefix)Day" class="form-control" data-part="day" aria-label="@dayLabel">
+						<option value="">@aa["Profile.Day"]</option>
+						@for (var day = 1; day <= 31; day++)
+						{
+							var impossible = value.Month > 0 && day > SeasonMonthDay.DaysIn(value.Month);
+							<option value="@day.ToString("00", CultureInfo.InvariantCulture)" selected="@(value.Day == day)" disabled="@impossible" hidden="@impossible">@day.ToString(CultureInfo.CurrentUICulture)</option>
+						}
+					</select>
+				</div>
+			</div>
+		</div>
 	}
-	<p>@aa["Profile.TimeZone"]: @ViewBag.DepartmentTimeZone <a asp-action="Settings">@aa["Ui.Configure"]</a></p>
-	<form method="post" asp-action="OperatingProfile">
-		<input type="hidden" asp-for="Revision" />
-		<div asp-validation-summary="All" class="text-danger" role="alert"></div>
-		<fieldset><legend>@aa["Ui.Packs"]</legend>
-		@foreach (var code in DepartmentOperatingProfile.ArchetypeCodes)
+
+	async Task ReferenceOptions(List<SelectListItem> items, List<string> selected)
+	{
+		var chosen = new HashSet<string>(selected ?? new List<string>(), StringComparer.Ordinal);
+		// A saved reference that is no longer offered (deleted or expired) stays visible so it can be removed.
+		foreach (var missing in chosen.Where(value => items.All(item => item.Value != value)))
 		{
-			<label class="checkbox-inline"><input type="checkbox" name="Archetypes" value="@code" checked="@Model.Archetypes.Contains(code)" /> @aa["Pack." + code]</label>
+			<option value="@missing" selected>@aa["Profile.MissingReference", "#" + missing]</option>
 		}
-		</fieldset>
-		<div class="form-group"><label asp-for="WorkforceMix">@aa["Profile.WorkforceMix"]</label><select asp-for="WorkforceMix" class="form-control">@foreach (var code in DepartmentOperatingProfile.WorkforceCodes) { <option value="@code">@aa["Profile." + code]</option> }</select></div>
-		<div class="form-group"><label asp-for="DeclaredMemberCount">@aa["Profile.DeclaredMemberCount"]</label><input asp-for="DeclaredMemberCount" min="0" max="1000000" class="form-control" /></div>
-		<div class="form-group"><label asp-for="DispatchModel">@aa["Profile.DispatchModel"]</label><select asp-for="DispatchModel" class="form-control">@foreach (var code in DepartmentOperatingProfile.DispatchCodes) { <option value="@code">@aa["Profile." + code]</option> }</select></div>
-		<div class="form-group"><label asp-for="OperatingHours">@aa["Profile.OperatingHours"]</label><select asp-for="OperatingHours" class="form-control">@foreach (var code in DepartmentOperatingProfile.HoursCodes) { <option value="@code">@aa["Profile." + code]</option> }</select></div>
-		<div class="form-group"><label asp-for="ExpectedEmailPollIntervalMinutes">@aa["ProfileField.ExpectedEmailPollIntervalMinutes"]</label><input asp-for="ExpectedEmailPollIntervalMinutes" min="1" max="10080" class="form-control" /><p>@aa["ProfileFieldHelp.ExpectedEmailPollIntervalMinutes"]</p></div>
-		<div class="form-group"><label asp-for="SeasonStartMonthDay">@aa["Profile.SeasonStartMonthDay"]</label><input asp-for="SeasonStartMonthDay" placeholder="MM-DD" maxlength="5" pattern="[0-9]{2}-[0-9]{2}" class="form-control" /></div>
-		<div class="form-group"><label asp-for="SeasonEndMonthDay">@aa["Profile.SeasonEndMonthDay"]</label><input asp-for="SeasonEndMonthDay" placeholder="MM-DD" maxlength="5" pattern="[0-9]{2}-[0-9]{2}" class="form-control" /></div>
-		<div class="form-group"><label asp-for="MutualAid">@aa["Profile.MutualAid"]</label><select asp-for="MutualAid" class="form-control"><option value="">@aa["Ui.Unknown"]</option><option value="true">@aa["Profile.Yes"]</option><option value="false">@aa["Profile.No"]</option></select></div>
-		<fieldset><legend>@aa["Profile.LanguageCodes"]</legend>
-		@foreach (var code in new[] { "ar", "de", "el", "en", "es", "fr", "it", "pl", "sv", "uk" }) { <label class="checkbox-inline"><input type="checkbox" name="LanguageCodes" value="@code" checked="@Model.LanguageCodes.Contains(code)" /> @System.Globalization.CultureInfo.GetCultureInfo(code).NativeName</label> }
-		</fieldset>
-		<fieldset><legend>@aa["Profile.AccessibilityNeeds"]</legend>
-		@foreach (var code in new[] { "captions", "screen-reader", "large-text", "plain-language" }) { <label class="checkbox-inline"><input type="checkbox" name="AccessibilityNeeds" value="@code" checked="@Model.AccessibilityNeeds.Contains(code)" /> @aa["Profile." + code]</label> }
-		</fieldset>
-		@foreach (var references in new Dictionary<string, List<string>> { ["AuthoritativeSystemReferences"] = Model.AuthoritativeSystemReferences, ["SiteGroupReferences"] = Model.SiteGroupReferences, ["StaffingPolicyReferences"] = Model.StaffingPolicyReferences, ["QualificationPolicyReferences"] = Model.QualificationPolicyReferences, ["ContinuityProcedureReferences"] = Model.ContinuityProcedureReferences })
+		foreach (var group in items.GroupBy(item => item.Group?.Name))
 		{
-			<fieldset><legend>@aa["Profile." + references.Key]</legend><p>@aa[references.Key == "AuthoritativeSystemReferences" ? "Profile.SystemReferenceHelp" : references.Key == "SiteGroupReferences" ? "Profile.GroupReferenceHelp" : "Profile.DocumentReferenceHelp"]</p>
-			@for (var i = 0; i < Math.Min(25, references.Value.Count + 1); i++) { <label for="@(references.Key + i)">@aa["Profile.Reference"] @(i + 1)</label><input class="form-control" id="@(references.Key + i)" name="@(references.Key + "[" + i + "]")" value="@(i < references.Value.Count ? references.Value[i] : "")" maxlength="128" pattern="[A-Za-z0-9._\-]+" /> }
-			</fieldset>
+			if (group.Key == null)
+			{
+				foreach (var item in group) { <option value="@item.Value" selected="@chosen.Contains(item.Value)">@item.Text</option> }
+			}
+			else
+			{
+				<optgroup label="@group.Key">
+					@foreach (var item in group) { <option value="@item.Value" selected="@chosen.Contains(item.Value)">@item.Text</option> }
+				</optgroup>
+			}
 		}
-		<button type="submit" class="btn btn-primary">@aa["Profile.Save"]</button>
-		<a asp-controller="Help" asp-action="SetupReport">@aa["Ui.report"]</a>
-	</form>
+	}
+
+	async Task DocumentPicker(string field, string label, List<string> selected)
+	{
+		<div class="form-group@(Highlight(field))">
+			<label class="col-sm-4 control-label" for="@field">@label</label>
+			<div class="col-sm-8">
+				<select id="@field" name="@field" multiple class="form-control op-picker" data-placeholder="@aa["Profile.ChooseDocuments"]" autofocus="@(Linked(field) ? "autofocus" : null)">
+					@{ await ReferenceOptions(documents, selected); }
+				</select>
+			</div>
+		</div>
+	}
+}
+
+@section Styles
+{
+	<style>
+		.op-profile .op-intro { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 20px; padding: 14px 18px; background: #fff; border-left: 3px solid #228BCB; font-size: 14px; }
+		.op-profile .op-intro .fa { color: #228BCB; font-size: 18px; margin-top: 1px; }
+		.op-profile .ibox-content > .text-muted:first-child { margin-bottom: 16px; }
+		.op-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+		.op-choices--compact { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+		.op-choice { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 12px; border: 1px solid #e7eaec; border-radius: 4px; background: #fff; font-weight: normal; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+		.op-choice:hover { border-color: #228BCB; }
+		.op-choice input { flex: none; width: 16px; height: 16px; margin: 0; accent-color: #228BCB; cursor: pointer; }
+		.op-choice:has(input:checked) { border-color: #228BCB; background: #f1f8fd; color: #1a6a9c; }
+		.op-choice:has(input:focus-visible) { outline: 2px solid #228BCB; outline-offset: 2px; }
+		.op-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+		.op-fieldset legend { margin-bottom: 4px; border: 0; font-size: 13px; font-weight: 600; color: inherit; }
+		.op-fieldset + .hr-line-dashed { margin: 20px 0; }
+		.op-monthday { display: flex; gap: 8px; max-width: 380px; }
+		.op-monthday select[data-part=month] { flex: 3 1 0; min-width: 0; }
+		.op-monthday select[data-part=day] { flex: 2 1 0; min-width: 0; }
+		.op-number { max-width: 200px; }
+		.op-profile .select2-container--default .select2-selection--multiple { min-height: 34px; border-color: #e5e6e7; border-radius: 1px; }
+		.op-profile .select2-container--default.select2-container--focus .select2-selection--multiple { border-color: #228BCB; }
+		/* Not sticky: the layout's overflow-x: hidden wrapper disables position: sticky. The header carries a second Save. */
+		.op-actions { display: flex; justify-content: flex-end; gap: 8px; margin: 0 0 24px; padding: 14px 20px; background: #fff; border: 1px solid #e7eaec; }
+		.op-profile-heading .title-action .btn + .btn { margin-left: 6px; }
+		@@media (max-width: 767px) {
+			.op-monthday { max-width: none; }
+			.op-actions { justify-content: stretch; }
+			.op-actions > * { flex: 1 1 0; }
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading op-profile-heading">
+	<div class="col-sm-8">
+		<h2>@aa["Ui.OperatingProfile"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["DepartmentSettings"]</a></li>
+			<li class="active"><strong>@aa["Ui.OperatingProfile"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="title-action">
+			@if (ViewBag.AdminAssistAvailable == true)
+			{
+				<a class="btn btn-white" asp-controller="AdminAssist" asp-action="SetupReport" asp-route-area="User"><i class="fa fa-list-alt" aria-hidden="true"></i> @aa["Ui.report"]</a>
+			}
+			<button type="submit" form="operating-profile-form" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @aa["Profile.Save"]</button>
+		</div>
+	</div>
 </div>
+
+<div class="row">
+	<div class="col-lg-9">
+		<div class="wrapper wrapper-content op-profile">
+			@if (saved)
+			{
+				<div class="alert alert-success" role="status"><i class="fa fa-check-circle" aria-hidden="true"></i> @aa["Profile.Saved"]</div>
+			}
+			@if (ViewBag.ProfileErrorKey is string errorKey)
+			{
+				<div class="alert alert-danger" role="alert">@aa[errorKey] <a class="alert-link" asp-controller="Department" asp-action="OperatingProfile" asp-route-area="User">@aa["Profile.Reload"]</a></div>
+			}
+			@if (!ViewData.ModelState.IsValid)
+			{
+				<div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+			}
+
+			<p class="op-intro"><i class="fa fa-info-circle" aria-hidden="true"></i> <span>@aa["Ui.ProfileHelp"]</span></p>
+
+			@* No data-val attributes: jQuery unobtrusive validation would switch off the browser's own checks (number ranges, the
+			   season picks) and has no message containers here. The browser's localized validation handles them; the server
+			   validates again. *@
+			<form id="operating-profile-form" method="post" asp-controller="Department" asp-action="OperatingProfile" asp-route-area="User" class="form-horizontal">
+				<input type="hidden" name="Revision" value="@Model.Revision.ToString(CultureInfo.InvariantCulture)" />
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@aa["Ui.Packs"]</h5></div>
+					<div class="ibox-content">
+						<fieldset class="op-fieldset@(Highlight("Archetypes"))">
+							<legend class="sr-only">@aa["ProfileField.Archetypes"]</legend>
+							<p class="text-muted">@aa["ProfileFieldHelp.Archetypes"]</p>
+							<div class="op-choices">
+								@foreach (var code in DepartmentOperatingProfile.ArchetypeCodes)
+								{
+									<label class="op-choice"><input type="checkbox" name="Archetypes" value="@code" checked="@Model.Archetypes.Contains(code)" autofocus="@(Linked("Archetypes") && code == DepartmentOperatingProfile.ArchetypeCodes[0] ? "autofocus" : null)" /> <span>@aa["Pack." + code]</span></label>
+								}
+							</div>
+						</fieldset>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@aa["Profile.Section.Operations"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-4 control-label" asp-for="WorkforceMix">@aa["Profile.WorkforceMix"]</label>
+							<div class="col-sm-8">
+								<select asp-for="WorkforceMix" class="form-control">
+									@foreach (var code in DepartmentOperatingProfile.WorkforceCodes) { <option value="@code">@aa["Profile." + code]</option> }
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label" asp-for="DeclaredMemberCount">@aa["Profile.DeclaredMemberCount"]</label>
+							<div class="col-sm-8">
+								<input asp-for="DeclaredMemberCount" type="number" min="0" max="1000000" step="1" inputmode="numeric" data-val="false" class="form-control op-number" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label" asp-for="DispatchModel">@aa["Profile.DispatchModel"]</label>
+							<div class="col-sm-8">
+								<select asp-for="DispatchModel" class="form-control">
+									@foreach (var code in DepartmentOperatingProfile.DispatchCodes) { <option value="@code">@aa["Profile." + code]</option> }
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label" asp-for="OperatingHours">@aa["Profile.OperatingHours"]</label>
+							<div class="col-sm-8">
+								<select asp-for="OperatingHours" class="form-control">
+									@foreach (var code in DepartmentOperatingProfile.HoursCodes) { <option value="@code">@aa["Profile." + code]</option> }
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label" asp-for="MutualAid">@aa["Profile.MutualAid"]</label>
+							<div class="col-sm-8">
+								<select asp-for="MutualAid" class="form-control">
+									<option value="">@aa["Ui.Unknown"]</option>
+									<option value="true">@aa["Profile.Yes"]</option>
+									<option value="false">@aa["Profile.No"]</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label" asp-for="ExpectedEmailPollIntervalMinutes">@aa["ProfileField.ExpectedEmailPollIntervalMinutes"]</label>
+							<div class="col-sm-8">
+								<input asp-for="ExpectedEmailPollIntervalMinutes" type="number" min="1" max="10080" step="1" inputmode="numeric" data-val="false" class="form-control op-number" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">@aa["Profile.TimeZone"]</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">@(ViewBag.DepartmentTimeZone ?? "-") &nbsp;<a asp-controller="Department" asp-action="Settings" asp-route-area="User"><i class="fa fa-external-link" aria-hidden="true"></i> @aa["Ui.Configure"]</a></p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@aa["Profile.Section.Season"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@aa["Profile.SeasonHelp"]</p>
+						@{ await MonthDay("SeasonStart", "SeasonStartMonthDay", aa["ProfileField.SeasonStartMonthDay"], SeasonMonthDay.Split(Model.SeasonStartMonthDay)); }
+						@{ await MonthDay("SeasonEnd", "SeasonEndMonthDay", aa["ProfileField.SeasonEndMonthDay"], SeasonMonthDay.Split(Model.SeasonEndMonthDay)); }
+						<div class="form-group m-b-none">
+							<div class="col-sm-8 col-sm-offset-4">
+								<button type="button" class="btn btn-white btn-xs op-clear-season"><i class="fa fa-eraser" aria-hidden="true"></i> @aa["Profile.ClearSeason"]</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@aa["Profile.Section.People"]</h5></div>
+					<div class="ibox-content">
+						<fieldset class="op-fieldset@(Highlight("LanguageCodes"))">
+							<legend>@aa["Profile.LanguageCodes"]</legend>
+							<p class="text-muted">@aa["ProfileFieldHelp.LanguageCodes"]</p>
+							<div class="op-choices op-choices--compact">
+								@foreach (var code in languages)
+								{
+									var culture = CultureInfo.GetCultureInfo(code);
+									<label class="op-choice"><input type="checkbox" name="LanguageCodes" value="@code" checked="@Model.LanguageCodes.Contains(code)" autofocus="@(Linked("LanguageCodes") && code == languages[0] ? "autofocus" : null)" /> <span lang="@code">@Capitalized(culture.NativeName, culture)</span></label>
+								}
+							</div>
+						</fieldset>
+						<div class="hr-line-dashed"></div>
+						<fieldset class="op-fieldset@(Highlight("AccessibilityNeeds"))">
+							<legend>@aa["Profile.AccessibilityNeeds"]</legend>
+							<p class="text-muted">@aa["ProfileFieldHelp.AccessibilityNeeds"]</p>
+							<div class="op-choices op-choices--compact">
+								@foreach (var code in accessibility)
+								{
+									<label class="op-choice"><input type="checkbox" name="AccessibilityNeeds" value="@code" checked="@Model.AccessibilityNeeds.Contains(code)" autofocus="@(Linked("AccessibilityNeeds") && code == accessibility[0] ? "autofocus" : null)" /> <span>@aa["Profile." + code]</span></label>
+								}
+							</div>
+						</fieldset>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@aa["Profile.Section.References"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group@(Highlight("SiteGroupReferences"))">
+							<label class="col-sm-4 control-label" for="SiteGroupReferences">@aa["Profile.SiteGroupReferences"]</label>
+							<div class="col-sm-8">
+								<select id="SiteGroupReferences" name="SiteGroupReferences" multiple class="form-control op-picker" data-placeholder="@aa["Profile.ChooseGroups"]" autofocus="@(Linked("SiteGroupReferences") ? "autofocus" : null)">
+									@{ await ReferenceOptions(groups, Model.SiteGroupReferences); }
+								</select>
+								<span class="help-block">@aa["Profile.GroupPickerHelp"]</span>
+							</div>
+						</div>
+						<div class="hr-line-dashed"></div>
+						<p class="text-muted">@aa["Profile.DocumentPickerHelp"]</p>
+						@{ await DocumentPicker("StaffingPolicyReferences", aa["Profile.StaffingPolicyReferences"], Model.StaffingPolicyReferences); }
+						@{ await DocumentPicker("QualificationPolicyReferences", aa["Profile.QualificationPolicyReferences"], Model.QualificationPolicyReferences); }
+						@{ await DocumentPicker("ContinuityProcedureReferences", aa["Profile.ContinuityProcedureReferences"], Model.ContinuityProcedureReferences); }
+						<div class="hr-line-dashed"></div>
+						<div class="form-group m-b-none@(Highlight("AuthoritativeSystemReferences"))">
+							<label class="col-sm-4 control-label" for="AuthoritativeSystemReferences">@aa["Profile.AuthoritativeSystemReferences"]</label>
+							<div class="col-sm-8">
+								<select id="AuthoritativeSystemReferences" name="AuthoritativeSystemReferences" multiple class="form-control op-tags" data-placeholder="@aa["Profile.SystemPlaceholder"]" autofocus="@(Linked("AuthoritativeSystemReferences") ? "autofocus" : null)">
+									@foreach (var value in Model.AuthoritativeSystemReferences ?? new List<string>()) { <option value="@value" selected>@value</option> }
+								</select>
+								<span class="help-block">@aa["Profile.SystemReferenceHelp"]</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="op-actions">
+					<a class="btn btn-white" asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+					<button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @aa["Profile.Save"]</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/department/resgrid.department.operatingprofile.js" asp-append-version="true"></script>
+}

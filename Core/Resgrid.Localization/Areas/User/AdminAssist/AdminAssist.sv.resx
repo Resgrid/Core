@@ -3921,11 +3921,23 @@
   <data xml:space="preserve" name="Profile.AuthoritativeSystemReferences">
     <value>Auktoritativa källsystem</value>
   </data>
+  <data xml:space="preserve" name="Profile.ChooseDocuments">
+    <value>Välj dokument</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ChooseGroups">
+    <value>Välj grupper</value>
+  </data>
+  <data xml:space="preserve" name="Profile.ClearSeason">
+    <value>Rensa säsong</value>
+  </data>
   <data xml:space="preserve" name="Profile.Conflict">
     <value>En annan administratör har ändrat den här profilen. Dina föreslagna värden visas fortfarande. Läs in den aktuella profilen igen innan du sparar på nytt.</value>
   </data>
   <data xml:space="preserve" name="Profile.ContinuityProcedureReferences">
     <value>Godkända kontinuitetsrutiner</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Day">
+    <value>Dag</value>
   </data>
   <data xml:space="preserve" name="Profile.DeclaredMemberCount">
     <value>Ungefärligt antal medlemmar (valfritt)</value>
@@ -3933,8 +3945,14 @@
   <data xml:space="preserve" name="Profile.DispatchModel">
     <value>Utlarmningsmodell</value>
   </data>
+  <data xml:space="preserve" name="Profile.DocumentPickerHelp">
+    <value>Välj aktuella dokument i den här avdelningen. Utgångna dokument kan inte refereras. Att spara verifierar att dokumentet finns, inte att det är godkänt eller lämpligt.</value>
+  </data>
   <data xml:space="preserve" name="Profile.DocumentReferenceHelp">
     <value>Ange befintliga numeriska dokument-id för godkända policyer i den här avdelningen. Utgångna dokument kan inte refereras. Att spara verifierar att dokumentet finns, inte att det är godkänt eller lämpligt.</value>
+  </data>
+  <data xml:space="preserve" name="Profile.GroupPickerHelp">
+    <value>Välj grupper i den här avdelningen. Det ger inte gruppåtkomst eller ändrar utlarmningens omfattning.</value>
   </data>
   <data xml:space="preserve" name="Profile.GroupReferenceHelp">
     <value>Ange befintliga numeriska grupp-id från den här avdelningen. Att spara lägger till ytterligare en valfri rad.</value>
@@ -3944,6 +3962,12 @@
   </data>
   <data xml:space="preserve" name="Profile.LanguageCodes">
     <value>Arbetsspråk</value>
+  </data>
+  <data xml:space="preserve" name="Profile.MissingReference">
+    <value>{0} (inte längre tillgänglig)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Month">
+    <value>Månad</value>
   </data>
   <data xml:space="preserve" name="Profile.MutualAid">
     <value>Deltar i ömsesidig hjälp</value>
@@ -3969,17 +3993,38 @@
   <data xml:space="preserve" name="Profile.Save">
     <value>Spara driftprofil</value>
   </data>
+  <data xml:space="preserve" name="Profile.Saved">
+    <value>Driftprofilen har sparats.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonEndMonthDay">
     <value>Säsongen slutar (MM-DD, valfritt)</value>
   </data>
+  <data xml:space="preserve" name="Profile.SeasonHelp">
+    <value>Om avdelningen arbetar säsongsvis väljer du månad och dag då säsongen börjar och slutar. Annars lämnar du säsongen tom. En säsong kan sträcka sig över årsskiftet.</value>
+  </data>
   <data xml:space="preserve" name="Profile.SeasonStartMonthDay">
     <value>Säsongen börjar (MM-DD, valfritt)</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Operations">
+    <value>Organisation och verksamhet</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.People">
+    <value>Språk och tillgänglighet</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.References">
+    <value>Platser, policyer och system</value>
+  </data>
+  <data xml:space="preserve" name="Profile.Section.Season">
+    <value>Säsongsverksamhet</value>
   </data>
   <data xml:space="preserve" name="Profile.SiteGroupReferences">
     <value>Platser och grupper för serviceområden</value>
   </data>
   <data xml:space="preserve" name="Profile.StaffingPolicyReferences">
     <value>Godkända bemanningspolicyer</value>
+  </data>
+  <data xml:space="preserve" name="Profile.SystemPlaceholder">
+    <value>Skriv en etikett och tryck på Retur</value>
   </data>
   <data xml:space="preserve" name="Profile.SystemReferenceHelp">
     <value>Använd en kort referensetikett för källsystemet. Etiketterna är deklarationer – att spara verifierar inte en anslutning eller import.</value>
@@ -6324,6 +6369,9 @@
   <data xml:space="preserve" name="Ui.SetupTask.Verify">
     <value>Verifiera aktuellt underlag och lokala rutiner</value>
   </data>
+  <data xml:space="preserve" name="Ui.ShowMoreSubjects">
+    <value>+{0} till</value>
+  </data>
   <data xml:space="preserve" name="Ui.SourceAccessUnavailable">
     <value>Aktuell källåtkomst inte tillgänglig</value>
   </data>
@@ -6494,6 +6542,9 @@
   </data>
   <data xml:space="preserve" name="Ui.WorklistHelp">
     <value>Verifiering uppdaterar fynd. Tilldelning och godkända undantag löser inte en misslyckad kontroll. En ny godkänd kontroll löser den.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.ai">
+    <value>Admin AI</value>
   </data>
   <data xml:space="preserve" name="Ui.ask">
     <value>Fråga Admin Assist</value>

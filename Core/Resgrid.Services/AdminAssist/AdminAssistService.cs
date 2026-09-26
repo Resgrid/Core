@@ -10,8 +10,36 @@ using Resgrid.Model.AdminAssist;
 namespace Resgrid.Services.AdminAssist
 {
 	public sealed class AdminAssistService(IAdminAssistAccessService access, IAdminAssistCatalog catalog,
-		IConfigurationSnapshotProvider snapshots, IAdminAssistRepository repository, TimeProvider clock) : IAdminAssistService
+		IConfigurationSnapshotProvider snapshots, IAdminAssistRepository repository, TimeProvider clock,
+		IEnumerable<IAdminAssistFindingSubjectSource> subjectSources = null) : IAdminAssistService
 	{
+		public async Task<IReadOnlyDictionary<string, IReadOnlyList<FindingSubject>>> GetFindingSubjectsAsync(AdminAssistActor actor, bool setup,
+			ConfigurationReport report, CancellationToken ct = default)
+		{
+			await RequireAccessAsync(actor, setup, ct);
+			var subjects = new Dictionary<string, IReadOnlyList<FindingSubject>>(StringComparer.Ordinal);
+			// The overview's evidence deadline has ended by now, so names get one short bound of their own: a stalled lookup
+			// leaves the rest of the findings unnamed instead of holding up the overview or print report.
+			using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+			timeout.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(AdminAssistConfig.EvidenceSourceTimeoutSeconds, 1, 60)));
+			foreach (var finding in report?.Findings?.Where(f => f.Result == RuleResult.Fail) ?? Enumerable.Empty<ConfigurationFinding>())
+			{
+				var source = subjectSources?.FirstOrDefault(s => s.RuleIds.Contains(finding.RuleId, StringComparer.Ordinal));
+				if (source == null || subjects.ContainsKey(finding.RuleId)) continue;
+				try
+				{
+					var names = await source.ReadAsync(actor, finding.RuleId, timeout.Token).WaitAsync(timeout.Token);
+					if (names?.Count > 0) subjects[finding.RuleId] = names;
+				}
+				catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+				catch (OperationCanceledException) when (timeout.IsCancellationRequested) { break; }
+				// Names are an aid to the finding, not evidence: when they cannot be read the finding still shows without them.
+				catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex, "Admin Assist finding subjects unavailable for " + finding.RuleId); }
+			}
+			await RequireAccessAsync(actor, setup, ct);
+			return subjects;
+		}
+
 		public async Task<AdminAssistOverview> GetOverviewAsync(AdminAssistActor actor, bool setup, CancellationToken ct = default)
 		{
 			using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);

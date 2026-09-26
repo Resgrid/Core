@@ -13,7 +13,7 @@ import SecurityPreview from './SecurityPreview';
 import SetupWizard from './SetupWizard';
 import AreaSetupChoice from './AreaSetupChoice';
 import { ModuleCard, ModuleReadiness, isKey, tiers, type Module } from './ModuleViews';
-import { Chip, FindingGroups, FindingRow, Ibox, MetricRow, ResultChip, SeverityChip, byPriority, format, isSuggestion, type Finding } from './SetupVisuals';
+import { Chip, FindingGroups, FindingRow, FindingSubjectsContext, Ibox, MetricRow, ResultChip, SeverityChip, byPriority, format, isSuggestion, type Finding, type FindingSubject } from './SetupVisuals';
 import AskPanel from './AskPanel';
 import PlansPanel, { type PlanSource } from './PlansPanel';
 import TroubleshootPanel from './TroubleshootPanel';
@@ -46,12 +46,20 @@ type Overview = {
   report: { verified: number; required: number; unknown: number; failed: number; hasCriticalUncertainty: boolean; selectedAreas: string[]; uncheckedAreaIds: string[]; findings: Finding[]; snapshot: { asOfUtc: string; consistent: boolean; revision: string; evidence: Record<string, { state: string; code: string | null }> } };
   access: { capabilityId: string; state: string; reasonCodes: string[]; canConfigure: boolean; subscriptionDestination: string | null; destination: string | null }[];
   capabilitySetup?: { capabilityId: string; state: string; opportunityKey: string; guidanceKey: string; ruleIds: string[] }[];
+  findingSubjects?: Record<string, FindingSubject[]> | null;
 };
 type History = { id: string; occurredOnUtc: string; action: string; subjectId: string; beforeCode: string; afterCode: string };
 type WorkItem = { adminAssistFindingId: string; ruleId: string; result: number; reviewStatus: number; ownerId: string | null; reviewOn: string | null; exceptionUntil: string | null; content: string | null; revision: number; lastObservedOn: string };
 type SearchHit = { id: string; titleKey: string; excerpt: string; sourcePath: string; anchor: string; packVersion: string; locale: string };
 type Followup = { digestsAvailable: boolean; preferences: { revision: number; digestEnabled: boolean; quietStartHour: number; quietEndHour: number; lastAttemptOutcome: string | null }; worker: { lastEvaluatedOn: string | null } };
 const endpoint = 'api/v4/AdminAssist/';
+// Admin Assist tabs: Setup Wizard, Setup Report and Explore, then Admin AI, which holds the workspace tools. The page runs in
+// setup mode until Admin.Assist and Ai.AdminAssist are both on; Admin AI is shown but disabled until then.
+const aiTabIds = ['ask', 'overview', 'health', 'worklist', 'reference', 'history', 'plans', 'troubleshoot'];
+const tabsFor = (catalog: Catalog, setup: boolean) => ({
+  primary: [...(catalog.canSetup ? ['wizard'] : []), 'report', 'explore'],
+  ai: setup ? [] : aiTabIds.filter(id => id === 'ask' ? catalog.askAvailable : id === 'plans' ? catalog.plansAvailable : id === 'troubleshoot' ? catalog.troubleshootingAvailable : true),
+});
 // No external URLs, scheme-relative links or redirects from catalog data.
 const safeLocalLink = (url: string | null | undefined) => url && /^\/User\/[A-Za-z0-9]+\/[A-Za-z0-9]+(?:\?aa=[A-Za-z0-9._-]+)?$/.test(url) ? url : undefined;
 
@@ -110,9 +118,13 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     window.addEventListener('resgrid:adp-reveal-changed', refreshProtection);
     return () => window.removeEventListener('resgrid:adp-reveal-changed', refreshProtection);
   }, [reload]);
-  useEffect(() => { if (catalog && !catalog.plansAvailable && tab === 'plans') setTab('overview'); }, [catalog, tab]);
-  useEffect(() => { if (catalog && !catalog.troubleshootingAvailable && tab === 'troubleshoot') setTab('overview'); }, [catalog, tab]);
-  useEffect(() => { if (catalog && !catalog.askAvailable && tab === 'ask') setTab('overview'); }, [catalog, tab]);
+  // A tab that is not available here (the wizard without setup rights, an Admin AI tool that is off, or Admin AI itself before
+  // it launches) opens the nearest one that is.
+  useEffect(() => {
+    if (!catalog) return;
+    const { primary, ai } = tabsFor(catalog, setup);
+    if (!primary.includes(tab) && !ai.includes(tab)) setTab(aiTabIds.includes(tab) && ai.length > 0 ? ai[0] : primary[0]);
+  }, [catalog, setup, tab]);
 
   async function save(operation: string, targetId: string | null = null, choice: string | null = null, reasonCode: string | null = null, revisitOnUtc: string | null = null) {
     if (!overview || !catalog || busy) return;
@@ -208,7 +220,8 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   const operatingPacks = overview.report.snapshot.evidence?.operatingPackIds;
   const selectedPackIds = operatingPacks?.state === 'Known' ? (operatingPacks.code ?? '').split(',').filter(Boolean) : [];
   const suggestedAreas = new Set(catalog.packs.filter(pack => selectedPackIds.includes(pack.id)).flatMap(pack => pack.areaIds));
-  const tabs = setup ? ['wizard', 'report', 'explore'] : ['overview', ...(catalog.canSetup ? ['wizard'] : []), 'report', 'explore', 'health', 'worklist', 'reference', 'history', ...(catalog.plansAvailable ? ['plans'] : []), ...(catalog.troubleshootingAvailable ? ['troubleshoot'] : []), ...(catalog.askAvailable ? ['ask'] : [])];
+  const { primary: tabs, ai: aiTabs } = tabsFor(catalog, setup);
+  const inAi = aiTabs.includes(tab);
   const selected = (finding: Finding) => finding.areaId === 'security' || finding.scopeIndependent || report.selectedAreas.includes(finding.areaId);
   const scoped = report.findings.filter(selected);
   const next = scoped.filter(f => f.result === 'Fail' && !isSuggestion(f)).sort(byPriority).slice(0, 5);
@@ -222,6 +235,9 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   const reviewState: 'current' | 'changed' | 'none' = !workspace.reviewEvidence ? 'none'
     : workspace.reviewEvidence.catalogVersion !== catalog.version || workspace.reviewEvidence.snapshotRevision !== report.snapshot.revision || (workspace.reviewEvidence.scopeRevision ?? 0) !== (workspace.scopeRevision ?? 0) ? 'changed' : 'current';
   const showTab = (id: string) => { setTab(id); if (id === 'history') void loadHistory(true); if (id === 'worklist') void loadWorklist(); };
+  const tabLink = (id: string) => <li key={id} className={tab === id ? 'active' : undefined}>
+    <a href={`#${id}`} role="button" aria-current={tab === id ? 'page' : undefined} aria-disabled={busy || undefined} onClick={event => { event.preventDefault(); if (!busy) showTab(id); }}>{ui(id)}</a>
+  </li>;
   const explore = (search = '', addons = false) => { setQuery(search); setAddonsOnly(addons); setTab('explore'); };
   const planFrom = catalog.plansAvailable ? (finding: Finding) => { setPlanSource({ source: 'finding', sourceId: finding.ruleId, goal: t(finding.titleKey) }); setTab('plans'); } : undefined;
   const link = (url: string) => localLink(url);
@@ -277,10 +293,14 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   </Ibox>;
   const healthFindings = report.findings.filter(f => (!healthArea || f.areaId === healthArea) && (!healthResult || f.result === healthResult));
 
-  return <section className="rgaa" dir={catalog.rightToLeft ? 'rtl' : 'ltr'} aria-busy={busy}>
-    <nav aria-label={ui('Title')}><ul className="nav nav-tabs rgaa-tabs">{tabs.map(id => <li key={id} className={tab === id ? 'active' : undefined}>
-      <a href={`#${id}`} role="button" aria-current={tab === id ? 'page' : undefined} aria-disabled={busy || undefined} onClick={event => { event.preventDefault(); if (!busy) showTab(id); }}>{ui(id)}</a>
-    </li>)}</ul></nav>
+  return <FindingSubjectsContext.Provider value={overview.findingSubjects ?? {}}><section className="rgaa" dir={catalog.rightToLeft ? 'rtl' : 'ltr'} aria-busy={busy}>
+    <nav aria-label={ui('Title')}><ul className="nav nav-tabs rgaa-tabs">{tabs.map(tabLink)}
+      {aiTabs.length > 0
+        ? <li className={inAi ? 'active' : undefined}><a href="#ai" role="button" aria-current={inAi ? 'true' : undefined} aria-disabled={busy || undefined}
+          onClick={event => { event.preventDefault(); if (!busy && !inAi) showTab(aiTabs[0]); }}>{ui('ai')}</a></li>
+        : <li className="disabled"><a role="button" aria-disabled="true">{ui('ai')}</a></li>}
+    </ul></nav>
+    {inAi && <nav aria-label={ui('ai')}><ul className="nav nav-pills rgaa-subtabs">{aiTabs.map(tabLink)}</ul></nav>}
     <h2 className="sr-only">{ui(tab)}</h2>
     <div className="rgaa-toolbar">
       {busy && <span className="rgaa-muted rgaa-small" role="status"><i className="fa fa-spinner fa-spin" aria-hidden="true" /> {ui('Loading')}</span>}
@@ -398,5 +418,5 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
       <tbody>{history.map(row => <tr key={row.id}><td>{new Date(row.occurredOnUtc).toLocaleString()}</td><td>{row.action}</td><td>{row.subjectId}</td><td><code>{row.beforeCode}</code></td><td><code>{row.afterCode}</code></td></tr>)}</tbody></table></div>
       {history.length === 0 && !busy && <p className="rgaa-muted">{ui('None')}</p>}
       {hasMore && history.length > 0 && <button type="button" className="btn btn-white btn-sm" disabled={busy} onClick={() => void loadHistory()}>{ui('More')}</button>}</Ibox>}
-  </section>;
+  </section></FindingSubjectsContext.Provider>;
 }

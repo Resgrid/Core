@@ -161,6 +161,49 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT * FROM {Tbl("SearchIndexStates")} WHERE {Col("IndexName")} = {P}IndexName ORDER BY {Col("DepartmentId")} ASC",
 				new { IndexName = indexName });
 		}
+
+		public async Task<bool> InsertIfMissingAsync(SearchIndexState state, CancellationToken cancellationToken = default)
+		{
+			if (state == null) throw new ArgumentNullException(nameof(state));
+			Utf8WriteGuard.Sanitize(state);
+
+			// The race is absorbed in-statement rather than caught: RunAsync logs every exception before rethrowing,
+			// so a caught unique violation would still reach Sentry. PostgreSQL resolves it with ON CONFLICT DO NOTHING;
+			// on SQL Server UPDLOCK, HOLDLOCK takes a key-range lock on the unique index so a second inserter waits for
+			// the first to commit and then sees its row, instead of both passing NOT EXISTS.
+			var columns = Cols("IndexName", "DepartmentId", "SchemaVersion", "ProtectedCatalogVersion", "PolicyEpoch", "Generation", "State",
+				"DocumentCount", "LastRebuiltOn", "LastIndexedModifiedOn", "RebuildRequestedOn", "CreatedOn", "ModifiedOn");
+			var values = $"{P}IndexName, {P}DepartmentId, {P}SchemaVersion, {P}ProtectedCatalogVersion, {P}PolicyEpoch, {P}Generation, {P}State, " +
+				$"{P}DocumentCount, {P}LastRebuiltOn, {P}LastIndexedModifiedOn, {P}RebuildRequestedOn, {P}CreatedOn, {P}ModifiedOn";
+			var sql = IsPostgres
+				? $"INSERT INTO {Tbl("SearchIndexStates")} ({columns}) VALUES ({values}) " +
+				  $"ON CONFLICT ({Cols("IndexName", "DepartmentId")}) DO NOTHING RETURNING {Col("SearchIndexStateId")}"
+				: $"INSERT INTO {Tbl("SearchIndexStates")} ({columns}) OUTPUT INSERTED.{Col("SearchIndexStateId")} SELECT {values} " +
+				  $"WHERE NOT EXISTS (SELECT 1 FROM {Tbl("SearchIndexStates")} WITH (UPDLOCK, HOLDLOCK) WHERE {Col("IndexName")} = {P}IndexName AND {Col("DepartmentId")} = {P}DepartmentId)";
+
+			DateTime? Timestamp(DateTime? value) => value.HasValue ? DatabaseTimestamp(value.Value) : (DateTime?)null;
+			var id = await ScalarAsync<int?>(sql, new
+			{
+				state.IndexName,
+				state.DepartmentId,
+				state.SchemaVersion,
+				state.ProtectedCatalogVersion,
+				state.PolicyEpoch,
+				state.Generation,
+				state.State,
+				state.DocumentCount,
+				LastRebuiltOn = Timestamp(state.LastRebuiltOn),
+				LastIndexedModifiedOn = Timestamp(state.LastIndexedModifiedOn),
+				RebuildRequestedOn = Timestamp(state.RebuildRequestedOn),
+				CreatedOn = DatabaseTimestamp(state.CreatedOn),
+				ModifiedOn = DatabaseTimestamp(state.ModifiedOn)
+			}, cancellationToken);
+			if (id == null)
+				return false;
+
+			state.SearchIndexStateId = id.Value;
+			return true;
+		}
 	}
 
 	/// <summary>The single-writer publish lease (plan R7 writer sequence step 2). One row per index name, compare-and-set.</summary>

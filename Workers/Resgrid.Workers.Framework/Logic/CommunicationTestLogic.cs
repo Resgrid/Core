@@ -30,7 +30,8 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
-				var communicationTestService = Bootstrapper.GetKernel().Resolve<ICommunicationTestService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var communicationTestService = scope.Resolve<ICommunicationTestService>();
 
 				// Both halves are idempotent — building no-ops once the run has results and each result
 				// is only ever sent once — so an at-least-once redelivery cannot double-send.

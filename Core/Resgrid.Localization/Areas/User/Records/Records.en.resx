@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>N/A</value></data>
   <data name="NoteBody" xml:space="preserve"><value>Note text</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>Note saved.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>The date is not valid. Check the year.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>Subject</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>Notice issued.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>Notice reference</value></data>

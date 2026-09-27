@@ -37,7 +37,8 @@ namespace Resgrid.Workers.Console.Tasks
 				//{
 				IUserProfileService _userProfileService = null;
 				ILogService _logsService = null;
-				var _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _shiftsService = scope.Resolve<IShiftsService>();
 
 				var logic = new ShiftNotifierLogic();
 
@@ -49,8 +50,8 @@ namespace Resgrid.Workers.Console.Tasks
 				{
 					_logger.LogInformation("ShiftNotifer::Shift days to Notify: " + days.Count);
 
-					_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-					_logsService = Bootstrapper.GetKernel().Resolve<ILogService>();
+					_userProfileService = scope.Resolve<IUserProfileService>();
+					_logsService = scope.Resolve<ILogService>();
 
 					foreach (var schedule in days)
 					{

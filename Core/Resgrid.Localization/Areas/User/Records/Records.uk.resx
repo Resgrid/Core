@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>Н/З</value></data>
   <data name="NoteBody" xml:space="preserve"><value>Текст нотатки</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>Нотатку збережено.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>Дата недійсна. Перевірте рік.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>Тема</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>Припис видано.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>Номер припису</value></data>

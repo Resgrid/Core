@@ -244,7 +244,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				model.Activity.OccurredOn = ParseUtc(occurredOn) ?? model.Activity.OccurredOn;
+				model.Activity.OccurredOn = ParseEnteredUtc(occurredOn) ?? model.Activity.OccurredOn;
 				await _crr.SaveAsync(DepartmentId, UserId, model.Activity, cancellationToken);
 				Notify("CrrSaved");
 				return RedirectToAction(nameof(Index));

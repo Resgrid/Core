@@ -344,6 +344,48 @@ namespace Resgrid.Providers.Cache
 			return 0;
 		}
 
+		public async Task<string> GetOrAddStringAsync(string cacheKey, string valueIfAbsent, TimeSpan slidingExpiration)
+		{
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected && valueIfAbsent != null)
+				{
+					IDatabase cache = _connection.GetDatabase();
+					var key = SetCacheKeyForEnv(cacheKey);
+
+					// GET-or-SET + PEXPIRE in a single server-side script so callers racing on a missing key
+					// all read back the one value that was stored, and a hit slides the TTL forward.
+					const string getOrAddScript =
+						"local current = redis.call('GET', KEYS[1])\n" +
+						"if current then\n" +
+						"  redis.call('PEXPIRE', KEYS[1], ARGV[2])\n" +
+						"  return current\n" +
+						"end\n" +
+						"redis.call('SET', KEYS[1], ARGV[1], 'PX', ARGV[2])\n" +
+						"return ARGV[1]";
+
+					var result = await cache.ScriptEvaluateAsync(
+						getOrAddScript,
+						new RedisKey[] { key },
+						new RedisValue[] { valueIfAbsent, (long)slidingExpiration.TotalMilliseconds });
+
+					return (string)result;
+				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (RedisConnectionException ex)
+			{
+				Logging.LogError(ex);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return null;
+		}
+
 		public bool IsConnected()
 		{
 			return _connection?.IsConnected ?? false;

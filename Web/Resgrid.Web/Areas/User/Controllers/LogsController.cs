@@ -381,6 +381,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitLookup = units.ToDictionary(u => u.UnitId, u => u.Name);
+			// After Records activation the list offers View only; DeleteWorkLog refuses anyway (RMS plan section 4.1).
+			var legacyReadOnly = await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId);
 
 			List<Log> logs;
 			if (String.IsNullOrWhiteSpace(year))
@@ -482,7 +484,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				logJson.SearchTerms = String.Join(" ", terms);
 
-				if (ClaimsAuthorizationHelper.CanDeleteLog() &&
+				if (!legacyReadOnly && ClaimsAuthorizationHelper.CanDeleteLog() &&
 				    (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || log.LoggedByUserId == UserId ||
 				     (log.StationGroupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(log.StationGroupId.Value))))
 					logJson.CanDelete = true;

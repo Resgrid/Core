@@ -26,6 +26,9 @@ namespace Resgrid.Workers.Framework.Logic
 
 			if (qi != null)
 			{
+				// Own scope per message: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+
 				switch ((CqrsEventTypes)qi.Type)
 				{
 					case CqrsEventTypes.None:
@@ -50,7 +53,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						else
 						{
-							var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
+							var pushService = scope.Resolve<IPushService>();
 							var resgriterResult = await pushService.Register(data);
 
 							if (!resgriterResult)
@@ -77,9 +80,19 @@ namespace Resgrid.Workers.Framework.Logic
 								pushUri.DeviceId = unitData.DeviceId;
 								pushUri.Uuid = unitData.Uuid;
 
-								var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
+								var pushService = scope.Resolve<IPushService>();
 
-								await pushService.UnRegisterUnit(pushUri);
+								// Clearing the legacy Azure registration is best-effort. When it threw here, the
+								// catch below skipped RegisterUnit, the Novu path that actually delivers unit pushes.
+								try
+								{
+									await pushService.UnRegisterUnit(pushUri);
+								}
+								catch (Exception ex)
+								{
+									Logging.LogException(ex, $"UnitPushRegistration: legacy unregister failed for unit {unitData.UnitId}, continuing with registration.");
+								}
+
 								var unitResult = await pushService.RegisterUnit(pushUri);
 
 								if (!unitResult)
@@ -99,14 +112,14 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (int.TryParse(qi.Data, out departmentId))
 						{
-							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-							//var departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-							var subscriptionService = Bootstrapper.GetKernel().Resolve<ISubscriptionsService>();
-							//var scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-							var departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-							var actionLogsService = Bootstrapper.GetKernel().Resolve<IActionLogsService>();
-							var customStatesService = Bootstrapper.GetKernel().Resolve<ICustomStateService>();
-							var usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
+							var userProfileService = scope.Resolve<IUserProfileService>();
+							//var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+							var subscriptionService = scope.Resolve<ISubscriptionsService>();
+							//var scheduledTasksService = scope.Resolve<IScheduledTasksService>();
+							var departmentService = scope.Resolve<IDepartmentsService>();
+							var actionLogsService = scope.Resolve<IActionLogsService>();
+							var customStatesService = scope.Resolve<ICustomStateService>();
+							var usersService = scope.Resolve<IUsersService>();
 
 							subscriptionService.ClearCacheForCurrentPayment(departmentId);
 							departmentService.InvalidateDepartmentUsersInCache(departmentId);
@@ -142,9 +155,9 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (newChatEvent != null)
 							{
-								var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-								var communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-								var usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
+								var userProfileService = scope.Resolve<IUserProfileService>();
+								var communicationService = scope.Resolve<ICommunicationService>();
+								var usersService = scope.Resolve<IUsersService>();
 
 
 								if (newChatEvent != null && newChatEvent.RecipientUserIds != null && newChatEvent.RecipientUserIds.Count > 0)
@@ -183,15 +196,15 @@ namespace Resgrid.Workers.Framework.Logic
 
 						if (troubleAlertEvent != null && troubleAlertEvent.DepartmentId.HasValue)
 						{
-							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-							var communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-							var usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
-							var departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-							var unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
-							var departmentGroupService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
-							var callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-							var departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-							var geoLocationProvider = Bootstrapper.GetKernel().Resolve<IGeoLocationProvider>();
+							var userProfileService = scope.Resolve<IUserProfileService>();
+							var communicationService = scope.Resolve<ICommunicationService>();
+							var usersService = scope.Resolve<IUsersService>();
+							var departmentService = scope.Resolve<IDepartmentsService>();
+							var unitsService = scope.Resolve<IUnitsService>();
+							var departmentGroupService = scope.Resolve<IDepartmentGroupsService>();
+							var callsService = scope.Resolve<ICallsService>();
+							var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+							var geoLocationProvider = scope.Resolve<IGeoLocationProvider>();
 
 							var admins = await departmentService.GetAllAdminsForDepartmentAsync(troubleAlertEvent.DepartmentId.Value);
 							var unit = await unitsService.GetUnitByIdAsync(troubleAlertEvent.UnitId);
@@ -258,9 +271,9 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							// Same row as the audit queue writes (actor, IP, user agent, subject, fallback message); the copy of its switch
 							// that used to live here had drifted from it.
-							var auditLogsRepository = Bootstrapper.GetKernel().Resolve<IAuditLogsRepository>();
-							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-							var auditService = Bootstrapper.GetKernel().Resolve<IAuditService>();
+							var auditLogsRepository = scope.Resolve<IAuditLogsRepository>();
+							var userProfileService = scope.Resolve<IUserProfileService>();
+							var auditService = scope.Resolve<IAuditService>();
 
 							var auditLog = await AuditQueueLogic.BuildAuditLogAsync(auditEvent, userProfileService, auditService);
 							await auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);

@@ -155,6 +155,14 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task The_list_json_offers_view_but_no_delete_after_activation()
+		{
+			var rows = (await _logs.GetLogsList("2025")).Should().BeOfType<JsonResult>().Which.Value.Should().BeAssignableTo<IEnumerable<LogForListJson>>().Which.ToList();
+			rows.Should().ContainSingle(r => r.LogId == 41);
+			rows.Should().OnlyContain(r => !r.CanDelete, "the list must not offer a Delete button that DeleteWorkLog refuses");
+		}
+
+		[Test]
 		public async Task Another_departments_log_never_renders_through_an_old_link()
 		{
 			(await _logs.View(99)).Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
@@ -210,6 +218,7 @@ namespace Resgrid.Tests.Rms
 			await _logs.DeleteWorkLog(41, CancellationToken.None);
 			_workLogs.Verify(w => w.DeleteLogAsync(41, It.IsAny<CancellationToken>()), Times.Once, "the guard is the cutover, not the controller");
 			((ViewLogsView)((ViewResult)await _logs.View(41)).Model).CanDelete.Should().BeTrue("before activation an administrator may still delete");
+			((IEnumerable<LogForListJson>)((JsonResult)await _logs.GetLogsList("2025")).Value).Single(r => r.LogId == 41).CanDelete.Should().BeTrue("before activation the list still offers delete");
 		}
 
 		#endregion

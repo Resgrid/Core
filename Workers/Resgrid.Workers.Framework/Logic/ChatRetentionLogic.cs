@@ -26,10 +26,12 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			try
 			{
-				var settingsRepository = Bootstrapper.GetKernel().Resolve<IChatDepartmentSettingRepository>();
-				var channelRepository = Bootstrapper.GetKernel().Resolve<IChatChannelRepository>();
-				var messageRepository = Bootstrapper.GetKernel().Resolve<IChatMessageRepository>();
-				var exportRepository = Bootstrapper.GetKernel().Resolve<IChatExportRepository>();
+				// Own scope per run: root-scope repositories would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var settingsRepository = scope.Resolve<IChatDepartmentSettingRepository>();
+				var channelRepository = scope.Resolve<IChatChannelRepository>();
+				var messageRepository = scope.Resolve<IChatMessageRepository>();
+				var exportRepository = scope.Resolve<IChatExportRepository>();
 
 				var runUtc = DateTime.UtcNow;
 				var totalDeleted = 0;

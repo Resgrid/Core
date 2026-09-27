@@ -125,7 +125,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				test.RmsHydrantId = id;
-				test.TestedOn = ParseUtc(testedOn) ?? DateTime.UtcNow;
+				test.TestedOn = ParseEnteredUtc(testedOn) ?? DateTime.UtcNow;
 				await _hydrants.RecordFlowTestAsync(DepartmentId, UserId, test, cancellationToken);
 				Notify("FlowTestRecorded");
 			}
@@ -141,7 +141,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				row.RmsHydrantId = id;
-				row.PerformedOn = ParseUtc(performedOn) ?? DateTime.UtcNow;
+				row.PerformedOn = ParseEnteredUtc(performedOn) ?? DateTime.UtcNow;
 				await _hydrants.RecordMaintenanceAsync(DepartmentId, UserId, row, cancellationToken);
 				Notify("MaintenanceRecorded");
 			}

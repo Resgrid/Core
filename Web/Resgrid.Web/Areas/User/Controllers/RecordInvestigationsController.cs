@@ -173,7 +173,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				if (string.IsNullOrWhiteSpace(noteId)) await _investigations.AddNoteAsync(DepartmentId, UserId, id, (RmsInvestigationNoteKind)kind, ParseUtc(occurredOn) ?? DateTime.UtcNow, subject, body, cancellationToken);
+				if (string.IsNullOrWhiteSpace(noteId)) await _investigations.AddNoteAsync(DepartmentId, UserId, id, (RmsInvestigationNoteKind)kind, ParseEnteredUtc(occurredOn) ?? DateTime.UtcNow, subject, body, cancellationToken);
 				else await _investigations.UpdateNoteAsync(DepartmentId, UserId, noteId, subject, body, cancellationToken);
 				Notify("NoteSaved");
 			}
@@ -187,7 +187,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				await _investigations.AddEvidenceAsync(DepartmentId, UserId, id, new RmsInvestigationEvidence { Kind = kind, Description = description, CollectedOn = ParseUtc(collectedOn) ?? DateTime.UtcNow, CollectedByUserId = UserId, CollectedFrom = collectedFrom, StorageLocation = storageLocation }, cancellationToken);
+				await _investigations.AddEvidenceAsync(DepartmentId, UserId, id, new RmsInvestigationEvidence { Kind = kind, Description = description, CollectedOn = ParseEnteredUtc(collectedOn) ?? DateTime.UtcNow, CollectedByUserId = UserId, CollectedFrom = collectedFrom, StorageLocation = storageLocation }, cancellationToken);
 				Notify("EvidenceAdded");
 			}
 			catch (Exception ex) { var f = Fail(ex); if (f != null) return f; }

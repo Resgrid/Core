@@ -35,8 +35,9 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-				var rollupProcessor = Bootstrapper.GetKernel().Resolve<IReportingRollupProcessor>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var departmentsService = scope.Resolve<IDepartmentsService>();
+				var rollupProcessor = scope.Resolve<IReportingRollupProcessor>();
 
 				var departments = await departmentsService.GetAllAsync();
 				var departmentIds = departments?.Select(d => d.DepartmentId).ToList() ?? new List<int>();

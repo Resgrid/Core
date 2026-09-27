@@ -19,7 +19,8 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					var usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
+					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+					var usersService = scope.Resolve<IUsersService>();
 
 					var personnelLocation = new PersonnelLocation();
 					personnelLocation.UserId = personnelLocationEvent.UserId;

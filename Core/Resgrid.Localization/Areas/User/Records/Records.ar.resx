@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>غير منطبق</value></data>
   <data name="NoteBody" xml:space="preserve"><value>نص الملاحظة</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>تم حفظ الملاحظة.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>التاريخ غير صالح. تحقق من السنة.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>الموضوع</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>تم إصدار الإشعار.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>مرجع الإشعار</value></data>

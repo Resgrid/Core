@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>Δ/Ε</value></data>
   <data name="NoteBody" xml:space="preserve"><value>Κείμενο σημείωσης</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>Η σημείωση αποθηκεύτηκε.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>Η ημερομηνία δεν είναι έγκυρη. Ελέγξτε το έτος.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>Θέμα</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>Η ειδοποίηση εκδόθηκε.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>Αναφορά ειδοποίησης</value></data>

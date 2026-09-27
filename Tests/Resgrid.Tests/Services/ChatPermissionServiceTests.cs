@@ -131,11 +131,62 @@ namespace Resgrid.Tests.Services
 		public class when_resolving_the_channel_access_version : with_the_chat_permission_service
 		{
 			[Test]
-			public async Task a_missing_cache_epoch_should_remain_null()
+			public async Task an_unavailable_cache_should_fail_closed()
 			{
+				_cacheProviderMock.Setup(x => x.GetOrAddStringAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
+					.ReturnsAsync((string)null);
+
 				var version = await _chatPermissionService.GetChannelAccessVersionAsync("channel-1");
 
 				version.Should().BeNull();
+			}
+
+			[Test]
+			public async Task a_channel_without_an_epoch_should_get_one_minted()
+			{
+				// Most channels are never invalidated, so the epoch key is usually absent; treating that as
+				// an outage made JoinChannel throw and dropped every realtime fan-out for the channel.
+				_cacheProviderMock.Setup(x => x.GetOrAddStringAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
+					.ReturnsAsync((string _, string valueIfAbsent, TimeSpan _) => valueIfAbsent);
+
+				var version = await _chatPermissionService.GetChannelAccessVersionAsync("channel-1");
+
+				version.Should().NotBeNullOrWhiteSpace();
+				_cacheProviderMock.Verify(x => x.GetOrAddStringAsync("chatpermver:channel-1", It.IsAny<string>(), It.IsAny<TimeSpan>()), Times.Once);
+			}
+
+			[Test]
+			public async Task an_existing_epoch_should_be_returned_unchanged()
+			{
+				_cacheProviderMock.Setup(x => x.GetOrAddStringAsync("chatpermver:channel-1", It.IsAny<string>(), It.IsAny<TimeSpan>()))
+					.ReturnsAsync("existing-epoch");
+
+				var version = await _chatPermissionService.GetChannelAccessVersionAsync("channel-1");
+
+				version.Should().Be("existing-epoch");
+			}
+		}
+
+		[TestFixture]
+		public class when_invalidating_a_channel : with_the_chat_permission_service
+		{
+			[Test]
+			public async Task each_invalidation_should_rotate_to_a_never_used_epoch()
+			{
+				var written = new List<string>();
+				_cacheProviderMock.Setup(x => x.SetStringAsync("chatpermver:channel-1", It.IsAny<string>(), It.IsAny<TimeSpan>()))
+					.Callback((string _, string value, TimeSpan _) => written.Add(value))
+					.ReturnsAsync(true);
+
+				await _chatPermissionService.InvalidateChannelCacheAsync("channel-1");
+				await _chatPermissionService.InvalidateChannelCacheAsync("channel-1");
+
+				written.Should().HaveCount(2);
+				written.Should().OnlyContain(v => !string.IsNullOrWhiteSpace(v));
+				written.Should().OnlyHaveUniqueItems();
+				// A counter restarts at 1 once its key lapses, reviving an obsolete group a revoked
+				// connection may still sit in; epochs must never repeat.
+				_cacheProviderMock.Verify(x => x.IncrementAsync("chatpermver:channel-1", It.IsAny<TimeSpan>()), Times.Never);
 			}
 		}
 

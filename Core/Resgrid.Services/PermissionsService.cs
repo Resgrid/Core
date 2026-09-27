@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonServiceLocator;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -20,11 +19,23 @@ namespace Resgrid.Services
 		private readonly IPermissionsRepository _permissionsRepository;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 
-		public PermissionsService(IPermissionsRepository permissionsRepository, IUsersService usersService, IDepartmentGroupsService departmentGroupsService)
+		// The chat realtime refresh after a dispatch-login permission change. Chat permissions depend on this service,
+		// so they come in lazily (a direct dependency would close a DI cycle) and resolve from this service's own
+		// lifetime scope; the service locator they replace resolved from the root scope. Left null outside the
+		// container, where the refresh is skipped.
+		private readonly Lazy<IChatChannelRepository> _chatChannelRepository;
+		private readonly Lazy<IChatPermissionService> _chatPermissionService;
+		private readonly IEventAggregator _eventAggregator;
+
+		public PermissionsService(IPermissionsRepository permissionsRepository, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
+			Lazy<IChatChannelRepository> chatChannelRepository = null, Lazy<IChatPermissionService> chatPermissionService = null, IEventAggregator eventAggregator = null)
 		{
 			_permissionsRepository = permissionsRepository;
 			_usersService = usersService;
 			_departmentGroupsService = departmentGroupsService;
+			_chatChannelRepository = chatChannelRepository;
+			_chatPermissionService = chatPermissionService;
+			_eventAggregator = eventAggregator;
 		}
 
 		public async Task<List<Permission>> GetAllPermissionsForDepartmentAsync(int departmentId)
@@ -64,15 +75,15 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		private static async Task RotateDispatchChatAccessAsync(int departmentId)
+		private async Task RotateDispatchChatAccessAsync(int departmentId)
 		{
-			if (departmentId <= 0 || !ServiceLocator.IsLocationProviderSet)
+			if (departmentId <= 0 || _chatChannelRepository == null || _chatPermissionService == null || _eventAggregator == null)
 				return;
 
 			try
 			{
-				var channelRepository = ServiceLocator.Current.GetInstance<IChatChannelRepository>();
-				var permissionService = ServiceLocator.Current.GetInstance<IChatPermissionService>();
+				var channelRepository = _chatChannelRepository.Value;
+				var permissionService = _chatPermissionService.Value;
 				var channels = await channelRepository.GetAllByDepartmentIdAsync(departmentId, true);
 
 				if (channels != null)
@@ -81,7 +92,7 @@ namespace Resgrid.Services
 						await permissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
 				}
 
-				ServiceLocator.Current.GetInstance<IEventAggregator>().SendMessage<ChatEventRaised>(new ChatEventRaised
+				_eventAggregator.SendMessage<ChatEventRaised>(new ChatEventRaised
 				{
 					DepartmentId = departmentId,
 					Kind = ChatEventKinds.ChannelUpdated,

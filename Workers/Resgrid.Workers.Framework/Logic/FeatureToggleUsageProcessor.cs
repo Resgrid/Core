@@ -23,7 +23,9 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			try
 			{
-				var featureToggleService = Bootstrapper.GetKernel().Resolve<IFeatureToggleService>();
+				// The evaluation counters are static, so a per-run scope flushes the same buffer.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var featureToggleService = scope.Resolve<IFeatureToggleService>();
 				var flushed = await featureToggleService.FlushEvaluationsAsync(cancellationToken);
 
 				return new Tuple<bool, string>(true, $"Flushed {flushed} feature toggle usage record(s).");

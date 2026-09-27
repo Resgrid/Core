@@ -36,6 +36,13 @@ namespace Resgrid.Model.Repositories
 		Task<SearchIndexState> GetAsync(string indexName, int departmentId);
 
 		Task<IEnumerable<SearchIndexState>> GetAllForIndexAsync(string indexName);
+
+		/// <summary>
+		/// Inserts <paramref name="state"/> unless a row for its (IndexName, DepartmentId) already exists, in one statement,
+		/// so concurrent callers never trip the unique index. Returns false, and leaves the existing row untouched, when
+		/// another writer got there first.
+		/// </summary>
+		Task<bool> InsertIfMissingAsync(SearchIndexState state, CancellationToken cancellationToken = default);
 	}
 
 	public interface ISearchIndexLeasesRepository : IRepository<SearchIndexLease>

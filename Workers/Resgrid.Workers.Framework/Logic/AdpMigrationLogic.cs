@@ -40,17 +40,18 @@ namespace Resgrid.Workers.Framework.Logic
 		private readonly IEmailService _emailService;
 		private readonly IMemberProfileRelocationService _relocationService;
 
-		public AdpMigrationLogic()
+		/// <summary>Resolves from the caller's per-sweep scope; the root scope would share one unit of work process-wide.</summary>
+		public AdpMigrationLogic(ILifetimeScope scope)
 			: this(
-				Bootstrapper.GetKernel().Resolve<IDepartmentLockService>(),
-				Bootstrapper.GetKernel().Resolve<IDepartmentDataProtectionPolicyRepository>(),
-				Bootstrapper.GetKernel().Resolve<IDepartmentDataProtectionService>(),
-				Bootstrapper.GetKernel().Resolve<IDepartmentKeyService>(),
-				Bootstrapper.GetKernel().Resolve<IDepartmentDataMigrationEngine>(),
-				Bootstrapper.GetKernel().Resolve<IProtectedFieldCatalog>(),
-				Bootstrapper.GetKernel().Resolve<IDepartmentsService>(),
-				Bootstrapper.GetKernel().Resolve<IEmailService>(),
-				Bootstrapper.GetKernel().Resolve<IMemberProfileRelocationService>())
+				scope.Resolve<IDepartmentLockService>(),
+				scope.Resolve<IDepartmentDataProtectionPolicyRepository>(),
+				scope.Resolve<IDepartmentDataProtectionService>(),
+				scope.Resolve<IDepartmentKeyService>(),
+				scope.Resolve<IDepartmentDataMigrationEngine>(),
+				scope.Resolve<IProtectedFieldCatalog>(),
+				scope.Resolve<IDepartmentsService>(),
+				scope.Resolve<IEmailService>(),
+				scope.Resolve<IMemberProfileRelocationService>())
 		{
 		}
 

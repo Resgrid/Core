@@ -125,7 +125,7 @@ namespace Resgrid.Services.Records
 			var test = new RmsHydrantFlowTest
 			{
 				RmsHydrantFlowTestId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), RmsHydrantId = hydrant.RmsHydrantId,
-				TestedOn = input.TestedOn == default ? now : input.TestedOn, TestedByUserId = userId, StaticPressurePsi = input.StaticPressurePsi, ResidualPressurePsi = input.ResidualPressurePsi,
+				TestedOn = RecordsPreventionGate.RequireStorableDate(input.TestedOn == default ? now : input.TestedOn, "The test date is not valid."), TestedByUserId = userId, StaticPressurePsi = input.StaticPressurePsi, ResidualPressurePsi = input.ResidualPressurePsi,
 				PitotPressurePsi = input.PitotPressurePsi, OutletDiameterInches = input.OutletDiameterInches, Coefficient = coefficient, Notes = RecordsPreventionGate.Trim(input.Notes, 2000), CreatedOn = now
 			};
 			test.FlowGpm = HydrantFlowCalculator.FlowGpm(coefficient, input.OutletDiameterInches, input.PitotPressurePsi);
@@ -150,7 +150,7 @@ namespace Resgrid.Services.Records
 			var row = new RmsHydrantMaintenance
 			{
 				RmsHydrantMaintenanceId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), RmsHydrantId = hydrant.RmsHydrantId,
-				PerformedOn = input.PerformedOn == default ? now : input.PerformedOn, PerformedByUserId = userId, Kind = input.Kind == 0 ? (int)RmsHydrantMaintenanceKind.Inspection : input.Kind,
+				PerformedOn = RecordsPreventionGate.RequireStorableDate(input.PerformedOn == default ? now : input.PerformedOn, "The maintenance date is not valid."), PerformedByUserId = userId, Kind = input.Kind == 0 ? (int)RmsHydrantMaintenanceKind.Inspection : input.Kind,
 				Notes = RecordsPreventionGate.Trim(input.Notes, 2000), ReturnedToService = input.ReturnedToService, CreatedOn = now
 			};
 			await _maintenance.InsertAsync(row, cancellationToken, true);

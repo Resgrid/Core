@@ -27,9 +27,11 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					var auditLogsRepository = Bootstrapper.GetKernel().Resolve<IAuditLogsRepository>();
-					var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-					var auditService = Bootstrapper.GetKernel().Resolve<IAuditService>();
+					// Own scope per message: root-scope services would share the process-wide root unit of work.
+					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+					var auditLogsRepository = scope.Resolve<IAuditLogsRepository>();
+					var userProfileService = scope.Resolve<IUserProfileService>();
+					var auditService = scope.Resolve<IAuditService>();
 
 					var auditLog = await BuildAuditLogAsync(auditEvent, userProfileService, auditService);
 					await auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);

@@ -21,6 +21,13 @@ namespace Resgrid.Services
 		private static readonly TimeSpan CacheLength = TimeSpan.FromSeconds(60);
 		private static readonly TimeSpan VersionCacheLength = TimeSpan.FromDays(1);
 
+		/// <summary>
+		/// Sliding lifetime of a channel's access epoch. Every read refreshes it, so an epoch only lapses
+		/// on a channel with no joins or fan-out for this long; the lapse mints a new epoch, which strands
+		/// any still-joined connection until it rejoins, so keep this well beyond a connection's lifetime.
+		/// </summary>
+		private static readonly TimeSpan AccessVersionSlidingExpiration = TimeSpan.FromDays(30);
+
 		/// <summary>Shared version key rolled into every per-user channel-list cache key; bumped by InvalidateChannelCacheAsync.</summary>
 		internal const string ChannelListVersionCacheKey = "chatchannellistver";
 
@@ -299,7 +306,9 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(chatChannelId))
 				return;
 
-			await _cacheProvider.IncrementAsync(GetVersionKey(chatChannelId), VersionCacheLength);
+			// A fresh random epoch rather than an increment: once a key lapses, a counter restarts at a
+			// value an obsolete group (still holding a revoked connection) may already carry.
+			await _cacheProvider.SetStringAsync(GetVersionKey(chatChannelId), NewAccessVersion(), AccessVersionSlidingExpiration);
 
 			// Roll every per-user channel-list cache key forward too (channel set/visibility changed).
 			await _cacheProvider.IncrementAsync(ChannelListVersionCacheKey, VersionCacheLength);
@@ -312,15 +321,22 @@ namespace Resgrid.Services
 
 			try
 			{
-				return await _cacheProvider.GetStringAsync(GetVersionKey(chatChannelId));
+				// A channel that has never been invalidated (or sat idle past the sliding window) has no
+				// epoch yet — mint one rather than treating the absence as an outage.
+				return await _cacheProvider.GetOrAddStringAsync(GetVersionKey(chatChannelId), NewAccessVersion(), AccessVersionSlidingExpiration);
 			}
 			catch (Exception ex)
 			{
-				// A missing authorization epoch must stop realtime fan-out. Falling back to the old
-				// group during a cache outage could reconnect a user whose access was just revoked.
+				// Null (cache unavailable) must stop realtime fan-out. Falling back to a fixed group during
+				// a cache outage could reconnect a user whose access was just revoked.
 				Resgrid.Framework.Logging.LogException(ex);
 				return null;
 			}
+		}
+
+		private static string NewAccessVersion()
+		{
+			return Guid.NewGuid().ToString("N");
 		}
 
 		private async Task<bool> EvaluateAccessAsync(ChatChannel channel, string userId, int? activeUnitId)

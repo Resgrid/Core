@@ -37,10 +37,11 @@ namespace Resgrid.Workers.Framework.Logic
 		private readonly IMemberProfileRelocationService _relocationService;
 		private readonly IDepartmentDataProtectionService _protectionService;
 
-		public MemberProfileRelocationLogic()
+		/// <summary>Resolves from the caller's per-run scope; the root scope would share one unit of work process-wide.</summary>
+		public MemberProfileRelocationLogic(ILifetimeScope scope)
 			: this(
-				Bootstrapper.GetKernel().Resolve<IMemberProfileRelocationService>(),
-				Bootstrapper.GetKernel().Resolve<IDepartmentDataProtectionService>())
+				scope.Resolve<IMemberProfileRelocationService>(),
+				scope.Resolve<IDepartmentDataProtectionService>())
 		{
 		}
 

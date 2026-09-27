@@ -129,7 +129,7 @@
 				{
 					<form method="post" asp-controller="RecordInvestigations" asp-action="SaveNote" asp-route-area="User">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" />
-						<div class="row"><div class="col-sm-4"><select class="form-control input-sm" name="kind" asp-items="Model.NoteKinds"></select></div><div class="col-sm-4"><input type="datetime-local" class="form-control input-sm" name="occurredOn" /></div><div class="col-sm-4"><input class="form-control input-sm" name="subject" maxlength="200" placeholder="@L["NoteSubject"]" required /></div></div>
+						<div class="row"><div class="col-sm-4"><select class="form-control input-sm" name="kind" asp-items="Model.NoteKinds"></select></div><div class="col-sm-4"><input type="datetime-local" class="form-control input-sm" name="occurredOn" min="1753-01-02T00:00" max="9999-12-30T23:59" /></div><div class="col-sm-4"><input class="form-control input-sm" name="subject" maxlength="200" placeholder="@L["NoteSubject"]" required /></div></div>
 						<textarea class="form-control m-t-xs" name="body" rows="4" maxlength="20000" placeholder="@L["NoteBody"]" required></textarea>
 						<button class="btn btn-sm btn-primary m-t-xs"><i class="fa fa-sticky-note"></i> @L["AddNote"]</button>
 					</form>
@@ -152,7 +152,7 @@
 				{
 					<form method="post" asp-controller="RecordInvestigations" asp-action="AddEvidence" asp-route-area="User">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" />
-						<div class="row"><div class="col-sm-3"><select class="form-control input-sm" name="kind" asp-items="Model.EvidenceKinds"></select></div><div class="col-sm-3"><input type="datetime-local" class="form-control input-sm" name="collectedOn" /></div><div class="col-sm-6"><input class="form-control input-sm" name="description" maxlength="2000" placeholder="@L["DefinitionDescription"]" required /></div></div>
+						<div class="row"><div class="col-sm-3"><select class="form-control input-sm" name="kind" asp-items="Model.EvidenceKinds"></select></div><div class="col-sm-3"><input type="datetime-local" class="form-control input-sm" name="collectedOn" min="1753-01-02T00:00" max="9999-12-30T23:59" /></div><div class="col-sm-6"><input class="form-control input-sm" name="description" maxlength="2000" placeholder="@L["DefinitionDescription"]" required /></div></div>
 						<div class="row m-t-xs"><div class="col-sm-6"><input class="form-control input-sm" name="collectedFrom" maxlength="500" placeholder="@L["CollectedFrom"]" /></div><div class="col-sm-6"><input class="form-control input-sm" name="storageLocation" maxlength="500" placeholder="@L["StorageLocation"]" /></div></div>
 						<button class="btn btn-sm btn-primary m-t-xs"><i class="fa fa-archive"></i> @L["AddEvidence"]</button>
 					</form>

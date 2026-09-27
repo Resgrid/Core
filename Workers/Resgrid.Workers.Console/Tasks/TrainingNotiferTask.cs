@@ -33,7 +33,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 				//await Task.Run(async () =>
 				//{
-				var _trainingService = Bootstrapper.GetKernel().Resolve<ITrainingService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _trainingService = scope.Resolve<ITrainingService>();
 				var logic = new TrainingNotifierLogic();
 
 				var trainings = await _trainingService.GetTrainingsToNotifyAsync(DateTime.UtcNow);

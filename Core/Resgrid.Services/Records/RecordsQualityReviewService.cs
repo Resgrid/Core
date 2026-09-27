@@ -108,6 +108,7 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsQualityReview>> SampleAsync(int departmentId, string userId, string rubricId, DateTime sinceUtc, CancellationToken cancellationToken = default)
 		{
 			await RequireReviewerAsync(departmentId, userId);
+			RecordsPreventionGate.RequireStorableDate(sinceUtc, "The sample start date is not valid.");
 			var rubric = await _rubrics.GetByIdForDepartmentAsync(departmentId, rubricId);
 			if (rubric == null || rubric.DeletedOn != null || !rubric.IsActive) throw new ArgumentException("Choose an active rubric.");
 			var criteria = ParseCriteria(rubric.CriteriaJson);
@@ -204,6 +205,7 @@ namespace Resgrid.Services.Records
 		public async Task<RecordsQualityTrends> GetTrendsAsync(int departmentId, string userId, DateTime sinceUtc)
 		{
 			await RequireReviewerAsync(departmentId, userId);
+			RecordsPreventionGate.RequireStorableDate(sinceUtc, "The start date is not valid.");
 			var scored = ((await _reviews.GetScoredSinceAsync(departmentId, sinceUtc, 5000)) ?? Enumerable.Empty<RmsQualityReview>()).Where(r => r.Score.HasValue).ToList();
 			var trends = new RecordsQualityTrends { Since = sinceUtc, Scored = scored.Count, Sampled = scored.Count + ((await _reviews.GetPendingAsync(departmentId, 1000))?.Count() ?? 0), AverageScore = scored.Count == 0 ? 0 : Math.Round(scored.Average(r => r.Score.Value), 1) };
 			List<RecordsQualityTrendRow> Rows(Func<RmsQualityReview, string> key) => scored.Where(r => key(r) != null).GroupBy(key).Select(g => new RecordsQualityTrendRow { Key = g.Key, Label = g.Key, Reviews = g.Count(), AverageScore = Math.Round(g.Average(r => r.Score.Value), 1), AmendmentsRecommended = g.Count(r => r.AmendmentRecommended) }).OrderBy(r => r.AverageScore).ToList();

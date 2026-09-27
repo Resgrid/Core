@@ -40,7 +40,8 @@ namespace Resgrid.Workers.Console.Tasks
 					return;
 				}
 
-				var ttsAudioService = Bootstrapper.GetKernel().Resolve<ITtsAudioService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var ttsAudioService = scope.Resolve<ITtsAudioService>();
 				var prompts = TwilioVoicePromptCatalog.GetStaticPrompts();
 				Exception lastException = null;
 

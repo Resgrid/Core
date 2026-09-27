@@ -28,7 +28,8 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var gdprService = Bootstrapper.GetKernel().Resolve<IGdprDataExportService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var gdprService = scope.Resolve<IGdprDataExportService>();
 
 				_logger.LogInformation("GdprExport::Expiring old requests");
 				await gdprService.ExpireOldRequestsAsync(cancellationToken);

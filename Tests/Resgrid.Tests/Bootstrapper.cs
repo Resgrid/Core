@@ -64,7 +64,7 @@ namespace Resgrid.Tests
 					.As<IUnitOfWork>()
 					.InstancePerLifetimeScope();
 
-				// IncidentCommandService resolves chat services lazily through the ServiceLocator for
+				// IncidentCommandService resolves chat services lazily (Lazy<T> constructor parameters) for
 				// its best-effort lane channel hooks. The real ChatChannelService can't activate in
 				// this container (its repository graph isn't registered), which logged an activation
 				// error on every lane save/delete test. Loose mocks turn the hooks into no-ops:

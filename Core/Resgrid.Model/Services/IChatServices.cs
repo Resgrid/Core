@@ -217,7 +217,10 @@ namespace Resgrid.Model.Services
 		/// <summary>Drops cached permission evaluations for a channel (membership/roles changed) and bumps the channel-list cache version.</summary>
 		Task InvalidateChannelCacheAsync(string chatChannelId);
 
-		/// <summary>Current distributed authorization epoch used to isolate realtime channel groups after access changes.</summary>
+		/// <summary>
+		/// Current distributed authorization epoch used to isolate realtime channel groups after access changes.
+		/// Minted on first use; null only when the cache is unavailable, and callers must then fail closed.
+		/// </summary>
 		Task<string> GetChannelAccessVersionAsync(string chatChannelId);
 	}
 

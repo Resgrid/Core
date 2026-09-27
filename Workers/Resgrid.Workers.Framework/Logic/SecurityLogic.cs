@@ -24,35 +24,6 @@ namespace Resgrid.Workers.Framework.Logic
 		private static string WhoCanViewPersonnelCacheKey = "ViewUsersSecurityMaxtix_{0}";
 		private static string WhoCanViewPersonnelLocationsCacheKey = "ViewUserLocationsSecurityMaxtix_{0}";
 
-		private IDepartmentMembersRepository _departmentMembersRepository;
-		private IUserProfileService _userProfileService;
-		private IUsersService _usersService;
-		private IDepartmentsService _departmentsService;
-		private IScheduledTasksService _scheduledTasksService;
-		private ICallsRepository _callsRepository;
-		private IPermissionsService _permissionsService;
-		private IUnitsService _unitsService;
-		private IDepartmentGroupsService _departmentGroupsService;
-		private IPersonnelRolesService _personnelRolesService;
-		private ICacheProvider _cacheProvider;
-		private IAuthorizationService _authorizationService;
-
-		public SecurityLogic()
-		{
-			_departmentMembersRepository = Bootstrapper.GetKernel().Resolve<IDepartmentMembersRepository>();
-			_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-			_usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
-			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-			_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-			_callsRepository = Bootstrapper.GetKernel().Resolve<ICallsRepository>();
-			_permissionsService = Bootstrapper.GetKernel().Resolve<IPermissionsService>();
-			_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
-			_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
-			_personnelRolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
-			_cacheProvider = Bootstrapper.GetKernel().Resolve<ICacheProvider>();
-			_authorizationService = Bootstrapper.GetKernel().Resolve<IAuthorizationService>();
-		}
-
 		/// <summary>
 		/// A rebuild that throws must not take the caller down with it. The all-departments sweep would
 		/// abandon every department after the failing one, and the queue handler has no catch of its
@@ -76,6 +47,17 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			bool success = true;
 			string result = String.Empty;
+
+			// Own scope per rebuild. This logic is long-lived in the queue processor, and services cached from the
+			// root scope would share the process-wide root unit of work with every other job.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+			var _departmentMembersRepository = scope.Resolve<IDepartmentMembersRepository>();
+			var _departmentsService = scope.Resolve<IDepartmentsService>();
+			var _permissionsService = scope.Resolve<IPermissionsService>();
+			var _unitsService = scope.Resolve<IUnitsService>();
+			var _departmentGroupsService = scope.Resolve<IDepartmentGroupsService>();
+			var _personnelRolesService = scope.Resolve<IPersonnelRolesService>();
+			var _cacheProvider = scope.Resolve<ICacheProvider>();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId);
 
@@ -667,7 +649,9 @@ namespace Resgrid.Workers.Framework.Logic
 		/// </summary>
 		public async Task<Tuple<bool, string>> UpdatedCachedSecurityForAllDepartments()
 		{
-			var departments = await _departmentsService.GetAllAsync();
+			List<Department> departments;
+			using (var scope = Bootstrapper.GetKernel().BeginLifetimeScope())
+				departments = await scope.Resolve<IDepartmentsService>().GetAllAsync();
 			var failures = new List<string>();
 
 			async Task rebuild(int departmentId, SecurityCacheTypes type)

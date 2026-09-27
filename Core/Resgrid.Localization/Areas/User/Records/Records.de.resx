@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>k. A.</value></data>
   <data name="NoteBody" xml:space="preserve"><value>Notiztext</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>Notiz gespeichert.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>Das Datum ist ungültig. Prüfen Sie das Jahr.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>Betreff</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>Bescheid ausgestellt.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>Bescheid-Referenz</value></data>

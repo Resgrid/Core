@@ -30,9 +30,10 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var identityRepository = Bootstrapper.GetKernel().Resolve<IIdentityRepository>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var identityRepository = scope.Resolve<IIdentityRepository>();
 				var tokensCleaned = await identityRepository.CleanUpOIDCTokensAsync(DateTime.UtcNow);
-				var sessionsRepository = Bootstrapper.GetKernel().Resolve<IUserSessionsRepository>();
+				var sessionsRepository = scope.Resolve<IUserSessionsRepository>();
 				var retentionDays = Math.Max(1, SessionSecurityConfig.RevokedSessionRetentionDays);
 				var purgeBefore = DateTime.UtcNow.AddDays(-retentionDays);
 				var sessionsPurged = await sessionsRepository.PurgeInactiveBeforeAsync(purgeBefore, cancellationToken);
@@ -40,7 +41,7 @@ namespace Resgrid.Workers.Console.Tasks
 				// UserSessions rows are the access record for every sign-in, so deleting them on retention
 				// is itself an accountable event. Record what ran, the window it covered and how much it
 				// removed; without this the history simply shrinks with nothing explaining why.
-				var systemAuditsService = Bootstrapper.GetKernel().Resolve<ISystemAuditsService>();
+				var systemAuditsService = scope.Resolve<ISystemAuditsService>();
 				await systemAuditsService.SaveSystemAuditAsync(new SystemAudit
 				{
 					System = (int)SystemAuditSystems.Worker,

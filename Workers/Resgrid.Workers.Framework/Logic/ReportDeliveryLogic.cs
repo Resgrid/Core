@@ -22,14 +22,11 @@ namespace Resgrid.Workers.Framework.Logic
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 		private readonly IDepartmentsService _departments;
 
-		public ReportDeliveryLogic()
+		/// <summary>Resolves from the caller's per-run scope; the root scope would share one unit of work process-wide.</summary>
+		public ReportDeliveryLogic(ILifetimeScope scope)
+			: this(scope.Resolve<IScheduledTasksService>(), scope.Resolve<IEmailService>(), scope.Resolve<IPdfProvider>(),
+				scope.Resolve<IChecklistScheduledReportService>(), scope.Resolve<IBusinessOperationsAccessService>(), scope.Resolve<IDepartmentsService>())
 		{
-			_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-			_emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
-			_pdfProvider = Bootstrapper.GetKernel().Resolve<IPdfProvider>();
-			_checklistReports = Bootstrapper.GetKernel().Resolve<IChecklistScheduledReportService>();
-			_businessOperationsAccess = Bootstrapper.GetKernel().Resolve<IBusinessOperationsAccessService>();
-			_departments = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 		}
 		public ReportDeliveryLogic(IScheduledTasksService tasks, IEmailService email, IPdfProvider pdf, IChecklistScheduledReportService checklistReports, IBusinessOperationsAccessService businessOperationsAccess, IDepartmentsService departments = null)
 		{ _scheduledTasksService = tasks; _emailService = email; _pdfProvider = pdf; _checklistReports = checklistReports; _businessOperationsAccess = businessOperationsAccess; _departments = departments; }

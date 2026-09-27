@@ -33,7 +33,8 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				//await Task.Run(async () =>
 				//{
-				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _departmentsService = scope.Resolve<IDepartmentsService>();
 				var logic = new CallEmailImporterLogic();
 
 				//var items = await _departmentsService.GetAllDepartmentEmailSettingsAsync();

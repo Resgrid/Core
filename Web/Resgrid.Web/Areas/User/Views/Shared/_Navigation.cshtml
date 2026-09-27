@@ -3,6 +3,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
+@inject Resgrid.Model.Services.IRecordsCutoverService recordsCutover
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
@@ -15,9 +16,13 @@
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
 	var chatSystemEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
-	// Records.System flag: Records takes the Logs sidebar position and the Logs link is absent. The
-	// existing LogsDisabled module setting still controls whether that position is visible at all.
-	var recordsEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsSystem, ClaimsAuthorizationHelper.GetDepartmentId());
+	// Records.System flag shows the Records group; the department's cutover, not the flag, decides where Logs
+	// goes. Until an administrator activates Records, Logs is still the working log system and keeps its own
+	// sidebar link. After activation the old Logs stay readable (never writable) from inside the Records group.
+	// The existing LogsDisabled module setting still controls whether either is visible at all.
+	var recordsState = await recordsCutover.GetModuleStateAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var recordsEnabled = recordsState.FlagEnabled;
+	var recordsUsable = recordsState.RecordsUsable;
 	// Keep legacy modules flat; only new feature areas get collapsible groups.
 	var showCertifications = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications();
 	var showInvoicing = ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, ClaimsAuthorizationHelper.GetDepartmentId());
@@ -126,7 +131,7 @@
 					"RecordDeployments", "RecordDocuments", "RecordEvidence", "RecordHydrants", "RecordInspections",
 					"RecordInvestigations", "RecordLegalHolds", "RecordOccupancies", "RecordPermits", "RecordSavedReports",
 					"RecordSubmissions", "RecordsAnalytics", "RecordsExportTemplates", "RecordsHealth", "RecordsInventory",
-					"RecordsQuality");
+					"RecordsQuality") || (recordsUsable && Html.IsController("Logs"));
 
 				// The dashboard and the queue share the Records controller, so they are told apart by
 				// action. Drilling into a record (Details, Edit, New) keeps the queue highlighted.
@@ -184,10 +189,15 @@
 						{
 							<li class="@Html.IsSelected(controller: "RecordsAnalytics")"><a asp-controller="RecordsAnalytics" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @recordsLocalizer["AnalyticsHeader"]</a></li>
 						}
+						@if (recordsUsable)
+						{
+							@* Logs created before activation: read-only, same Log_View gate as the pages themselves (LogsDeepLinkTests). *@
+							<li class="@Html.IsSelected(controller: "Logs")"><a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-history"></i> @recordsLocalizer["LegacyLogs"]</a></li>
+						}
 					</ul>
 				</li>
 			}
-			else if (SettingsHelper.IsLogsEnabled())
+			@if (SettingsHelper.IsLogsEnabled() && !recordsUsable)
 			{
 				<li class="@Html.IsSelected(controller: "Logs")">
 					<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@commonLocalizer["LogsModule"]</span></a>

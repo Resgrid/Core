@@ -18,6 +18,10 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
+				// Own scope per message: root-scope services would share the process-wide root unit of work,
+				// and workflow execution writes run logs inside their own transactions.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+
 				// ADP department operation lock: workflow executions can mutate department data, so a
 				// locked department's items are requeued unchanged (same attempt number — deferral is
 				// not a retry) rather than executed or dead-lettered (plan section 20.2). The short
@@ -26,13 +30,13 @@ namespace Resgrid.Workers.Framework.Logic
 				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.DepartmentId))
 				{
 					await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
-					var deferralQueue = Bootstrapper.GetKernel().Resolve<Resgrid.Model.Providers.IOutboundQueueProvider>();
+					var deferralQueue = scope.Resolve<Resgrid.Model.Providers.IOutboundQueueProvider>();
 					await deferralQueue.EnqueueWorkflow(item);
 					return true;
 				}
 
-				var workflowService = Bootstrapper.GetKernel().Resolve<IWorkflowService>();
-				var departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+				var workflowService = scope.Resolve<IWorkflowService>();
+				var departmentsService = scope.Resolve<IDepartmentsService>();
 
 				// Get the department code needed for credential decryption
 				var department = await departmentsService.GetDepartmentByIdAsync(item.DepartmentId, false);
@@ -60,7 +64,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var delaySeconds = (int)Math.Pow(2, item.AttemptNumber - 1) * backoffBase;
 						await Task.Delay(TimeSpan.FromSeconds(delaySeconds), cancellationToken);
 
-						var outboundQueue = Bootstrapper.GetKernel().Resolve<Resgrid.Model.Providers.IOutboundQueueProvider>();
+						var outboundQueue = scope.Resolve<Resgrid.Model.Providers.IOutboundQueueProvider>();
 						await outboundQueue.EnqueueWorkflow(new WorkflowQueueItem
 						{
 							WorkflowId = item.WorkflowId,

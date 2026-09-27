@@ -32,8 +32,9 @@ namespace Resgrid.Workers.Console.Tasks
 
 				//await Task.Run(async () =>
 				//{
-				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-				var _scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _departmentsService = scope.Resolve<IDepartmentsService>();
+				var _scheduledTasksService = scope.Resolve<IScheduledTasksService>();
 				var logic = new StaffingScheduleLogic();
 
 				var allDepartments = await _departmentsService.GetAllAsync();

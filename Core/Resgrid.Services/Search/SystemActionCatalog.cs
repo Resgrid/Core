@@ -51,7 +51,7 @@ namespace Resgrid.Services.Search
 		private const string Log = "Log";
 
 		private static SystemActionDefinition Nav(string key, string title, string description, string path, string[] keywords = null,
-			string claimResource = null, string claimAction = null, string module = null, string flag = null, bool adminOnly = false, bool hiddenWhenRecords = false)
+			string claimResource = null, string claimAction = null, string module = null, string flag = null, bool adminOnly = false, bool hiddenAfterCutover = false)
 		{
 			return new SystemActionDefinition
 			{
@@ -66,14 +66,14 @@ namespace Resgrid.Services.Search
 				Module = module,
 				FeatureFlag = flag,
 				DepartmentAdminOnly = adminOnly,
-				HiddenWhenRecordsEnabled = hiddenWhenRecords
+				HiddenAfterRecordsCutover = hiddenAfterCutover
 			};
 		}
 
 		private static SystemActionDefinition Act(string key, string title, string description, string path, string category, string[] keywords = null,
-			string claimResource = null, string claimAction = null, string module = null, string flag = null, bool adminOnly = false, bool hiddenWhenRecords = false)
+			string claimResource = null, string claimAction = null, string module = null, string flag = null, bool adminOnly = false, bool hiddenAfterCutover = false)
 		{
-			var d = Nav(key, title, description, path, keywords, claimResource, claimAction, module, flag, adminOnly, hiddenWhenRecords);
+			var d = Nav(key, title, description, path, keywords, claimResource, claimAction, module, flag, adminOnly, hiddenAfterCutover);
 			d.Category = category;
 			return d;
 		}
@@ -120,8 +120,9 @@ namespace Resgrid.Services.Search
 			Act("new-calendar-item", "New Calendar Event", "Create a calendar event", "/User/Calendar/New", SystemActionCategories.Create, new[] { "event", "meeting", "schedule" }, Schedule, Create, SystemActionModules.Calendar),
 
 			// ---- Logs (legacy) / Records
-			Nav("logs", "Logs", "Run, training, work and meeting logs", "/User/Logs", new[] { "run log", "activity", "reports", "training log", "work log" }, Log, View, SystemActionModules.Logs, hiddenWhenRecords: true),
-			Act("new-log", "New Log", "Create a run report, training log or work log", "/User/Logs/NewLog", SystemActionCategories.Create, new[] { "run report", "training log", "work log" }, Log, Create, SystemActionModules.Logs, hiddenWhenRecords: true),
+			// Logs stay findable before and after the Records cutover (read-only after it); only creating one goes away.
+			Nav("logs", "Logs", "Run, training, work and meeting logs", "/User/Logs", new[] { "run log", "activity", "reports", "training log", "work log", "legacy logs", "existing logs" }, Log, View, SystemActionModules.Logs),
+			Act("new-log", "New Log", "Create a run report, training log or work log", "/User/Logs/NewLog", SystemActionCategories.Create, new[] { "run report", "training log", "work log" }, Log, Create, SystemActionModules.Logs, hiddenAfterCutover: true),
 			Nav("records", "Records", "Records queue: run reports, training and operational records", "/User/Records", new[] { "rms", "run reports", "incident reports", "neris", "logs" }, Record, View, SystemActionModules.Logs, FeatureFlagKeys.RecordsSystem),
 			Nav("records-dashboard", "Records Dashboard", "Records due, submissions and quality at a glance", "/User/Records/Dashboard", new[] { "rms", "overview", "due" }, Record, View, SystemActionModules.Logs, FeatureFlagKeys.RecordsSystem),
 			Act("records-settings", "Records Settings", "Lifecycle, numbering, search, retention and visibility settings for Records", "/User/Records/Settings", SystemActionCategories.Manage, new[] { "rms settings", "retention", "numbering" }, Record, View, SystemActionModules.Logs, FeatureFlagKeys.RecordsSystem, adminOnly: true),

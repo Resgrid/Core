@@ -1,4 +1,5 @@
 using System;
+using System.Data.SqlTypes;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -128,5 +129,18 @@ namespace Resgrid.Services.Records
 				throw new ArgumentException($"{message} (at most {max} characters).");
 			return trimmed;
 		}
+
+		/// <summary>
+		/// Dapper binds DateTime as SQL datetime, which starts at 1753, so a client date outside it (a two-digit year sent as
+		/// 0026) failed the whole statement with SqlDateTime overflow. Refuse it here so the web and API both get a message.
+		/// </summary>
+		public static DateTime RequireStorableDate(DateTime value, string message)
+		{
+			if (value < (DateTime)SqlDateTime.MinValue || value > (DateTime)SqlDateTime.MaxValue)
+				throw new ArgumentException(message);
+			return value;
+		}
+
+		public static DateTime? RequireStorableDate(DateTime? value, string message) => value.HasValue ? RequireStorableDate(value.Value, message) : null;
 	}
 }

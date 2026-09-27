@@ -33,7 +33,8 @@ namespace Resgrid.Workers.Framework.Logic
 				if (!unitLocationEvent.Latitude.HasValue || !unitLocationEvent.Longitude.HasValue)
 					throw new InvalidOperationException("A valid Unit location queue event must contain latitude and longitude.");
 
-				var unitService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var unitService = scope.Resolve<IUnitsService>();
 				var timestamp = unitLocationEvent.Timestamp == default
 					? unitLocationEvent.ReceivedOn ?? DateTime.UtcNow
 					: unitLocationEvent.Timestamp;

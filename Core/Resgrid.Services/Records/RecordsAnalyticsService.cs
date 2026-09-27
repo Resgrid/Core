@@ -153,6 +153,8 @@ namespace Resgrid.Services.Records
 			await _gate.RequireEnabledAsync(departmentId, RecordsPreventionModule.Analytics);
 			await _gate.RequireViewerAsync(departmentId, userId);
 			query ??= new RecordsAnalyticsQuery();
+			RecordsPreventionGate.RequireStorableDate(query.Start, "The start date is not valid.");
+			RecordsPreventionGate.RequireStorableDate(query.End, "The end date is not valid.");
 			var now = DateTime.UtcNow;
 			var end = query.End ?? now;
 			var start = query.Start ?? end.AddDays(-RecordsAnalyticsLimits.DefaultWindowDays);

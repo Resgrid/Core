@@ -118,7 +118,7 @@ namespace Resgrid.Tests.Services
 			runs.Setup(s => s.InsertAsync(It.IsAny<WorkflowRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((WorkflowRun r, CancellationToken ct, bool first) => stored = r);
 			var attempts = new List<WorkflowQueueItem>();
 			queue.Setup(s => s.EnqueueWorkflow(It.IsAny<WorkflowQueueItem>())).ReturnsAsync((WorkflowQueueItem item) => { attempts.Add(item); return attempts.Count > 1; });
-			_ = new WorkflowEventProvider(_bus, queue.Object, workflows.Object, runs.Object, departments.Object, subscriptions.Object, _projection, _history.Lazy);
+			_ = new WorkflowEventProvider(_bus, queue.Object, WorkflowEventProviderScopeTests.Services(workflows.Object, runs.Object, departments.Object, subscriptions.Object, _projection, _history.Lazy));
 			var envelope = Event(); envelope.Trigger = (WorkflowTriggerEventType)trigger; envelope.EventName = envelope.Trigger.ToString();
 			var entry = await _outbox.EnqueueAsync(42, "Checklists", envelope);
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(0); stored.Should().NotBeNull();

@@ -20,10 +20,12 @@ namespace Resgrid.Services.Search
 	public class SystemActionsService : ISystemActionsService
 	{
 		private readonly IFeatureToggleService _featureToggles;
+		private readonly IRecordsCutoverService _recordsCutover;
 
-		public SystemActionsService(IFeatureToggleService featureToggles)
+		public SystemActionsService(IFeatureToggleService featureToggles, IRecordsCutoverService recordsCutover)
 		{
 			_featureToggles = featureToggles ?? throw new ArgumentNullException(nameof(featureToggles));
+			_recordsCutover = recordsCutover ?? throw new ArgumentNullException(nameof(recordsCutover));
 		}
 
 		public async Task<List<SystemActionHit>> SearchAsync(string text, SearchPrincipal principal, int max = 8, CancellationToken cancellationToken = default)
@@ -76,7 +78,18 @@ namespace Resgrid.Services.Search
 				return value;
 			}
 
-			var recordsOn = await FlagAsync(FeatureFlagKeys.RecordsSystem);
+			// The cutover, not the Records.System flag, is what makes legacy Logs read-only: a department with the flag
+			// on but Records not yet activated is still writing Logs.
+			bool? legacyWritesBlocked = null;
+			async Task<bool> LegacyWritesBlockedAsync()
+			{
+				if (legacyWritesBlocked.HasValue)
+					return legacyWritesBlocked.Value;
+				try { legacyWritesBlocked = await _recordsCutover.AreLegacyWritesBlockedAsync(principal.DepartmentId); }
+				catch (Exception ex) { Logging.LogException(ex, "Records cutover state could not be evaluated for the command palette; hiding legacy Logs writes."); legacyWritesBlocked = true; }
+				return legacyWritesBlocked.Value;
+			}
+
 			var allowed = new List<SystemActionDefinition>();
 			foreach (var def in SystemActionCatalog.All)
 			{
@@ -87,7 +100,7 @@ namespace Resgrid.Services.Search
 					continue;
 				if (!principal.ModuleEnabled(def.Module))
 					continue;
-				if (def.HiddenWhenRecordsEnabled && recordsOn)
+				if (def.HiddenAfterRecordsCutover && await LegacyWritesBlockedAsync())
 					continue;
 				if (!await FlagAsync(def.FeatureFlag))
 					continue;

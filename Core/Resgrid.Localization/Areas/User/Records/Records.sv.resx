@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>Ej tillämpl.</value></data>
   <data name="NoteBody" xml:space="preserve"><value>Anteckningstext</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>Anteckning sparad.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>Datumet är ogiltigt. Kontrollera året.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>Ämne</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>Föreläggande utfärdat.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>Föreläggandereferens</value></data>

@@ -16,22 +16,17 @@ namespace Resgrid.Workers.Framework.Logic
 	/// </summary>
 	public class ParEvaluationLogic
 	{
-		private readonly IDepartmentsService _departmentsService;
-		private readonly ICallsService _callsService;
-		private readonly IIncidentCommandService _incidentCommandService;
-
-		public ParEvaluationLogic()
-		{
-			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-			_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-			_incidentCommandService = Bootstrapper.GetKernel().Resolve<IIncidentCommandService>();
-		}
-
 		public async Task<Tuple<bool, string>> Process(CancellationToken cancellationToken = default)
 		{
 			try
 			{
-				var departments = await _departmentsService.GetAllAsync();
+				// Own scope per sweep: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var departmentsService = scope.Resolve<IDepartmentsService>();
+				var callsService = scope.Resolve<ICallsService>();
+				var incidentCommandService = scope.Resolve<IIncidentCommandService>();
+
+				var departments = await departmentsService.GetAllAsync();
 				if (departments == null)
 					return new Tuple<bool, string>(true, "No departments to sweep.");
 
@@ -43,7 +38,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (cancellationToken.IsCancellationRequested)
 						break;
 
-					var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
+					var activeCalls = await callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
 					if (activeCalls == null)
 						continue;
 
@@ -51,7 +46,7 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						// EvaluateCriticalParAsync no-ops cheaply when the call has no active incident command,
 						// so we can sweep every check-in-enabled active call without pre-filtering by command.
-						var flagged = await _incidentCommandService.EvaluateCriticalParAsync(
+						var flagged = await incidentCommandService.EvaluateCriticalParAsync(
 							department.DepartmentId, call.CallId, cancellationToken);
 
 						callsSwept++;

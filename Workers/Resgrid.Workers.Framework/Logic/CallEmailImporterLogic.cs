@@ -15,19 +15,14 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class CallEmailImporterLogic
 	{
-		private ICallsService _callsService;
-		private IQueueService _queueService;
-		private IDepartmentsService _departmentsService;
-		private ICallEmailProvider _callEmailProvider;
-		private IUserProfileService _userProfileService;
-		private IDepartmentSettingsService _departmentSettingsService;
-		private IUnitsService _unitsService;
-
 		public async Task<Tuple<bool, string>> Process(CallEmailQueueItem item)
 		{
 			bool success = true;
 			string result = "";
-			_callEmailProvider = Bootstrapper.GetKernel().Resolve<ICallEmailProvider>();
+
+			// Own scope per item: root-scope services would share the process-wide root unit of work.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+			var _callEmailProvider = scope.Resolve<ICallEmailProvider>();
 
 			if (!String.IsNullOrWhiteSpace(item?.EmailSettings?.Hostname))
 			{
@@ -44,12 +39,12 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					var calls = new List<Call>();
 
-					_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-					_queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
-					_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-					_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-					_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-					_unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+					var _callsService = scope.Resolve<ICallsService>();
+					var _queueService = scope.Resolve<IQueueService>();
+					var _departmentsService = scope.Resolve<IDepartmentsService>();
+					var _userProfileService = scope.Resolve<IUserProfileService>();
+					var _departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+					var _unitsService = scope.Resolve<IUnitsService>();
 
 					// Ran into an issue where the department users didn't come back. We can't put the email back in the POP
 					// email box so just added some simple retry logic here.
@@ -118,10 +113,10 @@ namespace Resgrid.Workers.Framework.Logic
 									// Run card auto-dispatch for imported email calls.
 									try
 									{
-										var featureToggleService = Bootstrapper.GetKernel().Resolve<IFeatureToggleService>();
+										var featureToggleService = scope.Resolve<IFeatureToggleService>();
 										if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
 										{
-											var dispatchRecommendationService = Bootstrapper.GetKernel().Resolve<IDispatchRecommendationService>();
+											var dispatchRecommendationService = scope.Resolve<IDispatchRecommendationService>();
 											var recommendation = await dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true);
 
 											if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
@@ -150,7 +145,7 @@ namespace Resgrid.Workers.Framework.Logic
 									{
 										try
 										{
-											var aiDispatchAdmin = Bootstrapper.GetKernel().Resolve<Resgrid.Model.AiDispatch.IAiDispatchAdminService>();
+											var aiDispatchAdmin = scope.Resolve<Resgrid.Model.AiDispatch.IAiDispatchAdminService>();
 											await _queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
 											{
 												DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = 3, QueuedOnUtc = DateTime.UtcNow,
@@ -174,13 +169,6 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 
 					await _departmentsService.SaveDepartmentEmailSettingsAsync(emailResult.EmailSettings);
-
-					_callsService = null;
-					_queueService = null;
-					_departmentsService = null;
-					_callEmailProvider = null;
-					_userProfileService = null;
-					_departmentSettingsService = null;
 				}
 			}
 

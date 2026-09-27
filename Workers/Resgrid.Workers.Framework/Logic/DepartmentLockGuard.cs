@@ -25,7 +25,9 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
-				var lockService = Bootstrapper.GetKernel().Resolve<IDepartmentLockService>();
+				// Own scope: a root-scope resolve would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var lockService = scope.Resolve<IDepartmentLockService>();
 				return await lockService.IsDepartmentLockedAsync(departmentId);
 			}
 			catch (Exception ex)

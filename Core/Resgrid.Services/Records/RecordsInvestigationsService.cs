@@ -259,7 +259,7 @@ namespace Resgrid.Services.Records
 			var note = new RmsInvestigationNote
 			{
 				RmsInvestigationNoteId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), RmsInvestigationCaseId = caseId, Kind = (int)kind,
-				OccurredOn = occurredOn == default ? now : occurredOn, AuthorUserId = userId, Subject = RecordsPreventionGate.Trim(subject, 250), Body = RecordsPreventionGate.Require(body, 32000, "A note needs content."), CreatedOn = now, ModifiedOn = now, RowVersion = 1
+				OccurredOn = RecordsPreventionGate.RequireStorableDate(occurredOn == default ? now : occurredOn, "The note date is not valid."), AuthorUserId = userId, Subject = RecordsPreventionGate.Trim(subject, 250), Body = RecordsPreventionGate.Require(body, 32000, "A note needs content."), CreatedOn = now, ModifiedOn = now, RowVersion = 1
 			};
 			var plaintext = PlaintextSnapshot<RmsInvestigationNote>.Take(note, RmsProtectedFields.InvestigationNotes);
 			await _protection.ProtectInvestigationNoteAsync(departmentId, note, null, userId, cancellationToken);
@@ -294,11 +294,13 @@ namespace Resgrid.Services.Records
 			var (investigation, _) = await RequireMemberAsync(departmentId, userId, caseId, RmsInvestigationRole.Lead, RmsInvestigationRole.Investigator);
 			RequireOpen(investigation);
 			var now = DateTime.UtcNow;
+			// Checked before the initializer, which draws the next evidence number.
+			var collectedOn = RecordsPreventionGate.RequireStorableDate(input.CollectedOn == default ? now : input.CollectedOn, "The collection date is not valid.");
 			var item = new RmsInvestigationEvidence
 			{
 				RmsInvestigationEvidenceId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), RmsInvestigationCaseId = caseId,
 				EvidenceNumber = await _gate.NextNumberAsync(departmentId, RmsPreventionNumberKinds.Evidence, now, cancellationToken), Kind = input.Kind == 0 ? (int)RmsInvestigationEvidenceKind.Physical : input.Kind,
-				Description = RecordsPreventionGate.Require(input.Description, 4000, "Evidence needs a description."), CollectedOn = input.CollectedOn == default ? now : input.CollectedOn,
+				Description = RecordsPreventionGate.Require(input.Description, 4000, "Evidence needs a description."), CollectedOn = collectedOn,
 				CollectedByUserId = string.IsNullOrWhiteSpace(input.CollectedByUserId) ? userId : input.CollectedByUserId.Trim(), CollectedFrom = RecordsPreventionGate.Trim(input.CollectedFrom, 1000),
 				State = (int)RmsEvidenceState.Collected, StorageLocation = RecordsPreventionGate.Trim(input.StorageLocation, 250), CreatedOn = now, ModifiedOn = now, RowVersion = 1
 			};

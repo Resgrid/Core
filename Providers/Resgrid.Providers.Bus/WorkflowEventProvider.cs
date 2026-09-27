@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using Newtonsoft.Json;
 using Resgrid.Config;
 using Resgrid.Model;
@@ -18,18 +19,21 @@ namespace Resgrid.Providers.Bus
 	/// Subscribes to all domain events and, for each active workflow whose trigger matches,
 	/// creates a WorkflowRun (Pending) and enqueues a WorkflowQueueItem to RabbitMQ.
 	/// Free-plan departments are subject to an aggressive, non-bypassable rate limit.
+	///
+	/// The scoped repositories and services are NOT constructor-injected: this is a singleton, and capturing
+	/// InstancePerLifetimeScope dependencies in it would pin them to the root scope — one shared unit of work,
+	/// and one shared DB connection, for every event the process ever handles. Events arrive concurrently
+	/// (async listeners, and several worker jobs dispatching at once), and a Records run insert opens a
+	/// transaction on that unit of work, so the other handlers' queries landed on the same connection
+	/// ("The connection does not support MultipleActiveResultSets") and inside another event's transaction.
+	/// Each event instead runs in its own child scope, as <c>ChatProvisioningEventService</c> does.
 	/// </summary>
 	public class WorkflowEventProvider : IWorkflowEventProvider
 	{
 		private readonly IEventAggregator _eventAggregator;
 		private static IOutboundQueueProvider _outboundQueueProvider;
-		private static IWorkflowRepository _workflowRepository;
-		private static IWorkflowRunRepository _runRepository;
-		private static IDepartmentsService _departmentsService;
-		private static ISubscriptionsService _subscriptionsService;
-		private static IProtectedProjectionService _protectedProjectionService;
-		private static Lazy<IReadinessHistoryProtectionService> _history;
-		private static Task ProtectChecklistRunAsync(WorkflowRun run) => (_history?.Value ?? throw new InvalidOperationException("Readiness history protection is unavailable."))
+		private static ILifetimeScope _lifetimeScope;
+		private static Task ProtectChecklistRunAsync(ILifetimeScope scope, WorkflowRun run) => scope.Resolve<IReadinessHistoryProtectionService>()
 			.ProtectAsync(run.DepartmentId, run.WorkflowRunId, run, ReadinessHistoryFields.Runs);
 
 		// Per-minute rate limit tracker: departmentId → (window start, count)
@@ -55,20 +59,11 @@ namespace Resgrid.Providers.Bus
 		public WorkflowEventProvider(
 			IEventAggregator eventAggregator,
 			IOutboundQueueProvider outboundQueueProvider,
-			IWorkflowRepository workflowRepository,
-			IWorkflowRunRepository runRepository,
-			IDepartmentsService departmentsService,
-			ISubscriptionsService subscriptionsService,
-			IProtectedProjectionService protectedProjectionService, Lazy<IReadinessHistoryProtectionService> history = null)
+			ILifetimeScope lifetimeScope)
 		{
 			_eventAggregator        = eventAggregator;
 			_outboundQueueProvider  = outboundQueueProvider;
-			_workflowRepository     = workflowRepository;
-			_runRepository          = runRepository;
-			_departmentsService     = departmentsService;
-			_subscriptionsService   = subscriptionsService;
-			_protectedProjectionService = protectedProjectionService;
-			_history = history;
+			_lifetimeScope          = lifetimeScope;
 
 			RegisterListeners();
 		}
@@ -206,24 +201,30 @@ namespace Resgrid.Providers.Bus
 		{
 			try
 			{
+				// Own scope per event: fresh repositories and services with their own unit of work (see the class summary).
+				using var scope = _lifetimeScope.BeginLifetimeScope();
+				var workflowRepository = scope.Resolve<IWorkflowRepository>();
+				var runRepository = scope.Resolve<IWorkflowRunRepository>();
+
 				System.Collections.Generic.List<Workflow> workflows = null;
 				string payloadJson = null;
 
 				if (envelope != null)
 				{
 					// The skip rows below need the workflow list, so for Records events it is loaded before the limits.
-					workflows = (await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
+					workflows = (await workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
 					if (workflows == null || workflows.Count == 0)
 						return;
 
+					var protectedProjectionService = scope.Resolve<IProtectedProjectionService>();
 					payloadJson = ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem)
-						? await ChecklistWorkflowPayload.ProjectAsync(departmentId, eventObj, _protectedProjectionService, wrapped: true)
-						: await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
+						? await ChecklistWorkflowPayload.ProjectAsync(departmentId, eventObj, protectedProjectionService, wrapped: true)
+						: await protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
 					if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem))
 					{
 						// Retry a run whose database insert succeeded but whose queue send did not.
 						// Its stable run ID is claimed atomically by the worker before executing actions.
-						var existingRuns = (await _runRepository.GetByWorkflowsAndEventAsync(departmentId, workflows.Select(w => w.WorkflowId).ToArray(), envelope.EventId))
+						var existingRuns = (await runRepository.GetByWorkflowsAndEventAsync(departmentId, workflows.Select(w => w.WorkflowId).ToArray(), envelope.EventId))
 							.GroupBy(r => r.WorkflowId).ToDictionary(g => g.Key, g => g.OrderBy(r => r.StartedOn).First());
 						foreach (var workflow in workflows.ToList())
 						{
@@ -237,7 +238,7 @@ namespace Resgrid.Providers.Bus
 				}
 
 				// ── Plan-aware rate limiting ─────────────────────────────────────────
-				var plan     = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
+				var plan     = await scope.Resolve<ISubscriptionsService>().GetCurrentPlanForDepartmentAsync(departmentId);
 				var isFreePlan = plan?.IsFree ?? false;
 
 				if (isFreePlan)
@@ -245,14 +246,14 @@ namespace Resgrid.Providers.Bus
 					// Free plan: aggressive per-minute limit with NO event-type exemptions
 					if (!IsWithinRateLimit(departmentId, WorkflowConfig.FreePlanRateLimitPerDepartmentPerMinute))
 					{
-						await RecordSkippedAsync(workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.RateLimit);
+						await RecordSkippedAsync(scope, workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.RateLimit);
 						return;
 					}
 
 					// Free plan: daily run cap
 					if (!IsWithinDailyLimit(departmentId, WorkflowConfig.FreePlanDailyRunLimit))
 					{
-						await RecordSkippedAsync(workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.DailyLimit);
+						await RecordSkippedAsync(scope, workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.DailyLimit);
 						return;
 					}
 				}
@@ -262,14 +263,14 @@ namespace Resgrid.Providers.Bus
 					if (!_rateLimitExemptEventTypes.Contains(eventType) &&
 					    !IsWithinRateLimit(departmentId, WorkflowConfig.RateLimitPerDepartmentPerMinute))
 					{
-						await RecordSkippedAsync(workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.RateLimit);
+						await RecordSkippedAsync(scope, workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.RateLimit);
 						return;
 					}
 				}
 				// ── End rate limiting ────────────────────────────────────────────────
 
 				if (workflows == null)
-					workflows = (await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
+					workflows = (await workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
 
 				if (workflows == null || workflows.Count == 0) return;
 
@@ -277,13 +278,13 @@ namespace Resgrid.Providers.Bus
 				// redacted HERE, before it reaches WorkflowRun.InputPayload, the queue, retries,
 				// dead letters, history, or designer previews.
 				if (payloadJson == null)
-					payloadJson = await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
-				var department  = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+					payloadJson = await scope.Resolve<IProtectedProjectionService>().BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
+				var department  = await scope.Resolve<IDepartmentsService>().GetDepartmentByIdAsync(departmentId);
 				var deptCode    = department?.Code ?? string.Empty;
 
 				foreach (var workflow in workflows)
 				{
-					if (!ChecklistWorkflowPayload.IsReadinessProducer(envelope?.ProducerSubsystem) && await IsDuplicateAsync(workflow.WorkflowId, envelope)) continue;
+					if (!ChecklistWorkflowPayload.IsReadinessProducer(envelope?.ProducerSubsystem) && await IsDuplicateAsync(runRepository, workflow.WorkflowId, envelope)) continue;
 
 					var run = WorkflowRunEnvelope.Apply(new WorkflowRun
 					{
@@ -300,14 +301,14 @@ namespace Resgrid.Providers.Bus
 
 					try
 					{
-						if (ChecklistWorkflowPayload.IsReadinessProducer(envelope?.ProducerSubsystem)) await ProtectChecklistRunAsync(run);
-						run = await _runRepository.InsertAsync(run, CancellationToken.None);
+						if (ChecklistWorkflowPayload.IsReadinessProducer(envelope?.ProducerSubsystem)) await ProtectChecklistRunAsync(scope, run);
+						run = await runRepository.InsertAsync(run, CancellationToken.None);
 					}
 					catch (Exception ex) when (envelope != null && WorkflowRunEnvelope.IsDuplicateKeyViolation(ex))
 					{
 						if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem))
 						{
-							var existing = await _runRepository.GetByWorkflowAndEventAsync(workflow.WorkflowId, envelope.EventId);
+							var existing = await runRepository.GetByWorkflowAndEventAsync(workflow.WorkflowId, envelope.EventId);
 							if (existing == null || existing.DepartmentId != departmentId) throw;
 							if (existing.Status == (int)WorkflowRunStatus.Pending) await RequeueChecklistRunAsync(existing, payloadJson);
 						}
@@ -353,12 +354,12 @@ namespace Resgrid.Providers.Bus
 		}
 
 		/// <summary>One initial run per (WorkflowId, EventId): a retry or a second dispatcher reuses the existing run.</summary>
-		private static async Task<bool> IsDuplicateAsync(string workflowId, DomainEventDispatchedEvent envelope)
+		private static async Task<bool> IsDuplicateAsync(IWorkflowRunRepository runRepository, string workflowId, DomainEventDispatchedEvent envelope)
 		{
 			if (envelope == null || string.IsNullOrWhiteSpace(envelope.EventId))
 				return false;
 
-			var existing = await _runRepository.GetByWorkflowAndEventAsync(workflowId, envelope.EventId);
+			var existing = await runRepository.GetByWorkflowAndEventAsync(workflowId, envelope.EventId);
 			if (existing == null)
 				return false;
 
@@ -371,16 +372,17 @@ namespace Resgrid.Providers.Bus
 		/// reason, so it shows in run history and health instead of vanishing (plan section 5.6). Legacy events
 		/// (no envelope) are still dropped silently, as before.
 		/// </summary>
-		private static async Task RecordSkippedAsync(System.Collections.Generic.List<Workflow> workflows, int departmentId, WorkflowTriggerEventType eventType,
+		private static async Task RecordSkippedAsync(ILifetimeScope scope, System.Collections.Generic.List<Workflow> workflows, int departmentId, WorkflowTriggerEventType eventType,
 			DomainEventDispatchedEvent envelope, string payloadJson, string reason)
 		{
 			if (envelope == null || workflows == null)
 				return;
 
+			var runRepository = scope.Resolve<IWorkflowRunRepository>();
 			var now = DateTime.UtcNow;
 			foreach (var workflow in workflows)
 			{
-				if (await IsDuplicateAsync(workflow.WorkflowId, envelope))
+				if (await IsDuplicateAsync(runRepository, workflow.WorkflowId, envelope))
 					continue;
 
 				var run = WorkflowRunEnvelope.MarkSkipped(WorkflowRunEnvelope.Apply(new WorkflowRun
@@ -397,8 +399,8 @@ namespace Resgrid.Providers.Bus
 
 				try
 				{
-					if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem)) await ProtectChecklistRunAsync(run);
-					await _runRepository.InsertAsync(run, CancellationToken.None);
+					if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem)) await ProtectChecklistRunAsync(scope, run);
+					await runRepository.InsertAsync(run, CancellationToken.None);
 					Framework.Logging.LogError($"Records event {envelope.EventId} ({eventType}) was skipped for workflow {workflow.WorkflowId} in department {departmentId}: {reason}.");
 				}
 				catch (Exception ex) when (WorkflowRunEnvelope.IsDuplicateKeyViolation(ex))

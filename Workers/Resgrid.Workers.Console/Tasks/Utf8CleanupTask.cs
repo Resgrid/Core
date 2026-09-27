@@ -1,7 +1,9 @@
+using Autofac;
 using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Workers.Console.Commands;
+using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 using System;
 using System.Threading;
@@ -26,7 +28,8 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var logic = new Utf8CleanupLogic();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var logic = new Utf8CleanupLogic(scope);
 				var result = await logic.Process(cancellationToken);
 
 				if (result.Item1)

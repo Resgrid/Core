@@ -41,7 +41,7 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IUnitOfWork _unitOfWork;
 
-		// IncidentCommandService reaches back for channel provisioning through ServiceLocator, so this
+		// IncidentCommandService reaches back for channel provisioning through a Lazy<IChatChannelService>, so this
 		// constructor edge does not close a resolution cycle.
 		private readonly IIncidentCommandService _incidentCommandService;
 

@@ -122,6 +122,7 @@ namespace Resgrid.Services.Records
 			await _gate.RequireAdminAsync(departmentId, userId);
 			if (input == null) throw new ArgumentNullException(nameof(input));
 			input.Name = RecordsPreventionGate.Require(input.Name, 250, "An occupancy needs a name.");
+			input.NextReviewDue = RecordsPreventionGate.RequireStorableDate(input.NextReviewDue, "The next review date is not valid.");
 			var now = DateTime.UtcNow;
 
 			RmsOccupancy entity;

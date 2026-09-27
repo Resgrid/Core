@@ -13,29 +13,20 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class CalendarNotifierLogic
 	{
-		private ICalendarService _calendarService;
-		private ICommunicationService _communicationService;
-		private IUserProfileService _userProfileService;
-		private IDepartmentSettingsService _departmentSettingsService;
-		private IDepartmentGroupsService _departmentGroupsService;
-		private IDepartmentsService _departmentsService;
-		private ITextResponsePromptService _textResponsePromptService;
-
-		public CalendarNotifierLogic()
-		{
-			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-			_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-			_calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
-			_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
-			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-			_textResponsePromptService = Bootstrapper.GetKernel().Resolve<ITextResponsePromptService>();
-		}
-
 		public async Task<Tuple<bool,string>> Process(CalendarNotifierQueueItem item)
 		{
 			bool success = true;
 			string result = "";
+
+			// Own scope per item: root-scope services would share the process-wide root unit of work.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+			var communicationService = scope.Resolve<ICommunicationService>();
+			var userProfileService = scope.Resolve<IUserProfileService>();
+			var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+			var calendarService = scope.Resolve<ICalendarService>();
+			var departmentGroupsService = scope.Resolve<IDepartmentGroupsService>();
+			var departmentsService = scope.Resolve<IDepartmentsService>();
+			var textResponsePromptService = scope.Resolve<ITextResponsePromptService>();
 
 			if (item?.CalendarItem?.Attendees != null && item.CalendarItem.Attendees.Any())
 			{
@@ -43,9 +34,9 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					var message = String.Empty;
 					var title = String.Empty;
-					var profiles = await _userProfileService.GetSelectedUserProfilesAsync(item.CalendarItem.Attendees.Select(x => x.UserId).ToList());
-					var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.CalendarItem.DepartmentId);
-					var department = await _departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
+					var profiles = await userProfileService.GetSelectedUserProfilesAsync(item.CalendarItem.Attendees.Select(x => x.UserId).ToList());
+					var departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.CalendarItem.DepartmentId);
+					var department = await departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
 
 					var adjustedDateTime = item.CalendarItem.Start.TimeConverter(department);
 
@@ -65,7 +56,7 @@ namespace Resgrid.Workers.Framework.Logic
 						foreach (var person in item.CalendarItem.Attendees)
 						{
 							var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
-							await SendCalendarReminderAsync(item.CalendarItem, person.UserId, message, departmentNumber, department, title, profile);
+							await SendCalendarReminderAsync(communicationService, textResponsePromptService, item.CalendarItem, person.UserId, message, departmentNumber, department, title, profile);
 						}
 					}
 				}
@@ -77,7 +68,7 @@ namespace Resgrid.Workers.Framework.Logic
 					Logging.LogException(ex);
 				}
 
-				await _calendarService.MarkAsNotifiedAsync(item.CalendarItem.CalendarItemId);
+				await calendarService.MarkAsNotifiedAsync(item.CalendarItem.CalendarItemId);
 			}
 			else if (!String.IsNullOrWhiteSpace(item?.CalendarItem?.Entities))
 			{
@@ -85,9 +76,9 @@ namespace Resgrid.Workers.Framework.Logic
 
 				var message = String.Empty;
 				var title = String.Empty;
-				var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(item.CalendarItem.DepartmentId);
-				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.CalendarItem.DepartmentId);
-				var department = await _departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
+				var profiles = await userProfileService.GetAllProfilesForDepartmentAsync(item.CalendarItem.DepartmentId);
+				var departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.CalendarItem.DepartmentId);
+				var department = await departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
 
 				var adjustedDateTime = item.CalendarItem.Start.TimeConverter(department);
 				title = $"Upcoming: {SafeCalendarText(item.CalendarItem.Title, "AdpProtectedCalendarTitle")}";
@@ -107,12 +98,12 @@ namespace Resgrid.Workers.Framework.Logic
 						// Notify the entire department
 						foreach (var profile in profiles)
 						{
-							await SendCalendarReminderAsync(item.CalendarItem, profile.Key, message, departmentNumber, department, title, profile.Value);
+							await SendCalendarReminderAsync(communicationService, textResponsePromptService, item.CalendarItem, profile.Key, message, departmentNumber, department, title, profile.Value);
 						}
 					}
 					else
 					{
-						var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(item.CalendarItem.DepartmentId);
+						var groups = await departmentGroupsService.GetAllGroupsForDepartmentAsync(item.CalendarItem.DepartmentId);
 						foreach (var val in items)
 						{
 							int groupId = 0;
@@ -125,9 +116,9 @@ namespace Resgrid.Workers.Framework.Logic
 									foreach (var member in group.Members)
 									{
 										if (profiles.ContainsKey(member.UserId))
-											await SendCalendarReminderAsync(item.CalendarItem, member.UserId, message, departmentNumber, department, title, profiles[member.UserId]);
+											await SendCalendarReminderAsync(communicationService, textResponsePromptService, item.CalendarItem, member.UserId, message, departmentNumber, department, title, profiles[member.UserId]);
 										else
-											await SendCalendarReminderAsync(item.CalendarItem, member.UserId, message, departmentNumber, department, title, null);
+											await SendCalendarReminderAsync(communicationService, textResponsePromptService, item.CalendarItem, member.UserId, message, departmentNumber, department, title, null);
 									}
 								}
 							}
@@ -135,23 +126,23 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 				}
 
-				await _calendarService.MarkAsNotifiedAsync(item.CalendarItem.CalendarItemId);
+				await calendarService.MarkAsNotifiedAsync(item.CalendarItem.CalendarItemId);
 			}
 
 			return new Tuple<bool, string>(success, result);
 		}
 
-		private async Task SendCalendarReminderAsync(CalendarItem calendarItem, string userId, string message,
-			string departmentNumber, Department department, string title, UserProfile profile)
+		private static async Task SendCalendarReminderAsync(ICommunicationService communicationService, ITextResponsePromptService textResponsePromptService,
+			CalendarItem calendarItem, string userId, string message, string departmentNumber, Department department, string title, UserProfile profile)
 		{
-			var sent = await _communicationService.SendNotificationAsync(userId, calendarItem.DepartmentId, message,
+			var sent = await communicationService.SendNotificationAsync(userId, calendarItem.DepartmentId, message,
 				departmentNumber, department, title, profile);
 
 			if (sent && calendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
 			{
 				try
 				{
-					await _textResponsePromptService.RecordCalendarRsvpPromptAsync(calendarItem, userId);
+					await textResponsePromptService.RecordCalendarRsvpPromptAsync(calendarItem, userId);
 				}
 				catch (Exception ex)
 				{

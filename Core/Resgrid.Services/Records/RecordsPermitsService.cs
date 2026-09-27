@@ -64,6 +64,7 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsPermit>> ListAsync(int departmentId, string userId, RmsPermitQuery query)
 		{
 			await RequireViewAsync(departmentId, userId);
+			RecordsPreventionGate.RequireStorableDate(query?.ExpiresBefore, "The expires-before date is not valid.");
 			var rows = (await _permits.QueryAsync(departmentId, query ?? new RmsPermitQuery()))?.ToList() ?? new List<RmsPermit>();
 			await _protection.RevealPermitsAsync(departmentId, rows);
 			return rows;
@@ -72,6 +73,7 @@ namespace Resgrid.Services.Records
 		public async Task<int> CountAsync(int departmentId, string userId, RmsPermitQuery query)
 		{
 			await RequireViewAsync(departmentId, userId);
+			RecordsPreventionGate.RequireStorableDate(query?.ExpiresBefore, "The expires-before date is not valid.");
 			return await _permits.CountAsync(departmentId, query ?? new RmsPermitQuery());
 		}
 
@@ -134,7 +136,7 @@ namespace Resgrid.Services.Records
 			permit.ApplicantContactId = RecordsPreventionGate.Trim(input.ApplicantContactId, 128); permit.ApplicantName = RecordsPreventionGate.Trim(input.ApplicantName, 250); permit.ApplicantPhone = RecordsPreventionGate.Trim(input.ApplicantPhone, 50); permit.ApplicantEmail = RecordsPreventionGate.Trim(input.ApplicantEmail, 250);
 			permit.Description = RecordsPreventionGate.Trim(input.Description, 4000); permit.Conditions = RecordsPreventionGate.Trim(input.Conditions, 8000); permit.ReviewNotes = RecordsPreventionGate.Trim(input.ReviewNotes, 8000);
 			permit.RmsOccupancyId = RecordsPreventionGate.Trim(input.RmsOccupancyId, 36); permit.FeeAmount = input.FeeAmount;
-			if (input.ExpiresOn.HasValue) permit.ExpiresOn = input.ExpiresOn; if (input.EffectiveOn.HasValue) permit.EffectiveOn = input.EffectiveOn;
+			if (input.ExpiresOn.HasValue) permit.ExpiresOn = RecordsPreventionGate.RequireStorableDate(input.ExpiresOn, "The expiry date is not valid."); if (input.EffectiveOn.HasValue) permit.EffectiveOn = RecordsPreventionGate.RequireStorableDate(input.EffectiveOn, "The effective date is not valid.");
 			permit.ModifiedOn = DateTime.UtcNow; permit.RowVersion++;
 			var plaintext = PlaintextSnapshot<RmsPermit>.Take(permit, RmsProtectedFields.Permits);
 			await _protection.ProtectPermitAsync(departmentId, permit, existing, userId, cancellationToken);
@@ -175,8 +177,8 @@ namespace Resgrid.Services.Records
 				case RmsPermitState.Approved: permit.ReviewedOn = now; permit.ReviewedByUserId = userId; break;
 				case RmsPermitState.Denied: permit.ReviewedOn = now; permit.ReviewedByUserId = userId; permit.DecisionReason = RecordsPreventionGate.Trim(reason, 1000); break;
 				case RmsPermitState.Issued:
-					permit.IssuedOn = now; permit.IssuedByUserId = userId; permit.EffectiveOn = effectiveOn ?? permit.EffectiveOn ?? now;
-					permit.ExpiresOn = expiresOn ?? permit.ExpiresOn ?? permit.EffectiveOn.Value.AddDays(type?.DefaultValidityDays ?? 365);
+					permit.IssuedOn = now; permit.IssuedByUserId = userId; permit.EffectiveOn = RecordsPreventionGate.RequireStorableDate(effectiveOn ?? permit.EffectiveOn ?? now, "The effective date is not valid.");
+					permit.ExpiresOn = RecordsPreventionGate.RequireStorableDate(expiresOn ?? permit.ExpiresOn ?? permit.EffectiveOn.Value.AddDays(type?.DefaultValidityDays ?? 365), "The expiry date is not valid.");
 					if (permit.ExpiresOn <= permit.EffectiveOn) throw new ArgumentException("The expiry must fall after the effective date.");
 					break;
 				case RmsPermitState.Revoked: permit.DecisionReason = RecordsPreventionGate.Trim(reason, 1000); break;

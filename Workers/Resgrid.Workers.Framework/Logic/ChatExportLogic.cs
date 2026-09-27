@@ -32,8 +32,10 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			try
 			{
-				var exportRepository = Bootstrapper.GetKernel().Resolve<IChatExportRepository>();
-				var protectedWriteService = Bootstrapper.GetKernel().Resolve<IProtectedWriteService>();
+				// Own scope per run: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var exportRepository = scope.Resolve<IChatExportRepository>();
+				var protectedWriteService = scope.Resolve<IProtectedWriteService>();
 
 				// Recovery first: exports stranded in Running by a crashed worker go back to the queue
 				// so they are picked up below (possibly by this run).
@@ -57,7 +59,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 					try
 					{
-						export.Data = await BuildExportAsync(export, cancellationToken);
+						export.Data = await BuildExportAsync(scope, export, cancellationToken);
 						export.Status = (int)ChatExportStatus.Complete;
 						export.CompletedOn = DateTime.UtcNow;
 						export.Error = null;
@@ -107,12 +109,12 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 		}
 
-		private static async Task<byte[]> BuildExportAsync(ChatExport export, CancellationToken cancellationToken)
+		private static async Task<byte[]> BuildExportAsync(ILifetimeScope scope, ChatExport export, CancellationToken cancellationToken)
 		{
-			var channelRepository = Bootstrapper.GetKernel().Resolve<IChatChannelRepository>();
-			var messageRepository = Bootstrapper.GetKernel().Resolve<IChatMessageRepository>();
-			var editRepository = Bootstrapper.GetKernel().Resolve<IChatMessageEditRepository>();
-			var moderationRepository = Bootstrapper.GetKernel().Resolve<IChatModerationActionRepository>();
+			var channelRepository = scope.Resolve<IChatChannelRepository>();
+			var messageRepository = scope.Resolve<IChatMessageRepository>();
+			var editRepository = scope.Resolve<IChatMessageEditRepository>();
+			var moderationRepository = scope.Resolve<IChatModerationActionRepository>();
 
 			var messages = (await messageRepository.GetForExportAsync(export.DepartmentId, export.ChatChannelId, export.StartDate, export.EndDate, MaxMessagesPerExport))?.ToList()
 				?? new List<ChatMessage>();

@@ -22,11 +22,11 @@ namespace Resgrid.Workers.Framework.Logic
 		/// classification as the webhook so every STOP variant it honors is honored here; a resolver
 		/// fault falls back to a literal "STOP" compare rather than blocking an opt-out.
 		/// </summary>
-		private static bool IsStopCommand(string body)
+		private static bool IsStopCommand(ILifetimeScope scope, string body)
 		{
 			try
 			{
-				var textCommandService = Bootstrapper.GetKernel().Resolve<Model.Services.ITextCommandService>();
+				var textCommandService = scope.Resolve<Model.Services.ITextCommandService>();
 				return textCommandService.DetermineType(body).Type == Model.TextCommandTypes.Stop;
 			}
 			catch (Exception ex)
@@ -53,9 +53,11 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
-				var chatbotIngressService = Bootstrapper.GetKernel().Resolve<IChatbotIngressService>();
-				var textMessageProvider = Bootstrapper.GetKernel().Resolve<ITextMessageProvider>();
-				var cacheProvider = Bootstrapper.GetKernel().Resolve<ICacheProvider>();
+				// Own scope per message: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var chatbotIngressService = scope.Resolve<IChatbotIngressService>();
+				var textMessageProvider = scope.Resolve<ITextMessageProvider>();
+				var cacheProvider = scope.Resolve<ICacheProvider>();
 
 				// Idempotency: the bus is at-least-once, so a redelivered item must not produce a second
 				// bot reply. Keyed on the platform/persisted message id with a 24h marker. A cache
@@ -82,7 +84,7 @@ namespace Resgrid.Workers.Framework.Logic
 						// SignalR fan-out), never over SMS — From is a Resgrid user id here, not a phone
 						// number. The ingress-resolved DepartmentId is passed through so the reply lands
 						// in the department the message actually came from.
-						var notifier = Bootstrapper.GetKernel().Resolve<IChatbotWebChatNotifier>();
+						var notifier = scope.Resolve<IChatbotWebChatNotifier>();
 						if (notifier != null)
 							await notifier.PushToUserAsync(item.From, text, item.DepartmentId);
 					}
@@ -116,7 +118,7 @@ namespace Resgrid.Workers.Framework.Logic
 				// half an hour later would act on stale intent. Value-free text; fail-open guard.
 				// EXCEPTION: STOP always works — opting out of messages is not a department-data
 				// mutation and must never be blocked by a migration lock.
-				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.DepartmentId) && !IsStopCommand(item.Body))
+				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.DepartmentId) && !IsStopCommand(scope, item.Body))
 				{
 					await SendReplyAsync("Resgrid is briefly paused for scheduled maintenance in your department. Please try again shortly.");
 					return true;

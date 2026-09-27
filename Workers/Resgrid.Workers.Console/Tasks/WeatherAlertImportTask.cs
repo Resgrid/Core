@@ -28,7 +28,8 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var weatherAlertService = Bootstrapper.GetKernel().Resolve<IWeatherAlertService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var weatherAlertService = scope.Resolve<IWeatherAlertService>();
 
 				_logger.LogInformation("WeatherAlertImport::Processing all active sources");
 				await weatherAlertService.ProcessAllActiveSourcesAsync(cancellationToken);

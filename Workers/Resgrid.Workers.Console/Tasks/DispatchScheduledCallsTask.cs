@@ -30,12 +30,13 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-				var callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-				var queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
-				var callDispatchStatusService = Bootstrapper.GetKernel().Resolve<ICallDispatchStatusService>();
-				var featureToggleService = Bootstrapper.GetKernel().Resolve<IFeatureToggleService>();
-				var dispatchRecommendationService = Bootstrapper.GetKernel().Resolve<IDispatchRecommendationService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var userProfileService = scope.Resolve<IUserProfileService>();
+				var callsService = scope.Resolve<ICallsService>();
+				var queueService = scope.Resolve<IQueueService>();
+				var callDispatchStatusService = scope.Resolve<ICallDispatchStatusService>();
+				var featureToggleService = scope.Resolve<IFeatureToggleService>();
+				var dispatchRecommendationService = scope.Resolve<IDispatchRecommendationService>();
 
 				var pendingCalls = await callsService.GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(5));
 

@@ -240,6 +240,16 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task A_window_bound_sql_cannot_store_is_refused_instead_of_overflowing_the_query()
+		{
+			// An API caller's two-digit year arrives as 0026; SQL datetime starts at 1753 (RESGRID-WEB-1MY).
+			Func<Task> start = () => _svc.GetWorkloadAsync(Dept, Member, new RecordsAnalyticsQuery { Start = new DateTime(26, 1, 1), End = End });
+			await start.Should().ThrowAsync<ArgumentException>().WithMessage("The start date is not valid.");
+			Func<Task> end = () => _svc.GetResponsePerformanceAsync(Dept, Member, new RecordsAnalyticsQuery { End = DateTime.MaxValue });
+			await end.Should().ThrowAsync<ArgumentException>().WithMessage("The end date is not valid.");
+		}
+
+		[Test]
 		public async Task Gate_flag_viewer_window_clamp_and_row_cap_apply_to_every_dashboard()
 		{
 			Func<Task> outsider = () => _svc.GetWorkloadAsync(Dept, Outsider, Q());

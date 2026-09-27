@@ -16,9 +16,20 @@ namespace Resgrid.Providers.Bus
 {
 	public class NotificationProvider : INotificationProvider
 	{
+		/// <summary>
+		/// The Azure user hub is legacy (Novu delivers user pushes) and is left unconfigured in newer
+		/// deployments. The client factory throws on an empty connection string, and there is nothing to
+		/// register with or remove from a hub that was never set up, so the methods that would otherwise
+		/// throw to their callers return early instead.
+		/// </summary>
+		private static bool IsHubConfigured()
+		{
+			return !String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureNotificationHub_FullConnectionString);
+		}
+
 		public async Task RegisterPush(PushUri pushUri)
 		{
-			if (String.IsNullOrWhiteSpace(pushUri.DeviceId))
+			if (String.IsNullOrWhiteSpace(pushUri.DeviceId) || !IsHubConfigured())
 				return;
 
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureNotificationHub_PushUrl);
@@ -98,6 +109,9 @@ namespace Resgrid.Providers.Bus
 
 		public async Task UnRegisterPush(PushUri pushUri)
 		{
+			if (!IsHubConfigured())
+				return;
+
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureNotificationHub_PushUrl);
 
 			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("userId:{0}", pushUri.UserId), 50);
@@ -121,6 +135,9 @@ namespace Resgrid.Providers.Bus
 
 		public async Task UnRegisterPushByUserDeviceId(PushUri pushUri)
 		{
+			if (!IsHubConfigured())
+				return;
+
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureNotificationHub_PushUrl);
 
 			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("userId:{0}", pushUri.UserId), 50);

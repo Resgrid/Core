@@ -1655,6 +1655,7 @@
   <data name="NotRecordedShort" xml:space="preserve"><value>Nie dot.</value></data>
   <data name="NoteBody" xml:space="preserve"><value>Treść notatki</value></data>
   <data name="NoteSaved" xml:space="preserve"><value>Notatka zapisana.</value></data>
+  <data name="InvalidDate" xml:space="preserve"><value>Data jest nieprawidłowa. Sprawdź rok.</value></data>
   <data name="NoteSubject" xml:space="preserve"><value>Temat</value></data>
   <data name="NoticeIssued" xml:space="preserve"><value>Wezwanie wystawione.</value></data>
   <data name="NoticeReference" xml:space="preserve"><value>Numer wezwania</value></data>

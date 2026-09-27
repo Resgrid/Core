@@ -21,6 +21,9 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
+					// Own scope per message: root-scope services would share the process-wide root unit of work.
+					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+
 					switch ((CqrsEventTypes)qi.Type)
 					{
 						case CqrsEventTypes.None:
@@ -30,7 +33,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (succeededCharge != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripePaymentAsync(succeededCharge);
 							}
@@ -40,7 +43,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (failedCharge != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeChargeFailedAsync(failedCharge);
 							}
@@ -50,7 +53,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (refundedCharge != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeSubscriptionRefundAsync(refundedCharge);
 							}
@@ -60,7 +63,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (updatedSubscription != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeSubscriptionUpdateAsync(updatedSubscription);
 							}
@@ -70,7 +73,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (deletedSubscription != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeSubscriptionCancellationAsync(deletedSubscription);
 							}
@@ -80,7 +83,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (stripeCheckoutSession != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeCheckoutCompletedAsync(stripeCheckoutSession);
 							}
@@ -90,7 +93,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (stripeCheckoutSessionUpdated != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeCheckoutUpdateAsync(stripeCheckoutSessionUpdated);
 							}
@@ -100,7 +103,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (invoicePaid != null)
 							{
-								var paymentProviderService = Bootstrapper.GetKernel().Resolve<IPaymentProviderService>();
+								var paymentProviderService = scope.Resolve<IPaymentProviderService>();
 
 								await paymentProviderService.ProcessStripeInvoicePaidAsync(invoicePaid);
 							}
@@ -117,7 +120,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							if (adpEvent != null)
 							{
-								var dataProtectionService = Bootstrapper.GetKernel().Resolve<IDepartmentDataProtectionService>();
+								var dataProtectionService = scope.Resolve<IDepartmentDataProtectionService>();
 
 								var adpResult = await dataProtectionService.ApplyAddonBillingEventAsync(adpEvent);
 

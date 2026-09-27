@@ -9,13 +9,6 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class GdprExportLogic
 	{
-		private readonly IGdprDataExportService _gdprDataExportService;
-
-		public GdprExportLogic()
-		{
-			_gdprDataExportService = Bootstrapper.GetKernel().Resolve<IGdprDataExportService>();
-		}
-
 		public async Task<Tuple<bool, string>> ProcessAsync(CancellationToken cancellationToken = default)
 		{
 			bool success = true;
@@ -23,8 +16,10 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
-				await _gdprDataExportService.ExpireOldRequestsAsync(cancellationToken);
-				await _gdprDataExportService.ProcessPendingRequestsAsync(cancellationToken);
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var gdprDataExportService = scope.Resolve<IGdprDataExportService>();
+				await gdprDataExportService.ExpireOldRequestsAsync(cancellationToken);
+				await gdprDataExportService.ProcessPendingRequestsAsync(cancellationToken);
 			}
 			catch (Exception ex)
 			{

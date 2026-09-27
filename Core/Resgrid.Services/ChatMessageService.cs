@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonServiceLocator;
+using Autofac;
+using Autofac.Core;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -33,6 +34,7 @@ namespace Resgrid.Services
 		private readonly IChatMessageMentionRepository _chatMessageMentionRepository;
 		private readonly IChatMessageAckRepository _chatMessageAckRepository;
 		private readonly IChatChannelMemberRepository _chatChannelMemberRepository;
+		private readonly ILifetimeScope _lifetimeScope;
 		private readonly IChatChannelService _chatChannelService;
 		private readonly IChatPermissionService _chatPermissionService;
 		private readonly IUserProfileService _userProfileService;
@@ -44,7 +46,7 @@ namespace Resgrid.Services
 			IChatMessageReactionRepository chatMessageReactionRepository, IChatMessageMentionRepository chatMessageMentionRepository,
 			IChatMessageAckRepository chatMessageAckRepository, IChatChannelMemberRepository chatChannelMemberRepository,
 			IChatChannelService chatChannelService, IChatPermissionService chatPermissionService, IUserProfileService userProfileService,
-			IUnitsService unitsService, IEventAggregator eventAggregator)
+			IUnitsService unitsService, IEventAggregator eventAggregator, ILifetimeScope lifetimeScope = null)
 		{
 			_chatChannelRepository = chatChannelRepository;
 			_chatMessageRepository = chatMessageRepository;
@@ -59,6 +61,7 @@ namespace Resgrid.Services
 			_userProfileService = userProfileService;
 			_unitsService = unitsService;
 			_eventAggregator = eventAggregator;
+			_lifetimeScope = lifetimeScope;
 		}
 
 		public async Task<ChatMessage> SendMessageAsync(int departmentId, string senderUserId, ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken))
@@ -807,16 +810,23 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Push fan-out off the request path: per-recipient Novu calls can be slow for large channels,
-		/// and a push failure must never fail the send. Fresh resolution inside the task keeps us off
-		/// the request's disposed lifetime scope (ChatProvisioningEventService pattern).
+		/// and a push failure must never fail the send. The task outlives the request, and Autofac will not
+		/// resolve from a scope whose parent is disposed, so it runs in its own child of the ROOT scope: never
+		/// the request's scope, and never a root-resolved notifier sharing the root unit of work
+		/// (ChatProvisioningEventService pattern). Skipped when constructed outside the container.
 		/// </summary>
 		private void FireAndForgetNotify(ChatChannel channel, ChatMessage message, List<ChatMessageMention> mentions)
 		{
+			var root = (_lifetimeScope as ISharingLifetimeScope)?.RootLifetimeScope;
+			if (root == null)
+				return;
+
 			_ = Task.Run(async () =>
 			{
 				try
 				{
-					var notifier = ServiceLocator.Current.GetInstance<IChatNotificationService>();
+					using var scope = root.BeginLifetimeScope();
+					var notifier = scope.Resolve<IChatNotificationService>();
 					await notifier.NotifyMessageSentAsync(channel, message, mentions);
 				}
 				catch (Exception ex)

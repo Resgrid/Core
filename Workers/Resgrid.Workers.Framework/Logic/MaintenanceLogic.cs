@@ -9,23 +9,6 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class MaintenanceLogic
 	{
-		private IDepartmentMembersRepository _departmentMembersRepository;
-		private IUserProfileService _userProfileService;
-		private IUsersService _usersService;
-		private IDepartmentsService _departmentsService;
-		private IScheduledTasksService _scheduledTasksService;
-		private ICallsRepository _callsRepository;
-
-		public MaintenanceLogic()
-		{
-			_departmentMembersRepository = Bootstrapper.GetKernel().Resolve<IDepartmentMembersRepository>();
-			_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-			_usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
-			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-			_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-			_callsRepository = Bootstrapper.GetKernel().Resolve<ICallsRepository>();
-		}
-
 		public Tuple<bool, string> FixMissingUserProfiles()
 		{
 			bool success = true;

@@ -10,21 +10,6 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class TrainingNotifierLogic
 	{
-		private ITrainingService _trainingService;
-		private ICommunicationService _communicationService;
-		private IUserProfileService _userProfileService;
-		private IDepartmentSettingsService _departmentSettingsService;
-		private IDepartmentsService _departmentsService;
-
-		public TrainingNotifierLogic()
-		{
-			_trainingService = Bootstrapper.GetKernel().Resolve<ITrainingService>();
-			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-			_userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-		}
-
 		public async Task<Tuple<bool, string>> Process(TrainingNotifierQueueItem item)
 		{
 			bool success = true;
@@ -32,11 +17,19 @@ namespace Resgrid.Workers.Framework.Logic
 
 			if (item != null && item.Training != null && item.Training.Users != null && item.Training.Users.Count > 0)
 			{
+				// Own scope per item: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var trainingService = scope.Resolve<ITrainingService>();
+				var communicationService = scope.Resolve<ICommunicationService>();
+				var userProfileService = scope.Resolve<IUserProfileService>();
+				var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+				var departmentsService = scope.Resolve<IDepartmentsService>();
+
 				var message = String.Empty;
 				var title = String.Empty;
-				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(item.Training.Users.Select(x => x.UserId).ToList());
-				var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
-				var department = await _departmentsService.GetDepartmentByIdAsync(item.Training.DepartmentId, false);
+				var profiles = await userProfileService.GetSelectedUserProfilesAsync(item.Training.Users.Select(x => x.UserId).ToList());
+				var departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
+				var department = await departmentsService.GetDepartmentByIdAsync(item.Training.DepartmentId, false);
 
 				if (ConfigHelper.CanTransmit(item.Training.DepartmentId))
 				{
@@ -60,13 +53,13 @@ namespace Resgrid.Workers.Framework.Logic
 						var profile = profiles.FirstOrDefault(x => x.UserId == person.UserId);
 
 						if (!item.Training.Notified.HasValue || !person.Complete)
-							await _communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, department, title, profile);
+							await communicationService.SendNotificationAsync(person.UserId, item.Training.DepartmentId, message, departmentNumber, department, title, profile);
 
 						title = "Training Due Notice";
 					}
 				}
 
-				await _trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
+				await trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
 			}
 
 			return new Tuple<bool, string>(success, result);

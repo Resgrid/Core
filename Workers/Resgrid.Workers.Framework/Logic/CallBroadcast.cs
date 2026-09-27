@@ -18,22 +18,14 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class BroadcastCallLogic
 	{
-		private static ICommunicationService _communicationService;
-		private static ICallsService _callsService;
-		private static IUserProfileService _userProfilesService;
-		private static IDepartmentGroupsService _departmentGroupsService;
-		private static IUnitsService _unitsService;
-		private static IPersonnelRolesService _rolesService;
-		private static IPrinterProvider _printerProvider;
-		private static IDepartmentSettingsService _departmentSettingsService;
-		private static IShiftsService _shiftsService;
-		private static IDepartmentsService _departmentsService;
-
 		public static async Task<bool> ProcessCallQueueItem(CallQueueItem cqi)
 		{
-			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-			_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+			// Own scope per message. These services used to be static fields resolved from the root scope,
+			// shared by every call processed concurrently and by the process-wide root unit of work.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+			var _communicationService = scope.Resolve<ICommunicationService>();
+			var _callsService = scope.Resolve<ICallsService>();
+			var _departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
 			cqi?.ApplyBroadcastDispatchFilter();
 
 			if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
@@ -48,8 +40,7 @@ namespace Resgrid.Workers.Framework.Logic
 					 */
 				if (cqi.Profiles == null || !cqi.Profiles.Any())
 				{
-					if (_userProfilesService == null)
-						_userProfilesService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+					var _userProfilesService = scope.Resolve<IUserProfileService>();
 
 					cqi.Profiles = (await _userProfilesService.GetAllProfilesForDepartmentAsync(cqi.Call.DepartmentId)).Select(x => x.Value).ToList();
 				}
@@ -70,8 +61,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 				var dispatchedUsers = new HashSet<string>();
 
-				if (_departmentsService == null)
-					_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+				var _departmentsService = scope.Resolve<IDepartmentsService>();
 
 				var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
 				cqi.Call.Department = department;
@@ -122,12 +112,11 @@ namespace Resgrid.Workers.Framework.Logic
 						catch (Exception ex) { Logging.LogException(ex); }
 					}
 
-				if (_departmentGroupsService == null)
-					_departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
+				var _departmentGroupsService = scope.Resolve<IDepartmentGroupsService>();
 
 				if (cqi.Call.GroupDispatches != null && cqi.Call.GroupDispatches.Any())
 				{
-					if (_shiftsService == null) _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
+					var _shiftsService = scope.Resolve<IShiftsService>();
 					var useShift = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(cqi.Call.DepartmentId);
 					routingTimeUtc = DateTime.UtcNow;
 					var onDuty = useShift
@@ -148,7 +137,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
 				{
-					if (_unitsService == null) _unitsService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+					var _unitsService = scope.Resolve<IUnitsService>();
 					var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
 					var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
 					foreach (var dispatch in cqi.Call.UnitDispatches)
@@ -171,7 +160,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (cqi.Call.RoleDispatches != null && cqi.Call.RoleDispatches.Any())
 				{
-					if (_rolesService == null) _rolesService = Bootstrapper.GetKernel().Resolve<IPersonnelRolesService>();
+					var _rolesService = scope.Resolve<IPersonnelRolesService>();
 					foreach (var dispatch in cqi.Call.RoleDispatches)
 					{
 						var members = await _rolesService.GetAllMembersOfRoleAsync(dispatch.RoleId);
@@ -180,7 +169,7 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 
 				// Send Call Print to Printer
-				_printerProvider = Bootstrapper.GetKernel().Resolve<IPrinterProvider>();
+				var _printerProvider = scope.Resolve<IPrinterProvider>();
 
 				Dictionary<int, DepartmentGroup> fetchedGroups = new Dictionary<int, DepartmentGroup>();
 				if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
@@ -258,9 +247,11 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					try
 					{
-						var ttsAudioService = Bootstrapper.GetKernel().Resolve<ITtsAudioService>();
-						var geoLocationProvider = Bootstrapper.GetKernel().Resolve<IGeoLocationProvider>();
-						var departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+						// Fire-and-forget outlives the message's scope, so it takes its own.
+						using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+						var ttsAudioService = scope.Resolve<ITtsAudioService>();
+						var geoLocationProvider = scope.Resolve<IGeoLocationProvider>();
+						var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
 
 						// Text and chunking must match the Twilio voice webhook exactly —
 						// the TTS cache key is a hash of the chunk text. CallPriority was

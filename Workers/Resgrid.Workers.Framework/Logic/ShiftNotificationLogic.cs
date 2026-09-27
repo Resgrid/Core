@@ -16,10 +16,12 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			if (sqi != null)
 			{
-				var _shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
-				var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-				var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-				var _departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+				// Own scope per message: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _shiftsService = scope.Resolve<IShiftsService>();
+				var _communicationService = scope.Resolve<ICommunicationService>();
+				var _userProfileService = scope.Resolve<IUserProfileService>();
+				var _departmentService = scope.Resolve<IDepartmentsService>();
 
 				var department = await _departmentService.GetDepartmentByIdAsync(sqi.DepartmentId, false);
 
@@ -104,7 +106,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var text = $"{signupProfile?.FullName?.AsFirstNameLastName} signed up for {shift.Name} on {day} and needs approval";
 
-							foreach (var supervisorId in await GetShiftSupervisorIdsAsync(sqi.DepartmentId, signup.DepartmentGroupId))
+							foreach (var supervisorId in await GetShiftSupervisorIdsAsync(scope, sqi.DepartmentId, signup.DepartmentGroupId))
 							{
 								if (supervisorId != signup.UserId)
 									await _communicationService.SendNotificationAsync(supervisorId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, shift.Name);
@@ -143,7 +145,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var text = $"{sourceProfile?.FullName?.AsFirstNameLastName} is trading {source.Shift.Name} on {day} to {takerProfile?.FullName?.AsFirstNameLastName} and needs approval";
 
-							foreach (var supervisorId in await GetShiftSupervisorIdsAsync(sqi.DepartmentId, source.DepartmentGroupId))
+							foreach (var supervisorId in await GetShiftSupervisorIdsAsync(scope, sqi.DepartmentId, source.DepartmentGroupId))
 							{
 								if (supervisorId != source.UserId)
 									await _communicationService.SendNotificationAsync(supervisorId, sqi.DepartmentId, text, sqi.DepartmentNumber, department, source.Shift.Name);
@@ -220,10 +222,10 @@ namespace Resgrid.Workers.Framework.Logic
 		/// <summary>
 		/// Who approves shift changes for a group: department admins plus the admins of the group and any group above it.
 		/// </summary>
-		private static async Task<List<string>> GetShiftSupervisorIdsAsync(int departmentId, int? departmentGroupId)
+		private static async Task<List<string>> GetShiftSupervisorIdsAsync(ILifetimeScope scope, int departmentId, int? departmentGroupId)
 		{
-			var departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-			var departmentGroupsService = Bootstrapper.GetKernel().Resolve<IDepartmentGroupsService>();
+			var departmentsService = scope.Resolve<IDepartmentsService>();
+			var departmentGroupsService = scope.Resolve<IDepartmentGroupsService>();
 
 			var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

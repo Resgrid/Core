@@ -259,7 +259,7 @@ namespace Resgrid.Tests.Services
 			runs.Setup(s => s.GetByWorkflowsAndEventAsync(42, It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<string>())).ReturnsAsync(() => stored == null ? new List<WorkflowRun>() : new List<WorkflowRun> { stored });
 			runs.Setup(s => s.InsertAsync(It.IsAny<WorkflowRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((WorkflowRun run, CancellationToken c, bool f) => stored = run);
 			var attempts = new List<WorkflowQueueItem>(); queue.Setup(s => s.EnqueueWorkflow(It.IsAny<WorkflowQueueItem>())).ReturnsAsync((WorkflowQueueItem q) => { attempts.Add(q); return attempts.Count > 1; });
-			_ = new WorkflowEventProvider(_bus, queue.Object, workflows.Object, runs.Object, Mock.Of<IDepartmentsService>(), subscriptions.Object, _projection, _history.Lazy);
+			_ = new WorkflowEventProvider(_bus, queue.Object, WorkflowEventProviderScopeTests.Services(workflows.Object, runs.Object, Mock.Of<IDepartmentsService>(), subscriptions.Object, _projection, _history.Lazy));
 			var entry = await _outbox.EnqueueAsync(42, "Inventory", Event(trigger));
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(0); stored.Should().NotBeNull(); entry.DispatchedOn.Should().BeNull();
 			_policy.Setup(s => s.IsProtectionEnforcedAsync(42)).ReturnsAsync(true);

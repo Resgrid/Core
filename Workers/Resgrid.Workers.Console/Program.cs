@@ -727,7 +727,8 @@ namespace Resgrid.Workers.Console
 
 			try
 			{
-				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var oidcRepository = scope.Resolve<IOidcRepository>();
 				bool result = await oidcRepository.UpdateOidcDatabaseAsync();
 
 				if (result)
@@ -754,7 +755,8 @@ namespace Resgrid.Workers.Console
 
 			try
 			{
-				var documentDbRepository = Bootstrapper.GetKernel().Resolve<IDocumentDbRepository>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var documentDbRepository = scope.Resolve<IDocumentDbRepository>();
 				bool result = await documentDbRepository.UpdateDocumentDatabaseAsync();
 
 				if (result)

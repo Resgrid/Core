@@ -215,6 +215,7 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsInspection>> ListAsync(int departmentId, string userId, RmsInspectionQuery query)
 		{
 			await RequireViewAsync(departmentId, userId);
+			RecordsPreventionGate.RequireStorableDate(query?.ScheduledBefore, "The scheduled-before date is not valid.");
 			var rows = (await _inspections.QueryAsync(departmentId, query ?? new RmsInspectionQuery()))?.ToList() ?? new List<RmsInspection>();
 			await _protection.RevealInspectionsAsync(departmentId, rows);
 			return rows;
@@ -223,6 +224,7 @@ namespace Resgrid.Services.Records
 		public async Task<int> CountAsync(int departmentId, string userId, RmsInspectionQuery query)
 		{
 			await RequireViewAsync(departmentId, userId);
+			RecordsPreventionGate.RequireStorableDate(query?.ScheduledBefore, "The scheduled-before date is not valid.");
 			return await _inspections.CountAsync(departmentId, query ?? new RmsInspectionQuery());
 		}
 
@@ -268,11 +270,13 @@ namespace Resgrid.Services.Records
 		private async Task<RmsInspection> CreateScheduledAsync(int departmentId, string userId, RmsOccupancy occupancy, RmsInspectionProgram program, DateTime scheduledOn, string inspectorUserId, string parentInspectionId, CancellationToken cancellationToken)
 		{
 			var now = DateTime.UtcNow;
+			// Checked before the initializer, which draws the next inspection number.
+			scheduledOn = RecordsPreventionGate.RequireStorableDate(scheduledOn == default ? now : scheduledOn, "The scheduled date is not valid.");
 			var inspection = new RmsInspection
 			{
 				RmsInspectionId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), RmsOccupancyId = occupancy.RmsOccupancyId, RmsInspectionProgramId = program?.RmsInspectionProgramId,
 				InspectionNumber = await _gate.NextNumberAsync(departmentId, RmsPreventionNumberKinds.Inspection, now, cancellationToken), State = (int)RmsInspectionState.Scheduled, Result = (int)RmsInspectionResult.NotRecorded,
-				ScheduledOn = scheduledOn == default ? now : scheduledOn, InspectorUserId = RecordsPreventionGate.Trim(inspectorUserId, 128), ParentInspectionId = parentInspectionId,
+				ScheduledOn = scheduledOn, InspectorUserId = RecordsPreventionGate.Trim(inspectorUserId, 128), ParentInspectionId = parentInspectionId,
 				CreatedOn = now, CreatedByUserId = userId, ModifiedOn = now, RowVersion = 1
 			};
 			await _inspections.InsertAsync(inspection, cancellationToken, true);
@@ -447,7 +451,7 @@ namespace Resgrid.Services.Records
 			entity.RmsCodeSetId = RecordsPreventionGate.Trim(input.RmsCodeSetId, 36); entity.RmsCodeSectionId = RecordsPreventionGate.Trim(input.RmsCodeSectionId, 36);
 			entity.Description = RecordsPreventionGate.Require(input.Description, 4000, "A violation needs a description.");
 			entity.Severity = Math.Clamp(input.Severity == 0 ? 2 : input.Severity, 1, 4); entity.CorrectiveAction = RecordsPreventionGate.Trim(input.CorrectiveAction, 4000);
-			entity.DueOn = input.DueOn ?? entity.DueOn ?? now.AddDays(30); entity.ModifiedOn = now; entity.RowVersion++;
+			entity.DueOn = RecordsPreventionGate.RequireStorableDate(input.DueOn, "The due date is not valid.") ?? entity.DueOn ?? now.AddDays(30); entity.ModifiedOn = now; entity.RowVersion++;
 			var plaintext = PlaintextSnapshot<RmsViolation>.Take(entity, RmsProtectedFields.Violations);
 			await _protection.ProtectViolationAsync(departmentId, entity, existing, userId, cancellationToken);
 			if (existing == null) await _violations.InsertAsync(entity, cancellationToken, true); else await _violations.UpdateAsync(entity, cancellationToken, true);

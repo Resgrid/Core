@@ -31,8 +31,9 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
-				var deleteService = Bootstrapper.GetKernel().Resolve<IDeleteService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var queueService = scope.Resolve<IQueueService>();
+				var deleteService = scope.Resolve<IDeleteService>();
 
 				var pendingDepartmentDeleteRequests = await queueService.GetAllPendingDeleteDepartmentQueueItemsAsync();
 

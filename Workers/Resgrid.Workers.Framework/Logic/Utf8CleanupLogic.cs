@@ -20,8 +20,9 @@ namespace Resgrid.Workers.Framework.Logic
 	{
 		private readonly IUtf8MaintenanceRepository _repository;
 
-		public Utf8CleanupLogic()
-			: this(Bootstrapper.GetKernel().Resolve<IUtf8MaintenanceRepository>())
+		/// <summary>Resolves from the caller's per-run scope; the root scope would share one unit of work process-wide.</summary>
+		public Utf8CleanupLogic(ILifetimeScope scope)
+			: this(scope.Resolve<IUtf8MaintenanceRepository>())
 		{
 		}
 

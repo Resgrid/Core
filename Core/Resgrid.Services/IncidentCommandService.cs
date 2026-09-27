@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonServiceLocator;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -58,6 +57,16 @@ namespace Resgrid.Services
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
 		private readonly IQueueService _queueService;
 
+		// The chat and command-access sides depend on this service, so constructor-injecting them directly would close a
+		// DI cycle. Lazy<T> resolves them on first use from this service's own lifetime scope; the service locator they
+		// replace resolved from the root scope, sharing its unit of work with everything else resolved there.
+		private readonly Lazy<ICommandAccessService> _commandAccessService;
+		private readonly Lazy<IChatChannelService> _chatChannelService;
+		private readonly Lazy<IChatChannelRepository> _chatChannelRepository;
+		private ICommandAccessService CommandAccess => _commandAccessService?.Value ?? throw new InvalidOperationException("Command access is unavailable.");
+		private IChatChannelService ChatChannels => _chatChannelService?.Value ?? throw new InvalidOperationException("Chat channels are unavailable.");
+		private IChatChannelRepository ChatChannelRepository => _chatChannelRepository?.Value ?? throw new InvalidOperationException("Chat channels are unavailable.");
+
 		public IncidentCommandService(
 			IIncidentCommandRepository incidentCommandRepository,
 			ICommandStructureNodeRepository commandStructureNodeRepository,
@@ -90,7 +99,10 @@ namespace Resgrid.Services
 			IIncidentMapRepository incidentMapRepository,
 			IIncidentNeedEntityRepository incidentNeedEntityRepository,
 			ICallDispatchStatusService callDispatchStatusService,
-			IQueueService queueService)
+			IQueueService queueService,
+			Lazy<ICommandAccessService> commandAccessService = null,
+			Lazy<IChatChannelService> chatChannelService = null,
+			Lazy<IChatChannelRepository> chatChannelRepository = null)
 		{
 			_incidentCommandRepository = incidentCommandRepository;
 			_commandStructureNodeRepository = commandStructureNodeRepository;
@@ -124,6 +136,9 @@ namespace Resgrid.Services
 			_incidentNeedEntityRepository = incidentNeedEntityRepository;
 			_callDispatchStatusService = callDispatchStatusService;
 			_queueService = queueService;
+			_commandAccessService = commandAccessService;
+			_chatChannelService = chatChannelService;
+			_chatChannelRepository = chatChannelRepository;
 		}
 
 		#region Command lifecycle
@@ -475,11 +490,10 @@ namespace Resgrid.Services
 			// Dispatch app. CanAssistWithCommandAsync (not CanUseCommandAsync) is the right question: the
 			// permission is open by default, and granting board authority off that open default would hand
 			// every member rights nobody asked for.
-			// Resolved through the service locator (matching this file's other cross-cutting lookups) so the
-			// permission side, which has no dependency on this service, does not close a DI cycle.
+			// Lazy (see the field) so the permission side does not close a DI cycle.
 			try
 			{
-				if (await ServiceLocator.Current.GetInstance<ICommandAccessService>().CanAssistWithCommandAsync(departmentId, userId))
+				if (await CommandAccess.CanAssistWithCommandAsync(departmentId, userId))
 					caps |= IncidentRoleCapabilityMap.CommandAssistCapabilities;
 			}
 			catch (Exception ex)
@@ -1074,7 +1088,7 @@ namespace Resgrid.Services
 			try
 			{
 				var nodes = knownNodes ?? await GetNodesForCallAsync(departmentId, callId);
-				await ServiceLocator.Current.GetInstance<IChatChannelService>().EnsureIncidentChannelsAsync(command, nodes);
+				await ChatChannels.EnsureIncidentChannelsAsync(command, nodes);
 			}
 			catch (Exception ex)
 			{
@@ -1113,9 +1127,9 @@ namespace Resgrid.Services
 
 			try
 			{
-				// Resolved through the service locator, matching DeleteNodeAsync: the chat side depends on
-				// this service, so constructor-injecting it back would close a DI cycle.
-				var channels = (await ServiceLocator.Current.GetInstance<Resgrid.Model.Repositories.IChatChannelRepository>()
+				// Lazy (see the field): the chat side depends on this service, so constructor-injecting it back
+				// directly would close a DI cycle.
+				var channels = (await ChatChannelRepository
 					.GetByCallIdAsync(callId))?.ToList() ?? new List<ChatChannel>();
 
 				view.Chat.IncidentChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.Incident)?.ChatChannelId;
@@ -1595,7 +1609,7 @@ namespace Resgrid.Services
 				// service's constructor graph, and a chat failure must never fail the lane save.
 				try
 				{
-					var chatChannelService = ServiceLocator.Current.GetInstance<IChatChannelService>();
+					var chatChannelService = ChatChannels;
 					await chatChannelService.EnsureLaneChannelAsync(node, cancellationToken);
 				}
 				catch (Exception ex)
@@ -1624,8 +1638,8 @@ namespace Resgrid.Services
 			// Best-effort: archive the lane's chat channel alongside the tombstoned node.
 			try
 			{
-				var chatChannelService = ServiceLocator.Current.GetInstance<IChatChannelService>();
-				var laneChannel = (await ServiceLocator.Current.GetInstance<Resgrid.Model.Repositories.IChatChannelRepository>().GetByCommandStructureNodeIdAsync(commandStructureNodeId));
+				var chatChannelService = ChatChannels;
+				var laneChannel = (await ChatChannelRepository.GetByCommandStructureNodeIdAsync(commandStructureNodeId));
 				if (laneChannel != null && !laneChannel.IsArchived)
 					await chatChannelService.SetChannelArchivedAsync(laneChannel.DepartmentId, laneChannel.ChatChannelId, true, userId, cancellationToken);
 			}

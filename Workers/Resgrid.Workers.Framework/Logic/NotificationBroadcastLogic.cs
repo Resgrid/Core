@@ -17,9 +17,12 @@ namespace Resgrid.Workers.Framework.Logic
 		public static async Task<bool> ProcessNotificationItem(NotificationItem ni, string messageId, string body,
 			CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Own scope per message: root-scope services would share the process-wide root unit of work.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+
 			if (ni?.Type == (int)EventTypes.ModerationRequestCompleted)
 			{
-				var moderationService = Bootstrapper.GetKernel().Resolve<IModerationService>();
+				var moderationService = scope.Resolve<IModerationService>();
 				await moderationService.NotifyReportersAsync(ni.Value, cancellationToken);
 				return true;
 			}
@@ -28,7 +31,7 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				// Records notification 31 is author-targeted (RMS plan section 4.7); it bypasses the department
 				// notification settings pipeline below, which is why the type stays [NotMapped].
-				var recordsNotificationService = Bootstrapper.GetKernel().Resolve<IRecordsNotificationService>();
+				var recordsNotificationService = scope.Resolve<IRecordsNotificationService>();
 				await recordsNotificationService.NotifyReturnedForCorrectionAsync(ni.DepartmentId, ni.Value, cancellationToken);
 				return true;
 			}
@@ -40,7 +43,7 @@ namespace Resgrid.Workers.Framework.Logic
 				// a record id never contains a pipe, so the split is unambiguous.
 				var parts = (ni.Value ?? string.Empty).Split('|');
 				var obligation = parts.Length > 1 && int.TryParse(parts[1], out var parsed) ? (RmsRecordObligation)parsed : RmsRecordObligation.Review;
-				var recordsNotificationService = Bootstrapper.GetKernel().Resolve<IRecordsNotificationService>();
+				var recordsNotificationService = scope.Resolve<IRecordsNotificationService>();
 				await recordsNotificationService.NotifyObligationOverdueAsync(ni.DepartmentId, parts[0], obligation, cancellationToken);
 				return true;
 			}
@@ -48,20 +51,20 @@ namespace Resgrid.Workers.Framework.Logic
 			if (ni?.Type == (int)EventTypes.RecordSubmissionRejected)
 			{
 				// Records notification 33 (RMS-2): the destination rejected the author's incident report; author-targeted like 31.
-				var recordsNotificationService = Bootstrapper.GetKernel().Resolve<IRecordsNotificationService>();
+				var recordsNotificationService = scope.Resolve<IRecordsNotificationService>();
 				await recordsNotificationService.NotifySubmissionRejectedAsync(ni.DepartmentId, ni.Value, cancellationToken);
 				return true;
 			}
 
 			if (ni != null)
 			{
-				var _notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();
-				var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-				var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
-				var _departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-				var _calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
-				var _textResponsePromptService = Bootstrapper.GetKernel().Resolve<ITextResponsePromptService>();
+				var _notificationService = scope.Resolve<INotificationService>();
+				var _communicationService = scope.Resolve<ICommunicationService>();
+				var _departmentsService = scope.Resolve<IDepartmentsService>();
+				var _userProfileService = scope.Resolve<IUserProfileService>();
+				var _departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+				var _calendarService = scope.Resolve<ICalendarService>();
+				var _textResponsePromptService = scope.Resolve<ITextResponsePromptService>();
 
 				var item = new ProcessedNotification();
 

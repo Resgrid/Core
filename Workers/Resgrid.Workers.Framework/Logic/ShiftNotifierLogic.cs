@@ -11,19 +11,6 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class ShiftNotifierLogic
 	{
-		private IShiftsService _shiftsService;
-		private ICommunicationService _communicationService;
-		private IDepartmentSettingsService _departmentSettingsService;
-		private IDepartmentsService _departmentsService;
-
-		public ShiftNotifierLogic()
-		{
-			_shiftsService = Bootstrapper.GetKernel().Resolve<IShiftsService>();
-			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
-			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
-			_departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
-		}
-
 		public async Task<Tuple<bool, string>> Process(ShiftNotifierQueueItem item)
 		{
 			bool success = true;
@@ -31,9 +18,16 @@ namespace Resgrid.Workers.Framework.Logic
 
 			if (item != null && item.Shift != null)
 			{
-				var text = _shiftsService.GenerateShiftNotificationText(item.Shift);
-				string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Shift.DepartmentId);
-				var department = await _departmentsService.GetDepartmentByIdAsync(item.Shift.DepartmentId, false);
+				// Own scope per item: root-scope services would share the process-wide root unit of work.
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var shiftsService = scope.Resolve<IShiftsService>();
+				var communicationService = scope.Resolve<ICommunicationService>();
+				var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
+				var departmentsService = scope.Resolve<IDepartmentsService>();
+
+				var text = shiftsService.GenerateShiftNotificationText(item.Shift);
+				string departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Shift.DepartmentId);
+				var department = await departmentsService.GetDepartmentByIdAsync(item.Shift.DepartmentId, false);
 
 				if (ConfigHelper.CanTransmit(item.Shift.DepartmentId) && item.UserIds != null)
 				{
@@ -44,7 +38,7 @@ namespace Resgrid.Workers.Framework.Logic
 					foreach (var userId in item.UserIds.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase))
 					{
 						UserProfile profile = item.Profiles?.FirstOrDefault(x => String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
-						await _communicationService.SendNotificationAsync(userId, item.Shift.DepartmentId, text, departmentNumber, department,
+						await communicationService.SendNotificationAsync(userId, item.Shift.DepartmentId, text, departmentNumber, department,
 							item.Shift.Name, profile);
 					}
 				}
@@ -55,7 +49,7 @@ namespace Resgrid.Workers.Framework.Logic
 						foreach (var person in item.Shift.Personnel)
 						{
 							UserProfile profile = item.Profiles.FirstOrDefault(x => x.UserId == person.UserId);
-							await _communicationService.SendNotificationAsync(person.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
+							await communicationService.SendNotificationAsync(person.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
 								item.Shift.Name, profile);
 						}
 					}
@@ -69,26 +63,26 @@ namespace Resgrid.Workers.Framework.Logic
 								if (!String.IsNullOrWhiteSpace(signup.Trade.UserId))
 								{
 									UserProfile profile = item.Profiles.FirstOrDefault(x => x.UserId == signup.Trade.UserId);
-									await _communicationService.SendNotificationAsync(signup.Trade.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
+									await communicationService.SendNotificationAsync(signup.Trade.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
 										item.Shift.Name, profile);
 								}
 								else if (signup.GetTradeType() == ShiftTradeTypes.Source)
 								{
 									UserProfile profile = item.Profiles.FirstOrDefault(x => x.UserId == signup.Trade.TargetShiftSignup.UserId);
-									await _communicationService.SendNotificationAsync(signup.Trade.TargetShiftSignup.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
+									await communicationService.SendNotificationAsync(signup.Trade.TargetShiftSignup.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
 										item.Shift.Name, profile);
 								}
 								else if (signup.GetTradeType() == ShiftTradeTypes.Target)
 								{
 									UserProfile profile = item.Profiles.FirstOrDefault(x => x.UserId == signup.Trade.SourceShiftSignup.UserId);
-									await _communicationService.SendNotificationAsync(signup.Trade.SourceShiftSignup.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
+									await communicationService.SendNotificationAsync(signup.Trade.SourceShiftSignup.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
 										item.Shift.Name, profile);
 								}
 							}
 							else
 							{
 								UserProfile profile = item.Profiles.FirstOrDefault(x => x.UserId == signup.UserId);
-								await _communicationService.SendNotificationAsync(signup.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
+								await communicationService.SendNotificationAsync(signup.UserId, item.Shift.DepartmentId, text, departmentNumber, department,
 									item.Shift.Name, profile);
 							}
 						}

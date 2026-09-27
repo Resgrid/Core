@@ -1,10 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
 using Resgrid.Workers.Console.Commands;
+using Resgrid.Workers.Framework;
 using Resgrid.Workers.Framework.Logic;
 
 namespace Resgrid.Workers.Console.Tasks
@@ -34,7 +36,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 			try
 			{
-				var logic = new MemberProfileRelocationLogic();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var logic = new MemberProfileRelocationLogic(scope);
 				var result = await logic.Process(cancellationToken);
 
 				if (!result.Item1)

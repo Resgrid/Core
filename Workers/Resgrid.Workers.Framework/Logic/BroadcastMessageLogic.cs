@@ -12,11 +12,13 @@ namespace Resgrid.Workers.Framework.Logic
 	{
 		public static async Task<bool> ProcessMessageQueueItem(MessageQueueItem mqi)
 		{
-			var _communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
+			// Own scope per message: root-scope services would share the process-wide root unit of work.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+			var _communicationService = scope.Resolve<ICommunicationService>();
 
 			if (mqi != null && mqi.Message == null && mqi.MessageId != 0)
 			{
-				var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
+				var messageService = scope.Resolve<IMessageService>();
 				mqi.Message = await messageService.GetMessageByIdAsync(mqi.MessageId);
 			}
 
@@ -24,14 +26,14 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				if (mqi.Message.MessageRecipients == null || mqi.Message.MessageRecipients.Count <= 0)
 				{
-					var messageService = Bootstrapper.GetKernel().Resolve<IMessageService>();
+					var messageService = scope.Resolve<IMessageService>();
 					mqi.Message = await messageService.GetMessageByIdAsync(mqi.Message.MessageId);
 				}
 
 				// If we didn't get any profiles chances are the message size was too big for Azure, get selected profiles now.
 				if (mqi.Profiles == null)
 				{
-					var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+					var userProfileService = scope.Resolve<IUserProfileService>();
 
 					if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
 					{
@@ -60,7 +62,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (mqi.Profiles != null)
 					{
 						var sendingToProfile = mqi.Profiles.FirstOrDefault(x => x.UserId == mqi.Message.ReceivingUserId);
-						var departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+						var departmentService = scope.Resolve<IDepartmentsService>();
 						var department = await departmentService.GetDepartmentByIdAsync(mqi.DepartmentId);
 
 						if (sendingToProfile != null)
@@ -69,7 +71,7 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						else
 						{
-							var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
+							var userProfileService = scope.Resolve<IUserProfileService>();
 							var sender = await userProfileService.GetProfileByUserIdAsync(mqi.Message.SendingUserId);
 
 							if (sender != null)
@@ -81,7 +83,7 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 				else if (mqi.Message.MessageRecipients != null && mqi.Message.MessageRecipients.Any())
 				{
-					var departmentService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+					var departmentService = scope.Resolve<IDepartmentsService>();
 					var department = await departmentService.GetDepartmentByIdAsync(mqi.DepartmentId);
 
 					foreach (var recipient in mqi.Message.MessageRecipients)

@@ -229,8 +229,8 @@ namespace Resgrid.Tests.Search
 			_global.SetupGet(g => g.IsAvailable).Returns(false);
 			_states.Setup(s => s.GetAsync(SearchIndexNames.Global, 7)).ReturnsAsync((SearchIndexState)null);
 			SearchIndexState saved = null;
-			_states.Setup(s => s.SaveOrUpdateAsync(It.IsAny<SearchIndexState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.Callback((SearchIndexState s, CancellationToken _, bool __) => saved = s).ReturnsAsync((SearchIndexState s, CancellationToken _, bool __) => s);
+			_states.Setup(s => s.InsertIfMissingAsync(It.IsAny<SearchIndexState>(), It.IsAny<CancellationToken>()))
+				.Callback((SearchIndexState s, CancellationToken _) => saved = s).ReturnsAsync(true);
 
 			var result = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal("Call:View"));
 
@@ -240,6 +240,21 @@ namespace Resgrid.Tests.Search
 			saved.Should().NotBeNull();
 			saved.State.Should().Be((int)SearchIndexBuildState.RebuildRequested);
 			saved.IndexName.Should().Be(SearchIndexNames.Global);
+			saved.DepartmentId.Should().Be(7);
+			_states.Verify(s => s.SaveOrUpdateAsync(It.IsAny<SearchIndexState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never,
+				"an unconditional insert races concurrent first searches into the unique index");
+		}
+
+		[Test]
+		public async Task Index_unavailable_with_a_state_row_already_present_does_not_try_to_create_one()
+		{
+			_global.SetupGet(g => g.IsAvailable).Returns(false);
+			_states.Setup(s => s.GetAsync(SearchIndexNames.Global, 7)).ReturnsAsync(new SearchIndexState { IndexName = SearchIndexNames.Global, DepartmentId = 7 });
+
+			var result = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal("Call:View"));
+
+			result.Degraded.Should().BeTrue();
+			_states.Verify(s => s.InsertIfMissingAsync(It.IsAny<SearchIndexState>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 		[Test]
 		public async Task A_records_only_page_past_the_first_twenty_still_returns_records()

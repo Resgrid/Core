@@ -32,7 +32,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 				//await Task.Run(async () =>
 				//{
-				var _calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _calendarService = scope.Resolve<ICalendarService>();
 				var logic = new CalendarNotifierLogic();
 
 				var calendarItems = await _calendarService.GetCalendarItemsToNotifyAsync(DateTime.UtcNow);

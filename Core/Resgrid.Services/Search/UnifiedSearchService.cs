@@ -401,7 +401,9 @@ namespace Resgrid.Services.Search
 				if (existing != null)
 					return;
 				var now = DateTime.UtcNow;
-				await _states.SaveOrUpdateAsync(new SearchIndexState
+				// A department's first searches arrive together (typeahead sends one per keystroke) and all see no row
+				// above, so the create has to be conditional or every request but one fails on the unique index.
+				await _states.InsertIfMissingAsync(new SearchIndexState
 				{
 					IndexName = SearchIndexNames.Global,
 					DepartmentId = departmentId,
@@ -411,7 +413,7 @@ namespace Resgrid.Services.Search
 					RebuildRequestedOn = now,
 					CreatedOn = now,
 					ModifiedOn = now
-				}, cancellationToken, true);
+				}, cancellationToken);
 			}
 			catch (Exception ex)
 			{

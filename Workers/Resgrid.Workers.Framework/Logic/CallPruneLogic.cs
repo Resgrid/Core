@@ -9,13 +9,6 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class CallPruneLogic
 	{
-		private readonly ICallsService _callsService;
-
-		public CallPruneLogic()
-		{
-			_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
-		}
-
 		public async Task<Tuple<bool, string>> Process(CallPruneQueueItem item)
 		{
 			bool success = true;
@@ -25,7 +18,11 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				try
 				{
-					var calls = await _callsService.GetActiveCallsByDepartmentAsync(item.PruneSettings.DepartmentId);
+					// Own scope per item: root-scope services would share the process-wide root unit of work.
+					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+					var callsService = scope.Resolve<ICallsService>();
+
+					var calls = await callsService.GetActiveCallsByDepartmentAsync(item.PruneSettings.DepartmentId);
 
 					if (calls != null && calls.Count > 0)
 					{
@@ -46,7 +43,7 @@ namespace Resgrid.Workers.Framework.Logic
 										call.CompletedNotes = "Call automatically closed by the system.";
 										call.ClosedByUserId = item.PruneSettings.Department.ManagingUserId;
 
-										await _callsService.SaveCallAsync(call);
+										await callsService.SaveCallAsync(call);
 									}
 								}
 							}
@@ -66,7 +63,7 @@ namespace Resgrid.Workers.Framework.Logic
 										call.CompletedNotes = "Call automatically closed by the system.";
 										call.ClosedByUserId = item.PruneSettings.Department.ManagingUserId;
 
-										await _callsService.SaveCallAsync(call);
+										await callsService.SaveCallAsync(call);
 									}
 								}
 							}

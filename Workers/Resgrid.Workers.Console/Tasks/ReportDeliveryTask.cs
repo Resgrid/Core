@@ -38,8 +38,9 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var _scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
-				var logic = new ReportDeliveryLogic();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var _scheduledTasksService = scope.Resolve<IScheduledTasksService>();
+				var logic = new ReportDeliveryLogic(scope);
 
 				/* Ok, I legit don't know what happened here. It was working and now it's kinda not.
 				 * So I'm replacing the Linq query with this loop, not as fancy but it works. Also

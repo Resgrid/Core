@@ -11,19 +11,6 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class DistributionListEmailImporterLogic
 	{
-		private IDistributionListProvider _distributionListProvider;
-		private IEmailService _emailService;
-		private IUsersService _usersService;
-		private IDistributionListsService _distributionListsService;
-
-		public DistributionListEmailImporterLogic()
-		{
-			_distributionListProvider = Bootstrapper.GetKernel().Resolve<IDistributionListProvider>();
-			_emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
-			_usersService = Bootstrapper.GetKernel().Resolve<IUsersService>();
-			_distributionListsService = Bootstrapper.GetKernel().Resolve<IDistributionListsService>();
-		}
-
 		public async Task<Tuple<bool, string>> Process(DistributionListQueueItem item)
 		{
 			bool success = true;
@@ -35,11 +22,18 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					try
 					{
-						var emails = _distributionListProvider.GetNewMessagesFromMailbox(item.List);
+						// Own scope per item: root-scope services would share the process-wide root unit of work.
+						using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+						var distributionListProvider = scope.Resolve<IDistributionListProvider>();
+						var emailService = scope.Resolve<IEmailService>();
+						var usersService = scope.Resolve<IUsersService>();
+						var distributionListsService = scope.Resolve<IDistributionListsService>();
+
+						var emails = distributionListProvider.GetNewMessagesFromMailbox(item.List);
 
 						if (emails != null && emails.Count > 0)
 						{
-							var listMembers = await _distributionListsService.GetAllListMembersByListIdAsync(item.List.DistributionListId);
+							var listMembers = await distributionListsService.GetAllListMembersByListIdAsync(item.List.DistributionListId);
 							foreach (var email in emails)
 							{
 								foreach (var member in listMembers)
@@ -48,10 +42,10 @@ namespace Resgrid.Workers.Framework.Logic
 									if (member.User != null && member.User != null)
 										membership = member.User;
 									else
-										membership = _usersService.GetMembershipByUserId(member.UserId);
+										membership = usersService.GetMembershipByUserId(member.UserId);
 
 									if (membership != null && !String.IsNullOrWhiteSpace(membership.Email))
-										await _emailService.SendDistributionListEmail(email, membership.Email, item.List.Name, $"Resgrid ({item.List.Name}) List", $"{item.List.EmailAddress}@{Config.InboundEmailConfig.ListsDomain}");
+										await emailService.SendDistributionListEmail(email, membership.Email, item.List.Name, $"Resgrid ({item.List.Name}) List", $"{item.List.EmailAddress}@{Config.InboundEmailConfig.ListsDomain}");
 								}
 							}
 						}

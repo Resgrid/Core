@@ -144,8 +144,8 @@ namespace Resgrid.Model.Search
 		/// <summary>Feature flag key that must evaluate true for the department (FeatureFlagKeys).</summary>
 		public string FeatureFlag { get; set; }
 
-		/// <summary>Hide when the Records module is on: the legacy Logs pages are replaced after cutover.</summary>
-		public bool HiddenWhenRecordsEnabled { get; set; }
+		/// <summary>Hide once the department's Records cutover is active: a legacy Logs write that the Logs pages now refuse. Reads stay listed.</summary>
+		public bool HiddenAfterRecordsCutover { get; set; }
 	}
 
 	public class SystemActionHit

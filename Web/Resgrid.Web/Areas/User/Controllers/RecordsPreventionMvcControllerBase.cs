@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -79,10 +81,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return map;
 		}
 
+		// SQL Server datetime starts at 1753, and browsers accept any year in a date input, so a two-digit year arrives as 0026 and
+		// failed the insert with a SqlDateTime overflow. The day of margin keeps the department-zone shift inside SQL's and DateTime's range.
+		private static readonly DateTime EarliestInput = ((DateTime)SqlDateTime.MinValue).AddDays(1);
+		private static readonly DateTime LatestInput = ((DateTime)SqlDateTime.MaxValue).AddDays(-1);
+
+		/// <summary>Filter dates: blank, unreadable or unstorable input is null, so the caller's default window applies.</summary>
 		protected DateTime? ParseUtc(string value)
 		{
+			if (string.IsNullOrWhiteSpace(value) || !DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed)) return null;
+			if (parsed < EarliestInput || parsed > LatestInput) return null;
+			return Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ToUtc(parsed);
+		}
+
+		/// <summary>Dates the user is recording: blank is null so the caller's default applies, but a value that is not a storable date
+		/// is an ArgumentException (shown by <see cref="Fail"/>) rather than silently replaced with the default.</summary>
+		protected DateTime? ParseEnteredUtc(string value)
+		{
 			if (string.IsNullOrWhiteSpace(value)) return null;
-			return Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Parse(value);
+			return ParseUtc(value) ?? throw new ArgumentException(Localizer["InvalidDate"].Value);
 		}
 	}
 }

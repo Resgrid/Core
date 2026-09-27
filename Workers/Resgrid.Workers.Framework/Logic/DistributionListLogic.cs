@@ -15,16 +15,18 @@ namespace Resgrid.Workers.Framework.Logic
 	{
 		public static async Task<bool> ProcessDistributionListQueueItem(DistributionListQueueItem dlqi)
 		{
-			var emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
-			var distributionListsService = Bootstrapper.GetKernel().Resolve<IDistributionListsService>();
-			var fileService = Bootstrapper.GetKernel().Resolve<IFileService>();
+			// Own scope per message: root-scope services would share the process-wide root unit of work.
+			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+			var emailService = scope.Resolve<IEmailService>();
+			var distributionListsService = scope.Resolve<IDistributionListsService>();
+			var fileService = scope.Resolve<IFileService>();
 
 			if (dlqi != null && dlqi.List != null && dlqi.Message != null)
 			{
 				// If we didn't get any profiles chances are the message size was too big for Azure, get selected profiles now.
 				if (dlqi.Users == null)
 				{
-					var departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
+					var departmentsService = scope.Resolve<IDepartmentsService>();
 					dlqi.Users = await departmentsService.GetAllUsersForDepartmentAsync(dlqi.List.DepartmentId);
 				}
 

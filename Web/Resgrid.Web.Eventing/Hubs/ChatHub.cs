@@ -195,10 +195,13 @@ namespace Resgrid.Web.Eventing.Hubs
 
 		public async Task LeaveChannel(string channelId)
 		{
+			// JoinChannel is the only way into a channel group and always records the group it used, so an
+			// untracked channel has nothing to leave. Don't resolve the current epoch here: that would mint
+			// one for any channelId a client sends, before any access check.
 			var contextKey = GetJoinedChannelGroupContextKey(channelId);
 			var groupName = Context.Items.TryGetValue(contextKey, out var trackedGroupName)
 				? trackedGroupName as string
-				: await GetCurrentChannelGroupNameAsync(channelId);
+				: null;
 			if (groupName != null)
 			{
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);

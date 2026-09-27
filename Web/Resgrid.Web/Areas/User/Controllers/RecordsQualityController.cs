@@ -90,7 +90,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Sample(string rubricId, string since, CancellationToken cancellationToken)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
-			try { var reviews = await _quality.SampleAsync(DepartmentId, UserId, rubricId, ParseUtc(since) ?? DateTime.UtcNow.AddDays(-30), cancellationToken); Notify("SampleCreated", reviews.Count); }
+			try { var reviews = await _quality.SampleAsync(DepartmentId, UserId, rubricId, ParseEnteredUtc(since) ?? DateTime.UtcNow.AddDays(-30), cancellationToken); Notify("SampleCreated", reviews.Count); }
 			catch (Exception ex) { var f = Fail(ex); if (f != null) return f; }
 			return RedirectToAction(nameof(Index));
 		}

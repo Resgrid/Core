@@ -28,7 +28,8 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				var communicationTestService = Bootstrapper.GetKernel().Resolve<ICommunicationTestService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var communicationTestService = scope.Resolve<ICommunicationTestService>();
 
 				_logger.LogInformation("CommunicationTest::Processing scheduled tests");
 				await communicationTestService.ProcessScheduledTestsAsync(cancellationToken);

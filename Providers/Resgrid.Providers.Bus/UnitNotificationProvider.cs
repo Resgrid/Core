@@ -15,9 +15,20 @@ namespace Resgrid.Providers.Bus
 {
 	public class UnitNotificationProvider : IUnitNotificationProvider
 	{
+		/// <summary>
+		/// The Azure unit hub is legacy (Novu delivers unit pushes) and is left unconfigured in newer
+		/// deployments. The client factory throws on an empty connection string, and there is nothing to
+		/// register with or remove from a hub that was never set up, so the methods that would otherwise
+		/// throw to their callers return early instead.
+		/// </summary>
+		private static bool IsHubConfigured()
+		{
+			return !String.IsNullOrWhiteSpace(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString);
+		}
+
 		public async Task RegisterPush(PushUri pushUri)
 		{
-			if (String.IsNullOrWhiteSpace(pushUri.DeviceId))
+			if (String.IsNullOrWhiteSpace(pushUri.DeviceId) || !IsHubConfigured())
 				return;
 
 			if (pushUri.UnitId.HasValue)
@@ -98,6 +109,9 @@ namespace Resgrid.Providers.Bus
 
 		public async Task UnRegisterPush(PushUri pushUri)
 		{
+			if (!IsHubConfigured())
+				return;
+
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
 			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("deviceId:{0}", pushUri.DeviceId), 50);
@@ -121,6 +135,9 @@ namespace Resgrid.Providers.Bus
 
 		public async Task UnRegisterPushByUserDeviceId(PushUri pushUri)
 		{
+			if (!IsHubConfigured())
+				return;
+
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
 			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("userId:{0}", pushUri.UserId), 50);
@@ -155,6 +172,9 @@ namespace Resgrid.Providers.Bus
 
 		public async Task UnRegisterPushByUUID(string uuid)
 		{
+			if (!IsHubConfigured())
+				return;
+
 			var hubClient = NotificationHubClient.CreateClientFromConnectionString(Config.ServiceBusConfig.AzureUnitNotificationHub_FullConnectionString, Config.ServiceBusConfig.AzureUnitNotificationHub_PushUrl);
 
 			var registrations = await hubClient.GetRegistrationsByTagAsync(string.Format("uuid:{0}", uuid), 50);

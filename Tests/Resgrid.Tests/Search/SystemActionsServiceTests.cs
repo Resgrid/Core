@@ -16,10 +16,12 @@ namespace Resgrid.Tests.Search
 	public class SystemActionsServiceTests
 	{
 		private Mock<IFeatureToggleService> _flags;
+		private Mock<IRecordsCutoverService> _cutover;
 		private SystemActionsService _service;
 		private HashSet<string> _enabledFlags;
 		private HashSet<string> _claims;
 		private HashSet<string> _disabledModules;
+		private bool _legacyWritesBlocked;
 
 		[SetUp]
 		public void SetUp()
@@ -27,10 +29,13 @@ namespace Resgrid.Tests.Search
 			_enabledFlags = new HashSet<string>();
 			_claims = new HashSet<string>();
 			_disabledModules = new HashSet<string>();
+			_legacyWritesBlocked = false;
 			_flags = new Mock<IFeatureToggleService>();
 			_flags.Setup(f => f.IsEnabledAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()))
 				.ReturnsAsync((string key, int dept, bool def, IDictionary<string, string> ctx) => _enabledFlags.Contains(key));
-			_service = new SystemActionsService(_flags.Object);
+			_cutover = new Mock<IRecordsCutoverService>();
+			_cutover.Setup(c => c.AreLegacyWritesBlockedAsync(It.IsAny<int>())).ReturnsAsync(() => _legacyWritesBlocked);
+			_service = new SystemActionsService(_flags.Object, _cutover.Object);
 		}
 
 		private SearchPrincipal Principal(bool admin = false) => new SearchPrincipal
@@ -80,13 +85,38 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
-		public async Task Logs_disappear_when_records_is_on_and_admin_entries_need_admin()
+		public async Task Logs_stay_findable_through_the_records_cutover_and_only_new_log_goes_away()
 		{
 			_claims.Add("Log:View");
+			_claims.Add("Log:Create");
 			(await _service.SearchAsync("logs", Principal())).Select(h => h.Key).Should().Contain("logs");
-			_enabledFlags.Add(FeatureFlagKeys.RecordsSystem);
-			(await _service.SearchAsync("logs", Principal())).Select(h => h.Key).Should().NotContain("logs");
+			(await _service.SearchAsync("new log", Principal())).Select(h => h.Key).Should().Contain("new-log");
 
+			// Records.System on but not yet activated: Logs is still the department's working log system.
+			_enabledFlags.Add(FeatureFlagKeys.RecordsSystem);
+			(await _service.SearchAsync("logs", Principal())).Select(h => h.Key).Should().Contain("logs");
+			(await _service.SearchAsync("new log", Principal())).Select(h => h.Key).Should().Contain("new-log", "the flag alone does not make Logs read-only");
+
+			// Activated: old Logs stay readable, creating one is refused by the Logs pages, so it is not offered.
+			_legacyWritesBlocked = true;
+			(await _service.SearchAsync("logs", Principal())).Select(h => h.Key).Should().Contain("logs", "old Logs remain readable after activation");
+			(await _service.SearchAsync("legacy logs", Principal())).Select(h => h.Key).Should().Contain("logs");
+			(await _service.SearchAsync("new log", Principal())).Select(h => h.Key).Should().NotContain("new-log");
+		}
+
+		[Test]
+		public async Task An_unreadable_cutover_state_hides_the_legacy_write_but_not_the_read()
+		{
+			_claims.Add("Log:View");
+			_claims.Add("Log:Create");
+			_cutover.Setup(c => c.AreLegacyWritesBlockedAsync(It.IsAny<int>())).ThrowsAsync(new System.InvalidOperationException("cache down"));
+			(await _service.SearchAsync("logs", Principal())).Select(h => h.Key).Should().Contain("logs");
+			(await _service.SearchAsync("new log", Principal())).Select(h => h.Key).Should().NotContain("new-log");
+		}
+
+		[Test]
+		public async Task Admin_entries_need_admin()
+		{
 			(await _service.SearchAsync("department settings", Principal())).Should().BeEmpty();
 			(await _service.SearchAsync("department settings", Principal(admin: true))).First().Key.Should().Be("department-settings");
 		}

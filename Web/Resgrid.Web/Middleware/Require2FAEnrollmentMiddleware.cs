@@ -74,21 +74,15 @@ namespace Resgrid.Web.Middleware
 				return;
 			}
 
-			try
+			async Task<bool> mustEnroll()
 			{
 				var department = await departmentsService.GetDepartmentByUserIdAsync(user.Id);
 				if (department == null)
-				{
-					await _next(context);
-					return;
-				}
+					return false;
 
 				var scope = await departmentSettingsService.GetRequire2FAForAdminsAsync(department.DepartmentId);
 				if (scope == 0)
-				{
-					await _next(context);
-					return;
-				}
+					return false;
 
 				// Determine if user is in scope
 				bool inScope = false;
@@ -105,16 +99,27 @@ namespace Resgrid.Web.Middleware
 						inScope = true;
 				}
 
-				if (inScope && !await userManager.GetTwoFactorEnabledAsync(user))
-				{
-					// Admin has not enrolled — redirect to setup
-					context.Response.Redirect("/User/TwoFactor/Enable2FA?enforced=1");
-					return;
-				}
+				return inScope && !await userManager.GetTwoFactorEnabledAsync(user);
+			}
+
+			// Only the enrollment check fails open. _next must stay outside this try: swallowing a
+			// downstream exception and falling through re-ran the whole request (duplicate side effects,
+			// "Headers are read-only" once the first run had started the response, the real error lost).
+			bool redirectToEnrollment;
+			try
+			{
+				redirectToEnrollment = await mustEnroll();
 			}
 			catch
 			{
-				// Swallow any error to avoid breaking the pipeline — fail open
+				redirectToEnrollment = false;
+			}
+
+			if (redirectToEnrollment)
+			{
+				// Admin has not enrolled — redirect to setup
+				context.Response.Redirect("/User/TwoFactor/Enable2FA?enforced=1");
+				return;
 			}
 
 			await _next(context);

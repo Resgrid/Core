@@ -75,6 +75,13 @@ namespace Resgrid.Web.Eventing.Hubs
 			return Context.User?.FindFirst(ClaimTypes.PrimarySid)?.Value ?? String.Empty;
 		}
 
+		/// <summary>
+		/// True when the connection closed while this call was running (SignalR does not wait for in-flight
+		/// calls before disconnecting). No server holds the connection any more, so the Redis backplane would
+		/// wait 30 seconds for a group ack that never comes and then throw.
+		/// </summary>
+		private bool ConnectionClosed => Context.ConnectionAborted.IsCancellationRequested;
+
 		public override async Task OnConnectedAsync()
 		{
 			var departmentId = GetDepartmentId();
@@ -170,6 +177,9 @@ namespace Resgrid.Web.Eventing.Hubs
 				!await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId))
 				return;
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, $"chatuser:{departmentId}:{userId.ToLowerInvariant()}");
 			await Groups.AddToGroupAsync(Context.ConnectionId, $"chatdept:{departmentId}");
 
@@ -187,6 +197,9 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (groupName == null)
 				throw new HubException("Chat authorization is temporarily unavailable.");
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 			Context.Items[GetJoinedChannelGroupContextKey(channel.ChatChannelId)] = groupName;
 
@@ -202,7 +215,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			var groupName = Context.Items.TryGetValue(contextKey, out var trackedGroupName)
 				? trackedGroupName as string
 				: null;
-			if (groupName != null)
+			if (groupName != null && !ConnectionClosed)
 			{
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 				Context.Items.Remove(contextKey);

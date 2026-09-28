@@ -7104,6 +7104,13 @@
             the reader happened to see a "Z".
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Hubs.EventingHub.ConnectionClosed">
+            <summary>
+            True when the connection closed while this call was running (SignalR does not wait for in-flight
+            calls before disconnecting). No server holds the connection any more, so the Redis backplane would
+            wait 30 seconds for a group ack that never comes and then throw.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.

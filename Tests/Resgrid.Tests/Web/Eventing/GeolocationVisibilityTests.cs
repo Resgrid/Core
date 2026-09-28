@@ -142,8 +142,8 @@ namespace Resgrid.Tests.Web.Eventing
 			var hubContext = new Mock<IHubContext<GeolocationHub>>();
 			hubContext.SetupGet(x => x.Groups).Returns(groups.Object);
 			var sync = new GeolocationVisibilitySync(tracker, new GeolocationMembership(_visibility.Object), hubContext.Object);
-			tracker.GetOrAdd("conn-1", DepartmentId, Viewer).SubscribeToDepartmentMap();
-			tracker.GetOrAdd("conn-2", DepartmentId, Subject).SubscribeToDepartmentMap();
+			tracker.Track("conn-1", DepartmentId, Viewer, CancellationToken.None).SubscribeToDepartmentMap();
+			tracker.Track("conn-2", DepartmentId, Subject, CancellationToken.None).SubscribeToDepartmentMap();
 			tracker.Remove("conn-2");
 
 			_visibility.Setup(x => x.GetVisibilitySetKeysForViewerAsync(DepartmentId, Viewer)).ReturnsAsync(new[] { "abc" });
@@ -185,6 +185,20 @@ namespace Resgrid.Tests.Web.Eventing
 		}
 
 		[Test]
+		public async Task Hub_call_that_finishes_after_its_connection_closed_leaves_nothing_tracked()
+		{
+			// SignalR runs OnDisconnectedAsync without waiting for in-flight hub calls.
+			var (hub, groups, caller, tracker) = CreateHub(Mock.Of<IUnitsService>(), Viewer, new CancellationToken(canceled: true));
+			await hub.OnDisconnectedAsync(null);
+
+			await hub.GeolocationConnect();
+
+			tracker.Contains("conn-1").Should().BeFalse("nothing would remove it, and every periodic sync would wait on it");
+			groups.Verify(x => x.AddToGroupAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			caller.Verify(x => x.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
 		public void Hub_location_publish_methods_are_reserved_for_the_internal_publisher()
 		{
 			var (hub, _, _, _) = CreateHub(Mock.Of<IUnitsService>(), Viewer);
@@ -216,7 +230,7 @@ namespace Resgrid.Tests.Web.Eventing
 		}
 
 		private (GeolocationHub Hub, Mock<IGroupManager> Groups, Mock<ISingleClientProxy> Caller, GeolocationConnectionTracker Tracker) CreateHub(
-			IUnitsService unitsService, string userId)
+			IUnitsService unitsService, string userId, CancellationToken connectionAborted = default)
 		{
 			var tracker = new GeolocationConnectionTracker();
 			var groups = new Mock<IGroupManager>();
@@ -226,7 +240,7 @@ namespace Resgrid.Tests.Web.Eventing
 
 			var context = new Mock<HubCallerContext>();
 			context.SetupGet(x => x.ConnectionId).Returns("conn-1");
-			context.SetupGet(x => x.ConnectionAborted).Returns(CancellationToken.None);
+			context.SetupGet(x => x.ConnectionAborted).Returns(connectionAborted);
 			context.SetupGet(x => x.User).Returns(new ClaimsPrincipal(new ClaimsIdentity(new[]
 			{
 				new Claim(ClaimTypes.PrimarySid, userId),

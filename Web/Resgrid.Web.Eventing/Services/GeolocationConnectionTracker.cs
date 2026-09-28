@@ -16,9 +16,24 @@ namespace Resgrid.Web.Eventing.Services
 		private readonly ConcurrentDictionary<string, GeolocationConnection> _connections =
 			new ConcurrentDictionary<string, GeolocationConnection>(StringComparer.Ordinal);
 
-		public GeolocationConnection GetOrAdd(string connectionId, int departmentId, string userId)
+		/// <summary>
+		/// Returns the tracked connection, or null when it has already closed. SignalR does not wait for
+		/// in-flight hub calls before OnDisconnectedAsync, so a subscribe can land after the entry was removed;
+		/// nothing would remove it again, and every periodic sync would wait out a 30 second Redis group ack
+		/// for it. ConnectionAborted is cancelled before OnDisconnectedAsync runs, so checking it after the
+		/// add catches that case.
+		/// </summary>
+		public GeolocationConnection Track(string connectionId, int departmentId, string userId, CancellationToken connectionAborted)
 		{
-			return _connections.GetOrAdd(connectionId, id => new GeolocationConnection(id, departmentId, userId));
+			var connection = _connections.GetOrAdd(connectionId, id => new GeolocationConnection(id, departmentId, userId));
+
+			if (connectionAborted.IsCancellationRequested)
+			{
+				Remove(connectionId);
+				return null;
+			}
+
+			return connection;
 		}
 
 		public bool Contains(string connectionId) => _connections.ContainsKey(connectionId);

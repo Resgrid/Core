@@ -65,9 +65,10 @@ namespace Resgrid.Web.Eventing.Hubs
 			return Context.User?.FindFirst(ClaimTypes.PrimarySid)?.Value;
 		}
 
+		/// <summary>Null when the connection closed while this call was running.</summary>
 		private GeolocationConnection TrackConnection(int departmentId)
 		{
-			return _connectionTracker.GetOrAdd(Context.ConnectionId, departmentId, GetUserId());
+			return _connectionTracker.Track(Context.ConnectionId, departmentId, GetUserId(), Context.ConnectionAborted);
 		}
 
 		/// <summary>
@@ -81,6 +82,9 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (departmentId > 0)
 			{
 				var connection = TrackConnection(departmentId);
+				if (connection == null)
+					return;
+
 				connection.SubscribeToDepartmentMap();
 				await _membership.SyncAsync(Groups, connection, Context.ConnectionAborted);
 
@@ -127,6 +131,9 @@ namespace Resgrid.Web.Eventing.Hubs
 				return;
 
 			var connection = TrackConnection(departmentId);
+			if (connection == null)
+				return;
+
 			connection.SubscribeToUnit(unitId);
 			await _membership.SyncAsync(Groups, connection, Context.ConnectionAborted);
 
@@ -148,6 +155,9 @@ namespace Resgrid.Web.Eventing.Hubs
 				return;
 
 			var connection = TrackConnection(departmentId);
+			if (connection == null)
+				return;
+
 			connection.SubscribeToPerson(userId);
 			await _membership.SyncAsync(Groups, connection, Context.ConnectionAborted);
 

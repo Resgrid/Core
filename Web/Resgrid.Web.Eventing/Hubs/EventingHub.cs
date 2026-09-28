@@ -44,6 +44,9 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (authenticatedDepartmentId <= 0 || departmentId != authenticatedDepartmentId)
 				throw new HubException("Not authorized for this department.");
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, authenticatedDepartmentId.ToString());
 			await Clients.Caller.SendAsync("onConnected", Context.ConnectionId);
 		}
@@ -55,6 +58,9 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (link == null || !link.LinkEnabled || !linkedDepartmentId.HasValue)
 				throw new HubException("Not authorized for this department link.");
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
 		}
 
@@ -62,7 +68,7 @@ namespace Resgrid.Web.Eventing.Hubs
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 			var linkedDepartmentId = GetLinkedDepartmentForCaller(link);
-			if (linkedDepartmentId.HasValue)
+			if (linkedDepartmentId.HasValue && !ConnectionClosed)
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
 		}
 
@@ -72,11 +78,21 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (call == null || call.DepartmentId != GetDepartmentId())
 				throw new HubException("Not authorized for this call.");
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
 		}
 
 		public Task UnsubscribeToCall(int callId) =>
-			Groups.RemoveFromGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
+			ConnectionClosed ? Task.CompletedTask : Groups.RemoveFromGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
+
+		/// <summary>
+		/// True when the connection closed while this call was running (SignalR does not wait for in-flight
+		/// calls before disconnecting). No server holds the connection any more, so the Redis backplane would
+		/// wait 30 seconds for a group ack that never comes and then throw.
+		/// </summary>
+		private bool ConnectionClosed => Context.ConnectionAborted.IsCancellationRequested;
 
 		/// <summary>
 		/// Single source of truth for the per-call group name, so a publisher added later cannot drift from

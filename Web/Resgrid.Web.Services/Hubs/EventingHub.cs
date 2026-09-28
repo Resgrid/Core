@@ -31,6 +31,9 @@ namespace Resgrid.Web.Services.Hubs
 			if (authenticatedDepartmentId <= 0 || authenticatedDepartmentId != departmentId)
 				throw new HubException("Not authorized for this department.");
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, departmentId.ToString());
 			await Clients.Caller.SendAsync("onConnected", Context.ConnectionId);
 		}
@@ -42,6 +45,9 @@ namespace Resgrid.Web.Services.Hubs
 			if (link == null || !link.LinkEnabled || !linkedDepartmentId.HasValue)
 				throw new HubException("Not authorized for this department link.");
 
+			if (ConnectionClosed)
+				return;
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
 		}
 
@@ -49,9 +55,16 @@ namespace Resgrid.Web.Services.Hubs
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 			var linkedDepartmentId = GetLinkedDepartmentForCaller(link);
-			if (linkedDepartmentId.HasValue)
+			if (linkedDepartmentId.HasValue && !ConnectionClosed)
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
 		}
+
+		/// <summary>
+		/// True when the connection closed while this call was running (SignalR does not wait for in-flight
+		/// calls before disconnecting). No server holds the connection any more, so the Redis backplane would
+		/// wait 30 seconds for a group ack that never comes and then throw.
+		/// </summary>
+		private bool ConnectionClosed => Context.ConnectionAborted.IsCancellationRequested;
 
 		public Task PersonnelStatusUpdated(int departmentId, int id) =>
 			PublishAsync("personnelStatusUpdated", departmentId, id);

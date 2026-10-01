@@ -986,6 +986,76 @@ Department Security Policy / Data Classification Level. Department classificatio
 
 Default: 0. Source: DepartmentSecurityPolicy.DataClassificationLevel.
 
+<a id="table-departmentsecuritypolicy-allowpasskeysforloginmfa"></a>
+## Department Security Policy / Allow Passkeys For Login MFA
+
+Department Security Policy / Allow Passkeys For Login MFA. Accepts a passkey registered in the requesting app as MFA for sign-in, department entry and step-up. Authenticator codes are always accepted. Changing it advances the MFA policy version; sessions whose only second factor is now disallowed verify again. Managing member only.
+
+Default: true. Source: DepartmentSecurityPolicy.AllowPasskeysForLoginMfa.
+
+<a id="table-departmentsecuritypolicy-allowpasskeysforadp"></a>
+## Department Security Policy / Allow Passkeys For ADP
+
+Department Security Policy / Allow Passkeys For ADP. Accepts a passkey for protected-data access, ADP management and protected-workflow approvals. Authenticator codes are always accepted. Changing it ends current protected-data access, so members verify again. Managing member only.
+
+Default: true. Source: DepartmentSecurityPolicy.AllowPasskeysForAdp.
+
+<a id="table-departmentsecuritypolicy-allowfederatedmfaforloginmfa"></a>
+## Department Security Policy / Allow Federated MFA For Login MFA
+
+Department Security Policy / Allow Federated MFA For Login MFA. Accepts the identity provider's MFA for sign-in and step-up. Requires a tested MFA mapping on the SSO configuration; without one the provider's claims never count. Managing member only.
+
+Default: false. Source: DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa.
+
+<a id="table-departmentsecuritypolicy-allowfederatedmfaforadp"></a>
+## Department Security Policy / Allow Federated MFA For ADP
+
+Department Security Policy / Allow Federated MFA For ADP. Accepts the identity provider's MFA for protected data. Requires a tested MFA mapping; changing it ends current protected-data access. Managing member only.
+
+Default: false. Source: DepartmentSecurityPolicy.AllowFederatedMfaForAdp.
+
+<a id="table-departmentsecuritypolicy-allowresponderapproval"></a>
+## Department Security Policy / Allow Responder Approval
+
+Department Security Policy / Allow Responder Approval. Accepts approval with the member's Responder app passkey wherever the matching passkey setting is on; never for security changes or account sign-in methods. Changing it also ends current protected-data access. Managing member only.
+
+Default: true. Source: DepartmentSecurityPolicy.AllowResponderApproval.
+
+<a id="table-departmentsecuritypolicy-acceptrecentloginmfaforadp"></a>
+## Department Security Policy / Accept Recent Login MFA For ADP
+
+Department Security Policy / Accept Recent Login MFA For ADP. Lets MFA completed at sign-in in the same session open protected data within the step-up window, for methods the protected-data settings allow. Changing it ends current protected-data access. Managing member only.
+
+Default: true. Source: DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp.
+
+<a id="table-departmentsecuritypolicy-acceptrecentunlockmfaforadp"></a>
+## Department Security Policy / Accept Recent Unlock MFA For ADP
+
+Department Security Policy / Accept Recent Unlock MFA For ADP. Lets the operator's fresh unlock verification on a shared device open protected data. Changing it ends current protected-data access. Managing member only.
+
+Default: true. Source: DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp.
+
+<a id="table-departmentsecuritypolicy-sharedidlelockminutes"></a>
+## Department Security Policy / Shared Idle Lock Minutes
+
+Department Security Policy / Shared Idle Lock Minutes. Minutes without operator activity before a shared vehicle tablet or workstation session locks, from 1 to 15. Background updates and incoming alerts are not activity. A stricter value reaches running sessions at their next request. Managing member only.
+
+Default: 5. Source: DepartmentSecurityPolicy.SharedIdleLockMinutes.
+
+<a id="table-departmentsecuritypolicy-sharedshifthours"></a>
+## Department Security Policy / Shared Shift Hours
+
+Department Security Policy / Shared Shift Hours. Hours after sign-in when a shared session ends whatever the activity, from 1 to 24. A shorter value ends running sessions sooner; a longer one never extends them. Managing member only.
+
+Default: 12. Source: DepartmentSecurityPolicy.SharedShiftHours.
+
+<a id="table-departmentsecuritypolicy-sharedmoderequiredapps"></a>
+## Department Security Policy / Shared Mode Required Apps
+
+Department Security Policy / Shared Mode Required Apps. Unit, IC and Dispatch sessions this department always runs as shared sessions, whatever the installation is set to; sign-ins that do not name their app count too. Needs app versions that support shared mode. Managing member only.
+
+Default: none. Source: DepartmentSecurityPolicy.SharedModeRequiredApps.
+
 <a id="table-departmentssoconfig-ssoprovidertype"></a>
 ## Department SSO Config / SSO Provider Type
 
@@ -1042,6 +1112,13 @@ Department SSO Config / Assertion Consumer Service URL. Stored SAML callback con
 
 Default: unset. Source: DepartmentSsoConfig.AssertionConsumerServiceUrl.
 
+<a id="table-departmentssoconfig-idpssourl"></a>
+## Department SSO Config / IdP SSO URL
+
+Department SSO Config / IdP SSO URL. SAML provider sign-in address that sign-in started from Resgrid sends its request to. Verify it against the provider metadata before relying on it.
+
+Default: unset. Source: DepartmentSsoConfig.IdpSsoUrl.
+
 <a id="table-departmentssoconfig-encryptedidpcertificate"></a>
 ## Department SSO Config / Encrypted IdP Certificate
 
@@ -1062,6 +1139,13 @@ Default: unset. Source: DepartmentSsoConfig.EncryptedSigningCertificate.
 Department SSO Config / Attribute Mapping JSON. Maps provider attributes to supported member fields. Validate identity matching and missing attributes with an approved test account.
 
 Default: unset. Source: DepartmentSsoConfig.AttributeMappingJson.
+
+<a id="table-departmentssoconfig-federatedmfamappingjson"></a>
+## Department SSO Config / Federated MFA Mapping JSON
+
+Department SSO Config / Federated MFA Mapping JSON. Which provider sign-in results count as MFA for provider step-up. A changed mapping, issuer or client needs a new successful test before provider MFA is accepted again.
+
+Default: unset. Source: DepartmentSsoConfig.FederatedMfaMappingJson.
 
 <a id="table-departmentssoconfig-allowlocallogin"></a>
 ## Department SSO Config / Allow Local Login

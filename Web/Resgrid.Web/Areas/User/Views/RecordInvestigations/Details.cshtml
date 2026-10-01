@@ -164,7 +164,7 @@
 				<div class="ibox"><div class="ibox-title"><h5>@L["Actions"]</h5></div><div class="ibox-content">
 					@if (!c.IsClosed)
 					{
-						<form method="post" class="form-inline" asp-controller="RecordInvestigations" asp-action="Close" asp-route-area="User" onsubmit="return confirm('@L["CloseCaseConfirm"]');">
+						<form method="post" class="form-inline" asp-controller="RecordInvestigations" asp-action="Close" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["CloseCaseConfirm"])');">
 							@Html.AntiForgeryToken()<input type="hidden" name="id" value="@c.RmsInvestigationCaseId" />
 							<input class="form-control input-sm" name="reason" maxlength="1000" placeholder="@L["ClosureReason"]" required />
 							<button class="btn btn-sm btn-danger"><i class="fa fa-lock"></i> @L["CloseCase"]</button>

@@ -66,7 +66,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IEncryptionService encryptionService,
 			ICacheProvider cacheProvider,
 			IUserSessionService userSessionService,
-			IExternalIdentityLinkService externalIdentityLinkService
+			IExternalIdentityLinkService externalIdentityLinkService,
+			IMfaPolicyService mfaPolicyService,
+			IMfaEvidenceService mfaEvidenceService,
+			IMfaLoginTransactionService loginTransactions,
+			ISsoBrokerService ssoBroker
 			)
 		{
 			_usersService = usersService;
@@ -80,7 +84,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_cacheProvider = cacheProvider;
 			_userSessionService = userSessionService;
 			_externalIdentityLinkService = externalIdentityLinkService;
+			_mfaPolicyService = mfaPolicyService;
+			_mfaEvidenceService = mfaEvidenceService;
+			_loginTransactions = loginTransactions;
+			_ssoBroker = ssoBroker;
 		}
+
+		private readonly ISsoBrokerService _ssoBroker;
+
+		private readonly IMfaPolicyService _mfaPolicyService;
+		private readonly IMfaEvidenceService _mfaEvidenceService;
+		private readonly IMfaLoginTransactionService _loginTransactions;
+
+		/// <summary>Where a member whose department requires MFA sets up an authenticator (plan section 7.6 rollout).</summary>
+		private static string MfaEnrollmentUri => $"{SystemBehaviorConfig.ResgridBaseUrl?.TrimEnd('/')}/User/TwoFactor";
+
+		private const string MfaEnrollmentRequiredDescription =
+			"Your department requires multi-factor authentication. Set up an authenticator app in Resgrid on the web (Account, Two-Factor Authentication), then sign in again.";
 
 		/// <summary>
 		/// Generates a token that is then used for subsquent requests to the API.
@@ -137,20 +157,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return InvalidGrant("The username or password is invalid.");
 				}
 
-				var localLoginAllowed = await _externalIdentityLinkService.IsLocalLoginAllowedAsync(
-					user.Id, CancellationToken.None);
-				if (localLoginAllowed && userDepartment != null)
-				{
-					localLoginAllowed = await _externalIdentityLinkService.IsLocalLoginAllowedAsync(
-						user.Id, userDepartment.DepartmentId, CancellationToken.None);
-					var requiresSso = await _departmentSsoService.IsRequireSsoPolicyActiveAsync(
-						userDepartment.DepartmentId, CancellationToken.None);
-					if (requiresSso && await _departmentSsoService.IsSsoEnabledForDepartmentAsync(
-							userDepartment.DepartmentId, CancellationToken.None))
-						localLoginAllowed = false;
-				}
-
-				if (!localLoginAllowed)
+				if (!await IsLocalLoginAllowedAsync(user.Id, userDepartment.DepartmentId))
 				{
 					audit.UserId = user.Id;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
@@ -187,8 +194,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// current authenticator code must accompany the request as totp_code. This closes
 				// the gap where only the SSO exchange enforced 2FA. The code is checked AFTER the
 				// password so this endpoint never becomes a TOTP oracle for unauthenticated callers.
+				DateTime? totpVerifiedOnUtc = null;
 				if (await _userManager.GetTwoFactorEnabledAsync(user))
 				{
+					// A client that asked for the login transaction completes its second factor there, with any accepted
+					// method, and never resends the password (plan section 7.5 rules 3-4). Everyone else keeps totp_code.
+					if (_loginTransactions.IsEnabled && string.Equals((string)request.GetParameter(MfaLoginTransactions.FlowParameter),
+							MfaLoginTransactions.FlowValue, StringComparison.Ordinal))
+					{
+						var started = await BeginLoginTransactionAsync(user, userDepartment.DepartmentId, request, audit);
+						if (started != null)
+							return started;
+					}
+
 					var totpCode = (string)request.GetParameter("totp_code");
 					if (string.IsNullOrWhiteSpace(totpCode))
 					{
@@ -224,6 +242,48 @@ namespace Resgrid.Web.Services.Controllers.v4
 								"The two-factor authentication code is invalid or has expired."
 						}), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 					}
+
+					totpVerifiedOnUtc = DateTime.UtcNow;
+				}
+				else if (await _mfaPolicyService.IsRequireMfaEnforcedAsync(userDepartment.DepartmentId))
+				{
+					// A member with no Resgrid factor can still meet RequireMfa through the department's provider step-up, where
+					// it accepts that for sign-in (plan sections 7.6 row 3 and 7.8), but only through the login transaction.
+					if (_loginTransactions.IsEnabled && string.Equals((string)request.GetParameter(MfaLoginTransactions.FlowParameter),
+							MfaLoginTransactions.FlowValue, StringComparison.Ordinal) &&
+						await _mfaPolicyService.IsMethodAcceptedAsync(userDepartment.DepartmentId, MfaMethodScope.Login, MfaEvidenceMethod.Federated) &&
+						await _departmentSsoService.IsFederatedMfaAvailableAsync(userDepartment.DepartmentId, user.Id))
+					{
+						var started = await BeginLoginTransactionAsync(user, userDepartment.DepartmentId, request, audit, totpEnrolled: false);
+						if (started != null)
+							return started;
+					}
+
+					// The department requires MFA and this member has none enrolled (plan section 7.6 row 3): no tokens,
+					// and a specific error older app builds can show, with where to enroll. A client using the login
+					// transaction also gets a setup transaction to enroll right here (plan section 6.2); it permits nothing else.
+					audit.Successful = false;
+					audit.Data += " (mfa_enrollment_required)";
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+					var enrollment = new AuthenticationProperties(new Dictionary<string, string>
+					{
+						[OpenIddictServerAspNetCoreConstants.Properties.Error] = "mfa_enrollment_required",
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = MfaEnrollmentRequiredDescription,
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorUri] = MfaEnrollmentUri
+					});
+					if (_loginTransactions.IsEnabled && string.Equals((string)request.GetParameter(MfaLoginTransactions.FlowParameter),
+							MfaLoginTransactions.FlowValue, StringComparison.Ordinal))
+					{
+						var setup = await BeginSetupTransactionAsync(user, userDepartment.DepartmentId, request);
+						if (setup != null)
+						{
+							enrollment.Parameters["mfa_setup_transaction"] = setup.Secret;
+							enrollment.Parameters["mfa_expires_in"] = (long)setup.ExpiresInSeconds;
+						}
+					}
+
+					return Forbid(enrollment, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
 				// Create a new ClaimsPrincipal containing the claims that
@@ -248,8 +308,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					try
 					{
 						var session = await CreateApiSessionAsync(user, userDepartment?.DepartmentId,
-							UserSessionAuthenticationMethod.LocalPassword, refreshTokenLifetime, CancellationToken.None);
+							UserSessionAuthenticationMethod.LocalPassword, refreshTokenLifetime, CancellationToken.None,
+							loginMfaMethod: totpVerifiedOnUtc == null ? null : MfaEvidenceMethod.Totp);
 						AddSessionClaims(principal, session);
+						await RecordLoginEvidenceAsync(user, session, MfaEvidenceMethod.Password, totpVerifiedOnUtc, CancellationToken.None);
 					}
 					catch (SessionCreationDeniedException ex)
 					{
@@ -307,11 +369,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (!validation.IsValid)
 				{
+					// A locked shared session cannot refresh its way back to active (plan section 12.5.3). The tokens are
+					// still what unlocks it, so the client is told to unlock, not to discard them.
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
 					{
 						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The refresh token is no longer valid."
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = validation.IsLocked
+							? "The shared session is locked. Unlock it, then refresh."
+							: "The refresh token is no longer valid."
 					});
+					if (validation.IsLocked)
+						properties.Parameters["shared_session_locked"] = true;
 					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
@@ -343,7 +411,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 							UserId = user.Id,
 							DepartmentId = departmentId,
 							AuthenticationGeneration = user.AuthenticationGeneration,
-							ClientApplication = ResolveClientApplication(Request.Headers["X-Resgrid-Client"]),
+							ClientApplication = ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header]),
 							DeviceName = Request.Headers["X-Resgrid-Device-Name"],
 							DeviceType = Request.Headers["X-Resgrid-Device-Type"],
 							OperatingSystem = Request.Headers["X-Resgrid-Operating-System"],
@@ -612,7 +680,267 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return SignIn(deptPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 			}
 
+			else if (request != null && string.Equals(request.GrantType, MfaLoginTransactions.CompletionGrantType, StringComparison.Ordinal))
+			{
+				return await RedeemLoginTransactionAsync(request);
+			}
+
 			throw new NotImplementedException("The specified grant type is not implemented.");
+		}
+
+		/// <summary>
+		/// Starts the restricted login transaction after a verified password (workbook section 7.1): no tokens, only the
+		/// transaction secret and the methods it accepts. Null when it could not start, so the caller falls back to the
+		/// legacy <c>totp_code</c> response, which still requires the second factor.
+		/// </summary>
+		private async Task<IActionResult> BeginLoginTransactionAsync(Model.Identity.IdentityUser user, int departmentId, OpenIddictRequest request,
+			SystemAudit audit, bool totpEnrolled = true)
+		{
+			MfaLoginTransactionStart start;
+			try
+			{
+				start = await _loginTransactions.BeginAsync(new MfaLoginTransactionRequest
+				{
+					UserId = user.Id,
+					DepartmentId = departmentId,
+					ClientApplication = ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header]),
+					ClientId = request.ClientId,
+					FirstFactorMethod = MfaEvidenceMethod.Password,
+					FirstFactorVerifiedOnUtc = DateTime.UtcNow,
+					AuthenticationGeneration = user.AuthenticationGeneration,
+					Scopes = GrantableScopes(request.GetScopes()),
+					SharedModeRequested = SharedSessionRules.IsRequested(Request.Headers[SharedSessionRules.InstallationHeader]),
+					InstallationLabel = Request.Headers["X-Resgrid-Device-Name"],
+					TotpEnrolled = totpEnrolled
+				}, CancellationToken.None);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Framework.Logging.LogException(ex, "A login MFA transaction could not be started; the legacy TOTP response was used.");
+				return null;
+			}
+
+			audit.Successful = false;
+			audit.Data += " (mfa_required, transaction)";
+			await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+			var properties = new AuthenticationProperties(new Dictionary<string, string>
+			{
+				[OpenIddictServerAspNetCoreConstants.Properties.Error] = "mfa_required",
+				[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "Additional verification is required."
+			});
+			properties.Parameters["mfa_transaction"] = start.Secret;
+			properties.Parameters["mfa_methods"] = string.Join(" ", start.Choice.AllowedMethods);
+			properties.Parameters["mfa_enrolled"] = string.Join(" ", start.Choice.EnrolledMethods);
+			if (start.Choice.Preferred != null)
+				properties.Parameters["mfa_preferred"] = start.Choice.Preferred;
+			properties.Parameters["mfa_expires_in"] = (long)start.ExpiresInSeconds;
+			return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+		}
+
+		/// <summary>
+		/// A setup transaction (plan section 6.2): a login transaction for an account with no factor, which can only set up an
+		/// authenticator and then complete with it. Null when it could not start; the enrollment error stands on its own.
+		/// </summary>
+		private async Task<MfaLoginTransactionStart> BeginSetupTransactionAsync(Model.Identity.IdentityUser user, int departmentId, OpenIddictRequest request)
+		{
+			try
+			{
+				return await _loginTransactions.BeginAsync(new MfaLoginTransactionRequest
+				{
+					UserId = user.Id,
+					DepartmentId = departmentId,
+					ClientApplication = ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header]),
+					ClientId = request.ClientId,
+					FirstFactorMethod = MfaEvidenceMethod.Password,
+					FirstFactorVerifiedOnUtc = DateTime.UtcNow,
+					AuthenticationGeneration = user.AuthenticationGeneration,
+					Scopes = GrantableScopes(request.GetScopes()),
+					SharedModeRequested = SharedSessionRules.IsRequested(Request.Headers[SharedSessionRules.InstallationHeader]),
+					InstallationLabel = Request.Headers["X-Resgrid-Device-Name"],
+					TotpEnrolled = false
+				}, CancellationToken.None);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Framework.Logging.LogException(ex, "An MFA setup transaction could not be started.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Redeems a login transaction's one-use completion code for the normal token response (workbook section 7.1). The
+		/// account, department policy and first-factor rules are rechecked; the session records the original first-factor
+		/// time and the second factor actually verified. A lost response means signing in again: nothing is issued twice.
+		/// </summary>
+		private async Task<IActionResult> RedeemLoginTransactionAsync(OpenIddictRequest request)
+		{
+			var audit = new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Api,
+				Type = (int)SystemAuditTypes.Login,
+				Successful = false,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"V4 Token (MFA completion), {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			};
+
+			var redeemed = await _loginTransactions.RedeemAsync((string)request.GetParameter("transaction"),
+				(string)request.GetParameter("completion_code"), ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header]),
+				CancellationToken.None);
+			if (!redeemed.IsUsable)
+			{
+				audit.Data += $" ({MfaLoginTransactions.ErrorCode(redeemed.Outcome)})";
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+				return LoginTransactionError(redeemed.Outcome);
+			}
+
+			var transaction = redeemed.Transaction;
+			var user = await _userManager.FindByIdAsync(transaction.UserId);
+			audit.UserId = transaction.UserId;
+			audit.Username = user?.UserName;
+			if (user == null || !await _signInManager.CanSignInAsync(user) || await _userManager.IsLockedOutAsync(user))
+			{
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+				return InvalidGrant("The username or password is invalid.");
+			}
+
+			// What allowed the first factor must still hold: an active membership, and password sign-in still permitted, or
+			// the department's SSO configuration still the one that authenticated the user.
+			var authenticationMethod = UserSessionAuthenticationMethod.LocalPassword;
+			if (transaction.DepartmentId is int departmentId)
+			{
+				var membership = await _departmentsService.GetDepartmentMemberAsync(user.Id, departmentId, bypassCache: true);
+				bool firstFactorStillAllowed;
+				if (transaction.FirstFactorMethod == (int)MfaEvidenceMethod.Password)
+				{
+					firstFactorStillAllowed = await IsLocalLoginAllowedAsync(user.Id, departmentId);
+				}
+				else
+				{
+					authenticationMethod = await SsoAuthenticationMethodAsync(departmentId, transaction.DepartmentSsoConfigId);
+					firstFactorStillAllowed = authenticationMethod != UserSessionAuthenticationMethod.LocalPassword;
+				}
+
+				if (membership == null || membership.IsDeleted || membership.IsDisabled == true || !firstFactorStillAllowed)
+				{
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return InvalidGrant("The username or password is invalid.");
+				}
+			}
+			else if (transaction.FirstFactorMethod != (int)MfaEvidenceMethod.Password)
+			{
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+				return InvalidGrant("The username or password is invalid.");
+			}
+
+			var principal = await _signInManager.CreateUserPrincipalAsync(user);
+			var granted = (transaction.Scopes ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			var requested = request.GetScopes();
+			principal.SetScopes(requested.IsDefaultOrEmpty ? granted : granted.Intersect(requested));
+
+			// A brokered SSO login for an account without MFA completes with no second factor, and records none.
+			var method = transaction.CompletionMethod == null ? (MfaEvidenceMethod?)null : (MfaEvidenceMethod)transaction.CompletionMethod.Value;
+			var refreshTokenLifetime = GetRefreshTokenLifetime(transaction.ClientId);
+			if (SessionSecurityConfig.TrackingEnabled)
+			{
+				try
+				{
+					var session = await CreateApiSessionAsync(user, transaction.DepartmentId, authenticationMethod,
+						refreshTokenLifetime, CancellationToken.None, transaction.DepartmentSsoConfigId,
+						method, transaction.CompletionFactorReference);
+					AddSessionClaims(principal, session);
+					await RecordLoginEvidenceAsync(user, session, (MfaEvidenceMethod)transaction.FirstFactorMethod,
+						method == null ? null : transaction.CompletionVerifiedOnUtc, CancellationToken.None, transaction.FirstFactorVerifiedOnUtc,
+						method ?? MfaEvidenceMethod.Totp, transaction.CompletionFactorReference);
+				}
+				catch (SessionCreationDeniedException ex)
+				{
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return InvalidGrant(ex.FailureCode == "maximum_sessions"
+						? "The department's maximum number of active sessions has been reached."
+						: "The user is no longer allowed to sign in to this department.");
+				}
+			}
+
+			foreach (var claim in principal.Claims)
+				claim.SetDestinations(GetDestinations(claim, principal));
+
+			principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+			principal.SetRefreshTokenLifetime(refreshTokenLifetime);
+			principal.SetResources(JwtConfig.EventsClientId);
+
+			audit.Successful = true;
+			audit.Data += method switch
+			{
+				null => " (SSO, no second factor required)",
+				MfaEvidenceMethod.RecoveryCode => " (recovery code)",
+				_ => $" ({MfaMethodNames.From(method.Value)})"
+			};
+			await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+			return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+		}
+
+		/// <summary>
+		/// The session's first-factor method for an SSO login, from the department configuration that authenticated it;
+		/// <see cref="UserSessionAuthenticationMethod.LocalPassword"/> when that configuration is gone or disabled.
+		/// </summary>
+		private async Task<UserSessionAuthenticationMethod> SsoAuthenticationMethodAsync(int departmentId, string departmentSsoConfigId)
+		{
+			var config = (await _departmentSsoService.GetSsoConfigsForDepartmentAsync(departmentId, CancellationToken.None))?
+				.FirstOrDefault(c => c.IsEnabled && string.Equals(c.DepartmentSsoConfigId, departmentSsoConfigId, StringComparison.Ordinal));
+			return (SsoProviderType?)config?.SsoProviderType switch
+			{
+				SsoProviderType.Oidc => UserSessionAuthenticationMethod.OidcSso,
+				SsoProviderType.Saml2 => UserSessionAuthenticationMethod.SamlSso,
+				_ => UserSessionAuthenticationMethod.LocalPassword
+			};
+		}
+
+		private IActionResult LoginTransactionError(MfaLoginTransactionOutcome outcome) =>
+			Forbid(new AuthenticationProperties(new Dictionary<string, string>
+			{
+				[OpenIddictServerAspNetCoreConstants.Properties.Error] = MfaLoginTransactions.ErrorCode(outcome) ?? Errors.InvalidGrant,
+				[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = outcome switch
+				{
+					MfaLoginTransactionOutcome.Expired => "The sign-in took too long. Sign in again.",
+					MfaLoginTransactionOutcome.PolicyChanged => "Your department's sign-in policy changed. Sign in again.",
+					MfaLoginTransactionOutcome.SessionRevoked => "Your account's sign-in state changed. Sign in again.",
+					MfaLoginTransactionOutcome.Unavailable => "Sign-in is temporarily unavailable. Try again.",
+					_ => "The sign-in could not be completed. Sign in again."
+				}
+			}), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+		/// <summary>The scopes a password sign-in grants, limited to what the client asked for.</summary>
+		private static IReadOnlyCollection<string> GrantableScopes(IEnumerable<string> requested) =>
+			new[] { Scopes.OpenId, Scopes.Email, Scopes.Profile, Scopes.OfflineAccess, Scopes.Roles }.Intersect(requested ?? Array.Empty<string>()).ToList();
+
+		/// <summary>
+		/// Whether a password may sign this user in to the department: no SSO-only account link, and the department does
+		/// not require SSO. Checked at the first factor and again when a login transaction is redeemed.
+		/// </summary>
+		private async Task<bool> IsLocalLoginAllowedAsync(string userId, int departmentId)
+		{
+			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(userId, CancellationToken.None))
+				return false;
+			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(userId, departmentId, CancellationToken.None))
+				return false;
+
+			return !(await _departmentSsoService.IsRequireSsoPolicyActiveAsync(departmentId, CancellationToken.None) &&
+				await _departmentSsoService.IsSsoEnabledForDepartmentAsync(departmentId, CancellationToken.None));
+		}
+
+		/// <summary>
+		/// The discovery fields every client needs to continue without a department code (plan section 7.7.4): the
+		/// system-encrypted department token, the department id, and whether brokered SSO can run for this department.
+		/// </summary>
+		private void AddDepartmentIdentity(Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData data, Model.Department department,
+			DepartmentSsoConfig activeConfig)
+		{
+			data.DepartmentId = department.DepartmentId;
+			data.DepartmentToken = _ssoBroker.DepartmentTokenFor(department);
+			data.BrokeredSsoAvailable = activeConfig != null && _ssoBroker.IsEnabled && _ssoBroker.SupportsBrokered(activeConfig);
 		}
 
 		private IActionResult InvalidGrant(string description)
@@ -677,6 +1005,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.AllowLocalLogin = true;
 				result.Data.RequireSso = false;
 				result.Data.RequireMfa = policy?.RequireMfa ?? false;
+				AddDepartmentIdentity(result.Data, department, null);
 				return Ok(result);
 			}
 
@@ -687,17 +1016,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.AllowLocalLogin = activeConfig.AllowLocalLogin;
 			result.Data.RequireSso = policy?.RequireSso ?? false;
 			result.Data.RequireMfa = policy?.RequireMfa ?? false;
+			AddDepartmentIdentity(result.Data, department, activeConfig);
 
 			if (providerType == SsoProviderType.Oidc)
 			{
 				result.Data.Authority = activeConfig.Authority;
 				result.Data.ClientId = activeConfig.ClientId; // public client ID — safe to expose
-				result.Data.OidcRedirectUri = "resgrid://auth/callback";
+				result.Data.OidcRedirectUri = LegacyOidcRedirectUri();
 				result.Data.OidcScopes = "openid email profile offline_access";
 			}
 			else if (providerType == SsoProviderType.Saml2)
 			{
 				result.Data.MetadataUrl = activeConfig.MetadataUrl;
+				result.Data.SamlLoginUrl = LegacySamlLoginUrl(department, activeConfig);
 				result.Data.EntityId = activeConfig.EntityId;
 			}
 
@@ -791,6 +1122,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.AllowLocalLogin = true;
 				result.Data.RequireSso = false;
 				result.Data.RequireMfa = policy?.RequireMfa ?? false;
+				AddDepartmentIdentity(result.Data, department, null);
 				return Ok(result);
 			}
 
@@ -801,17 +1133,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.AllowLocalLogin = activeConfig.AllowLocalLogin;
 			result.Data.RequireSso = policy?.RequireSso ?? false;
 			result.Data.RequireMfa = policy?.RequireMfa ?? false;
+			AddDepartmentIdentity(result.Data, department, activeConfig);
 
 			if (providerType == SsoProviderType.Oidc)
 			{
 				result.Data.Authority = activeConfig.Authority;
 				result.Data.ClientId = activeConfig.ClientId;
-				result.Data.OidcRedirectUri = "resgrid://auth/callback";
+				result.Data.OidcRedirectUri = LegacyOidcRedirectUri();
 				result.Data.OidcScopes = "openid email profile offline_access";
 			}
 			else if (providerType == SsoProviderType.Saml2)
 			{
 				result.Data.MetadataUrl = activeConfig.MetadataUrl;
+				result.Data.SamlLoginUrl = LegacySamlLoginUrl(department, activeConfig);
 				result.Data.EntityId = activeConfig.EntityId;
 			}
 
@@ -874,10 +1208,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest(new { error = "invalid_request", error_description = "provider must be 'saml2' or 'oidc'." });
 			}
 
+			// A relayed SAML sign-in spends its relay token and assertion on the first exchange. When that exchange stopped at the
+			// member's Resgrid code, the retry with the same relay token continues from the identity it validated (the app resends
+			// the exchange with the code, as it does for OIDC); otherwise a spent relay token signs nobody in.
+			string samlRelayId = null;
+			SamlMfaContinuation continuation = null;
 			if (providerType == SsoProviderType.Saml2 && external_token.StartsWith(SamlRelayTokenPrefix, StringComparison.Ordinal))
 			{
+				samlRelayId = SamlRelayId(external_token);
 				external_token = await ConsumeSamlRelayAsync(external_token);
 				if (string.IsNullOrWhiteSpace(external_token))
+					continuation = await ReadSamlMfaContinuationAsync(samlRelayId, department.DepartmentId);
+				if (string.IsNullOrWhiteSpace(external_token) && continuation == null)
 				{
 					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
@@ -885,29 +1227,66 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			// Validate the external token against the department's SSO config
-			var externalPrincipal = await _departmentSsoService.ValidateExternalTokenAsync(
-				department.DepartmentId, providerType, external_token, department.Code, cancellationToken);
-
-			if (externalPrincipal == null)
+			DepartmentSsoConfig ssoConfig;
+			Model.Identity.IdentityUser user;
+			if (continuation != null)
 			{
-				audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
-				await _systemAuditsService.SaveSystemAuditAsync(audit);
-				return Unauthorized(new { error = "invalid_grant", error_description = "The external token could not be validated." });
+				// Nothing that allowed the first exchange may have changed: the account, its generation, the membership, the SSO
+				// configuration, and the Resgrid factor the retry is for.
+				ssoConfig = await _departmentSsoService.GetSsoConfigForDepartmentAsync(department.DepartmentId, providerType, cancellationToken);
+				user = await _userManager.FindByIdAsync(continuation.UserId);
+				var member = user == null ? null : await _departmentsService.GetDepartmentMemberAsync(user.Id, department.DepartmentId, bypassCache: true);
+				if (user == null || user.AuthenticationGeneration != continuation.AuthenticationGeneration || ssoConfig?.IsEnabled != true ||
+					ssoConfig.DepartmentSsoConfigId != continuation.DepartmentSsoConfigId || member == null || member.IsDeleted || member.IsDisabled == true ||
+					!await _userManager.GetTwoFactorEnabledAsync(user))
+				{
+					await ForgetSamlMfaContinuationAsync(samlRelayId);
+					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return Unauthorized(new { error = "invalid_grant", error_description = "The sign-in can no longer be finished. Sign in again." });
+				}
 			}
-
-			// Get the SSO config to pass to provisioning
-			var ssoConfig = await _departmentSsoService.GetSsoConfigForDepartmentAsync(department.DepartmentId, providerType, cancellationToken);
-
-			// Provision or link the user
-			var user = await _departmentSsoService.ProvisionOrLinkUserAsync(
-				department.DepartmentId, externalPrincipal, ssoConfig, department.Code, cancellationToken);
-
-			if (user == null)
+			else
 			{
-				audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
-				await _systemAuditsService.SaveSystemAuditAsync(audit);
-				return Unauthorized(new { error = "invalid_grant", error_description = "No matching user found and auto-provisioning is disabled." });
+				// Validate the external token against the department's SSO config
+				var externalPrincipal = await _departmentSsoService.ValidateExternalTokenAsync(
+					department.DepartmentId, providerType, external_token, department.Code, cancellationToken);
+
+				if (externalPrincipal == null)
+				{
+					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return Unauthorized(new { error = "invalid_grant", error_description = "The external token could not be validated." });
+				}
+
+				// A shared installation's sign-in must be a fresh provider sign-in: an older one may be the last operator's
+				// provider session, still in the installation's browser (plan section 12.5.2). The app asks the provider for one
+				// (OIDC prompt=login with max_age=0, SAML ForceAuthn); this refuses a provider that answered from its session.
+				if (await SharedInstallationAsync(department.DepartmentId, cancellationToken) && !ProviderSignInTime.IsFresh(
+						ProviderSignInTime.Read(externalPrincipal), DateTime.UtcNow, SharedSignInMaxAge, ProviderClockSkew))
+				{
+					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return Unauthorized(new
+					{
+						error = "login_required",
+						error_description = "This is a shared installation: sign in at your identity provider again, not with a sign-in it remembered."
+					});
+				}
+
+				// Get the SSO config to pass to provisioning
+				ssoConfig = await _departmentSsoService.GetSsoConfigForDepartmentAsync(department.DepartmentId, providerType, cancellationToken);
+
+				// Provision or link the user
+				user = await _departmentSsoService.ProvisionOrLinkUserAsync(
+					department.DepartmentId, externalPrincipal, ssoConfig, department.Code, cancellationToken);
+
+				if (user == null)
+				{
+					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return Unauthorized(new { error = "invalid_grant", error_description = "No matching user found and auto-provisioning is disabled." });
+				}
 			}
 
 			// ── Resgrid 2FA check ────────────────────────────────────────────────────
@@ -922,6 +1301,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				if (string.IsNullOrWhiteSpace(totp_code))
 				{
+					if (samlRelayId != null && continuation == null)
+						await KeepSamlMfaContinuationAsync(samlRelayId, user, department, ssoConfig);
 					audit.UserId = user.Id;
 					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
@@ -932,14 +1313,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 					});
 				}
 
-				// Verify the TOTP code against the Resgrid authenticator
-				var totpValid = await _userManager.VerifyTwoFactorTokenAsync(
+				// The SSO path shares the account lockout with every other TOTP surface (plan section 7.5 rule 6): a
+				// caller holding a valid IdP token does not get unlimited code guesses.
+				var totpValid = !await _userManager.IsLockedOutAsync(user) && await _userManager.VerifyTwoFactorTokenAsync(
 					user,
 					_userManager.Options.Tokens.AuthenticatorTokenProvider,
 					totp_code);
 
 				if (!totpValid)
 				{
+					await _userManager.AccessFailedAsync(user);
+					if (samlRelayId != null && continuation == null)
+						await KeepSamlMfaContinuationAsync(samlRelayId, user, department, ssoConfig);
+					if (samlRelayId != null)
+						await CountSamlMfaFailureAsync(samlRelayId);
 					audit.UserId = user.Id;
 					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
@@ -952,6 +1339,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				mfaCompleted = true;
 			}
+			else if (await _mfaPolicyService.DepartmentRequiresMfaAsync(department.DepartmentId, cancellationToken))
+			{
+				// RequireMfa has always been enforced here; say specifically that enrollment is what is missing.
+				audit.UserId = user.Id;
+				audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+				return Unauthorized(new
+				{
+					error = "mfa_enrollment_required",
+					error_description = MfaEnrollmentRequiredDescription,
+					error_uri = MfaEnrollmentUri
+				});
+			}
+			var mfaCompletedOnUtc = mfaCompleted ? DateTime.UtcNow : (DateTime?)null;
 
 			// Enforce security policy (IP ranges, RequireMfa, RequireSso).
 			// mfaCompleted reflects whether Resgrid 2FA was satisfied above.
@@ -972,6 +1373,41 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized(new { error = "access_denied", error_description = policyViolation });
 			}
 
+			// A continued SAML sign-in finishes once, however many retries race for it.
+			if (continuation != null && !await ClaimSamlMfaContinuationAsync(samlRelayId))
+			{
+				audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+				audit.UserId = user.Id;
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+				return Unauthorized(new { error = "invalid_grant", error_description = "The SAML relay token is invalid, expired, or has already been used." });
+			}
+
+			// An id_token signs in once (plan section 7.7.2 item 8). It is recorded only now, at a successful completion,
+			// so an older build's OIDC + TOTP resend after mfa_required keeps working (section 7.7.4).
+			if (providerType == SsoProviderType.Oidc)
+			{
+				bool firstUse;
+				try
+				{
+					firstUse = await _ssoBroker.TryRecordIdTokenUseAsync(external_token,
+						new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().ReadJwtToken(external_token).ValidTo, cancellationToken);
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException))
+				{
+					Framework.Logging.LogException(ex, "The id_token replay record could not be written; the sign-in was refused.");
+					return StatusCode(StatusCodes.Status503ServiceUnavailable,
+						new { error = "temporarily_unavailable", error_description = "Sign-in is temporarily unavailable. Try again." });
+				}
+
+				if (!firstUse)
+				{
+					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+					audit.UserId = user.Id;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return Unauthorized(new { error = "invalid_grant", error_description = "The external token has already been used. Sign in again." });
+				}
+			}
+
 			// Issue an OpenIddict access token
 			var principal = await _signInManager.CreateUserPrincipalAsync(user);
 
@@ -984,15 +1420,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Scopes.Roles
 			});
 
-			var refreshTokenLifetime = GetRefreshTokenLifetime(null);
+			var refreshTokenLifetime = GetRefreshTokenLifetime((string)null);
 			if (SessionSecurityConfig.TrackingEnabled)
 			{
 				try
 				{
 					var session = await CreateApiSessionAsync(user, department.DepartmentId,
 						providerType == SsoProviderType.Oidc ? UserSessionAuthenticationMethod.OidcSso : UserSessionAuthenticationMethod.SamlSso,
-						refreshTokenLifetime, cancellationToken, ssoConfig?.DepartmentSsoConfigId);
+						refreshTokenLifetime, cancellationToken, ssoConfig?.DepartmentSsoConfigId,
+						mfaCompleted ? MfaEvidenceMethod.Totp : null);
 					AddSessionClaims(principal, session);
+					await RecordLoginEvidenceAsync(user, session, MfaEvidenceMethod.Sso, mfaCompletedOnUtc, cancellationToken);
 				}
 				catch (SessionCreationDeniedException ex)
 				{
@@ -1023,9 +1461,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// SAML 2.0 Assertion Consumer Service (ACS) relay for mobile apps.
-		/// Receives the SAMLResponse POST from the IdP, then redirects to the
-		/// resgrid:// deep-link scheme so the mobile app can complete authentication
-		/// via the external-token endpoint.
+		/// Receives the SAMLResponse POST from the IdP, then redirects to the app that started the sign-in
+		/// (named in its RelayState, see <see cref="LegacySamlRelay"/>) so it can complete authentication
+		/// via the external-token endpoint. An untagged RelayState returns to Responder, as before.
 		/// Configure your IdP's ACS URL to point here:
 		///   POST /api/v4/connect/saml-mobile-callback?departmentCode=DEPT
 		/// </summary>
@@ -1038,8 +1476,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromQuery] string departmentToken,
 			[FromQuery] string departmentCode,
 			[FromForm] string SAMLResponse,
+			[FromForm] string RelayState,
 			CancellationToken cancellationToken)
 		{
+			// A response to a brokered AuthnRequest carries our RelayState; it is validated against that transaction (with
+			// InResponseTo) and never relayed. Everything else keeps the legacy relay for older app builds.
+			if (_ssoBroker.IsBrokeredRelayState(RelayState))
+				return SsoCallbackResponse(await _ssoBroker.CompleteSamlCallbackAsync(RelayState, SAMLResponse,
+					IpAddressHelper.GetRequestIP(Request, true), cancellationToken));
+
 			if (string.IsNullOrWhiteSpace(SAMLResponse) || SAMLResponse.Length > 2_800_000)
 				return BadRequest(new { error = "invalid_request", error_description = "SAMLResponse is required and must be within the supported size limit." });
 
@@ -1059,13 +1504,104 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return StatusCode(StatusCodes.Status503ServiceUnavailable,
 					new { error = "temporarily_unavailable", error_description = "SAML login relay is temporarily unavailable." });
 
-			var encodedResponse = Uri.EscapeDataString($"{SamlRelayTokenPrefix}{relayId}");
 			var callbackToken = _encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}");
-			var encodedToken = Uri.EscapeDataString(callbackToken);
 
-			var deepLink = $"resgrid://auth/callback?saml_response={encodedResponse}&department_token={encodedToken}";
-			return Redirect(deepLink);
+			// Back to the app that started the sign-in, with its RelayState echoed so it can reject a sign-in it did not
+			// start. The link carries a single-use relay token, so no cache may keep it.
+			var appReturn = LegacySamlRelay.For(RelayState);
+			Response.Headers.CacheControl = "no-store";
+			Response.Headers.Pragma = "no-cache";
+			return Redirect(LegacySamlRelay.DeepLink(appReturn, $"{SamlRelayTokenPrefix}{relayId}", callbackToken));
 		}
+
+		/// <summary>
+		/// The IdP's OIDC redirect for brokered SSO (passkey plan section 7.7.2 step 2). Departments register
+		/// <c>{api}/api/v4/connect/oidc-callback</c> with their IdP. The server exchanges the code and validates the id_token
+		/// (state, nonce, PKCE), then sends the browser to the client's registered return target with a one-time
+		/// <c>sso_code</c>. No token or assertion is ever in the URL.
+		/// </summary>
+		[HttpGet("oidc-callback")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status302Found)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> OidcCallback([FromQuery] string state, [FromQuery] string code, [FromQuery] string error,
+			CancellationToken cancellationToken) =>
+			SsoCallbackResponse(await _ssoBroker.CompleteOidcCallbackAsync(state, code, error, IpAddressHelper.GetRequestIP(Request, true), cancellationToken));
+
+		/// <summary>
+		/// Redirects to the registered return target when the transaction is known; otherwise there is nowhere trusted to
+		/// send the browser, so the callback answers with the error itself.
+		/// </summary>
+		private IActionResult SsoCallbackResponse(SsoCallbackResult result)
+		{
+			Response.Headers.CacheControl = "no-store";
+			Response.Headers.Pragma = "no-cache";
+			if (result.RedirectUrl != null)
+				return Redirect(result.RedirectUrl);
+
+			return StatusCode(result.Outcome == SsoBrokerOutcome.ServiceUnavailable ? StatusCodes.Status503ServiceUnavailable : StatusCodes.Status400BadRequest,
+				new { error = SsoBrokerOutcomes.ErrorCode(result.Outcome) ?? "sso_failed", error_description = "The sign-in could not be completed. Start again from the app." });
+		}
+
+		/// <summary>
+		/// Starts a legacy (unbrokered) SAML sign-in for an app (workbook section 12, slice 35). An app cannot build a SAML
+		/// AuthnRequest, so it opens this page, which sends the browser to the department's IdP with one. The RelayState must be
+		/// the app's own tagged value (<c>unit.&lt;nonce&gt;</c>): the IdP returns it with the response, and the relay
+		/// (<see cref="SamlMobileCallback"/>) sends the member back to that app and echoes it. Anything else is refused, so
+		/// this page never names another destination. Nothing is stored here.
+		/// </summary>
+		[HttpGet("saml-mobile-login")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status302Found)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> SamlMobileLogin([FromQuery] string departmentToken, [FromQuery] string departmentCode, [FromQuery] string relayState,
+			CancellationToken cancellationToken, [FromQuery] bool forceAuthn = false)
+		{
+			Response.Headers.CacheControl = "no-store";
+			Response.Headers.Pragma = "no-cache";
+			if (LegacySamlRelay.For(relayState).EchoedRelayState == null)
+				return BadRequest(new { error = "invalid_request", error_description = "Start the sign-in from the app." });
+
+			var department = await ResolveDepartmentAsync(departmentToken, departmentCode);
+			var config = department == null
+				? null
+				: await _departmentSsoService.GetSsoConfigForDepartmentAsync(department.DepartmentId, SsoProviderType.Saml2, cancellationToken);
+			var signIn = config?.IsEnabled == true ? _ssoBroker.LegacySamlSignInUrl(config, department.Code, relayState, forceAuthn) : null;
+			if (signIn == null)
+				return BadRequest(new { error = "sso_unavailable", error_description = "Single sign-on is not available for this department." });
+
+			return Redirect(signIn);
+		}
+
+		/// <summary>How long ago the provider may have authenticated a shared installation's member (the reauthentication window).</summary>
+		private static TimeSpan SharedSignInMaxAge => TimeSpan.FromSeconds(Math.Max(30, SsoConfig.ReauthenticationMaxAgeSeconds));
+
+		private static readonly TimeSpan ProviderClockSkew = TimeSpan.FromMinutes(2);
+
+		/// <summary>
+		/// A sign-in from a shared installation: it says so, or the department makes this app's sessions shared (the broker's
+		/// rule for its own round trips).
+		/// </summary>
+		private async Task<bool> SharedInstallationAsync(int departmentId, CancellationToken cancellationToken) =>
+			SharedSessionRules.IsRequested(Request.Headers[SharedSessionRules.InstallationHeader]) ||
+			SharedSessionRules.IsRequiredFor(await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(departmentId, cancellationToken),
+				ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header]));
+
+		/// <summary>
+		/// This server's legacy SAML start page for the department, when its configuration can start a sign-in. Discovery calls
+		/// it only for a SAML configuration.
+		/// </summary>
+		private string LegacySamlLoginUrl(Model.Department department, DepartmentSsoConfig config) =>
+			config != null && _ssoBroker.SupportsBrokered(config)
+				? $"{SystemBehaviorConfig.ResgridApiBaseUrl?.TrimEnd('/')}{SsoConfig.SamlLoginPath}?departmentToken={Uri.EscapeDataString(_ssoBroker.DepartmentTokenFor(department))}"
+				: null;
+
+		/// <summary>
+		/// The legacy OIDC redirect URI for the app asking (<c>X-Resgrid-Client</c>): each app has its own scheme, and the
+		/// department's IdP must list each one. A caller that names no app gets Responder's, as every caller did before.
+		/// </summary>
+		private string LegacyOidcRedirectUri() =>
+			LegacyAppCallbacks.For(ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header])).Callback;
 
 		/// <summary>
 		/// Decrypts a departmentToken (format: {departmentId}:{departmentCode}) produced by the
@@ -1100,13 +1636,85 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return null;
 		}
 
-		private async Task<string> ConsumeSamlRelayAsync(string relayToken)
+		/// <summary>The 64 hex digits of a relay token, or null when it is not one.</summary>
+		private static string SamlRelayId(string relayToken) =>
+			relayToken?.Length == SamlRelayTokenPrefix.Length + 64 && relayToken.StartsWith(SamlRelayTokenPrefix, StringComparison.Ordinal) &&
+			relayToken[SamlRelayTokenPrefix.Length..].All(Uri.IsHexDigit)
+				? relayToken[SamlRelayTokenPrefix.Length..]
+				: null;
+
+		/// <summary>What a relayed SAML exchange that stopped at the member's Resgrid code validated, for the code retry.</summary>
+		private sealed record SamlMfaContinuation(string UserId, int DepartmentId, string DepartmentSsoConfigId, long AuthenticationGeneration);
+
+		/// <summary>
+		/// Keeps what the first exchange validated under its relay token, encrypted, for the relay's own lifetime (not sliding),
+		/// so the member's code retry can finish the sign-in the spent assertion can no longer start again.
+		/// </summary>
+		private async Task KeepSamlMfaContinuationAsync(string relayId, Model.Identity.IdentityUser user, Model.Department department, DepartmentSsoConfig config)
 		{
-			if (relayToken.Length != SamlRelayTokenPrefix.Length + 64)
+			try
+			{
+				var value = string.Join("|", user.Id, department.DepartmentId.ToString(CultureInfo.InvariantCulture), config?.DepartmentSsoConfigId ?? "",
+					user.AuthenticationGeneration.ToString(CultureInfo.InvariantCulture));
+				await _cacheProvider.SetStringAsync(GetSamlRelayMfaCacheKey(relayId), _encryptionService.Encrypt(value), SamlRelayLifetime);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				// Without it the retry is refused as a spent relay token and the member starts again, as before.
+				Logging.LogException(ex, "The SAML code-retry state could not be kept.");
+			}
+		}
+
+		private async Task<SamlMfaContinuation> ReadSamlMfaContinuationAsync(string relayId, int departmentId)
+		{
+			if (relayId == null)
 				return null;
 
-			var relayId = relayToken[SamlRelayTokenPrefix.Length..];
-			if (relayId.Any(character => !Uri.IsHexDigit(character)))
+			try
+			{
+				var stored = await _cacheProvider.GetStringAsync(GetSamlRelayMfaCacheKey(relayId));
+				if (string.IsNullOrWhiteSpace(stored))
+					return null;
+
+				var parts = _encryptionService.Decrypt(stored).Split('|');
+				return parts.Length == 4 && int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var storedDepartment) &&
+					storedDepartment == departmentId && long.TryParse(parts[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var generation)
+					? new SamlMfaContinuation(parts[0], storedDepartment, parts[2], generation)
+					: null;
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "The SAML code-retry state could not be read.");
+				return null;
+			}
+		}
+
+		/// <summary>A wrong code on a relayed SAML sign-in; the retry state ends after the transaction attempt limit.</summary>
+		private async Task CountSamlMfaFailureAsync(string relayId)
+		{
+			var failures = await _cacheProvider.IncrementAsync(GetSamlRelayMfaFailuresCacheKey(relayId), SamlRelayLifetime);
+			if (failures == 0 || failures >= Math.Max(1, TwoFactorConfig.LoginMfaTransactionMaxAttempts))
+				await ForgetSamlMfaContinuationAsync(relayId);
+		}
+
+		/// <summary>The one retry that finishes the sign-in: atomic, so racing retries cannot both sign in.</summary>
+		private async Task<bool> ClaimSamlMfaContinuationAsync(string relayId)
+		{
+			var claimed = await _cacheProvider.IncrementAsync(GetSamlRelayMfaUseCacheKey(relayId), SamlRelayLifetime) == 1;
+			await ForgetSamlMfaContinuationAsync(relayId);
+			return claimed;
+		}
+
+		private async Task ForgetSamlMfaContinuationAsync(string relayId)
+		{
+			if (relayId != null)
+				await _cacheProvider.RemoveAsync(GetSamlRelayMfaCacheKey(relayId));
+		}
+
+		private async Task<string> ConsumeSamlRelayAsync(string relayToken)
+		{
+			var relayId = SamlRelayId(relayToken);
+			if (relayId == null)
 				return null;
 
 			// Increment is atomic in Redis. Only the first exchange is allowed to read the assertion,
@@ -1135,9 +1743,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private static string GetSamlRelayUseCacheKey(string relayId) => $"Sso:SamlRelayUse:{relayId}";
 
-		private TimeSpan GetRefreshTokenLifetime(OpenIddictRequest request)
+		private static string GetSamlRelayMfaCacheKey(string relayId) => $"Sso:SamlRelayMfa:{relayId}";
+
+		private static string GetSamlRelayMfaFailuresCacheKey(string relayId) => $"Sso:SamlRelayMfaFailures:{relayId}";
+
+		private static string GetSamlRelayMfaUseCacheKey(string relayId) => $"Sso:SamlRelayMfaUse:{relayId}";
+
+		private TimeSpan GetRefreshTokenLifetime(OpenIddictRequest request) => GetRefreshTokenLifetime(request?.ClientId);
+
+		private TimeSpan GetRefreshTokenLifetime(string clientId)
 		{
-			var clientId = request?.ClientId;
 			var isTrustedLongLivedClient = !string.IsNullOrWhiteSpace(clientId) &&
 				(OidcConfig.TrustedLongLivedClientIds ?? string.Empty)
 					.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
@@ -1175,14 +1790,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<UserSession> CreateApiSessionAsync(Model.Identity.IdentityUser user, int? departmentId,
 			UserSessionAuthenticationMethod authenticationMethod, TimeSpan refreshTokenLifetime,
-			CancellationToken cancellationToken, string departmentSsoConfigId = null)
+			CancellationToken cancellationToken, string departmentSsoConfigId = null, MfaEvidenceMethod? loginMfaMethod = null,
+			string loginMfaFactorReference = null)
 		{
-			return await _userSessionService.CreateSessionAsync(new SessionIssueContext
+			var session = await _userSessionService.CreateSessionAsync(new SessionIssueContext
 			{
 				UserId = user.Id,
 				DepartmentId = departmentId,
 				AuthenticationGeneration = user.AuthenticationGeneration,
-				ClientApplication = ResolveClientApplication(Request.Headers["X-Resgrid-Client"]),
+				ClientApplication = ApiClientApplication.Resolve(Request.Headers[ApiClientApplication.Header]),
+				SharedModeRequested = SharedSessionRules.IsRequested(Request.Headers[SharedSessionRules.InstallationHeader]),
 				DeviceName = Request.Headers["X-Resgrid-Device-Name"],
 				DeviceType = Request.Headers["X-Resgrid-Device-Type"],
 				OperatingSystem = Request.Headers["X-Resgrid-Operating-System"],
@@ -1192,27 +1809,76 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DepartmentSsoConfigId = departmentSsoConfigId,
 				ExpiresOn = DateTime.UtcNow.Add(refreshTokenLifetime),
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
-				UserAgent = Request.Headers["User-Agent"]
+				UserAgent = Request.Headers["User-Agent"],
+				LoginMfaMethod = loginMfaMethod,
+				LoginMfaFactorReference = loginMfaFactorReference
 			}, cancellationToken);
+
+			if (session?.SharedMode == true)
+			{
+				try
+				{
+					await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+					{
+						System = (int)SystemAuditSystems.Api,
+						Type = (int)SystemAuditTypes.SharedSessionStarted,
+						DepartmentId = session.DepartmentId,
+						UserId = user.Id,
+						Username = user.UserName,
+						TargetUserId = user.Id,
+						SessionId = SharedSessionAudit.SessionSuffix(session.UserSessionId),
+						Successful = true,
+						IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+						ServerName = Environment.MachineName,
+						CorrelationId = HttpContext.TraceIdentifier,
+						Data = SharedSessionAudit.Describe("started", session,
+							(SharedModeSource)session.SharedModeSource == SharedModeSource.DepartmentRequired ? "department required" : "installation requested"),
+						LoggedOn = DateTime.UtcNow
+					}, cancellationToken);
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException))
+				{
+					Framework.Logging.LogException(ex, "Shared session start audit failed.");
+				}
+			}
+
+			return session;
 		}
 
-		private static UserSessionClientApplication ResolveClientApplication(string value)
+		/// <summary>
+		/// Records what this sign-in verified as server-side evidence for the new API session (passkey plan section 5.3), so
+		/// a TOTP sign-in satisfies a following step-up window the same way it does on Web. A failure here never blocks the
+		/// sign-in; the user is simply asked to verify again for a sensitive operation.
+		/// </summary>
+		private async Task RecordLoginEvidenceAsync(Model.Identity.IdentityUser user, UserSession session, MfaEvidenceMethod firstFactor,
+			DateTime? secondFactorOnUtc, CancellationToken cancellationToken, DateTime? firstFactorOnUtc = null,
+			MfaEvidenceMethod secondFactorMethod = MfaEvidenceMethod.Totp, string factorReference = null)
 		{
-			if (string.IsNullOrWhiteSpace(value))
-				return UserSessionClientApplication.Api;
+			var sessionKey = MfaEvidence.TrackedSessionKey(session?.UserSessionId);
+			if (sessionKey == null)
+				return;
 
-			return value.Trim().ToLowerInvariant() switch
+			try
 			{
-				"web" => UserSessionClientApplication.Web,
-				"responder" => UserSessionClientApplication.Responder,
-				"unit" => UserSessionClientApplication.Unit,
-				"dispatch" => UserSessionClientApplication.Dispatch,
-				"bigboard" => UserSessionClientApplication.BigBoard,
-				"command" => UserSessionClientApplication.Command,
-				"ic" => UserSessionClientApplication.Command,
-				"mcp" => UserSessionClientApplication.Mcp,
-				_ => UserSessionClientApplication.Api
-			};
+				var client = (UserSessionClientApplication)session.ClientApplication;
+				// A login transaction carries the original first-factor time, so a completed login is never fresher than
+				// the password or SSO verification it began with (plan section 5.2).
+				await _mfaEvidenceService.RecordAsync(user.Id, sessionKey, client, MfaEvidenceKind.FirstFactor, firstFactor,
+					MfaEvidencePurpose.Login, firstFactorOnUtc ?? DateTime.UtcNow, user.AuthenticationGeneration, session.DepartmentId,
+					cancellationToken: cancellationToken);
+				if (secondFactorOnUtc != null)
+				{
+					// A recovery code is recorded as recovery and never satisfies MFA later (plan section 6.1 item 10).
+					var recovery = secondFactorMethod == MfaEvidenceMethod.RecoveryCode;
+					await _mfaEvidenceService.RecordAsync(user.Id, sessionKey, client, recovery ? MfaEvidenceKind.Recovery : MfaEvidenceKind.SecondFactor,
+						secondFactorMethod, MfaEvidencePurpose.Login, secondFactorOnUtc.Value, user.AuthenticationGeneration, session.DepartmentId,
+						factorReference, cancellationToken);
+				}
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Framework.Logging.LogException(ex, "Failed to record API sign-in MFA evidence.");
+			}
 		}
 
 		private static void AddSessionClaims(ClaimsPrincipal principal, UserSession session)

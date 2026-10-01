@@ -27,5 +27,10 @@
 		public static int UserAgentMaximumLength = 1024;
 		// Optional local JSON CIDR database. Leave blank to display location as unavailable.
 		public static string IpLocationDatabasePath = "";
+
+		// How often each SignalR host rechecks the sessions behind its open connections and closes those that ended,
+		// locked or passed their idle deadline (passkey workbook section 12, slice 16). Invocations are checked on every
+		// call anyway; this bounds how long a passive connection keeps receiving broadcasts. 0 turns the sweep off.
+		public static int ConnectionSweepIntervalSeconds = 30;
 	}
 }

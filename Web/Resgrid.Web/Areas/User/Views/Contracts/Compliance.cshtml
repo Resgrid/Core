@@ -46,7 +46,7 @@
                                             @if (Model.CanManageContracts)
                                             {
                                                 <a asp-action="Compliance" asp-route-edit="@d.DepartmentComplianceDocumentId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                                <form method="post" asp-action="DeleteComplianceDocument" asp-route-id="@d.DepartmentComplianceDocumentId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                                <form method="post" asp-action="DeleteComplianceDocument" asp-route-id="@d.DepartmentComplianceDocumentId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
                                             }
                                         </td>
                                     </tr>

@@ -35,6 +35,7 @@ COPY ["Providers/Resgrid.Providers.Pdf/Resgrid.Providers.Pdf.csproj", "Providers
 COPY ["Providers/Resgrid.Providers.Claims/Resgrid.Providers.Claims.csproj", "Providers/Resgrid.Providers.Claims/"]
 COPY ["Providers/Resgrid.Providers.Migrations/Resgrid.Providers.Migrations.csproj", "Providers/Resgrid.Providers.Migrations/"]
 COPY ["Providers/Resgrid.Providers.Voip/Resgrid.Providers.Voip.csproj", "Providers/Resgrid.Providers.Voip/"]
+COPY ["Providers/Resgrid.Providers.Authentication/Resgrid.Providers.Authentication.csproj", "Providers/Resgrid.Providers.Authentication/"]
 RUN dotnet restore "Web/Resgrid.Web.Services/Resgrid.Web.Services.csproj"
 COPY . .
 WORKDIR "/src/Web/Resgrid.Web.Services"

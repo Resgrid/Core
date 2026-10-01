@@ -153,4 +153,25 @@ El equipo de Resgrid</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>Reconozco que los detalles entregados salen de Resgrid y pueden ser conservados por operadores telefónicos o destinatarios.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Permitir contenido protegido</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>El personal de Resgrid solicitó acceso al despacho protegido {0} para el caso de soporte {1}. El acceso requiere un aprobador independiente y caduca en 15 minutos.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Cambio de seguridad en su cuenta de Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Hola {0}:</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Hola:</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>Se configuró una aplicación de autenticación para el inicio de sesión en dos pasos de su cuenta.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>Se reemplazó la aplicación de autenticación de su cuenta y se cerraron todas las sesiones iniciadas.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>Se quitó la aplicación de autenticación de su cuenta, por lo que el inicio de sesión en dos pasos está desactivado. Se cerraron todas las sesiones iniciadas.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Se crearon nuevos códigos de recuperación para su cuenta. Los códigos anteriores ya no funcionan.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>Se usó uno de sus códigos de recuperación para iniciar sesión o para comenzar la recuperación de la cuenta.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>Se agregó una nueva clave de acceso a su cuenta.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>Se quitó una clave de acceso de su cuenta.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Una clave de acceso en Resgrid Responder ahora puede aprobar inicios de sesión en sus otras aplicaciones de Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Una clave de acceso en Resgrid Responder ya no puede aprobar inicios de sesión en sus otras aplicaciones de Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Usted indicó en Resgrid Responder que no solicitó iniciar sesión. Ese inicio de sesión se detuvo y las solicitudes de aprobación están en pausa durante 15 minutos. Es posible que alguien conozca su contraseña: cámbiela ahora.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Varias solicitudes de aprobación seguidas se rechazaron o no se respondieron, por lo que las solicitudes de aprobación están en pausa durante 15 minutos.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Su cuenta se recuperó con un código de recuperación. Se configuró una nueva aplicación de autenticación, se crearon nuevos códigos de recuperación y se cerraron todas las sesiones iniciadas.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>Se configuró una aplicación de autenticación o una clave de acceso en una tableta de vehículo o un puesto de trabajo compartido. Si otra persona pudo ver el código de configuración o puede usar ese dispositivo, reemplace la aplicación de autenticación o quite la clave de acceso desde su propio dispositivo.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Se informó que una verificación en su cuenta no la realizó usted. Si con ella se inició sesión en otro dispositivo, esa sesión se cerró. Cambie su contraseña y revise sus métodos de inicio de sesión.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Cuándo: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Dónde: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Si no fue usted, restablezca su contraseña ahora en {0}, luego inicie sesión y revise sus métodos de inicio de sesión. Resgrid nunca le pedirá un código ni una contraseña por correo electrónico.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Este es un aviso de seguridad automático sobre su cuenta de Resgrid.</value></data>
 </root>

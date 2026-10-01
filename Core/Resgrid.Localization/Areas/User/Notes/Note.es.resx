@@ -162,4 +162,10 @@
   <data name="ViewNoteHeader" xml:space="preserve">
     <value>Ver nota</value>
   </data>
+  <data name="AdminsOnly" xml:space="preserve">
+    <value>Solo administradores</value>
+  </data>
+  <data name="Everyone" xml:space="preserve">
+    <value>Todos</value>
+  </data>
 </root>

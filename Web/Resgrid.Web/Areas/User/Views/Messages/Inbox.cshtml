@@ -40,7 +40,7 @@
                     if (Model.Messages != null && Model.Messages.Any())
                     {
                         @Html.Raw("<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'>")
-                        @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{@localizer["Subject"]}</th><th>{@localizer["SentBy"]}</th><th>{@localizer["SentOn"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                        @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{Html.Encode(localizer["Subject"].Value)}</th><th>{Html.Encode(localizer["SentBy"].Value)}</th><th>{Html.Encode(localizer["SentOn"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
                         @Html.Raw("<tbody>")
 
                         foreach (var message in Model.Messages)
@@ -51,11 +51,11 @@
 
                             if (message.HasUserRead(Model.User.Id))
                             {
-                                @Html.Raw($"<td>{message.Subject}</td>")
+                                @Html.Raw($"<td>{Html.Encode(message.Subject)}</td>")
                             }
                             else
                             {
-                                @Html.Raw($"<td><strong>{message.Subject}</strong></td>")
+                                @Html.Raw($"<td><strong>{Html.Encode(message.Subject)}</strong></td>")
                             }
 
 
@@ -65,11 +65,11 @@
                             }
                             else
                             {
-                                @Html.Raw($"<td>{(await UserHelper.GetFullNameForUser(message.SendingUserId))}</td>")
+                                @Html.Raw($"<td>{Html.Encode(await UserHelper.GetFullNameForUser(message.SendingUserId))}</td>")
                             }
 
-                            @Html.Raw($"<td>{message.SentOn.TimeConverterToString(Model.Department)}</td>")
-                            @Html.Raw($"<td><a href='{@Url.Action("ViewMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-primary btn-xs' title='View Message'>{@commonLocalizer["View"]}</a>&nbsp;<a href='{@Url.Action("DeleteMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-danger btn-xs' title='Delete Message' data-confirm='{@localizer["DeleteMessageWarning"]} {message.Subject}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a></td>")
+                            @Html.Raw($"<td>{Html.Encode(message.SentOn.TimeConverterToString(Model.Department))}</td>")
+                            @Html.Raw($"<td><a href='{@Url.Action("ViewMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-primary btn-xs' title='View Message'>{Html.Encode(commonLocalizer["View"].Value)}</a>&nbsp;<a href='{@Url.Action("DeleteMessage", "Messages", new { area = "User" })}?messageId={message.MessageId}' class='btn btn-danger btn-xs' title='Delete Message' data-confirm='{Html.Encode(localizer["DeleteMessageWarning"].Value)} {Html.Encode(message.Subject)}?' rel='nofollow'>{Html.Encode(commonLocalizer["Delete"].Value)}</a></td>")
 
                             @Html.Raw("</tr>")
                         }

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Картографування</value>
+  </data>
+  <data name="ManageLayers" xml:space="preserve">
+    <value>Керування шарами</value>
+  </data>
+  <data name="CustomMaps" xml:space="preserve">
+    <value>Власні карти</value>
+  </data>
+  <data name="MapOptionsTitle" xml:space="preserve">
+    <value>Параметри карти</value>
+  </data>
+  <data name="ShowCalls" xml:space="preserve">
+    <value>Показувати виклики</value>
+  </data>
+  <data name="ShowPersonnel" xml:space="preserve">
+    <value>Показувати персонал</value>
+  </data>
+  <data name="ShowUnits" xml:space="preserve">
+    <value>Показувати одиниці</value>
+  </data>
+  <data name="ShowStations" xml:space="preserve">
+    <value>Показувати станції</value>
+  </data>
+  <data name="ShowGeofences" xml:space="preserve">
+    <value>Показувати геозони</value>
+  </data>
+  <data name="ShowPOIs" xml:space="preserve">
+    <value>Показувати POI</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <!-- AddPOI -->
+  <data name="AddPOIPageTitle" xml:space="preserve">
+    <value>Додати POI</value>
+  </data>
+  <data name="AddPOIHeader" xml:space="preserve">
+    <value>Додати POI</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Широта</value>
+  </data>
+  <data name="LatitudeHelp" xml:space="preserve">
+    <value>Широта (десятковий формат, напр. 39.1517)</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Довгота</value>
+  </data>
+  <data name="LongitudeHelp" xml:space="preserve">
+    <value>Довгота (десятковий формат, напр. -119.4571)</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Нотатка</value>
+  </data>
+  <!-- AddPOIType -->
+  <data name="AddPOITypePageTitle" xml:space="preserve">
+    <value>Додати тип POI</value>
+  </data>
+  <data name="AddPOITypeHeader" xml:space="preserve">
+    <value>Додати тип POI</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="IsDestination" xml:space="preserve">
+    <value>Пункт призначення</value>
+  </data>
+  <data name="IsDestinationHelp" xml:space="preserve">
+    <value>Позначає можливий пункт призначення для одиниці чи особи, наприклад офіс, місце збору, лікарню, пункт доступу тощо.</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Колір</value>
+  </data>
+  <data name="Marker" xml:space="preserve">
+    <value>Маркер</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Значок</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <!-- EditLayer / NewLayer -->
+  <data name="EditLayerPageTitle" xml:space="preserve">
+    <value>Редагувати шар</value>
+  </data>
+  <data name="EditLayerHeader" xml:space="preserve">
+    <value>Редагувати шар</value>
+  </data>
+  <data name="NewLayerPageTitle" xml:space="preserve">
+    <value>Новий шар</value>
+  </data>
+  <data name="NewLayerHeader" xml:space="preserve">
+    <value>Новий шар</value>
+  </data>
+  <data name="IsVisibleByDefault" xml:space="preserve">
+    <value>Видимий за замовчуванням</value>
+  </data>
+  <data name="IsVisibleByDefaultHelp" xml:space="preserve">
+    <value>Показувати цей шар щоразу під час завантаження карти? Примітка: забагато шарів, видимих за замовчуванням, перевантажать карту. Користувачі можуть самі ввімкнути потрібні шари в елементі керування картою.</value>
+  </data>
+  <data name="IsSearchable" xml:space="preserve">
+    <value>Доступний для пошуку</value>
+  </data>
+  <data name="IsSearchableHelp" xml:space="preserve">
+    <value>Дозволяє пошуку адрес використовувати координати з цього шару. Примітка: якщо у вас немає точок, придатних для пошуку (текстових полів), не позначайте шар як доступний для пошуку, оскільки це може сповільнити диспетчеризацію.</value>
+  </data>
+  <data name="LayerElements" xml:space="preserve">
+    <value>Елементи шару</value>
+  </data>
+  <data name="EditLayerButton" xml:space="preserve">
+    <value>Редагувати шар</value>
+  </data>
+  <data name="AddLayerButton" xml:space="preserve">
+    <value>Додати шар</value>
+  </data>
+  <!-- ImportPOIs -->
+  <data name="ImportPOIsPageTitle" xml:space="preserve">
+    <value>Імпорт POI</value>
+  </data>
+  <data name="ImportPOIsHeader" xml:space="preserve">
+    <value>Імпорт POI</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="ImportPOIsButton" xml:space="preserve">
+    <value>Імпортувати POI</value>
+  </data>
+  <!-- Layers -->
+  <data name="LayersPageTitle" xml:space="preserve">
+    <value>Шари</value>
+  </data>
+  <data name="LayersHeader" xml:space="preserve">
+    <value>Шари</value>
+  </data>
+  <data name="NewLayer" xml:space="preserve">
+    <value>Новий шар</value>
+  </data>
+  <data name="ItemCount" xml:space="preserve">
+    <value>Кількість елементів</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <!-- LiveRouting -->
+  <data name="LiveRoutingPageTitle" xml:space="preserve">
+    <value>Навігація в реальному часі</value>
+  </data>
+  <data name="LiveRoutingHeader" xml:space="preserve">
+    <value>Маршрут у реальному часі</value>
+  </data>
+  <!-- POIs -->
+  <data name="POIsPageTitle" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="POIsHeader" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="AddPOIType" xml:space="preserve">
+    <value>Додати тип POI</value>
+  </data>
+  <data name="PointCount" xml:space="preserve">
+    <value>Кількість точок</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Імпортувати</value>
+  </data>
+  <data name="DeletePOITypeConfirm" xml:space="preserve">
+    <value>ПОПЕРЕДЖЕННЯ: це остаточно видалить цей тип POI і всі його позиції. Ви впевнені, що хочете видалити</value>
+  </data>
+  <data name="DeletePOITypeSuffix" xml:space="preserve">
+    <value>(тип POI)?</value>
+  </data>
+  <!-- StationRouting -->
+  <data name="StationRoutingPageTitle" xml:space="preserve">
+    <value>Навігація до станції</value>
+  </data>
+  <data name="StationRoutingHeader" xml:space="preserve">
+    <value>Маршрут до станції</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Відстань:</value>
+  </data>
+  <data name="DurationLabel" xml:space="preserve">
+    <value>Тривалість:</value>
+  </data>
+  <!-- ViewType -->
+  <data name="ViewTypePageTitle" xml:space="preserve">
+    <value>Перегляд типу</value>
+  </data>
+  <data name="ViewTypeHeader" xml:space="preserve">
+    <value>Перегляд типу</value>
+  </data>
+  <data name="TabMap" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="TabInformation" xml:space="preserve">
+    <value>Інформація</value>
+  </data>
+  <data name="TabList" xml:space="preserve">
+    <value>Список</value>
+  </data>
+  <data name="True" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="False" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+</root>

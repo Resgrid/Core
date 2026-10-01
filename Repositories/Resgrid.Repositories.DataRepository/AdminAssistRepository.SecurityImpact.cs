@@ -12,7 +12,9 @@ namespace Resgrid.Repositories.DataRepository
 		public async Task<DepartmentSecurityPolicy> ReadSecurityPolicyAsync(int departmentId, CancellationToken ct)
 		{
 			if (departmentId <= 0) throw new ArgumentException("Invalid department.");
-			var rows = (await QueryAsync<DepartmentSecurityPolicy>($"SELECT {(IsPostgres ? "" : "TOP (2) ")}{Cols("DepartmentId", "RequireMfa", "RequireSso", "SessionTimeoutMinutes", "MaxConcurrentSessions", "PasswordExpirationDays", "MinPasswordLength")} " +
+			var rows = (await QueryAsync<DepartmentSecurityPolicy>($"SELECT {(IsPostgres ? "" : "TOP (2) ")}{Cols("DepartmentId", "RequireMfa", "RequireSso", "SessionTimeoutMinutes", "MaxConcurrentSessions", "PasswordExpirationDays", "MinPasswordLength",
+				"AllowPasskeysForLoginMfa", "AllowPasskeysForAdp", "AllowFederatedMfaForLoginMfa", "AllowFederatedMfaForAdp", "AllowResponderApproval",
+				"AcceptRecentLoginMfaForAdp", "AcceptRecentUnlockMfaForAdp", "MfaPolicyVersion")} " +
 				$"FROM {Tbl("DepartmentSecurityPolicies")} WHERE {Col("DepartmentId")}={P}DepartmentId{(IsPostgres ? " LIMIT 2" : "")}", new { DepartmentId = departmentId }, ct)).ToList();
 			return rows.SingleOrDefault();
 		}

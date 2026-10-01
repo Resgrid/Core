@@ -117,4 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdminsOnlyLabel" xml:space="preserve">
+    <value>Solo administradores</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="DeleteDocumentButton" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="DeleteDocumentWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este documento. ¿Está seguro de que desea eliminar el documento?</value>
+  </data>
+  <data name="EditDocumentHeader" xml:space="preserve">
+    <value>Editar documento</value>
+  </data>
+  <data name="EveryoneLabel" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Imágenes</value>
+  </data>
+  <data name="NewDocumentHeader" xml:space="preserve">
+    <value>Nuevo documento</value>
+  </data>
+  <data name="NewDocumentNamePlaceholder" xml:space="preserve">
+    <value>Nombre del documento</value>
+  </data>
+  <data name="Presentations" xml:space="preserve">
+    <value>Presentaciones</value>
+  </data>
+  <data name="Spreadsheets" xml:space="preserve">
+    <value>Hojas de cálculo</value>
+  </data>
+  <data name="UploadLabel" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="UploadWarning" xml:space="preserve">
+    <value>¡No se permiten todos los tipos de archivo! El archivo debe pesar menos de 10 MB y tener una de estas extensiones (.png, .jpg, .jpeg, .gif, .pdf, .doc, .docx, .txt, .ppt, .pptx, .pps, .ppsx, .odt, .xls, .xlsx, .mp4, .mp3)</value>
+  </data>
+  <data name="ViewableByLabel" xml:space="preserve">
+    <value>Visible por</value>
+  </data>
+  <data name="ViewDocumentHeader" xml:space="preserve">
+    <value>Ver documento</value>
+  </data>
 </root>

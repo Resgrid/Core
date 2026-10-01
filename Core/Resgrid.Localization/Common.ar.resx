@@ -326,4 +326,43 @@
   <data name="JsonInputSchema" xml:space="preserve">
     <value>مخطط JSON (أسماء الحقول وأنواعها)</value>
   </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>استخدام مفتاح مرور</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>الموافقة عبر Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>استخدام رمز المصادقة</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>افتح Resgrid Responder على هاتفك، وتحقق من الطلب، وأدخل هذا الرقم:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>بانتظار موافقتك في Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>تم رفض الطلب في Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>انتهت صلاحية الطلب قبل الموافقة عليه. ابدأ من جديد.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>تم إغلاق نافذة مفتاح المرور. لم يتغير شيء.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>تعذر استخدام مفتاح المرور. حاول مرة أخرى أو استخدم تطبيق المصادقة.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>استخدام موفر الهوية</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>اسمح بالنوافذ المنبثقة لهذا الموقع للتحقق عبر موفر الهوية.</value>
+  </data>
+  <data name="POI" xml:space="preserve">
+    <value>نقطة اهتمام</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
 </root>

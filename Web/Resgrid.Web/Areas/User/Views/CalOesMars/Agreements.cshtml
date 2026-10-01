@@ -43,7 +43,7 @@
                                             @if (Model.IsManager)
                                             {
                                                 <a asp-action="Agreements" asp-route-edit="@a.CalOesMarsAgreementSnapshotId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                                <form method="post" asp-action="DeleteAgreement" asp-route-id="@a.CalOesMarsAgreementSnapshotId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                                <form method="post" asp-action="DeleteAgreement" asp-route-id="@a.CalOesMarsAgreementSnapshotId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
                                             }
                                         </td>
                                     </tr>

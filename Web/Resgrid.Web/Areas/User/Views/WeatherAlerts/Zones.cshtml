@@ -74,14 +74,14 @@
 											}
 										</td>
 										<td>
-											<a class="btn btn-xs btn-info" href="javascript:void(0)" onclick="editZone('@zone.WeatherAlertZoneId', '@zone.Name.Replace("'", "\\'")','@(zone.ZoneCode ?? "")','@(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles,@zone.IsPrimary.ToString().ToLower(),@zone.IsActive.ToString().ToLower())"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+											<a class="btn btn-xs btn-info" href="javascript:void(0)" onclick="editZone('@zone.WeatherAlertZoneId', '@JsEncoder.Encode(zone.Name)','@JsEncoder.Encode(zone.ZoneCode ?? "")','@JsEncoder.Encode(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles.ToString(System.Globalization.CultureInfo.InvariantCulture),@zone.IsPrimary.ToString().ToLower(),@zone.IsActive.ToString().ToLower())"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
 											@if (zone.IsActive)
 											{
-												<a class="btn btn-xs btn-warning" href="javascript:void(0)" onclick="toggleZone('@zone.WeatherAlertZoneId', '@zone.Name.Replace("'", "\\'")','@(zone.ZoneCode ?? "")','@(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles,@zone.IsPrimary.ToString().ToLower(),false)"><i class="fa fa-pause"></i> @localizer["Disable"]</a>
+												<a class="btn btn-xs btn-warning" href="javascript:void(0)" onclick="toggleZone('@zone.WeatherAlertZoneId', '@JsEncoder.Encode(zone.Name)','@JsEncoder.Encode(zone.ZoneCode ?? "")','@JsEncoder.Encode(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles.ToString(System.Globalization.CultureInfo.InvariantCulture),@zone.IsPrimary.ToString().ToLower(),false)"><i class="fa fa-pause"></i> @localizer["Disable"]</a>
 											}
 											else
 											{
-												<a class="btn btn-xs btn-success" href="javascript:void(0)" onclick="toggleZone('@zone.WeatherAlertZoneId', '@zone.Name.Replace("'", "\\'")','@(zone.ZoneCode ?? "")','@(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles,@zone.IsPrimary.ToString().ToLower(),true)"><i class="fa fa-play"></i> @localizer["Enable"]</a>
+												<a class="btn btn-xs btn-success" href="javascript:void(0)" onclick="toggleZone('@zone.WeatherAlertZoneId', '@JsEncoder.Encode(zone.Name)','@JsEncoder.Encode(zone.ZoneCode ?? "")','@JsEncoder.Encode(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles.ToString(System.Globalization.CultureInfo.InvariantCulture),@zone.IsPrimary.ToString().ToLower(),true)"><i class="fa fa-play"></i> @localizer["Enable"]</a>
 											}
 											<a class="btn btn-xs btn-danger" href="javascript:void(0)" onclick="deleteZone('@zone.WeatherAlertZoneId')"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
 										</td>
@@ -153,13 +153,13 @@
 @section Scripts {
 	<script>
 		var loc = {
-			addZone: '@localizer["AddZone"]',
-			editZone: '@localizer["EditZone"]',
-			enterZoneName: '@localizer["EnterZoneName"]',
-			failedToSaveZone: '@localizer["FailedToSaveZone"]',
-			failedToToggleZone: '@localizer["FailedToToggleZone"]',
-			deleteZoneConfirm: '@localizer["DeleteZoneConfirm"]',
-			failedToDeleteZone: '@localizer["FailedToDeleteZone"]'
+			addZone: '@JsEncoder.Encode(localizer["AddZone"])',
+			editZone: '@JsEncoder.Encode(localizer["EditZone"])',
+			enterZoneName: '@JsEncoder.Encode(localizer["EnterZoneName"])',
+			failedToSaveZone: '@JsEncoder.Encode(localizer["FailedToSaveZone"])',
+			failedToToggleZone: '@JsEncoder.Encode(localizer["FailedToToggleZone"])',
+			deleteZoneConfirm: '@JsEncoder.Encode(localizer["DeleteZoneConfirm"])',
+			failedToDeleteZone: '@JsEncoder.Encode(localizer["FailedToDeleteZone"])'
 		};
 
 		function getAntiForgeryToken() {

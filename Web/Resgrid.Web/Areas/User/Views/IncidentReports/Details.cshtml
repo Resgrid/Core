@@ -620,7 +620,7 @@
 				<div class="ibox">
 					<div class="ibox-title"><h5><i class="fa fa-ban"></i> @localizer["Void"]</h5></div>
 					<div class="ibox-content">
-						<form method="post" asp-controller="IncidentReports" asp-action="Void" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" onsubmit="return confirm('@localizer["Void"]?');">
+						<form method="post" asp-controller="IncidentReports" asp-action="Void" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" onsubmit="return confirm('@JsEncoder.Encode(localizer["Void"])?');">
 							@Html.AntiForgeryToken()
 							<div class="form-group"><label>@localizer["ReasonCode"]</label><input type="text" class="form-control" name="reasonCode" maxlength="64" required /></div>
 							<div class="form-group"><label>@localizer["ReasonText"]</label><textarea class="form-control" name="reasonText" rows="2"></textarea></div>
@@ -633,7 +633,7 @@
 			{
 				<div class="ibox">
 					<div class="ibox-content">
-						<form method="post" asp-controller="IncidentReports" asp-action="CancelDraft" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" onsubmit="return confirm('@localizer["Cancel"]?');">
+						<form method="post" asp-controller="IncidentReports" asp-action="CancelDraft" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" onsubmit="return confirm('@JsEncoder.Encode(localizer["Cancel"])?');">
 							@Html.AntiForgeryToken()
 							<button type="submit" class="btn btn-default btn-block">@localizer["Cancel"]</button>
 						</form>

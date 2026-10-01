@@ -17,5 +17,11 @@ namespace Resgrid.Model.Services
 
 		/// <summary>True when no attended user is behind the call (worker, system principal, relay).</summary>
 		bool IsWorkloadCaller { get; }
+
+		/// <summary>
+		/// The validated session behind an attended call (passkey plan section 8.3), or null for a workload or a session
+		/// that is not tracked. A version 2 grant is refused whenever this is null.
+		/// </summary>
+		Security.ProtectedGrantSessionContext Session { get; }
 	}
 }

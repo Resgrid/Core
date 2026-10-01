@@ -19,7 +19,7 @@
             @if (Model != null && Model.Any())
             {
                 <form asp-action="ClearPending" method="post" style="display:inline;"
-                      onsubmit="return confirm('@localizer["ClearAllPendingConfirm"]');">
+                      onsubmit="return confirm('@JsEncoder.Encode(localizer["ClearAllPendingConfirm"])');">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> @localizer["ClearAllPending"]</button>
                 </form>
@@ -63,7 +63,7 @@
                                         <td>@run.AttemptNumber</td>
                                         <td>
                                             <form asp-action="CancelRun" method="post" style="display:inline;"
-                                                  onsubmit="return confirm('@localizer["CancelRunConfirm"]');">
+                                                  onsubmit="return confirm('@JsEncoder.Encode(localizer["CancelRunConfirm"])');">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="workflowRunId" value="@run.WorkflowRunId" />
                                                 <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-times"></i> @localizer["CancelRun"]</button>

@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Department Notification / Users To Notify</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Department Security Policy / Accept Recent Login MFA For ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Department Security Policy / Accept Recent Unlock MFA For ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Department Security Policy / Allow Federated MFA For ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Department Security Policy / Allow Federated MFA For Login MFA</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Department Security Policy / Allow Passkeys For ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Department Security Policy / Allow Passkeys For Login MFA</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Department Security Policy / Allow Responder Approval</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Department Security Policy / Allowed IP Ranges</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Department Security Policy / Session Timeout Minutes</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Department Security Policy / Shared Idle Lock Minutes</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Department Security Policy / Shared Mode Required Apps</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Department Security Policy / Shared Shift Hours</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>Department SSO Config / Allow Local Login</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>Department SSO Config / Entity ID</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Department SSO Config / Federated MFA Mapping JSON</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Department SSO Config / IdP SSO URL</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>Department SSO Config / Is Enabled</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Explicit member recipients. Membership and channel eligibility are evaluated separately at send time.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Lets MFA completed at sign-in in the same session open protected data within the step-up window, for methods the protected-data settings allow. Changing it ends current protected-data access. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Lets the operator's fresh unlock verification on a shared device open protected data. Changing it ends current protected-data access. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Accepts the identity provider's MFA for protected data. Requires a tested MFA mapping; changing it ends current protected-data access. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Accepts the identity provider's MFA for sign-in and step-up. Requires a tested MFA mapping on the SSO configuration; without one the provider's claims never count. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Accepts a passkey for protected-data access, ADP management and protected-workflow approvals. Authenticator codes are always accepted. Changing it ends current protected-data access, so members verify again. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Accepts a passkey registered in the requesting app as MFA for sign-in, department entry and step-up. Authenticator codes are always accepted. Changing it advances the MFA policy version; sessions whose only second factor is now disallowed verify again. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Accepts approval with the member's Responder app passkey wherever the matching passkey setting is on; never for security changes or account sign-in methods. Changing it also ends current protected-data access. Managing member only.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Allowed login network ranges. Empty adds no range restriction. Review legitimate responder networks and recovery access before narrowing it.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Idle timeout in minutes; zero defers to host behavior. Verify policy-managed sessions and each supported client rather than assuming immediate global logout.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Minutes without operator activity before a shared vehicle tablet or workstation session locks, from 1 to 15. Background updates and incoming alerts are not activity. A stricter value reaches running sessions at their next request. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Unit, IC and Dispatch sessions this department always runs as shared sessions, whatever the installation is set to; sign-ins that do not name their app count too. Needs app versions that support shared mode. Managing member only.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Hours after sign-in when a shared session ends whatever the activity, from 1 to 24. A shorter value ends running sessions sooner; a longer one never extends them. Managing member only.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Allows a local-password path alongside this provider where policy permits. Review the department-wide SSO requirement and recovery plan together.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>SAML service-provider identifier registered at the identity provider. It must agree with the configured integration.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Which provider sign-in results count as MFA for provider step-up. A changed mapping, issuer or client needs a new successful test before provider MFA is accepted again.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>SAML provider sign-in address that sign-in started from Resgrid sends its request to. Verify it against the provider metadata before relying on it.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Makes this provider configuration available to the supported SSO flow. A saved enabled flag is not a successful sign-in test.</value>

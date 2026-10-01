@@ -18,14 +18,17 @@ namespace Resgrid.Services
 		IAdpReleaseReceiptService receipts, IProtectedDataBrokerClient broker, ICallsService calls,
 		IAuthorizationService authorization, IUserProfileService profiles, IDepartmentsService departments,
 		IPermissionsService permissions, IDepartmentGroupsService groups, IPersonnelRolesService roles,
-		IPhoneNumberProcesserProvider phoneNumbers) : IAdpReleaseService
+		IPhoneNumberProcesserProvider phoneNumbers, IProtectedGrantContext grantContext = null,
+		IMfaCredentialStateService credentialStates = null) : IAdpReleaseService
 	{
 		public async Task<bool> EnrollPinAsync(int departmentId, string userId, string grantToken, string pin, CancellationToken cancellationToken = default)
 		{
 			if (pin == null || !Regex.IsMatch(pin, "^[0-9]{6,12}$")) return false;
 			var policy = await protection.GetPolicyByDepartmentIdAsync(departmentId, bypassCache: true);
 			if (policy == null || grants.ValidateGrant(grantToken, departmentId, policy.PolicyEpoch, ProtectedDataGrantScopes.Read,
-				out var grant) != ProtectedDataGrantValidationOutcome.Valid || grant.UserId != userId || grant.StepUpExempt ||
+				out var grant) != ProtectedDataGrantValidationOutcome.Valid || grant.UserId != userId ||
+				await ProtectedGrantBinding.CheckAsync(grant, userId, ProtectedGrantBinding.SessionFor(grantContext, userId), policy.StepUpWindowMinutes,
+					credentialStates, cancellationToken) != Resgrid.Model.Security.ProtectedGrantBindingOutcome.Bound || grant.StepUpExempt ||
 				grant.MfaAtUtc < DateTime.UtcNow.AddMinutes(-5) || grant.MfaAtUtc > DateTime.UtcNow.AddSeconds(30)) return false;
 			var key = PinKey(departmentId, userId);
 			var previous = await store.GetAsync(key, cancellationToken);

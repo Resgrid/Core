@@ -153,4 +153,25 @@ Resgrid-teamet</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>Jag bekräftar att utlämnade uppgifter lämnar Resgrid och kan sparas av telefonoperatörer eller mottagare.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Tillåt skyddat innehåll</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Resgrids personal har begärt åtkomst till det skyddade larmet {0} för supportärende {1}. Åtkomst kräver en oberoende godkännare och upphör inom 15 minuter.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Säkerhetsändring på ditt Resgrid-konto</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Hej {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Hej,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>En autentiseringsapp har konfigurerats för tvåstegsinloggning på ditt konto.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>Autentiseringsappen på ditt konto har bytts ut, och alla inloggade sessioner har avslutats.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>Autentiseringsappen har tagits bort från ditt konto, så tvåstegsinloggning är avstängd. Alla inloggade sessioner har avslutats.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Nya återställningskoder har skapats för ditt konto. De gamla koderna fungerar inte längre.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>En av dina återställningskoder användes för att logga in eller för att starta kontoåterställning.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>En ny nyckel (passkey) har lagts till på ditt konto.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>En nyckel (passkey) har tagits bort från ditt konto.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>En nyckel (passkey) i Resgrid Responder kan nu godkänna inloggningar i dina andra Resgrid-appar.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>En nyckel (passkey) i Resgrid Responder kan inte längre godkänna inloggningar i dina andra Resgrid-appar.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Du angav i Resgrid Responder att du inte bad om att logga in. Den inloggningen stoppades, och godkännandeförfrågningar är pausade i 15 minuter. Någon kan känna till ditt lösenord, så byt det nu.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Flera godkännandeförfrågningar i rad nekades eller besvarades inte, så godkännandeförfrågningar är pausade i 15 minuter.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Ditt konto har återställts med en återställningskod. En ny autentiseringsapp har konfigurerats, nya återställningskoder har skapats och alla inloggade sessioner har avslutats.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>En autentiseringsapp eller nyckel (passkey) har konfigurerats på en delad fordonsplatta eller arbetsstation. Om någon annan kan ha sett konfigurationskoden eller kan använda enheten, byt ut autentiseringsappen eller ta bort nyckeln från din egen enhet.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>En verifiering på ditt konto rapporterades som inte gjord av dig. Om den loggade in på en annan enhet har den sessionen avslutats. Byt lösenord och se över dina inloggningsmetoder.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>När: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Var: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Om det inte var du, återställ ditt lösenord nu på {0}, logga sedan in och granska dina inloggningsmetoder. Resgrid ber aldrig om en kod eller ett lösenord via e-post.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Detta är ett automatiskt säkerhetsmeddelande om ditt Resgrid-konto.</value></data>
 </root>

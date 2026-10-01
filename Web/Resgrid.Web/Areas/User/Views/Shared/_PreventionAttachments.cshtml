@@ -38,7 +38,7 @@
 									@Html.AntiForgeryToken()
 									<input type="hidden" name="id" value="@a.RmsPreventionAttachmentId" />
 									<input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
-									<button class="btn btn-xs btn-danger" onclick="return confirm('@L["RemoveAttachmentConfirm"]');">@L["RemoveRow"]</button>
+									<button class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(L["RemoveAttachmentConfirm"])');">@L["RemoveRow"]</button>
 								</form>
 							}
 						</td>

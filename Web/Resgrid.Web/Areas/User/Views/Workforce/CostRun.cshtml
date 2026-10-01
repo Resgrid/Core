@@ -38,8 +38,8 @@
                     </table>
                     @if (!r.IsFrozen)
                     {
-                        <form method="post" asp-action="FreezeCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@localizer["ConfirmFreeze"]');"><i class="fa fa-lock"></i> @localizer["Freeze"]</button></form>
-                        <form method="post" asp-action="DeleteCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                        <form method="post" asp-action="FreezeCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmFreeze"])');"><i class="fa fa-lock"></i> @localizer["Freeze"]</button></form>
+                        <form method="post" asp-action="DeleteCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
                     }
                     @if (!string.IsNullOrWhiteSpace(r.DeploymentId))
                     {

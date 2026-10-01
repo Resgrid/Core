@@ -567,9 +567,6 @@
   <data name="StationHeader" xml:space="preserve">
     <value>Station</value>
   </data>
-  <data name="UnitsLabel" xml:space="preserve">
-    <value>Units</value>
-  </data>
   <data name="ConditionLabel" xml:space="preserve">
     <value>Condition</value>
   </data>
@@ -736,9 +733,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>Not checked out</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>Total Time</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>Call Unit Times</value>

@@ -68,6 +68,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 		private readonly ILimitsService _limitsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> _profileLocalizer;
+		private readonly IMfaPolicyService _mfaPolicyService;
+		private readonly IMfaEvidenceService _mfaEvidenceService;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
@@ -79,8 +81,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ISystemAuditsService systemAuditsService, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService,
 			IEventAggregator eventAggregator, IProtectedReadService protectedReadService, IBusinessOperationsAccessService businessOperationsAccess,
-			ILimitsService limitsService, IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> profileLocalizer)
+			ILimitsService limitsService, IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> profileLocalizer,
+			IMfaPolicyService mfaPolicyService, IMfaEvidenceService mfaEvidenceService, ISsoBrokerService ssoBroker,
+			ISsoReturnTargetRegistry ssoReturnTargets)
 		{
+			_ssoBroker = ssoBroker;
+			_ssoReturnTargets = ssoReturnTargets;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_authorizationService = authorizationService;
@@ -107,6 +113,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_businessOperationsAccess = businessOperationsAccess;
 			_limitsService = limitsService;
 			_profileLocalizer = profileLocalizer;
+			_mfaPolicyService = mfaPolicyService;
+			_mfaEvidenceService = mfaEvidenceService;
 		}
 		#endregion Private Members and Constructors
 
@@ -1618,7 +1626,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (await _departmentsService.IsMemberOfDepartmentAsync(model.DepartmentId, UserId))
 			{
-				if (!await CanContinueCurrentAuthenticationInDepartmentAsync(model.DepartmentId, cancellationToken))
+				var entry = await CheckDepartmentEntryAsync(model.DepartmentId, cancellationToken);
+				if (entry == DepartmentEntry.StepUpRequired)
+					return StatusCode(StatusCodes.Status403Forbidden, new { error = "step_up_required", redirectUrl = StepUpThenYourDepartmentsUrl(model.DepartmentId) });
+				if (entry == DepartmentEntry.SsoRequired && await SsoSignInForDepartmentUrlAsync(model.DepartmentId) is string ssoUrl)
+					return StatusCode(StatusCodes.Status403Forbidden, new { error = "sso_required", redirectUrl = ssoUrl });
+				if (entry != DepartmentEntry.Allowed)
 					return Forbid();
 
 				var user = await _userManager.FindByIdAsync(UserId);
@@ -1640,7 +1653,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (await _departmentsService.IsMemberOfDepartmentAsync(departmentId, UserId))
 			{
-				if (!await CanContinueCurrentAuthenticationInDepartmentAsync(departmentId, cancellationToken))
+				var entry = await CheckDepartmentEntryAsync(departmentId, cancellationToken);
+				if (entry == DepartmentEntry.StepUpRequired)
+					return Redirect(StepUpThenYourDepartmentsUrl(departmentId));
+				if (entry == DepartmentEntry.SsoRequired && await SsoSignInForDepartmentUrlAsync(departmentId) is string ssoUrl)
+					return Redirect(ssoUrl);
+				if (entry != DepartmentEntry.Allowed)
 					return Forbid();
 
 				var user = await _userManager.FindByIdAsync(UserId);
@@ -1677,9 +1695,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.OrderByDescending(x => x.IsDefault)
 				.FirstOrDefault();
 			var switchesDepartment = departmentToRemove.IsActive;
+			// Leaving the active department moves the session to the remaining one; if this session may not enter it
+			// (its SSO, or MFA it has not completed), the user signs in again there instead.
 			var canKeepCurrentSession = !switchesDepartment ||
-				await CanContinueCurrentAuthenticationInDepartmentAsync(remainingDepartment.DepartmentId,
-					cancellationToken);
+				await CheckDepartmentEntryAsync(remainingDepartment.DepartmentId, cancellationToken) == DepartmentEntry.Allowed;
 
 			if (switchesDepartment)
 			{
@@ -1716,6 +1735,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return switchesDepartment
 				? RedirectToAction("Dashboard", "Home", new {Area = "User"})
 				: RedirectToAction("YourDepartments");
+		}
+
+		private enum DepartmentEntry
+		{
+			Allowed,
+
+			/// <summary>The department requires its own SSO sign-in.</summary>
+			SsoRequired,
+
+			/// <summary>The department requires MFA and this session has not completed it (passkey plan section 7.6 row 5).</summary>
+			StepUpRequired
+		}
+
+		private async Task<DepartmentEntry> CheckDepartmentEntryAsync(int departmentId, CancellationToken cancellationToken)
+		{
+			if (!await CanContinueCurrentAuthenticationInDepartmentAsync(departmentId, cancellationToken))
+				return DepartmentEntry.SsoRequired;
+
+			// A RequireMfa department accepts only a session that has completed an actual second factor. An unenrolled
+			// member may enter, and the enrollment middleware then confines them to setup until they enroll.
+			if (!await _mfaPolicyService.IsRequireMfaEnforcedAsync(departmentId, cancellationToken))
+				return DepartmentEntry.Allowed;
+
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null || !await _userManager.GetTwoFactorEnabledAsync(user))
+				return DepartmentEntry.Allowed;
+
+			return await StepUpEvidence.GetLatestSecondFactorUtcAsync(_mfaEvidenceService, user, HttpContext, _mfaPolicyService, departmentId,
+					MfaMethodScope.Login, cancellationToken) == null
+				? DepartmentEntry.StepUpRequired
+				: DepartmentEntry.Allowed;
+		}
+
+		private string StepUpThenYourDepartmentsUrl(int departmentId) =>
+			Url.Action("Verify2FA", "TwoFactor", new { area = "User", returnUrl = Url.Action("YourDepartments", "Profile", new { area = "User" }),
+				entry = departmentId });
+
+		private readonly ISsoBrokerService _ssoBroker;
+		private readonly ISsoReturnTargetRegistry _ssoReturnTargets;
+
+		/// <summary>
+		/// A department that requires its own SSO is entered by signing in through its provider (plan section 7.6 row 5): the Web SSO
+		/// sign-in for that department, when this deployment offers it; null otherwise.
+		/// </summary>
+		private async Task<string> SsoSignInForDepartmentUrlAsync(int departmentId)
+		{
+			if (!Resgrid.Config.TwoFactorConfig.WebLoginMfaTransactionEnabled || !Resgrid.Config.TwoFactorConfig.LoginMfaTransactionEnabled ||
+				!WebSsoRoundTrip.IsAvailable(_ssoBroker, _ssoReturnTargets))
+				return null;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+			return string.IsNullOrWhiteSpace(department?.Code)
+				? null
+				: Url.Action("SsoLogOn", "Account", new { area = "", departmentCode = department.Code, returnUrl = Url.Action("Dashboard", "Home", new { area = "User" }) });
 		}
 
 		private async Task<bool> CanContinueCurrentAuthenticationInDepartmentAsync(int departmentId,

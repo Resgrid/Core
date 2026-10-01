@@ -146,20 +146,23 @@ namespace Resgrid.Repositories.DataRepository
 					applicationversion, authenticationmethod, departmentssoconfigid, openiddictauthorizationid,
 					webcookieticketkey, createdon, lastactiveon, expireson, firstipaddress, lastipaddress,
 					lastcountry, lastregion, lastcity, useragent, islegacyadopted, revokedon, revokedbyuserid,
-					revocationreason"
+					revocationreason, loginmfamethod, loginmfafactorreference, sharedmode, sharedmodesource,
+					sharedidlelockminutes, lockversion, islocked, lockedonutc, lockreason, lastoperatoractivityon, approvalsdisabledonutc"
 				: @"[UserSessionId], [UserId], [DepartmentId], [AuthenticationGeneration], [State], [StateVersion],
 					[ClientApplication], [ClientInstanceIdHash], [DeviceName], [DeviceType], [OperatingSystem], [Browser],
 					[ApplicationVersion], [AuthenticationMethod], [DepartmentSsoConfigId], [OpenIddictAuthorizationId],
 					[WebCookieTicketKey], [CreatedOn], [LastActiveOn], [ExpiresOn], [FirstIpAddress], [LastIpAddress],
 					[LastCountry], [LastRegion], [LastCity], [UserAgent], [IsLegacyAdopted], [RevokedOn], [RevokedByUserId],
-					[RevocationReason]";
+					[RevocationReason], [LoginMfaMethod], [LoginMfaFactorReference], [SharedMode], [SharedModeSource],
+					[SharedIdleLockMinutes], [LockVersion], [IsLocked], [LockedOnUtc], [LockReason], [LastOperatorActivityOn], [ApprovalsDisabledOnUtc]";
 
 			const string values = @"@UserSessionId, @UserId, @DepartmentId, @AuthenticationGeneration, @State, @StateVersion,
 					@ClientApplication, @ClientInstanceIdHash, @DeviceName, @DeviceType, @OperatingSystem, @Browser,
 					@ApplicationVersion, @AuthenticationMethod, @DepartmentSsoConfigId, @OpenIddictAuthorizationId,
 					@WebCookieTicketKey, @CreatedOn, @LastActiveOn, @ExpiresOn, @FirstIpAddress, @LastIpAddress,
 					@LastCountry, @LastRegion, @LastCity, @UserAgent, @IsLegacyAdopted, @RevokedOn, @RevokedByUserId,
-					@RevocationReason";
+					@RevocationReason, @LoginMfaMethod, @LoginMfaFactorReference, @SharedMode, @SharedModeSource,
+					@SharedIdleLockMinutes, @LockVersion, @IsLocked, @LockedOnUtc, @LockReason, @LastOperatorActivityOn, @ApprovalsDisabledOnUtc";
 
 			// The counted set mirrors the policy rule exactly: active, unexpired sessions this user holds in
 			// the department that were created on or after the policy gate.
@@ -298,6 +301,125 @@ namespace Resgrid.Repositories.DataRepository
 			}, cancellationToken);
 		}
 
+		public Task<int> TryLockAsync(string sessionId, long expectedLockVersion, int reason, DateTime lockedOnUtc,
+			CancellationToken cancellationToken)
+		{
+			var sql = _isPostgres
+				? $@"UPDATE {_table} SET islocked = @True, lockversion = lockversion + 1, lockedonutc = @LockedOnUtc,
+					lockreason = @Reason, stateversion = stateversion + 1
+					WHERE usersessionid = @SessionId AND state = @ActiveState AND sharedmode = @True AND islocked = @False
+						AND lockversion = @ExpectedLockVersion"
+				: $@"UPDATE {_table} SET [IsLocked] = @True, [LockVersion] = [LockVersion] + 1, [LockedOnUtc] = @LockedOnUtc,
+					[LockReason] = @Reason, [StateVersion] = [StateVersion] + 1
+					WHERE [UserSessionId] = @SessionId AND [State] = @ActiveState AND [SharedMode] = @True AND [IsLocked] = @False
+						AND [LockVersion] = @ExpectedLockVersion";
+
+			return ExecuteAsync(sql, new
+			{
+				SessionId = sessionId,
+				ExpectedLockVersion = expectedLockVersion,
+				Reason = reason,
+				LockedOnUtc = Timestamp(lockedOnUtc),
+				ActiveState = (int)UserSessionState.Active,
+				True = true,
+				False = false
+			}, cancellationToken);
+		}
+
+		public Task<int> TryUnlockAsync(string userId, string sessionId, long expectedLockVersion, DateTime unlockedOnUtc,
+			CancellationToken cancellationToken)
+		{
+			var sql = _isPostgres
+				? $@"UPDATE {_table} SET islocked = @False, lastoperatoractivityon = @UnlockedOnUtc, stateversion = stateversion + 1
+					WHERE usersessionid = @SessionId AND userid = @UserId AND state = @ActiveState AND sharedmode = @True
+						AND islocked = @True AND lockversion = @ExpectedLockVersion AND expireson > @UnlockedOnUtc"
+				: $@"UPDATE {_table} SET [IsLocked] = @False, [LastOperatorActivityOn] = @UnlockedOnUtc, [StateVersion] = [StateVersion] + 1
+					WHERE [UserSessionId] = @SessionId AND [UserId] = @UserId AND [State] = @ActiveState AND [SharedMode] = @True
+						AND [IsLocked] = @True AND [LockVersion] = @ExpectedLockVersion AND [ExpiresOn] > @UnlockedOnUtc";
+
+			return ExecuteAsync(sql, new
+			{
+				UserId = userId,
+				SessionId = sessionId,
+				ExpectedLockVersion = expectedLockVersion,
+				UnlockedOnUtc = Timestamp(unlockedOnUtc),
+				ActiveState = (int)UserSessionState.Active,
+				True = true,
+				False = false
+			}, cancellationToken);
+		}
+
+		public Task<int> RecordOperatorActivityAsync(string sessionId, DateTime occurredOnUtc, DateTime writeBefore, DateTime idleCutoff,
+			CancellationToken cancellationToken)
+		{
+			// A session created before this column existed has no activity yet; its creation time stands in, exactly as the
+			// idle deadline reads it.
+			var sql = _isPostgres
+				? $@"UPDATE {_table} SET lastoperatoractivityon = @OccurredOnUtc
+					WHERE usersessionid = @SessionId AND state = @ActiveState AND sharedmode = @True AND islocked = @False
+						AND COALESCE(lastoperatoractivityon, createdon) <= @WriteBefore
+						AND COALESCE(lastoperatoractivityon, createdon) > @IdleCutoff"
+				: $@"UPDATE {_table} SET [LastOperatorActivityOn] = @OccurredOnUtc
+					WHERE [UserSessionId] = @SessionId AND [State] = @ActiveState AND [SharedMode] = @True AND [IsLocked] = @False
+						AND COALESCE([LastOperatorActivityOn], [CreatedOn]) <= @WriteBefore
+						AND COALESCE([LastOperatorActivityOn], [CreatedOn]) > @IdleCutoff";
+
+			return ExecuteAsync(sql, new
+			{
+				SessionId = sessionId,
+				OccurredOnUtc = Timestamp(occurredOnUtc),
+				WriteBefore = Timestamp(writeBefore),
+				IdleCutoff = Timestamp(idleCutoff),
+				ActiveState = (int)UserSessionState.Active,
+				True = true,
+				False = false
+			}, cancellationToken);
+		}
+
+		public Task<int> DisableApprovalsAsync(string userId, string sessionId, DateTime disabledOnUtc, CancellationToken cancellationToken)
+		{
+			// One installation, or (no session id) every one; the filter is left out rather than sent as a null parameter.
+			var sql = _isPostgres
+				? $@"UPDATE {_table} SET approvalsdisabledonutc = @Now
+					WHERE userid = @UserId AND state = @ActiveState AND clientapplication = @Responder AND approvalsdisabledonutc IS NULL
+						{(sessionId == null ? "" : "AND usersessionid = @SessionId")}"
+				: $@"UPDATE {_table} SET [ApprovalsDisabledOnUtc] = @Now
+					WHERE [UserId] = @UserId AND [State] = @ActiveState AND [ClientApplication] = @Responder AND [ApprovalsDisabledOnUtc] IS NULL
+						{(sessionId == null ? "" : "AND [UserSessionId] = @SessionId")}";
+
+			return ExecuteAsync(sql, new
+			{
+				UserId = userId,
+				SessionId = sessionId,
+				Now = Timestamp(disabledOnUtc),
+				ActiveState = (int)UserSessionState.Active,
+				Responder = (int)UserSessionClientApplication.Responder
+			}, cancellationToken);
+		}
+
+		public async Task<IReadOnlyList<UserSession>> GetStatesAsync(IReadOnlyCollection<string> sessionIds, CancellationToken cancellationToken)
+		{
+			var result = new List<UserSession>();
+			if (sessionIds == null || sessionIds.Count == 0)
+				return result;
+
+			var sql = _isPostgres
+				? $@"SELECT usersessionid AS UserSessionId, state AS State, expireson AS ExpiresOn, createdon AS CreatedOn, sharedmode AS SharedMode,
+						islocked AS IsLocked, sharedidlelockminutes AS SharedIdleLockMinutes, lastoperatoractivityon AS LastOperatorActivityOn
+					FROM {_table} WHERE usersessionid = ANY(@Ids)"
+				: $@"SELECT [UserSessionId], [State], [ExpiresOn], [CreatedOn], [SharedMode], [IsLocked], [SharedIdleLockMinutes], [LastOperatorActivityOn]
+					FROM {_table} WHERE [UserSessionId] IN @Ids";
+
+			foreach (var batch in sessionIds.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.Ordinal).Chunk(500))
+			{
+				var rows = await WithConnectionAsync(connection => connection.QueryAsync<UserSession>(new Dapper.CommandDefinition(sql,
+					new { Ids = batch }, _unitOfWork?.Transaction, cancellationToken: cancellationToken)));
+				result.AddRange(rows);
+			}
+
+			return result;
+		}
+
 		private Task<int> RevokeWhereAsync(string predicate, object values, string actorUserId, int reason,
 			DateTime revokedOn, CancellationToken cancellationToken)
 		{
@@ -317,6 +439,12 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("Reason", reason);
 			return ExecuteAsync(sql, parameters, cancellationToken);
 		}
+
+		/// <summary>
+		/// The shared-session statements run on every host (the broker and Eventing validate sessions too), not only where
+		/// Npgsql's legacy timestamp behavior is switched on, so their times go to PostgreSQL as zone-less values.
+		/// </summary>
+		private DateTime Timestamp(DateTime utc) => _isPostgres ? DateTime.SpecifyKind(utc, DateTimeKind.Unspecified) : utc;
 
 		private Task<int> ExecuteAsync(string sql, object parameters, CancellationToken cancellationToken)
 		{

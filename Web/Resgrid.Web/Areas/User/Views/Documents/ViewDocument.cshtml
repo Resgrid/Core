@@ -56,7 +56,7 @@
             @if (Model.CanDelete)
             {
                 <form asp-controller="Documents" asp-action="DeleteDocument" asp-route-area="User" method="post" style="display:inline;"
-                      onsubmit="return confirm('@localizer["DeleteDocumentWarning"]');">
+                      onsubmit="return confirm('@JsEncoder.Encode(localizer["DeleteDocumentWarning"])');">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="documentId" value="@Model.Document.DocumentId" />
                     <button type="submit" class="btn btn-danger">

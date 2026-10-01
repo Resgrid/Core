@@ -1,23 +1,24 @@
 ﻿@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
 @{
-  ViewBag.Title = "Resgrid | Audit Logs";
+  ViewBag.Title = "Resgrid | " + localizer["AuditLogsButton"];
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Audit Logs</h2>
+    <h2>@localizer["AuditLogsButton"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["BreadcrumbHome"]</a>
       </li>
       <li>
-        <a asp-controller="Security" asp-action="Index" asp-route-area="User">Security and Permissions</a>
+        <a asp-controller="Security" asp-action="Index" asp-route-area="User">@localizer["BreadcrumbSecurity"]</a>
       </li>
       <li class="active">
-        <strong>Audit Logs</strong>
+        <strong>@localizer["AuditLogsButton"]</strong>
       </li>
     </ol>
   </div>
@@ -27,22 +28,21 @@
       <div class="wrapper wrapper-content">
         <div class="ibox float-e-margins">
           <div class="ibox-title">
-            <h5>Audit Logs</h5>
+            <h5>@localizer["AuditLogsButton"]</h5>
             <div class="ibox-tools">
             </div>
           </div>
           <div class="ibox-content">
             <div class="row m-b-md">
               <div class="col-md-5">
-                <label for="auditLogTypeFilter">Filter by audit type</label>
+                <label for="auditLogTypeFilter">@localizer["AuditLogsTypeFilterLabel"]</label>
                 <select id="auditLogTypeFilter" class="form-control">
-                  <option value="">All audit types</option>
+                  <option value="">@localizer["AuditLogsTypeFilterAll"]</option>
                 </select>
               </div>
               <div class="col-md-7">
                 <p class="help-block m-t-lg">
-                  Search by user name, user or audit ID, email address, date/time, or audit type.
-                  Search and sorting apply within the selected audit type.
+                  @localizer["AuditLogsSearchHelp"]
                 </p>
               </div>
             </div>
@@ -56,6 +56,52 @@
   </div>
 @section Scripts
 {
-
+  @{
+    var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml };
+    var auditLogStrings = new
+    {
+      columns = new
+      {
+        timestamp = localizer["AuditLogsColumnTimestamp"].Value,
+        type = localizer["AuditLogsColumnType"].Value,
+        loggedBy = localizer["AuditLogsColumnLoggedBy"].Value,
+        result = localizer["AuditLogsColumnResult"].Value,
+        message = localizer["AuditLogsColumnMessage"].Value,
+        searchTerms = localizer["AuditLogsColumnSearchTerms"].Value,
+        actions = localizer["AuditLogsColumnActions"].Value
+      },
+      successful = localizer["AuditLogsResultSuccessful"].Value,
+      failed = localizer["AuditLogsResultFailed"].Value,
+      view = localizer["AuditLogsViewButton"].Value,
+      // Passed straight to DataTables as its "language" option.
+      table = new
+      {
+        search = localizer["AuditLogsSearchLabel"].Value,
+        searchPlaceholder = localizer["AuditLogsSearchPlaceholder"].Value,
+        info = localizer["AuditLogsTableInfo"].Value,
+        infoEmpty = localizer["AuditLogsTableInfoEmpty"].Value,
+        infoFiltered = localizer["AuditLogsTableInfoFiltered"].Value,
+        lengthMenu = localizer["AuditLogsTableLengthMenu"].Value,
+        loadingRecords = localizer["AuditLogsTableLoading"].Value,
+        emptyTable = localizer["AuditLogsTableEmpty"].Value,
+        zeroRecords = localizer["AuditLogsTableZeroRecords"].Value,
+        paginate = new
+        {
+          first = localizer["AuditLogsTableFirst"].Value,
+          last = localizer["AuditLogsTableLast"].Value,
+          next = localizer["AuditLogsTableNext"].Value,
+          previous = localizer["AuditLogsTablePrevious"].Value
+        },
+        aria = new
+        {
+          sortAscending = localizer["AuditLogsTableSortAscending"].Value,
+          sortDescending = localizer["AuditLogsTableSortDescending"].Value
+        }
+      }
+    };
+  }
+  <script type="text/javascript">
+    window.resgridAuditLogStrings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(auditLogStrings, jsonSettings));
+  </script>
   <script src="~/js/app/internal/security/resgrid.security.audits.js" type="text/javascript"></script>
 }

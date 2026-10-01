@@ -117,7 +117,7 @@
                                             <a class="btn btn-xs btn-primary" asp-controller="Contacts" asp-action="GetContactAttachment" asp-route-area="User" asp-route-contactAttachmentId="@attachment.ContactAttachmentId"><i class="fa fa-download"></i> @localizer["Download"]</a>
                                             @if (canDelete)
                                             {
-                                                <form method="post" style="display:inline;" asp-controller="Contacts" asp-action="DeleteAttachment" asp-route-area="User" onsubmit="return confirm('@localizer["DeleteFileConfirm"]');">
+                                                <form method="post" style="display:inline;" asp-controller="Contacts" asp-action="DeleteAttachment" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(localizer["DeleteFileConfirm"])');">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="contactId" value="@Model.Contact.ContactId" />
                                                     <input type="hidden" name="contactAttachmentId" value="@attachment.ContactAttachmentId" />

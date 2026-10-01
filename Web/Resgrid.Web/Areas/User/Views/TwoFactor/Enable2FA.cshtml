@@ -21,7 +21,7 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>@localizer["SetupHeader"]</h5>
+                    <h5>@(Model.IsReplacement ? localizer["ReplaceHeader"] : localizer["SetupHeader"])</h5>
                 </div>
                 <div class="ibox-content">
                     @if (enforced)
@@ -32,6 +32,10 @@
                         </div>
                     }
 
+                    @if (Model.IsReplacement)
+                    {
+                        <div class="alert alert-info">@localizer["ReplaceInstructions"]</div>
+                    }
                     <p>@localizer["SetupInstructions"]</p>
                     <ol>
                         <li>
@@ -51,7 +55,7 @@
                         <li>@localizer["SetupStep3"]</li>
                     </ol>
 
-                    <form asp-action="Enable2FA" method="post" class="form-horizontal">
+                    <form asp-action="@(Model.IsReplacement ? "ReplaceAuthenticator" : "Enable2FA")" method="post" class="form-horizontal">
                         @Html.AntiForgeryToken()
                         <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -66,7 +70,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
-                                <button type="submit" class="btn btn-primary">@localizer["VerifyAndEnableButton"]</button>
+                                <button type="submit" class="btn btn-primary">@(Model.IsReplacement ? localizer["ReplaceAndSignOutButton"] : localizer["VerifyAndEnableButton"])</button>
                                 <a asp-action="Index" class="btn btn-default">@commonLocalizer["Cancel"]</a>
                             </div>
                         </div>

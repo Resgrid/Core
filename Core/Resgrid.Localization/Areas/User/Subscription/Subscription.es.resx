@@ -465,4 +465,7 @@
   <data name="ManageYourSubscription" xml:space="preserve">
     <value>Administre su suscripción</value>
   </data>
+  <data name="BuyPTTAddonInfo2" xml:space="preserve">
+    <value>En el cuadro numérico de abajo, indique la cantidad de paquetes de 10 usuarios simultáneos de Push-To-Talk que desea comprar mensualmente. Si aumenta la cantidad, se le facturará de inmediato; si la reduce, su renovación será por la cantidad reducida. Si la establece en cero, no se le facturará (PTT no se renovará). Para esta suscripción del complemento PTT se usará la tarjeta registrada de su suscripción estándar de Resgrid. </value>
+  </data>
 </root>

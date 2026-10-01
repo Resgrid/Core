@@ -1,0 +1,27 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.SsoReturnContinueViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    Layout = null;
+    // The provider's return arrived cross-site, without this site's SameSite=Strict cookies. This page posts it on from this
+    // site, a same-site request that carries them; the post is matched to this browser's round trip before anything happens.
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Resgrid</title>
+</head>
+<body>
+    <form id="ssoReturnContinue" method="post" action="@Url.Action("SsoReturn", "Account")" asp-antiforgery="false">
+        <input type="hidden" name="sso_code" value="@Model.Code" />
+        <input type="hidden" name="state" value="@Model.State" />
+        <input type="hidden" name="error" value="@Model.Error" />
+        <p>@localizer["SsoReturnContinuing"]</p>
+        <button type="submit">@localizer["SsoReturnContinue"]</button>
+    </form>
+    <script src="~/js/app/common/sso/resgrid.sso.return.js" asp-append-version="true"></script>
+</body>
+</html>

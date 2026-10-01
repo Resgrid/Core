@@ -43,7 +43,7 @@
                                     @if (Model.CanManage)
                                     {
                                         <a asp-action="Establishments" asp-route-edit="@row.WorkforceEstablishmentId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                        <form method="post" asp-action="DeleteEstablishment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceEstablishmentId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                        <form method="post" asp-action="DeleteEstablishment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceEstablishmentId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                                     }
                                 </td>
                             </tr>

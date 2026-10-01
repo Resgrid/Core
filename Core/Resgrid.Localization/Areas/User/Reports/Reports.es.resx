@@ -73,9 +73,9 @@
   <data name="ShiftReadinessReportName" xml:space="preserve"><value>Informe de Preparación de Turno</value></data>
   <data name="ShiftReadinessReportDescription" xml:space="preserve"><value>Este informe mostrará la preparación del turno para los próximos días de turno para cada turno.</value></data>
   <data name="DepartmentActivityReportName" xml:space="preserve"><value>Informe de Actividad Anual del Departamento</value></data>
-  <data name="DepartmentActivityReportDescription" xml:space="preserve"><value>Este informe mostrará la actividad de llamadas, registros, capacitación y personal del departamento en cifras anuales hasta la fecha.</value></data>
-  <data name="PersonnelHoursReportName" xml:space="preserve"><value>Informe de Horas de Registro del Personal</value></data>
-  <data name="PersonnelHoursReportDescription" xml:space="preserve"><value>Este informe mostrará el número de horas que el personal del departamento trabajó, entrenó y respondió a llamadas según los registros.</value></data>
+  <data name="DepartmentActivityReportDescription" xml:space="preserve"><value>Este informe mostrará la actividad de llamadas, bitácoras, capacitación y personal del departamento en cifras anuales hasta la fecha.</value></data>
+  <data name="PersonnelHoursReportName" xml:space="preserve"><value>Informe de Horas de Bitácora del Personal</value></data>
+  <data name="PersonnelHoursReportDescription" xml:space="preserve"><value>Este informe mostrará el número de horas que el personal del departamento trabajó, se capacitó y respondió a llamadas según las entradas de bitácora (informes posteriores a la intervención).</value></data>
   <data name="CallSummaryReportName" xml:space="preserve"><value>Informe de Resumen de Llamadas</value></data>
   <data name="CallSummaryReportDescription" xml:space="preserve"><value>Este informe mostrará detalles sobre todas las llamadas en un rango de fechas seleccionado</value></data>
   <data name="PersonnelStaffingHistoryReportName" xml:space="preserve"><value>Informe de Historial de Dotación del Personal</value></data>
@@ -154,7 +154,7 @@
   <data name="CallHours" xml:space="preserve"><value>Horas de Llamada</value></data>
   <data name="WorkHours" xml:space="preserve"><value>Horas de Trabajo</value></data>
   <data name="TrainingHours" xml:space="preserve"><value>Horas de Capacitación</value></data>
-  <data name="WorkLogs" xml:space="preserve"><value>Registros de Trabajo</value></data>
+  <data name="WorkLogs" xml:space="preserve"><value>Bitácoras de Trabajo</value></data>
   <data name="PersonnelReportTitle" xml:space="preserve"><value>Informe de Personal Resgrid</value></data>
   <data name="UsernameHeader" xml:space="preserve"><value>Usuario</value></data>
   <data name="EmailHeader" xml:space="preserve"><value>Correo Electrónico</value></data>
@@ -196,7 +196,7 @@
   <data name="DispatchedOnHeader" xml:space="preserve"><value>Despachado En</value></data>
   <data name="FourteenDayMarkHeader" xml:space="preserve"><value>Marca de 14 Días</value></data>
   <data name="TwentyOneDayMarkHeader" xml:space="preserve"><value>Marca de 21 Días</value></data>
-  <data name="LogReportTitle" xml:space="preserve"><value>Registro Resgrid</value></data>
+  <data name="LogReportTitle" xml:space="preserve"><value>Bitácora Resgrid</value></data>
   <data name="DistrictLabel" xml:space="preserve"><value>Distrito</value></data>
   <data name="DepartmentLabel" xml:space="preserve"><value>Departamento</value></data>
   <data name="TypeLabel" xml:space="preserve"><value>Tipo</value></data>
@@ -210,7 +210,6 @@
   <data name="WorkLogType" xml:space="preserve"><value>Trabajo</value></data>
   <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
   <data name="StationHeader" xml:space="preserve"><value>Estación</value></data>
-  <data name="UnitsLabel" xml:space="preserve"><value>Unidades</value></data>
   <data name="ConditionLabel" xml:space="preserve"><value>Condición</value></data>
   <data name="CallNameLabel" xml:space="preserve"><value>Nombre de Llamada</value></data>
   <data name="CallTypeLabel" xml:space="preserve"><value>Tipo de Llamada</value></data>
@@ -229,7 +228,7 @@
   <data name="AttendanceLabel" xml:space="preserve"><value>Asistencia</value></data>
   <data name="TotalTimeLabel" xml:space="preserve"><value>Tiempo Total</value></data>
   <data name="MeetingTypeLabel" xml:space="preserve"><value>Tipo de Reunión</value></data>
-  <data name="LogTypeLabel" xml:space="preserve"><value>Tipo de Registro</value></data>
+  <data name="LogTypeLabel" xml:space="preserve"><value>Tipo de Bitácora</value></data>
   <data name="MeetingLogType" xml:space="preserve"><value>Reunión</value></data>
   <data name="LocationLabel" xml:space="preserve"><value>Ubicación</value></data>
   <data name="PresidingLabel" xml:space="preserve"><value>Presidiendo</value></data>
@@ -305,9 +304,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>Sin registro de salida</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>Tiempo Total</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>Tiempos de unidades por llamada</value>

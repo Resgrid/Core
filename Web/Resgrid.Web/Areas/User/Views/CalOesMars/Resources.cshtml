@@ -46,7 +46,7 @@
                                         <td>@localizer["ReviewState" + (Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsReviewStates)r.ReviewState] @if (!r.IsCurrent(today)) { <span class="label label-default">@localizer["NotCurrent"]</span> }</td>
                                         <td class="text-right">
                                             <a asp-action="Resources" asp-route-edit="@r.CalOesMarsResourceProfileId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                            <form method="post" asp-action="DeleteResource" asp-route-id="@r.CalOesMarsResourceProfileId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                            <form method="post" asp-action="DeleteResource" asp-route-id="@r.CalOesMarsResourceProfileId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
                                         </td>
                                     </tr>
                                 }

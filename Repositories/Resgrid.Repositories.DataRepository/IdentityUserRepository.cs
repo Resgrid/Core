@@ -1182,5 +1182,40 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 		}
+
+		public async Task<bool> TryReplaceTokenAsync(string userId, string loginProvider, string name, string expectedValue, string newValue,
+			CancellationToken cancellationToken)
+		{
+			// Exact comparison: SQL Server's default collation would treat base64 values that differ only in case as equal.
+			var sql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
+				? "UPDATE aspnetusertokens SET value = @NewValue WHERE userid = @UserId AND loginprovider = @LoginProvider AND name = @Name AND value = @ExpectedValue"
+				: "UPDATE AspNetUserTokens SET Value = @NewValue WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND Name = @Name AND Value COLLATE Latin1_General_BIN2 = @ExpectedValue";
+
+			// A dedicated connection, as SetTokenAsync uses: the ambient unit of work may already have been committed.
+			await using var conn = _connectionProvider.Create();
+			await conn.OpenAsync(cancellationToken);
+			return await conn.ExecuteAsync(new CommandDefinition(sql,
+				new { UserId = userId, LoginProvider = loginProvider, Name = name, ExpectedValue = expectedValue, NewValue = newValue },
+				cancellationToken: cancellationToken)) == 1;
+		}
+
+		public async Task<IReadOnlyList<UserTokenValue>> GetTokensPageAsync(string loginProvider, string name, string afterUserId, int take,
+			CancellationToken cancellationToken)
+		{
+			// The first page starts after "", which every user id sorts after; no nullable parameter for PostgreSQL to type.
+			var sql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
+				? @"SELECT userid AS UserId, value AS Value FROM aspnetusertokens
+					WHERE loginprovider = @LoginProvider AND name = @Name AND userid > @AfterUserId
+					ORDER BY userid LIMIT @Take"
+				: @"SELECT TOP (@Take) UserId, Value FROM AspNetUserTokens
+					WHERE LoginProvider = @LoginProvider AND Name = @Name AND UserId > @AfterUserId
+					ORDER BY UserId";
+
+			await using var conn = _connectionProvider.Create();
+			await conn.OpenAsync(cancellationToken);
+			var rows = await conn.QueryAsync<UserTokenValue>(new CommandDefinition(sql,
+				new { LoginProvider = loginProvider, Name = name, AfterUserId = afterUserId ?? string.Empty, Take = Math.Max(1, take) }, cancellationToken: cancellationToken));
+			return rows.ToList();
+		}
 	}
 }

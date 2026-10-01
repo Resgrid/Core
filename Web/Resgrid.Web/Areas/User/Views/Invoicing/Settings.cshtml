@@ -162,7 +162,7 @@
                                 {
                                     <form method="post" asp-controller="Invoicing" asp-action="DisconnectPayment" asp-route-area="User" asp-route-id="@connection.DepartmentPaymentConnectionId" style="display: inline;">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('@localizer["DisconnectConfirm"]');"><i class="fa fa-unlink"></i> @localizer["Disconnect"]</button>
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('@JsEncoder.Encode(localizer["DisconnectConfirm"])');"><i class="fa fa-unlink"></i> @localizer["Disconnect"]</button>
                                     </form>
                                     @if (!connection.IsUsable && op.AvailableInCluster)
                                     {

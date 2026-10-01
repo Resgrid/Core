@@ -21,7 +21,7 @@
                             data-retry="@profile.RetryExpectation"
                             data-certification="@profile.CertificationStatus"
                             data-identifier-required="@profile.IdentifierRequired.ToString().ToLowerInvariant()">
-                        @profile.ManufacturerName — @profile.Model (@profile.CertificationStatus)
+                        @profile.ManufacturerName — @profile.Model (@UnitTrackingDisplayHelper.GetLocalizedCertificationStatus(profile.CertificationStatus, localizer, commonLocalizer))
                     </option>
                 }
             </select>

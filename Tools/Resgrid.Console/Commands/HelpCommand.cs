@@ -21,6 +21,7 @@ namespace Resgrid.Console.Commands
 			logger.LogInformation("Resgrid Console Help");
 
 			logger.LogInformation("--AddHosts :: Adds a host to the Resgrid Console");
+			logger.LogInformation("--AuthenticatorSeeds --Encrypt|--Decrypt [--BatchSize=500] :: Encrypts every stored TOTP seed (gate on) or writes them back as plaintext before a rollback (gate off)");
 			logger.LogInformation("--ClearCache -- --DepartmentId=1 :: Clears the cache for a department");
 			logger.LogInformation("--DbUpdate || --UpdateDb :: Updates the Resgrid Database");
 			logger.LogInformation("--FeatureFlags :: Reads and sets feature toggles. Sub commands:");

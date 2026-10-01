@@ -153,4 +153,25 @@
   <data name="AdpEgressWarning" xml:space="preserve"><value>Я підтверджую, що надані відомості залишають Resgrid і можуть зберігатися телефонними операторами або одержувачами.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Дозволити захищений вміст</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Працівник Resgrid запросив доступ до захищеного виклику {0} для звернення до підтримки {1}. Доступ потребує незалежного схвалення та діє не більше 15 хвилин.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Зміна безпеки у вашому обліковому записі Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Вітаємо, {0}!</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Вітаємо!</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>Для двоетапного входу у ваш обліковий запис налаштовано застосунок автентифікації.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>Застосунок автентифікації вашого облікового запису замінено, а всі активні сеанси завершено.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>Застосунок автентифікації видалено з вашого облікового запису, тому двоетапний вхід вимкнено. Усі активні сеанси завершено.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Для вашого облікового запису створено нові коди відновлення. Старі коди більше не діють.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>Один із ваших кодів відновлення використано для входу або для початку відновлення облікового запису.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>До вашого облікового запису додано новий ключ доступу.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>З вашого облікового запису видалено ключ доступу.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Ключ доступу в Resgrid Responder тепер може підтверджувати входи у ваші інші застосунки Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Ключ доступу в Resgrid Responder більше не може підтверджувати входи у ваші інші застосунки Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Ви вказали в Resgrid Responder, що не запитували вхід. Цей вхід зупинено, а запити на підтвердження призупинено на 15 хвилин. Можливо, хтось знає ваш пароль, тож змініть його зараз.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Кілька запитів на підтвердження поспіль було відхилено або залишено без відповіді, тому запити на підтвердження призупинено на 15 хвилин.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Ваш обліковий запис відновлено за допомогою коду відновлення. Налаштовано новий застосунок автентифікації, створено нові коди відновлення, а всі активні сеанси завершено.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>На спільному планшеті в транспортному засобі або робочій станції налаштовано застосунок автентифікації чи ключ доступу. Якщо хтось інший міг бачити код налаштування або може користуватися цим пристроєм, замініть застосунок автентифікації або видаліть ключ доступу зі свого власного пристрою.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Про перевірку у вашому обліковому записі повідомлено, що її виконали не ви. Якщо з її допомогою було здійснено вхід на іншому пристрої, цей сеанс завершено. Змініть пароль і перегляньте свої способи входу.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Коли: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Де: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Якщо це були не ви, негайно скиньте пароль на {0}, а потім увійдіть і перевірте свої способи входу. Resgrid ніколи не просить код або пароль електронною поштою.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Це автоматичне сповіщення про безпеку вашого облікового запису Resgrid.</value></data>
 </root>

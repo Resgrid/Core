@@ -15,16 +15,20 @@ namespace Resgrid.Services
 		public string UserId => null;
 
 		public bool IsWorkloadCaller => true;
+
+		public Model.Security.ProtectedGrantSessionContext Session => null;
 	}
 
 	/// <summary>A fixed grant context for tests and one-off tool runs.</summary>
 	public sealed class FixedProtectedGrantContext : IProtectedGrantContext
 	{
-		public FixedProtectedGrantContext(string grantToken, bool isWorkloadCaller, string userId = null)
+		public FixedProtectedGrantContext(string grantToken, bool isWorkloadCaller, string userId = null,
+			Model.Security.ProtectedGrantSessionContext session = null)
 		{
 			GrantToken = grantToken;
 			IsWorkloadCaller = isWorkloadCaller;
 			UserId = userId;
+			Session = session;
 		}
 
 		public static FixedProtectedGrantContext Workload { get; } = new FixedProtectedGrantContext(null, true);
@@ -32,5 +36,6 @@ namespace Resgrid.Services
 		public string GrantToken { get; }
 		public string UserId { get; }
 		public bool IsWorkloadCaller { get; }
+		public Model.Security.ProtectedGrantSessionContext Session { get; }
 	}
 }

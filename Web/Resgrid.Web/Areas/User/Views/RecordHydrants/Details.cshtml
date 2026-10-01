@@ -53,7 +53,7 @@
 						@if (h.InService) { <input class="form-control input-sm" name="reason" maxlength="500" placeholder="@L["ReasonText"]" required /> }
 						<button class="btn btn-sm @(h.InService ? "btn-danger" : "btn-success")">@(h.InService ? L["SetOutOfService"].Value : L["SetInService"].Value)</button>
 					</form>
-					<form method="post" class="m-t-sm" asp-controller="RecordHydrants" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@L["DeleteHydrantConfirm"]');">
+					<form method="post" class="m-t-sm" asp-controller="RecordHydrants" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["DeleteHydrantConfirm"])');">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" />
 						<button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @L["DeleteHydrant"]</button>
 					</form>

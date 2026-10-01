@@ -847,4 +847,25 @@
   <data name="NearestUnitsNoPosition" xml:space="preserve">
     <value>Χωρίς θέση</value>
   </data>
+  <data name="SiteInfo" xml:space="preserve">
+    <value>Πληροφορίες Χώρου</value>
+  </data>
+  <data name="NoSiteInfo" xml:space="preserve">
+    <value>Καμία επαφή με πληροφορίες χώρου δεν είναι συνδεδεμένη με αυτή την κλήση.</value>
+  </data>
+  <data name="PremiseHazard" xml:space="preserve">
+    <value>Κίνδυνος Χώρου</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Κίνδυνοι Χώρου</value>
+  </data>
+  <data name="AlertNotes" xml:space="preserve">
+    <value>Σημειώσεις Ειδοποίησης</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>Δεν έχει καταχωριστεί προσχέδιο επέμβασης για αυτή την επαφή.</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>Αρχεία Χώρου</value>
+  </data>
 </root>

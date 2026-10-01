@@ -19,6 +19,12 @@
             <a asp-action="SecurityPolicy" class="btn btn-default">
                 <i class="fa fa-lock"></i> @localizer["SsoSecurityPolicyButton"]
             </a>
+            @if (Model.Configs.Any(c => c.IsEnabled))
+            {
+                <a asp-action="FederatedMfa" class="btn btn-default">
+                    <i class="fa fa-id-badge"></i> @localizer["FederatedMfaLink"]
+                </a>
+            }
             @if (!Model.HasOidcConfig)
             {
                 <a asp-action="SsoNew" asp-route-providerType="oidc" class="btn btn-primary">
@@ -497,7 +503,7 @@ Content-Type: application/scim+json
             var el = document.getElementById(fieldId);
             el.select();
             document.execCommand('copy');
-            toastr.success('@localizer["SsoCopiedToClipboard"]');
+            toastr.success('@JsEncoder.Encode(localizer["SsoCopiedToClipboard"])');
         }
 
         document.addEventListener('DOMContentLoaded', function () {

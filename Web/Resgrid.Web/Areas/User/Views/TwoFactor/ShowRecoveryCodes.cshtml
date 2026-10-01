@@ -23,6 +23,10 @@
                     <h5><i class="fa fa-key"></i> @localizer["SaveRecoveryCodesHeader"]</h5>
                 </div>
                 <div class="ibox-content">
+                    @if (Model.SignInAgainRequired)
+                    {
+                        <div class="alert alert-info">@localizer["SignInAgainNotice"]</div>
+                    }
                     <div class="alert alert-danger">
                         <strong>@localizer["SaveRecoveryCodesWarning"]</strong>
                     </div>
@@ -38,7 +42,14 @@
                         </div>
                     </div>
 
-                    <a asp-action="Index" class="btn btn-primary">@localizer["DoneButton"]</a>
+                    @if (Model.SignInAgainRequired)
+                    {
+                        <a asp-area="" asp-controller="Account" asp-action="LogOn" class="btn btn-primary">@localizer["SignInAgainButton"]</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" class="btn btn-primary">@localizer["DoneButton"]</a>
+                    }
                 </div>
             </div>
         </div>

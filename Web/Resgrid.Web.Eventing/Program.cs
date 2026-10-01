@@ -93,6 +93,7 @@ namespace Resgrid.Web.Eventing
 				{
 					services.AddHostedService<Worker>();
 					services.AddHostedService<Services.GeolocationVisibilitySync>();
+					services.AddHostedService<Services.SessionConnectionSweepService>();
 				});
 	}
 }

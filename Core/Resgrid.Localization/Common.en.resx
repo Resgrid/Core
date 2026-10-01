@@ -811,4 +811,40 @@
   <data name="JsonInputSchema" xml:space="preserve">
     <value>JSON schema (field names and types)</value>
   </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Use a passkey</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Approve with Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Use an authenticator code</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Open Resgrid Responder on your phone, check the request, and enter this number:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>Waiting for your approval in Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>The request was denied in Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>The request expired before it was approved. Start again.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>The passkey prompt was closed. Nothing was changed.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>The passkey could not be used. Try again, or use your authenticator app.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Use your identity provider</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Allow pop-ups for this site to verify with your identity provider.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
 </root>

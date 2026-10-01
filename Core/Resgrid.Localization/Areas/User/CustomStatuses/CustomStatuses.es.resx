@@ -315,4 +315,7 @@
   <data name="Completed" xml:space="preserve">
     <value>Completado</value>
   </data>
+  <data name="BaseType" xml:space="preserve">
+    <value>Tipo base</value>
+  </data>
 </root>

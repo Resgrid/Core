@@ -210,7 +210,6 @@
   <data name="WorkLogType" xml:space="preserve"><value>Arbete</value></data>
   <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
   <data name="StationHeader" xml:space="preserve"><value>Station</value></data>
-  <data name="UnitsLabel" xml:space="preserve"><value>Enheter</value></data>
   <data name="ConditionLabel" xml:space="preserve"><value>Tillstånd</value></data>
   <data name="CallNameLabel" xml:space="preserve"><value>Larmnamn</value></data>
   <data name="CallTypeLabel" xml:space="preserve"><value>Larmtyp</value></data>
@@ -305,9 +304,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>Inte utcheckad</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>Total tid</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>Enhetstider per larm</value>

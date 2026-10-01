@@ -55,7 +55,10 @@ namespace Resgrid.Tests.Services
 				usersService: new Mock<IUsersService>().Object, emailService: null, invitesService: invites.Object, userProfileService: null,
 				subscriptionsService: null, affiliateService: null, eventAggregator: null, emailMarketingProvider: null,
 				systemAuditsService: null, serviceProvider: null, departmentSsoService: null, secLocalizer: null,
-				userSessionService: null, externalIdentityLinkService: null, passwordRecoveryService: null, limitsService: _limits.Object);
+				userSessionService: null, externalIdentityLinkService: null, passwordRecoveryService: null, limitsService: _limits.Object,
+				mfaEvidenceService: null, securityNotices: null, mfaActivity: null, loginTransactions: null, passkeys: null, approvals: null,
+				mfaPolicy: null, twoFactorLocalizer: null, ssoBroker: null, ssoReturnTargets: null, dataProtection: null, adpStepUp: null, mfaState: null,
+				userStore: null, recoveries: null, passkeyRows: null, challenges: null, approvalRows: null, sharedSessions: null);
 		}
 
 		[Test]
@@ -132,7 +135,8 @@ namespace Resgrid.Tests.Services
 				externalIdentityLinkService: null, userSessionService: null, systemAuditsService: null,
 				departmentGroupsService: null, departmentSettingsService: null, passwordRecoveryService: null,
 				eventAggregator: null, protectedReadService: null, businessOperationsAccess: null,
-				limitsService: _limits.Object, profileLocalizer: strings.Object)
+				limitsService: _limits.Object, profileLocalizer: strings.Object, mfaPolicyService: null, mfaEvidenceService: null, ssoBroker: null,
+				ssoReturnTargets: null)
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				TempData = new TempDataDictionary(http, Mock.Of<ITempDataProvider>())
@@ -285,7 +289,10 @@ namespace Resgrid.Tests.Services
 			_config = new DepartmentSsoConfig { DepartmentId = Dept, DepartmentSsoConfigId = "cfg-sso", AutoProvisionUsers = true };
 			_service = new DepartmentSsoService(new Mock<IDepartmentSsoConfigRepository>().Object, new Mock<IDepartmentSecurityPolicyRepository>().Object,
 				_members.Object, new Mock<IDepartmentsService>().Object, new Mock<IUserProfileService>().Object, new Mock<IEncryptionService>().Object,
-				new Mock<ICacheProvider>().Object, new Mock<IExternalIdentityLinkService>().Object, _limits.Object);
+				new Mock<ICacheProvider>().Object, new Mock<IExternalIdentityLinkService>().Object, _limits.Object,
+				new Mock<Resgrid.Model.Repositories.Queries.IUnitOfWork>().Object, new Mock<IDepartmentDataProtectionPolicyRepository>().Object,
+				new Lazy<IDepartmentDataProtectionService>(() => new Mock<IDepartmentDataProtectionService>().Object), Mock.Of<IUserSessionMfaEvidenceRepository>(),
+				Mock.Of<IAuditLogsRepository>());
 		}
 
 		private static ClaimsPrincipal External() => new ClaimsPrincipal(new ClaimsIdentity(new[]

@@ -993,4 +993,25 @@
   <data name="NearestUnitsNoPosition" xml:space="preserve">
     <value>Sin posición</value>
   </data>
+  <data name="SiteInfo" xml:space="preserve">
+    <value>Información del sitio</value>
+  </data>
+  <data name="NoSiteInfo" xml:space="preserve">
+    <value>No hay contactos con información del sitio vinculados a esta llamada.</value>
+  </data>
+  <data name="PremiseHazard" xml:space="preserve">
+    <value>Peligro del inmueble</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Peligros del inmueble</value>
+  </data>
+  <data name="AlertNotes" xml:space="preserve">
+    <value>Notas de alerta</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>No se ha registrado un plan previo al incidente para este contacto.</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>Archivos del sitio</value>
+  </data>
 </root>

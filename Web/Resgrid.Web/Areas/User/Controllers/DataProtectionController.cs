@@ -67,9 +67,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IProtectedDataBrokerClient brokerClient, IDepartmentsService departmentsService,
 			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService, IAdpReleaseService adpRelease, Resgrid.Model.Repositories.IAdpAccessStore adpAccess, Resgrid.Model.Repositories.IAdpAuditRepository adpAudit,
 			ICacheProvider cacheProvider, IEventAggregator eventAggregator, IProtectedWorkflowService protectedWorkflows,
-			IChatbotDepartmentConfigService chatbotConfig)
+			IChatbotDepartmentConfigService chatbotConfig, IMfaEvidenceService mfaEvidence, IMfaActivityService mfaActivity,
+			IAdpStepUpService adpStepUp, IMfaCredentialStateService credentialStates, IMfaApprovalService approvals)
 		{
+			_approvals = approvals;
+			_adpStepUp = adpStepUp;
+			_credentialStates = credentialStates;
+			_mfaActivity = mfaActivity;
 			_chatbotConfig = chatbotConfig;
+			_mfaEvidence = mfaEvidence;
 			_protectedWorkflows = protectedWorkflows;
 			_eventAggregator = eventAggregator;
 			_dataProtectionService = dataProtectionService;
@@ -84,6 +90,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_adpAudit = adpAudit;
 			_cacheProvider = cacheProvider;
 		}
+
+		private readonly IMfaEvidenceService _mfaEvidence;
+		private readonly IMfaActivityService _mfaActivity;
+		private readonly IAdpStepUpService _adpStepUp;
+		private readonly IMfaApprovalService _approvals;
+		private readonly IMfaCredentialStateService _credentialStates;
 
 		[HttpGet]
 		public async Task<IActionResult> ReleaseSettings()
@@ -103,7 +115,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				!acknowledged && (smsMode != 0 || voiceMode != 0 || supportEnabled)) return Unauthorized();
 			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId, bypassCache: true);
 			if (policy == null || _grantService.ValidateGrant(grantToken, DepartmentId, policy.PolicyEpoch, ProtectedDataGrantScopes.Read,
-				out var grant) != ProtectedDataGrantValidationOutcome.Valid || grant.UserId != UserId || grant.StepUpExempt ||
+				out var grant) != ProtectedDataGrantValidationOutcome.Valid || grant.UserId != UserId ||
+				await Resgrid.Services.ProtectedGrantBinding.CheckAsync(grant, UserId, HttpProtectedGrantContext.SessionOf(HttpContext), policy.StepUpWindowMinutes,
+					_credentialStates) != Resgrid.Model.Security.ProtectedGrantBindingOutcome.Bound || grant.StepUpExempt ||
 				grant.MfaAtUtc < DateTime.UtcNow.AddMinutes(-5) || grant.MfaAtUtc > DateTime.UtcNow.AddSeconds(30)) return Unauthorized();
 			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "application", Operation = "release-settings",
 				Outcome = "requested", ActorId = UserId, PolicyEpoch = policy.PolicyEpoch });
@@ -259,7 +273,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.Adp)]
 		public async Task<IActionResult> QueueEnrollment([FromForm] QueueEnrollmentInputModel input,
 			CancellationToken cancellationToken)
 		{
@@ -305,7 +319,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[AllowDuringDepartmentLock]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.Adp)]
 		public async Task<IActionResult> CancelQueuedEnrollment(CancellationToken cancellationToken)
 		{
 			var outcome = await _dataProtectionService.CancelQueuedEnrollmentAsync(DepartmentId, UserId, cancellationToken);
@@ -319,7 +333,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[AllowDuringDepartmentLock]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.Adp)]
 		public async Task<IActionResult> RevokeOffboarding(CancellationToken cancellationToken)
 		{
 			var outcome = await _dataProtectionService.RevokeOffboardingAsync(DepartmentId, UserId, cancellationToken);
@@ -345,7 +359,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.Adp)]
 		public async Task<IActionResult> SaveStepUpExemptions([FromForm] int exemptions, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -391,47 +405,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[AllowDuringDepartmentLock]
 		public async Task<IActionResult> RequestGrant()
 		{
-			// The exemption answer and the epoch stamped on the grant come from ONE policy snapshot.
-			// Read separately, a managing member revoking the Web exemption between the two reads
-			// would have the check pass against the old policy while the grant took the epoch that
-			// revocation bumped — leaving a step-up-exempt grant alive after the revocation.
-			var decision = await _dataProtectionService.GetStepUpDecisionForClientAsync(DepartmentId,
-				UserSessionClientApplication.Web);
-
-			if (decision.StepUpRequired)
-				return Json(new { success = false, error = "step_up_required" });
-
-			if (!_grantService.CanIssueGrants)
-				return Json(new { success = false, error = "grants_not_configured" });
-
-			var windowMinutes = decision.StepUpWindowMinutes > 0
-				? decision.StepUpWindowMinutes
-				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
-			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
-
-			var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
+			// The exemption answer and the epoch stamped on the grant come from one policy snapshot inside the issuer, so a
+			// revocation between two reads cannot leave a step-up-exempt grant alive after it.
+			var caller = StepUpCaller(await _userManager.FindByIdAsync(UserId));
+			var issued = await _adpStepUp.IssueExemptAsync(caller);
+			if (issued.Outcome == Model.Security.AdpGrantOutcome.StepUpRequired)
 			{
-				UserId = UserId,
-				DepartmentId = DepartmentId,
-				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
-				ClientApp = (int)UserSessionClientApplication.Web,
-				PolicyEpoch = decision.PolicyEpoch,
-				WindowMinutes = windowMinutes,
-				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
-				MfaAtUtc = DateTime.UtcNow,
-				StepUpExempt = true
-			});
-			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
-				Operation = "grant-issued", Outcome = "step-up-exempt", ActorId = UserId, CorrelationId = issued.GrantId });
+				// This session's own recent sign-in or unlock MFA, where the department accepts reusing it (plan section 9.1).
+				var reused = await _adpStepUp.IssueFromRecentEvidenceAsync(caller);
+				if (reused.Succeeded)
+					issued = reused;
+			}
 
-			return Json(new
-			{
-				success = true,
-				grantToken = issued.Token,
-				grantId = issued.GrantId,
-				expiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
-				windowMinutes
-			});
+			return GrantJson(issued);
 		}
 
 		[HttpPost]
@@ -453,45 +439,148 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _userManager.GetTwoFactorEnabledAsync(user))
 				return Json(new { success = false, error = "mfa_not_enrolled" });
 
+			// ADP step-up shares the account lockout with sign-in and every other TOTP surface (passkey plan section 7.5 rule 6).
+			if (await _userManager.IsLockedOutAsync(user))
+				return Json(new { success = false, error = "too_many_attempts" });
+
 			var valid = await _userManager.VerifyTwoFactorTokenAsync(user,
 				_userManager.Options.Tokens.AuthenticatorTokenProvider, code.Trim());
 			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
 				Operation = "mfa-verify", Outcome = valid ? "verified" : "denied", ActorId = UserId });
 			if (!valid)
-				return Json(new { success = false, error = "invalid_totp" });
-
-			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
-			var windowMinutes = policy?.StepUpWindowMinutes > 0
-				? policy.StepUpWindowMinutes
-				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
-			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
-
-			if (!_grantService.CanIssueGrants)
-				return Json(new { success = false, error = "grants_not_configured" });
-
-			var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
 			{
-				UserId = UserId,
-				DepartmentId = DepartmentId,
-				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
-				ClientApp = (int)UserSessionClientApplication.Web,
-				PolicyEpoch = policy?.PolicyEpoch ?? 0,
-				WindowMinutes = windowMinutes,
-				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
-				MfaAtUtc = DateTime.UtcNow
-			});
-			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
-				Operation = "grant-issued", Outcome = "mfa-verified", ActorId = UserId, CorrelationId = issued.GrantId });
+				await _userManager.AccessFailedAsync(user);
+				await _mfaActivity.RecordAsync(new Model.Security.MfaActivityEntry
+				{
+					UserId = user.Id, Method = Model.Security.MfaEvidenceMethod.Totp, Purpose = Model.Security.MfaEvidencePurpose.AdpStepUp, Successful = false,
+					ClientApplication = UserSessionClientApplication.Web, DepartmentId = DepartmentId,
+					SessionId = Model.Security.MfaEvidence.TrackedSessionId(MfaEvidenceSession.KeyFor(User, HttpContext))
+				});
+				return Json(new { success = false, error = "invalid_totp" });
+			}
 
+			await _userManager.ResetAccessFailedCountAsync(user);
+
+			// The verified code becomes AdpStepUp evidence and, through the one issuer every method shares, a grant whose
+			// expiry runs from this verification (passkey plan sections 8.1 and 9.2).
+			return GrantJson(await _adpStepUp.IssueForTotpAsync(StepUpCaller(user), DateTime.UtcNow));
+		}
+
+		/// <summary>
+		/// The ways this user can verify for this department's protected data now (passkey plan section 7.5 rule 5), for the
+		/// reveal dialog: the methods it has that the department accepts, and which to show first. Advisory only.
+		/// </summary>
+		[HttpGet]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> StepUpMethods(CancellationToken cancellationToken)
+		{
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null)
+				return Json(new { success = false, error = "protected_access_denied" });
+
+			var choice = await _adpStepUp.GetMethodChoiceAsync(StepUpCaller(user), await _userManager.GetTwoFactorEnabledAsync(user), cancellationToken);
 			return Json(new
 			{
 				success = true,
-				grantToken = issued.Token,
-				grantId = issued.GrantId,
-				expiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
-				windowMinutes
+				methods = choice.AllowedMethods.Where(choice.EnrolledMethods.Contains).ToList(),
+				preferred = choice.Preferred
 			});
 		}
+
+		/// <summary>Assertion options for a Web passkey, bound to this session and department's protected data.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> PasskeyOptions(CancellationToken cancellationToken)
+		{
+			var start = await _adpStepUp.BeginPasskeyAsync(StepUpCaller(await _userManager.FindByIdAsync(UserId)), cancellationToken);
+			return start.Succeeded
+				? Json(new { success = true, requestId = start.RequestId, options = start.OptionsJson })
+				: Json(new { success = false, error = Model.Security.PasskeyOutcomes.ErrorCode(start.Outcome) });
+		}
+
+		/// <summary>Verifies the passkey and returns a <c>passkey</c> grant, held in the page's memory only.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> VerifyPasskey([FromForm] string requestId, [FromForm] string credential, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(requestId) || string.IsNullOrWhiteSpace(credential))
+				return Json(new { success = false, error = "invalid_request" });
+
+			return GrantJson(await _adpStepUp.CompletePasskeyAsync(StepUpCaller(await _userManager.FindByIdAsync(UserId)), requestId, credential,
+				cancellationToken));
+		}
+
+		/// <summary>Asks the user's Responder to approve access to this department's protected data; returns the number to show.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> RequestApproval(CancellationToken cancellationToken)
+		{
+			var start = await _adpStepUp.RequestApprovalAsync(StepUpCaller(await _userManager.FindByIdAsync(UserId)), cancellationToken);
+			return start.Succeeded
+				? Json(new { success = true, approvalRequestId = start.ApprovalRequestId, matchNumber = start.MatchNumber, expiresIn = start.ExpiresInSeconds })
+				: Json(new { success = false, error = Model.Security.MfaApprovalOutcomes.ErrorCode(start.Outcome) ?? "approval_unavailable" });
+		}
+
+		/// <summary>The state of this session's own approval request: pending, approved, denied, expired or canceled.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> ApprovalStatus([FromForm] string approvalRequestId, CancellationToken cancellationToken)
+		{
+			var session = HttpProtectedGrantContext.SessionOf(HttpContext);
+			if (session == null)
+				return Json(new { success = false, error = Model.Security.MfaApprovalOutcomes.ErrorCode(Model.Security.MfaApprovalOutcome.SessionRequired) });
+
+			var found = await _approvals.GetForRequesterAsync(approvalRequestId, Model.Security.MfaApprovalRequesterKind.Session, session.SessionId,
+				cancellationToken);
+			return found.Succeeded
+				? Json(new { success = true, state = Model.Security.MfaApprovalOutcomes.StateName(found.Request.EffectiveState(DateTime.UtcNow)) })
+				: Json(new { success = false, error = Model.Security.MfaApprovalOutcomes.ErrorCode(found.Outcome) ?? "approval_unavailable" });
+		}
+
+		/// <summary>Uses the approved request once and returns a <c>passkey_approval</c> grant.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> CompleteApproval([FromForm] string approvalRequestId, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(approvalRequestId))
+				return Json(new { success = false, error = "invalid_request" });
+
+			return GrantJson(await _adpStepUp.CompleteApprovalAsync(StepUpCaller(await _userManager.FindByIdAsync(UserId)), approvalRequestId,
+				cancellationToken));
+		}
+
+		/// <summary>The caller as the grant issuer sees it: this user, department and validated Web session (never client-supplied).</summary>
+		private Model.Security.AdpStepUpCaller StepUpCaller(IdentityUser user = null) => new()
+		{
+			UserId = UserId,
+			UserName = user?.UserName,
+			DepartmentId = DepartmentId,
+			Session = HttpProtectedGrantContext.SessionOf(HttpContext),
+			LegacySessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
+			ClientApplication = UserSessionClientApplication.Web,
+			AccountAuthenticationGeneration = user?.AuthenticationGeneration ?? 0,
+			EvidenceSessionKey = MfaEvidenceSession.KeyFor(User, HttpContext),
+			IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+			AuditSystem = SystemAuditSystems.Website
+		};
+
+		/// <summary>The reveal module's JSON shape: a grant held in page memory only, or a value-free error code.</summary>
+		private IActionResult GrantJson(Model.Security.AdpGrantIssue issued) =>
+			issued.Succeeded
+				? Json(new
+				{
+					success = true,
+					grantToken = issued.Token,
+					grantId = issued.GrantId,
+					expiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
+					windowMinutes = issued.WindowMinutes
+				})
+				: Json(new { success = false, error = issued.ErrorCode });
 
 		private IActionResult MapOutcome(DepartmentDataProtectionEnrollmentResult outcome)
 		{

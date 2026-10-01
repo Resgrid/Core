@@ -95,7 +95,7 @@ var resgrid;
 
                     if (isAdmin) {
                         var nonGroupLabel = (typeof resgridShiftsI18n !== 'undefined' && resgridShiftsI18n.nonGroupPersonnel) ? resgridShiftsI18n.nonGroupPersonnel : 'Non - Group Personnel';
-                        html = '<div class="form-group"><label class="control-label">' + nonGroupLabel + '</label><div class="controls"><div class="col-xs-6"><select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select></div></div></div>';
+                        html = '<div class="form-group"><label class="control-label">' + $('<div>').text(nonGroupLabel).html() + '</label><div class="controls"><div class="col-xs-6"><select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select></div></div></div>';
                     }
                     for (var i = 0; i < data.length; i++) {
                         if (isAdmin || data[i].CanManage) {

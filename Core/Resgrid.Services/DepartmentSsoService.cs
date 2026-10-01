@@ -43,6 +43,11 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly ILimitsService _limitsService;
+		private readonly Resgrid.Model.Repositories.Queries.IUnitOfWork _unitOfWork;
+		private readonly IDepartmentDataProtectionPolicyRepository _dataProtectionPolicyRepository;
+		private readonly Lazy<IDepartmentDataProtectionService> _dataProtectionService;
+		private readonly IUserSessionMfaEvidenceRepository _mfaEvidence;
+		private readonly IAuditLogsRepository _auditLogs;
 
 		public DepartmentSsoService(
 			IDepartmentSsoConfigRepository ssoConfigRepository,
@@ -53,8 +58,18 @@ namespace Resgrid.Services
 			IEncryptionService encryptionService,
 			ICacheProvider cacheProvider,
 			IExternalIdentityLinkService externalIdentityLinkService,
-			ILimitsService limitsService)
+			ILimitsService limitsService,
+			Resgrid.Model.Repositories.Queries.IUnitOfWork unitOfWork,
+			IDepartmentDataProtectionPolicyRepository dataProtectionPolicyRepository,
+			Lazy<IDepartmentDataProtectionService> dataProtectionService,
+			IUserSessionMfaEvidenceRepository mfaEvidence,
+			IAuditLogsRepository auditLogs)
 		{
+			_mfaEvidence = mfaEvidence;
+			_auditLogs = auditLogs;
+			_unitOfWork = unitOfWork;
+			_dataProtectionPolicyRepository = dataProtectionPolicyRepository;
+			_dataProtectionService = dataProtectionService;
 			_ssoConfigRepository = ssoConfigRepository;
 			_securityPolicyRepository = securityPolicyRepository;
 			_departmentMembersRepository = departmentMembersRepository;
@@ -104,7 +119,10 @@ namespace Resgrid.Services
 				config.EncryptedSigningCertificate = EncryptNewSecret(config.EncryptedSigningCertificate, config.DepartmentId, departmentCode);
 				config.EncryptedScimBearerToken = EncryptNewSecret(config.EncryptedScimBearerToken, config.DepartmentId, departmentCode);
 
-				return await _ssoConfigRepository.InsertAsync(config, cancellationToken);
+				var inserted = await _ssoConfigRepository.InsertAsync(config, cancellationToken);
+				if (!string.IsNullOrWhiteSpace(inserted.FederatedMfaMappingJson))
+					inserted.FederatedMfaMappingVersion = await AdvanceFederatedMfaMappingAsync(inserted.DepartmentSsoConfigId, 0, cancellationToken);
+				return inserted;
 			}
 
 			// Blank secret fields mean "keep the stored value". The generic repository updates
@@ -118,8 +136,79 @@ namespace Resgrid.Services
 			config.EncryptedScimBearerToken = EncryptUpdatedSecret(config.EncryptedScimBearerToken, existing.EncryptedScimBearerToken, config.DepartmentId, departmentCode);
 			config.UpdatedOn = DateTime.UtcNow;
 
-			return await _ssoConfigRepository.UpdateAsync(config, cancellationToken);
+			var updated = await _ssoConfigRepository.UpdateAsync(config, cancellationToken);
+
+			// A provider step-up test proves one mapping against one issuer and client: changing either needs a new test,
+			// and what the old version verified stops counting (plan section 7.8).
+			if (FederatedMfaIdentityChanged(existing, config) &&
+				(!string.IsNullOrWhiteSpace(existing.FederatedMfaMappingJson) || !string.IsNullOrWhiteSpace(config.FederatedMfaMappingJson)))
+				updated.FederatedMfaMappingVersion = await AdvanceFederatedMfaMappingAsync(existing.DepartmentSsoConfigId,
+					existing.FederatedMfaMappingVersion, cancellationToken);
+
+			return updated;
 		}
+
+		/// <summary>Every rule the policy sets, as JSON for its audit record; the same value means nothing changed.</summary>
+		private static string AuditSnapshot(DepartmentSecurityPolicy policy) =>
+			System.Text.Json.JsonSerializer.Serialize(new
+			{
+				policy.RequireMfa, policy.RequireSso, policy.SessionTimeoutMinutes, policy.MaxConcurrentSessions, policy.AllowedIpRanges,
+				policy.PasswordExpirationDays, policy.MinPasswordLength, policy.RequirePasswordComplexity, policy.DataClassificationLevel,
+				policy.AllowPasskeysForLoginMfa, policy.AllowPasskeysForAdp, policy.AllowFederatedMfaForLoginMfa, policy.AllowFederatedMfaForAdp,
+				policy.AllowResponderApproval, policy.AcceptRecentLoginMfaForAdp, policy.AcceptRecentUnlockMfaForAdp,
+				policy.SharedIdleLockMinutes, policy.SharedShiftHours, policy.SharedModeRequiredApps
+			});
+
+		private static bool FederatedMfaIdentityChanged(DepartmentSsoConfig existing, DepartmentSsoConfig config) =>
+			!string.Equals(existing.FederatedMfaMappingJson, config.FederatedMfaMappingJson, StringComparison.Ordinal) ||
+			!string.Equals(existing.Authority, config.Authority, StringComparison.Ordinal) ||
+			!string.Equals(existing.ClientId, config.ClientId, StringComparison.Ordinal) ||
+			!string.Equals(existing.EntityId, config.EntityId, StringComparison.Ordinal) ||
+			!string.Equals(existing.IdpSsoUrl, config.IdpSsoUrl, StringComparison.Ordinal) ||
+			!string.Equals(existing.EncryptedIdpCertificate, config.EncryptedIdpCertificate, StringComparison.Ordinal);
+
+		/// <summary>Advances the mapping version (clearing its test) and retires the evidence the previous version produced.</summary>
+		private async Task<long> AdvanceFederatedMfaMappingAsync(string configId, long previousVersion, CancellationToken cancellationToken)
+		{
+			var version = await _ssoConfigRepository.AdvanceFederatedMfaMappingVersionAsync(configId, cancellationToken);
+			if (previousVersion > 0)
+			{
+				try
+				{
+					await _mfaEvidence.RevokeByFactorReferenceAsync(Resgrid.Model.Security.FederatedMfaMapping.FactorReferenceFor(configId, previousVersion),
+						DateTime.UtcNow, cancellationToken);
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException))
+				{
+					// The version already advanced, so nothing new can rely on the old mapping; the old evidence expires on its own.
+					Logging.LogException(ex, "Provider step-up evidence for a changed mapping could not be revoked.");
+				}
+			}
+
+			return version;
+		}
+
+		// ── Provider step-up (passkey plan section 7.8) ───────────────────────
+
+		public async Task<DepartmentSsoConfig> GetTestedFederatedMfaConfigAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			var config = (await _ssoConfigRepository.GetAllByDepartmentIdAsync(departmentId))?.FirstOrDefault(c => c.IsEnabled);
+			return Resgrid.Model.Security.FederatedMfaMapping.IsTested(config) ? config : null;
+		}
+
+		public async Task<bool> IsFederatedMfaAvailableAsync(int departmentId, string userId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || await GetTestedFederatedMfaConfigAsync(departmentId, cancellationToken) == null)
+				return false;
+
+			// Offered to members signed in through this department's provider before; the callback still checks the identity.
+			var members = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
+			return members?.Any(member => string.Equals(member.UserId, userId, StringComparison.OrdinalIgnoreCase) &&
+				!string.IsNullOrWhiteSpace(member.ExternalSsoId) && !member.IsDeleted) == true;
+		}
+
+		public Task<bool> RecordFederatedMfaTestAsync(string departmentSsoConfigId, long version, string userId, CancellationToken cancellationToken = default) =>
+			_ssoConfigRepository.TryRecordFederatedMfaTestAsync(departmentSsoConfigId, version, userId, DateTime.UtcNow, cancellationToken);
 
 		public async Task<bool> DeleteSsoConfigAsync(int departmentId, SsoProviderType providerType, CancellationToken cancellationToken = default)
 		{
@@ -138,10 +227,73 @@ namespace Resgrid.Services
 			return await _securityPolicyRepository.GetByDepartmentIdAsync(departmentId);
 		}
 
-		public async Task<DepartmentSecurityPolicy> SaveSecurityPolicyAsync(DepartmentSecurityPolicy policy, CancellationToken cancellationToken = default)
+		public Task<DepartmentSecurityPolicy> SaveSecurityPolicyAsync(DepartmentSecurityPolicy policy, CancellationToken cancellationToken = default) =>
+			SaveSecurityPolicyAsync(policy, null, cancellationToken);
+
+		/// <summary>
+		/// Saves the policy and, in the same transaction, advances what its change invalidates (passkey plan section 10.1):
+		/// MfaPolicyVersion when the sign-in MFA rules move, and the ADP PolicyEpoch (revoking grants) when the rules for
+		/// grants move. The stored row is read under an update lock first, so concurrent changes are versioned one after
+		/// the other, and the version is always the server's, never the caller's. A change is written to the department's
+		/// audit log in the same transaction, so there is no change without its record and no record of a change that
+		/// rolled back. The ADP cache is cleared after commit, so no reader can re-cache the old epoch.
+		/// </summary>
+		public async Task<DepartmentSecurityPolicy> SaveSecurityPolicyAsync(DepartmentSecurityPolicy policy, string changedByUserId,
+			CancellationToken cancellationToken = default)
 		{
+			ArgumentNullException.ThrowIfNull(policy);
 			policy.UpdatedOn = DateTime.UtcNow;
-			return await _securityPolicyRepository.SaveOrUpdateAsync(policy, cancellationToken);
+
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			bool adpChanged;
+			DepartmentSecurityPolicy saved;
+			try
+			{
+				// No stored row behaves as the defaults, so a first save that departs from them still advances.
+				var stored = await _securityPolicyRepository.GetByDepartmentIdForUpdateAsync(policy.DepartmentId, cancellationToken)
+					?? new DepartmentSecurityPolicy { DepartmentId = policy.DepartmentId };
+				var mfaChanged = DepartmentSecurityPolicyDecisions.MfaPolicyChanged(stored, policy);
+				adpChanged = DepartmentSecurityPolicyDecisions.AdpMethodPolicyChanged(stored, policy);
+
+				saved = await _securityPolicyRepository.SaveOrUpdateAsync(policy, cancellationToken);
+				saved.MfaPolicyVersion = mfaChanged
+					? await _securityPolicyRepository.IncrementMfaPolicyVersionAsync(policy.DepartmentId, cancellationToken)
+					: stored.MfaPolicyVersion;
+				if (adpChanged)
+					await _dataProtectionPolicyRepository.IncrementPolicyEpochAsync(policy.DepartmentId, changedByUserId, cancellationToken);
+
+				var before = AuditSnapshot(stored);
+				var after = AuditSnapshot(policy);
+				if (!string.Equals(before, after, StringComparison.Ordinal))
+					await _auditLogs.SaveOrUpdateAsync(new AuditLog
+					{
+						DepartmentId = policy.DepartmentId,
+						ObjectDepartmentId = policy.DepartmentId,
+						UserId = changedByUserId,
+						LogType = (int)AuditLogTypes.DepartmentSecurityPolicyChanged,
+						LoggedOn = DateTime.UtcNow,
+						Successful = true,
+						ObjectId = saved.DepartmentSecurityPolicyId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+						Message = "SecurityPolicyChanged",
+						Data = $"{{\"before\":{before},\"after\":{after},\"mfaPolicyVersion\":{saved.MfaPolicyVersion},\"adpEpochAdvanced\":{(adpChanged ? "true" : "false")}}}",
+						ServerName = Environment.MachineName
+					}, cancellationToken);
+
+				if (owns)
+					_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			if (adpChanged)
+				await _dataProtectionService.Value.InvalidateProtectionCacheAsync(policy.DepartmentId);
+
+			return saved;
 		}
 
 		// ── Token Validation ──────────────────────────────────────────────────
@@ -167,6 +319,51 @@ namespace Resgrid.Services
 				Logging.LogException(ex);
 				return null;
 			}
+		}
+
+		public async Task<Resgrid.Model.Security.SsoIdentityAssertion> ValidateBrokeredSamlResponseAsync(int departmentId, string base64SamlResponse,
+			string departmentCode, string expectedRequestId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(expectedRequestId))
+				return null;
+
+			try
+			{
+				var config = await _ssoConfigRepository.GetByDepartmentIdAndTypeAsync(departmentId, SsoProviderType.Saml2);
+				if (config == null || !config.IsEnabled)
+					return null;
+
+				var (principal, authnInstant, authnContexts) = await ValidateSamlResponseCoreAsync(base64SamlResponse, config, departmentCode, expectedRequestId);
+				return principal == null
+					? null
+					: new Resgrid.Model.Security.SsoIdentityAssertion { Principal = principal, AuthenticatedAtUtc = authnInstant, AuthnContextClassRefs = authnContexts };
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return null;
+			}
+		}
+
+		public async Task<string> FindLinkedUserIdAsync(int departmentId, ClaimsPrincipal externalClaims, DepartmentSsoConfig config,
+			CancellationToken cancellationToken = default)
+		{
+			if (externalClaims == null || config == null || config.DepartmentId != departmentId)
+				return null;
+
+			var mapping = ResolveAttributeMapping(config.AttributeMappingJson);
+			var externalSubject = GetMappedClaim(externalClaims, mapping, "subject",
+				ClaimTypes.NameIdentifier, "sub", "nameidentifier");
+			if (string.IsNullOrWhiteSpace(externalSubject))
+				return null;
+
+			var link = await _externalIdentityLinkService.GetBySubjectAsync(config.DepartmentSsoConfigId, externalSubject, cancellationToken);
+			if (link != null)
+				return link.DepartmentId == departmentId ? link.UserId : null;
+
+			// Accounts linked before the durable binding table existed.
+			var members = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
+			return members?.FirstOrDefault(candidate => string.Equals(candidate.ExternalSsoId, externalSubject, StringComparison.Ordinal))?.UserId;
 		}
 
 		// ── User Provisioning ─────────────────────────────────────────────────
@@ -592,19 +789,23 @@ namespace Resgrid.Services
 			}
 		}
 
-		private static TokenValidationParameters BuildOidcValidationParameters(DepartmentSsoConfig config, OpenIdConnectConfiguration oidcConfiguration)
+		private static TokenValidationParameters BuildOidcValidationParameters(DepartmentSsoConfig config, OpenIdConnectConfiguration oidcConfiguration) =>
+			BuildOidcValidationParameters(config.ClientId, oidcConfiguration.Issuer, oidcConfiguration.SigningKeys);
+
+		/// <summary>The id_token checks shared by the legacy exchange and brokered SSO: issuer, audience, lifetime, signature.</summary>
+		internal static TokenValidationParameters BuildOidcValidationParameters(string clientId, string issuer, IEnumerable<SecurityKey> signingKeys)
 		{
 			return new TokenValidationParameters
 			{
 				ValidateIssuer = true,
-				ValidIssuer = oidcConfiguration.Issuer,
+				ValidIssuer = issuer,
 				ValidateAudience = true,
-				ValidAudience = config.ClientId,
+				ValidAudience = clientId,
 				ValidateLifetime = true,
 				RequireExpirationTime = true,
 				ValidateIssuerSigningKey = true,
 				RequireSignedTokens = true,
-				IssuerSigningKeys = oidcConfiguration.SigningKeys,
+				IssuerSigningKeys = signingKeys,
 				ClockSkew = TokenClockSkew
 			};
 		}
@@ -613,58 +814,113 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				if (string.IsNullOrWhiteSpace(base64SamlResponse) || base64SamlResponse.Length > 2_800_000 ||
-					string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate) || string.IsNullOrWhiteSpace(config.EntityId) ||
-					string.IsNullOrWhiteSpace(config.AssertionConsumerServiceUrl))
-					return null;
-
-				var samlBytes = Convert.FromBase64String(base64SamlResponse);
-				if (samlBytes.Length > 2_000_000)
-					return null;
-
-				var document = LoadSamlDocument(samlBytes);
-				var response = document.DocumentElement;
-				if (response == null || response.LocalName != "Response" || response.NamespaceURI != "urn:oasis:names:tc:SAML:2.0:protocol")
-					return null;
-
-				var namespaces = new XmlNamespaceManager(document.NameTable);
-				namespaces.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
-				namespaces.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
-				namespaces.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
-
-				var statusCode = response.SelectSingleNode("./samlp:Status/samlp:StatusCode", namespaces) as XmlElement;
-				if (statusCode?.GetAttribute("Value") != "urn:oasis:names:tc:SAML:2.0:status:Success")
-					return null;
-
-				var assertionNodes = response.SelectNodes("./saml:Assertion", namespaces);
-				if (assertionNodes?.Count != 1 || assertionNodes[0] is not XmlElement assertion || !HasUniqueSamlIds(document))
-					return null;
-
-				var certificatePem = _encryptionService.DecryptForDepartment(
-					config.EncryptedIdpCertificate, config.DepartmentId, departmentCode);
-				using var certificate = X509Certificate2.CreateFromPem(certificatePem);
-
-				var now = DateTime.UtcNow;
-				if (now + TokenClockSkew < certificate.NotBefore.ToUniversalTime() || now - TokenClockSkew >= certificate.NotAfter.ToUniversalTime())
-					return null;
-
-				if (!ValidateSamlSignature(document, response, assertion, namespaces, certificate) ||
-					!ValidateSamlDestinationAndConditions(response, assertion, namespaces, config, now, out var assertionExpiresOn))
-					return null;
-
-				var assertionId = assertion.GetAttribute("ID");
-				if (string.IsNullOrWhiteSpace(assertionId) ||
-					!await MarkSamlAssertionConsumedAsync(config.DepartmentSsoConfigId, assertionId, assertionExpiresOn, now))
-					return null;
-
-				var claims = ExtractSamlClaims(assertion, namespaces);
-				return claims.Count == 0 ? null : new ClaimsPrincipal(new ClaimsIdentity(claims, "SAML2"));
+				// The legacy relay accepts IdP-initiated (unsolicited) responses; brokered SSO never does.
+				return (await ValidateSamlResponseCoreAsync(base64SamlResponse, config, departmentCode, expectedInResponseTo: null)).Principal;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 				return null;
 			}
+		}
+
+		/// <summary>
+		/// Every SAML check, and when <paramref name="expectedInResponseTo"/> is set, the binding to that AuthnRequest: the
+		/// signed element must carry it (the Response when the Response is signed, otherwise the assertion's bearer
+		/// SubjectConfirmationData), and no <c>InResponseTo</c> anywhere may name another request.
+		/// </summary>
+		private async Task<(ClaimsPrincipal Principal, DateTime? AuthnInstant, IReadOnlyCollection<string> AuthnContexts)> ValidateSamlResponseCoreAsync(string base64SamlResponse,
+			DepartmentSsoConfig config, string departmentCode, string expectedInResponseTo)
+		{
+			if (string.IsNullOrWhiteSpace(base64SamlResponse) || base64SamlResponse.Length > 2_800_000 ||
+				string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate) || string.IsNullOrWhiteSpace(config.EntityId) ||
+				string.IsNullOrWhiteSpace(config.AssertionConsumerServiceUrl))
+				return default;
+
+			var samlBytes = Convert.FromBase64String(base64SamlResponse);
+			if (samlBytes.Length > 2_000_000)
+				return default;
+
+			var document = LoadSamlDocument(samlBytes);
+			var response = document.DocumentElement;
+			if (response == null || response.LocalName != "Response" || response.NamespaceURI != "urn:oasis:names:tc:SAML:2.0:protocol")
+				return default;
+
+			var namespaces = new XmlNamespaceManager(document.NameTable);
+			namespaces.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
+			namespaces.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+			namespaces.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
+
+			var statusCode = response.SelectSingleNode("./samlp:Status/samlp:StatusCode", namespaces) as XmlElement;
+			if (statusCode?.GetAttribute("Value") != "urn:oasis:names:tc:SAML:2.0:status:Success")
+				return default;
+
+			var assertionNodes = response.SelectNodes("./saml:Assertion", namespaces);
+			if (assertionNodes?.Count != 1 || assertionNodes[0] is not XmlElement assertion || !HasUniqueSamlIds(document))
+				return default;
+
+			var certificatePem = _encryptionService.DecryptForDepartment(
+				config.EncryptedIdpCertificate, config.DepartmentId, departmentCode);
+			using var certificate = X509Certificate2.CreateFromPem(certificatePem);
+
+			var now = DateTime.UtcNow;
+			if (now + TokenClockSkew < certificate.NotBefore.ToUniversalTime() || now - TokenClockSkew >= certificate.NotAfter.ToUniversalTime())
+				return default;
+
+			if (!ValidateSamlSignature(document, response, assertion, namespaces, certificate, out var signedElement) ||
+				!ValidateSamlDestinationAndConditions(response, assertion, namespaces, config, now, out var assertionExpiresOn))
+				return default;
+
+			if (expectedInResponseTo != null && !IsBoundToRequest(response, assertion, signedElement, namespaces, expectedInResponseTo))
+				return default;
+
+			var assertionId = assertion.GetAttribute("ID");
+			if (string.IsNullOrWhiteSpace(assertionId) ||
+				!await MarkSamlAssertionConsumedAsync(config.DepartmentSsoConfigId, assertionId, assertionExpiresOn, now))
+				return default;
+
+			var claims = ExtractSamlClaims(assertion, namespaces);
+			if (claims.Count == 0)
+				return default;
+
+			DateTime? authnInstant = null;
+			if (assertion.SelectSingleNode("./saml:AuthnStatement", namespaces) is XmlElement authnStatement &&
+				TryReadSamlInstant(authnStatement.GetAttribute("AuthnInstant"), out var instant))
+			{
+				authnInstant = instant;
+				// Under the claim an id_token carries, for the legacy exchange's check on shared installations (section 12.5.2).
+				claims.Add(new Claim(Resgrid.Model.Security.ProviderSignInTime.ClaimType, Resgrid.Model.Security.ProviderSignInTime.ClaimValue(instant),
+					ClaimValueTypes.Integer64));
+			}
+
+			// How the IdP says it authenticated the user, for provider step-up mappings (plan section 7.8).
+			var authnContexts = assertion.SelectNodes("./saml:AuthnStatement/saml:AuthnContext/saml:AuthnContextClassRef", namespaces)?
+				.Cast<XmlNode>().Select(node => node.InnerText.Trim()).Where(value => value.Length > 0).ToList() ?? new List<string>();
+
+			return (new ClaimsPrincipal(new ClaimsIdentity(claims, "SAML2")), authnInstant, authnContexts);
+		}
+
+		/// <summary>
+		/// A brokered response must answer our AuthnRequest in a place the signature covers: the Response itself when it is
+		/// the signed element, otherwise the assertion's bearer SubjectConfirmationData. No InResponseTo may name another.
+		/// </summary>
+		private static bool IsBoundToRequest(XmlElement response, XmlElement assertion, XmlElement signedElement, XmlNamespaceManager namespaces,
+			string expectedInResponseTo)
+		{
+			var responseInResponseTo = response.GetAttribute("InResponseTo");
+			if (!string.IsNullOrEmpty(responseInResponseTo) && !string.Equals(responseInResponseTo, expectedInResponseTo, StringComparison.Ordinal))
+				return false;
+
+			var confirmations = assertion.SelectNodes(
+				"./saml:Subject/saml:SubjectConfirmation[@Method='urn:oasis:names:tc:SAML:2.0:cm:bearer']/saml:SubjectConfirmationData", namespaces)?
+				.Cast<XmlElement>().ToList() ?? new List<XmlElement>();
+			if (confirmations.Any(data => data.HasAttribute("InResponseTo") &&
+					!string.Equals(data.GetAttribute("InResponseTo"), expectedInResponseTo, StringComparison.Ordinal)))
+				return false;
+
+			return ReferenceEquals(signedElement, response)
+				? string.Equals(responseInResponseTo, expectedInResponseTo, StringComparison.Ordinal)
+				: confirmations.Any(data => string.Equals(data.GetAttribute("InResponseTo"), expectedInResponseTo, StringComparison.Ordinal));
 		}
 
 		private static XmlDocument LoadSamlDocument(byte[] samlBytes)
@@ -701,10 +957,10 @@ namespace Resgrid.Services
 		}
 
 		private static bool ValidateSamlSignature(XmlDocument document, XmlElement response, XmlElement assertion,
-			XmlNamespaceManager namespaces, X509Certificate2 certificate)
+			XmlNamespaceManager namespaces, X509Certificate2 certificate, out XmlElement signedElement)
 		{
 			var signature = assertion.SelectSingleNode("./ds:Signature", namespaces) as XmlElement;
-			var signedElement = assertion;
+			signedElement = assertion;
 			if (signature == null)
 			{
 				signature = response.SelectSingleNode("./ds:Signature", namespaces) as XmlElement;

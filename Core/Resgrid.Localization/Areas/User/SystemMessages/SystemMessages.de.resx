@@ -153,4 +153,25 @@ Ihr Resgrid-Team</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>Ich bestätige, dass freigegebene Details Resgrid verlassen und von Telefonanbietern oder Empfängern gespeichert werden können.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Geschützte Inhalte erlauben</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Resgrid-Mitarbeiter haben Zugriff auf den geschützten Einsatz {0} für Supportfall {1} angefordert. Der Zugriff erfordert einen unabhängigen Genehmiger und läuft innerhalb von 15 Minuten ab.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Sicherheitsänderung an Ihrem Resgrid-Konto</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Hallo {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Hallo,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>Für die zweistufige Anmeldung an Ihrem Konto wurde eine Authentifizierungs-App eingerichtet.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>Die Authentifizierungs-App Ihres Kontos wurde ersetzt, und alle angemeldeten Sitzungen wurden beendet.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>Die Authentifizierungs-App wurde aus Ihrem Konto entfernt, daher ist die zweistufige Anmeldung ausgeschaltet. Alle angemeldeten Sitzungen wurden beendet.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Für Ihr Konto wurden neue Wiederherstellungscodes erstellt. Die alten Codes funktionieren nicht mehr.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>Einer Ihrer Wiederherstellungscodes wurde zur Anmeldung oder zum Start einer Kontowiederherstellung verwendet.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>Ihrem Konto wurde ein neuer Passkey hinzugefügt.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>Ein Passkey wurde aus Ihrem Konto entfernt.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Ein Passkey in Resgrid Responder kann jetzt Anmeldungen bei Ihren anderen Resgrid-Apps genehmigen.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Ein Passkey in Resgrid Responder kann keine Anmeldungen bei Ihren anderen Resgrid-Apps mehr genehmigen.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Sie haben in Resgrid Responder angegeben, dass Sie keine Anmeldung angefordert haben. Diese Anmeldung wurde gestoppt, und Genehmigungsanfragen sind für 15 Minuten pausiert. Möglicherweise kennt jemand Ihr Passwort – ändern Sie es jetzt.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Mehrere Genehmigungsanfragen hintereinander wurden abgelehnt oder nicht beantwortet, daher sind Genehmigungsanfragen für 15 Minuten pausiert.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Ihr Konto wurde mit einem Wiederherstellungscode wiederhergestellt. Eine neue Authentifizierungs-App wurde eingerichtet, neue Wiederherstellungscodes wurden erstellt, und alle angemeldeten Sitzungen wurden beendet.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>Auf einem gemeinsam genutzten Fahrzeugtablet oder Arbeitsplatz wurde eine Authentifizierungs-App oder ein Passkey eingerichtet. Wenn jemand anderes den Einrichtungscode gesehen haben könnte oder dieses Gerät verwenden kann, ersetzen Sie die Authentifizierungs-App oder entfernen Sie den Passkey von Ihrem eigenen Gerät aus.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Eine Bestätigung in Ihrem Konto wurde als nicht von Ihnen stammend gemeldet. Wenn damit ein anderes Gerät angemeldet wurde, wurde diese Sitzung beendet. Ändern Sie Ihr Passwort und überprüfen Sie Ihre Anmeldemethoden.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Zeitpunkt: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Ort: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Wenn Sie das nicht waren, setzen Sie Ihr Passwort jetzt unter {0} zurück, melden Sie sich dann an und prüfen Sie Ihre Anmeldemethoden. Resgrid fragt niemals per E-Mail nach einem Code oder Passwort.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Dies ist ein automatischer Sicherheitshinweis zu Ihrem Resgrid-Konto.</value></data>
 </root>

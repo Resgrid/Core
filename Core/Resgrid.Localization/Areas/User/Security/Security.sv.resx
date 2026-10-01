@@ -60,379 +60,1468 @@
   </resheader>
 
   <data name="SecurityPermissionsHeader" xml:space="preserve">
-    <value>Security and Permissions</value>
+    <value>Säkerhet och behörigheter</value>
   </data>
   <data name="SecurityPermissionsDescription" xml:space="preserve">
-    <value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value>
+    <value>Här kan du ställa in behörigheterna för din avdelning, till exempel vilka användare eller roller som får skapa larm eller vem som får lägga till och ta bort användare. Ändringar av behörigheterna börjar gälla vid nästa inloggning i Resgrids webbapplikation.</value>
   </data>
   <data name="AuditLogsButton" xml:space="preserve">
-    <value>Audit Logs</value>
+    <value>Granskningsloggar</value>
+  </data>
+  <data name="AuditLogsTypeFilterLabel" xml:space="preserve">
+    <value>Filtrera efter granskningstyp</value>
+  </data>
+  <data name="AuditLogsTypeFilterAll" xml:space="preserve">
+    <value>Alla granskningstyper</value>
+  </data>
+  <data name="AuditLogsSearchHelp" xml:space="preserve">
+    <value>Sök efter användarnamn, användar- eller gransknings-ID, e-postadress, datum/tid eller granskningstyp. Sökning och sortering gäller inom den valda granskningstypen.</value>
+  </data>
+  <data name="AuditLogsSearchLabel" xml:space="preserve">
+    <value>Sök i granskningsloggar:</value>
+  </data>
+  <data name="AuditLogsSearchPlaceholder" xml:space="preserve">
+    <value>Namn, ID, e-post, datum/tid eller typ</value>
+  </data>
+  <data name="AuditLogsColumnTimestamp" xml:space="preserve">
+    <value>Tidsstämpel</value>
+  </data>
+  <data name="AuditLogsColumnType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="AuditLogsColumnLoggedBy" xml:space="preserve">
+    <value>Loggad av</value>
+  </data>
+  <data name="AuditLogsColumnResult" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="AuditLogsColumnMessage" xml:space="preserve">
+    <value>Meddelande</value>
+  </data>
+  <data name="AuditLogsColumnSearchTerms" xml:space="preserve">
+    <value>Söktermer</value>
+  </data>
+  <data name="AuditLogsColumnActions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="AuditLogsResultSuccessful" xml:space="preserve">
+    <value>Lyckad</value>
+  </data>
+  <data name="AuditLogsResultFailed" xml:space="preserve">
+    <value>Misslyckad</value>
+  </data>
+  <data name="AuditLogsViewButton" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="AuditLogsTableInfo" xml:space="preserve">
+    <value>Visar _START_ till _END_ av _TOTAL_ poster</value>
+  </data>
+  <data name="AuditLogsTableInfoEmpty" xml:space="preserve">
+    <value>Visar 0 till 0 av 0 poster</value>
+  </data>
+  <data name="AuditLogsTableInfoFiltered" xml:space="preserve">
+    <value>(filtrerat från totalt _MAX_ poster)</value>
+  </data>
+  <data name="AuditLogsTableLengthMenu" xml:space="preserve">
+    <value>Visa _MENU_ poster</value>
+  </data>
+  <data name="AuditLogsTableLoading" xml:space="preserve">
+    <value>Läser in...</value>
+  </data>
+  <data name="AuditLogsTableEmpty" xml:space="preserve">
+    <value>Inga poster i granskningsloggen</value>
+  </data>
+  <data name="AuditLogsTableZeroRecords" xml:space="preserve">
+    <value>Inga matchande poster i granskningsloggen hittades</value>
+  </data>
+  <data name="AuditLogsTableFirst" xml:space="preserve">
+    <value>Första</value>
+  </data>
+  <data name="AuditLogsTableLast" xml:space="preserve">
+    <value>Sista</value>
+  </data>
+  <data name="AuditLogsTableNext" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="AuditLogsTablePrevious" xml:space="preserve">
+    <value>Föregående</value>
+  </data>
+  <data name="AuditLogsTableSortAscending" xml:space="preserve">
+    <value>: aktivera för att sortera kolumnen stigande</value>
+  </data>
+  <data name="AuditLogsTableSortDescending" xml:space="preserve">
+    <value>: aktivera för att sortera kolumnen fallande</value>
+  </data>
+  <data name="AuditLogsSystemActor" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="AuditLogsUnknownTime" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="AuditLogViewTitle" xml:space="preserve">
+    <value>Visa granskningslogg</value>
+  </data>
+  <data name="AuditLogViewPanelTitle" xml:space="preserve">
+    <value>Granskningslogg</value>
+  </data>
+  <data name="AuditLogViewAuditLogId" xml:space="preserve">
+    <value>Granskningslogg-ID:</value>
+  </data>
+  <data name="AuditLogViewDepartmentId" xml:space="preserve">
+    <value>Avdelnings-ID:</value>
+  </data>
+  <data name="AuditLogViewAuditType" xml:space="preserve">
+    <value>Granskningstyp:</value>
+  </data>
+  <data name="AuditLogViewLogTypeId" xml:space="preserve">
+    <value>Loggtyp-ID:</value>
+  </data>
+  <data name="AuditLogViewTypeDescription" xml:space="preserve">
+    <value>Typbeskrivning:</value>
+  </data>
+  <data name="AuditLogViewResult" xml:space="preserve">
+    <value>Resultat:</value>
+  </data>
+  <data name="AuditLogViewLoggedBy" xml:space="preserve">
+    <value>Loggad av:</value>
+  </data>
+  <data name="AuditLogViewUserId" xml:space="preserve">
+    <value>Användar-ID:</value>
+  </data>
+  <data name="AuditLogViewLoggedOnLocal" xml:space="preserve">
+    <value>Loggad (lokal tid):</value>
+  </data>
+  <data name="AuditLogViewLoggedOnUtc" xml:space="preserve">
+    <value>Loggad (UTC):</value>
+  </data>
+  <data name="AuditLogViewIpAddress" xml:space="preserve">
+    <value>IP-adress:</value>
+  </data>
+  <data name="AuditLogViewServerName" xml:space="preserve">
+    <value>Servernamn:</value>
+  </data>
+  <data name="AuditLogViewObjectId" xml:space="preserve">
+    <value>Objekt-ID:</value>
+  </data>
+  <data name="AuditLogViewObjectDepartmentId" xml:space="preserve">
+    <value>Objektets avdelnings-ID:</value>
+  </data>
+  <data name="AuditLogViewUserAgent" xml:space="preserve">
+    <value>Användaragent:</value>
+  </data>
+  <data name="AuditLogViewMessage" xml:space="preserve">
+    <value>Meddelande:</value>
+  </data>
+  <data name="AuditLogViewData" xml:space="preserve">
+    <value>Data:</value>
+  </data>
+  <data name="AuditLogViewNotRecorded" xml:space="preserve">
+    <value>Inte registrerat</value>
+  </data>
+  <data name="AuditLogTypeDepartmentSettingsChanged" xml:space="preserve">
+    <value>Avdelningsinställningar ändrade</value>
+  </data>
+  <data name="AuditLogTypeUserAdded" xml:space="preserve">
+    <value>Användare tillagd</value>
+  </data>
+  <data name="AuditLogTypeUserRemoved" xml:space="preserve">
+    <value>Användare borttagen</value>
+  </data>
+  <data name="AuditLogTypeGroupAdded" xml:space="preserve">
+    <value>Grupp tillagd</value>
+  </data>
+  <data name="AuditLogTypeGroupRemoved" xml:space="preserve">
+    <value>Grupp borttagen</value>
+  </data>
+  <data name="AuditLogTypeGroupChanged" xml:space="preserve">
+    <value>Grupp ändrad</value>
+  </data>
+  <data name="AuditLogTypeUnitAdded" xml:space="preserve">
+    <value>Enhet tillagd</value>
+  </data>
+  <data name="AuditLogTypeUnitRemoved" xml:space="preserve">
+    <value>Enhet borttagen</value>
+  </data>
+  <data name="AuditLogTypeUnitChanged" xml:space="preserve">
+    <value>Enhet ändrad</value>
+  </data>
+  <data name="AuditLogTypeProfileUpdated" xml:space="preserve">
+    <value>Profil uppdaterad</value>
+  </data>
+  <data name="AuditLogTypePermissionsChanged" xml:space="preserve">
+    <value>Behörigheter ändrade</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionUpdated" xml:space="preserve">
+    <value>Prenumeration uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionCreated" xml:space="preserve">
+    <value>Prenumeration skapad</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionCancelled" xml:space="preserve">
+    <value>Prenumeration avbruten</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionBillingInfoUpdated" xml:space="preserve">
+    <value>Faktureringsuppgifter för prenumeration uppdaterade</value>
+  </data>
+  <data name="AuditLogTypeCallReactivated" xml:space="preserve">
+    <value>Larm återaktiverat</value>
+  </data>
+  <data name="AuditLogTypeUserAccountDeleted" xml:space="preserve">
+    <value>Användarkonto raderat</value>
+  </data>
+  <data name="AuditLogTypeAddonSubscriptionModified" xml:space="preserve">
+    <value>Tilläggsprenumeration modifierad</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequested" xml:space="preserve">
+    <value>Radering av avdelning begärd</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequestedCancelled" xml:space="preserve">
+    <value>Begäran om radering av avdelning avbruten</value>
+  </data>
+  <data name="AuditLogTypeDeleteStaticShift" xml:space="preserve">
+    <value>Statiskt skift raderat</value>
+  </data>
+  <data name="AuditLogTypeUpdateStaticShift" xml:space="preserve">
+    <value>Statiskt skift uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusAdded" xml:space="preserve">
+    <value>Anpassad status tillagd</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusRemoved" xml:space="preserve">
+    <value>Anpassad status borttagen</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusUpdated" xml:space="preserve">
+    <value>Anpassad status uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusDetailUpdated" xml:space="preserve">
+    <value>Detalj för anpassad status uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeCallTypeAdded" xml:space="preserve">
+    <value>Larmtyp tillagd</value>
+  </data>
+  <data name="AuditLogTypeCallTypeEdited" xml:space="preserve">
+    <value>Larmtyp redigerad</value>
+  </data>
+  <data name="AuditLogTypeCallTypeRemoved" xml:space="preserve">
+    <value>Larmtyp borttagen</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityAdded" xml:space="preserve">
+    <value>Larmprioritet tillagd</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityEdited" xml:space="preserve">
+    <value>Larmprioritet redigerad</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityRemoved" xml:space="preserve">
+    <value>Larmprioritet borttagen</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeAdded" xml:space="preserve">
+    <value>Enhetstyp tillagd</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeEdited" xml:space="preserve">
+    <value>Enhetstyp redigerad</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeRemoved" xml:space="preserve">
+    <value>Enhetstyp borttagen</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeAdded" xml:space="preserve">
+    <value>Certifieringstyp tillagd</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeEdited" xml:space="preserve">
+    <value>Certifieringstyp redigerad</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeRemoved" xml:space="preserve">
+    <value>Certifieringstyp borttagen</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryAdded" xml:space="preserve">
+    <value>Dokumentkategori tillagd</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryEdited" xml:space="preserve">
+    <value>Dokumentkategori redigerad</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryRemoved" xml:space="preserve">
+    <value>Dokumentkategori borttagen</value>
+  </data>
+  <data name="AuditLogTypeDocumentAdded" xml:space="preserve">
+    <value>Dokument tillagt</value>
+  </data>
+  <data name="AuditLogTypeDocumentEdited" xml:space="preserve">
+    <value>Dokument redigerat</value>
+  </data>
+  <data name="AuditLogTypeDocumentRemoved" xml:space="preserve">
+    <value>Dokument borttaget</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryAdded" xml:space="preserve">
+    <value>Anteckningskategori tillagd</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryEdited" xml:space="preserve">
+    <value>Anteckningskategori redigerad</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryRemoved" xml:space="preserve">
+    <value>Anteckningskategori borttagen</value>
+  </data>
+  <data name="AuditLogTypeNoteAdded" xml:space="preserve">
+    <value>Anteckning tillagd</value>
+  </data>
+  <data name="AuditLogTypeNoteEdited" xml:space="preserve">
+    <value>Anteckning redigerad</value>
+  </data>
+  <data name="AuditLogTypeNoteRemoved" xml:space="preserve">
+    <value>Anteckning borttagen</value>
+  </data>
+  <data name="AuditLogTypeContactAdded" xml:space="preserve">
+    <value>Kontakt tillagd</value>
+  </data>
+  <data name="AuditLogTypeContactEdited" xml:space="preserve">
+    <value>Kontakt redigerad</value>
+  </data>
+  <data name="AuditLogTypeContactRemoved" xml:space="preserve">
+    <value>Kontakt borttagen</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryAdded" xml:space="preserve">
+    <value>Kontaktkategori tillagd</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryEdited" xml:space="preserve">
+    <value>Kontaktkategori redigerad</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryRemoved" xml:space="preserve">
+    <value>Kontaktkategori borttagen</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeAdded" xml:space="preserve">
+    <value>Anteckningstyp för kontakt tillagd</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeEdited" xml:space="preserve">
+    <value>Anteckningstyp för kontakt redigerad</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeRemoved" xml:space="preserve">
+    <value>Anteckningstyp för kontakt borttagen</value>
+  </data>
+  <data name="AuditLogTypeWorkflowAdded" xml:space="preserve">
+    <value>Arbetsflöde skapat</value>
+  </data>
+  <data name="AuditLogTypeWorkflowEdited" xml:space="preserve">
+    <value>Arbetsflöde uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeWorkflowDeleted" xml:space="preserve">
+    <value>Arbetsflöde raderat</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepAdded" xml:space="preserve">
+    <value>Arbetsflödessteg tillagt</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepEdited" xml:space="preserve">
+    <value>Arbetsflödessteg uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepDeleted" xml:space="preserve">
+    <value>Arbetsflödessteg raderat</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialAdded" xml:space="preserve">
+    <value>Autentiseringsuppgift för arbetsflöde tillagd</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialEdited" xml:space="preserve">
+    <value>Autentiseringsuppgift för arbetsflöde uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialDeleted" xml:space="preserve">
+    <value>Autentiseringsuppgift för arbetsflöde raderad</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationCodeSent" xml:space="preserve">
+    <value>Kod för kontaktverifiering skickad</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationConfirmed" xml:space="preserve">
+    <value>Kontaktverifiering bekräftad</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationFailed" xml:space="preserve">
+    <value>Kontaktverifiering misslyckad</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorEnabled" xml:space="preserve">
+    <value>2FA aktiverad</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorDisabled" xml:space="preserve">
+    <value>2FA inaktiverad</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorLoginVerified" xml:space="preserve">
+    <value>2FA-inloggning verifierad</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorRecoveryCodeUsed" xml:space="preserve">
+    <value>Återställningskod för 2FA använd</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorStepUpVerified" xml:space="preserve">
+    <value>Säkerhetskontroll med 2FA verifierad</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigCreated" xml:space="preserve">
+    <value>SSO-konfiguration skapad</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigUpdated" xml:space="preserve">
+    <value>SSO-konfiguration uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigDeleted" xml:space="preserve">
+    <value>SSO-konfiguration raderad</value>
+  </data>
+  <data name="AuditLogTypeSsoLoginSucceeded" xml:space="preserve">
+    <value>SSO-inloggning lyckad</value>
+  </data>
+  <data name="AuditLogTypeSsoLoginFailed" xml:space="preserve">
+    <value>SSO-inloggning misslyckad</value>
+  </data>
+  <data name="AuditLogTypeSsoUserProvisioned" xml:space="preserve">
+    <value>SSO-användare etablerad</value>
+  </data>
+  <data name="AuditLogTypeScimUserCreated" xml:space="preserve">
+    <value>SCIM-användare skapad</value>
+  </data>
+  <data name="AuditLogTypeScimUserUpdated" xml:space="preserve">
+    <value>SCIM-användare uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeScimUserDeactivated" xml:space="preserve">
+    <value>SCIM-användare avaktiverad</value>
+  </data>
+  <data name="AuditLogTypeScimUserDeleted" xml:space="preserve">
+    <value>SCIM-användare raderad</value>
+  </data>
+  <data name="AuditLogTypeScimAuthFailed" xml:space="preserve">
+    <value>SCIM-autentisering misslyckad</value>
+  </data>
+  <data name="AuditLogTypeScimUserReactivated" xml:space="preserve">
+    <value>SCIM-användare återaktiverad</value>
+  </data>
+  <data name="AuditLogTypeScimGroupListed" xml:space="preserve">
+    <value>SCIM-grupper listade</value>
+  </data>
+  <data name="AuditLogTypeScimUserListed" xml:space="preserve">
+    <value>SCIM-användare listade</value>
+  </data>
+  <data name="AuditLogTypeScimUserRetrieved" xml:space="preserve">
+    <value>SCIM-användare läst</value>
+  </data>
+  <data name="AuditLogTypeScimBearerTokenProvisioned" xml:space="preserve">
+    <value>SCIM-bärartoken etablerad</value>
+  </data>
+  <data name="AuditLogTypeScimBearerTokenRotated" xml:space="preserve">
+    <value>SCIM-bärartoken roterad</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionCreated" xml:space="preserve">
+    <value>UDF-definition skapad</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionUpdated" xml:space="preserve">
+    <value>UDF-definition uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionDeleted" xml:space="preserve">
+    <value>UDF-definition raderad</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldAdded" xml:space="preserve">
+    <value>UDF-fält tillagt</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldUpdated" xml:space="preserve">
+    <value>UDF-fält uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldRemoved" xml:space="preserve">
+    <value>UDF-fält borttaget</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldValueSaved" xml:space="preserve">
+    <value>UDF-fältvärden sparade</value>
+  </data>
+  <data name="AuditLogTypeRouteCreated" xml:space="preserve">
+    <value>Rutt skapad</value>
+  </data>
+  <data name="AuditLogTypeRouteUpdated" xml:space="preserve">
+    <value>Rutt uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeRouteDeleted" xml:space="preserve">
+    <value>Rutt raderad</value>
+  </data>
+  <data name="AuditLogTypeRouteStarted" xml:space="preserve">
+    <value>Rutt startad</value>
+  </data>
+  <data name="AuditLogTypeRouteCompleted" xml:space="preserve">
+    <value>Rutt slutförd</value>
+  </data>
+  <data name="AuditLogTypeRouteCancelled" xml:space="preserve">
+    <value>Rutt avbruten</value>
+  </data>
+  <data name="AuditLogTypeRoutePaused" xml:space="preserve">
+    <value>Rutt pausad</value>
+  </data>
+  <data name="AuditLogTypeRouteResumed" xml:space="preserve">
+    <value>Rutt återupptagen</value>
+  </data>
+  <data name="AuditLogTypeRouteStopCheckedIn" xml:space="preserve">
+    <value>Ruttstopp incheckat</value>
+  </data>
+  <data name="AuditLogTypeRouteStopCheckedOut" xml:space="preserve">
+    <value>Ruttstopp utcheckat</value>
+  </data>
+  <data name="AuditLogTypeRouteStopSkipped" xml:space="preserve">
+    <value>Ruttstopp överhoppat</value>
+  </data>
+  <data name="AuditLogTypeRouteDeviationDetected" xml:space="preserve">
+    <value>Ruttavvikelse upptäckt</value>
+  </data>
+  <data name="AuditLogTypeRouteDeviationAcknowledged" xml:space="preserve">
+    <value>Ruttavvikelse kvitterad</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigCreated" xml:space="preserve">
+    <value>Konfiguration för incheckningstimer skapad</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigUpdated" xml:space="preserve">
+    <value>Konfiguration för incheckningstimer uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigDeleted" xml:space="preserve">
+    <value>Konfiguration för incheckningstimer raderad</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideCreated" xml:space="preserve">
+    <value>Åsidosättning för incheckningstimer skapad</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideUpdated" xml:space="preserve">
+    <value>Åsidosättning för incheckningstimer uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideDeleted" xml:space="preserve">
+    <value>Åsidosättning för incheckningstimer raderad</value>
+  </data>
+  <data name="AuditLogTypeCheckInPerformed" xml:space="preserve">
+    <value>Incheckning utförd</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerEnabledOnCall" xml:space="preserve">
+    <value>Incheckningstimer aktiverad för larm</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerDisabledOnCall" xml:space="preserve">
+    <value>Incheckningstimer inaktiverad för larm</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInPerformed" xml:space="preserve">
+    <value>Incheckning till kalenderhändelse</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckOutPerformed" xml:space="preserve">
+    <value>Utcheckning från kalenderhändelse</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInUpdated" xml:space="preserve">
+    <value>Incheckningstider i kalender uppdaterade</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInDeleted" xml:space="preserve">
+    <value>Kalenderincheckning raderad</value>
+  </data>
+  <data name="AuditLogTypeCalendarAdminCheckInPerformed" xml:space="preserve">
+    <value>Administratörsincheckning i kalender</value>
+  </data>
+  <data name="AuditLogTypeLogCreated" xml:space="preserve">
+    <value>Loggpost skapad</value>
+  </data>
+  <data name="AuditLogTypeLogDeleted" xml:space="preserve">
+    <value>Loggpost raderad</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestCreated" xml:space="preserve">
+    <value>Kommunikationstest skapat</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestUpdated" xml:space="preserve">
+    <value>Kommunikationstest uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestDeleted" xml:space="preserve">
+    <value>Kommunikationstest raderat</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestRunStarted" xml:space="preserve">
+    <value>Körning av kommunikationstest startad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceCreated" xml:space="preserve">
+    <value>Vädervarningskälla skapad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceUpdated" xml:space="preserve">
+    <value>Vädervarningskälla uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceDeleted" xml:space="preserve">
+    <value>Vädervarningskälla raderad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceEnabled" xml:space="preserve">
+    <value>Vädervarningskälla aktiverad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceDisabled" xml:space="preserve">
+    <value>Vädervarningskälla inaktiverad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneCreated" xml:space="preserve">
+    <value>Vädervarningszon skapad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneUpdated" xml:space="preserve">
+    <value>Vädervarningszon uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneDeleted" xml:space="preserve">
+    <value>Vädervarningszon raderad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneEnabled" xml:space="preserve">
+    <value>Vädervarningszon aktiverad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneDisabled" xml:space="preserve">
+    <value>Vädervarningszon inaktiverad</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSettingsChanged" xml:space="preserve">
+    <value>Inställningar för vädervarningar ändrade</value>
+  </data>
+  <data name="AuditLogTypeFeatureFlagChanged" xml:space="preserve">
+    <value>Funktionsflagga ändrad</value>
+  </data>
+  <data name="AuditLogTypeFeatureFlagOverrideChanged" xml:space="preserve">
+    <value>Åsidosättning av funktionsflagga ändrad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceCreated" xml:space="preserve">
+    <value>Spårningsenhet skapad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceUpdated" xml:space="preserve">
+    <value>Spårningsenhet uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceDisabled" xml:space="preserve">
+    <value>Spårningsenhet inaktiverad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceDeleted" xml:space="preserve">
+    <value>Spårningsenhet raderad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialCreated" xml:space="preserve">
+    <value>Autentiseringsuppgift för enhetsspårning skapad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialRotated" xml:space="preserve">
+    <value>Autentiseringsuppgift för enhetsspårning roterad</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialRevoked" xml:space="preserve">
+    <value>Autentiseringsuppgift för enhetsspårning återkallad</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequestExecuted" xml:space="preserve">
+    <value>Radering av avdelning genomförd</value>
+  </data>
+  <data name="AuditLogTypeChatMessageDeletedByModerator" xml:space="preserve">
+    <value>Chattmeddelande raderat av moderator</value>
+  </data>
+  <data name="AuditLogTypeChatUserMuted" xml:space="preserve">
+    <value>Chattanvändare tystad</value>
+  </data>
+  <data name="AuditLogTypeChatUserUnmuted" xml:space="preserve">
+    <value>Tystning av chattanvändare hävd</value>
+  </data>
+  <data name="AuditLogTypeChatUserBanned" xml:space="preserve">
+    <value>Chattanvändare blockerad</value>
+  </data>
+  <data name="AuditLogTypeChatUserUnbanned" xml:space="preserve">
+    <value>Blockering av chattanvändare hävd</value>
+  </data>
+  <data name="AuditLogTypeChatChannelLocked" xml:space="preserve">
+    <value>Chattkanal låst</value>
+  </data>
+  <data name="AuditLogTypeChatChannelUnlocked" xml:space="preserve">
+    <value>Chattkanal upplåst</value>
+  </data>
+  <data name="AuditLogTypeChatChannelArchived" xml:space="preserve">
+    <value>Chattkanal arkiverad</value>
+  </data>
+  <data name="AuditLogTypeChatFlagResolved" xml:space="preserve">
+    <value>Chattflaggning löst</value>
+  </data>
+  <data name="AuditLogTypeChatSettingsChanged" xml:space="preserve">
+    <value>Chattinställningar ändrade</value>
+  </data>
+  <data name="AuditLogTypeChatExportRequested" xml:space="preserve">
+    <value>Chattexport begärd</value>
+  </data>
+  <data name="AuditLogTypeChatExportDownloaded" xml:space="preserve">
+    <value>Chattexport hämtad</value>
+  </data>
+  <data name="AuditLogTypeModerationReportSubmitted" xml:space="preserve">
+    <value>Modereringsrapport inskickad</value>
+  </data>
+  <data name="AuditLogTypeModerationRequestReopened" xml:space="preserve">
+    <value>Modereringsärende återöppnat</value>
+  </data>
+  <data name="AuditLogTypeModerationRequestCompleted" xml:space="preserve">
+    <value>Modereringsärende slutfört</value>
+  </data>
+  <data name="AuditLogTypeModerationEvidenceDownloaded" xml:space="preserve">
+    <value>Bevismaterial för moderering hämtat</value>
+  </data>
+  <data name="AuditLogTypePasswordResetByAdministrator" xml:space="preserve">
+    <value>Lösenord återställt av administratör</value>
+  </data>
+  <data name="AuditLogTypeUserAuthenticationSessionsRevoked" xml:space="preserve">
+    <value>Inloggningssessioner för användare återkallade</value>
+  </data>
+  <data name="AuditLogTypeDataProtectionStepUpExemptionsChanged" xml:space="preserve">
+    <value>Undantag från säkerhetskontroll för dataskydd ändrade</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanAdded" xml:space="preserve">
+    <value>Insatsplan för kontakt tillagd</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanUpdated" xml:space="preserve">
+    <value>Insatsplan för kontakt uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanRemoved" xml:space="preserve">
+    <value>Insatsplan för kontakt borttagen</value>
+  </data>
+  <data name="AuditLogTypeContactAttachmentAdded" xml:space="preserve">
+    <value>Kontaktbilaga tillagd</value>
+  </data>
+  <data name="AuditLogTypeContactAttachmentRemoved" xml:space="preserve">
+    <value>Kontaktbilaga borttagen</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionAdded" xml:space="preserve">
+    <value>Checklistedefinition tillagd</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionUpdated" xml:space="preserve">
+    <value>Checklistedefinition uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionPublished" xml:space="preserve">
+    <value>Checklistedefinition publicerad</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionRetired" xml:space="preserve">
+    <value>Checklistedefinition avvecklad</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionRemoved" xml:space="preserve">
+    <value>Checklistedefinition borttagen</value>
+  </data>
+  <data name="AuditLogTypeChecklistCompletionStarted" xml:space="preserve">
+    <value>Genomförande av checklista startat</value>
+  </data>
+  <data name="AuditLogTypeChecklistProgressSaved" xml:space="preserve">
+    <value>Checklisteförlopp sparat</value>
+  </data>
+  <data name="AuditLogTypeChecklistCompletionSubmitted" xml:space="preserve">
+    <value>Genomförande av checklista inskickat</value>
+  </data>
+  <data name="AuditLogTypeChecklistWitnessAttested" xml:space="preserve">
+    <value>Checklista intygad av vittne</value>
+  </data>
+  <data name="AuditLogTypeChecklistFileAdded" xml:space="preserve">
+    <value>Checklistefil tillagd</value>
+  </data>
+  <data name="AuditLogTypeChecklistFileRemoved" xml:space="preserve">
+    <value>Checklistefil borttagen</value>
+  </data>
+  <data name="AuditLogTypeChecklistScheduleAdded" xml:space="preserve">
+    <value>Kontrollschema tillagt</value>
+  </data>
+  <data name="AuditLogTypeChecklistScheduleUpdated" xml:space="preserve">
+    <value>Kontrollschema uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeChecklistOccurrenceMissed" xml:space="preserve">
+    <value>Planerad kontroll missad</value>
+  </data>
+  <data name="AuditLogTypeChecklistOccurrenceSkipped" xml:space="preserve">
+    <value>Planerad kontroll överhoppad</value>
+  </data>
+  <data name="AuditLogTypeChecklistReminderSettingsUpdated" xml:space="preserve">
+    <value>Påminnelseinställningar för checklistor uppdaterade</value>
+  </data>
+  <data name="AuditLogTypeWorkOrderChanged" xml:space="preserve">
+    <value>Arbetsorder ändrad</value>
+  </data>
+  <data name="AuditLogTypeInventoryChanged" xml:space="preserve">
+    <value>Inventarium ändrat</value>
+  </data>
+  <data name="AuditLogTypeBillingProfileChanged" xml:space="preserve">
+    <value>Faktureringsprofil ändrad</value>
+  </data>
+  <data name="AuditLogTypeRateCardChanged" xml:space="preserve">
+    <value>Prislista ändrad</value>
+  </data>
+  <data name="AuditLogTypeInvoiceCreated" xml:space="preserve">
+    <value>Faktura skapad</value>
+  </data>
+  <data name="AuditLogTypeInvoiceUpdated" xml:space="preserve">
+    <value>Faktura uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeInvoiceSent" xml:space="preserve">
+    <value>Faktura skickad</value>
+  </data>
+  <data name="AuditLogTypeInvoiceVoided" xml:space="preserve">
+    <value>Faktura makulerad</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRecorded" xml:space="preserve">
+    <value>Fakturabetalning registrerad</value>
+  </data>
+  <data name="AuditLogTypeDepartmentBillingIdentityChanged" xml:space="preserve">
+    <value>Faktureringsidentitet för avdelning ändrad</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionConnected" xml:space="preserve">
+    <value>Betalningsanslutning ansluten</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionDisconnected" xml:space="preserve">
+    <value>Betalningsanslutning frånkopplad</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionRevoked" xml:space="preserve">
+    <value>Betalningsanslutning återkallad</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionActionRequired" xml:space="preserve">
+    <value>Betalningsanslutning kräver åtgärd</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestCreated" xml:space="preserve">
+    <value>Betalningsbegäran för faktura skapad</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRefunded" xml:space="preserve">
+    <value>Fakturabetalning återbetald</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentDisputed" xml:space="preserve">
+    <value>Fakturabetalning bestriden</value>
+  </data>
+  <data name="AuditLogTypePaymentWebhookRejected" xml:space="preserve">
+    <value>Betalningswebhook avvisad</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestFailed" xml:space="preserve">
+    <value>Betalningsbegäran för faktura misslyckad</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestExpired" xml:space="preserve">
+    <value>Betalningsbegäran för faktura utgången</value>
+  </data>
+  <data name="AuditLogTypeCertificationAdded" xml:space="preserve">
+    <value>Certifiering tillagd</value>
+  </data>
+  <data name="AuditLogTypeCertificationUpdated" xml:space="preserve">
+    <value>Certifiering uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeCertificationRemoved" xml:space="preserve">
+    <value>Certifiering borttagen</value>
+  </data>
+  <data name="AuditLogTypeCertificationStatusChanged" xml:space="preserve">
+    <value>Certifieringsstatus ändrad</value>
+  </data>
+  <data name="AuditLogTypeCertificationVerified" xml:space="preserve">
+    <value>Certifiering verifierad</value>
+  </data>
+  <data name="AuditLogTypeCertificationCreditAdded" xml:space="preserve">
+    <value>Certifieringspoäng tillagda</value>
+  </data>
+  <data name="AuditLogTypeCertificationCreditRemoved" xml:space="preserve">
+    <value>Certifieringspoäng borttagna</value>
+  </data>
+  <data name="AuditLogTypeRoleCertificationRequirementChanged" xml:space="preserve">
+    <value>Certifieringskrav för roll ändrat</value>
+  </data>
+  <data name="AuditLogTypeDepartmentCertificationSettingsChanged" xml:space="preserve">
+    <value>Certifieringsinställningar för avdelning ändrade</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberAdded" xml:space="preserve">
+    <value>Rollmedlem tillagd</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberRemoved" xml:space="preserve">
+    <value>Rollmedlem borttagen</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberRemovedByCertification" xml:space="preserve">
+    <value>Rollmedlem borttagen på grund av certifiering</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationAdded" xml:space="preserve">
+    <value>Enhetscertifiering tillagd</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationUpdated" xml:space="preserve">
+    <value>Enhetscertifiering uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationRemoved" xml:space="preserve">
+    <value>Enhetscertifiering borttagen</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationStatusChanged" xml:space="preserve">
+    <value>Enhetscertifieringens status ändrad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentCreated" xml:space="preserve">
+    <value>Insats skapad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentUpdated" xml:space="preserve">
+    <value>Insats uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentStatusChanged" xml:space="preserve">
+    <value>Insatsstatus ändrad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentRosterChanged" xml:space="preserve">
+    <value>Insatsbemanning ändrad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentEquipmentChanged" xml:space="preserve">
+    <value>Insatsutrustning ändrad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentAttachmentAdded" xml:space="preserve">
+    <value>Insatsbilaga tillagd</value>
+  </data>
+  <data name="AuditLogTypeDeploymentAttachmentRemoved" xml:space="preserve">
+    <value>Insatsbilaga borttagen</value>
+  </data>
+  <data name="AuditLogTypeTimeReportCreated" xml:space="preserve">
+    <value>Tidrapport skapad</value>
+  </data>
+  <data name="AuditLogTypeTimeReportUpdated" xml:space="preserve">
+    <value>Tidrapport uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeTimeReportSubmitted" xml:space="preserve">
+    <value>Tidrapport inskickad</value>
+  </data>
+  <data name="AuditLogTypeTimeReportApproved" xml:space="preserve">
+    <value>Tidrapport godkänd</value>
+  </data>
+  <data name="AuditLogTypeTimeReportVoided" xml:space="preserve">
+    <value>Tidrapport makulerad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseAdded" xml:space="preserve">
+    <value>Insatsutlägg tillagt</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseUpdated" xml:space="preserve">
+    <value>Insatsutlägg uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseRemoved" xml:space="preserve">
+    <value>Insatsutlägg borttaget</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleCreated" xml:space="preserve">
+    <value>Taxetabell skapad</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleUpdated" xml:space="preserve">
+    <value>Taxetabell uppdaterad</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleDeleted" xml:space="preserve">
+    <value>Taxetabell raderad</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleEntryChanged" xml:space="preserve">
+    <value>Taxetabellpost ändrad</value>
+  </data>
+  <data name="AuditLogTypeRatePremiumChanged" xml:space="preserve">
+    <value>Taxetillägg ändrat</value>
+  </data>
+  <data name="AuditLogTypeServiceContractCreated" xml:space="preserve">
+    <value>Serviceavtal skapat</value>
+  </data>
+  <data name="AuditLogTypeServiceContractUpdated" xml:space="preserve">
+    <value>Serviceavtal uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeServiceContractStatusChanged" xml:space="preserve">
+    <value>Status för serviceavtal ändrad</value>
+  </data>
+  <data name="AuditLogTypeServiceContractDeleted" xml:space="preserve">
+    <value>Serviceavtal raderat</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentAdded" xml:space="preserve">
+    <value>Efterlevnadsdokument tillagt</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentUpdated" xml:space="preserve">
+    <value>Efterlevnadsdokument uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentRemoved" xml:space="preserve">
+    <value>Efterlevnadsdokument borttaget</value>
+  </data>
+  <data name="AuditLogTypeBidCreated" xml:space="preserve">
+    <value>Anbud skapat</value>
+  </data>
+  <data name="AuditLogTypeBidUpdated" xml:space="preserve">
+    <value>Anbud uppdaterat</value>
+  </data>
+  <data name="AuditLogTypeBidSent" xml:space="preserve">
+    <value>Anbud skickat</value>
+  </data>
+  <data name="AuditLogTypeBidAccepted" xml:space="preserve">
+    <value>Anbud antaget</value>
+  </data>
+  <data name="AuditLogTypeBidDeclined" xml:space="preserve">
+    <value>Anbud avböjt</value>
+  </data>
+  <data name="AuditLogTypeBidWithdrawn" xml:space="preserve">
+    <value>Anbud tillbakadraget</value>
+  </data>
+  <data name="AuditLogTypeBidExpired" xml:space="preserve">
+    <value>Anbud utgånget</value>
+  </data>
+  <data name="AuditLogTypeBidConverted" xml:space="preserve">
+    <value>Anbud omvandlat</value>
+  </data>
+  <data name="AuditLogTypeBidDeleted" xml:space="preserve">
+    <value>Anbud raderat</value>
+  </data>
+  <data name="AuditLogTypeTimeReportBilled" xml:space="preserve">
+    <value>Tidrapport fakturerad</value>
+  </data>
+  <data name="AuditLogTypeDeploymentInvoiceGenerated" xml:space="preserve">
+    <value>Insatsfaktura genererad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgencyProfileChanged" xml:space="preserve">
+    <value>Cal OES MARS-myndighetsprofil ändrad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsResourceProfileChanged" xml:space="preserve">
+    <value>Cal OES MARS-resursprofil ändrad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateProfileChanged" xml:space="preserve">
+    <value>Cal OES MARS-taxprofil ändrad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateDraftBuilt" xml:space="preserve">
+    <value>Cal OES MARS-taxutkast sammanställt</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateReviewed" xml:space="preserve">
+    <value>Cal OES MARS-taxa granskad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgreementChanged" xml:space="preserve">
+    <value>Cal OES MARS-avtal ändrat</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgreementObserved" xml:space="preserve">
+    <value>Cal OES MARS-avtal observerat</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemPrepared" xml:space="preserve">
+    <value>Cal OES MARS-ärende förberett</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemValidated" xml:space="preserve">
+    <value>Cal OES MARS-ärende validerat</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsReimbursementCalculated" xml:space="preserve">
+    <value>Cal OES MARS-ersättning beräknad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemOpenedForHandoff" xml:space="preserve">
+    <value>Cal OES MARS-ärende öppnat för överlämning</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsExternalStatusObserved" xml:space="preserve">
+    <value>Extern Cal OES MARS-status observerad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsInvoiceApproved" xml:space="preserve">
+    <value>Cal OES MARS-faktura godkänd</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsInvoiceRejected" xml:space="preserve">
+    <value>Cal OES MARS-faktura avvisad</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsPaymentReconciled" xml:space="preserve">
+    <value>Cal OES MARS-betalning avstämd</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemDeleted" xml:space="preserve">
+    <value>Cal OES MARS-ärende raderat</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve">
+    <value>Arbetsgivarprofil ändrad</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve">
+    <value>Arbetsställe ändrat</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve">
+    <value>Anställning ändrad</value>
+  </data>
+  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve">
+    <value>Personalersättning ändrad</value>
+  </data>
+  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve">
+    <value>Årliga lönefakta importerade</value>
+  </data>
+  <data name="AuditLogTypePayDataDemographicChanged" xml:space="preserve">
+    <value>Demografiska uppgifter för lönedata ändrade</value>
+  </data>
+  <data name="AuditLogTypePayDataReportCreated" xml:space="preserve">
+    <value>Lönedatarapport skapad</value>
+  </data>
+  <data name="AuditLogTypePayDataReportValidated" xml:space="preserve">
+    <value>Lönedatarapport validerad</value>
+  </data>
+  <data name="AuditLogTypePayDataReportFrozen" xml:space="preserve">
+    <value>Lönedatarapport fryst</value>
+  </data>
+  <data name="AuditLogTypePayDataReportExported" xml:space="preserve">
+    <value>Lönedatarapport exporterad</value>
+  </data>
+  <data name="AuditLogTypePayDataReportMarkedCertified" xml:space="preserve">
+    <value>Lönedatarapport markerad som certifierad</value>
+  </data>
+  <data name="AuditLogTypePayDataReportCorrected" xml:space="preserve">
+    <value>Lönedatarapport korrigerad</value>
+  </data>
+  <data name="AuditLogTypeResourceCostProfileChanged" xml:space="preserve">
+    <value>Resurskostnadsprofil ändrad</value>
+  </data>
+  <data name="AuditLogTypeResourceUsageChanged" xml:space="preserve">
+    <value>Resursanvändning ändrad</value>
+  </data>
+  <data name="AuditLogTypeFieldCostRunCreated" xml:space="preserve">
+    <value>Fältkostnadskörning skapad</value>
+  </data>
+  <data name="AuditLogTypeFieldCostRunFrozen" xml:space="preserve">
+    <value>Fältkostnadskörning fryst</value>
+  </data>
+  <data name="AuditLogTypeUserReactivated" xml:space="preserve">
+    <value>Användare återaktiverad</value>
+  </data>
+  <data name="AuditLogTypeDepartmentConfigurationChanged" xml:space="preserve">
+    <value>Avdelningskonfiguration ändrad</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistReviewChanged" xml:space="preserve">
+    <value>Admin Assist-granskning ändrad</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistDiagnosticAccess" xml:space="preserve">
+    <value>Åtkomst till Admin Assist-diagnostik</value>
+  </data>
+  <data name="AuditLogTypeAiDispatchSettingsUpdated" xml:space="preserve">
+    <value>Inställningar för AI-larmhantering uppdaterade</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistPlanAccess" xml:space="preserve">
+    <value>Åtkomst till Admin Assist-ändringsplan</value>
+  </data>
+  <data name="AuditLogTypeDepartmentSecurityPolicyChanged" xml:space="preserve">
+    <value>Säkerhetspolicy ändrad</value>
   </data>
   <data name="PermissionColumn" xml:space="preserve">
-    <value>Permission</value>
+    <value>Behörighet</value>
   </data>
   <data name="NoteColumn" xml:space="preserve">
     <value>Anteckning</value>
   </data>
   <data name="ValueColumn" xml:space="preserve">
-    <value>Value</value>
+    <value>Värde</value>
   </data>
   <data name="RolesColumn" xml:space="preserve">
     <value>Roller</value>
   </data>
   <data name="TwoFactorEnforcementHeader" xml:space="preserve">
-    <value>Two-Factor Authentication (2FA) Enforcement</value>
+    <value>Krav på tvåfaktorsautentisering (2FA)</value>
   </data>
   <data name="TwoFactorEnforcementDescription" xml:space="preserve">
-    <value>Require authenticator-app 2FA for admin users. When enabled, admins who have not set up 2FA will be redirected to enroll before accessing administrative features.</value>
+    <value>Kräv 2FA med autentiseringsapp för administratörer. När detta är aktiverat skickas administratörer som inte har konfigurerat 2FA vidare till registrering innan de kan använda administrativa funktioner.</value>
   </data>
   <data name="Require2FAForAdminsLabel" xml:space="preserve">
-    <value>Require 2FA for Admins</value>
+    <value>Kräv 2FA för administratörer</value>
   </data>
   <data name="Require2FAForAdminsDescription" xml:space="preserve">
-    <value>Controls which admin-level users must enroll in authenticator-app 2FA (Google Authenticator, Microsoft Authenticator, Authy, etc.).</value>
+    <value>Styr vilka användare på administratörsnivå som måste registrera sig för 2FA med autentiseringsapp (Google Authenticator, Microsoft Authenticator, Authy m.fl.).</value>
   </data>
   <data name="Require2FADisabled" xml:space="preserve">
-    <value>Disabled (no requirement)</value>
+    <value>Inaktiverat (inget krav)</value>
   </data>
   <data name="Require2FADeptAdmins" xml:space="preserve">
-    <value>Department Admins + Managing User</value>
+    <value>Avdelningsadministratörer + ansvarig användare</value>
   </data>
   <data name="Require2FAAllAdmins" xml:space="preserve">
-    <value>Department Admins + Managing User + Group Admins</value>
+    <value>Avdelningsadministratörer + ansvarig användare + gruppadministratörer</value>
   </data>
   <data name="Require2FASettingSaved" xml:space="preserve">
-    <value>2FA enforcement setting saved.</value>
+    <value>Inställningen för 2FA-krav har sparats.</value>
   </data>
   <data name="Require2FASettingFailed" xml:space="preserve">
-    <value>Failed to save 2FA enforcement setting.</value>
+    <value>Det gick inte att spara inställningen för 2FA-krav.</value>
   </data>
   <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: the managing user of this department does not have two-factor authentication enabled on their account. The managing user must enable 2FA before this setting can be turned on.</value>
+    <value>Det går inte att aktivera 2FA-kravet: avdelningens ansvariga användare har inte aktiverat tvåfaktorsautentisering på sitt konto. Den ansvariga användaren måste aktivera 2FA innan inställningen kan slås på.</value>
   </data>
   <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: you do not have two-factor authentication enabled on your own account. You must enable 2FA before you can require it for others.</value>
+    <value>Det går inte att aktivera 2FA-kravet: du har inte aktiverat tvåfaktorsautentisering på ditt eget konto. Du måste aktivera 2FA innan du kan kräva det av andra.</value>
   </data>
   <data name="Require2FABothMustEnable" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: neither you nor the managing user have two-factor authentication enabled. Both must enable 2FA before this setting can be turned on.</value>
+    <value>Det går inte att aktivera 2FA-kravet: varken du eller den ansvariga användaren har aktiverat tvåfaktorsautentisering. Båda måste aktivera 2FA innan inställningen kan slås på.</value>
   </data>
   <data name="Require2FASettingLocked" xml:space="preserve">
-    <value>This setting is locked until the above conditions are met.</value>
+    <value>Inställningen är låst tills villkoren ovan är uppfyllda.</value>
   </data>
   <data name="PermissionNameColumn" xml:space="preserve">
-    <value>Permission</value>
+    <value>Behörighet</value>
   </data>
   <data name="PermissionNoteColumn" xml:space="preserve">
     <value>Anteckning</value>
   </data>
   <data name="PermissionSelectionColumn" xml:space="preserve">
-    <value>Selection</value>
+    <value>Val</value>
   </data>
   <data name="PermissionGroupOnlyColumn" xml:space="preserve">
-    <value>Group Only</value>
+    <value>Endast grupp</value>
   </data>
   <data name="PermissionRolesColumn" xml:space="preserve">
     <value>Roller</value>
   </data>
   <data name="PermissionNoRoles" xml:space="preserve">
-    <value>No Roles</value>
+    <value>Inga roller</value>
   </data>
   <data name="PermissionNA" xml:space="preserve">
-    <value>N/A</value>
+    <value>Ej tillämpligt</value>
+  </data>
+  <data name="PermOptionEveryone" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="PermOptionDepartmentAdmins" xml:space="preserve">
+    <value>Avdelningsadministratörer</value>
+  </data>
+  <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve">
+    <value>Avdelnings- och gruppadministratörer</value>
+  </data>
+  <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve">
+    <value>Avdelningsadministratörer och valda roller</value>
+  </data>
+  <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
+    <value>Avdelnings- och gruppadministratörer samt valda roller</value>
   </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
-    <value>Security and Permissions</value>
+    <value>Säkerhet och behörigheter</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Hem</value>
   </data>
   <data name="SecurityDescription" xml:space="preserve">
-    <value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value>
+    <value>Här kan du ställa in behörigheterna för din avdelning, till exempel vilka användare eller roller som får skapa larm eller vem som får lägga till och ta bort användare. Ändringar av behörigheterna börjar gälla vid nästa inloggning i Resgrids webbapplikation.</value>
   </data>
   <data name="PermAddUsersLabel" xml:space="preserve">
-    <value>Who can Add Users</value>
+    <value>Vem kan lägga till användare</value>
   </data>
   <data name="PermAddUsersNote" xml:space="preserve">
-    <value>This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users. But Group Admins can also be allowed to add users (limited only to the group they are an admin of).</value>
+    <value>Det här alternativet avgör vem som får lägga till användare/personal i avdelningen. Som standard kan bara avdelningsadministratörer (och den ansvariga medlemmen) lägga till användare. Gruppadministratörer kan dock också få lägga till användare (begränsat till den grupp de administrerar).</value>
   </data>
   <data name="PermRemoveUsersLabel" xml:space="preserve">
-    <value>Who can Remove Users</value>
+    <value>Vem kan ta bort användare</value>
   </data>
   <data name="PermRemoveUsersNote" xml:space="preserve">
-    <value>This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users. But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).</value>
+    <value>Det här alternativet avgör vem som får ta bort användare/personal från avdelningen. Som standard kan bara avdelningsadministratörer (och den ansvariga medlemmen) ta bort användare. Gruppadministratörer kan dock också få ta bort användare (begränsat till användarna i den grupp de administrerar).</value>
   </data>
   <data name="PermCreateCallLabel" xml:space="preserve">
-    <value>Who can Create Calls</value>
+    <value>Vem kan skapa larm</value>
   </data>
   <data name="PermCreateCallNote" xml:space="preserve">
-    <value>This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.</value>
+    <value>Det här alternativet avgör vem som får skapa larm manuellt i Resgrid. Som standard kan alla skapa larm.</value>
   </data>
   <data name="PermDeleteCallLabel" xml:space="preserve">
-    <value>Who can Delete Calls</value>
+    <value>Vem kan ta bort larm</value>
   </data>
   <data name="PermDeleteCallNote" xml:space="preserve">
-    <value>This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.</value>
+    <value>Det här alternativet avgör vem som får ta bort larm i Resgrid. Som standard kan alla ta bort larm.</value>
   </data>
   <data name="PermCloseCallLabel" xml:space="preserve">
-    <value>Who can Close Calls</value>
+    <value>Vem kan avsluta larm</value>
   </data>
   <data name="PermCloseCallNote" xml:space="preserve">
-    <value>This option determines who can close calls from the Resgrid system. By default Everyone can close calls.</value>
+    <value>Det här alternativet avgör vem som får avsluta larm i Resgrid. Som standard kan alla avsluta larm.</value>
   </data>
   <data name="PermAddCallDataLabel" xml:space="preserve">
-    <value>Who can Add Data To Calls</value>
+    <value>Vem kan lägga till data i larm</value>
   </data>
   <data name="PermAddCallDataNote" xml:space="preserve">
-    <value>This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to calls.</value>
+    <value>Det här alternativet avgör vem som får lägga till data, till exempel bilder, anteckningar och filer, i larm i Resgrid. Som standard kan alla lägga till data i larm.</value>
   </data>
   <data name="PermCreateTrainingLabel" xml:space="preserve">
-    <value>Who can Create Trainings</value>
+    <value>Vem kan skapa utbildningar</value>
   </data>
   <data name="PermCreateTrainingNote" xml:space="preserve">
-    <value>This option determines who can create trainings. By default only Department Admins can create trainings.</value>
+    <value>Det här alternativet avgör vem som får skapa utbildningar. Som standard kan bara avdelningsadministratörer skapa utbildningar.</value>
   </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
-    <value>Who can Add Documents</value>
+    <value>Vem kan lägga till dokument</value>
   </data>
   <data name="PermCreateDocumentNote" xml:space="preserve">
-    <value>This option determines who can add documents. By default Everyone can add documents.</value>
+    <value>Det här alternativet avgör vem som får lägga till dokument. Som standard kan alla lägga till dokument.</value>
   </data>
   <data name="PermCreateCalendarEntryLabel" xml:space="preserve">
-    <value>Who can Create Calendar Entries</value>
+    <value>Vem kan skapa kalenderposter</value>
   </data>
   <data name="PermCreateCalendarEntryNote" xml:space="preserve">
-    <value>This option determines who can create calendar entries. By default Everyone can create calendar entries.</value>
+    <value>Det här alternativet avgör vem som får skapa kalenderposter. Som standard kan alla skapa kalenderposter.</value>
   </data>
   <data name="PermCreateNoteLabel" xml:space="preserve">
-    <value>Who can Create Notes</value>
+    <value>Vem kan skapa anteckningar</value>
   </data>
   <data name="PermCreateNoteNote" xml:space="preserve">
-    <value>This option determines who can create notes. By default Everyone can create notes.</value>
+    <value>Det här alternativet avgör vem som får skapa anteckningar. Som standard kan alla skapa anteckningar.</value>
   </data>
   <data name="PermCreateLogLabel" xml:space="preserve">
-    <value>Who can Add Log Entries</value>
+    <value>Vem kan lägga till loggposter</value>
   </data>
   <data name="PermCreateLogNote" xml:space="preserve">
-    <value>This option determines who can add log entries. By default Everyone can add log entries.</value>
+    <value>Det här alternativet avgör vem som får lägga till loggposter. Som standard kan alla lägga till loggposter.</value>
   </data>
   <data name="PermCreateShiftLabel" xml:space="preserve">
-    <value>Who can Create Shifts</value>
+    <value>Vem kan skapa skift</value>
   </data>
   <data name="PermCreateShiftNote" xml:space="preserve">
-    <value>This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.</value>
+    <value>Det här alternativet avgör vem som får skapa och redigera skift. Som standard kan bara avdelningsadministratörer skapa och redigera skift.</value>
   </data>
   <data name="PermViewPersonalInfoLabel" xml:space="preserve">
-    <value>Who can View Personal Info</value>
+    <value>Vem kan se personuppgifter</value>
   </data>
   <data name="PermViewPersonalInfoNote" xml:space="preserve">
-    <value>This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.</value>
+    <value>Det här alternativet avgör vem som får se personuppgifter (PII) om personalen i systemet, till exempel e-postadress och telefonnummer. Som standard kan alla se den här informationen.</value>
   </data>
   <data name="PermAdjustInventoryLabel" xml:space="preserve">
-    <value>Who can Adjust Inventory</value>
+    <value>Vem kan justera lager</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.</value>
+    <value>Det här alternativet avgör vem som får justera lagernivåer i systemet. Som standard kan alla justera lager.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
-    <value>Who can see the Location of Personnel</value>
+    <value>Vem kan se personalens position</value>
   </data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve">
-    <value>This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value>
+    <value>Det här alternativet avgör vem som kan se personalens position på kartorna. Markera alternativet Endast grupp för att begränsa det till gruppadministratörer och roller inom en grupp.</value>
   </data>
   <data name="PermViewUnitLocationLabel" xml:space="preserve">
-    <value>Who can see the Location of Units</value>
+    <value>Vem kan se enheternas position</value>
   </data>
   <data name="PermViewUnitLocationNote" xml:space="preserve">
-    <value>This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value>
+    <value>Det här alternativet avgör vem som kan se enheternas position på kartorna. Markera alternativet Endast grupp för att begränsa det till gruppadministratörer och roller inom en grupp.</value>
   </data>
   <data name="PermCreateMessageLabel" xml:space="preserve">
-    <value>Who can send messages</value>
+    <value>Vem kan skicka meddelanden</value>
   </data>
   <data name="PermCreateMessageNote" xml:space="preserve">
-    <value>This option determines who can create and send messages (in-system mail). By default everyone can create and send messages.</value>
+    <value>Det här alternativet avgör vem som får skapa och skicka meddelanden (intern post i systemet). Som standard kan alla skapa och skicka meddelanden.</value>
   </data>
   <data name="PermViewGroupsUsersLabel" xml:space="preserve">
-    <value>Who can view users</value>
+    <value>Vem kan se användare</value>
   </data>
   <data name="PermViewGroupsUsersNote" xml:space="preserve">
-    <value>By default all users can see all other users in the system. This option allows you to limit who can see users in the system.</value>
+    <value>Som standard kan alla användare se alla andra användare i systemet. Med det här alternativet kan du begränsa vem som kan se användare i systemet.</value>
   </data>
   <data name="PermViewGroupsUnitsLabel" xml:space="preserve">
-    <value>Who can view units</value>
+    <value>Vem kan se enheter</value>
   </data>
   <data name="PermViewGroupsUnitsNote" xml:space="preserve">
-    <value>By default all users can see all units in the system. This option allows you to limit who can view units in the system.</value>
+    <value>Som standard kan alla användare se alla enheter i systemet. Med det här alternativet kan du begränsa vem som kan se enheter i systemet.</value>
   </data>
   <data name="PermViewContactsLabel" xml:space="preserve">
-    <value>Who can view Contacts</value>
+    <value>Vem kan se kontakter</value>
   </data>
   <data name="PermViewContactsNote" xml:space="preserve">
-    <value>By default all users can see all contacts in the system. This option allows you to limit who can view contacts in the system. If a user cannot view Contacts they also won't be able to add them to a call.</value>
+    <value>Som standard kan alla användare se alla kontakter i systemet. Med det här alternativet kan du begränsa vem som kan se kontakter i systemet. En användare som inte kan se kontakter kan inte heller lägga till dem i ett larm.</value>
   </data>
   <data name="PermEditContactsLabel" xml:space="preserve">
-    <value>Who can edit or create Contacts</value>
+    <value>Vem kan redigera eller skapa kontakter</value>
   </data>
   <data name="PermEditContactsNote" xml:space="preserve">
-    <value>By default all users can create and edit contacts in the system. This option allows you to limit who can create or edit contacts in the system.</value>
+    <value>Som standard kan alla användare skapa och redigera kontakter i systemet. Med det här alternativet kan du begränsa vem som kan skapa eller redigera kontakter i systemet.</value>
   </data>
   <data name="PermDeleteContactsLabel" xml:space="preserve">
-    <value>Who can delete Contacts</value>
+    <value>Vem kan ta bort kontakter</value>
   </data>
   <data name="PermDeleteContactsNote" xml:space="preserve">
-    <value>By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.</value>
+    <value>Som standard kan alla användare ta bort kontakter i systemet. Med det här alternativet kan du begränsa vem som kan ta bort kontakter i systemet.</value>
   </data>
   <data name="PermCreateWorkflowLabel" xml:space="preserve">
-    <value>Who can Create/Edit Workflows</value>
+    <value>Vem kan skapa/redigera arbetsflöden</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>This option determines who can create, edit, and delete workflows and workflow steps. By default only Department Admins can manage workflows.</value>
+    <value>Det här alternativet avgör vem som får skapa, redigera och ta bort arbetsflöden och arbetsflödessteg. Som standard kan bara avdelningsadministratörer hantera arbetsflöden.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
-    <value>Who can Manage Workflow Credentials</value>
+    <value>Vem kan hantera autentiseringsuppgifter för arbetsflöden</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). By default only Department Admins can manage credentials.</value>
+    <value>Det här alternativet avgör vem som får skapa, redigera och ta bort krypterade autentiseringsuppgifter som används av arbetsflödesåtgärder (t.ex. SMTP-lösenord och API-nycklar). Som standard kan bara avdelningsadministratörer hantera autentiseringsuppgifter.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
-    <value>Who can View Workflow Runs</value>
+    <value>Vem kan se arbetsflödeskörningar</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.</value>
+    <value>Det här alternativet avgör vem som får se körhistorik, körloggar och hälsoöversikter för arbetsflöden. Som standard kan bara avdelningsadministratörer se arbetsflödeskörningar.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
-    <value>Single Sign-On (SSO) &amp; SCIM</value>
+    <value>Enkel inloggning (SSO) och SCIM</value>
   </data>
   <data name="SsoPageHeader" xml:space="preserve">
-    <value>Single Sign-On &amp; Identity Provisioning</value>
+    <value>Enkel inloggning och identitetsetablering</value>
   </data>
   <data name="SsoBreadcrumb" xml:space="preserve">
     <value>SSO / SCIM</value>
   </data>
   <data name="SsoSecurityPolicyButton" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Säkerhetspolicy</value>
   </data>
   <data name="SsoAddOidcButton" xml:space="preserve">
-    <value>Add OIDC Config</value>
+    <value>Lägg till OIDC-konfiguration</value>
   </data>
   <data name="SsoAddSamlButton" xml:space="preserve">
-    <value>Add SAML 2.0 Config</value>
+    <value>Lägg till SAML 2.0-konfiguration</value>
   </data>
   <data name="SsoWhatIsSsoHeader" xml:space="preserve">
-    <value>What is SSO &amp; SCIM?</value>
+    <value>Vad är SSO och SCIM?</value>
   </data>
   <data name="SsoSingleSignOnHeader" xml:space="preserve">
-    <value>Single Sign-On (SSO)</value>
+    <value>Enkel inloggning (SSO)</value>
   </data>
   <data name="SsoSingleSignOnDescription" xml:space="preserve">
-    <value>Allow department members to log in with their existing corporate identity (Microsoft Entra ID, Okta, Google Workspace, etc.) instead of a separate Resgrid password.</value>
+    <value>Låt avdelningens medlemmar logga in med sitt befintliga jobbkonto (Microsoft Entra ID, Okta, Google Workspace m.fl.) i stället för ett separat lösenord för Resgrid.</value>
   </data>
   <data name="SsoOidcDescription" xml:space="preserve">
-    <value>OIDC — Modern protocol, ideal for Entra, Okta, Auth0, Google</value>
+    <value>OIDC — modernt protokoll, idealiskt för Entra, Okta, Auth0 och Google</value>
   </data>
   <data name="SsoSamlDescription" xml:space="preserve">
-    <value>SAML 2.0 — Widely supported by government &amp; enterprise IdPs</value>
+    <value>SAML 2.0 — brett stöd hos identitetsleverantörer inom offentlig sektor och näringsliv</value>
   </data>
   <data name="SsoScimHeader" xml:space="preserve">
-    <value>SCIM 2.0 Provisioning</value>
+    <value>SCIM 2.0-etablering</value>
   </data>
   <data name="SsoScimDescription" xml:space="preserve">
-    <value>Automatically sync users from your identity provider. When you onboard or offboard staff in your corporate directory, Resgrid reflects those changes automatically — no manual invite/remove steps.</value>
+    <value>Synkronisera användare automatiskt från din identitetsleverantör. När du lägger till eller tar bort personal i din användarkatalog återspeglar Resgrid ändringarna automatiskt — inga manuella steg för att bjuda in eller ta bort.</value>
   </data>
   <data name="SsoScimAutoCreate" xml:space="preserve">
-    <value>Auto-create new members when added in your IdP</value>
+    <value>Skapa nya medlemmar automatiskt när de läggs till i din IdP</value>
   </data>
   <data name="SsoScimAutoDisable" xml:space="preserve">
-    <value>Disable/remove members when deprovisioned</value>
+    <value>Inaktivera/ta bort medlemmar när de avetableras</value>
   </data>
   <data name="SsoScimSyncNames" xml:space="preserve">
-    <value>Keep names &amp; email addresses in sync</value>
+    <value>Håll namn och e-postadresser synkroniserade</value>
   </data>
   <data name="SsoSecurityPolicyHeader" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Säkerhetspolicy</value>
   </data>
   <data name="SsoSecurityPolicyDescription" xml:space="preserve">
-    <value>Enforce department-wide compliance controls alongside SSO:</value>
+    <value>Tillämpa avdelningsövergripande efterlevnadskontroller tillsammans med SSO:</value>
   </data>
   <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve">
-    <value>Mandate MFA for all members</value>
+    <value>Kräv MFA för alla medlemmar</value>
   </data>
   <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve">
-    <value>Restrict login to SSO only (disable passwords)</value>
+    <value>Begränsa inloggning till endast SSO (inaktivera lösenord)</value>
   </data>
   <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve">
-    <value>Limit logins to specific IP CIDR ranges</value>
+    <value>Begränsa inloggningar till specifika IP-intervall (CIDR)</value>
   </data>
   <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve">
-    <value>Set password expiration &amp; complexity rules</value>
+    <value>Ange regler för lösenordens giltighetstid och komplexitet</value>
   </data>
   <data name="SsoSecurityPolicyDataClassification" xml:space="preserve">
-    <value>Classify data level (Unclassified / CUI / Confidential)</value>
+    <value>Klassificera datanivå (Oklassificerad / CUI / Konfidentiell)</value>
   </data>
   <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve">
-    <value>Mobile App Discovery URL</value>
+    <value>Identifierings-URL för mobilappen</value>
   </data>
   <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve">
-    <value>The Resgrid mobile app uses this URL to discover your SSO settings before showing the login screen. Share it with your mobile team if needed.</value>
+    <value>Resgrids mobilapp använder den här URL:en för att hitta dina SSO-inställningar innan inloggningsskärmen visas. Dela den med ditt mobilteam vid behov.</value>
   </data>
   <data name="SsoCopyButton" xml:space="preserve">
-    <value>Copy</value>
+    <value>Kopiera</value>
   </data>
   <data name="SsoCopiedToClipboard" xml:space="preserve">
-    <value>Copied to clipboard!</value>
+    <value>Kopierat till urklipp!</value>
   </data>
   <data name="SsoConfigurationsHeader" xml:space="preserve">
-    <value>SSO Configurations</value>
+    <value>SSO-konfigurationer</value>
   </data>
   <data name="SsoNoConfigurationsWarning" xml:space="preserve">
-    <value>No SSO configurations yet. Use the buttons above to add OIDC or SAML 2.0.</value>
+    <value>Inga SSO-konfigurationer ännu. Använd knapparna ovan för att lägga till OIDC eller SAML 2.0.</value>
   </data>
   <data name="SsoTableColProvider" xml:space="preserve">
-    <value>Provider</value>
+    <value>Leverantör</value>
   </data>
   <data name="SsoTableColIdentifier" xml:space="preserve">
-    <value>Identifier / Endpoint</value>
+    <value>Identifierare / slutpunkt</value>
   </data>
   <data name="SsoTableColStatus" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="SsoTableColLocalLogin" xml:space="preserve">
-    <value>Local Login</value>
+    <value>Lokal inloggning</value>
   </data>
   <data name="SsoTableColAutoProvision" xml:space="preserve">
-    <value>Auto-Provision</value>
+    <value>Automatisk etablering</value>
   </data>
   <data name="SsoTableColScim" xml:space="preserve">
     <value>SCIM</value>
   </data>
   <data name="SsoTableColCreated" xml:space="preserve">
-    <value>Created</value>
+    <value>Skapad</value>
   </data>
   <data name="SsoTableColActions" xml:space="preserve">
     <value>Åtgärder</value>
   </data>
   <data name="SsoStatusEnabled" xml:space="preserve">
-    <value>Enabled</value>
+    <value>Aktiverad</value>
   </data>
   <data name="SsoStatusDisabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Inaktiverad</value>
   </data>
   <data name="SsoLocalLoginYes" xml:space="preserve">
     <value>Ja</value>
   </data>
   <data name="SsoLocalLoginSsoOnly" xml:space="preserve">
-    <value>SSO Only</value>
+    <value>Endast SSO</value>
   </data>
   <data name="SsoAutoProvisionOn" xml:space="preserve">
-    <value>On</value>
+    <value>På</value>
   </data>
   <data name="SsoAutoProvisionOff" xml:space="preserve">
-    <value>Off</value>
+    <value>Av</value>
   </data>
   <data name="SsoScimStatusActive" xml:space="preserve">
     <value>Aktiv</value>
   </data>
   <data name="SsoScimStatusNoToken" xml:space="preserve">
-    <value>No Token</value>
+    <value>Ingen token</value>
   </data>
   <data name="SsoScimStatusOff" xml:space="preserve">
-    <value>Off</value>
+    <value>Av</value>
   </data>
   <data name="SsoEditButton" xml:space="preserve">
     <value>Redigera</value>
@@ -441,10 +1530,37 @@
     <value>SCIM</value>
   </data>
   <data name="SsoDeleteConfirmTitle" xml:space="preserve">
-    <value>Confirm Delete</value>
+    <value>Bekräfta borttagning</value>
   </data>
   <data name="SsoDeleteConfirmMessage" xml:space="preserve">
-    <value>Are you sure you want to delete the {0} SSO configuration? This cannot be undone.</value>
+    <value>Vill du verkligen ta bort SSO-konfigurationen {0}? Det går inte att ångra.</value>
+  </data>
+  <data name="SsoErrorInvalidProviderType" xml:space="preserve">
+    <value>Ogiltig leverantörstyp.</value>
+  </data>
+  <data name="SsoErrorConfigAlreadyExists" xml:space="preserve">
+    <value>Det finns redan en SSO-konfiguration för {0}. Använd Redigera för att ändra den.</value>
+  </data>
+  <data name="SsoErrorOidcClientIdRequired" xml:space="preserve">
+    <value>OIDC-klient-ID krävs.</value>
+  </data>
+  <data name="SsoErrorOidcAuthorityInvalid" xml:space="preserve">
+    <value>OIDC-auktoriteten måste vara en giltig HTTPS-URL.</value>
+  </data>
+  <data name="SsoErrorSamlCertificateRequired" xml:space="preserve">
+    <value>IdP:ns signeringscertifikat krävs för att validera SAML-intyg.</value>
+  </data>
+  <data name="SsoErrorIdpSsoUrlInvalid" xml:space="preserve">
+    <value>Identitetsleverantörens URL för enkel inloggning måste vara en giltig HTTPS-URL.</value>
+  </data>
+  <data name="SsoConfigCreatedSuccess" xml:space="preserve">
+    <value>SSO-konfigurationen för {0} har skapats.</value>
+  </data>
+  <data name="SsoConfigUpdatedSuccess" xml:space="preserve">
+    <value>SSO-konfigurationen har uppdaterats.</value>
+  </data>
+  <data name="SsoConfigDeletedSuccess" xml:space="preserve">
+    <value>SSO-konfigurationen för {0} har tagits bort.</value>
   </data>
   <data name="SsoDeleteCancelButton" xml:space="preserve">
     <value>Avbryt</value>
@@ -453,10 +1569,10 @@
     <value>Ta bort</value>
   </data>
   <data name="SsoEditPageTitleNew" xml:space="preserve">
-    <value>New SSO Configuration</value>
+    <value>Ny SSO-konfiguration</value>
   </data>
   <data name="SsoEditPageTitleEdit" xml:space="preserve">
-    <value>Edit SSO Configuration</value>
+    <value>Redigera SSO-konfiguration</value>
   </data>
   <data name="SsoEditBreadcrumbNew" xml:space="preserve">
     <value>Ny</value>
@@ -465,226 +1581,256 @@
     <value>Redigera</value>
   </data>
   <data name="SsoEditStep1Label" xml:space="preserve">
-    <value>Step 1</value>
+    <value>Steg 1</value>
   </data>
   <data name="SsoEditStep1Header" xml:space="preserve">
-    <value>Provider &amp; Basic Settings</value>
+    <value>Leverantör och grundinställningar</value>
   </data>
   <data name="SsoEditProviderTypeLabel" xml:space="preserve">
-    <value>Identity Provider Protocol</value>
+    <value>Identitetsleverantörens protokoll</value>
+  </data>
+  <data name="SsoEditProviderTypeOidcOption" xml:space="preserve">
+    <value>OIDC (OpenID Connect) — Microsoft Entra, Okta, Google och Auth0</value>
+  </data>
+  <data name="SsoEditProviderTypeSamlOption" xml:space="preserve">
+    <value>SAML 2.0 — de flesta identitetsleverantörer inom näringsliv och offentlig sektor</value>
   </data>
   <data name="SsoEditEnableLabel" xml:space="preserve">
-    <value>Enable this SSO configuration</value>
+    <value>Aktivera den här SSO-konfigurationen</value>
   </data>
   <data name="SsoEditEnableDescription" xml:space="preserve">
-    <value>Only one configuration per provider type is active at a time.</value>
+    <value>Endast en konfiguration per leverantörstyp kan vara aktiv åt gången.</value>
   </data>
   <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve">
-    <value>Allow local password login</value>
+    <value>Tillåt inloggning med lokalt lösenord</value>
   </data>
   <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve">
-    <value>When checked, users can still log in with username &amp; password in addition to SSO. Disable this together with the Security Policy's Require SSO flag to enforce SSO-only login.</value>
+    <value>När detta är markerat kan användare fortfarande logga in med användarnamn och lösenord utöver SSO. Avmarkera detta och aktivera Kräv SSO i säkerhetspolicyn för att tvinga fram inloggning endast via SSO.</value>
   </data>
   <data name="SsoEditAutoProvisionLabel" xml:space="preserve">
-    <value>Auto-provision new users</value>
+    <value>Etablera nya användare automatiskt</value>
   </data>
   <data name="SsoEditAutoProvisionDescription" xml:space="preserve">
-    <value>Automatically create a Resgrid account when a user authenticates via SSO for the first time and no matching email is found. Leave off to require manual invitation first.</value>
+    <value>Skapa automatiskt ett Resgrid-konto när en användare autentiseras via SSO för första gången och ingen matchande e-postadress hittas. Lämna avstängt för att kräva en manuell inbjudan först.</value>
   </data>
   <data name="SsoEditScimEnableLabel" xml:space="preserve">
-    <value>Enable SCIM 2.0 provisioning</value>
+    <value>Aktivera SCIM 2.0-etablering</value>
   </data>
   <data name="SsoEditScimEnableDescription" xml:space="preserve">
-    <value>Allows your IdP to automatically create/update/deactivate members. After saving, go to the SCIM Setup page to generate a bearer token.</value>
+    <value>Låter din IdP automatiskt skapa, uppdatera och inaktivera medlemmar. När du har sparat går du till sidan SCIM-inställningar för att generera en bärartoken.</value>
   </data>
   <data name="SsoEditDefaultRankLabel" xml:space="preserve">
-    <value>Default Rank for Auto-Provisioned Users</value>
+    <value>Standardgrad för automatiskt etablerade användare</value>
+  </data>
+  <data name="SsoEditDefaultRankNone" xml:space="preserve">
+    <value>(Ingen standardgrad)</value>
   </data>
   <data name="SsoEditDefaultRankDescription" xml:space="preserve">
-    <value>Optional. Applied only when Auto-Provision creates a new member.</value>
+    <value>Valfritt. Används bara när automatisk etablering skapar en ny medlem.</value>
   </data>
   <data name="SsoEditStep2OidcLabel" xml:space="preserve">
-    <value>Step 2 — OIDC</value>
+    <value>Steg 2 — OIDC</value>
   </data>
   <data name="SsoEditStep2OidcHeader" xml:space="preserve">
-    <value>OpenID Connect Settings</value>
+    <value>Inställningar för OpenID Connect</value>
   </data>
   <data name="SsoEditOidcInfoAlert" xml:space="preserve">
-    <value>Where to find these values: In your IdP, register Resgrid as a Public Client (PKCE, no client secret required for mobile) or Web App (with secret for server-side flows). Copy the Client ID and Issuer URL from the registered application.</value>
+    <value>Här hittar du värdena: Registrera Resgrid i din IdP som en publik klient (PKCE, ingen klienthemlighet krävs för mobil) eller som en webbapp (med hemlighet för flöden på serversidan). Kopiera klient-ID och utfärdar-URL från det registrerade programmet.</value>
   </data>
   <data name="SsoEditAuthorityLabel" xml:space="preserve">
-    <value>Authority / Issuer URL</value>
+    <value>Auktoritet / utfärdar-URL</value>
   </data>
   <data name="SsoEditAuthorityPlaceholder" xml:space="preserve">
     <value>https://login.microsoftonline.com/{tenant-id}/v2.0</value>
   </data>
   <data name="SsoEditAuthorityDescription" xml:space="preserve">
-    <value>Examples: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value>
+    <value>Exempel: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value>
   </data>
   <data name="SsoEditClientIdLabel" xml:space="preserve">
-    <value>Client ID</value>
+    <value>Klient-ID</value>
   </data>
   <data name="SsoEditClientIdPlaceholder" xml:space="preserve">
     <value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value>
   </data>
   <data name="SsoEditClientIdDescription" xml:space="preserve">
-    <value>The public client identifier assigned by your IdP. Safe to display — not a secret.</value>
+    <value>Den publika klientidentifierare som din IdP har tilldelat. Säker att visa — inte en hemlighet.</value>
   </data>
   <data name="SsoEditClientSecretLabel" xml:space="preserve">
-    <value>Client Secret</value>
+    <value>Klienthemlighet</value>
   </data>
   <data name="SsoEditClientSecretStored" xml:space="preserve">
-    <value>Secret stored</value>
+    <value>Hemlighet lagrad</value>
   </data>
   <data name="SsoEditClientSecretDescription" xml:space="preserve">
-    <value>Encrypted at rest using your department-specific key. Leave blank if using PKCE (mobile/SPA — no secret needed).</value>
+    <value>Krypteras i vila med din avdelningsspecifika nyckel. Lämna tomt om du använder PKCE (mobil/SPA — ingen hemlighet behövs).</value>
   </data>
   <data name="SsoEditClientSecretKeepExisting" xml:space="preserve">
-    <value>Leave blank to keep the existing secret unchanged.</value>
+    <value>Lämna tomt för att behålla den befintliga hemligheten oförändrad.</value>
   </data>
   <data name="SsoEditStep2SamlLabel" xml:space="preserve">
-    <value>Step 2 — SAML 2.0</value>
+    <value>Steg 2 — SAML 2.0</value>
   </data>
   <data name="SsoEditStep2SamlHeader" xml:space="preserve">
-    <value>SAML 2.0 Settings</value>
+    <value>Inställningar för SAML 2.0</value>
   </data>
   <data name="SsoEditSamlInfoAlert" xml:space="preserve">
-    <value>Where to find these values: In your IdP, create a new SAML application. Enter the SP Entity ID and ACS URL shown below into your IdP, then paste the IdP metadata URL or certificate back here.</value>
+    <value>Här hittar du värdena: Skapa ett nytt SAML-program i din IdP. Ange SP-entitets-ID och ACS-URL som visas nedan i din IdP och klistra sedan in IdP:ns metadata-URL eller certifikat här.</value>
   </data>
   <data name="SsoEditSpEntityIdLabel" xml:space="preserve">
-    <value>SP Entity ID (enter this into your IdP)</value>
+    <value>SP-entitets-ID (ange detta i din IdP)</value>
   </data>
   <data name="SsoEditAcsUrlLabel" xml:space="preserve">
-    <value>ACS URL (Assertion Consumer Service — enter this into your IdP)</value>
+    <value>ACS-URL (Assertion Consumer Service — ange detta i din IdP)</value>
   </data>
   <data name="SsoEditAcsUrlNote" xml:space="preserve">
-    <value>This URL uses an encrypted department token — never exposes your plain department code.</value>
+    <value>Den här URL:en använder en krypterad avdelningstoken — din avdelningskod exponeras aldrig i klartext.</value>
   </data>
   <data name="SsoEditEntityIdEditableLabel" xml:space="preserve">
-    <value>SP Entity ID (editable)</value>
+    <value>SP-entitets-ID (redigerbart)</value>
   </data>
   <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve">
     <value>https://app.resgrid.com/saml/DEPT</value>
   </data>
   <data name="SsoEditEntityIdEditableNote" xml:space="preserve">
-    <value>Must match exactly what you entered in the IdP.</value>
+    <value>Måste exakt matcha det du angav i IdP:n.</value>
   </data>
   <data name="SsoEditMetadataUrlLabel" xml:space="preserve">
-    <value>IdP Metadata URL</value>
+    <value>IdP:ns metadata-URL</value>
   </data>
   <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve">
     <value>https://idp.example.com/metadata.xml</value>
   </data>
   <data name="SsoEditMetadataUrlNote" xml:space="preserve">
-    <value>Resgrid will periodically fetch this URL to stay up to date with IdP certificates.</value>
+    <value>Resgrid hämtar regelbundet den här URL:en för att hålla IdP-certifikaten aktuella.</value>
   </data>
   <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve">
-    <value>ACS URL (stored)</value>
+    <value>ACS-URL (lagrad)</value>
   </data>
   <data name="SsoEditAcsUrlStoredNote" xml:space="preserve">
-    <value>Auto-filled from the generated URL above. Modify only if you configured a different ACS URL in your IdP.</value>
+    <value>Fylls i automatiskt från den genererade URL:en ovan. Ändra bara om du har konfigurerat en annan ACS-URL i din IdP.</value>
+  </data>
+  <data name="SsoEditOidcBrokerRedirectLabel" xml:space="preserve">
+    <value>Omdirigerings-URI för inloggning som startas från Resgrid (ange den hos din identitetsleverantör)</value>
+  </data>
+  <data name="SsoEditOidcBrokerRedirectNote" xml:space="preserve">
+    <value>Lägg till den bredvid de omdirigerings-URI:er du redan har registrerat; äldre versioner av Resgrid-apparna fortsätter använda sina.</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectLabel" xml:space="preserve">
+    <value>Omdirigerings-URI:er för inloggning i Resgrid-apparna (ange var och en hos din identitetsleverantör)</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectNote" xml:space="preserve">
+    <value>Varje app, och varje apps webbversion, återvänder till sin egen adress, så registrera alla. De används av äldre versioner av apparna och av appar vars inloggning inte startas från Resgrid.</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectWebLabel" xml:space="preserve">
+    <value>{0} (webb)</value>
+  </data>
+  <data name="SsoEditIdpSsoUrlLabel" xml:space="preserve">
+    <value>Identitetsleverantörens URL för enkel inloggning</value>
+  </data>
+  <data name="SsoEditIdpSsoUrlNote" xml:space="preserve">
+    <value>Identitetsleverantörens SAML-inloggningsadress (HTTP-Redirect-bindning). Behövs för inloggningar som startas från Resgrid-apparna och webbplatsen.</value>
   </data>
   <data name="SsoEditIdpCertLabel" xml:space="preserve">
-    <value>IdP Signing Certificate (PEM)</value>
+    <value>IdP:ns signeringscertifikat (PEM)</value>
   </data>
   <data name="SsoEditIdpCertStored" xml:space="preserve">
-    <value>Certificate stored</value>
+    <value>Certifikat lagrat</value>
   </data>
   <data name="SsoEditIdpCertNote" xml:space="preserve">
-    <value>Encrypted at rest. Leave blank to keep the existing certificate.</value>
+    <value>Krypteras i vila. Lämna tomt för att behålla det befintliga certifikatet.</value>
   </data>
   <data name="SsoEditSigningKeyLabel" xml:space="preserve">
-    <value>SP Signing Key (PEM, optional)</value>
+    <value>SP-signeringsnyckel (PEM, valfritt)</value>
   </data>
   <data name="SsoEditSigningKeyStored" xml:space="preserve">
-    <value>Key stored</value>
+    <value>Nyckel lagrad</value>
   </data>
   <data name="SsoEditSigningKeyNote" xml:space="preserve">
-    <value>Encrypted at rest. Leave blank if your IdP does not require signed requests.</value>
+    <value>Krypteras i vila. Lämna tomt om din IdP inte kräver signerade förfrågningar.</value>
   </data>
   <data name="SsoEditStep3Label" xml:space="preserve">
-    <value>Step 3</value>
+    <value>Steg 3</value>
   </data>
   <data name="SsoEditStep3Header" xml:space="preserve">
-    <value>Attribute Mapping</value>
+    <value>Attributmappning</value>
   </data>
   <data name="SsoEditAttrMapDescription" xml:space="preserve">
-    <value>Map claim names your IdP sends to the Resgrid user fields. Leave blank to use the standard claim URIs automatically. The value is the claim name as emitted by your IdP.</value>
+    <value>Mappa de anspråksnamn (claims) som din IdP skickar till användarfälten i Resgrid. Lämna tomt för att automatiskt använda standard-URI:erna för anspråk. Värdet är anspråkets namn så som din IdP skickar det.</value>
   </data>
   <data name="SsoEditAttrMapJsonLabel" xml:space="preserve">
-    <value>Attribute Mapping JSON</value>
+    <value>Attributmappning (JSON)</value>
   </data>
   <data name="SsoEditAttrMapJsonNote" xml:space="preserve">
-    <value>Must be valid JSON. Use the quick-fill buttons on the right.</value>
+    <value>Måste vara giltig JSON. Använd snabbifyllningsknapparna till höger.</value>
   </data>
   <data name="SsoEditQuickFillHeader" xml:space="preserve">
-    <value>Quick-fill presets</value>
+    <value>Förinställningar för snabbifyllning</value>
   </data>
   <data name="SsoEditQuickFillDescription" xml:space="preserve">
-    <value>Click to auto-fill the mapping JSON with known defaults for your IdP.</value>
+    <value>Klicka för att automatiskt fylla i mappnings-JSON med kända standardvärden för din IdP.</value>
   </data>
   <data name="SsoEditFieldMappingHeader" xml:space="preserve">
-    <value>Supported Resgrid field keys</value>
+    <value>Fältnycklar i Resgrid som stöds</value>
   </data>
   <data name="SsoEditFieldKeyColumn" xml:space="preserve">
-    <value>Key</value>
+    <value>Nyckel</value>
   </data>
   <data name="SsoEditFieldDescColumn" xml:space="preserve">
     <value>Beskrivning</value>
   </data>
   <data name="SsoEditFieldEmailDesc" xml:space="preserve">
-    <value>User's email address</value>
+    <value>Användarens e-postadress</value>
   </data>
   <data name="SsoEditFieldFirstNameDesc" xml:space="preserve">
-    <value>Given / first name</value>
+    <value>Tilltalsnamn / förnamn</value>
   </data>
   <data name="SsoEditFieldLastNameDesc" xml:space="preserve">
-    <value>Surname / family name</value>
+    <value>Efternamn / släktnamn</value>
   </data>
   <data name="SsoEditFieldSubjectDesc" xml:space="preserve">
-    <value>Unique IdP subject (for account linking)</value>
+    <value>Unik subjektidentifierare från IdP:n (för kontokoppling)</value>
   </data>
   <data name="SsoEditCreateButton" xml:space="preserve">
-    <value>Create Configuration</value>
+    <value>Skapa konfiguration</value>
   </data>
   <data name="SsoEditSaveButton" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Spara ändringar</value>
   </data>
   <data name="SsoEditCancelButton" xml:space="preserve">
     <value>Avbryt</value>
   </data>
   <data name="ScimSetupPageTitle" xml:space="preserve">
-    <value>SCIM 2.0 Setup</value>
+    <value>SCIM 2.0-inställningar</value>
   </data>
   <data name="ScimSetupPageHeader" xml:space="preserve">
-    <value>SCIM 2.0 Provisioning Setup</value>
+    <value>Inställning av SCIM 2.0-etablering</value>
   </data>
   <data name="ScimSetupBreadcrumb" xml:space="preserve">
-    <value>SCIM Setup</value>
+    <value>SCIM-inställningar</value>
   </data>
   <data name="ScimSetupBackButton" xml:space="preserve">
-    <value>Back to SSO</value>
+    <value>Tillbaka till SSO</value>
   </data>
   <data name="ScimSetupTokenWarningTitle" xml:space="preserve">
-    <value>Important — Copy your SCIM Bearer Token Now</value>
+    <value>Viktigt — kopiera din SCIM-bärartoken nu</value>
   </data>
   <data name="ScimSetupTokenWarningBody" xml:space="preserve">
-    <value>This token is displayed only once and cannot be retrieved again. Copy it immediately and paste it into your identity provider's SCIM configuration. If you lose it, click Rotate Token to generate a new one.</value>
+    <value>Denna token visas bara en gång och kan inte hämtas igen. Kopiera den direkt och klistra in den i din identitetsleverantörs SCIM-konfiguration. Om du tappar bort den klickar du på Rotera SCIM-token för att generera en ny.</value>
   </data>
   <data name="ScimSetupCopyTokenButton" xml:space="preserve">
-    <value>Copy Token</value>
+    <value>Kopiera token</value>
   </data>
   <data name="ScimSetupTokenEncryptedNote" xml:space="preserve">
-    <value>This token is stored encrypted in the Resgrid database using your department-specific encryption key.</value>
+    <value>Denna token lagras krypterad i Resgrid-databasen med din avdelningsspecifika krypteringsnyckel.</value>
   </data>
   <data name="ScimSetupStatusHeader" xml:space="preserve">
-    <value>SCIM Status</value>
+    <value>SCIM-status</value>
   </data>
   <data name="ScimSetupStatusProvider" xml:space="preserve">
-    <value>Provider</value>
+    <value>Leverantör</value>
   </data>
   <data name="ScimSetupStatusEnabled" xml:space="preserve">
-    <value>SCIM Enabled</value>
+    <value>SCIM aktiverat</value>
   </data>
   <data name="ScimSetupStatusEnabledYes" xml:space="preserve">
     <value>Ja</value>
@@ -693,61 +1839,61 @@
     <value>Nej</value>
   </data>
   <data name="ScimSetupStatusBearerToken" xml:space="preserve">
-    <value>Bearer Token</value>
+    <value>Bärartoken</value>
   </data>
   <data name="ScimSetupStatusTokenConfigured" xml:space="preserve">
-    <value>Configured</value>
+    <value>Konfigurerad</value>
   </data>
   <data name="ScimSetupStatusTokenNotSet" xml:space="preserve">
-    <value>Not Set</value>
+    <value>Inte angiven</value>
   </data>
   <data name="ScimSetupRotateTokenButton" xml:space="preserve">
-    <value>Rotate SCIM Token</value>
+    <value>Rotera SCIM-token</value>
   </data>
   <data name="ScimSetupGenerateTokenButton" xml:space="preserve">
-    <value>Generate SCIM Token</value>
+    <value>Generera SCIM-token</value>
   </data>
   <data name="ScimSetupRotateTokenNote" xml:space="preserve">
-    <value>Rotating generates a new token and invalidates the old one.</value>
+    <value>Rotation genererar en ny token och gör den gamla ogiltig.</value>
   </data>
   <data name="ScimSetupRotateTokenConfirm" xml:space="preserve">
-    <value>Are you sure? Any existing SCIM integration will break until you update the token in your IdP.</value>
+    <value>Är du säker? Befintliga SCIM-integrationer slutar fungera tills du uppdaterar token i din IdP.</value>
   </data>
   <data name="ScimSetupConnectorHeader" xml:space="preserve">
-    <value>SCIM Connector Settings</value>
+    <value>Inställningar för SCIM-anslutning</value>
   </data>
   <data name="ScimSetupConnectorDescription" xml:space="preserve">
-    <value>Enter these values into your identity provider's SCIM provisioning configuration.</value>
+    <value>Ange de här värdena i SCIM-etableringskonfigurationen hos din identitetsleverantör.</value>
   </data>
   <data name="ScimSetupSettingColumn" xml:space="preserve">
-    <value>Setting</value>
+    <value>Inställning</value>
   </data>
   <data name="ScimSetupValueColumn" xml:space="preserve">
-    <value>Value</value>
+    <value>Värde</value>
   </data>
   <data name="ScimSetupBaseUrlLabel" xml:space="preserve">
-    <value>SCIM Connector Base URL</value>
+    <value>Bas-URL för SCIM-anslutning</value>
   </data>
   <data name="ScimSetupAuthMethodLabel" xml:space="preserve">
-    <value>Authentication Method</value>
+    <value>Autentiseringsmetod</value>
   </data>
   <data name="ScimSetupAuthHeaderLabel" xml:space="preserve">
-    <value>Authorization Header</value>
+    <value>Auktoriseringsrubrik</value>
   </data>
   <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve">
-    <value>Custom Header Name</value>
+    <value>Namn på anpassad rubrik</value>
   </data>
   <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve">
-    <value>Custom Header Value</value>
+    <value>Värde för anpassad rubrik</value>
   </data>
   <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve">
-    <value>Supported Resources</value>
+    <value>Resurser som stöds</value>
   </data>
   <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve">
-    <value>Supported Update Method</value>
+    <value>Uppdateringsmetod som stöds</value>
   </data>
   <data name="ScimSetupGuideHeader" xml:space="preserve">
-    <value>Step-by-Step Setup Guide</value>
+    <value>Steg-för-steg-guide</value>
   </data>
   <data name="ScimSetupTabOkta" xml:space="preserve">
     <value>Okta</value>
@@ -759,22 +1905,22 @@
     <value>Google Workspace</value>
   </data>
   <data name="ScimSetupTabGeneric" xml:space="preserve">
-    <value>Other / Generic</value>
+    <value>Annan / generisk</value>
   </data>
   <data name="ScimSetupGenericHeader" xml:space="preserve">
-    <value>Any SCIM 2.0 compatible client can be configured with the following:</value>
+    <value>Alla SCIM 2.0-kompatibla klienter kan konfigureras med följande:</value>
   </data>
   <data name="ScimSetupFieldMappingHeader" xml:space="preserve">
-    <value>Resgrid SCIM field mapping</value>
+    <value>Resgrids SCIM-fältmappning</value>
   </data>
   <data name="ScimSetupParamColumn" xml:space="preserve">
     <value>Parameter</value>
   </data>
   <data name="ScimSetupScimFieldColumn" xml:space="preserve">
-    <value>SCIM field</value>
+    <value>SCIM-fält</value>
   </data>
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve">
-    <value>Resgrid effect</value>
+    <value>Effekt i Resgrid</value>
   </data>
 
   <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
@@ -804,7 +1950,7 @@
   <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Generera eller rotera Bearer Token som din identitetsleverantör använder för att autentisera SCIM-förfrågningar. Token visas bara en gång — kopiera den innan du stänger den här dialogen.</value></data>
   <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Etablera token</value></data>
   <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Rotera token</value></data>
-  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>SCIM Bearer Token</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>SCIM-bärartoken</value></data>
   <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Denna token visas bara en gång och kan inte hämtas igen. Kopiera den nu och klistra in den i din identitetsleverantörs SCIM-konfiguration.</value></data>
   <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Rotation av token gör den aktuella token omedelbart ogiltig. All aktiv SCIM-synkronisering misslyckas tills du uppdaterar token i din IdP. Fortsätta?</value></data>
   <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Detta genererar en ny SCIM-bärartoken för den här konfigurationen. Kopiera och spara den säkert – den visas bara en gång. Fortsätta?</value></data>
@@ -814,112 +1960,136 @@
   <data name="SsoScimSetupPageNote" xml:space="preserve"><value>För steg-för-steg-instruktioner specifika för din IdP (Okta, Microsoft Entra ID, Google Workspace) och tokenhantering, besök SCIM-inställningssidan för varje konfiguration.</value></data>
 
   <data name="SecurityPolicyPageTitle" xml:space="preserve">
-    <value>Department Security Policy</value>
+    <value>Avdelningens säkerhetspolicy</value>
   </data>
   <data name="SecurityPolicyPageHeader" xml:space="preserve">
-    <value>Department Security Policy</value>
+    <value>Avdelningens säkerhetspolicy</value>
   </data>
   <data name="SecurityPolicyBreadcrumb" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Säkerhetspolicy</value>
   </data>
   <data name="SecurityPolicyBackButton" xml:space="preserve">
-    <value>Back to SSO</value>
+    <value>Tillbaka till SSO</value>
   </data>
   <data name="SecurityPolicySaveSuccess" xml:space="preserve">
-    <value>Security policy saved successfully.</value>
+    <value>Säkerhetspolicyn har sparats.</value>
   </data>
   <data name="SecurityPolicyNoSsoWarning" xml:space="preserve">
-    <value>No active SSO configuration. You can configure password policies below, but Require SSO cannot be enabled until you have an active SSO configuration.</value>
+    <value>Ingen aktiv SSO-konfiguration. Du kan konfigurera lösenordspolicyer nedan, men Kräv SSO kan inte aktiveras förrän du har en aktiv SSO-konfiguration.</value>
   </data>
   <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve">
-    <value>Configure SSO →</value>
+    <value>Konfigurera SSO →</value>
   </data>
   <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve">
-    <value>Authentication Controls</value>
+    <value>Autentiseringskontroller</value>
   </data>
   <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve">
-    <value>Require MFA for all members</value>
+    <value>Kräv MFA för alla medlemmar</value>
   </data>
   <data name="SecurityPolicyRequireMfaNote" xml:space="preserve">
-    <value>Members who have not enrolled in MFA will be prompted to do so on next login.</value>
+    <value>Medlemmar som inte har registrerat sig för MFA uppmanas att göra det vid nästa inloggning.</value>
   </data>
   <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve">
-    <value>Require SSO — disable password login</value>
+    <value>Kräv SSO — inaktivera lösenordsinloggning</value>
   </data>
   <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve">
-    <value>Requires active SSO config</value>
+    <value>Kräver en aktiv SSO-konfiguration</value>
   </data>
   <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve">
-    <value>Warning: Enabling this blocks all username/password logins. Ensure at least one admin has tested SSO login successfully before enabling.</value>
+    <value>Varning: Om du aktiverar detta blockeras alla inloggningar med användarnamn och lösenord. Se till att minst en administratör har testat SSO-inloggningen med lyckat resultat innan du aktiverar det.</value>
   </data>
   <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve">
-    <value>Session Timeout (minutes)</value>
+    <value>Sessionens tidsgräns (minuter)</value>
   </data>
   <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve">
-    <value>0 = use system default. 480 = 8 hours.</value>
+    <value>0 = använd systemets standardvärde. 480 = 8 timmar.</value>
   </data>
   <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve">
-    <value>Max Concurrent Sessions per User</value>
+    <value>Max samtidiga sessioner per användare</value>
   </data>
   <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve">
-    <value>0 = unlimited. Government environments typically set 1.</value>
+    <value>0 = obegränsat. Myndighetsmiljöer anger vanligtvis 1.</value>
   </data>
   <data name="SecurityPolicyIpRangesLabel" xml:space="preserve">
-    <value>Allowed IP Ranges (CIDR)</value>
+    <value>Tillåtna IP-intervall (CIDR)</value>
   </data>
   <data name="SecurityPolicyIpRangesNote" xml:space="preserve">
-    <value>One CIDR block per line, or comma-separated. Empty = allow all. Logins from outside these ranges will be denied.</value>
+    <value>Ett CIDR-block per rad, eller kommaseparerade. Tomt = tillåt alla. Inloggningar utanför dessa intervall nekas.</value>
   </data>
   <data name="SecurityPolicyDataClassLabel" xml:space="preserve">
-    <value>Data Classification Level</value>
+    <value>Dataklassificeringsnivå</value>
+  </data>
+  <data name="SecurityPolicyDataClassUnclassified" xml:space="preserve">
+    <value>Oklassificerad</value>
+  </data>
+  <data name="SecurityPolicyDataClassCui" xml:space="preserve">
+    <value>CUI - Kontrollerad oklassificerad information</value>
+  </data>
+  <data name="SecurityPolicyDataClassConfidential" xml:space="preserve">
+    <value>Konfidentiell</value>
   </data>
   <data name="SecurityPolicyDataClassNote" xml:space="preserve">
-    <value>Used for compliance reporting and audit logs.</value>
+    <value>Används för efterlevnadsrapportering och granskningsloggar.</value>
   </data>
   <data name="SecurityPolicyPasswordHeader" xml:space="preserve">
-    <value>Password Policy</value>
+    <value>Lösenordspolicy</value>
   </data>
   <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve">
-    <value>Password policies apply to local (non-SSO) logins only. If you enable Require SSO above, these settings have no effect.</value>
+    <value>Lösenordspolicyer gäller endast lokala inloggningar (utan SSO). Om du aktiverar Kräv SSO ovan har de här inställningarna ingen effekt.</value>
   </data>
   <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve">
-    <value>Password Expiration (days)</value>
+    <value>Lösenordets giltighetstid (dagar)</value>
   </data>
   <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve">
-    <value>0 = passwords never expire. 90 is typical for CUI environments.</value>
+    <value>0 = lösenord upphör aldrig att gälla. 90 är vanligt i CUI-miljöer.</value>
   </data>
   <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve">
-    <value>Minimum Password Length</value>
+    <value>Minsta lösenordslängd</value>
   </data>
   <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve">
-    <value>0 = system default (8). NIST recommends 12+; CUI requires 14+.</value>
+    <value>Minst 8 (systemets standardvärde). Avdelningens policy kan bara höja värdet. NIST rekommenderar minst 12; CUI kräver minst 14.</value>
+  </data>
+  <data name="SecurityPolicySystemComplexityHeader" xml:space="preserve">
+    <value>Systemkrav på lösenordskomplexitet</value>
+  </data>
+  <data name="SecurityPolicySystemComplexityNote" xml:space="preserve">
+    <value>Alla Resgrid-konton måste uppfylla följande standard för lösenordskomplexitet. Det går inte att inaktivera med avdelningens policy.</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule1" xml:space="preserve">
+    <value>Minst 8 tecken (eller avdelningens minsta längd ovan)</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule2" xml:space="preserve">
+    <value>Minst en siffra</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule3" xml:space="preserve">
+    <value>Minst en stor och en liten bokstav</value>
   </data>
   <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve">
-    <value>Require password complexity</value>
+    <value>Kräv lösenordskomplexitet</value>
   </data>
   <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve">
-    <value>Enforces at least one uppercase letter, one digit, and one special character.</value>
+    <value>Kräver minst en stor bokstav, en siffra och ett specialtecken.</value>
   </data>
   <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve">
-    <value>Quick presets</value>
+    <value>Snabbförinställningar</value>
   </data>
   <data name="SecurityPolicyPresetGovernment" xml:space="preserve">
-    <value>Government / CUI</value>
+    <value>Myndighet / CUI</value>
   </data>
   <data name="SecurityPolicyPresetEnterprise" xml:space="preserve">
-    <value>Standard Enterprise</value>
+    <value>Standard för företag</value>
   </data>
   <data name="SecurityPolicyPresetMinimal" xml:space="preserve">
     <value>Minimal</value>
   </data>
   <data name="SecurityPolicySaveButton" xml:space="preserve">
-    <value>Save Security Policy</value>
+    <value>Spara säkerhetspolicy</value>
   </data>
   <data name="SecurityPolicyCancelButton" xml:space="preserve">
     <value>Avbryt</value>
   </data>
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve">
-    <value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value>
+    <value>Det går inte att aktivera inloggning endast via SSO: det finns ingen aktiv SSO-konfiguration. Skapa och aktivera en SSO-konfiguration först.</value>
   </data>
   <data name="PwdErrorEmpty" xml:space="preserve"><value>Lösenordet får inte vara tomt.</value></data>
   <data name="PwdErrorNoDigit" xml:space="preserve"><value>Lösenordet måste innehålla minst en siffra.</value></data>
@@ -927,32 +2097,34 @@
   <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Lösenordet måste innehålla minst en liten bokstav.</value></data>
   <data name="PwdErrorTooShort" xml:space="preserve"><value>Lösenordet måste vara minst {0} tecken långt.</value></data>
   <data name="PwdMinLengthTooLow" xml:space="preserve"><value>Minsta lösenordslängd kan inte vara kortare än systemets standardvärde på 8 tecken.</value></data>
-  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Use Calendar Sync</value></data>
-  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</value></data>
-  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Dispatch App Login</value></data>
-  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Controls who can sign in to the Dispatch app. Dispatch shows private command, unit and responder communications for every incident, so restrict this if your members are not all dispatchers.</value></data>
-  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
-  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
-  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
-  <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
-  <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
-  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
-  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
-  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
-  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>
-  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Who can reveal protected personnel information (employee IDs, emergency contacts) after two-factor verification. Defaults to Department Admins.</value></data>
-  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>View Protected Contact Data</value></data>
-  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Who can reveal protected contact information (names, phone numbers, government IDs, locations) after two-factor verification. Defaults to Department Admins.</value></data>
-  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>View Protected Operational Data</value></data>
-  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Who can reveal protected operational content (logs, form submissions, incident command notes and attachments) after two-factor verification. Defaults to Department and Group Admins.</value></data>
-  <data name="PermAdpExportLabel" xml:space="preserve"><value>Export Protected Data</value></data>
-  <data name="PermAdpExportNote" xml:space="preserve"><value>Who can export data containing protected fields. Exports leave the protection of Resgrid, so every export is separately audited. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
-  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Configure Protected Data Delivery</value></data>
-  <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
-  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
-  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermDeleteLogLabel" xml:space="preserve"><value>Ta bort loggposter</value></data>
+  <data name="PermDeleteLogNote" xml:space="preserve"><value>Vem i din avdelning som får ta bort loggposter</value></data>
+  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Använda kalendersynkronisering</value></data>
+  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Styr vem som får aktivera och använda URL:er för kalenderprenumeration för att synkronisera kalenderhändelser från Resgrid till externa kalenderprogram.</value></data>
+  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Inloggning i Dispatch-appen</value></data>
+  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Styr vem som får logga in i Dispatch-appen. Dispatch visar privat kommunikation från ledning, enheter och insatspersonal för varje händelse, så begränsa detta om inte alla dina medlemmar är larmoperatörer.</value></data>
+  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Inloggning i Command-appen</value></data>
+  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Styr vem som får agera som insatsledare: logga in i IC-appen, upprätta insatsledning för ett larm och visa ledningstavlor. Om du begränsar detta till något annat än Alla kan de personer du väljer också hjälpa till med valfri ledningstavla (tilldela och flytta resurser, köra timers och personalredovisning) utan att ha en ICS-befattning på den — användbart för att låta larmoperatörer hjälpa till i Dispatch-appen. Så länge inställningen är Alla är åtgärder på tavlan begränsade till insatsledaren och tilldelade ICS-roller.</value></data>
+  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Avancerat dataskydd</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>De här behörigheterna styr vem som får arbeta med krypterade (skyddade) data när tillägget Avancerat dataskydd är aktivt. Varje visning eller redigering kräver dessutom en nylig tvåfaktorsverifiering; de här inställningarna avgör vem som ens får försöka. Till skillnad från de flesta Resgrid-behörigheter får värden som inte har ställts in det visade restriktiva valet som standard.</value></data>
+  <data name="PermAdpManageLabel" xml:space="preserve"><value>Hantera inställningar för dataskydd</value></data>
+  <data name="PermAdpManageNote" xml:space="preserve"><value>Vem som får ändra inställningar för Avancerat dataskydd, till exempel verifieringsfönstret och alternativ för aviseringarnas innehåll. Köp, registrering och uppsägning är alltid förbehållna avdelningens ansvariga medlem.</value></data>
+  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Visa skyddade larmdata</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Vem som får visa skyddade larmfält (art, adress, kontaktuppgifter, anteckningar) efter tvåfaktorsverifiering. Standard är Alla eftersom insatspersonal måste kunna läsa ett larm.</value></data>
+  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Redigera skyddade larmdata</value></data>
+  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Vem som får redigera skyddade larmfält efter tvåfaktorsverifiering. Standard är Alla för att matcha det vanliga arbetsflödet för larm.</value></data>
+  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Visa skyddade personaldata</value></data>
+  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Vem som får visa skyddad personalinformation (anställnings-ID, nödkontakter) efter tvåfaktorsverifiering. Standard är avdelningsadministratörer.</value></data>
+  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>Visa skyddade kontaktdata</value></data>
+  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Vem som får visa skyddade kontaktuppgifter (namn, telefonnummer, id-handlingar, platser) efter tvåfaktorsverifiering. Standard är avdelningsadministratörer.</value></data>
+  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>Visa skyddade operativa data</value></data>
+  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Vem som får visa skyddat operativt innehåll (loggar, formulärinskick, anteckningar och bilagor från insatsledningen) efter tvåfaktorsverifiering. Standard är avdelnings- och gruppadministratörer.</value></data>
+  <data name="PermAdpExportLabel" xml:space="preserve"><value>Exportera skyddade data</value></data>
+  <data name="PermAdpExportNote" xml:space="preserve"><value>Vem som får exportera data som innehåller skyddade fält. Exporterade data lämnar Resgrids skydd, så varje export granskningsloggas separat. Standard är avdelningsadministratörer; Alla erbjuds medvetet inte.</value></data>
+  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Konfigurera leverans av skyddade data</value></data>
+  <data name="PermAdpEgressNote" xml:space="preserve"><value>Vem som får ändra hur skyddat innehåll lämnar Resgrid via push, sms, e-post och röst. Standard är avdelningsadministratörer; Alla erbjuds medvetet inte.</value></data>
+  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Nödåtkomst (break-glass)</value></data>
+  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Vem som får använda den granskningsloggade nödåtkomsten till skyddade data. Den fungerar bara om nödåtkomst är aktiverad i avdelningens skyddspolicy, kräver en registrerad anledning och meddelar avdelningen. Standard är avdelningsadministratörer; Alla erbjuds medvetet inte.</value></data>
   <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Rapporter</value></data>
   <data name="PermRecordsSectionNote" xml:space="preserve"><value>Dessa behörigheter styr modulen Rapporter, efterföljaren till Loggar. Som för de flesta Resgrid-behörigheter gäller det visade standardvärdet för en rad som inte ställts in, och det motsvarar hur Loggar fungerar i dag. När Rapporter aktiveras för din avdelning kopieras även inställningarna Skapa logg och Ta bort logg till motsvarande rader, om du inte redan har ställt in dem här.</value></data>
   <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Rapporter är ännu inte aktiverat för den här avdelningen. Du kan förbereda inställningarna nu; de börjar gälla när Rapporter aktiveras.</value></data>
@@ -1011,5 +2183,191 @@
   </data>
   <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
     <value>Styr vem som får flytta inventarier mellan lagerplatser. Som standard har avdelningsadministratörer behörighet.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsHeader" xml:space="preserve">
+    <value>Metoder för andra faktorn</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsIntro" xml:space="preserve">
+    <value>Välj vilka verifieringsmetoder som räknas som multifaktorautentisering i den här organisationen. Koder från autentiseringsappar (TOTP) godtas alltid, så att stänga av en metod låser aldrig ute någon; medlemmar som använde den ombeds verifiera igen.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsManagingMemberOnly" xml:space="preserve">
+    <value>Endast organisationens ansvariga medlem kan ändra de här inställningarna.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsNotYetAvailable" xml:space="preserve">
+    <value>Nycklar (passkeys) är ännu inte tillgängliga i det här systemet. Valen gäller när de blir det.</value>
+  </data>
+  <data name="SecurityPolicyMethodNotYetAvailable" xml:space="preserve">
+    <value>Inte tillgängligt ännu</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaLabel" xml:space="preserve">
+    <value>Godta nycklar för inloggning och säkerhetskontroller</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaNote" xml:space="preserve">
+    <value>En nyckel som registrerats i samma app räknas som MFA för inloggning, byte av organisation och känsliga åtgärder.</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpLabel" xml:space="preserve">
+    <value>Godta nycklar för skyddade data</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpNote" xml:space="preserve">
+    <value>En nyckel räknas som MFA för att visa och redigera skyddade data. En ändring avslutar pågående åtkomst till skyddade data, så medlemmarna verifierar igen.</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalLabel" xml:space="preserve">
+    <value>Godta godkännande från Responder-appen</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalNote" xml:space="preserve">
+    <value>Där nycklar godtas kan en medlem godkänna en inloggning eller en begäran om skyddade data med nyckeln i sin Responder-app. Används aldrig för säkerhetsändringar. En ändring avslutar pågående åtkomst till skyddade data.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaLabel" xml:space="preserve">
+    <value>Godta din identitetsleverantörs MFA för inloggning och säkerhetskontroller</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaNote" xml:space="preserve">
+    <value>Kräver en testad MFA-mappning i din SSO-konfiguration.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpLabel" xml:space="preserve">
+    <value>Godta din identitetsleverantörs MFA för skyddade data</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpNote" xml:space="preserve">
+    <value>Kräver en testad MFA-mappning i din SSO-konfiguration. En ändring avslutar pågående åtkomst till skyddade data.</value>
+  </data>
+  <data name="SecurityPolicyFederatedMappingUntested" xml:space="preserve">
+    <value>Din SSO-konfiguration har ingen testad MFA-mappning. Spara en mappning och slutför testet innan du godtar identitetsleverantörens MFA.</value>
+  </data>
+  <data name="SecurityPolicyFederatedNeedsResgridMfa" xml:space="preserve">
+    <value>Verifiera först med din autentiseringsapp eller en nyckel för att godta identitetsleverantörens MFA. Identitetsleverantörens MFA kan inte godkänna den här ändringen.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpLabel" xml:space="preserve">
+    <value>Låt en nylig verifiering vid inloggning öppna skyddade data</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpNote" xml:space="preserve">
+    <value>Medlemmar som verifierade MFA vid inloggningen behöver inte verifiera igen för att visa skyddade data inom verifieringsfönstret. En ändring avslutar pågående åtkomst till skyddade data.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpLabel" xml:space="preserve">
+    <value>Låt upplåsning av en delad enhet öppna skyddade data</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpNote" xml:space="preserve">
+    <value>På delade fordonsplattor och arbetsstationer räknas operatörens nyliga upplåsningsverifiering för att visa skyddade data. En ändring avslutar pågående åtkomst till skyddade data.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesHeader" xml:space="preserve">
+    <value>Delade enheter i fordon och på arbetsstationer</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesIntro" xml:space="preserve">
+    <value>Delade fordonsplattor och larmcentralsarbetsstationer låses när ingen använder dem och avslutas med passet. Operatörer låser upp med sin egen autentiseringsapp, nyckel eller Responder-godkännande, aldrig med ett lösenord som sparats på enheten. Ett striktare värde här gäller även sessioner som redan pågår.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesManagingMemberOnly" xml:space="preserve">
+    <value>Endast organisationens ansvariga medlem kan ändra policyn för delade enheter.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesNotYetAvailable" xml:space="preserve">
+    <value>Läget för delade enheter är ännu inte tillgängligt i den här installationen. Värdena sparas, och läget kan inte krävas för en annan app förrän det är det.</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockLabel" xml:space="preserve">
+    <value>Lås efter så här många minuter utan aktivitet</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockNote" xml:space="preserve">
+    <value>1 till {0} minuter. Bara operatörens egen aktivitet räknas; bakgrundsuppdateringar och inkommande larm gör det inte.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftLabel" xml:space="preserve">
+    <value>Avsluta passet efter så här många timmar</value>
+  </data>
+  <data name="SecurityPolicySharedShiftNote" xml:space="preserve">
+    <value>1 till {0} timmar efter inloggningen, oavsett aktivitet. Nästa pass loggar in igen.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredLabel" xml:space="preserve">
+    <value>Använd alltid delat läge för</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredNote" xml:space="preserve">
+    <value>Sessioner i de här apparna i den här organisationen låses alltid vid inaktivitet och avslutas med passet, oavsett installationens inställning. Inloggningar som inte anger sin app räknas också, så integrationer som loggar in med lösenord låses också. Använd appversioner som stöder delat läge.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredCommand" xml:space="preserve">
+    <value>IC (Ledning)</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="SecurityPolicySharedIdleOutOfRange" xml:space="preserve">
+    <value>Välj en låsning vid inaktivitet på 1 till {0} minuter.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftOutOfRange" xml:space="preserve">
+    <value>Välj en passlängd på 1 till {0} timmar.</value>
+  </data>
+  <data name="SecurityPolicySharedRequirementUnavailable" xml:space="preserve">
+    <value>Läget för delade enheter är ännu inte tillgängligt i den här installationen, så det kan inte krävas för en annan app.</value>
+  </data>
+  <data name="FederatedMfaPageTitle" xml:space="preserve">
+    <value>Identitetsleverantörens MFA</value>
+  </data>
+  <data name="FederatedMfaIntro" xml:space="preserve">
+    <value>Ange för Resgrid hur din identitetsleverantör rapporterar att den har verifierat en medlem med MFA. Där organisationen godtar identitetsleverantörens MFA räknas en inloggning eller verifiering som bär ett av värdena som MFA, och medlemmarna behöver ingen autentiserare från Resgrid för det. Varje ändring måste klara en testinloggning innan den börjar gälla.</value>
+  </data>
+  <data name="FederatedMfaNoSso" xml:space="preserve">
+    <value>Konfigurera och aktivera en SSO-konfiguration först.</value>
+  </data>
+  <data name="FederatedMfaStatusEffective" xml:space="preserve">
+    <value>Gäller: version {0}, testad {1}.</value>
+  </data>
+  <data name="FederatedMfaStatusUntested" xml:space="preserve">
+    <value>Gäller inte: version {0} har inte klarat sitt test ännu.</value>
+  </data>
+  <data name="FederatedMfaStatusNone" xml:space="preserve">
+    <value>Ingen mappning är sparad.</value>
+  </data>
+  <data name="FederatedMfaRequestHeader" xml:space="preserve">
+    <value>Vad Resgrid begär</value>
+  </data>
+  <data name="FederatedMfaAcceptHeader" xml:space="preserve">
+    <value>Vad som räknas som MFA</value>
+  </data>
+  <data name="FederatedMfaValuesNote" xml:space="preserve">
+    <value>Ett värde per rad. Värdena måste stämma exakt, inklusive versaler. Ett svar måste innehålla minst ett av värdena.</value>
+  </data>
+  <data name="FederatedMfaRequestAcrValuesLabel" xml:space="preserve">
+    <value>acr_values att begära (OIDC)</value>
+  </data>
+  <data name="FederatedMfaRequestClaimsLabel" xml:space="preserve">
+    <value>claims-begäran (OIDC, JSON)</value>
+  </data>
+  <data name="FederatedMfaRequestAuthnContextLabel" xml:space="preserve">
+    <value>Klassreferenser för RequestedAuthnContext (SAML)</value>
+  </data>
+  <data name="FederatedMfaAcceptAmrLabel" xml:space="preserve">
+    <value>amr-värden (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrLabel" xml:space="preserve">
+    <value>acr-värden (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrsLabel" xml:space="preserve">
+    <value>acrs-värden (OIDC, autentiseringskontext)</value>
+  </data>
+  <data name="FederatedMfaAcceptAuthnContextLabel" xml:space="preserve">
+    <value>AuthnContextClassRef-värden (SAML)</value>
+  </data>
+  <data name="FederatedMfaSaveButton" xml:space="preserve">
+    <value>Spara mappning</value>
+  </data>
+  <data name="FederatedMfaRemoveButton" xml:space="preserve">
+    <value>Ta bort mappning</value>
+  </data>
+  <data name="FederatedMfaSaved" xml:space="preserve">
+    <value>Mappningen har sparats. Den börjar gälla när den klarar en testinloggning.</value>
+  </data>
+  <data name="FederatedMfaRemoved" xml:space="preserve">
+    <value>Mappningen har tagits bort. Identitetsleverantörens MFA räknas inte längre i organisationen.</value>
+  </data>
+  <data name="FederatedMfaInvalid" xml:space="preserve">
+    <value>Mappningen kan inte användas: {0}</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfa" xml:space="preserve">
+    <value>För att ändra mappningen krävs en nylig verifiering med din autentiseringsapp eller en nyckel. Identitetsleverantörens MFA kan inte godkänna ändringen.</value>
+  </data>
+  <data name="FederatedMfaLink" xml:space="preserve">
+    <value>Identitetsleverantörens MFA-mappning</value>
+  </data>
+  <data name="FederatedMfaTestButton" xml:space="preserve">
+    <value>Testa med en inloggning</value>
+  </data>
+  <data name="FederatedMfaTestNote" xml:space="preserve">
+    <value>Testet skickar dig nu till identitetsleverantören och begär MFA. När den returnerar ett värde som mappningen räknar börjar den här versionen gälla.</value>
   </data>
 </root>

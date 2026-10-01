@@ -162,7 +162,10 @@ namespace Resgrid.Web.ServicesCore
 				config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 				config.Lockout.MaxFailedAccessAttempts = 5;
 				config.Lockout.AllowedForNewUsers = true;
-			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
+			}).AddDefaultTokenProviders()
+				// One-time TOTP steps (passkey plan section 7.5 rule 8): replaces Identity's authenticator provider.
+				.AddTokenProvider<ResgridAuthenticatorTokenProvider>(TokenOptions.DefaultAuthenticatorProvider)
+				.AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
 			services.AddCors();
 
@@ -555,29 +558,12 @@ namespace Resgrid.Web.ServicesCore
 				// Register the OpenIddict server components.
 				.AddServer(options =>
 				{
-					options.RegisterScopes(
-						Scopes.Profile,
-						Scopes.Email,
-						Scopes.OfflineAccess,
-						"mobile",
-						"web");
-
-					// Enable the token endpoint.
-					options.SetTokenEndpointUris("/api/v4/connect/token");
+					// The scopes, token endpoints and grants (connect/token and the legacy connect/external-token exchange).
+					Resgrid.Web.Services.Helpers.ResgridTokenEndpoints.UseResgridTokenEndpoints(options);
 					options.SetIntrospectionEndpointUris("/api/v4/connect/introspect");
 
 					options.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
 					options.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
-
-					// Enable the password and the refresh token flows.
-					//options.AllowPasswordFlow()
-					//	   .AllowRefreshTokenFlow();
-					options//.AllowAuthorizationCodeFlow()
-						   //.AllowHybridFlow()
-					   .AllowClientCredentialsFlow()
-					   .AllowPasswordFlow()
-					   .AllowRefreshTokenFlow()
-					   .AllowCustomFlow("web_session");
 
 					// Accept anonymous clients (i.e clients that don't send a client_id).
 					options.AcceptAnonymousClients();
@@ -653,6 +639,9 @@ namespace Resgrid.Web.ServicesCore
 			services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
 
 			services.AddHostedService<Worker>();
+			// Open SignalR connections by session, closed by the sweep once their session ends or locks (slice 16).
+			services.AddSingleton<Resgrid.Services.SessionConnectionRegistry>();
+			services.AddHostedService<Resgrid.Web.Services.Middleware.SessionConnectionSweepService>();
 			services.AddScoped<ITwilioVoiceResponseService, TwilioVoiceResponseService>();
 			this.Services = services;
 
@@ -746,6 +735,8 @@ namespace Resgrid.Web.ServicesCore
 			// ADP broker CLIENT only (no key material, no KMS route) — the app tier asks the broker
 			// to act on a caller's grant. The real KMS adapter module is broker-host-only.
 			builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());
+			// WebAuthn ceremonies for passkey enrollment and step-up; every passkey gate starts off (PasskeyConfig).
+			builder.RegisterModule(new Resgrid.Providers.Authentication.AuthenticationProviderModule());
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
 			builder.RegisterType<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>().As<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
@@ -765,6 +756,10 @@ namespace Resgrid.Web.ServicesCore
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
+			// Passkeys fail closed on a bad relying-party configuration; say so at startup (plan section 10.3).
+			Resgrid.Services.PasskeyReadinessReporter.Report(app.ApplicationServices.GetService(typeof(Resgrid.Model.Services.IRelyingPartyRegistry)) as Resgrid.Model.Services.IRelyingPartyRegistry);
+			Resgrid.Repositories.DataRepository.Stores.AuthenticatorSeedProtector.ReportReadiness();
+
 			app.UseForwardedHeaders();
 			app.UseMiddleware<CapabilityPathRedactionMiddleware>();
 

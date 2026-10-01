@@ -107,6 +107,7 @@ namespace Resgrid.Tests.Services
 			public readonly Mock<IDeploymentService> Deployments = new Mock<IDeploymentService>();
 			public readonly Mock<IWorkforceService> Workforce = new Mock<IWorkforceService>();
 			public readonly Mock<IDepartmentsService> Departments = new Mock<IDepartmentsService>();
+			public readonly Mock<IMfaAccountCleanupService> MfaCleanup = new Mock<IMfaAccountCleanupService>();
 			public DeleteService Service;
 		}
 
@@ -137,7 +138,8 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IShiftsService>(), Mock.Of<IUnitsService>(), Mock.Of<ICertificationService>(), Mock.Of<ILogService>(), Mock.Of<IInventoryService>(), Mock.Of<IEventAggregator>(),
 				Mock.Of<IAddressService>(), Mock.Of<IQueueService>(), Mock.Of<IEmailService>(), Mock.Of<IDeleteRepository>(), Mock.Of<IAuditLogsRepository>(), Mock.Of<IScheduledTasksService>(),
 				Mock.Of<IUserSessionService>(), Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentMemberEmergencyContactService>(),
-				deploymentService: r.Deployments.Object, deploymentPersonnel: seats.Object, workforceService: r.Workforce.Object);
+				deploymentService: r.Deployments.Object, deploymentPersonnel: seats.Object, workforceService: r.Workforce.Object,
+				mfaAccountCleanup: r.MfaCleanup.Object);
 			return r;
 		}
 
@@ -155,6 +157,22 @@ namespace Resgrid.Tests.Services
 			r.Calls.Should().Equal("seat:seat-open:chief", "employment:" + DateTime.UtcNow.ToString("yyyy-MM-dd") + ":chief", "membership");
 			r.Deployments.Verify(d => d.RemovePersonnelAsync("seat-already-off", It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 			r.Deployments.Verify(d => d.RemovePersonnelAsync("seat-closed", Dept, "chief", null, null, It.IsAny<CancellationToken>()), Times.Once, "a closed deployment's roster is history and is skipped, not a failure");
+		}
+
+		[Test]
+		public async Task Deleting_the_last_membership_retires_the_accounts_sign_in_factors_and_leaving_one_department_does_not()
+		{
+			var stays = Build();
+			(await stays.Service.DeleteUserAsync(Dept, "chief", "leaver")).Should().Be(DeleteUserResults.NoFailure);
+			stays.MfaCleanup.Verify(c => c.RemoveForDeletedAccountAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the account still signs in to its other department");
+
+			var leaves = Build();
+			leaves.Departments.Setup(d => d.GetAllDepartmentsForUserAsync("leaver"))
+				.ReturnsAsync(new List<DepartmentMember> { new DepartmentMember { DepartmentId = Dept, UserId = "leaver" } });
+			(await leaves.Service.DeleteUserAsync(Dept, "chief", "leaver")).Should().Be(DeleteUserResults.NoFailure);
+			leaves.MfaCleanup.Verify(c => c.RemoveForDeletedAccountAsync("leaver", "chief", It.IsAny<CancellationToken>()), Times.Once,
+				"passkeys, evidence, pending challenges and approvals, notices and recoveries go with the account (plan section 6.4)");
 		}
 
 		[Test]

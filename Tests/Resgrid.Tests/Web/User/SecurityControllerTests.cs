@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
@@ -27,6 +28,7 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IDepartmentsService> _departmentsService;
 		private Mock<IAuditService> _auditService;
 		private Mock<IPermissionsService> _permissionsService;
+		private Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security>> _secLocalizer;
 		private SecurityController _controller;
 
 		[SetUp]
@@ -35,6 +37,10 @@ namespace Resgrid.Tests.Web.User
 			_departmentsService = new Mock<IDepartmentsService>();
 			_auditService = new Mock<IAuditService>();
 			_permissionsService = new Mock<IPermissionsService>();
+			// Like ASP.NET's localizer, an unknown key comes back as its own name with ResourceNotFound set.
+			_secLocalizer = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security>>();
+			_secLocalizer.Setup(l => l[It.IsAny<string>()])
+				.Returns((string name) => new LocalizedString(name, name, resourceNotFound: true));
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -58,10 +64,13 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<ISystemAuditsService>(),
 				null,
-				null,
+				_secLocalizer.Object,
 				Mock.Of<IDepartmentSsoService>(),
 				Mock.Of<IEncryptionService>(),
-				Mock.Of<IRecordsCutoverService>())
+				Mock.Of<IRecordsCutoverService>(),
+				Mock.Of<IPasskeyFeatureGates>(),
+				Mock.Of<IMfaEvidenceService>(),
+				Mock.Of<IMfaPolicyService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -180,6 +189,37 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task GetAuditLogsList_UsesLocalizedTypeNamesAndFallsBackToTheAuditServiceName()
+		{
+			var localizedType = new AuditLog { AuditLogId = 1, DepartmentId = DepartmentId, UserId = "actor-1", LoggedOn = DateTime.UtcNow, LogType = (int)AuditLogTypes.UserAdded };
+			var untranslatedType = new AuditLog { AuditLogId = 2, DepartmentId = DepartmentId, LogType = (int)AuditLogTypes.UserRemoved };
+			_auditService.Setup(x => x.GetAllAuditLogsForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<AuditLog> { localizedType, untranslatedType });
+			_auditService.Setup(x => x.GetAuditLogTypeString(AuditLogTypes.UserRemoved)).Returns("User Removed");
+			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false))
+				.ReturnsAsync(new Department { DepartmentId = DepartmentId, TimeZone = "UTC" });
+			_departmentsService.Setup(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName>());
+			_departmentsService.Setup(x => x.GetAllUsersForDepartmentAsync(DepartmentId, true, false)).ReturnsAsync(new List<IdentityUser>());
+			_secLocalizer.Setup(l => l["AuditLogTypeUserAdded"]).Returns(new LocalizedString("AuditLogTypeUserAdded", "Benutzer hinzugefügt"));
+			_secLocalizer.Setup(l => l["AuditLogsSystemActor"]).Returns(new LocalizedString("AuditLogsSystemActor", "System (de)"));
+			_secLocalizer.Setup(l => l["AuditLogsUnknownTime"]).Returns(new LocalizedString("AuditLogsUnknownTime", "Unbekannt"));
+
+			var result = await _controller.GetAuditLogsList();
+
+			var entries = result.Should().BeOfType<JsonResult>().Subject.Value
+				.Should().BeAssignableTo<IEnumerable<AuditLogJson>>().Subject.ToList();
+			var translated = entries.Single(x => x.AuditLogId == 1);
+			translated.Type.Should().Be("Benutzer hinzugefügt");
+			translated.SearchTerms.Should().Contain("Benutzer hinzugefügt").And.Contain(AuditLogTypes.UserAdded.ToString());
+			_auditService.Verify(x => x.GetAuditLogTypeString(AuditLogTypes.UserAdded), Times.Never);
+
+			var fallback = entries.Single(x => x.AuditLogId == 2);
+			fallback.Type.Should().Be("User Removed", "a type without a Security resource falls back to the audit service's English name");
+			fallback.Name.Should().Be("System (de)");
+			fallback.Timestamp.Should().Be("Unbekannt");
+		}
+
+		[Test]
 		public async Task ViewAudit_ReturnsCompleteAuditEntryAndFriendlyTypeName()
 		{
 			var auditLog = new AuditLog
@@ -211,6 +251,23 @@ namespace Resgrid.Tests.Web.User
 			model.AuditLog.Should().BeSameAs(auditLog);
 			model.Type.Should().Be(AuditLogTypes.UserAdded);
 			model.TypeName.Should().Be("User Added");
+		}
+
+		[Test]
+		public async Task ViewAudit_UsesLocalizedTypeName()
+		{
+			_auditService.Setup(x => x.GetAuditLogByIdAsync(43))
+				.ReturnsAsync(new AuditLog { AuditLogId = 43, DepartmentId = DepartmentId, LogType = (int)AuditLogTypes.UserAdded });
+			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false))
+				.ReturnsAsync(new Department { DepartmentId = DepartmentId });
+			_secLocalizer.Setup(l => l["AuditLogTypeUserAdded"]).Returns(new LocalizedString("AuditLogTypeUserAdded", "Utente aggiunto"));
+
+			var result = await _controller.ViewAudit(43);
+
+			var model = result.Should().BeOfType<ViewResult>().Subject.Model.Should().BeOfType<ViewAuditLogView>().Subject;
+			model.Type.Should().Be(AuditLogTypes.UserAdded, "the raw type stays available as an identifier");
+			model.TypeName.Should().Be("Utente aggiunto");
+			_auditService.Verify(x => x.GetAuditLogTypeString(It.IsAny<AuditLogTypes>()), Times.Never);
 		}
 
 		[Test]

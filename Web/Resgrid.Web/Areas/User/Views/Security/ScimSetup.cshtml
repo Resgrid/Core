@@ -87,7 +87,7 @@
                     <form asp-action="RotateScimToken" asp-route-id="@Model.DepartmentSsoConfigId" method="post" class="m-t-md">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-block btn-@(Model.HasScimBearerToken ? "warning" : "primary")"
-                                onclick="return confirm('@localizer["ScimSetupRotateTokenConfirm"]')">
+                                onclick="return confirm('@JsEncoder.Encode(localizer["ScimSetupRotateTokenConfirm"])')">
                             <i class="fa fa-refresh"></i>
                             @(Model.HasScimBearerToken ? localizer["ScimSetupRotateTokenButton"] : localizer["ScimSetupGenerateTokenButton"])
                         </button>
@@ -352,7 +352,7 @@
             var el = document.getElementById(fieldId);
             el.select();
             document.execCommand('copy');
-            toastr.success('@localizer["SsoCopiedToClipboard"]');
+            toastr.success('@JsEncoder.Encode(localizer["SsoCopiedToClipboard"])');
         }
 
         @if (!string.IsNullOrWhiteSpace(Model.NewScimBearerToken))

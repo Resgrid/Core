@@ -155,6 +155,9 @@
   <data name="DisableConfirmationText" xml:space="preserve">
     <value>Enter your current authenticator code to confirm you wish to disable 2FA:</value>
   </data>
+  <data name="DisableBlockedByPasskeys" xml:space="preserve">
+    <value>Vous ne pouvez pas désactiver la 2FA tant que vous avez des clés d'accès. Supprimez d'abord vos clés d'accès, puis désactivez la 2FA.</value>
+  </data>
   <data name="AuthenticatorCodeLabel" xml:space="preserve">
     <value>Authenticator Code</value>
   </data>
@@ -211,5 +214,422 @@
   </data>
   <data name="InvalidRecoveryCode" xml:space="preserve">
     <value>Invalid recovery code.</value>
+  </data>
+  <data name="ReplaceAuthenticatorButton" xml:space="preserve">
+    <value>Replace Authenticator</value>
+  </data>
+  <data name="ReplaceHeader" xml:space="preserve">
+    <value>Replace Your Authenticator App</value>
+  </data>
+  <data name="ReplaceInstructions" xml:space="preserve">
+    <value>Scan this new key with the authenticator app you want to use, then enter a code from it. When you confirm, your old authenticator stops working, new recovery codes are issued, and every device is signed out.</value>
+  </data>
+  <data name="ReplaceAndSignOutButton" xml:space="preserve">
+    <value>Verify, Replace and Sign Out Everywhere</value>
+  </data>
+  <data name="SignInAgainNotice" xml:space="preserve">
+    <value>Your authenticator was replaced and every session was signed out. Save these recovery codes, then sign in again with your new authenticator.</value>
+  </data>
+  <data name="SignInAgainButton" xml:space="preserve">
+    <value>Sign In Again</value>
+  </data>
+  <data name="PasskeysHeader" xml:space="preserve">
+    <value>Clés d'accès</value>
+  </data>
+  <data name="PasskeysDescription" xml:space="preserve">
+    <value>Une clé d'accès vous vérifie avec le verrouillage d'écran de votre appareil ou une clé de sécurité. Chaque clé d'accès ne fonctionne que dans l'application où elle a été ajoutée ; ajoutez-en une ici pour le web. Une clé d'accès supprimée cesse aussitôt de fonctionner sur Resgrid, même si elle peut rester sur l'appareil ou dans votre gestionnaire de mots de passe.</value>
+  </data>
+  <data name="PasskeysNone" xml:space="preserve">
+    <value>Vous n'avez encore aucune clé d'accès.</value>
+  </data>
+  <data name="PasskeysAddButton" xml:space="preserve">
+    <value>Ajouter une clé d'accès pour le web</value>
+  </data>
+  <data name="PasskeysUnavailable" xml:space="preserve">
+    <value>L'ajout de clés d'accès pour le web n'est pas encore disponible sur cette installation.</value>
+  </data>
+  <data name="PasskeysNeedAuthenticator" xml:space="preserve">
+    <value>Configurez une application d'authentification et conservez des codes de récupération avant d'ajouter une clé d'accès.</value>
+  </data>
+  <data name="PasskeyNameLabel" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="PasskeyAppLabel" xml:space="preserve">
+    <value>Fonctionne dans</value>
+  </data>
+  <data name="PasskeyCreatedLabel" xml:space="preserve">
+    <value>Ajoutée</value>
+  </data>
+  <data name="PasskeyLastUsedLabel" xml:space="preserve">
+    <value>Dernière utilisation</value>
+  </data>
+  <data name="PasskeyNeverUsed" xml:space="preserve">
+    <value>Pas encore</value>
+  </data>
+  <data name="PasskeySharedWarning" xml:space="preserve">
+    <value>Ajoutée sur une installation partagée</value>
+  </data>
+  <data name="PasskeyRenameButton" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="PasskeyRemoveButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="PasskeyRenamePrompt" xml:space="preserve">
+    <value>Nouveau nom pour cette clé d'accès :</value>
+  </data>
+  <data name="PasskeyRemoveConfirm" xml:space="preserve">
+    <value>Supprimer cette clé d'accès ? Elle cesse aussitôt de fonctionner sur Resgrid, et les sessions ouvertes avec elle sont fermées.</value>
+  </data>
+  <data name="PasskeyAdded" xml:space="preserve">
+    <value>Clé d'accès ajoutée.</value>
+  </data>
+  <data name="PasskeyRemoved" xml:space="preserve">
+    <value>Clé d'accès supprimée.</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>La fenêtre de la clé d'accès a été fermée. Rien n'a été modifié.</value>
+  </data>
+  <data name="PasskeyNotSupported" xml:space="preserve">
+    <value>Ce navigateur ne peut pas utiliser de clés d'accès. Utilisez plutôt votre application d'authentification.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>La clé d'accès n'a pas pu être utilisée. Réessayez ou utilisez votre application d'authentification.</value>
+  </data>
+  <data name="PasskeyLimitReached" xml:space="preserve">
+    <value>Vous avez déjà le nombre maximal de clés d'accès autorisé pour le web. Supprimez-en une d'abord.</value>
+  </data>
+  <data name="VerifyWithPasskeyButton" xml:space="preserve">
+    <value>Utiliser une clé d'accès</value>
+  </data>
+  <data name="PasskeyAppWeb" xml:space="preserve">
+    <value>Web</value>
+  </data>
+  <data name="PasskeyAppResponder" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="PasskeyAppUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="PasskeyAppDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="PasskeyAppCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="PasskeyRenamed" xml:space="preserve">
+    <value>Clé d'accès renommée.</value>
+  </data>
+  <data name="PasskeyAlreadyRegistered" xml:space="preserve">
+    <value>Cet appareil ou cette clé de sécurité contient déjà une clé d'accès pour votre compte dans cette application.</value>
+  </data>
+  <data name="LoginMfaDescription" xml:space="preserve">
+    <value>Votre mot de passe a été accepté. Terminez la connexion avec l'une de vos méthodes de vérification.</value>
+  </data>
+  <data name="ApproveWithResponderButton" xml:space="preserve">
+    <value>Approuver avec Responder</value>
+  </data>
+  <data name="ApprovalNumberLabel" xml:space="preserve">
+    <value>Ouvrez Responder sur votre téléphone et approuvez la demande. Vérifiez qu'il affiche ce numéro :</value>
+  </data>
+  <data name="ApprovalWaiting" xml:space="preserve">
+    <value>En attente de votre approbation dans Responder…</value>
+  </data>
+  <data name="ApprovalDenied" xml:space="preserve">
+    <value>La demande a été refusée dans Responder. Utilisez une autre méthode.</value>
+  </data>
+  <data name="ApprovalExpired" xml:space="preserve">
+    <value>La demande a pris fin avant d'être approuvée. Recommencez.</value>
+  </data>
+  <data name="ApprovalCancelButton" xml:space="preserve">
+    <value>Ne plus attendre</value>
+  </data>
+  <data name="ApprovalUnavailable" xml:space="preserve">
+    <value>L'approbation avec Responder n'est pas disponible pour le moment. Utilisez une autre méthode.</value>
+  </data>
+  <data name="LoginMfaFailed" xml:space="preserve">
+    <value>Cela n'a pas fonctionné. Réessayez ou utilisez une autre méthode.</value>
+  </data>
+  <data name="LoginMfaExpired" xml:space="preserve">
+    <value>Votre connexion a pris trop de temps. Reconnectez-vous.</value>
+  </data>
+  <data name="LoginMfaTooManyAttempts" xml:space="preserve">
+    <value>Trop de tentatives échouées. Patientez quelques minutes, puis reconnectez-vous.</value>
+  </data>
+  <data name="LoginMfaPolicyChanged" xml:space="preserve">
+    <value>La politique de connexion de votre département a changé. Reconnectez-vous.</value>
+  </data>
+  <data name="LoginMfaSignInChanged" xml:space="preserve">
+    <value>Les informations de connexion de votre compte ont changé. Reconnectez-vous.</value>
+  </data>
+  <data name="LoginMfaUnavailable" xml:space="preserve">
+    <value>La connexion est momentanément indisponible. Réessayez dans un instant.</value>
+  </data>
+  <data name="LoginMfaInvalid" xml:space="preserve">
+    <value>Cette connexion n'est plus valide. Reconnectez-vous.</value>
+  </data>
+  <data name="LoginMfaMethodUnavailable" xml:space="preserve">
+    <value>Cette méthode de vérification n'est pas disponible pour cette connexion. Utilisez une autre méthode.</value>
+  </data>
+  <data name="LoginMfaMaximumSessions" xml:space="preserve">
+    <value>Le nombre maximal de sessions actives de votre département est atteint. Fermez l'une de vos sessions ou contactez votre administrateur.</value>
+  </data>
+  <data name="LoginMfaRecoveryUsed" xml:space="preserve">
+    <value>Vous vous êtes connecté avec un code de récupération. Si vous n'avez plus votre application d'authentification, remplacez-la maintenant.</value>
+  </data>
+  <data name="UseAnotherMethodLink" xml:space="preserve">
+    <value>Utiliser une autre méthode</value>
+  </data>
+  <data name="SsoSignInLink" xml:space="preserve">
+    <value>Se connecter avec l'authentification unique</value>
+  </data>
+  <data name="SsoLogOnHeader" xml:space="preserve">
+    <value>Authentification unique</value>
+  </data>
+  <data name="SsoLogOnDescription" xml:space="preserve">
+    <value>Saisissez votre nom d'utilisateur ou le code de votre département. Vous vous connecterez avec le fournisseur d'identité de votre organisation.</value>
+  </data>
+  <data name="SsoUsernameLabel" xml:space="preserve">
+    <value>Nom d'utilisateur</value>
+  </data>
+  <data name="SsoOr" xml:space="preserve">
+    <value>ou</value>
+  </data>
+  <data name="SsoDepartmentCodeLabel" xml:space="preserve">
+    <value>Code du département</value>
+  </data>
+  <data name="SsoContinueButton" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="SsoUsePasswordLink" xml:space="preserve">
+    <value>Se connecter plutôt avec un mot de passe</value>
+  </data>
+  <data name="SsoLogOnNeedsEntry" xml:space="preserve">
+    <value>Saisissez votre nom d'utilisateur ou le code de votre département.</value>
+  </data>
+  <data name="SsoUnavailable" xml:space="preserve">
+    <value>L'authentification unique n'est pas disponible pour cette connexion.</value>
+  </data>
+  <data name="SsoRestart" xml:space="preserve">
+    <value>Cette connexion n'a pas pu être associée à ce navigateur. Recommencez.</value>
+  </data>
+  <data name="SsoDeniedByProvider" xml:space="preserve">
+    <value>Votre fournisseur d'identité ne vous a pas connecté.</value>
+  </data>
+  <data name="SsoFailed" xml:space="preserve">
+    <value>L'authentification unique n'a pas pu aboutir. Recommencez.</value>
+  </data>
+  <data name="SsoExpired" xml:space="preserve">
+    <value>L'authentification unique a pris trop de temps. Recommencez.</value>
+  </data>
+  <data name="SsoAccessDenied" xml:space="preserve">
+    <value>Ce compte ne peut pas se connecter ici avec l'authentification unique.</value>
+  </data>
+  <data name="SsoAccountMismatch" xml:space="preserve">
+    <value>Votre fournisseur d'identité a connecté un autre compte. Recommencez avec le compte que vous utilisez ici.</value>
+  </data>
+  <data name="SsoNotFresh" xml:space="preserve">
+    <value>Votre fournisseur d'identité n'a pas confirmé une nouvelle connexion. Recommencez.</value>
+  </data>
+  <data name="SsoProviderMfaNotConfirmed" xml:space="preserve">
+    <value>Votre fournisseur d'identité n'a pas confirmé l'authentification multifacteur. Utilisez une autre méthode.</value>
+  </data>
+  <data name="SsoMfaEnrollmentRequired" xml:space="preserve">
+    <value>Votre département exige l'authentification multifacteur, et ce compte n'en a pas encore. Demandez à votre administrateur comment la configurer.</value>
+  </data>
+  <data name="VerifyWithProviderButton" xml:space="preserve">
+    <value>Vérifier avec votre fournisseur d'identité</value>
+  </data>
+  <data name="ReauthenticateWithSsoButton" xml:space="preserve">
+    <value>Confirmer avec l'authentification unique</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfaShort" xml:space="preserve">
+    <value>Tester la correspondance nécessite une vérification récente avec votre application d'authentification ou une clé d'accès.</value>
+  </data>
+  <data name="FederatedMfaTestFailed" xml:space="preserve">
+    <value>La connexion de test ne portait aucune valeur que la correspondance compte comme MFA. Vérifiez la correspondance et votre fournisseur d'identité, puis testez à nouveau.</value>
+  </data>
+  <data name="FederatedMfaTestChanged" xml:space="preserve">
+    <value>La correspondance a changé pendant le test. Testez-la à nouveau.</value>
+  </data>
+  <data name="FederatedMfaTestPassed" xml:space="preserve">
+    <value>La correspondance a réussi son test et est désormais en vigueur.</value>
+  </data>
+  <data name="LoginMfaSetupHeader" xml:space="preserve">
+    <value>Configurez votre application d'authentification</value>
+  </data>
+  <data name="LoginMfaSetupDescription" xml:space="preserve">
+    <value>Votre département exige un second facteur, et ce compte n'en a pas encore. Configurez une application d'authentification pour terminer la connexion.</value>
+  </data>
+  <data name="SetupCompleteButton" xml:space="preserve">
+    <value>Vérifier et se connecter</value>
+  </data>
+  <data name="SetupExpired" xml:space="preserve">
+    <value>Le code de configuration a expiré. Un nouveau s'affiche ; scannez-le à nouveau.</value>
+  </data>
+  <data name="BackToSignInLink" xml:space="preserve">
+    <value>Retour à la connexion</value>
+  </data>
+  <data name="LostFactorLink" xml:space="preserve">
+    <value>J'ai perdu mon authentificateur</value>
+  </data>
+  <data name="LostFactorHeader" xml:space="preserve">
+    <value>Vous avez perdu votre authentificateur ?</value>
+  </data>
+  <data name="LostFactorWithCodeDescription" xml:space="preserve">
+    <value>Si vous avez conservé vos codes de récupération, saisissez-en un pour configurer une nouvelle application d'authentification et supprimer les clés d'accès perdues. Toutes les sessions sont fermées, puis vous vous reconnectez.</value>
+  </data>
+  <data name="StartRecoveryButton" xml:space="preserve">
+    <value>Remplacer mon authentificateur</value>
+  </data>
+  <data name="LostFactorSignInFirst" xml:space="preserve">
+    <value>Pour utiliser un code de récupération, connectez-vous d'abord avec votre mot de passe ou l'authentification unique, puis choisissez « J'ai perdu mon authentificateur ».</value>
+  </data>
+  <data name="LostFactorNoCodeHeader" xml:space="preserve">
+    <value>Pas de code de récupération ?</value>
+  </data>
+  <data name="LostFactorNoCodeDescription" xml:space="preserve">
+    <value>Resgrid ne peut pas réinitialiser automatiquement un authentificateur perdu. Demandez aux administrateurs de votre département de contacter l'assistance Resgrid, qui confirme votre identité auprès de votre département avant tout changement. D'ici là, suivez les procédures de votre département.</value>
+  </data>
+  <data name="RecoveryHeader" xml:space="preserve">
+    <value>Remplacez votre authentificateur</value>
+  </data>
+  <data name="RecoveryDescription" xml:space="preserve">
+    <value>Configurez votre nouvelle application d'authentification et saisissez le code affiché. Choisissez les clés d'accès perdues ; elles seront supprimées.</value>
+  </data>
+  <data name="RecoveryPasskeysLabel" xml:space="preserve">
+    <value>Clés d'accès à supprimer comme perdues</value>
+  </data>
+  <data name="RecoveryCompleteButton" xml:space="preserve">
+    <value>Remplacer et se déconnecter partout</value>
+  </data>
+  <data name="RecoveryCancelButton" xml:space="preserve">
+    <value>Annuler la récupération</value>
+  </data>
+  <data name="RecoveryCompleteHeader" xml:space="preserve">
+    <value>Votre authentificateur a été remplacé</value>
+  </data>
+  <data name="RecoveryCompleteDescription" xml:space="preserve">
+    <value>Toutes les sessions ont été fermées. Enregistrez vos nouveaux codes de récupération, puis reconnectez-vous avec votre nouvel authentificateur.</value>
+  </data>
+  <data name="RecoverySignInAgainButton" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="RecoveryEnded" xml:space="preserve">
+    <value>Cette récupération n'est plus valide. Connectez-vous et recommencez.</value>
+  </data>
+  <data name="RecoveryUnavailable" xml:space="preserve">
+    <value>La récupération est momentanément indisponible. Connectez-vous et réessayez avec un autre code de récupération.</value>
+  </data>
+  <data name="RecoveryPasskeyNotFound" xml:space="preserve">
+    <value>L'une des clés d'accès à supprimer ne vous appartient pas ou a déjà été supprimée.</value>
+  </data>
+  <data name="SsoReturnContinuing" xml:space="preserve">
+    <value>Retour depuis la connexion de votre organisation…</value>
+  </data>
+  <data name="SsoReturnContinue" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="SharedWorkstationTitle" xml:space="preserve">
+    <value>Poste de travail partagé</value>
+  </data>
+  <data name="SharedWorkstationDescription" xml:space="preserve">
+    <value>Sur un poste de travail partagé, chaque connexion dans ce navigateur se verrouille en cas d’inactivité, se termine à la limite du quart et ne mémorise jamais le navigateur. Chaque opérateur se connecte avec son propre compte.</value>
+  </data>
+  <data name="SharedWorkstationUseLabel" xml:space="preserve">
+    <value>Utiliser ce navigateur comme poste de travail partagé</value>
+  </data>
+  <data name="SharedWorkstationLabelLabel" xml:space="preserve">
+    <value>Nom du poste (facultatif)</value>
+  </data>
+  <data name="SharedWorkstationLabelHelp" xml:space="preserve">
+    <value>Un nom pour le support, par exemple « Poste de régulation 2 ». Il identifie le poste, pas une personne.</value>
+  </data>
+  <data name="SharedWorkstationSaveButton" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="SharedWorkstationSaved" xml:space="preserve">
+    <value>Ce navigateur est désormais un poste de travail partagé. Cela s’applique dès la prochaine connexion.</value>
+  </data>
+  <data name="SharedWorkstationRemoved" xml:space="preserve">
+    <value>Ce navigateur n’est plus un poste de travail partagé. Cela s’applique dès la prochaine connexion.</value>
+  </data>
+  <data name="SharedWorkstationUnavailable" xml:space="preserve">
+    <value>Le mode poste de travail partagé n’est pas disponible sur ce déploiement Resgrid.</value>
+  </data>
+  <data name="SharedWorkstationLink" xml:space="preserve">
+    <value>Paramètres du poste partagé</value>
+  </data>
+  <data name="SharedWorkstationNotice" xml:space="preserve">
+    <value>Poste de travail partagé : les connexions ici se verrouillent en cas d’inactivité et ne mémorisent jamais ce navigateur.</value>
+  </data>
+  <data name="SharedWorkstationNoticeNamed" xml:space="preserve">
+    <value>Poste de travail partagé ({0}) : les connexions ici se verrouillent en cas d’inactivité et ne mémorisent jamais ce navigateur.</value>
+  </data>
+  <data name="SharedLockedHeader" xml:space="preserve">
+    <value>Poste verrouillé</value>
+  </data>
+  <data name="SharedLockedIdle" xml:space="preserve">
+    <value>Ce poste s’est verrouillé pour cause d’inactivité.</value>
+  </data>
+  <data name="SharedLockedExplicit" xml:space="preserve">
+    <value>Ce poste est verrouillé.</value>
+  </data>
+  <data name="SharedLockedOperator" xml:space="preserve">
+    <value>Connecté en tant que {0}</value>
+  </data>
+  <data name="SharedLockedInstruction" xml:space="preserve">
+    <value>Seul {0} peut le déverrouiller. Toute autre personne : changez d’opérateur ou terminez le quart.</value>
+  </data>
+  <data name="SharedUnlockButton" xml:space="preserve">
+    <value>Déverrouiller</value>
+  </data>
+  <data name="SharedSwitchOperatorButton" xml:space="preserve">
+    <value>Changer d’opérateur</value>
+  </data>
+  <data name="SharedEndShiftButton" xml:space="preserve">
+    <value>Terminer le quart</value>
+  </data>
+  <data name="SharedLockButton" xml:space="preserve">
+    <value>Verrouiller</value>
+  </data>
+  <data name="SharedStaySignedInButton" xml:space="preserve">
+    <value>Rester connecté</value>
+  </data>
+  <data name="SharedBarLocksIn" xml:space="preserve">
+    <value>Verrouillage dans {0}</value>
+  </data>
+  <data name="SharedIdleWarning" xml:space="preserve">
+    <value>Ce poste se verrouille dans {0} secondes pour cause d’inactivité.</value>
+  </data>
+  <data name="SharedShiftEndsSoon" xml:space="preserve">
+    <value>Le quart se termine dans {0} minutes.</value>
+  </data>
+  <data name="SharedUnlockNeedsAuthenticator" xml:space="preserve">
+    <value>Le déverrouillage rapide nécessite une application d’authentification ou une autre méthode de vérification. Terminez le quart et reconnectez-vous.</value>
+  </data>
+  <data name="SharedUnlockNeedsSso" xml:space="preserve">
+    <value>Votre service exige l’authentification unique. Terminez le quart et connectez-vous avec le SSO.</value>
+  </data>
+  <data name="SharedUnlockLockChanged" xml:space="preserve">
+    <value>Le poste s’est de nouveau verrouillé. Déverrouillez-le à nouveau.</value>
+  </data>
+  <data name="SharedUnlockSessionEnded" xml:space="preserve">
+    <value>Cette session est terminée. Terminez le quart et reconnectez-vous.</value>
+  </data>
+  <data name="SharedUnlockTooManyAttempts" xml:space="preserve">
+    <value>Trop de tentatives de déverrouillage. Patientez quelques minutes ou terminez le quart et reconnectez-vous.</value>
+  </data>
+  <data name="SharedSessionUpdateFailed" xml:space="preserve">
+    <value>La session n’a pas pu être mise à jour. Réessayez.</value>
+  </data>
+  <data name="SharedShiftEnded" xml:space="preserve">
+    <value>Le quart sur ce poste de travail partagé est terminé. Reconnectez-vous.</value>
+  </data>
+  <data name="SharedShiftEndedByOperator" xml:space="preserve">
+    <value>Quart terminé. Ce poste est prêt pour la prochaine connexion.</value>
+  </data>
+  <data name="SharedSwitchOperatorDone" xml:space="preserve">
+    <value>Déconnecté. L’opérateur suivant peut se connecter maintenant.</value>
   </data>
 </root>

@@ -128,4 +128,205 @@
   <data name="SensitivityPart2" xml:space="preserve">
     <value>42 CFR Part 2</value>
   </data>
+  <data name="PageHeader" xml:space="preserve">
+    <value>Champs définis par l'utilisateur</value>
+  </data>
+  <data name="PageSubHeader" xml:space="preserve">
+    <value>Gérez les champs personnalisés des entités du département</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Type d'entité</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="FieldCount" xml:space="preserve">
+    <value>Champs</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="NoDefinition" xml:space="preserve">
+    <value>Non configuré</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Configurer</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Supprimer toute la configuration des champs personnalisés pour {0} ? Cette action est irréversible.</value>
+  </data>
+  <data name="UdfSummaryTitle" xml:space="preserve">
+    <value>Définitions des champs personnalisés par entité</value>
+  </data>
+  <data name="EditDefinitionHeader" xml:space="preserve">
+    <value>Configurer les champs — {0}</value>
+  </data>
+  <data name="NewDefinitionHeader" xml:space="preserve">
+    <value>Configurer les champs — {0}</value>
+  </data>
+  <data name="FieldsSection" xml:space="preserve">
+    <value>Définitions des champs</value>
+  </data>
+  <data name="AddField" xml:space="preserve">
+    <value>Ajouter un champ</value>
+  </data>
+  <data name="NoFieldsAdded" xml:space="preserve">
+    <value>Aucun champ n'a encore été ajouté. Cliquez sur « Ajouter un champ » pour définir le premier champ.</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Nom technique</value>
+  </data>
+  <data name="FieldLabel" xml:space="preserve">
+    <value>Libellé</value>
+  </data>
+  <data name="FieldDataType" xml:space="preserve">
+    <value>Type de données</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Requis</value>
+  </data>
+  <data name="FieldEnabled" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="FieldVisibleMobile" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
+  <data name="FieldVisibleReports" xml:space="preserve">
+    <value>Rapports</value>
+  </data>
+  <data name="FieldOrder" xml:space="preserve">
+    <value>Ordre</value>
+  </data>
+  <data name="RemoveField" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="RemoveFieldConfirm" xml:space="preserve">
+    <value>Retirer ce champ ?</value>
+  </data>
+  <data name="SaveDefinition" xml:space="preserve">
+    <value>Enregistrer la définition</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="FieldModalTitle" xml:space="preserve">
+    <value>Détails du champ</value>
+  </data>
+  <data name="FieldNameHelp" xml:space="preserve">
+    <value>Identifiant interne (lettres, chiffres, traits de soulignement ; doit commencer par une lettre ou un trait de soulignement). Doit être unique pour ce type d'entité.</value>
+  </data>
+  <data name="FieldLabelHelp" xml:space="preserve">
+    <value>Libellé lisible affiché aux utilisateurs.</value>
+  </data>
+  <data name="FieldDescription" xml:space="preserve">
+    <value>Description / info-bulle</value>
+  </data>
+  <data name="FieldPlaceholder" xml:space="preserve">
+    <value>Texte indicatif</value>
+  </data>
+  <data name="FieldDefaultValue" xml:space="preserve">
+    <value>Valeur par défaut</value>
+  </data>
+  <data name="FieldGroupName" xml:space="preserve">
+    <value>Groupe / section</value>
+  </data>
+  <data name="FieldIsReadOnly" xml:space="preserve">
+    <value>Lecture seule</value>
+  </data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve">
+    <value>Lorsque cette option est activée, le champ est affiché mais ne peut pas être modifié par les utilisateurs.</value>
+  </data>
+  <data name="ValidationSection" xml:space="preserve">
+    <value>Règles de validation</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Longueur min.</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Longueur max.</value>
+  </data>
+  <data name="ValidationMinValue" xml:space="preserve">
+    <value>Valeur min.</value>
+  </data>
+  <data name="ValidationMaxValue" xml:space="preserve">
+    <value>Valeur max.</value>
+  </data>
+  <data name="ValidationRegex" xml:space="preserve">
+    <value>Expression régulière</value>
+  </data>
+  <data name="ValidationRegexError" xml:space="preserve">
+    <value>Message d'erreur de l'expression régulière</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Options (Clé=Libellé, une par ligne)</value>
+  </data>
+  <data name="DropdownOptionsHelp" xml:space="preserve">
+    <value>Saisissez une option par ligne au format Clé=Libellé, p. ex. « yes=Oui » ou « no=Non ».</value>
+  </data>
+  <data name="ModalSave" xml:space="preserve">
+    <value>Ajouter le champ</value>
+  </data>
+  <data name="ModalClose" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="UdfModule" xml:space="preserve">
+    <value>Champs définis par l'utilisateur</value>
+  </data>
+  <data name="EntityCall" xml:space="preserve">
+    <value>Appel</value>
+  </data>
+  <data name="EntityPersonnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="EntityUnit" xml:space="preserve">
+    <value>Unité</value>
+  </data>
+  <data name="EntityContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="PreviewModalTitle" xml:space="preserve">
+    <value>Aperçu des champs — {0}</value>
+  </data>
+  <data name="PreviewWarningTitle" xml:space="preserve">
+    <value>Aperçu uniquement</value>
+  </data>
+  <data name="PreviewWarningBody" xml:space="preserve">
+    <value>Ceci est un exemple de l'apparence et du rendu des champs sur la page. Aucune donnée ne sera enregistrée.</value>
+  </data>
+  <data name="PreviewNoFields" xml:space="preserve">
+    <value>Aucun champ activé à prévisualiser.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="DefinitionSaved" xml:space="preserve">
+    <value>Définition des champs enregistrée avec succès.</value>
+  </data>
+  <data name="DefinitionDeleted" xml:space="preserve">
+    <value>Définition des champs supprimée.</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Veuillez corriger les erreurs ci-dessous avant d'enregistrer.</value>
+  </data>
 </root>

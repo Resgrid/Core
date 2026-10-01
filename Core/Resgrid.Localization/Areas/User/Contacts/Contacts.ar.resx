@@ -490,4 +490,268 @@
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>فتح المبنى</value>
   </data>
+  <data name="Routes" xml:space="preserve">
+    <value>المسارات</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="StopName" xml:space="preserve">
+    <value>اسم المحطة</value>
+  </data>
+  <data name="PriorityNormal" xml:space="preserve">
+    <value>عادي</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>عالٍ</value>
+  </data>
+  <data name="PriorityCritical" xml:space="preserve">
+    <value>حرج</value>
+  </data>
+  <data name="PriorityOptional" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="PreplanTitle" xml:space="preserve">
+    <value>خطة ما قبل الحادث</value>
+  </data>
+  <data name="PreplanTab" xml:space="preserve">
+    <value>الخطة المسبقة</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>ملفات الموقع</value>
+  </data>
+  <data name="ManageFiles" xml:space="preserve">
+    <value>إدارة الملفات</value>
+  </data>
+  <data name="PreplanOccupancySection" xml:space="preserve">
+    <value>البناء والإشغال</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>نوع البناء</value>
+  </data>
+  <data name="RoofType" xml:space="preserve">
+    <value>نوع السقف</value>
+  </data>
+  <data name="OccupancyType" xml:space="preserve">
+    <value>نوع الإشغال</value>
+  </data>
+  <data name="OccupancyHours" xml:space="preserve">
+    <value>ساعات الإشغال</value>
+  </data>
+  <data name="OccupancyHoursPlaceholder" xml:space="preserve">
+    <value>مثلاً: الاثنين-الجمعة 08:00-17:00، مع وجود طاقم ليلاً</value>
+  </data>
+  <data name="OccupantLoad" xml:space="preserve">
+    <value>الحمل الإشغالي</value>
+  </data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve">
+    <value>شاغلون يحتاجون إلى مساعدة</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceYes" xml:space="preserve">
+    <value>قد يحتاج الشاغلون في الموقع إلى مساعدة في الإخلاء</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceNotes" xml:space="preserve">
+    <value>من يحتاج إلى المساعدة، وأين، وما نوع المساعدة المطلوبة</value>
+  </data>
+  <data name="OccupancyNotes" xml:space="preserve">
+    <value>ملاحظات الإشغال</value>
+  </data>
+  <data name="PreplanUtilitiesSection" xml:space="preserve">
+    <value>قواطع المرافق</value>
+  </data>
+  <data name="GasShutoff" xml:space="preserve">
+    <value>قاطع الغاز</value>
+  </data>
+  <data name="ElectricShutoff" xml:space="preserve">
+    <value>قاطع الكهرباء</value>
+  </data>
+  <data name="WaterShutoff" xml:space="preserve">
+    <value>قاطع الماء</value>
+  </data>
+  <data name="UtilityNotes" xml:space="preserve">
+    <value>ملاحظات المرافق</value>
+  </data>
+  <data name="PreplanWaterSection" xml:space="preserve">
+    <value>إمداد المياه</value>
+  </data>
+  <data name="NearestHydrant" xml:space="preserve">
+    <value>أقرب صنبور</value>
+  </data>
+  <data name="RequiredFireFlow" xml:space="preserve">
+    <value>التدفق المطلوب للإطفاء (غالون/دقيقة)</value>
+  </data>
+  <data name="WaterSupplyNotes" xml:space="preserve">
+    <value>ملاحظات إمداد المياه</value>
+  </data>
+  <data name="PreplanAccessSection" xml:space="preserve">
+    <value>الوصول</value>
+  </data>
+  <data name="KnoxBox" xml:space="preserve">
+    <value>موقع صندوق المفاتيح</value>
+  </data>
+  <data name="GateCode" xml:space="preserve">
+    <value>رمز البوابة</value>
+  </data>
+  <data name="GateCodeInfo" xml:space="preserve">
+    <value>يُخزَّن مشفّرًا. يظهر للأعضاء الذين يمكنهم عرض جهة الاتصال هذه وللمستجيبين في البلاغات المرتبطة.</value>
+  </data>
+  <data name="AlarmPanel" xml:space="preserve">
+    <value>موقع لوحة الإنذار</value>
+  </data>
+  <data name="AlarmCompany" xml:space="preserve">
+    <value>شركة الإنذار</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="AccessNotes" xml:space="preserve">
+    <value>ملاحظات الوصول</value>
+  </data>
+  <data name="PreplanContactsSection" xml:space="preserve">
+    <value>جهات الاتصال في الموقع</value>
+  </data>
+  <data name="EmergencyContact" xml:space="preserve">
+    <value>جهة اتصال الطوارئ</value>
+  </data>
+  <data name="SecondaryContact" xml:space="preserve">
+    <value>جهة الاتصال الثانوية</value>
+  </data>
+  <data name="PreplanTacticalSection" xml:space="preserve">
+    <value>المخاطر والتكتيكات</value>
+  </data>
+  <data name="HazmatOnSite" xml:space="preserve">
+    <value>مواد خطرة في الموقع</value>
+  </data>
+  <data name="HazmatOnSiteYes" xml:space="preserve">
+    <value>تُخزَّن مواد خطرة أو تُستخدم في الموقع</value>
+  </data>
+  <data name="GeneralHazardNotes" xml:space="preserve">
+    <value>ملاحظات عامة عن المخاطر</value>
+  </data>
+  <data name="TacticalSummary" xml:space="preserve">
+    <value>ملخص تكتيكي</value>
+  </data>
+  <data name="PreplanReviewSection" xml:space="preserve">
+    <value>دورة المراجعة</value>
+  </data>
+  <data name="LastReviewed" xml:space="preserve">
+    <value>آخر مراجعة</value>
+  </data>
+  <data name="NeverReviewed" xml:space="preserve">
+    <value>لم تُراجَع قط</value>
+  </data>
+  <data name="MarkReviewedNow" xml:space="preserve">
+    <value>وضع علامة تمت المراجعة على هذه الخطة المسبقة الآن</value>
+  </data>
+  <data name="NextReviewDue" xml:space="preserve">
+    <value>موعد المراجعة التالية</value>
+  </data>
+  <data name="SavePreplan" xml:space="preserve">
+    <value>حفظ الخطة المسبقة</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>مخاطر المنشأة</value>
+  </data>
+  <data name="PremiseHazardsInfo" xml:space="preserve">
+    <value>مخاطر مصنّفة حسب النوع مع درجة خطورة. تُعرض المخاطر المعلَّمة كتنبيهات على المرسلين عند إضافة جهة الاتصال هذه إلى بلاغ.</value>
+  </data>
+  <data name="AddHazard" xml:space="preserve">
+    <value>إضافة خطر</value>
+  </data>
+  <data name="EditHazard" xml:space="preserve">
+    <value>تعديل الخطر</value>
+  </data>
+  <data name="SaveHazard" xml:space="preserve">
+    <value>حفظ الخطر</value>
+  </data>
+  <data name="DeleteHazardConfirm" xml:space="preserve">
+    <value>هل تريد إزالة هذا الخطر؟</value>
+  </data>
+  <data name="HazardSaveError" xml:space="preserve">
+    <value>تعذر حفظ الخطر.</value>
+  </data>
+  <data name="HazardTitleRequired" xml:space="preserve">
+    <value>يجب أن يكون للخطر عنوان.</value>
+  </data>
+  <data name="HazardShouldAlert" xml:space="preserve">
+    <value>تنبيه المرسلين عند إضافة جهة الاتصال هذه إلى بلاغ</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>الخطورة</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="Alert" xml:space="preserve">
+    <value>تنبيه</value>
+  </data>
+  <data name="NoHazards" xml:space="preserve">
+    <value>لا توجد مخاطر مسجلة للمنشأة.</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>إحداثيات GPS</value>
+  </data>
+  <data name="PreplanReviewOverdue" xml:space="preserve">
+    <value>انقضى موعد مراجعة الخطة المسبقة.</value>
+  </data>
+  <data name="PreplanReviewDue" xml:space="preserve">
+    <value>مراجعة الخطة المسبقة مستحقة</value>
+  </data>
+  <data name="CreatePreplan" xml:space="preserve">
+    <value>إنشاء خطة مسبقة</value>
+  </data>
+  <data name="EditPreplan" xml:space="preserve">
+    <value>تعديل الخطة المسبقة</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>لم تُسجَّل خطة ما قبل الحادث لجهة الاتصال هذه.</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>لم تُرفق أي ملفات بجهة الاتصال هذه.</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>رفع ملف</value>
+  </data>
+  <data name="UploadFileInfo" xml:space="preserve">
+    <value>صور أو ملفات PDF أو مستندات Office أو نصوص أو CSV أو DWG أو DXF بحجم يصل إلى 30MB.</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>نوع الملف</value>
+  </data>
+  <data name="FileTitle" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="FileTitlePlaceholder" xml:space="preserve">
+    <value>عنوان اختياري (يُستخدم اسم الملف افتراضيًا)</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>اسم الملف</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>رفع</value>
+  </data>
+  <data name="DeleteFileConfirm" xml:space="preserve">
+    <value>هل تريد إزالة هذا الملف؟</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>تنزيل</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>الحجم</value>
+  </data>
+  <data name="AddedOn" xml:space="preserve">
+    <value>أُضيف في</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
 </root>

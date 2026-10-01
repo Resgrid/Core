@@ -865,7 +865,7 @@
     <value>Enrutamiento en vivo</value>
   </data>
   <data xml:space="preserve" name="Feature.logs">
-    <value>Registro</value>
+    <value>Bitácoras</value>
   </data>
   <data xml:space="preserve" name="Feature.maintenance-policy">
     <value>Políticas de mantenimiento y aprobaciones</value>
@@ -919,7 +919,7 @@
     <value>Nueva factura</value>
   </data>
   <data xml:space="preserve" name="Feature.new-log">
-    <value>Nuevo registro</value>
+    <value>Nueva bitácora</value>
   </data>
   <data xml:space="preserve" name="Feature.new-note">
     <value>Nueva nota</value>
@@ -2842,10 +2842,10 @@
     <value>Nombre del menú de inventario</value>
   </data>
   <data xml:space="preserve" name="Module.LogsDisabled">
-    <value>Disponibilidad de registros</value>
+    <value>Disponibilidad de bitácoras</value>
   </data>
   <data xml:space="preserve" name="Module.LogsNameOverride">
-    <value>Nombre del menú de registros</value>
+    <value>Nombre del menú de bitácoras</value>
   </data>
   <data xml:space="preserve" name="Module.MaintenanceDisabled">
     <value>Disponibilidad de mantenimiento</value>
@@ -2980,10 +2980,10 @@
     <value>Nombre de visualización opcional para inventario en los consumidores que admiten la anulación. Cambia la etiqueta, no los permisos ni la funcionalidad. Esta versión no tiene un control de anulación de nombre independiente en Configuración de módulos.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.LogsDisabled">
-    <value>Controla la disponibilidad de los registros heredados. Deshabilitar este módulo puede eliminar la navegación y bloquear las operaciones del módulo; no elimina sus registros. Habilitarlo sigue requiriendo la suscripción, el despliegue y los permisos correspondientes.</value>
+    <value>Controla la disponibilidad de las bitácoras heredadas. Deshabilitar este módulo puede eliminar la navegación y bloquear las operaciones del módulo; no elimina sus entradas. Habilitarlo sigue requiriendo la suscripción, el despliegue y los permisos correspondientes.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.LogsNameOverride">
-    <value>Nombre de visualización opcional para registros heredados en los consumidores que admiten la anulación. Cambia la etiqueta, no los permisos ni la funcionalidad. Esta versión no tiene un control de anulación de nombre independiente en Configuración de módulos.</value>
+    <value>Nombre de visualización opcional para las bitácoras heredadas en los consumidores que admiten la anulación. Cambia la etiqueta, no los permisos ni la funcionalidad. Esta versión no tiene un control de anulación de nombre independiente en Configuración de módulos.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.MaintenanceDisabled">
     <value>Controla la disponibilidad del mantenimiento y las órdenes de trabajo. Deshabilitar este módulo puede eliminar la navegación y bloquear las operaciones del módulo; no elimina sus registros. Habilitarlo sigue requiriendo la suscripción, el despliegue y los permisos correspondientes.</value>
@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Notificación del departamento / Usuarios a notificar</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Política de seguridad del departamento / Aceptar MFA de inicio de sesión reciente para ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Política de seguridad del departamento / Aceptar MFA de desbloqueo reciente para ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Política de seguridad del departamento / Permitir MFA federada para ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Política de seguridad del departamento / Permitir MFA federada para MFA de inicio de sesión</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Política de seguridad del departamento / Permitir llaves de acceso para ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Política de seguridad del departamento / Permitir llaves de acceso para MFA de inicio de sesión</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Política de seguridad del departamento / Permitir aprobación con Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Política de seguridad del departamento / Rangos de IP permitidos</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Política de seguridad del departamento / Minutos de tiempo de espera de sesión</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Política de seguridad del departamento / Minutos de inactividad antes de bloquear sesiones compartidas</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Política de seguridad del departamento / Aplicaciones con modo compartido obligatorio</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Política de seguridad del departamento / Horas de turno de las sesiones compartidas</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>Configuración de SSO del departamento / Permitir inicio de sesión local</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>Configuración de SSO del departamento / ID de entidad</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Configuración de SSO del departamento / JSON de asignación de MFA federada</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Configuración de SSO del departamento / URL de SSO del IdP</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>Configuración de SSO del departamento / Está habilitado</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Destinatarios explícitos de miembros. La membresía y la elegibilidad de canal se evalúan por separado en el momento del envío.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Permite que la MFA completada al iniciar sesión en la misma sesión abra datos protegidos dentro de la ventana de verificación reforzada, para los métodos que permiten los ajustes de datos protegidos. Cambiarlo finaliza el acceso actual a los datos protegidos. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Permite que la verificación de desbloqueo reciente del operador en un dispositivo compartido abra datos protegidos. Cambiarlo finaliza el acceso actual a los datos protegidos. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Acepta la MFA del proveedor de identidad para datos protegidos. Requiere una asignación de MFA probada; cambiarlo finaliza el acceso actual a los datos protegidos. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Acepta la MFA del proveedor de identidad para el inicio de sesión y la verificación reforzada. Requiere una asignación de MFA probada en la configuración de SSO; sin ella, las afirmaciones del proveedor nunca cuentan. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Acepta una llave de acceso para el acceso a datos protegidos, la administración de ADP y las aprobaciones de flujos de trabajo protegidos. Los códigos del autenticador siempre se aceptan. Cambiarlo finaliza el acceso actual a los datos protegidos, por lo que los miembros vuelven a verificar. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Acepta una llave de acceso registrada en la aplicación solicitante como MFA para el inicio de sesión, el cambio de departamento y la verificación reforzada. Los códigos del autenticador siempre se aceptan. Cambiarlo incrementa la versión de la política de MFA; las sesiones cuyo único segundo factor ya no está permitido vuelven a verificar. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Acepta la aprobación con la llave de acceso de la aplicación Responder del miembro donde el ajuste de llave de acceso correspondiente está activado; nunca para cambios de seguridad ni métodos de inicio de sesión de la cuenta. Cambiarlo también finaliza el acceso actual a los datos protegidos. Solo el miembro administrador.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Rangos de red permitidos para el inicio de sesión. Si está vacío, no se agrega ninguna restricción de rango. Revise las redes legítimas de los respondedores y el acceso de recuperación antes de restringirlo.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Tiempo de espera por inactividad en minutos; cero delega el comportamiento al proveedor. Verifique las sesiones administradas por la política y cada cliente admitido en lugar de asumir un cierre de sesión global inmediato.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Minutos sin actividad del operador antes de que se bloquee la sesión de una tableta de vehículo o un puesto de trabajo compartido, de 1 a 15. Las actualizaciones en segundo plano y las alertas entrantes no cuentan como actividad. Un valor más estricto se aplica a las sesiones en curso en su siguiente solicitud. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Sesiones de Unit, IC y Dispatch que este departamento ejecuta siempre como sesiones compartidas, sin importar la configuración de la instalación; también cuentan los inicios de sesión que no indican su aplicación. Requiere versiones de las aplicaciones compatibles con el modo compartido. Solo el miembro administrador.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Horas después del inicio de sesión en que termina una sesión compartida, sin importar la actividad, de 1 a 24. Un valor más corto termina antes las sesiones en curso; uno más largo nunca las extiende. Solo el miembro administrador.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Permite una ruta de contraseña local junto con este proveedor cuando la política lo permite. Revise en conjunto el requisito de SSO para todo el departamento y el plan de recuperación.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>Identificador del proveedor de servicio SAML registrado en el proveedor de identidad. Debe coincidir con la integración configurada.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Qué resultados de inicio de sesión del proveedor cuentan como MFA para la verificación adicional del proveedor. Un cambio en la asignación, el emisor o el cliente requiere una nueva prueba satisfactoria antes de volver a aceptar la MFA del proveedor.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Dirección de inicio de sesión del proveedor SAML a la que el inicio de sesión iniciado desde Resgrid envía su solicitud. Verifíquela con los metadatos del proveedor antes de confiar en ella.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Hace que esta configuración de proveedor esté disponible para el flujo de SSO admitido. Un indicador de habilitado guardado no equivale a una prueba de inicio de sesión exitosa.</value>

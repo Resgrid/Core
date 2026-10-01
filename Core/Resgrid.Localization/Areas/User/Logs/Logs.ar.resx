@@ -31,30 +31,58 @@
   <data name="CoronerInformation" xml:space="preserve"><value>معلومات الطب الشرعي</value></data>
   <data name="WorkLogInformation" xml:space="preserve"><value>معلومات سجل العمل</value></data>
   <data name="Units" xml:space="preserve"><value>الوحدات</value></data>
-  <data name="Station" xml:space="preserve"><value>المحطة</value></data>
   <data name="Cause" xml:space="preserve"><value>السبب</value></data>
-  <data name="TrainingCourse" xml:space="preserve"><value>دورة التدريب</value></data>
-  <data name="TrainingType" xml:space="preserve"><value>نوع التدريب</value></data>
-  <data name="Hours" xml:space="preserve"><value>الساعات</value></data>
   <data name="MeetingType" xml:space="preserve"><value>نوع الاجتماع</value></data>
-  <data name="MeetingLocation" xml:space="preserve"><value>موقع الاجتماع</value></data>
-  <data name="Manner" xml:space="preserve"><value>الأسلوب</value></data>
-  <data name="Sex" xml:space="preserve"><value>الجنس</value></data>
-  <data name="Age" xml:space="preserve"><value>العمر</value></data>
-  <data name="Race" xml:space="preserve"><value>العرق</value></data>
-  <data name="WorkType" xml:space="preserve"><value>نوع العمل</value></data>
-  <data name="WorkLocation" xml:space="preserve"><value>موقع العمل</value></data>
   <data name="NewLogHeader" xml:space="preserve"><value>سجل تشغيل جديد</value></data>
-  <data name="EditLogHeader" xml:space="preserve"><value>تعديل سجل التشغيل</value></data>
-  <data name="StartDate" xml:space="preserve"><value>تاريخ البدء</value></data>
-  <data name="EndDate" xml:space="preserve"><value>تاريخ الانتهاء</value></data>
-  <data name="LogDate" xml:space="preserve"><value>تاريخ السجل</value></data>
-  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
-  <data name="AddPersonnelToLog" xml:space="preserve"><value>إضافة أفراد إلى السجل</value></data>
-  <data name="NoPersonnel" xml:space="preserve"><value>لا يوجد أفراد</value></data>
-  <data name="NoUnits" xml:space="preserve"><value>لا توجد وحدات</value></data>
-  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
-  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
-  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
   <data name="LogsReadOnly" xml:space="preserve"><value>السجلات مفعّلة لهذه الإدارة. السجلات القديمة للقراءة فقط: يمكن عرضها وطباعتها وتصديرها لكن لا يمكن إنشاؤها أو تعديلها أو حذفها.</value></data>
+  <data name="BodyLocationReq" xml:space="preserve"><value>موقع الجثة مطلوب.</value></data>
+  <data name="CallTimestamp" xml:space="preserve"><value>طابع وقت البلاغ</value></data>
+  <data name="CaseNumber" xml:space="preserve"><value>رقم القضية</value></data>
+  <data name="Condition" xml:space="preserve"><value>الوضع</value></data>
+  <data name="Coroner" xml:space="preserve"><value>الطب الشرعي</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="DestinationLocation" xml:space="preserve"><value>موقع الوجهة</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>مُرسَل</value></data>
+  <data name="Investigator" xml:space="preserve"><value>المحقق</value></data>
+  <data name="Location" xml:space="preserve"><value>الموقع</value></data>
+  <data name="LogInfo" xml:space="preserve"><value>معلومات السجل</value></data>
+  <data name="LogsForYear" xml:space="preserve"><value>السجلات لعام</value></data>
+  <data name="Meeting" xml:space="preserve"><value>الاجتماع</value></data>
+  <data name="MeetingEndReq" xml:space="preserve"><value>وقت انتهاء الاجتماع مطلوب.</value></data>
+  <data name="MeetingLocationReq" xml:space="preserve"><value>موقع الاجتماع مطلوب.</value></data>
+  <data name="MeetingStartReq" xml:space="preserve"><value>وقت بدء الاجتماع مطلوب.</value></data>
+  <data name="MeetingTypeReq" xml:space="preserve"><value>نوع الاجتماع مطلوب.</value></data>
+  <data name="NewCall" xml:space="preserve"><value>بلاغ جديد</value></data>
+  <data name="NewLogInfo" xml:space="preserve"><value>يمكنك أدناه إضافة سجل جديد إلى النظام (مثل تقرير تشغيل، أو أعمال المحطة، أو تدريب، أو فعالية، وغير ذلك). يمكن استخدام السجلات لتوثيق تفاصيل الاستجابة للبلاغات والاجتماعات والتدريبات. الحقول المكتوبة بخط مائل أزرق مطلوبة.</value></data>
+  <data name="OtherAttendees" xml:space="preserve"><value>حاضرون آخرون</value></data>
+  <data name="OthersHavingContact" xml:space="preserve"><value>آخرون لامسوا الجثة</value></data>
+  <data name="PersonnelRequired" xml:space="preserve"><value>يتطلب تحديد الأفراد</value></data>
+  <data name="PresidingPeople" xml:space="preserve"><value>رئيس (رؤساء) الاجتماع</value></data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve"><value>أُعلنت الوفاة بواسطة</value></data>
+  <data name="PronouncedDeceasedByReq" xml:space="preserve"><value>حقل "أُعلنت الوفاة بواسطة" مطلوب.</value></data>
+  <data name="PronouncedDeceasedDateReq" xml:space="preserve"><value>التاريخ مطلوب.</value></data>
+  <data name="SelectCall" xml:space="preserve"><value>اختيار بلاغ</value></data>
+  <data name="SeniorOIC" xml:space="preserve"><value>الضابط المسؤول الأقدم (OIC)</value></data>
+  <data name="TrainingEndError" xml:space="preserve"><value>وقت انتهاء التدريب مطلوب.</value></data>
+  <data name="TrainingStartError" xml:space="preserve"><value>وقت بدء التدريب مطلوب.</value></data>
+  <data name="UnitPersonnel" xml:space="preserve"><value>أفراد الوحدة</value></data>
+  <data name="UnitsAndPersonnel" xml:space="preserve"><value>الوحدات والأفراد</value></data>
+  <data name="WorkLogEndRequired" xml:space="preserve"><value>وقت انتهاء العمل مطلوب.</value></data>
+  <data name="WorkLogStartRequired" xml:space="preserve"><value>وقت بدء العمل مطلوب.</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>سُجّل في</value></data>
+  <data name="LoggedBy" xml:space="preserve"><value>سُجّل بواسطة</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>رقم البلاغ</value></data>
+  <data name="LogDetails" xml:space="preserve"><value>تفاصيل السجل</value></data>
+  <data name="ConditionInitialReport" xml:space="preserve"><value>الوضع / التقرير الأولي</value></data>
+  <data name="PersonnelNotAssignedUnit" xml:space="preserve"><value>غير معيّنين لأي وحدة</value></data>
+  <data name="PrintExport" xml:space="preserve"><value>طباعة / تصدير</value></data>
+  <data name="PrintExportView" xml:space="preserve"><value>عرض الطباعة (التصدير)</value></data>
+  <data name="DeleteLog" xml:space="preserve"><value>حذف السجل</value></data>
+  <data name="DeleteLogConfirm" xml:space="preserve"><value>هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="LogReport" xml:space="preserve"><value>تقرير السجل</value></data>
+  <data name="GeneratedLabel" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>المعرّف الخارجي</value></data>
+  <data name="NoType" xml:space="preserve"><value>بدون نوع</value></data>
+  <data name="NotSupplied" xml:space="preserve"><value>غير محدد</value></data>
+  <data name="Presiding" xml:space="preserve"><value>رئيس الاجتماع</value></data>
 </root>

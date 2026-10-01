@@ -76,7 +76,7 @@ namespace Resgrid.Tests.Web.Services
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
 			var dataProtection = new Mock<IDepartmentDataProtectionService>();
 			dataProtection.Setup(d => d.GetPolicyByDepartmentIdAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(_h.Policy);
-			return new ProtectedWorkflowsController(_h.Service, dataProtection.Object, _grants.Object)
+			return new ProtectedWorkflowsController(_h.Service, dataProtection.Object, _grants.Object, Mock.Of<IMfaCredentialStateService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

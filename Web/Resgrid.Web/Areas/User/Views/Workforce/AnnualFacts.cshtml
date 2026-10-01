@@ -83,7 +83,7 @@
                             <input type="hidden" name="year" value="@Model.ReportingYear" /><input type="hidden" name="type" value="@((int)Model.ReportType)" />
                             <div class="form-group"><textarea name="csv" class="form-control" rows="8" placeholder="CSV">@Model.Csv</textarea></div>
                             <button type="submit" name="commit" value="false" class="btn btn-default">@localizer["DryRun"]</button>
-                            <button type="submit" name="commit" value="true" class="btn btn-primary" onclick="return confirm('@localizer["ConfirmImport"]');">@localizer["Commit"]</button>
+                            <button type="submit" name="commit" value="true" class="btn btn-primary" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmImport"])');">@localizer["Commit"]</button>
                         </form>
                     </div>
                 </div>

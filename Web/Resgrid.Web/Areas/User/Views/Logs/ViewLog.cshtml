@@ -636,7 +636,7 @@
                     @if (Model.CanDelete)
                     {
                         <a class="btn btn-danger btn-block" asp-controller="Logs" asp-action="DeleteWorkLog" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId"
-                           onclick="return confirm('@localizer["DeleteLogConfirm"]');">
+                           onclick="return confirm('@JsEncoder.Encode(localizer["DeleteLogConfirm"])');">
                             <i class="fa fa-trash-o"></i> @localizer["DeleteLog"]
                         </a>
                     }

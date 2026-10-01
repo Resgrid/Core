@@ -27,6 +27,27 @@
 		ExternalIdentityLinked = 22,
 		ExternalIdentityUnlinked = 23,
 		PasswordResetLinkSentByAdministrator = 24,
-		SessionHistoryPurged = 25
+		SessionHistoryPurged = 25,
+		TwoFactorAuthenticatorReplaced = 26,
+		AccountReauthenticated = 27,
+		PasskeyRegistered = 28,
+		PasskeyRevoked = 29,
+		PasskeyRenamed = 30,
+		PasskeyApprovalChanged = 31,
+		FederatedMfaMappingTested = 32,
+		MfaApprovalRequested = 33,
+		MfaApprovalApproved = 34,
+		MfaApprovalDenied = 35,
+		FactorRecoveryStarted = 36,
+		FactorRecoveryCompleted = 37,
+		FactorRecoveryCanceled = 38,
+		SecurityNoticeFailed = 39,
+		SharedSessionStarted = 40,
+		SharedSessionLocked = 41,
+		SharedSessionUnlocked = 42,
+		SharedSessionEnded = 43,
+		MfaActivityReported = 44,
+		ApprovalInstallationsDisabled = 45,
+		FederatedMfaMappingChanged = 46
 	}
 }

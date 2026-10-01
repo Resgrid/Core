@@ -93,14 +93,14 @@
 			groupIds: [@String.Join(",", Model.ManageableGroupIds)]
 		};
 		var resgridShiftsI18n = {
-			shiftRoleColumn: '@localizer["ShiftRoleColumn"]',
-			rolesCountColumn: '@localizer["RolesCountColumn"]',
-			addRoleToGroup: '@localizer["AddRoleToGroup"]',
-			addShiftRolesToGroup: '@localizer["AddShiftRolesToGroup"]',
-			removeGroup: '@localizer["RemoveGroup"]',
-			removeRole: '@localizer["RemoveRole"]',
-			removeRoleFromGroup: '@localizer["RemoveRoleFromGroup"]',
-			roleCountRequired: '@localizer["RoleCountRequired"]'
+			shiftRoleColumn: '@JsEncoder.Encode(localizer["ShiftRoleColumn"])',
+			rolesCountColumn: '@JsEncoder.Encode(localizer["RolesCountColumn"])',
+			addRoleToGroup: '@JsEncoder.Encode(localizer["AddRoleToGroup"])',
+			addShiftRolesToGroup: '@JsEncoder.Encode(localizer["AddShiftRolesToGroup"])',
+			removeGroup: '@JsEncoder.Encode(localizer["RemoveGroup"])',
+			removeRole: '@JsEncoder.Encode(localizer["RemoveRole"])',
+			removeRoleFromGroup: '@JsEncoder.Encode(localizer["RemoveRoleFromGroup"])',
+			roleCountRequired: '@JsEncoder.Encode(localizer["RoleCountRequired"])'
 		};
 	</script>
 	<script src="~/js/app/internal/shifts/resgrid.shifts.editshiftgroups.js"></script>

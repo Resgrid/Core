@@ -187,7 +187,7 @@
     <value>Canali vocali all'interno delle app Resgrid per il coordinamento del team.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.records">
-    <value>Rapporti e record di incidente, moduli record, registri delle attività e rapporti del dipartimento.</value>
+    <value>Rapporti e record di incidente, moduli record, log delle attività e rapporti del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="AreaPurpose.security">
     <value>Profilo e impostazioni del dipartimento, quali aree sono attivate, permessi, accesso a due fattori e regole di sessione.</value>
@@ -865,7 +865,7 @@
     <value>Instradamento in Tempo Reale</value>
   </data>
   <data xml:space="preserve" name="Feature.logs">
-    <value>Registri</value>
+    <value>Log</value>
   </data>
   <data xml:space="preserve" name="Feature.maintenance-policy">
     <value>Politiche di manutenzione e approvazioni</value>
@@ -919,7 +919,7 @@
     <value>Nuova Fattura</value>
   </data>
   <data xml:space="preserve" name="Feature.new-log">
-    <value>Nuovo Registro</value>
+    <value>Nuovo log</value>
   </data>
   <data xml:space="preserve" name="Feature.new-note">
     <value>Nuova Nota</value>
@@ -1357,7 +1357,7 @@
     <value>Indicazioni e percorsi per le risorse in risposta.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.logs">
-    <value>Registri delle attività per chiamate, formazione e lavoro.</value>
+    <value>Log delle attività per chiamate, formazione e lavoro.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.maintenance-policy">
     <value>Approvazioni di riparazione e fermi di sicurezza.</value>
@@ -1411,7 +1411,7 @@
     <value>Crea una fattura per un cliente.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-log">
-    <value>Registra un rapporto di intervento, un registro di formazione o un registro di lavoro.</value>
+    <value>Registra un rapporto di intervento, un log di formazione o un log di lavoro.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.new-note">
     <value>Pubblica una nota del dipartimento.</value>
@@ -1705,7 +1705,7 @@
     <value>Configura le impostazioni di fatturazione e le tariffe, quindi crea le fatture.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.logs">
-    <value>Scegli i tipi di registro che i membri completano.</value>
+    <value>Scegli i tipi di log che i membri completano.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.maintenance-policy">
     <value>Decidi chi approva le riparazioni e rimette in servizio l'attrezzatura.</value>
@@ -2245,7 +2245,7 @@
     <value>Istantanea storica della politica utilizzata per risolvere la conservazione per le revisioni precedenti. Non modificarla mai come una normale preferenza.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsSearchConfig.IncludeLegacyHistory">
-    <value>Include i registri legacy supportati di personale e unità nell'ambito di ricerca dei Record. Si applicano comunque i permessi di origine.</value>
+    <value>Include i log legacy supportati di personale e unità nell'ambito di ricerca dei Registri. Si applicano comunque i permessi di origine.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsSearchConfig.IndexNarrative">
     <value>Include la narrativa non protetta nella ricerca. La registrazione ad Advanced Data Protection ritira l'indicizzazione della narrativa; questa preferenza non può sovrascrivere la protezione.</value>
@@ -2842,10 +2842,10 @@
     <value>Nome menu Inventario</value>
   </data>
   <data xml:space="preserve" name="Module.LogsDisabled">
-    <value>Disponibilità Registri</value>
+    <value>Disponibilità Log</value>
   </data>
   <data xml:space="preserve" name="Module.LogsNameOverride">
-    <value>Nome menu Registri</value>
+    <value>Nome menu Log</value>
   </data>
   <data xml:space="preserve" name="Module.MaintenanceDisabled">
     <value>Disponibilità Manutenzione</value>
@@ -2980,10 +2980,10 @@
     <value>Nome visualizzato facoltativo per l'inventario nei consumatori che supportano la sovrascrittura. Modifica l'etichetta, non i permessi o la funzionalità. Questa versione non dispone di un controllo separato di sovrascrittura del nome in Impostazioni area.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.LogsDisabled">
-    <value>Controlla la disponibilità dei registri legacy. Disabilitare questa area può rimuovere la navigazione e bloccare le operazioni dell'area; non elimina i relativi record. Attivarla richiede comunque l'abbonamento, il rilascio e i permessi applicabili.</value>
+    <value>Controlla la disponibilità dei log legacy. Disabilitare questa area può rimuovere la navigazione e bloccare le operazioni dell'area; non elimina i relativi record. Attivarla richiede comunque l'abbonamento, il rilascio e i permessi applicabili.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.LogsNameOverride">
-    <value>Nome visualizzato facoltativo per i registri legacy nei consumatori che supportano la sovrascrittura. Modifica l'etichetta, non i permessi o la funzionalità. Questa versione non dispone di un controllo separato di sovrascrittura del nome in Impostazioni area.</value>
+    <value>Nome visualizzato facoltativo per i log legacy nei consumatori che supportano la sovrascrittura. Modifica l'etichetta, non i permessi o la funzionalità. Questa versione non dispone di un controllo separato di sovrascrittura del nome in Impostazioni area.</value>
   </data>
   <data xml:space="preserve" name="ModuleHelp.MaintenanceDisabled">
     <value>Controlla la disponibilità di manutenzione e ordini di lavoro. Disabilitare questa area può rimuovere la navigazione e bloccare le operazioni dell'area; non elimina i relativi record. Attivarla richiede comunque l'abbonamento, il rilascio e i permessi applicabili.</value>
@@ -3127,7 +3127,7 @@
     <value>Modifica Record</value>
   </data>
   <data xml:space="preserve" name="Permission.ApproveRecords">
-    <value>Approvare rapporti</value>
+    <value>Approvare registri</value>
   </data>
   <data xml:space="preserve" name="Permission.ApproveTimeReports">
     <value>Approva Rapporti Orari</value>
@@ -3169,7 +3169,7 @@
     <value>Crea Documento</value>
   </data>
   <data xml:space="preserve" name="Permission.CreateLog">
-    <value>Crea Registro</value>
+    <value>Crea log</value>
   </data>
   <data xml:space="preserve" name="Permission.CreateMessage">
     <value>Crea Messaggio</value>
@@ -3193,7 +3193,7 @@
     <value>Elimina Chiamata</value>
   </data>
   <data xml:space="preserve" name="Permission.DeleteLog">
-    <value>Elimina Registro</value>
+    <value>Elimina log</value>
   </data>
   <data xml:space="preserve" name="Permission.DeleteRecord">
     <value>Elimina Record</value>
@@ -3214,7 +3214,7 @@
     <value>Esporta Record</value>
   </data>
   <data xml:space="preserve" name="Permission.FinalizeRecords">
-    <value>Finalizzare rapporti</value>
+    <value>Finalizzare registri</value>
   </data>
   <data xml:space="preserve" name="Permission.IssueInventory">
     <value>Assegna Inventario</value>
@@ -3253,10 +3253,10 @@
     <value>Gestisci Rendicontazione Dati Retributivi</value>
   </data>
   <data xml:space="preserve" name="Permission.ManageRecordDefinitions">
-    <value>Gestire definizioni di rapporto</value>
+    <value>Gestire definizioni di registro</value>
   </data>
   <data xml:space="preserve" name="Permission.ManageRecordDisclosures">
-    <value>Gestire divulgazioni di rapporti</value>
+    <value>Gestire divulgazioni di registri</value>
   </data>
   <data xml:space="preserve" name="Permission.ManageRecordLegalHold">
     <value>Gestisci Fermo Legale dei Record</value>
@@ -3277,7 +3277,7 @@
     <value>Gestisci retribuzione del personale</value>
   </data>
   <data xml:space="preserve" name="Permission.PublishRecordDefinitions">
-    <value>Pubblicare definizioni di rapporto</value>
+    <value>Pubblicare definizioni di registro</value>
   </data>
   <data xml:space="preserve" name="Permission.ReassignRecordDrafts">
     <value>Riassegna bozze di record</value>
@@ -3289,7 +3289,7 @@
     <value>Rimuovi personale</value>
   </data>
   <data xml:space="preserve" name="Permission.ReviewRecords">
-    <value>Revisionare rapporti</value>
+    <value>Revisionare registri</value>
   </data>
   <data xml:space="preserve" name="Permission.ShareRecordsExternally">
     <value>Condividi record esternamente</value>
@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Notifica del dipartimento / Utenti da notificare</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Policy di sicurezza del dipartimento / Accetta MFA di accesso recente per ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Policy di sicurezza del dipartimento / Accetta MFA di sblocco recente per ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Policy di sicurezza del dipartimento / Consenti MFA federata per ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Policy di sicurezza del dipartimento / Consenti MFA federata per la MFA di accesso</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Policy di sicurezza del dipartimento / Consenti passkey per ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Policy di sicurezza del dipartimento / Consenti passkey per la MFA di accesso</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Policy di sicurezza del dipartimento / Consenti approvazione con Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Policy di sicurezza del dipartimento / Intervalli IP consentiti</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Policy di sicurezza del dipartimento / Timeout sessione in minuti</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Policy di sicurezza del dipartimento / Minuti di inattività prima del blocco delle sessioni condivise</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Policy di sicurezza del dipartimento / App con modalità condivisa obbligatoria</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Policy di sicurezza del dipartimento / Ore di turno delle sessioni condivise</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>Configurazione SSO del dipartimento / Consenti accesso locale</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>Configurazione SSO del dipartimento / ID entità</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Configurazione SSO del dipartimento / Mappatura MFA federata JSON</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Configurazione SSO del dipartimento / URL SSO dell'IdP</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>Configurazione SSO del dipartimento / Abilitata</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Destinatari espliciti tra i membri. L'appartenenza e l'idoneità del canale vengono valutate separatamente al momento dell'invio.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Consente alla MFA completata all'accesso nella stessa sessione di aprire i dati protetti entro la finestra di verifica rafforzata, per i metodi consentiti dalle impostazioni dei dati protetti. Modificarla termina l'accesso attuale ai dati protetti. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Consente alla verifica di sblocco recente dell'operatore su un dispositivo condiviso di aprire i dati protetti. Modificarla termina l'accesso attuale ai dati protetti. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Accetta la MFA del provider di identità per i dati protetti. Richiede una mappatura MFA testata; modificarla termina l'accesso attuale ai dati protetti. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Accetta la MFA del provider di identità per l'accesso e la verifica rafforzata. Richiede una mappatura MFA testata nella configurazione SSO; senza di essa le attestazioni del provider non contano mai. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Accetta una passkey per l'accesso ai dati protetti, la gestione ADP e le approvazioni dei workflow protetti. I codici dell'autenticatore sono sempre accettati. Modificarla termina l'accesso attuale ai dati protetti, quindi i membri si verificano di nuovo. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Accetta una passkey registrata nell'app richiedente come MFA per l'accesso, il cambio di dipartimento e la verifica rafforzata. I codici dell'autenticatore sono sempre accettati. Modificarla fa avanzare la versione della policy MFA; le sessioni il cui unico secondo fattore non è più consentito si verificano di nuovo. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Accetta l'approvazione con la passkey dell'app Responder del membro dove l'impostazione passkey corrispondente è attiva; mai per modifiche di sicurezza o metodi di accesso dell'account. Modificarla termina anche l'accesso attuale ai dati protetti. Solo il membro responsabile.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Intervalli di rete consentiti per l'accesso. Vuoto non aggiunge alcuna restrizione di intervallo. Rivedi le reti legittime dei soccorritori e l'accesso di ripristino prima di restringerlo.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Timeout di inattività in minuti; zero rimanda al comportamento dell'host. Verifica le sessioni gestite dalla policy e ciascun client supportato anziché presumere una disconnessione globale immediata.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Minuti senza attività dell'operatore prima che la sessione di un tablet di un veicolo o di una postazione condivisa si blocchi, da 1 a 15. Gli aggiornamenti in background e gli avvisi in arrivo non contano come attività. Un valore più restrittivo si applica alle sessioni in corso alla loro richiesta successiva. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Sessioni di Unit, IC e Dispatch che questo dipartimento esegue sempre come sessioni condivise, indipendentemente dall'impostazione dell'installazione; contano anche gli accessi che non indicano la propria app. Richiede versioni delle app che supportano la modalità condivisa. Solo il membro responsabile.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Ore dopo l'accesso al termine delle quali una sessione condivisa finisce, indipendentemente dall'attività, da 1 a 24. Un valore più breve termina prima le sessioni in corso; uno più lungo non le estende mai. Solo il membro responsabile.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Consente un percorso con password locale insieme a questo provider dove la policy lo permette. Rivedi insieme il requisito SSO a livello di dipartimento e il piano di ripristino.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>Identificativo del service provider SAML registrato presso il provider di identità. Deve corrispondere all'integrazione configurata.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Quali risultati di accesso del provider valgono come MFA per la verifica aggiuntiva tramite provider. Una modifica alla mappatura, all’emittente o al client richiede un nuovo test riuscito prima che la MFA del provider venga di nuovo accettata.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Indirizzo di accesso del provider SAML a cui l'accesso avviato da Resgrid invia la propria richiesta. Verificalo con i metadati del provider prima di farvi affidamento.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Rende disponibile questa configurazione del provider al flusso SSO supportato. Un flag di abilitazione salvato non è un test di accesso riuscito.</value>

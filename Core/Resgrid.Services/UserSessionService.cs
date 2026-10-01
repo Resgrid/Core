@@ -21,13 +21,19 @@ namespace Resgrid.Services
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IClientSessionMetadataParser _metadataParser;
 		private readonly IIpLocationProvider _ipLocationProvider;
+		private readonly IPasskeyFeatureGates _gates;
+		private readonly ISystemAuditsService _audits;
+		private readonly ISessionEventPublisher _sessionEvents;
+		private readonly TimeProvider _time;
 
 		public UserSessionService(IUserSessionsRepository sessionsRepository,
 			IIdentityUserRepository identityUserRepository, IIdentityRepository identityRepository,
 			IDepartmentsService departmentsService, IDepartmentSsoService departmentSsoService,
 			IClientSessionMetadataParser metadataParser,
-			IIpLocationProvider ipLocationProvider)
+			IIpLocationProvider ipLocationProvider, IPasskeyFeatureGates gates, ISystemAuditsService audits, ISessionEventPublisher sessionEvents,
+			TimeProvider time)
 		{
+			_sessionEvents = sessionEvents;
 			_sessionsRepository = sessionsRepository;
 			_identityUserRepository = identityUserRepository;
 			_identityRepository = identityRepository;
@@ -35,6 +41,9 @@ namespace Resgrid.Services
 			_departmentSsoService = departmentSsoService;
 			_metadataParser = metadataParser;
 			_ipLocationProvider = ipLocationProvider;
+			_gates = gates;
+			_audits = audits;
+			_time = time;
 		}
 
 		public async Task<UserSession> CreateSessionAsync(SessionIssueContext context, CancellationToken cancellationToken = default)
@@ -44,9 +53,10 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(context.UserId))
 				throw new ArgumentException("A user is required to create a session.", nameof(context));
 
-			var now = DateTime.UtcNow;
+			var now = _time.GetUtcNow().UtcDateTime;
 			var concurrentSessionLimit = 0;
 			var concurrencyGateOn = DateTime.MinValue;
+			DepartmentSecurityPolicy policy = null;
 			if (context.DepartmentId.HasValue)
 			{
 				var member = await _departmentsService.GetDepartmentMemberAsync(context.UserId,
@@ -54,19 +64,26 @@ namespace Resgrid.Services
 				if (member == null || member.IsDeleted || member.IsDisabled == true)
 					throw new SessionCreationDeniedException("membership_inactive");
 
-				if (TryGetDepartmentPolicyGate(out var policyGate) && now >= policyGate)
+				// Read for every new session: whether the department requires shared mode is not behind the session-policy
+				// gate, and a failed read refuses the sign-in rather than issuing a personal session by default.
+				policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(
+					context.DepartmentId.Value, cancellationToken);
+				if (TryGetDepartmentPolicyGate(out var policyGate) && now >= policyGate && policy?.MaxConcurrentSessions > 0)
 				{
-					var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(
-						context.DepartmentId.Value, cancellationToken);
-					if (policy?.MaxConcurrentSessions > 0)
-					{
-						// Deliberately not checked here: counting now and inserting later lets two concurrent
-						// logins both see room and both insert. The limit is enforced by the insert itself below.
-						concurrentSessionLimit = policy.MaxConcurrentSessions;
-						concurrencyGateOn = policyGate;
-					}
+					// Deliberately not checked here: counting now and inserting later lets two concurrent
+					// logins both see room and both insert. The limit is enforced by the insert itself below.
+					concurrentSessionLimit = policy.MaxConcurrentSessions;
+					concurrencyGateOn = policyGate;
 				}
 			}
+
+			// Shared mode (plan section 10.5), by the department's requirement or the installation's request while the gate is
+			// on. Either way the session takes the department's idle lock and shift ceiling.
+			var sharedSource = SharedSessionRules.SourceFor(policy, context.ClientApplication, context.SharedModeRequested, _gates.SharedDeviceModeEnabled);
+			var shared = sharedSource != SharedModeSource.None;
+			var expiresOn = context.ExpiresOn > now ? context.ExpiresOn : now.AddHours(24);
+			if (shared && expiresOn > now.AddHours(SharedSessionRules.ShiftHours(policy)))
+				expiresOn = now.AddHours(SharedSessionRules.ShiftHours(policy));
 
 			var metadata = _metadataParser.Parse(context.UserAgent, context.DeviceName, context.DeviceType,
 				context.OperatingSystem, context.Browser, context.ApplicationVersion);
@@ -93,14 +110,20 @@ namespace Resgrid.Services
 				WebCookieTicketKey = Limit(context.WebCookieTicketKey, 512),
 				CreatedOn = now,
 				LastActiveOn = now,
-				ExpiresOn = context.ExpiresOn > now ? context.ExpiresOn : now.AddHours(24),
+				ExpiresOn = expiresOn,
 				FirstIpAddress = CanonicalIp(context.IpAddress),
 				LastIpAddress = CanonicalIp(context.IpAddress),
 				LastCountry = Limit(location?.Country, 128),
 				LastRegion = Limit(location?.Region, 128),
 				LastCity = Limit(location?.City, 128),
 				UserAgent = Limit(context.UserAgent, Math.Max(128, SessionSecurityConfig.UserAgentMaximumLength)),
-				IsLegacyAdopted = context.IsLegacyAdopted
+				IsLegacyAdopted = context.IsLegacyAdopted,
+				LoginMfaMethod = context.LoginMfaMethod == null ? null : (int)context.LoginMfaMethod.Value,
+				LoginMfaFactorReference = Limit(context.LoginMfaFactorReference, 256),
+				SharedMode = shared,
+				SharedModeSource = (int)sharedSource,
+				SharedIdleLockMinutes = shared ? SharedSessionRules.IdleLockMinutes(policy) : null,
+				LastOperatorActivityOn = shared ? now : null
 			};
 
 			if (concurrentSessionLimit > 0)
@@ -157,6 +180,7 @@ namespace Resgrid.Services
 				return SessionValidationResult.Valid(canAdoptLegacy: true);
 			}
 
+			var now = _time.GetUtcNow().UtcDateTime;
 			var session = await _sessionsRepository.GetByIdAsync(context.SessionId);
 			if (session == null)
 				return SessionValidationResult.Invalid("session_not_found");
@@ -164,13 +188,14 @@ namespace Resgrid.Services
 				return SessionValidationResult.Invalid("session_user_mismatch");
 			if (session.State != (int)UserSessionState.Active)
 				return SessionValidationResult.Invalid("session_revoked");
-			if (session.ExpiresOn <= DateTime.UtcNow)
-				return SessionValidationResult.Invalid("session_expired");
+			if (session.ExpiresOn <= now)
+				return SessionValidationResult.Invalid(session.SharedMode ? SharedSessionRules.ExpiredFailureCode : "session_expired");
 			if (session.AuthenticationGeneration != user.AuthenticationGeneration ||
 				(context.AuthenticationGeneration.HasValue && context.AuthenticationGeneration.Value != user.AuthenticationGeneration))
 				return SessionValidationResult.Invalid("authentication_generation_mismatch");
 			if (session.DepartmentId.HasValue && context.DepartmentId.HasValue && session.DepartmentId != context.DepartmentId)
 				return SessionValidationResult.Invalid("session_department_mismatch");
+			DepartmentSecurityPolicy policy = null;
 			if (session.DepartmentId.HasValue)
 			{
 				var member = await _departmentsService.GetDepartmentMemberAsync(context.UserId,
@@ -180,15 +205,122 @@ namespace Resgrid.Services
 
 				if (TryGetDepartmentPolicyGate(out var policyGate) && session.CreatedOn >= policyGate)
 				{
-					var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(
+					policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(
 						session.DepartmentId.Value, cancellationToken);
 					if (policy?.SessionTimeoutMinutes > 0 &&
-						DepartmentSecurityPolicyDecisions.IdleExpired(policy.SessionTimeoutMinutes, session.LastActiveOn, DateTime.UtcNow))
+						DepartmentSecurityPolicyDecisions.IdleExpired(policy.SessionTimeoutMinutes, session.LastActiveOn, now))
 						return SessionValidationResult.Invalid("session_idle_timeout");
+				}
+				else if (session.SharedMode)
+				{
+					policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(
+						session.DepartmentId.Value, cancellationToken);
 				}
 			}
 
-			return SessionValidationResult.Valid(session);
+			return session.SharedMode ? await ValidateSharedAsync(session, policy, now) : SessionValidationResult.Valid(session);
+		}
+
+		/// <summary>
+		/// The shared-session checks every validator applies (passkey plan section 12.5.3), so HTTP, the token endpoint,
+		/// SignalR and the broker all agree. The shift ceiling ends the session. A passed idle deadline locks it here, durably
+		/// and once, whether or not the client showed its lock screen. A locked session is invalid for everything except the
+		/// locked-session endpoints, which read it from the result.
+		/// </summary>
+		private async Task<SessionValidationResult> ValidateSharedAsync(UserSession session, DepartmentSecurityPolicy policy, DateTime now)
+		{
+			if (SharedSessionRules.ShiftEndsOn(session, policy) <= now)
+				return SessionValidationResult.Invalid(SharedSessionRules.ExpiredFailureCode);
+
+			if (SharedSessionRules.IdleLockDue(session, policy, now))
+			{
+				if (await _sessionsRepository.TryLockAsync(session.UserSessionId, session.LockVersion, (int)SharedSessionLockReason.Idle, now,
+						CancellationToken.None) == 1)
+				{
+					session.IsLocked = true;
+					session.LockVersion++;
+					session.LockedOnUtc = now;
+					session.LockReason = (int)SharedSessionLockReason.Idle;
+					await AuditIdleLockAsync(session);
+					await CloseConnectionsAsync(session.UserSessionId);
+				}
+				else
+				{
+					// Another request locked (or ended) it first. Whatever it did, this request is not let through on the stale row.
+					var current = await _sessionsRepository.GetByIdAsync(session.UserSessionId);
+					if (current == null || current.State != (int)UserSessionState.Active)
+						return SessionValidationResult.Invalid("session_revoked");
+					session = current;
+					if (!session.IsLocked && SharedSessionRules.IdleLockDue(session, policy, now))
+						return SessionValidationResult.Locked(session);
+				}
+			}
+
+			return session.IsLocked ? SessionValidationResult.Locked(session) : SessionValidationResult.Valid(session);
+		}
+
+		private async Task AuditIdleLockAsync(UserSession session)
+		{
+			try
+			{
+				await _audits.SaveSystemAuditAsync(new SystemAudit
+				{
+					System = (int)SystemAuditSystems.Api,
+					Type = (int)SystemAuditTypes.SharedSessionLocked,
+					DepartmentId = session.DepartmentId,
+					UserId = session.UserId,
+					TargetUserId = session.UserId,
+					SessionId = SharedSessionAudit.SessionSuffix(session.UserSessionId),
+					Successful = true,
+					ServerName = Environment.MachineName,
+					Data = SharedSessionAudit.Describe("locked", session, "idle"),
+					LoggedOn = _time.GetUtcNow().UtcDateTime
+				}, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				// The lock stands without its audit row; failing the request would not undo it.
+				Resgrid.Framework.Logging.LogException(ex, "Shared session idle-lock audit failed.");
+			}
+		}
+
+		public async Task<IReadOnlySet<string>> GetUnusableSessionIdsAsync(IReadOnlyCollection<string> sessionIds, CancellationToken cancellationToken = default)
+		{
+			var unusable = new HashSet<string>(sessionIds ?? Array.Empty<string>(), StringComparer.Ordinal);
+			if (unusable.Count == 0)
+				return unusable;
+
+			var now = _time.GetUtcNow().UtcDateTime;
+			foreach (var session in await _sessionsRepository.GetStatesAsync(unusable.ToList(), cancellationToken))
+			{
+				var idleLocksOn = (session.LastOperatorActivityOn ?? session.CreatedOn)
+					.AddMinutes(Math.Clamp(session.SharedIdleLockMinutes ?? SharedSessionRules.DefaultIdleLockMinutes, 1, SharedSessionRules.MaxIdleLockMinutes));
+				var usable = session.State == (int)UserSessionState.Active && session.ExpiresOn > now &&
+					!(session.SharedMode && (session.IsLocked || idleLocksOn <= now));
+				if (usable)
+					unusable.Remove(session.UserSessionId);
+			}
+
+			return unusable;
+		}
+
+		public async Task RecordOperatorActivityAsync(UserSession session, CancellationToken cancellationToken = default)
+		{
+			if (session == null || !session.SharedMode || session.IsLocked)
+				return;
+
+			var now = _time.GetUtcNow().UtcDateTime;
+			var writeBefore = now.AddSeconds(-Math.Max(1, PasskeyConfig.SharedActivityWriteIntervalSeconds));
+			if ((session.LastOperatorActivityOn ?? session.CreatedOn) > writeBefore)
+				return;
+
+			DepartmentSecurityPolicy policy = null;
+			if (session.DepartmentId.HasValue)
+				policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(session.DepartmentId.Value, cancellationToken);
+			var idleCutoff = now.AddMinutes(-SharedSessionRules.EffectiveIdleLockMinutes(session, policy));
+			// The caller's copy follows the row, so a status read in the same request shows the moved deadline.
+			if (await _sessionsRepository.RecordOperatorActivityAsync(session.UserSessionId, now, writeBefore, idleCutoff, cancellationToken) > 0)
+				session.LastOperatorActivityOn = now;
 		}
 
 		public async Task<UserSession> AdoptLegacyAsync(LegacySessionContext context, CancellationToken cancellationToken = default)
@@ -263,7 +395,9 @@ namespace Resgrid.Services
 				LastRegion = session.LastRegion,
 				LastCity = session.LastCity,
 				UserAgent = session.UserAgent,
-				IsLegacyAdopted = session.IsLegacyAdopted
+				IsLegacyAdopted = session.IsLegacyAdopted,
+				SharedMode = session.SharedMode,
+				IsLocked = session.IsLocked
 			}).ToList();
 		}
 
@@ -272,7 +406,25 @@ namespace Resgrid.Services
 		{
 			var now = DateTime.UtcNow;
 			var count = await _sessionsRepository.RevokeAsync(targetUserId, sessionId, actorUserId, (int)reason, now, cancellationToken);
+			if (count > 0)
+				await CloseConnectionsAsync(sessionId);
 			return new RevocationResult { RevokedSessionCount = count, RevokedOn = now };
+		}
+
+		/// <summary>
+		/// Asks every SignalR host to close this session's open connections now (slice 16). Best effort: each host's sweep
+		/// closes them within its interval anyway, and bulk revocations rely on the sweep alone.
+		/// </summary>
+		public async Task CloseConnectionsAsync(string sessionId)
+		{
+			try
+			{
+				await _sessionEvents.PublishAsync(sessionId, new SessionEventMessage { Name = SessionEvents.SessionClosed }, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, "A session close event could not be sent; the connection sweep closes it instead.");
+			}
 		}
 
 		public async Task<RevocationResult> RevokeOtherSessionsAsync(string userId, string currentSessionId,

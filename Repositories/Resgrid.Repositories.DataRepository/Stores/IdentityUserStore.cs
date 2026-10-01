@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,14 +38,17 @@ namespace Resgrid.Repositories.DataRepository.Stores
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly IIdentityUserRepository _userRepository;
+		private readonly IUserMfaStateRepository _mfaStateRepository;
 
 		public IdentityUserStore(IConnectionProvider connProv,
 							   IIdentityUserRepository roleRepo,
-							   IUnitOfWork uow)
+							   IUnitOfWork uow,
+							   IUserMfaStateRepository mfaStateRepository)
 		{
 			_userRepository = roleRepo;
 			_connectionProvider = connProv;
 			_unitOfWork = uow;
+			_mfaStateRepository = mfaStateRepository;
 		}
 
 		public Task SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) => CommitTransactionAsync(cancellationToken);
@@ -463,14 +468,58 @@ namespace Resgrid.Repositories.DataRepository.Stores
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			if (user == null) throw new ArgumentNullException(nameof(user));
-			return await _userRepository.GetTokenAsync(user.Id, loginProvider, name);
+			var stored = await _userRepository.GetTokenAsync(user.Id, loginProvider, name);
+			var use = SeedUse(loginProvider, name);
+			return use == null || stored == null ? stored : await ReadSeedAsync(user.Id, loginProvider, name, use.Value, stored, cancellationToken);
 		}
 
 		public async Task SetTokenAsync(IdentityUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			if (user == null) throw new ArgumentNullException(nameof(user));
+			var use = SeedUse(loginProvider, name);
+			if (use != null && value != null && TwoFactorConfig.AuthenticatorSeedEncryptionEnabled)
+				value = AuthenticatorSeedProtector.Protect(user.Id, use.Value, value);
 			await _userRepository.SetTokenAsync(user.Id, loginProvider, name, value, cancellationToken);
+		}
+
+		/// <summary>The authenticator seed tokens: the active key, and a replacement staged for setup (slice 14).</summary>
+		private static AuthenticatorSeedUse? SeedUse(string loginProvider, string name) =>
+			loginProvider == AuthenticatorKeyLoginProvider && name == AuthenticatorKeyTokenName ? AuthenticatorSeedUse.Active
+			: loginProvider == StagedAuthenticatorKey.LoginProvider && name == StagedAuthenticatorKey.TokenName ? AuthenticatorSeedUse.Staged
+			: null;
+
+		/// <summary>
+		/// A stored seed as the authenticator uses it. An unreadable one (unknown key, moved between accounts or uses, or
+		/// tampered with) reads as no seed, so the code check fails closed; the account still has its recovery codes. With the
+		/// gate on, a plaintext seed or one under a retired key is re-encrypted here, once, and only if nothing replaced it
+		/// meanwhile.
+		/// </summary>
+		private async Task<string> ReadSeedAsync(string userId, string loginProvider, string name, AuthenticatorSeedUse use, string stored,
+			CancellationToken cancellationToken)
+		{
+			var read = AuthenticatorSeedProtector.Unprotect(userId, use, stored);
+			if (read.Failed)
+			{
+				Framework.Logging.LogError($"An authenticator seed could not be decrypted ({use}); the account's authenticator reads as not set up.");
+				return null;
+			}
+
+			if (TwoFactorConfig.AuthenticatorSeedEncryptionEnabled && (read.IsPlaintext || read.NeedsRewrap))
+			{
+				try
+				{
+					await _userRepository.TryReplaceTokenAsync(userId, loginProvider, name, stored,
+						AuthenticatorSeedProtector.Protect(userId, use, read.Value), cancellationToken);
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException))
+				{
+					// The seed still works as read; the next read or the migration command tries again.
+					Framework.Logging.LogException(ex, "Authenticator seed re-encryption failed.");
+				}
+			}
+
+			return read.Value;
 		}
 
 		public async Task RemoveTokenAsync(IdentityUser user, string loginProvider, string name, CancellationToken cancellationToken)
@@ -482,8 +531,8 @@ namespace Resgrid.Repositories.DataRepository.Stores
 
 		// ── IUserAuthenticatorKeyStore ─────────────────────────────────────────────
 
-		private const string AuthenticatorKeyLoginProvider = "[AspNetUserStore]";
-		private const string AuthenticatorKeyTokenName = "AuthenticatorKey";
+		private const string AuthenticatorKeyLoginProvider = AuthenticatorSeedProtector.ActiveLoginProvider;
+		private const string AuthenticatorKeyTokenName = AuthenticatorSeedProtector.ActiveTokenName;
 		private const string RecoveryCodeTokenName = "RecoveryCodes";
 
 		public Task SetAuthenticatorKeyAsync(IdentityUser user, string key, CancellationToken cancellationToken)
@@ -493,29 +542,30 @@ namespace Resgrid.Repositories.DataRepository.Stores
 			=> GetTokenAsync(user, AuthenticatorKeyLoginProvider, AuthenticatorKeyTokenName, cancellationToken);
 
 		// ── IUserTwoFactorRecoveryCodeStore ────────────────────────────────────────
+		// Codes live as HMAC verifiers in UserRecoveryCodes (M0243), one row each, consumed by a single guarded UPDATE
+		// so a code redeemed concurrently on two nodes succeeds once. The pre-M0243 plaintext ";"-joined token is
+		// migrated on first use and then deleted.
 
 		public async Task ReplaceCodesAsync(IdentityUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
 		{
-			var mergedCodes = string.Join(";", recoveryCodes);
-			await SetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, mergedCodes, cancellationToken);
+			cancellationToken.ThrowIfCancellationRequested();
+			if (user == null) throw new ArgumentNullException(nameof(user));
+
+			var hashes = (recoveryCodes ?? Enumerable.Empty<string>())
+				.Where(code => !string.IsNullOrWhiteSpace(code))
+				.Select(code => RecoveryCodeHasher.Hash(user.Id, code))
+				.ToList();
+			await _mfaStateRepository.ReplaceRecoveryCodesAsync(user.Id, hashes, RecoveryCodeHasher.CurrentVersion, DateTime.UtcNow, cancellationToken);
 		}
 
 		public async Task<bool> RedeemCodeAsync(IdentityUser user, string code, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			if (user == null) throw new ArgumentNullException(nameof(user));
+			if (string.IsNullOrWhiteSpace(code)) return false;
 
-			var mergedCodes = await GetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? string.Empty;
-			var splitCodes = mergedCodes.Split(';');
-
-			if (splitCodes.Contains(code))
-			{
-				var updatedCodes = splitCodes.Where(s => s != code);
-				await ReplaceCodesAsync(user, updatedCodes, cancellationToken);
-				return true;
-			}
-
-			return false;
+			await MigrateLegacyRecoveryCodesAsync(user, cancellationToken);
+			return await _mfaStateRepository.TryRedeemRecoveryCodeAsync(user.Id, RecoveryCodeHasher.Hash(user.Id, code), DateTime.UtcNow, cancellationToken);
 		}
 
 		public async Task<int> CountCodesAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -523,11 +573,24 @@ namespace Resgrid.Repositories.DataRepository.Stores
 			cancellationToken.ThrowIfCancellationRequested();
 			if (user == null) throw new ArgumentNullException(nameof(user));
 
-			var mergedCodes = await GetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? string.Empty;
-			if (string.IsNullOrEmpty(mergedCodes))
-				return 0;
+			await MigrateLegacyRecoveryCodesAsync(user, cancellationToken);
+			return await _mfaStateRepository.CountUnusedRecoveryCodesAsync(user.Id, cancellationToken);
+		}
 
-			return mergedCodes.Split(';').Length;
+		private async Task MigrateLegacyRecoveryCodesAsync(IdentityUser user, CancellationToken cancellationToken)
+		{
+			var legacy = await GetTokenAsync(user, AuthenticatorKeyLoginProvider, RecoveryCodeTokenName, cancellationToken);
+			if (legacy == null)
+				return;
+
+			var hashes = legacy.Split(';', StringSplitOptions.RemoveEmptyEntries)
+				.Select(code => RecoveryCodeHasher.Hash(user.Id, code))
+				.ToList();
+
+			// Returns false when another request already migrated (or regenerated) this user's codes; either way the
+			// verifier rows are now authoritative.
+			await _mfaStateRepository.ImportLegacyRecoveryCodesAsync(user.Id, legacy, hashes, RecoveryCodeHasher.CurrentVersion,
+				DateTime.UtcNow, cancellationToken);
 		}
 
 		public Task<bool> GetTwoFactorEnabledAsync(IdentityUser user, CancellationToken cancellationToken)

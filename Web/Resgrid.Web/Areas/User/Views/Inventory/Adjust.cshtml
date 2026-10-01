@@ -118,7 +118,7 @@
 {
 	<script type="text/javascript">
 		var inventoryAdjustStrings = {
-			noUnit: '@Html.Raw(localizer["NoUnit"].Value)'
+			noUnit: '@JsEncoder.Encode(localizer["NoUnit"].Value)'
 		};
 	</script>
 	<script src="~/js/app/internal/inventory/resgrid.inventory.adjust.js" asp-append-version="true" type="text/javascript"></script>

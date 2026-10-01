@@ -447,4 +447,13 @@
   <data name="SecurityPinPlaceholder" xml:space="preserve">
     <value>PIN de 4 dígitos</value>
   </data>
+  <data name="DeleteUserAccount" xml:space="preserve">
+    <value>Eliminar su cuenta</value>
+  </data>
+  <data name="DeleteUserAccountInfo" xml:space="preserve">
+    <value>Elimine su propia cuenta de Resgrid en todos los departamentos de los que es miembro</value>
+  </data>
+  <data name="VerificationCodeVoiceCallSent" xml:space="preserve">
+    <value>Se está realizando una llamada de verificación. Conteste y anote el código que se le dicte.</value>
+  </data>
 </root>

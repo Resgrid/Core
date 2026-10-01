@@ -68,32 +68,32 @@
 @section Scripts {
 	<script>
 		var loc = {
-			event: '@localizer["Event"]',
-			severity: '@localizer["Severity"]',
-			category: '@localizer["Category"]',
-			area: '@localizer["Area"]',
-			effectiveDate: '@localizer["EffectiveDate"]',
-			expires: '@localizer["Expires"]',
-			status: '@localizer["Status"]',
-			details: '@localizer["Details"]',
-			selectDates: '@localizer["SelectDates"]',
-			loadingHistory: '@localizer["LoadingHistory"]',
-			noHistoryFound: '@localizer["NoHistoryFound"]',
-			failedToLoadHistory: '@localizer["FailedToLoadHistory"]',
-			severityExtreme: '@localizer["SeverityExtreme"]',
-			severitySevere: '@localizer["SeveritySevere"]',
-			severityModerate: '@localizer["SeverityModerate"]',
-			severityMinor: '@localizer["SeverityMinor"]',
-			severityUnknown: '@localizer["SeverityUnknown"]',
-			categoryMet: '@localizer["CategoryMet"]',
-			categoryFire: '@localizer["CategoryFire"]',
-			categoryHealth: '@localizer["CategoryHealth"]',
-			categoryEnv: '@localizer["CategoryEnv"]',
-			categoryOther: '@localizer["CategoryOther"]',
-			statusActive: '@localizer["StatusActive"]',
-			statusUpdated: '@localizer["StatusUpdated"]',
-			statusExpired: '@localizer["StatusExpired"]',
-			statusCancelled: '@localizer["StatusCancelled"]'
+			event: '@JsEncoder.Encode(localizer["Event"])',
+			severity: '@JsEncoder.Encode(localizer["Severity"])',
+			category: '@JsEncoder.Encode(localizer["Category"])',
+			area: '@JsEncoder.Encode(localizer["Area"])',
+			effectiveDate: '@JsEncoder.Encode(localizer["EffectiveDate"])',
+			expires: '@JsEncoder.Encode(localizer["Expires"])',
+			status: '@JsEncoder.Encode(localizer["Status"])',
+			details: '@JsEncoder.Encode(localizer["Details"])',
+			selectDates: '@JsEncoder.Encode(localizer["SelectDates"])',
+			loadingHistory: '@JsEncoder.Encode(localizer["LoadingHistory"])',
+			noHistoryFound: '@JsEncoder.Encode(localizer["NoHistoryFound"])',
+			failedToLoadHistory: '@JsEncoder.Encode(localizer["FailedToLoadHistory"])',
+			severityExtreme: '@JsEncoder.Encode(localizer["SeverityExtreme"])',
+			severitySevere: '@JsEncoder.Encode(localizer["SeveritySevere"])',
+			severityModerate: '@JsEncoder.Encode(localizer["SeverityModerate"])',
+			severityMinor: '@JsEncoder.Encode(localizer["SeverityMinor"])',
+			severityUnknown: '@JsEncoder.Encode(localizer["SeverityUnknown"])',
+			categoryMet: '@JsEncoder.Encode(localizer["CategoryMet"])',
+			categoryFire: '@JsEncoder.Encode(localizer["CategoryFire"])',
+			categoryHealth: '@JsEncoder.Encode(localizer["CategoryHealth"])',
+			categoryEnv: '@JsEncoder.Encode(localizer["CategoryEnv"])',
+			categoryOther: '@JsEncoder.Encode(localizer["CategoryOther"])',
+			statusActive: '@JsEncoder.Encode(localizer["StatusActive"])',
+			statusUpdated: '@JsEncoder.Encode(localizer["StatusUpdated"])',
+			statusExpired: '@JsEncoder.Encode(localizer["StatusExpired"])',
+			statusCancelled: '@JsEncoder.Encode(localizer["StatusCancelled"])'
 		};
 
 		function formatLocalDate(d) {
@@ -123,7 +123,7 @@
 			}
 
 			var container = $('#historyContainer');
-			container.html('<p>' + loc.loadingHistory + '</p>');
+			container.empty().append($('<p>').text(loc.loadingHistory));
 
 			$.ajax({
 				url: '/api/web-bff/api/v4/WeatherAlerts/GetAlertHistory?startDate=' + startDate + '&endDate=' + endDate,
@@ -174,11 +174,11 @@
 						$table.append($thead).append($tbody);
 						container.append($table);
 					} else {
-						container.html('<div class="alert alert-info">' + loc.noHistoryFound + '</div>');
+						container.empty().append($('<div class="alert alert-info">').text(loc.noHistoryFound));
 					}
 				},
 				error: function() {
-					container.html('<div class="alert alert-warning">' + loc.failedToLoadHistory + '</div>');
+					container.empty().append($('<div class="alert alert-warning">').text(loc.failedToLoadHistory));
 				}
 			});
 		}

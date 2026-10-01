@@ -811,4 +811,40 @@
   <data name="JsonInputSchema" xml:space="preserve">
     <value>Σχήμα JSON (ονόματα και τύποι πεδίων)</value>
   </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Χρήση κλειδιού πρόσβασης</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Έγκριση με το Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Χρήση κωδικού ελέγχου ταυτότητας</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Ανοίξτε το Resgrid Responder στο τηλέφωνό σας, ελέγξτε το αίτημα και πληκτρολογήστε αυτόν τον αριθμό:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>Αναμονή για την έγκρισή σας στο Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>Το αίτημα απορρίφθηκε στο Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>Το αίτημα έληξε πριν εγκριθεί. Ξεκινήστε ξανά.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>Το παράθυρο του κλειδιού πρόσβασης έκλεισε. Δεν άλλαξε τίποτα.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η χρήση του κλειδιού πρόσβασης. Δοκιμάστε ξανά ή χρησιμοποιήστε την εφαρμογή ελέγχου ταυτότητας.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Χρήση του παρόχου ταυτότητας</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Επιτρέψτε τα αναδυόμενα παράθυρα για αυτόν τον ιστότοπο για επαλήθευση με τον πάροχο ταυτότητας.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
 </root>

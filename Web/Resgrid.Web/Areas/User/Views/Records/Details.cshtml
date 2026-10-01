@@ -281,7 +281,7 @@
 				<div class="ibox">
 					<div class="ibox-title"><h5>@localizer["Void"]</h5></div>
 					<div class="ibox-content">
-						<form method="post" asp-controller="Records" asp-action="Void" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" onsubmit="return confirm('@localizer["Void"]?');">
+						<form method="post" asp-controller="Records" asp-action="Void" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" onsubmit="return confirm('@JsEncoder.Encode(localizer["Void"])?');">
 							@Html.AntiForgeryToken()
 							<div class="form-group"><label>@localizer["ReasonCode"]</label><input type="text" class="form-control" name="reasonCode" maxlength="50" required /></div>
 							<div class="form-group"><label>@localizer["ReasonText"]</label><input type="text" class="form-control" name="reasonText" /></div>
@@ -318,7 +318,7 @@
 
 			@if (Model.CanVoid && RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Cancelled))
 			{
-				<form method="post" asp-controller="Records" asp-action="CancelDraft" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" onsubmit="return confirm('@localizer["Cancel"]?');">
+				<form method="post" asp-controller="Records" asp-action="CancelDraft" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" onsubmit="return confirm('@JsEncoder.Encode(localizer["Cancel"])?');">
 					@Html.AntiForgeryToken()
 					<button type="submit" class="btn btn-outline btn-danger btn-block m-b-md">@localizer["Cancel"]</button>
 				</form>

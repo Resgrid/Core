@@ -51,7 +51,7 @@
                             }
                             @if (c.Status != (int)Resgrid.Model.Invoicing.ServiceContractStatuses.Active)
                             {
-                                <form method="post" asp-action="Delete" asp-route-id="@c.ServiceContractId" class="inline" onsubmit="return confirm('@localizer["ConfirmDeleteContract"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                                <form method="post" asp-action="Delete" asp-route-id="@c.ServiceContractId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDeleteContract"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
                             }
                         </div>
                     }

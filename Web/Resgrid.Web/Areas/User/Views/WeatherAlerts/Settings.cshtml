@@ -288,16 +288,16 @@
 @section Scripts {
 	<script>
 		var loc = {
-			addEditSource: '@localizer["AddEditSource"]',
-			editSource: '@localizer["EditSource"]',
-			enterSourceName: '@localizer["EnterSourceName"]',
-			failedToSaveSource: '@localizer["FailedToSaveSource"]',
-			failedToToggleSource: '@localizer["FailedToToggleSource"]',
-			deleteSourceConfirm: '@localizer["DeleteSourceConfirm"]',
-			failedToDeleteSource: '@localizer["FailedToDeleteSource"]',
-			settingsSaved: '@localizer["SettingsSaved"]',
-			failedToSaveSettings: '@localizer["FailedToSaveSettings"]',
-			failedToLoadSettings: '@localizer["FailedToLoadSettings"]'
+			addEditSource: '@JsEncoder.Encode(localizer["AddEditSource"])',
+			editSource: '@JsEncoder.Encode(localizer["EditSource"])',
+			enterSourceName: '@JsEncoder.Encode(localizer["EnterSourceName"])',
+			failedToSaveSource: '@JsEncoder.Encode(localizer["FailedToSaveSource"])',
+			failedToToggleSource: '@JsEncoder.Encode(localizer["FailedToToggleSource"])',
+			deleteSourceConfirm: '@JsEncoder.Encode(localizer["DeleteSourceConfirm"])',
+			failedToDeleteSource: '@JsEncoder.Encode(localizer["FailedToDeleteSource"])',
+			settingsSaved: '@JsEncoder.Encode(localizer["SettingsSaved"])',
+			failedToSaveSettings: '@JsEncoder.Encode(localizer["FailedToSaveSettings"])',
+			failedToLoadSettings: '@JsEncoder.Encode(localizer["FailedToLoadSettings"])'
 		};
 
 		function getAntiForgeryToken() {
@@ -340,11 +340,11 @@
 
 		function saveSettings() {
 			var severityNames = {
-				0: '@localizer["SeverityExtreme"]',
-				1: '@localizer["SeveritySevere"]',
-				2: '@localizer["SeverityModerate"]',
-				3: '@localizer["SeverityMinor"]',
-				4: '@localizer["SeverityUnknown"]'
+				0: '@JsEncoder.Encode(localizer["SeverityExtreme"])',
+				1: '@JsEncoder.Encode(localizer["SeveritySevere"])',
+				2: '@JsEncoder.Encode(localizer["SeverityModerate"])',
+				3: '@JsEncoder.Encode(localizer["SeverityMinor"])',
+				4: '@JsEncoder.Encode(localizer["SeverityUnknown"])'
 			};
 
 			var schedule = [];

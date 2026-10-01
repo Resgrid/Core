@@ -84,24 +84,46 @@ namespace Resgrid.Web.Services.Models.v4.DataProtection
 	/// <summary>
 	/// Result of a successful step-up verification. The window is ABSOLUTE (never sliding): clients
 	/// conceal protected values at StepUpExpiresOnUtc and prompt again on the next reveal/edit.
-	/// When grant signing is configured on this deployment, GrantId/GrantToken carry a signed
-	/// Protected Data Grant the client presents alongside its access token on protected operations;
-	/// clients hold the token in MEMORY ONLY (never persisted) and discard it at expiry. On
-	/// deployments without signing key material both stay null and the verification itself remains
-	/// the capability (pre-broker behavior).
+	/// GrantId/GrantToken carry a signed Protected Data Grant the client presents alongside its access
+	/// token on protected operations; clients hold the token in MEMORY ONLY (never persisted) and discard
+	/// it at expiry. A deployment without signing key material answers 503 <c>grants_not_configured</c>
+	/// instead: a verification without a grant is not access (passkey plan section 8.1).
 	/// </summary>
 	public class StepUpResult : StandardApiResponseV4Base
 	{
-		/// <summary>Unique grant id (jti) for display/audit correlation; null when grants are not configured.</summary>
+		/// <summary>Unique grant id (jti) for display/audit correlation.</summary>
 		public string GrantId { get; set; }
 
-		/// <summary>Signed Protected Data Grant token; null when grants are not configured. MEMORY ONLY.</summary>
+		/// <summary>Signed Protected Data Grant token. MEMORY ONLY.</summary>
 		public string GrantToken { get; set; }
 
-		/// <summary>Absolute UTC expiry of this step-up window (ISO 8601).</summary>
+		/// <summary>
+		/// The grant's absolute UTC expiry (ISO 8601): the verification time plus the department's window, never past the
+		/// session's end (passkey plan section 9.2). Conceal at this time; never add the window to the client's own clock.
+		/// </summary>
 		public string StepUpExpiresOnUtc { get; set; }
 
 		/// <summary>The department's effective step-up window in minutes.</summary>
 		public int StepUpWindowMinutes { get; set; }
+	}
+	/// <summary>
+	/// How the caller can verify for this department's protected data now (passkey plan section 7.5 rule 5): every usable
+	/// method is an equal choice, and <see cref="Preferred"/> is the one to show first. Advisory: every command rechecks.
+	/// </summary>
+	public class AdpStepUpMethodsResult : StandardApiResponseV4Base
+	{
+		public AdpStepUpMethodsResultData Data { get; set; }
+	}
+
+	public class AdpStepUpMethodsResultData
+	{
+		/// <summary>Methods the caller has and the department accepts for protected data: totp, passkey, passkey_approval, federated.</summary>
+		public System.Collections.Generic.List<string> Methods { get; set; }
+
+		public string Preferred { get; set; }
+
+		public System.Collections.Generic.List<string> EnrolledMethods { get; set; }
+
+		public System.Collections.Generic.List<string> AllowedMethods { get; set; }
 	}
 }

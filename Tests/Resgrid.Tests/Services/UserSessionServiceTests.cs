@@ -32,7 +32,8 @@ namespace Resgrid.Tests.Services
 			_departments = new Mock<IDepartmentsService>();
 			_departmentSso = new Mock<IDepartmentSsoService>();
 			_service = new UserSessionService(_sessions.Object, _users.Object, _identity.Object,
-				_departments.Object, _departmentSso.Object, new ClientSessionMetadataParser(), Mock.Of<IIpLocationProvider>());
+				_departments.Object, _departmentSso.Object, new ClientSessionMetadataParser(), Mock.Of<IIpLocationProvider>(),
+				Mock.Of<IPasskeyFeatureGates>(), Mock.Of<ISystemAuditsService>(), Mock.Of<ISessionEventPublisher>(), TimeProvider.System);
 			SessionSecurityConfig.LegacyAdoptionEnabled = true;
 			SessionSecurityConfig.RequireSessionClaimForCredentialsIssuedAfterUtc = string.Empty;
 			SessionSecurityConfig.DepartmentSessionPolicyEnforcementAfterUtc = string.Empty;

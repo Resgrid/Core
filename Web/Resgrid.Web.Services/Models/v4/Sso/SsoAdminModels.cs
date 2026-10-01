@@ -112,6 +112,22 @@ namespace Resgrid.Web.Services.Models.v4.Sso
 		/// <summary>SAML Assertion Consumer Service URL.</summary>
 		public string AssertionConsumerServiceUrl { get; set; }
 
+		/// <summary>The IdP's SAML single sign-on URL that brokered sign-in sends its AuthnRequest to.</summary>
+		public string IdpSsoUrl { get; set; }
+
+		/// <summary>
+		/// The OIDC redirect URI to register with the IdP for brokered sign-in (plan section 7.7.2 item 7). It is added
+		/// alongside any existing registration, which older app builds keep using.
+		/// </summary>
+		public string OidcBrokerRedirectUri { get; set; }
+
+		/// <summary>
+		/// Each app's own redirect URIs for sign-in the app runs itself (older app versions, or while brokered sign-in is off):
+		/// its native scheme, and its web edition's page where this deployment serves one. The department registers every one
+		/// with its IdP; an app can only receive a redirect on an address it owns. OIDC only.
+		/// </summary>
+		public List<SsoAppRedirectUriData> OidcAppRedirectUris { get; set; }
+
 		/// <summary>
 		/// JSON attribute mapping from IdP claim names to Resgrid user fields.
 		/// Example: {"email":"http://schemas/.../emailaddress","firstName":"given_name","lastName":"family_name"}
@@ -132,6 +148,20 @@ namespace Resgrid.Web.Services.Models.v4.Sso
 
 		/// <summary>Whether a SCIM bearer token is currently stored.</summary>
 		public bool HasScimBearerToken { get; set; }
+	}
+
+	/// <summary>One of an app's legacy OIDC redirect URIs.</summary>
+	public class SsoAppRedirectUriData
+	{
+		/// <summary>The app, as <c>X-Resgrid-Client</c> names it: responder, unit, dispatch or ic.</summary>
+		public string Client { get; set; }
+
+		public string DisplayName { get; set; }
+
+		/// <summary>True for the app's web edition (a page on its web host), false for the native app's own scheme.</summary>
+		public bool Web { get; set; }
+
+		public string RedirectUri { get; set; }
 	}
 
 	/// <summary>Department security policy data.</summary>
@@ -166,6 +196,39 @@ namespace Resgrid.Web.Services.Models.v4.Sso
 
 		/// <summary>Data classification level: 0=Unclassified, 1=CUI, 2=Confidential.</summary>
 		public int DataClassificationLevel { get; set; }
+
+		/// <summary>Accept a passkey as sign-in and step-up MFA.</summary>
+		public bool AllowPasskeysForLoginMfa { get; set; }
+
+		/// <summary>Accept a passkey for protected data.</summary>
+		public bool AllowPasskeysForAdp { get; set; }
+
+		/// <summary>Accept provider step-up for sign-in and step-up MFA.</summary>
+		public bool AllowFederatedMfaForLoginMfa { get; set; }
+
+		/// <summary>Accept provider step-up for protected data.</summary>
+		public bool AllowFederatedMfaForAdp { get; set; }
+
+		/// <summary>Accept Responder approval.</summary>
+		public bool AllowResponderApproval { get; set; }
+
+		/// <summary>Let recent sign-in MFA serve protected data.</summary>
+		public bool AcceptRecentLoginMfaForAdp { get; set; }
+
+		/// <summary>Let fresh unlock MFA serve protected data.</summary>
+		public bool AcceptRecentUnlockMfaForAdp { get; set; }
+
+		/// <summary>Minutes of no operator activity before a shared session locks.</summary>
+		public int SharedIdleLockMinutes { get; set; }
+
+		/// <summary>Hours after sign-in when a shared session ends.</summary>
+		public int SharedShiftHours { get; set; }
+
+		/// <summary>Apps whose sessions are always shared (flags: Unit 1, IC 2, Dispatch 4).</summary>
+		public int SharedModeRequiredApps { get; set; }
+
+		/// <summary>Advanced by the server whenever the sign-in MFA rules change; read-only.</summary>
+		public long MfaPolicyVersion { get; set; }
 
 		/// <summary>Date/time the policy was created.</summary>
 		public DateTime CreatedOn { get; set; }
@@ -210,6 +273,9 @@ namespace Resgrid.Web.Services.Models.v4.Sso
 
 		/// <summary>SAML Assertion Consumer Service URL.</summary>
 		public string AssertionConsumerServiceUrl { get; set; }
+
+		/// <summary>The IdP's SAML single sign-on URL (HTTP-Redirect binding) for brokered sign-in. Optional; https.</summary>
+		public string IdpSsoUrl { get; set; }
 
 		/// <summary>
 		/// IdP public certificate in PEM format (plaintext). Encrypted before storage.
@@ -275,6 +341,42 @@ namespace Resgrid.Web.Services.Models.v4.Sso
 		/// <summary>Data classification level: 0=Unclassified, 1=CUI, 2=Confidential.</summary>
 		[Range(0, 2)]
 		public int DataClassificationLevel { get; set; }
+
+		// Second-factor method switches (passkey plan section 10.1). Null keeps the stored value, so a client that does not
+		// know these fields never switches anything off. Changing any of them requires the managing member.
+
+		/// <summary>Accept a passkey bound to the requesting app as sign-in and step-up MFA. TOTP is always accepted.</summary>
+		public bool? AllowPasskeysForLoginMfa { get; set; }
+
+		/// <summary>Accept a passkey for Protected Data Grants, ADP management and protected workflows.</summary>
+		public bool? AllowPasskeysForAdp { get; set; }
+
+		/// <summary>Accept provider step-up for sign-in and step-up MFA (needs a tested mapping).</summary>
+		public bool? AllowFederatedMfaForLoginMfa { get; set; }
+
+		/// <summary>Accept provider step-up for protected data (needs a tested mapping).</summary>
+		public bool? AllowFederatedMfaForAdp { get; set; }
+
+		/// <summary>Accept Responder approval where the matching passkey switch is on.</summary>
+		public bool? AllowResponderApproval { get; set; }
+
+		/// <summary>Let recent same-session sign-in MFA serve protected data without another verification.</summary>
+		public bool? AcceptRecentLoginMfaForAdp { get; set; }
+
+		/// <summary>Let fresh same-operator unlock MFA serve protected data on a shared session.</summary>
+		public bool? AcceptRecentUnlockMfaForAdp { get; set; }
+
+		/// <summary>Shared sessions lock after this many idle minutes (1-15). Managing member only; omitted leaves it unchanged.</summary>
+		public int? SharedIdleLockMinutes { get; set; }
+
+		/// <summary>Shared sessions end this many hours after sign-in (1-24). Managing member only.</summary>
+		public int? SharedShiftHours { get; set; }
+
+		/// <summary>
+		/// The apps whose sessions are always shared: flags Unit 1, IC 2, Dispatch 4. Sign-ins that do not name their app count
+		/// too. Managing member only; a new app needs the deployment's shared-device mode.
+		/// </summary>
+		public int? SharedModeRequiredApps { get; set; }
 	}
 }
 

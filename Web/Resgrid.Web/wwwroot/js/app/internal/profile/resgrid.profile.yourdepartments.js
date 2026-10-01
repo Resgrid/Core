@@ -53,7 +53,13 @@ var resgrid;
                 }).done(function () {
 					window.location.href = resgrid.absoluteBaseUrl + '/User/Home/Dashboard';
 				}).fail(function (xhr) {
-					if (xhr.status === 403) {
+					if (xhr.status === 403 && xhr.responseJSON && xhr.responseJSON.error === 'step_up_required' && xhr.responseJSON.redirectUrl) {
+						// The department requires MFA this session has not completed: verify, then come back and switch.
+						window.location.href = xhr.responseJSON.redirectUrl;
+					} else if (xhr.status === 403 && xhr.responseJSON && xhr.responseJSON.error === 'sso_required' && xhr.responseJSON.redirectUrl) {
+						// The department requires its own single sign-on: sign in through its provider.
+						window.location.href = xhr.responseJSON.redirectUrl;
+					} else if (xhr.status === 403) {
 						window.alert('This department requires its own SSO sign-in. Sign out, then sign in through that department\'s identity provider.');
 					}
 				});

@@ -46,7 +46,7 @@
 					<p>@L["SwitchOwnershipIntro"]</p>
 					@if (s.CanSwitchToRecords)
 					{
-						<form method="post" asp-controller="RecordOccupancies" asp-action="SwitchOwnership" asp-route-area="User" onsubmit="return confirm('@L["SwitchOwnershipConfirm"]');">
+						<form method="post" asp-controller="RecordOccupancies" asp-action="SwitchOwnership" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["SwitchOwnershipConfirm"])');">
 							@Html.AntiForgeryToken()
 							<div class="form-group"><label>@L["ReasonText"]</label><textarea class="form-control" name="reason" rows="2" maxlength="1000" required></textarea></div>
 							<div class="checkbox"><label><input type="checkbox" name="acknowledge" value="true" required /> @L["SwitchOwnershipAcknowledge"]</label></div>

@@ -45,11 +45,15 @@
                             <span asp-validation-for="Code" class="text-danger small"></span>
                         </div>
 
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label><input asp-for="RememberBrowser" /> @localizer["RememberBrowserLabel"]</label>
+                        @if (!Resgrid.Web.Helpers.WebSharedSession.IsWorkstation(Context.Request))
+                        {
+                            @* A shared workstation is never remembered (plan section 12.5.2). *@
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label><input asp-for="RememberBrowser" /> @localizer["RememberBrowserLabel"]</label>
+                                </div>
                             </div>
-                        </div>
+                        }
 
                         <button type="submit" class="btn btn-primary block full-width m-b">@localizer["VerifyCodeButton"]</button>
 

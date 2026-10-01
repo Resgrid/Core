@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Avdelningsavisering / Användare att avisera</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Säkerhetspolicy för avdelning / Godkänn nylig inloggnings-MFA för ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Säkerhetspolicy för avdelning / Godkänn nylig upplåsnings-MFA för ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Säkerhetspolicy för avdelning / Tillåt federerad MFA för ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Säkerhetspolicy för avdelning / Tillåt federerad MFA för inloggnings-MFA</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Säkerhetspolicy för avdelning / Tillåt lösennycklar för ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Säkerhetspolicy för avdelning / Tillåt lösennycklar för inloggnings-MFA</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Säkerhetspolicy för avdelning / Tillåt godkännande i Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Säkerhetspolicy för avdelning / Tillåtna IP-intervall</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Säkerhetspolicy för avdelning / Sessionens tidsgräns i minuter</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Säkerhetspolicy för avdelning / Minuter av inaktivitet innan delade sessioner låses</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Säkerhetspolicy för avdelning / Appar med tvingat delat läge</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Säkerhetspolicy för avdelning / Skiftlängd för delade sessioner (timmar)</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>SSO-konfiguration för avdelning / Tillåt lokal inloggning</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>SSO-konfiguration för avdelning / Entitets-id</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>SSO-konfiguration för avdelning / Mappning för federerad MFA (JSON)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>SSO-konfiguration för avdelning / IdP:ns SSO-URL</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>SSO-konfiguration för avdelning / Aktiverad</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Explicita medlemsmottagare. Medlemskap och kanalbehörighet utvärderas separat vid sändningstillfället.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Låter MFA som slutförts vid inloggningen i samma session öppna skyddade data inom fönstret för förstärkt verifiering, för metoder som inställningarna för skyddade data tillåter. En ändring avslutar nuvarande åtkomst till skyddade data. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Låter operatörens färska upplåsningsverifiering på en delad enhet öppna skyddade data. En ändring avslutar nuvarande åtkomst till skyddade data. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Godkänner identitetsleverantörens MFA för skyddade data. Kräver en testad MFA-mappning; en ändring avslutar nuvarande åtkomst till skyddade data. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Godkänner identitetsleverantörens MFA för inloggning och förstärkt verifiering. Kräver en testad MFA-mappning i SSO-konfigurationen; utan den räknas leverantörens påståenden aldrig. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Godkänner en lösennyckel för åtkomst till skyddade data, ADP-hantering och godkännanden av skyddade arbetsflöden. Autentiseringskoder godkänns alltid. En ändring avslutar nuvarande åtkomst till skyddade data, så medlemmar verifierar igen. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Godkänner en lösennyckel som registrerats i den begärande appen som MFA för inloggning, byte av avdelning och förstärkt verifiering. Autentiseringskoder godkänns alltid. En ändring höjer versionen av MFA-policyn; sessioner vars enda andra faktor inte längre är tillåten verifierar igen. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Godkänner godkännande med lösennyckeln i medlemmens Responder-app där motsvarande lösennyckelinställning är på; aldrig för säkerhetsändringar eller kontots inloggningsmetoder. En ändring avslutar också nuvarande åtkomst till skyddade data. Endast förvaltande medlem.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Tillåtna nätverksintervall för inloggning. Tomt lägger inte till någon intervallbegränsning. Granska legitima insatsnätverk och återställningsåtkomst innan du begränsar det.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Tidsgräns för inaktivitet i minuter; noll överlåter till värdens beteende. Verifiera policyhanterade sessioner och varje klient som stöds i stället för att anta omedelbar global utloggning.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Minuter utan aktivitet från operatören innan sessionen på en delad fordonsplatta eller arbetsstation låses, från 1 till 15. Bakgrundsuppdateringar och inkommande larm räknas inte som aktivitet. Ett striktare värde gäller pågående sessioner vid deras nästa begäran. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Unit-, IC- och Dispatch-sessioner som avdelningen alltid kör som delade sessioner, oavsett hur installationen är inställd; inloggningar som inte anger sin app räknas också. Kräver appversioner som stöder delat läge. Endast förvaltande medlem.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Timmar efter inloggning då en delad session avslutas oavsett aktivitet, från 1 till 24. Ett kortare värde avslutar pågående sessioner tidigare; ett längre förlänger dem aldrig. Endast förvaltande medlem.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Tillåter en lokal lösenordsväg vid sidan av den här leverantören där policyn tillåter det. Granska det avdelningsövergripande SSO-kravet och återställningsplanen tillsammans.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>SAML-identifierare för tjänsteleverantören registrerad hos identitetsleverantören. Den måste överensstämma med den konfigurerade integrationen.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Vilka inloggningsresultat hos leverantören som räknas som MFA vid stegvis verifiering via leverantören. En ändrad mappning, utfärdare eller klient kräver ett nytt lyckat test innan leverantörens MFA godtas igen.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>SAML-leverantörens inloggningsadress som inloggning som startas från Resgrid skickar sin begäran till. Kontrollera den mot leverantörens metadata innan du förlitar dig på den.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Gör den här leverantörskonfigurationen tillgänglig för det SSO-flöde som stöds. En sparad aktiverad-flagga är inget lyckat inloggningstest.</value>

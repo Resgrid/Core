@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AccountInfoHeader" xml:space="preserve">
     <value>Account Information</value>
   </data>
@@ -400,5 +391,11 @@
   </data>
   <data name="SecurityPinPlaceholder" xml:space="preserve">
     <value>4-значний PIN</value>
+  </data>
+  <data name="MobileCarrierPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerificationCodeVoiceCallSent" xml:space="preserve">
+    <value>Здійснюється дзвінок для підтвердження. Будь ласка, відповідайте та запишіть продиктований вам код.</value>
   </data>
 </root>

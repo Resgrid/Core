@@ -30,14 +30,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IWorkflowService _workflowService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly Microsoft.AspNetCore.Identity.UserManager<Resgrid.Model.Identity.IdentityUser> _userManager;
+		private readonly IMfaEvidenceService _mfaEvidence;
+		private readonly IMfaPolicyService _mfaPolicy;
 
 		public ProtectedWorkflowsController(IProtectedWorkflowService protectedWorkflows, IWorkflowService workflowService,
-			IDepartmentsService departmentsService, IUserProfileService userProfileService)
+			IDepartmentsService departmentsService, IUserProfileService userProfileService,
+			Microsoft.AspNetCore.Identity.UserManager<Resgrid.Model.Identity.IdentityUser> userManager, IMfaEvidenceService mfaEvidence,
+			IMfaPolicyService mfaPolicy)
 		{
+			_mfaPolicy = mfaPolicy;
 			_protectedWorkflows = protectedWorkflows;
 			_workflowService = workflowService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
+			_userManager = userManager;
+			_mfaEvidence = mfaEvidence;
 		}
 
 		// ── Pages ─────────────────────────────────────────────────────────────────────────────────────
@@ -154,12 +162,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>Sends the user through the step-up verification and back to the page they came from.</summary>
 		[HttpGet]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
-		public IActionResult StepUp(string returnUrl)
+		[RequiresRecentTwoFactor(RequireForOperation = true, MethodScope = Resgrid.Model.Security.MfaMethodScope.Adp)]
+		public async Task<IActionResult> StepUp(string returnUrl)
 		{
 			// The attribute's window can be longer than the one Protected Workflows accept; re-verify rather than bounce the
 			// user back to a command the service will refuse again.
-			if (!ProtectedWorkflowService.IsStepUpFresh(RequiresRecentTwoFactorAttribute.GetStepUpVerifiedAtUtc(HttpContext, UserId), DateTime.UtcNow))
+			if (!ProtectedWorkflowService.IsStepUpFresh(await StepUpVerifiedAtUtcAsync(), DateTime.UtcNow))
 				return RedirectToAction("Verify2FA", "TwoFactor", new { area = "User", returnUrl = Url.Action("StepUp", new { returnUrl }) });
 
 			if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -176,7 +184,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (input == null)
 				return BadRequest();
 			return Result(await _protectedWorkflows.SetDepartmentSettingsAsync(DepartmentId, input.Enabled, input.RequireSecondApprover,
-				input.AcknowledgedVersion, Actor(), cancellationToken));
+				input.AcknowledgedVersion, await ActorAsync(), cancellationToken));
 		}
 
 		[HttpPost]
@@ -191,7 +199,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				RecipientType = input.RecipientType,
 				RecipientName = input.RecipientName,
 				Purpose = input.Purpose
-			}, Actor(), cancellationToken));
+			}, await ActorAsync(), cancellationToken));
 		}
 
 		[HttpPost]
@@ -201,7 +209,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (input == null)
 				return BadRequest();
 			return Result(await _protectedWorkflows.RequestApprovalAsync(DepartmentId, input.WorkflowId, input.Attested,
-				input.AcknowledgedVersion, input.ReviewedFingerprint, Actor(), input.Sensitive(), cancellationToken));
+				input.AcknowledgedVersion, input.ReviewedFingerprint, await ActorAsync(), input.Sensitive(), cancellationToken));
 		}
 
 		[HttpPost]
@@ -211,7 +219,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (input == null)
 				return BadRequest();
 			return Result(await _protectedWorkflows.ApproveAsync(DepartmentId, input.ReleaseId, input.Attested,
-				input.AcknowledgedVersion, input.ReviewedFingerprint, Actor(), input.Sensitive(), cancellationToken));
+				input.AcknowledgedVersion, input.ReviewedFingerprint, await ActorAsync(), input.Sensitive(), cancellationToken));
 		}
 
 		[HttpPost]
@@ -221,23 +229,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (input == null)
 				return BadRequest();
 			return Result(await _protectedWorkflows.RenewAsync(DepartmentId, input.ReleaseId, input.Attested,
-				input.AcknowledgedVersion, input.ReviewedFingerprint, Actor(), input.Sensitive(), cancellationToken));
+				input.AcknowledgedVersion, input.ReviewedFingerprint, await ActorAsync(), input.Sensitive(), cancellationToken));
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Suspend([FromBody] ProtectedReleaseCommandInput input, CancellationToken cancellationToken) =>
-			input == null ? BadRequest() : Result(await _protectedWorkflows.SuspendAsync(DepartmentId, input.ReleaseId, Actor(), cancellationToken));
+			input == null ? BadRequest() : Result(await _protectedWorkflows.SuspendAsync(DepartmentId, input.ReleaseId, await ActorAsync(), cancellationToken));
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Revoke([FromBody] ProtectedReleaseCommandInput input, CancellationToken cancellationToken) =>
-			input == null ? BadRequest() : Result(await _protectedWorkflows.RevokeAsync(DepartmentId, input.ReleaseId, Actor(), cancellationToken));
+			input == null ? BadRequest() : Result(await _protectedWorkflows.RevokeAsync(DepartmentId, input.ReleaseId, await ActorAsync(), cancellationToken));
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DiscardDraft([FromBody] ProtectedReleaseCommandInput input, CancellationToken cancellationToken) =>
-			input == null ? BadRequest() : Result(await _protectedWorkflows.DiscardDraftAsync(DepartmentId, input.ReleaseId, Actor(), cancellationToken));
+			input == null ? BadRequest() : Result(await _protectedWorkflows.DiscardDraftAsync(DepartmentId, input.ReleaseId, await ActorAsync(), cancellationToken));
 
 		/// <summary>"Send test with sample data": synthetic values only, recorded as test disclosures.</summary>
 		[HttpPost]
@@ -263,12 +271,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// ── Helpers ───────────────────────────────────────────────────────────────────────────────────
 
 		/// <summary>A signed-in web session is interactive; the step-up time comes from this session's verified second factor.</summary>
-		private ProtectedWorkflowActor Actor() => new ProtectedWorkflowActor
+		private async Task<ProtectedWorkflowActor> ActorAsync() => new ProtectedWorkflowActor
 		{
 			UserId = UserId,
 			IsInteractive = true,
-			StepUpVerifiedAtUtc = RequiresRecentTwoFactorAttribute.GetStepUpVerifiedAtUtc(HttpContext, UserId)
+			StepUpVerifiedAtUtc = await StepUpVerifiedAtUtcAsync()
 		};
+
+		/// <summary>This session's latest actual second factor, from server-side evidence (passkey plan section 7.6 row 11).</summary>
+		private async Task<DateTime?> StepUpVerifiedAtUtcAsync() =>
+			await RequiresRecentTwoFactorAttribute.GetStepUpVerifiedAtUtcAsync(HttpContext, await _userManager.FindByIdAsync(UserId), _mfaEvidence,
+				_mfaPolicy, DepartmentId, Resgrid.Model.Security.MfaMethodScope.Adp);
 
 		private IActionResult Result(ProtectedWorkflowCommandResult result) => Json(new
 		{

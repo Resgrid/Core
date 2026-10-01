@@ -428,15 +428,36 @@ namespace Resgrid.Services
 		private readonly IProtectedDataGrantService _grantService;
 		private readonly IProtectedDataBrokerClient _brokerClient;
 		private readonly IProtectedFieldCatalog _fieldCatalog;
+		private readonly IProtectedGrantContext _grantContext;
+		private readonly IMfaCredentialStateService _credentialStates;
 
 		public ProtectedReadService(IDepartmentDataProtectionService dataProtectionService,
 			IProtectedDataGrantService grantService, IProtectedDataBrokerClient brokerClient,
-			IProtectedFieldCatalog fieldCatalog)
+			IProtectedFieldCatalog fieldCatalog, IProtectedGrantContext grantContext = null, IMfaCredentialStateService credentialStates = null)
 		{
+			_credentialStates = credentialStates;
 			_dataProtectionService = dataProtectionService;
 			_grantService = grantService;
 			_brokerClient = brokerClient;
 			_fieldCatalog = fieldCatalog;
+			_grantContext = grantContext;
+		}
+
+		/// <summary>
+		/// Validates the grant and binds it to the caller (passkey plan section 8.3): null when the caller may act under
+		/// it, otherwise the value-free error code. A version 2 grant also has to match the request's validated session,
+		/// which comes from the grant context, never from the token or the client.
+		/// </summary>
+		private async Task<string> AuthorizeGrantAsync(string grantToken, int departmentId, DepartmentDataProtectionPolicy policy,
+			string requiredScope, string userId)
+		{
+			var outcome = _grantService.ValidateGrant(grantToken, departmentId, policy?.PolicyEpoch ?? 0,
+				requiredScope, out var grant);
+			if (outcome != ProtectedDataGrantValidationOutcome.Valid)
+				return ProtectedGrantBinding.ErrorCode(outcome);
+
+			return ProtectedGrantBinding.ErrorCode(await ProtectedGrantBinding.CheckAsync(grant, userId,
+				ProtectedGrantBinding.SessionFor(_grantContext, userId), policy?.StepUpWindowMinutes, _credentialStates));
 		}
 
 		public async Task<ProtectedReadResult> ResolveForReadAsync(int departmentId, Call call,
@@ -1722,17 +1743,9 @@ namespace Resgrid.Services
 				return ProtectedWriteResult.Blocked("step_up_required");
 
 			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
-			var outcome = _grantService.ValidateGrant(grantToken, departmentId, policy?.PolicyEpoch ?? 0,
-				ProtectedDataGrantScopes.Write, out var grant);
-			if (outcome != ProtectedDataGrantValidationOutcome.Valid)
-				return ProtectedWriteResult.Blocked(outcome switch
-				{
-					ProtectedDataGrantValidationOutcome.Expired => "grant_expired",
-					ProtectedDataGrantValidationOutcome.EpochRevoked => "grant_revoked",
-					_ => "step_up_required"
-				});
-			if (!string.Equals(grant.UserId, userId, StringComparison.OrdinalIgnoreCase))
-				return ProtectedWriteResult.Blocked("protected_access_denied");
+			var refusal = await AuthorizeGrantAsync(grantToken, departmentId, policy, ProtectedDataGrantScopes.Write, userId);
+			if (refusal != null)
+				return ProtectedWriteResult.Blocked(refusal);
 
 			return ProtectedWriteResult.Allowed(isProtected: true);
 		}
@@ -2298,20 +2311,12 @@ namespace Resgrid.Services
 			// 3.3). Workload callers use the broker's encrypt-only lane — no grant, no disclosure.
 			if (!workloadCaller)
 			{
-				var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
-				var outcome = _grantService.ValidateGrant(grantToken, departmentId, policy?.PolicyEpoch ?? 0,
-					ProtectedDataGrantScopes.Write, out var grant);
 				if (string.IsNullOrWhiteSpace(grantToken))
 					return ProtectedWriteResult.Blocked("step_up_required");
-				if (outcome != ProtectedDataGrantValidationOutcome.Valid)
-					return ProtectedWriteResult.Blocked(outcome switch
-					{
-						ProtectedDataGrantValidationOutcome.Expired => "grant_expired",
-						ProtectedDataGrantValidationOutcome.EpochRevoked => "grant_revoked",
-						_ => "step_up_required"
-					});
-				if (!string.Equals(grant.UserId, userId, StringComparison.OrdinalIgnoreCase))
-					return ProtectedWriteResult.Blocked("protected_access_denied");
+				var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
+				var refusal = await AuthorizeGrantAsync(grantToken, departmentId, policy, ProtectedDataGrantScopes.Write, userId);
+				if (refusal != null)
+					return ProtectedWriteResult.Blocked(refusal);
 			}
 
 			var policyRow = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
@@ -2800,12 +2805,11 @@ namespace Resgrid.Services
 				return;
 
 			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
-			var currentEpoch = policy?.PolicyEpoch ?? 0;
 			var catalogVersion = policy?.CatalogVersion ?? 0;
 
-			// One grant validation per batch, bound to this user and department at the current
-			// policy epoch. Anything but Valid redacts with a machine-readable reason the clients
-			// map onto the step-up flow.
+			// One grant validation per batch, bound to this user (and, for version 2, this session) and
+			// department at the current policy epoch. Anything but a bound, valid grant redacts with a
+			// machine-readable reason the clients map onto the step-up flow.
 			string redactionReason;
 			if (string.IsNullOrWhiteSpace(grantToken))
 			{
@@ -2813,17 +2817,7 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var outcome = _grantService.ValidateGrant(grantToken, departmentId, currentEpoch,
-					ProtectedDataGrantScopes.Read, out var grant);
-				redactionReason = outcome switch
-				{
-					ProtectedDataGrantValidationOutcome.Valid when
-						string.Equals(grant.UserId, userId, StringComparison.OrdinalIgnoreCase) => null,
-					ProtectedDataGrantValidationOutcome.Valid => "protected_access_denied",
-					ProtectedDataGrantValidationOutcome.Expired => "grant_expired",
-					ProtectedDataGrantValidationOutcome.EpochRevoked => "grant_revoked",
-					_ => "step_up_required"
-				};
+				redactionReason = await AuthorizeGrantAsync(grantToken, departmentId, policy, ProtectedDataGrantScopes.Read, userId);
 			}
 
 			if (redactionReason != null)

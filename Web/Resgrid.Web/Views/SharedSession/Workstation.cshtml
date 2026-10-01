@@ -1,0 +1,64 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.SharedWorkstationViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["SharedWorkstationTitle"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    @* This browser's own setting (passkey plan section 12.5.2): a station label that can only make later sign-ins stricter. *@
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" alt="Resgrid" />
+                </div>
+                <h3>@localizer["SharedWorkstationTitle"]</h3>
+                <p>@localizer["SharedWorkstationDescription"]</p>
+
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.Status))
+                    {
+                        <div class="alert alert-success" role="status" id="sharedWorkstationStatus">@Model.Status</div>
+                    }
+
+                    @if (!Model.Available)
+                    {
+                        <div class="alert alert-warning" role="alert" id="sharedWorkstationUnavailable">@localizer["SharedWorkstationUnavailable"]</div>
+                    }
+                    else
+                    {
+                        <form asp-action="Workstation" asp-controller="SharedSession" method="post" id="sharedWorkstationForm">
+                            @Html.AntiForgeryToken()
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="Shared" value="true" @(Model.Shared ? "checked" : "") id="sharedWorkstationShared" /> @localizer["SharedWorkstationUseLabel"]</label>
+                                <input type="hidden" name="Shared" value="false" />
+                            </div>
+                            <div class="form-group">
+                                <label for="sharedWorkstationLabel">@localizer["SharedWorkstationLabelLabel"]</label>
+                                <input type="text" name="Label" id="sharedWorkstationLabel" class="form-control" maxlength="64" value="@Model.Label" autocomplete="off" />
+                                <span class="help-block">@localizer["SharedWorkstationLabelHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary block full-width m-b">@localizer["SharedWorkstationSaveButton"]</button>
+                        </form>
+                    }
+
+                    <p class="text-center m-t">
+                        <a asp-controller="Account" asp-action="LogOn" asp-route-area="">@localizer["BackToSignInLink"]</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -142,6 +142,8 @@ namespace Resgrid.Web.Eventing
 
 			// Realtime location visibility: this instance's geolocation connections and their groups.
 			services.AddSingleton<Resgrid.Web.Eventing.Services.GeolocationConnectionTracker>();
+			// Open connections by session, for the session sweep and session events (slice 16).
+			services.AddSingleton<Resgrid.Services.SessionConnectionRegistry>();
 			services.AddSingleton<Resgrid.Web.Eventing.Services.GeolocationMembership>();
 			services.AddSingleton<Resgrid.Web.Eventing.Services.GeolocationBroadcaster>();
 
@@ -164,7 +166,10 @@ namespace Resgrid.Web.Eventing
 				config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 				config.Lockout.MaxFailedAccessAttempts = 5;
 				config.Lockout.AllowedForNewUsers = true;
-			}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
+			}).AddDefaultTokenProviders()
+				// One-time TOTP steps (passkey plan section 7.5 rule 8): replaces Identity's authenticator provider.
+				.AddTokenProvider<ResgridAuthenticatorTokenProvider>(TokenOptions.DefaultAuthenticatorProvider)
+				.AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
 			services.Configure<ForwardedHeadersOptions>(options =>
 			{

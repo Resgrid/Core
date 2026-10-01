@@ -96,7 +96,7 @@
                                                 <form asp-controller="CommunicationTest" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="testId" value="@test.CommunicationTestId" />
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(@Html.Raw(Json.Serialize(localizer["DeleteTestWarning"].Value)));">@localizer["Delete"]</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteTestWarning"])');">@localizer["Delete"]</button>
                                                 </form>
                                             }
                                         </td>

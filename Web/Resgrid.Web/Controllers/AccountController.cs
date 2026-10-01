@@ -36,9 +36,19 @@ namespace Resgrid.Web.Controllers
 #if (!DEBUG || !DOCKER)
 	//[RequireHttps]
 #endif
-	public class AccountController : Controller
+	// Authentication and session flows stay available during a department operation lock (ADP plan section 20.2): signing in
+	// and out, locking and unlocking a shared session, and verifying a second factor touch no department data.
+	[Resgrid.Web.Filters.AllowDuringDepartmentLock]
+	public partial class AccountController : Controller
 	{
 		private const string RecoveryGrantCookie = ".Resgrid.PasswordRecovery";
+
+		/// <summary>
+		/// The restricted login transaction's secret between the password and the second factor (passkey plan section 5.2): HttpOnly,
+		/// Secure and same-site, sent only to /Account, and useless except for finishing that one sign-in. The server keeps only its hash.
+		/// </summary>
+		private const string MfaLoginCookie = ".Resgrid.MfaLogin";
+		private const string MfaLoginCookiePath = "/Account";
 		#region Private Members and Constructors
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly SignInManager<IdentityUser> _signInManager;
@@ -59,6 +69,35 @@ namespace Resgrid.Web.Controllers
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IPasswordRecoveryService _passwordRecoveryService;
 		private readonly ILimitsService _limitsService;
+		private readonly IMfaEvidenceService _mfaEvidenceService;
+		private readonly IMfaActivityService _mfaActivity;
+		private readonly IMfaLoginTransactionService _loginTransactions;
+		private readonly IPasskeyService _passkeys;
+		private readonly IMfaApprovalService _approvals;
+		private readonly IMfaPolicyService _mfaPolicy;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> _twoFactorLocalizer;
+		private readonly ISsoBrokerService _ssoBroker;
+		private readonly ISsoReturnTargetRegistry _ssoReturnTargets;
+		private readonly Microsoft.AspNetCore.DataProtection.IDataProtectionProvider _dataProtection;
+		private readonly IAdpStepUpService _adpStepUp;
+		private readonly Resgrid.Model.Repositories.IUserMfaStateRepository _mfaState;
+		private readonly IUserStore<IdentityUser> _userStore;
+		private readonly IFactorRecoveryService _recoveries;
+		private readonly Resgrid.Model.Repositories.IUserPasskeyRepository _passkeyRows;
+		private readonly IAuthenticationChallengeService _challenges;
+		private readonly Resgrid.Model.Repositories.IMfaApprovalRequestRepository _approvalRows;
+
+		/// <summary>A refused second factor at sign-in is the account's recent activity (plan section 6.5); no session exists yet.</summary>
+		private Task RecordDeniedLoginAsync(IdentityUser user, MfaEvidenceMethod method, CancellationToken cancellationToken) =>
+			user == null
+				? Task.CompletedTask
+				: _mfaActivity.RecordAsync(new MfaActivityEntry
+				{
+					UserId = user.Id, Method = method, Purpose = MfaEvidencePurpose.Login, Successful = false, ClientApplication = UserSessionClientApplication.Web
+				}, cancellationToken);
+
+		/// <summary>A factor verified during this sign-in, recorded as server-side evidence against the new session.</summary>
+		private readonly record struct VerifiedFactor(MfaEvidenceKind Kind, MfaEvidenceMethod Method, DateTime VerifiedOnUtc, string FactorReference = null);
 
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
@@ -68,8 +107,34 @@ namespace Resgrid.Web.Controllers
 						IDepartmentSsoService departmentSsoService,
 						IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
 						IUserSessionService userSessionService, IExternalIdentityLinkService externalIdentityLinkService,
-						IPasswordRecoveryService passwordRecoveryService, ILimitsService limitsService)
+						IPasswordRecoveryService passwordRecoveryService, ILimitsService limitsService,
+						IMfaEvidenceService mfaEvidenceService, ISecurityNoticeService securityNotices, IMfaActivityService mfaActivity,
+						IMfaLoginTransactionService loginTransactions, IPasskeyService passkeys, IMfaApprovalService approvals, IMfaPolicyService mfaPolicy,
+						IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer,
+						ISsoBrokerService ssoBroker, ISsoReturnTargetRegistry ssoReturnTargets,
+						Microsoft.AspNetCore.DataProtection.IDataProtectionProvider dataProtection, IAdpStepUpService adpStepUp,
+						Resgrid.Model.Repositories.IUserMfaStateRepository mfaState, IUserStore<IdentityUser> userStore, IFactorRecoveryService recoveries,
+						Resgrid.Model.Repositories.IUserPasskeyRepository passkeyRows, IAuthenticationChallengeService challenges,
+						Resgrid.Model.Repositories.IMfaApprovalRequestRepository approvalRows, ISharedSessionService sharedSessions)
 		{
+			_sharedSessions = sharedSessions;
+			_mfaState = mfaState;
+			_userStore = userStore;
+			_recoveries = recoveries;
+			_passkeyRows = passkeyRows;
+			_challenges = challenges;
+			_approvalRows = approvalRows;
+			_ssoBroker = ssoBroker;
+			_ssoReturnTargets = ssoReturnTargets;
+			_dataProtection = dataProtection;
+			_adpStepUp = adpStepUp;
+			_mfaActivity = mfaActivity;
+			_loginTransactions = loginTransactions;
+			_passkeys = passkeys;
+			_approvals = approvals;
+			_mfaPolicy = mfaPolicy;
+			_twoFactorLocalizer = twoFactorLocalizer;
+			_securityNotices = securityNotices;
 			_userManager = userManager;
 			_signInManager = signInManager;
 			_departmentsService = departmentsService;
@@ -89,7 +154,11 @@ namespace Resgrid.Web.Controllers
 			_externalIdentityLinkService = externalIdentityLinkService;
 			_passwordRecoveryService = passwordRecoveryService;
 			_limitsService = limitsService;
+			_mfaEvidenceService = mfaEvidenceService;
 		}
+
+		private readonly ISecurityNoticeService _securityNotices;
+		private readonly ISharedSessionService _sharedSessions;
 		#endregion Private Members and Constructors
 
 		/// <summary>Resolves a password-error key returned by ValidatePasswordAgainstPolicyAsync into a localised message.</summary>
@@ -114,6 +183,12 @@ namespace Resgrid.Web.Controllers
 
 			ViewData["ReturnUrl"] = returnUrl;
 			ViewData["LoginNotice"] = NoticeConfig.EffectiveLoginPageNotice;
+			ViewData["LoginMfaMessage"] = TempData["LoginMfaMessage"];
+			ViewData["SsoSignInAvailable"] = WebSsoAvailable;
+			ViewData["SharedWorkstationAvailable"] = WebSharedSession.IsAvailable;
+			ViewData["SharedWorkstation"] = WebSharedSession.IsAvailable ? WebSharedSession.WorkstationLabel(Request) : null;
+			if (ViewData["LoginMfaMessage"] == null && string.Equals(Request.Query["reason"], "shift_ended", StringComparison.Ordinal))
+				ViewData["LoginMfaMessage"] = _twoFactorLocalizer["SharedShiftEnded"].Value;
 			return View();
 		}
 
@@ -126,6 +201,9 @@ namespace Resgrid.Web.Controllers
 		{
 			await _signInManager.SignOutAsync();
 			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			// A shared workstation never remembers a browser for anyone (plan section 12.5.2): the second factor is always asked.
+			if (WebSharedSession.IsWorkstation(Request))
+				await _signInManager.ForgetTwoFactorClientAsync();
 
 			ViewData["ReturnUrl"] = returnUrl;
 			if (ModelState.IsValid)
@@ -164,6 +242,11 @@ namespace Resgrid.Web.Controllers
 
 					if (result != null && result.RequiresTwoFactor)
 					{
+						// The password was verified now; the session is created after the second factor.
+						if (passwordUser != null && UseLoginTransaction)
+							return await BeginLoginTransactionAsync(passwordUser, model, returnUrl, cancellationToken);
+						if (passwordUser != null)
+							MfaEvidenceSession.StashFirstFactor(HttpContext, passwordUser.Id, DateTime.UtcNow);
 						return RedirectToAction(nameof(LoginWith2fa), new { returnUrl });
 					}
 					if (result != null && result.Succeeded)
@@ -171,8 +254,28 @@ namespace Resgrid.Web.Controllers
 						if (await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
 						{
 							var signedInUser = await _userManager.FindByNameAsync(model.Username);
+							var loginDepartment = UseLoginTransaction ? await _departmentsService.GetDepartmentByUserIdAsync(signedInUser.Id) : null;
+							if (loginDepartment != null && await MustSetUpMfaAsync(signedInUser, loginDepartment.DepartmentId, false, cancellationToken))
+							{
+								// Required MFA the account does not have yet (plan section 7.5 rule 9): a setup transaction, never ordinary access.
+								await _signInManager.SignOutAsync();
+								return await BeginSetupTransactionAsync(new MfaLoginTransactionRequest
+								{
+									UserId = signedInUser.Id,
+									DepartmentId = loginDepartment.DepartmentId,
+									ClientApplication = UserSessionClientApplication.Web,
+									FirstFactorMethod = MfaEvidenceMethod.Password,
+									FirstFactorVerifiedOnUtc = DateTime.UtcNow,
+									AuthenticationGeneration = signedInUser.AuthenticationGeneration,
+									TotpEnrolled = false,
+									SharedModeRequested = WebInstallation().Shared,
+									InstallationLabel = WebInstallation().Label
+								}, returnUrl, cancellationToken);
+							}
+
 							if (!await SignInTrackedWebSessionAsync(signedInUser,
-								UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken))
+								UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken,
+								new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
 							{
 								ModelState.AddModelError(string.Empty,
 									"Your department's maximum number of active sessions has been reached. Revoke an existing session or contact your administrator.");
@@ -338,7 +441,8 @@ namespace Resgrid.Web.Controllers
 					if (loginResult.Succeeded)
 					{
 						if (!await SignInTrackedWebSessionAsync(user,
-							UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(24), cancellationToken))
+							UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(24), cancellationToken,
+							new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
 						{
 							ModelState.AddModelError(string.Empty,
 								"Your department's maximum number of active sessions has been reached.");
@@ -393,7 +497,8 @@ namespace Resgrid.Web.Controllers
 						?? await _userManager.FindByNameAsync(model.Provider ?? string.Empty);
 
 			var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
-			var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe, model.RememberBrowser);
+			var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe,
+				model.RememberBrowser && !WebSharedSession.IsWorkstation(Request));
 
 			var audit = new SystemAudit
 			{
@@ -407,6 +512,8 @@ namespace Resgrid.Web.Controllers
 				Data = $"2FA login attempt. {Request.Headers["User-Agent"]}"
 			};
 			await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+			if (!result.Succeeded)
+				await RecordDeniedLoginAsync(user, MfaEvidenceMethod.Totp, cancellationToken);
 
 			if (result.Succeeded)
 			{
@@ -416,18 +523,18 @@ namespace Resgrid.Web.Controllers
 					return View(model);
 				}
 
-				// Build the full claims principal and sign into the app's cookie scheme
+				// Build the full claims principal and sign into the app's cookie scheme. Both factors become server-side
+				// evidence for the new session; the password time is the one stashed when it was verified.
+				var secondFactorAt = DateTime.UtcNow;
 				if (!await SignInTrackedWebSessionAsync(user,
-					UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken))
+					UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken, MfaEvidenceMethod.Totp, null,
+					new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, MfaEvidenceSession.TakeFirstFactor(HttpContext, user.Id) ?? secondFactorAt),
+					new VerifiedFactor(MfaEvidenceKind.SecondFactor, MfaEvidenceMethod.Totp, secondFactorAt)))
 				{
 					ModelState.AddModelError(string.Empty,
 						"Your department's maximum number of active sessions has been reached. Revoke an existing session or contact your administrator.");
 					return View(model);
 				}
-
-				// Stamp the step-up session key immediately after login 2FA
-				HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
-					$"{user.Id}|{DateTime.UtcNow:O}");
 
 				// Prefer the query-string returnUrl, fall back to the hidden-field value in the model
 				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
@@ -447,8 +554,19 @@ namespace Resgrid.Web.Controllers
 		// GET: /Account/LoginWithRecoveryCode
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> LoginWithRecoveryCode(string returnUrl = null)
+		public async Task<IActionResult> LoginWithRecoveryCode(string returnUrl = null, CancellationToken cancellationToken = default)
 		{
+			if (HoldsLoginTransaction)
+			{
+				var (transaction, _, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+				if (transaction == null)
+					return RestartSignIn(outcome, returnUrl);
+
+				ViewData["ReturnUrl"] = returnUrl;
+				ViewData["BackAction"] = nameof(LoginMfa);
+				return View(new VerifyCodeViewModel { ReturnUrl = returnUrl });
+			}
+
 			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 			if (user == null) return RedirectToAction(nameof(LogOn));
 
@@ -463,6 +581,9 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> LoginWithRecoveryCode(VerifyCodeViewModel model, CancellationToken cancellationToken, string returnUrl = null)
 		{
+			if (HoldsLoginTransaction)
+				return await LoginTransactionRecoveryCodeAsync(model, returnUrl ?? model?.ReturnUrl, cancellationToken);
+
 			if (!ModelState.IsValid) return View(model);
 
 			// Fetch the user before sign-in while the partial 2FA cookie is still present
@@ -483,6 +604,15 @@ namespace Resgrid.Web.Controllers
 				Data = $"Recovery code login attempt. {Request.Headers["User-Agent"]}"
 			};
 			await _systemAuditsService.SaveSystemAuditAsync(audit, cancellationToken);
+			if (!result.Succeeded)
+				await RecordDeniedLoginAsync(user, MfaEvidenceMethod.RecoveryCode, cancellationToken);
+
+			// The code is spent even if the sign-in stops below, so the account holder hears about it either way (plan section 6.4).
+			if (result.Succeeded && user != null)
+				await _securityNotices.QueueAsync(new SecurityNoticeRequest
+				{
+					UserId = user.Id, Kind = SecurityNoticeKind.RecoveryCodeUsed, ClientApplication = UserSessionClientApplication.Web
+				}, cancellationToken);
 
 			if (result.Succeeded)
 			{
@@ -493,28 +623,589 @@ namespace Resgrid.Web.Controllers
 				}
 
 				// Build the full claims principal and sign into the app's cookie scheme
+				// The recovery code is recorded as recovery evidence only: it never satisfies MFA or ADP.
+				var recoveredAt = DateTime.UtcNow;
 				if (!await SignInTrackedWebSessionAsync(user,
-					UserSessionAuthenticationMethod.Recovery, TimeSpan.FromHours(8), cancellationToken))
+					UserSessionAuthenticationMethod.Recovery, TimeSpan.FromHours(8), cancellationToken, MfaEvidenceMethod.RecoveryCode, null,
+					new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, MfaEvidenceSession.TakeFirstFactor(HttpContext, user.Id) ?? recoveredAt),
+					new VerifiedFactor(MfaEvidenceKind.Recovery, MfaEvidenceMethod.RecoveryCode, recoveredAt)))
 				{
 					ModelState.AddModelError(string.Empty,
 						"Your department's maximum number of active sessions has been reached. Revoke an existing session or contact your administrator.");
 					return View(model);
 				}
 
-				HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
-					$"{user.Id}|{DateTime.UtcNow:O}");
-
+				// A recovery code is not recent MFA (passkey plan section 6.1 item 10): no step-up stamp is written, so
+				// sensitive operations still require a real factor. The recovery session may replace the authenticator
+				// (TwoFactorController.ReplaceAuthenticator) for a short window.
 				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
 				if (!string.IsNullOrWhiteSpace(redirect) && Url.IsLocalUrl(redirect))
 					return Redirect(redirect);
 
-				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+				TempData["StatusMessage"] = "You signed in with a recovery code. If you no longer have your authenticator app, replace it now.";
+				return RedirectToAction("Index", "TwoFactor", new { Area = "User" });
 			}
 			if (result.IsLockedOut)
 				return View("Lockout");
 
 			ModelState.AddModelError(string.Empty, "Invalid recovery code.");
 			return View(model);
+		}
+
+		// ── Web sign-in on the login transaction (passkey plan sections 5.2, 7.1 and 7.5) ─────────────────────────
+
+		private bool UseLoginTransaction => TwoFactorConfig.WebLoginMfaTransactionEnabled && _loginTransactions.IsEnabled;
+
+		private bool HoldsLoginTransaction => UseLoginTransaction && !string.IsNullOrWhiteSpace(Request.Cookies[MfaLoginCookie]);
+
+		/// <summary>
+		/// Starts the restricted login transaction after a verified password. Identity's own partial sign-in is dropped: until a
+		/// second factor verifies, this browser holds only the transaction, which carries no password and grants nothing else.
+		/// </summary>
+		private async Task<IActionResult> BeginLoginTransactionAsync(IdentityUser user, LoginViewModel model, string returnUrl,
+			CancellationToken cancellationToken)
+		{
+			await _signInManager.SignOutAsync();
+
+			MfaLoginTransactionStart start;
+			try
+			{
+				var department = await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
+				start = await _loginTransactions.BeginAsync(new MfaLoginTransactionRequest
+				{
+					UserId = user.Id,
+					DepartmentId = department?.DepartmentId,
+					ClientApplication = UserSessionClientApplication.Web,
+					FirstFactorMethod = MfaEvidenceMethod.Password,
+					FirstFactorVerifiedOnUtc = DateTime.UtcNow,
+					AuthenticationGeneration = user.AuthenticationGeneration,
+					TotpEnrolled = await _userManager.GetTwoFactorEnabledAsync(user),
+					SharedModeRequested = WebInstallation().Shared,
+					InstallationLabel = WebInstallation().Label
+				}, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "The Web login transaction could not be started; the sign-in was refused.");
+				ModelState.AddModelError(string.Empty, _twoFactorLocalizer["LoginMfaUnavailable"]);
+				return View(model);
+			}
+
+			SetLoginTransactionCookie(start);
+			return RedirectToAction(nameof(LoginMfa), new { returnUrl });
+		}
+
+		/// <summary>
+		/// This browser as a session records it: a browser set up as a shared workstation asks for a shared session, labeled
+		/// with the station unless the request names its device (plan section 10.5). A login transaction records the same, so
+		/// the member's Responder sees the sign-in it is asked to approve as the session it will be.
+		/// </summary>
+		private (bool Shared, string Label) WebInstallation()
+		{
+			var workstation = WebSharedSession.WorkstationLabel(Request);
+			string label = Request.Headers["X-Resgrid-Device-Name"];
+			if (string.IsNullOrWhiteSpace(label) && !string.IsNullOrEmpty(workstation))
+				label = workstation;
+			return (workstation != null, label);
+		}
+
+		private void SetLoginTransactionCookie(MfaLoginTransactionStart start) =>
+			Response.Cookies.Append(MfaLoginCookie, start.Secret, new CookieOptions
+			{
+				HttpOnly = true,
+				Secure = true,
+				SameSite = SameSiteMode.Strict,
+				IsEssential = true,
+				Path = MfaLoginCookiePath,
+				Expires = DateTimeOffset.UtcNow.AddSeconds(Math.Max(30, start.ExpiresInSeconds))
+			});
+
+		private void EndLoginTransactionCookie() =>
+			Response.Cookies.Delete(MfaLoginCookie, new CookieOptions { Path = MfaLoginCookiePath, Secure = true, SameSite = SameSiteMode.Strict });
+
+		/// <summary>This browser's pending login transaction and its user, or why the sign-in cannot continue.</summary>
+		private async Task<(MfaLoginTransaction Transaction, IdentityUser User, MfaLoginTransactionOutcome Outcome)> OpenLoginTransactionAsync(
+			CancellationToken cancellationToken)
+		{
+			var secret = Request.Cookies[MfaLoginCookie];
+			if (!UseLoginTransaction || string.IsNullOrWhiteSpace(secret))
+				return (null, null, MfaLoginTransactionOutcome.Invalid);
+
+			MfaLoginTransactionResult opened;
+			try
+			{
+				opened = await _loginTransactions.OpenAsync(secret, UserSessionClientApplication.Web, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "The Web login transaction could not be read.");
+				return (null, null, MfaLoginTransactionOutcome.Unavailable);
+			}
+
+			if (!opened.IsUsable)
+				return (null, null, opened.Outcome);
+
+			var user = await _userManager.FindByIdAsync(opened.Transaction.UserId);
+			return user == null
+				? (null, null, MfaLoginTransactionOutcome.SessionRevoked)
+				: (opened.Transaction, user, MfaLoginTransactionOutcome.Usable);
+		}
+
+		private string LoginMfaMessage(MfaLoginTransactionOutcome outcome) => _twoFactorLocalizer[outcome switch
+		{
+			MfaLoginTransactionOutcome.Expired => "LoginMfaExpired",
+			MfaLoginTransactionOutcome.TooManyAttempts => "LoginMfaTooManyAttempts",
+			MfaLoginTransactionOutcome.PolicyChanged => "LoginMfaPolicyChanged",
+			MfaLoginTransactionOutcome.SessionRevoked => "LoginMfaSignInChanged",
+			MfaLoginTransactionOutcome.Unavailable => "LoginMfaUnavailable",
+			_ => "LoginMfaInvalid"
+		}].Value;
+
+		/// <summary>The sign-in cannot continue: the transaction is dropped and the user starts again with the reason shown.</summary>
+		private IActionResult RestartSignIn(MfaLoginTransactionOutcome outcome, string returnUrl)
+		{
+			EndLoginTransactionCookie();
+			TempData["LoginMfaMessage"] = LoginMfaMessage(outcome);
+			return RedirectToAction(nameof(LogOn), new { returnUrl = SafeReturnUrl(returnUrl) });
+		}
+
+		/// <summary>The JSON form of <see cref="RestartSignIn"/>: the page goes back to sign-in.</summary>
+		private IActionResult RestartSignInJson(MfaLoginTransactionOutcome outcome, string returnUrl)
+		{
+			EndLoginTransactionCookie();
+			TempData["LoginMfaMessage"] = LoginMfaMessage(outcome);
+			return Json(new
+			{
+				success = false,
+				error = MfaLoginTransactions.ErrorCode(outcome) ?? "mfa_transaction_invalid",
+				restart = Url.Action(nameof(LogOn), new { returnUrl = SafeReturnUrl(returnUrl) })
+			});
+		}
+
+		private string SafeReturnUrl(string returnUrl) => !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? returnUrl : null;
+
+		/// <summary>
+		/// Whether this sign-in may use <paramref name="method"/> now: the account is not locked out, the department accepts the
+		/// method, and code-based methods have an authenticator behind them. Null when it may; otherwise whether the sign-in must start
+		/// again (a locked account) and the message.
+		/// </summary>
+		private async Task<(bool Restart, MfaLoginTransactionOutcome Outcome, string Error)?> RefuseLoginMethodAsync(MfaLoginTransaction transaction,
+			IdentityUser user, MfaEvidenceMethod method, CancellationToken cancellationToken)
+		{
+			if (await _userManager.IsLockedOutAsync(user))
+				return (true, MfaLoginTransactionOutcome.TooManyAttempts, "too_many_attempts");
+
+			if (((method is MfaEvidenceMethod.Totp or MfaEvidenceMethod.RecoveryCode) && !await _userManager.GetTwoFactorEnabledAsync(user)) ||
+				!await _loginTransactions.IsMethodAcceptedAsync(transaction, method, cancellationToken))
+				return (false, MfaLoginTransactionOutcome.Usable, "mfa_method_not_allowed");
+
+			return null;
+		}
+
+		/// <summary>
+		/// A second factor that did not verify: it counts against the transaction and the account lockout alike (plan section 7.5
+		/// rule 6) and is the account's denied activity. Returns the outcome when this ended the sign-in.
+		/// </summary>
+		private async Task<MfaLoginTransactionOutcome?> LoginFactorFailedAsync(MfaLoginTransaction transaction, IdentityUser user,
+			MfaEvidenceMethod method, CancellationToken cancellationToken)
+		{
+			await _userManager.AccessFailedAsync(user);
+			await _loginTransactions.RecordFailedAttemptAsync(transaction, cancellationToken);
+			await AuditLoginTransactionAsync(user, method, false, cancellationToken);
+			await RecordDeniedLoginAsync(user, method, cancellationToken);
+
+			if (await _userManager.IsLockedOutAsync(user))
+				return MfaLoginTransactionOutcome.TooManyAttempts;
+
+			var (open, _, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			return open == null ? outcome : null;
+		}
+
+		private Task AuditLoginTransactionAsync(IdentityUser user, MfaEvidenceMethod method, bool successful, CancellationToken cancellationToken) =>
+			_systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)(method == MfaEvidenceMethod.RecoveryCode ? SystemAuditTypes.TwoFactorRecoveryCodeUsed : SystemAuditTypes.TwoFactorLoginVerified),
+				UserId = user.Id,
+				Username = user.UserName,
+				Successful = successful,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"Web login transaction with {(method == MfaEvidenceMethod.RecoveryCode ? "a recovery code" : MfaMethodNames.From(method))}: " +
+					$"{(successful ? "verified" : "verification failed")}. {Request.Headers["User-Agent"]}"
+			}, cancellationToken);
+
+		private readonly record struct LoginFinish(string Redirect, MfaLoginTransactionOutcome? Restart, string Error);
+
+		/// <summary>
+		/// A verified second factor finishes the sign-in (plan section 7.1 step 4): the transaction is completed and redeemed once,
+		/// what allowed the password is checked again, and only then is the normal session created, with the password's own time
+		/// and the second factor's as its evidence. A lost response means signing in again; nothing is issued twice.
+		/// </summary>
+		private async Task<LoginFinish> FinishLoginTransactionAsync(MfaLoginTransaction transaction, IdentityUser user, MfaEvidenceMethod method,
+			string factorReference, DateTime verifiedOnUtc, string returnUrl, bool rememberBrowser, CancellationToken cancellationToken)
+		{
+			await _userManager.ResetAccessFailedCountAsync(user);
+
+			MfaLoginTransactionResult redeemed;
+			try
+			{
+				var completion = await _loginTransactions.CompleteAsync(transaction, method, factorReference, verifiedOnUtc, cancellationToken);
+				if (!completion.Succeeded)
+					return new LoginFinish(null, completion.Outcome, null);
+
+				redeemed = await _loginTransactions.RedeemAsync(Request.Cookies[MfaLoginCookie], completion.CompletionCode,
+					UserSessionClientApplication.Web, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "A verified Web login second factor could not be recorded; the sign-in was refused.");
+				return new LoginFinish(null, MfaLoginTransactionOutcome.Unavailable, null);
+			}
+
+			EndLoginTransactionCookie();
+			if (!redeemed.IsUsable)
+				return new LoginFinish(null, redeemed.Outcome, null);
+
+			return await SignInRedeemedAsync(redeemed.Transaction, user, method, factorReference, verifiedOnUtc, returnUrl, rememberBrowser,
+				cancellationToken);
+		}
+
+		/// <summary>
+		/// Creates the normal Web session for a redeemed login transaction, once what allowed its first factor is checked again: for
+		/// a password, an active department where password sign-in is still permitted; for single sign-on, an active membership in the
+		/// department whose provider signed the user in, with that configuration still enabled. The session records the method that
+		/// completed the sign-in; its evidence carries the first factor's own time and the second factor's, if there was one.
+		/// </summary>
+		private async Task<LoginFinish> SignInRedeemedAsync(MfaLoginTransaction done, IdentityUser user, MfaEvidenceMethod? method, string factorReference,
+			DateTime verifiedOnUtc, string returnUrl, bool rememberBrowser, CancellationToken cancellationToken)
+		{
+			var viaSso = done.FirstFactorMethod == (int)MfaEvidenceMethod.Sso;
+			var authentication = UserSessionAuthenticationMethod.LocalPassword;
+			if (viaSso)
+			{
+				var membership = done.DepartmentId is int ssoDepartment
+					? await _departmentsService.GetDepartmentMemberAsync(user.Id, ssoDepartment, bypassCache: true)
+					: null;
+				authentication = membership == null ? authentication : await SsoAuthenticationMethodAsync(done.DepartmentId.Value, done.DepartmentSsoConfigId,
+					cancellationToken);
+				if (membership == null || membership.IsDeleted || membership.IsDisabled == true || authentication == UserSessionAuthenticationMethod.LocalPassword)
+					return new LoginFinish(null, MfaLoginTransactionOutcome.SessionRevoked, null);
+
+				// The provider signed the user in to this department, so it becomes the active one, as switching to it would.
+				var active = await _departmentsService.GetDepartmentByUserIdAsync(user.Id, true);
+				if (active?.DepartmentId != done.DepartmentId)
+					await _departmentsService.SetActiveDepartmentForUserAsync(user.Id, done.DepartmentId.Value, user, cancellationToken);
+			}
+			else if (!await _usersService.DoesUserHaveAnyActiveDepartments(user.UserName) || !await IsPasswordLoginAllowedAsync(user, cancellationToken))
+			{
+				return new LoginFinish(null, MfaLoginTransactionOutcome.SessionRevoked, null);
+			}
+
+			var recovery = method == MfaEvidenceMethod.RecoveryCode;
+			var secondFactorAt = done.CompletionVerifiedOnUtc ?? verifiedOnUtc;
+			var factors = new System.Collections.Generic.List<VerifiedFactor>
+			{
+				new(MfaEvidenceKind.FirstFactor, viaSso ? MfaEvidenceMethod.Sso : MfaEvidenceMethod.Password, done.FirstFactorVerifiedOnUtc)
+			};
+			if (method is MfaEvidenceMethod secondFactor)
+				factors.Add(recovery
+					? new VerifiedFactor(MfaEvidenceKind.Recovery, MfaEvidenceMethod.RecoveryCode, secondFactorAt)
+					: new VerifiedFactor(MfaEvidenceKind.SecondFactor, secondFactor, secondFactorAt, factorReference));
+
+			if (!await SignInTrackedWebSessionCoreAsync(user, recovery ? UserSessionAuthenticationMethod.Recovery : authentication, TimeSpan.FromHours(8),
+				method, factorReference, viaSso ? done.DepartmentId : null, viaSso ? done.DepartmentSsoConfigId : null, factors.ToArray(), cancellationToken))
+				return new LoginFinish(null, null, "maximum_sessions");
+
+			if (method is MfaEvidenceMethod verified)
+				await AuditLoginTransactionAsync(user, verified, true, cancellationToken);
+
+			// A remembered browser may skip the prompt next time; it never counts as a verification (plan section 7.6 row 1). A shared
+			// workstation is never remembered (plan section 12.5.2).
+			if (rememberBrowser && !recovery && method != null && !WebSharedSession.IsWorkstation(Request))
+				await _signInManager.RememberTwoFactorClientAsync(user);
+
+			if (recovery)
+			{
+				// A recovery code is not recent MFA (plan section 6.1 item 10); the lost factor should be replaced now.
+				TempData["StatusMessage"] = _twoFactorLocalizer["LoginMfaRecoveryUsed"].Value;
+				return new LoginFinish(SafeReturnUrl(returnUrl) ?? Url.Action("Index", "TwoFactor", new { Area = "User" }), null, null);
+			}
+
+			return new LoginFinish(SafeReturnUrl(returnUrl) ?? Url.Action("Dashboard", "Home", new { Area = "User" }), null, null);
+		}
+
+		private IActionResult FinishedJson(LoginFinish finish, string returnUrl) =>
+			finish.Redirect != null
+				? Json(new { success = true, redirect = finish.Redirect })
+				: finish.Restart is MfaLoginTransactionOutcome restart
+					? RestartSignInJson(restart, returnUrl)
+					: Json(new { success = false, error = finish.Error });
+
+		/// <summary>The choices for this sign-in, preferred first; every usable method stays an equal choice (plan section 7.5 rule 5).</summary>
+		private async Task<LoginMfaViewModel> LoginMfaModelAsync(MfaLoginTransaction transaction, IdentityUser user, LoginMfaViewModel model,
+			CancellationToken cancellationToken)
+		{
+			var totp = await _userManager.GetTwoFactorEnabledAsync(user);
+			bool passkey = false, approval = false, federated = false;
+			try
+			{
+				passkey = await _passkeys.HasActiveForClientAsync(user.Id, UserSessionClientApplication.Web, cancellationToken);
+				approval = await _approvals.IsAvailableAsync(user.Id, UserSessionClientApplication.Web, cancellationToken);
+				// Provider step-up: a round trip through the department's identity provider, for an account that signs in through it.
+				federated = WebSsoAvailable && transaction.DepartmentId is int departmentId &&
+					await _departmentSsoService.IsFederatedMfaAvailableAsync(departmentId, user.Id, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				// Display only: without them the authenticator code is still offered.
+				Logging.LogException(ex, "Passkey or approval availability could not be read for Web sign-in.");
+			}
+
+			var choice = await _mfaPolicy.GetMethodChoiceAsync(user.Id, totp, transaction.DepartmentId, MfaMethodScope.Login, passkey,
+				federatedEnrolled: federated, approvalEnrolled: approval, cancellationToken: cancellationToken);
+			var usable = choice.AllowedMethods.Where(choice.EnrolledMethods.Contains)
+				.Where(m => m is MfaMethodNames.Totp or MfaMethodNames.Passkey or MfaMethodNames.PasskeyApproval or MfaMethodNames.Federated).ToList();
+			if (choice.Preferred != null && usable.Remove(choice.Preferred))
+				usable.Insert(0, choice.Preferred);
+
+			model.Methods = usable;
+			model.Preferred = usable.FirstOrDefault();
+			model.RecoveryAvailable = totp;
+			return model;
+		}
+
+		//
+		// GET: /Account/LoginMfa
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> LoginMfa(string returnUrl = null, CancellationToken cancellationToken = default)
+		{
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignIn(outcome, returnUrl);
+
+			if (TempData["LoginMfaChoiceMessage"] is string choiceMessage)
+				ModelState.AddModelError(string.Empty, choiceMessage);
+			var model = await LoginMfaModelAsync(transaction, user, new LoginMfaViewModel { ReturnUrl = SafeReturnUrl(returnUrl) }, cancellationToken);
+			if (model.Methods.Count == 0 && !model.RecoveryAvailable)
+				return RedirectToAction(nameof(LoginMfaSetup), new { returnUrl = model.ReturnUrl });
+			return View(model);
+		}
+
+		//
+		// POST: /Account/LoginMfa (the authenticator code)
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginMfa(LoginMfaViewModel model, CancellationToken cancellationToken)
+		{
+			model ??= new LoginMfaViewModel();
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignIn(outcome, model.ReturnUrl);
+
+			var refusal = await RefuseLoginMethodAsync(transaction, user, MfaEvidenceMethod.Totp, cancellationToken);
+			if (refusal?.Restart == true)
+				return RestartSignIn(refusal.Value.Outcome, model.ReturnUrl);
+			if (refusal != null || string.IsNullOrWhiteSpace(model.Code))
+			{
+				ModelState.AddModelError(nameof(model.Code), _twoFactorLocalizer[refusal != null ? "LoginMfaMethodUnavailable" : "InvalidCodeLogin"]);
+				return View(await LoginMfaModelAsync(transaction, user, model, cancellationToken));
+			}
+
+			// One-time: ResgridAuthenticatorTokenProvider accepts each time step once per user, on every surface.
+			var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+			if (!await _userManager.VerifyTwoFactorTokenAsync(user, _userManager.Options.Tokens.AuthenticatorTokenProvider, code))
+			{
+				var ended = await LoginFactorFailedAsync(transaction, user, MfaEvidenceMethod.Totp, cancellationToken);
+				if (ended != null)
+					return RestartSignIn(ended.Value, model.ReturnUrl);
+
+				ModelState.AddModelError(nameof(model.Code), _twoFactorLocalizer["InvalidCodeLogin"]);
+				model.Code = null;
+				return View(await LoginMfaModelAsync(transaction, user, model, cancellationToken));
+			}
+
+			var finish = await FinishLoginTransactionAsync(transaction, user, MfaEvidenceMethod.Totp, null, DateTime.UtcNow, model.ReturnUrl,
+				model.RememberBrowser, cancellationToken);
+			if (finish.Redirect != null)
+				return LocalRedirect(finish.Redirect);
+			if (finish.Restart is MfaLoginTransactionOutcome restart)
+				return RestartSignIn(restart, model.ReturnUrl);
+
+			TempData["LoginMfaMessage"] = _twoFactorLocalizer["LoginMfaMaximumSessions"].Value;
+			return RedirectToAction(nameof(LogOn), new { returnUrl = SafeReturnUrl(model.ReturnUrl) });
+		}
+
+		/// <summary>Assertion options for the user's Web passkeys, bound to this sign-in's transaction.</summary>
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginMfaPasskeyOptions(string returnUrl, CancellationToken cancellationToken)
+		{
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignInJson(outcome, returnUrl);
+
+			var refusal = await RefuseLoginMethodAsync(transaction, user, MfaEvidenceMethod.Passkey, cancellationToken);
+			if (refusal != null)
+				return refusal.Value.Restart ? RestartSignInJson(refusal.Value.Outcome, returnUrl) : Json(new { success = false, error = refusal.Value.Error });
+
+			var start = await _passkeys.BeginAssertionAsync(PasskeyCaller.ForLoginTransaction(transaction, user.UserName, SystemAuditSystems.Website,
+				IpAddressHelper.GetRequestIP(Request, true)), AuthenticationChallengePurpose.LoginSecondFactor, cancellationToken);
+			return start.Succeeded
+				? Json(new { success = true, requestId = start.RequestId, options = start.OptionsJson })
+				: Json(new { success = false, error = PasskeyOutcomes.ErrorCode(start.Outcome) });
+		}
+
+		/// <summary>Finishes the sign-in with a Web passkey; a signature that does not verify counts as a failed attempt.</summary>
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginMfaPasskey(string requestId, string credential, string returnUrl, bool rememberBrowser,
+			CancellationToken cancellationToken)
+		{
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignInJson(outcome, returnUrl);
+
+			var refusal = await RefuseLoginMethodAsync(transaction, user, MfaEvidenceMethod.Passkey, cancellationToken);
+			if (refusal != null)
+				return refusal.Value.Restart ? RestartSignInJson(refusal.Value.Outcome, returnUrl) : Json(new { success = false, error = refusal.Value.Error });
+
+			var assertion = await _passkeys.CompleteAssertionAsync(PasskeyCaller.ForLoginTransaction(transaction, user.UserName, SystemAuditSystems.Website,
+				IpAddressHelper.GetRequestIP(Request, true)), AuthenticationChallengePurpose.LoginSecondFactor, requestId, credential, cancellationToken);
+			if (!assertion.Succeeded)
+			{
+				// A signature that did not verify is a failed second factor like a wrong code; an expired or reused request is not.
+				if (assertion.Outcome is PasskeyOutcome.VerificationFailed or PasskeyOutcome.NotRegisteredForClient)
+				{
+					var ended = await LoginFactorFailedAsync(transaction, user, MfaEvidenceMethod.Passkey, cancellationToken);
+					if (ended != null)
+						return RestartSignInJson(ended.Value, returnUrl);
+				}
+
+				return Json(new { success = false, error = PasskeyOutcomes.ErrorCode(assertion.Outcome) });
+			}
+
+			return FinishedJson(await FinishLoginTransactionAsync(transaction, user, MfaEvidenceMethod.Passkey,
+				UserPasskey.FactorReferenceFor(assertion.Passkey.UserPasskeyId), assertion.VerifiedOnUtc, returnUrl, rememberBrowser, cancellationToken),
+				returnUrl);
+		}
+
+		/// <summary>Asks the user's Responder to approve this sign-in; the number is shown on this page only (plan section 7.9).</summary>
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginMfaRequestApproval(string returnUrl, CancellationToken cancellationToken)
+		{
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignInJson(outcome, returnUrl);
+
+			var refusal = await RefuseLoginMethodAsync(transaction, user, MfaEvidenceMethod.PasskeyApproval, cancellationToken);
+			if (refusal != null)
+				return refusal.Value.Restart ? RestartSignInJson(refusal.Value.Outcome, returnUrl) : Json(new { success = false, error = "approval_unavailable" });
+
+			var start = await _approvals.RequestAsync(MfaApprovalRequester.ForLoginTransaction(transaction, user.UserName,
+				IpAddressHelper.GetRequestIP(Request, true), SystemAuditSystems.Website), cancellationToken);
+			return start.Succeeded
+				? Json(new { success = true, approvalRequestId = start.ApprovalRequestId, matchNumber = start.MatchNumber, expiresIn = start.ExpiresInSeconds })
+				: Json(new { success = false, error = MfaApprovalOutcomes.ErrorCode(start.Outcome) ?? "approval_unavailable" });
+		}
+
+		/// <summary>The state of this sign-in's own approval request: pending, approved, denied, expired or canceled.</summary>
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginMfaApprovalStatus(string approvalRequestId, string returnUrl, CancellationToken cancellationToken)
+		{
+			var (transaction, _, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignInJson(outcome, returnUrl);
+
+			var found = await _approvals.GetForRequesterAsync(approvalRequestId, MfaApprovalRequesterKind.LoginTransaction, transaction.MfaLoginTransactionId,
+				cancellationToken);
+			return found.Succeeded
+				? Json(new { success = true, state = MfaApprovalOutcomes.StateName(found.Request.EffectiveState(DateTime.UtcNow)) })
+				: Json(new { success = false, error = MfaApprovalOutcomes.ErrorCode(found.Outcome) ?? "approval_unavailable" });
+		}
+
+		/// <summary>Uses this sign-in's approved request once and finishes the sign-in, as the approving passkey and Responder allow.</summary>
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LoginMfaCompleteApproval(string approvalRequestId, string returnUrl, bool rememberBrowser,
+			CancellationToken cancellationToken)
+		{
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignInJson(outcome, returnUrl);
+
+			var refusal = await RefuseLoginMethodAsync(transaction, user, MfaEvidenceMethod.PasskeyApproval, cancellationToken);
+			if (refusal != null)
+				return refusal.Value.Restart ? RestartSignInJson(refusal.Value.Outcome, returnUrl) : Json(new { success = false, error = "approval_unavailable" });
+
+			var consumed = await _approvals.ConsumeAsync(approvalRequestId, MfaApprovalRequesterKind.LoginTransaction, transaction.MfaLoginTransactionId,
+				transaction.UserId, transaction.AuthenticationGeneration, cancellationToken);
+			if (!consumed.Succeeded)
+				return Json(new { success = false, error = MfaApprovalOutcomes.ErrorCode(consumed.Outcome) ?? "approval_unavailable" });
+
+			var approval = consumed.Request;
+			return FinishedJson(await FinishLoginTransactionAsync(transaction, user, MfaEvidenceMethod.PasskeyApproval,
+				MfaApprovalRequest.FactorReferenceFor(approval.ApproverPasskeyId, approval.ApproverSessionId), approval.DecidedOnUtc ?? DateTime.UtcNow,
+				returnUrl, rememberBrowser, cancellationToken), returnUrl);
+		}
+
+		/// <summary>
+		/// A one-time recovery code finishes the sign-in as a recovery session: it never satisfies a later MFA check or protected
+		/// data, and the user is sent to replace the lost factor (plan sections 6.1 item 10 and 6.3).
+		/// </summary>
+		private async Task<IActionResult> LoginTransactionRecoveryCodeAsync(VerifyCodeViewModel model, string returnUrl, CancellationToken cancellationToken)
+		{
+			var (transaction, user, outcome) = await OpenLoginTransactionAsync(cancellationToken);
+			if (transaction == null)
+				return RestartSignIn(outcome, returnUrl);
+
+			ViewData["ReturnUrl"] = returnUrl;
+			ViewData["BackAction"] = nameof(LoginMfa);
+			var refusal = await RefuseLoginMethodAsync(transaction, user, MfaEvidenceMethod.RecoveryCode, cancellationToken);
+			if (refusal?.Restart == true)
+				return RestartSignIn(refusal.Value.Outcome, returnUrl);
+			if (refusal != null || string.IsNullOrWhiteSpace(model?.Code))
+			{
+				ModelState.AddModelError(nameof(model.Code), _twoFactorLocalizer[refusal != null ? "LoginMfaMethodUnavailable" : "InvalidRecoveryCode"]);
+				return View(model ?? new VerifyCodeViewModel { ReturnUrl = returnUrl });
+			}
+
+			var redeemedCode = await _userManager.RedeemTwoFactorRecoveryCodeAsync(user, model.Code.Replace(" ", string.Empty).Trim());
+			if (!redeemedCode.Succeeded)
+			{
+				var ended = await LoginFactorFailedAsync(transaction, user, MfaEvidenceMethod.RecoveryCode, cancellationToken);
+				if (ended != null)
+					return RestartSignIn(ended.Value, returnUrl);
+
+				ModelState.AddModelError(nameof(model.Code), _twoFactorLocalizer["InvalidRecoveryCode"]);
+				model.Code = null;
+				return View(model);
+			}
+
+			// The code is spent even if the sign-in stops below, so the account holder hears about it either way (plan section 6.4).
+			await _securityNotices.QueueAsync(new SecurityNoticeRequest
+			{
+				UserId = user.Id, Kind = SecurityNoticeKind.RecoveryCodeUsed, ClientApplication = UserSessionClientApplication.Web
+			}, cancellationToken);
+
+			var finish = await FinishLoginTransactionAsync(transaction, user, MfaEvidenceMethod.RecoveryCode, null, DateTime.UtcNow, returnUrl, false,
+				cancellationToken);
+			if (finish.Redirect != null)
+				return LocalRedirect(finish.Redirect);
+			if (finish.Restart is MfaLoginTransactionOutcome restart)
+				return RestartSignIn(restart, returnUrl);
+
+			TempData["LoginMfaMessage"] = _twoFactorLocalizer["LoginMfaMaximumSessions"].Value;
+			return RedirectToAction(nameof(LogOn), new { returnUrl = SafeReturnUrl(returnUrl) });
 		}
 
 		// ── Forced Password Change (expired password) ─────────────────────────
@@ -637,8 +1328,6 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> LogOff(CancellationToken cancellationToken)
 		{
-			// Explicitly clear the step-up 2FA proof so it cannot be inherited by any subsequent session.
-			HttpContext.Session.Remove(RequiresRecentTwoFactorAttribute.StepUpSessionKey);
 			var sessionId = User.FindFirstValue(SessionClaimTypes.SessionId);
 			if (!string.IsNullOrWhiteSpace(sessionId))
 			{
@@ -940,6 +1629,23 @@ namespace Resgrid.Web.Controllers
 			return token.All(character => char.IsLetterOrDigit(character) || character == '-' || character == '_');
 		}
 
+		/// <summary>
+		/// The session's first-factor method for a single sign-on, from the department configuration that authenticated it;
+		/// <see cref="UserSessionAuthenticationMethod.LocalPassword"/> when that configuration is gone or disabled.
+		/// </summary>
+		private async Task<UserSessionAuthenticationMethod> SsoAuthenticationMethodAsync(int departmentId, string departmentSsoConfigId,
+			CancellationToken cancellationToken)
+		{
+			var config = (await _departmentSsoService.GetSsoConfigsForDepartmentAsync(departmentId, cancellationToken))?
+				.FirstOrDefault(c => c.IsEnabled && string.Equals(c.DepartmentSsoConfigId, departmentSsoConfigId, StringComparison.Ordinal));
+			return (SsoProviderType?)config?.SsoProviderType switch
+			{
+				SsoProviderType.Oidc => UserSessionAuthenticationMethod.OidcSso,
+				SsoProviderType.Saml2 => UserSessionAuthenticationMethod.SamlSso,
+				_ => UserSessionAuthenticationMethod.LocalPassword
+			};
+		}
+
 		private async Task<bool> IsPasswordLoginAllowedAsync(IdentityUser user, CancellationToken cancellationToken)
 		{
 			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(user.Id, cancellationToken))
@@ -1073,7 +1779,8 @@ namespace Resgrid.Web.Controllers
 					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Invite.DepartmentId);
 
 					if (!await SignInTrackedWebSessionAsync(user,
-						UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken))
+						UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken,
+						new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
 					{
 						ModelState.AddModelError(string.Empty,
 							"Your department's maximum number of active sessions has been reached.");
@@ -1136,16 +1843,36 @@ namespace Resgrid.Web.Controllers
 			return sanitized.Length <= maximumLength ? sanitized : sanitized.Substring(0, maximumLength);
 		}
 
-		private async Task<bool> SignInTrackedWebSessionAsync(IdentityUser user,
-			UserSessionAuthenticationMethod authenticationMethod, TimeSpan lifetime, CancellationToken cancellationToken)
+		private Task<bool> SignInTrackedWebSessionAsync(IdentityUser user,
+			UserSessionAuthenticationMethod authenticationMethod, TimeSpan lifetime, CancellationToken cancellationToken,
+			params VerifiedFactor[] verifiedFactors) =>
+			SignInTrackedWebSessionCoreAsync(user, authenticationMethod, lifetime, null, null, null, null, verifiedFactors, cancellationToken);
+
+		/// <param name="loginMfaMethod">The second factor that completed this sign-in, stored on the session with its reference.</param>
+		private Task<bool> SignInTrackedWebSessionAsync(IdentityUser user,
+			UserSessionAuthenticationMethod authenticationMethod, TimeSpan lifetime, CancellationToken cancellationToken,
+			MfaEvidenceMethod? loginMfaMethod, string loginMfaFactorReference, params VerifiedFactor[] verifiedFactors) =>
+			SignInTrackedWebSessionCoreAsync(user, authenticationMethod, lifetime, loginMfaMethod, loginMfaFactorReference, null, null, verifiedFactors,
+				cancellationToken);
+
+		/// <param name="departmentId">The department the session is for; the user's active department when null.</param>
+		/// <param name="departmentSsoConfigId">The SSO configuration that signed the user in, for a single sign-on session.</param>
+		private async Task<bool> SignInTrackedWebSessionCoreAsync(IdentityUser user, UserSessionAuthenticationMethod authenticationMethod, TimeSpan lifetime,
+			MfaEvidenceMethod? loginMfaMethod, string loginMfaFactorReference, int? departmentId, string departmentSsoConfigId,
+			VerifiedFactor[] verifiedFactors, CancellationToken cancellationToken)
 		{
 			if (user == null)
 				throw new InvalidOperationException("The authenticated user could not be loaded.");
 
 			var principal = await _signInManager.CreateUserPrincipalAsync(user);
+			string trackedSessionId = null;
+			var expiresUtc = DateTimeOffset.UtcNow.Add(lifetime);
 			if (SessionSecurityConfig.TrackingEnabled)
 			{
-				var department = await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
+				var (sharedWorkstation, deviceName) = WebInstallation();
+				var department = departmentId is int chosen
+					? new Department { DepartmentId = chosen }
+					: await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
 				UserSession session;
 				try
 				{
@@ -1155,14 +1882,18 @@ namespace Resgrid.Web.Controllers
 						DepartmentId = department?.DepartmentId,
 						AuthenticationGeneration = user.AuthenticationGeneration,
 						ClientApplication = UserSessionClientApplication.Web,
-						DeviceName = Request.Headers["X-Resgrid-Device-Name"],
+						DeviceName = deviceName,
 						DeviceType = Request.Headers["X-Resgrid-Device-Type"],
 						OperatingSystem = Request.Headers["X-Resgrid-Operating-System"],
 						Browser = Request.Headers["X-Resgrid-Browser"],
 						AuthenticationMethod = authenticationMethod,
 						ExpiresOn = DateTime.UtcNow.Add(lifetime),
 						IpAddress = IpAddressHelper.GetRequestIP(Request, true),
-						UserAgent = Request.Headers["User-Agent"]
+						UserAgent = Request.Headers["User-Agent"],
+						LoginMfaMethod = loginMfaMethod,
+						LoginMfaFactorReference = loginMfaFactorReference,
+						DepartmentSsoConfigId = departmentSsoConfigId,
+						SharedModeRequested = sharedWorkstation
 					}, cancellationToken);
 				}
 				catch (SessionCreationDeniedException)
@@ -1176,17 +1907,84 @@ namespace Resgrid.Web.Controllers
 				{
 					identity.AddClaim(new Claim(SessionClaimTypes.SessionId, session.UserSessionId));
 				}
+
+				trackedSessionId = session.UserSessionId;
+				if (session.SharedMode)
+				{
+					// The cookie never outlives the shift ceiling the server set (plan section 10.5).
+					var shiftEnds = new DateTimeOffset(DateTime.SpecifyKind(session.ExpiresOn, DateTimeKind.Utc));
+					if (shiftEnds < expiresUtc)
+						expiresUtc = shiftEnds;
+					await AuditSharedSessionStartedAsync(user, session, cancellationToken);
+				}
 			}
 
 			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
 				new AuthenticationProperties
 				{
 					IssuedUtc = DateTimeOffset.UtcNow,
-					ExpiresUtc = DateTimeOffset.UtcNow.Add(lifetime),
+					ExpiresUtc = expiresUtc,
 					IsPersistent = false,
 					AllowRefresh = false
 				});
+
+			await RecordSignInEvidenceAsync(user, MfaEvidenceSession.KeyForNewSignIn(trackedSessionId, HttpContext), verifiedFactors,
+				cancellationToken);
 			return true;
+		}
+
+		private async Task AuditSharedSessionStartedAsync(IdentityUser user, UserSession session, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+				{
+					System = (int)SystemAuditSystems.Website,
+					Type = (int)SystemAuditTypes.SharedSessionStarted,
+					DepartmentId = session.DepartmentId,
+					UserId = user.Id,
+					Username = user.UserName,
+					TargetUserId = user.Id,
+					SessionId = SharedSessionAudit.SessionSuffix(session.UserSessionId),
+					Successful = true,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					ServerName = Environment.MachineName,
+					CorrelationId = HttpContext.TraceIdentifier,
+					Data = SharedSessionAudit.Describe("started", session, "shared workstation"),
+					LoggedOn = DateTime.UtcNow
+				}, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				// The session exists; a missing audit row must not undo the sign-in.
+				Resgrid.Framework.Logging.LogException(ex, "Shared session start audit failed.");
+			}
+		}
+
+		/// <summary>
+		/// Records the factors this sign-in verified as server-side evidence for the new session (passkey plan section 5.3).
+		/// A failure here never blocks the sign-in; the only effect is that a later credential change asks the user to
+		/// reauthenticate first.
+		/// </summary>
+		private async Task RecordSignInEvidenceAsync(IdentityUser user, string sessionKey, VerifiedFactor[] verifiedFactors,
+			CancellationToken cancellationToken)
+		{
+			if (sessionKey == null || verifiedFactors == null || verifiedFactors.Length == 0)
+				return;
+
+			foreach (var factor in verifiedFactors)
+			{
+				try
+				{
+					await _mfaEvidenceService.RecordAsync(user.Id, sessionKey, UserSessionClientApplication.Web, factor.Kind,
+						factor.Method, MfaEvidencePurpose.Login, factor.VerifiedOnUtc, user.AuthenticationGeneration,
+						factorReference: factor.FactorReference, cancellationToken: cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex, "Failed to record sign-in MFA evidence.");
+				}
+			}
 		}
 
 		private void AddErrors(IdentityResult result)

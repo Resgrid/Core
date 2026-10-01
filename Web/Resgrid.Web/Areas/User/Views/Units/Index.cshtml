@@ -132,12 +132,12 @@
                         if (Model.Units != null && Model.Units.Any())
                         {
                             @Html.Raw("<div id='unitsTab-1' class='unitTabPannel'>")
-                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@commonLocalizer["Timestamp"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_0'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Status"].Value)}</th><th>{Html.Encode(commonLocalizer["Timestamp"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStatus"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_0'>")
 
                             foreach (var u in Model.Units)
                             {
                                 var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                var stateText = "Unknown";
+                                var stateText = commonLocalizer["Unknown"].Value;
                                 var stateColor = "#000000";
                                 var stateTextColor = "#FFFFFF";
 
@@ -171,7 +171,7 @@
                         }
                         else
                         {
-                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnitsInDepartment"]}</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoUnitsInDepartment"].Value)}</h3></div>")
                         }
                     }
 
@@ -183,7 +183,7 @@
                         {
                             @Html.Raw("<div id='unitsTab0' class='unitTabPannel' style='display: none;'>")
 
-                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@commonLocalizer["Timestamp"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_0'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Status"].Value)}</th><th>{Html.Encode(commonLocalizer["Timestamp"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStatus"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_0'>")
 
 
                             if (ungroupedUnits2 != null && ungroupedUnits2.Any())
@@ -191,7 +191,7 @@
                                 foreach (var u in ungroupedUnits2)
                                 {
                                     var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                    var stateText = "Unknown";
+                                    var stateText = commonLocalizer["Unknown"].Value;
                                     var stateColor = "#000000";
                                     var stateTextColor = "#FFFFFF";
 
@@ -228,7 +228,7 @@
                         }
                         else
                         {
-                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnGroupedUnits"]}</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoUnGroupedUnits"].Value)}</h3></div>")
                         }
                     }
 
@@ -249,7 +249,7 @@
                             {
                                 @Html.Raw("<div id='unitsTab" + Model.Groups[i].DepartmentGroupId + "' class='unitTabPannel' style='display: none;'>")
 
-                                @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@commonLocalizer["Timestamp"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Status"].Value)}</th><th>{Html.Encode(commonLocalizer["Timestamp"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStatus"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
                                 ;
 
                                 if (groupUnits != null && groupUnits.Any())
@@ -257,7 +257,7 @@
                                     foreach (var u in groupUnits)
                                     {
                                         var unitStatus = Model.States.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                        var stateText = "Unknown";
+                                        var stateText = commonLocalizer["Unknown"].Value;
                                         var stateColor = "#000000";
                                         var stateTextColor = "#FFFFFF";
 
@@ -294,7 +294,7 @@
                             else
                             {
                                 @Html.Raw("<div id='unitsTab" + Model.Groups[i].DepartmentGroupId + "' class='unitTabPannel' style='display: none;'>")
-                                @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnitsInThisGroup"]}</h3></div>")
+                                @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoUnitsInThisGroup"].Value)}</h3></div>")
                                 @Html.Raw("</div>")
                             }
                         }
@@ -429,6 +429,8 @@
 @{
     void UnitTableButtonTemplate(Unit u, int customState, string stateTextColor, string stateColor, string stateText, UnitState unitStatus)
     {
+        // Razor does not encode text built inside Html.Raw: unit fields, custom-status text and colors, and labels
+        // all go through Html.Encode, which also escapes apostrophes for the single-quoted attributes.
         var timestamp = DateTime.UtcNow.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
         if (unitStatus != null)
         {
@@ -437,22 +439,22 @@
 
         if (Model.IsUserAdminOrGroupAdmin)
         {
-            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + timestamp + "</td>")
-            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setUnitStatusModal' data-id='{u.UnitId}' data-customstateid='{customState}'>{@localizer["SetStatus"]}</button></td>")
+            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td>" + Html.Encode(timestamp) + "</td>")
+            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setUnitStatusModal' data-id='{u.UnitId}' data-customstateid='{customState}'>{Html.Encode(localizer["SetStatus"].Value)}</button></td>")
         }
         else
         {
-            @Html.Raw("<tr><td></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td><td>" + timestamp + "</td>")
+            @Html.Raw("<tr><td></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td>" + Html.Encode(timestamp) + "</td>")
             @Html.Raw("<td></td>")
         }
         
         @Html.Raw("<td>")
 
-        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>{@localizer["ViewEvents"]}</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>{@localizer["Logs"]}</a>&nbsp;")
+        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>{Html.Encode(localizer["ViewEvents"].Value)}</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>{Html.Encode(localizer["Logs"].Value)}</a>&nbsp;")
 
         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
         {
-            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>{@commonLocalizer["Edit"]}</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='{@localizer["DeleteUnitWarning"]} {u.Name}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a>")
+            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>{Html.Encode(commonLocalizer["Edit"].Value)}</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='{Html.Encode(localizer["DeleteUnitWarning"].Value)} {Html.Encode(u.Name)}?' rel='nofollow'>{Html.Encode(commonLocalizer["Delete"].Value)}</a>")
         }
     }
 }

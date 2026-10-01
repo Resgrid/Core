@@ -1,0 +1,30 @@
+@model Resgrid.Web.Models.AccountViewModels.SsoReturnGrantViewModel
+@{
+    Layout = null;
+    // The grant goes to the reveal dialog that opened this window, on this site only, and is never stored here.
+    var message = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Error == null
+        ? (object)new { type = "resgrid-adp-grant", success = true, grantToken = Model.GrantToken, grantId = Model.GrantId, expiresOnUtc = Model.ExpiresOnUtc, windowMinutes = Model.WindowMinutes }
+        : new { type = "resgrid-adp-grant", success = false, error = Model.Error },
+        new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml });
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Resgrid</title>
+</head>
+<body>
+    <script type="text/javascript">
+        (function () {
+            var message = @Html.Raw(message);
+            try {
+                if (window.opener && !window.opener.closed)
+                    window.opener.postMessage(message, window.location.origin);
+            } finally {
+                window.close();
+            }
+        })();
+    </script>
+</body>
+</html>

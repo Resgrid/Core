@@ -22,7 +22,7 @@
 					<td colspan="3" style="text-align: right;">
 						@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g.Group.DepartmentGroupId) && Model.States == null)
 						{
-							<a class="btn btn-xs btn-default" data-confirm="@localizer["ConfirmSetStandByGroup"]@g.Group.Name" href="@Url.Action("ResetGroupToStandingBy", "Home", new {area = "User", groupId = g.Group.DepartmentGroupId})">@localizer["ResetGroupStandingBy"]</a>
+							<a class="btn btn-xs btn-default" data-confirm="@localizer["ConfirmSetStandByGroup"] @g.Group.Name" href="@Url.Action("ResetGroupToStandingBy", "Home", new {area = "User", groupId = g.Group.DepartmentGroupId})">@localizer["ResetGroupStandingBy"]</a>
 						}
 					</td>
 				</tr>
@@ -57,7 +57,7 @@
 						<td class="hidden-xs" colspan="3" style="text-align: right;">
 							@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g1.Group.DepartmentGroupId) && Model.States == null)
 							{
-								<a class="btn btn-xs btn-default" data-confirm="@localizer["ConfirmSetStandByGroup"]@g.Group.Name" href="@Url.Action("ResetGroupToStandingBy", "Home", new { area = "User", groupId = g1.Group.DepartmentGroupId })">@localizer["ResetGroupStandingBy"]</a>
+								<a class="btn btn-xs btn-default" data-confirm="@localizer["ConfirmSetStandByGroup"] @g1.Group.Name" href="@Url.Action("ResetGroupToStandingBy", "Home", new { area = "User", groupId = g1.Group.DepartmentGroupId })">@localizer["ResetGroupStandingBy"]</a>
 							}
 						</td>
 					</tr>

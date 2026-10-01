@@ -1,0 +1,48 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.RecoveryCompleteViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["RecoveryCompleteHeader"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" />
+                </div>
+                <h3>@localizer["RecoveryCompleteHeader"]</h3>
+                <p>@localizer["RecoveryCompleteDescription"]</p>
+
+                <div class="ibox-content">
+                    <div class="alert alert-warning">
+                        <strong>@localizer["SaveRecoveryCodesHeader"]</strong>
+                        <p>@localizer["SaveRecoveryCodesWarning"]</p>
+                    </div>
+                    <div class="well text-center" id="recoveryCodes" style="font-family: monospace; font-size: 16px;">
+                        @foreach (var code in Model.RecoveryCodes)
+                        {
+                            <div>@code</div>
+                        }
+                    </div>
+                    <a asp-action="LogOn" class="btn btn-primary block full-width" id="recoverySignInAgain">@localizer["RecoverySignInAgainButton"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ScriptsPartial")
+</body>
+</html>

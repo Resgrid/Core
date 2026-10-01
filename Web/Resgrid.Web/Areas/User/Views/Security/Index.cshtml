@@ -634,12 +634,12 @@
                     type: 'POST',
                     headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() }
                 }).done(function (data) {
-                    toastr.success('@localizer["Require2FASettingSaved"]');
+                    toastr.success('@JsEncoder.Encode(localizer["Require2FASettingSaved"])');
                 }).fail(function (xhr) {
                     if (xhr.status === 412) {
-                        toastr.error('@localizer["Require2FACannotEnableNoCurrentUser2FA"]');
+                        toastr.error('@JsEncoder.Encode(localizer["Require2FACannotEnableNoCurrentUser2FA"])');
                     } else {
-                        toastr.error('@localizer["Require2FASettingFailed"]');
+                        toastr.error('@JsEncoder.Encode(localizer["Require2FASettingFailed"])');
                     }
                     // Reset the dropdown to its previous saved value
                     $(this).val('@Model.Require2FAForAdmins');

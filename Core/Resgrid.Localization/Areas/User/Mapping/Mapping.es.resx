@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Cartografía</value>
+  </data>
+  <data name="ManageLayers" xml:space="preserve">
+    <value>Administrar capas</value>
+  </data>
+  <data name="CustomMaps" xml:space="preserve">
+    <value>Mapas personalizados</value>
+  </data>
+  <data name="MapOptionsTitle" xml:space="preserve">
+    <value>Opciones del mapa</value>
+  </data>
+  <data name="ShowCalls" xml:space="preserve">
+    <value>Mostrar llamadas</value>
+  </data>
+  <data name="ShowPersonnel" xml:space="preserve">
+    <value>Mostrar personal</value>
+  </data>
+  <data name="ShowUnits" xml:space="preserve">
+    <value>Mostrar unidades</value>
+  </data>
+  <data name="ShowStations" xml:space="preserve">
+    <value>Mostrar estaciones</value>
+  </data>
+  <data name="ShowGeofences" xml:space="preserve">
+    <value>Mostrar geocercas</value>
+  </data>
+  <data name="ShowPOIs" xml:space="preserve">
+    <value>Mostrar PDI</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <!-- AddPOI -->
+  <data name="AddPOIPageTitle" xml:space="preserve">
+    <value>Agregar PDI</value>
+  </data>
+  <data name="AddPOIHeader" xml:space="preserve">
+    <value>Agregar PDI</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="LatitudeHelp" xml:space="preserve">
+    <value>Latitud (Notación decimal: p. ej. 39.1517)</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="LongitudeHelp" xml:space="preserve">
+    <value>Longitud (Notación decimal: p. ej. -119.4571)</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <!-- AddPOIType -->
+  <data name="AddPOITypePageTitle" xml:space="preserve">
+    <value>Agregar tipo de PDI</value>
+  </data>
+  <data name="AddPOITypeHeader" xml:space="preserve">
+    <value>Agregar tipo de PDI</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="IsDestination" xml:space="preserve">
+    <value>Es destino</value>
+  </data>
+  <data name="IsDestinationHelp" xml:space="preserve">
+    <value>Para indicar un posible destino de una unidad o persona. Por ejemplo, una oficina, un punto de reunión, un hospital, un punto de acceso, etc.</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="Marker" xml:space="preserve">
+    <value>Marcador</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Ícono</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <!-- EditLayer / NewLayer -->
+  <data name="EditLayerPageTitle" xml:space="preserve">
+    <value>Editar capa</value>
+  </data>
+  <data name="EditLayerHeader" xml:space="preserve">
+    <value>Editar capa</value>
+  </data>
+  <data name="NewLayerPageTitle" xml:space="preserve">
+    <value>Nueva capa</value>
+  </data>
+  <data name="NewLayerHeader" xml:space="preserve">
+    <value>Nueva capa</value>
+  </data>
+  <data name="IsVisibleByDefault" xml:space="preserve">
+    <value>Visible por defecto</value>
+  </data>
+  <data name="IsVisibleByDefaultHelp" xml:space="preserve">
+    <value>¿Desea que esta capa sea visible cada vez que se carga un mapa? Nota: tener demasiadas capas visibles por defecto complicará el mapa. Los usuarios pueden activar las capas que quieran ver desde el control del mapa.</value>
+  </data>
+  <data name="IsSearchable" xml:space="preserve">
+    <value>Incluir en búsquedas</value>
+  </data>
+  <data name="IsSearchableHelp" xml:space="preserve">
+    <value>Esto permitirá que la búsqueda de direcciones use las coordenadas de esta capa. Nota: si no tiene puntos que se puedan buscar (campos de texto), no active esta opción, ya que puede ralentizar el despacho.</value>
+  </data>
+  <data name="LayerElements" xml:space="preserve">
+    <value>Elementos de la capa</value>
+  </data>
+  <data name="EditLayerButton" xml:space="preserve">
+    <value>Editar capa</value>
+  </data>
+  <data name="AddLayerButton" xml:space="preserve">
+    <value>Agregar capa</value>
+  </data>
+  <!-- ImportPOIs -->
+  <data name="ImportPOIsPageTitle" xml:space="preserve">
+    <value>Importar PDI</value>
+  </data>
+  <data name="ImportPOIsHeader" xml:space="preserve">
+    <value>Importar PDI</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="ImportPOIsButton" xml:space="preserve">
+    <value>Importar PDI</value>
+  </data>
+  <!-- Layers -->
+  <data name="LayersPageTitle" xml:space="preserve">
+    <value>Capas</value>
+  </data>
+  <data name="LayersHeader" xml:space="preserve">
+    <value>Capas</value>
+  </data>
+  <data name="NewLayer" xml:space="preserve">
+    <value>Nueva capa</value>
+  </data>
+  <data name="ItemCount" xml:space="preserve">
+    <value>Cantidad de elementos</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <!-- LiveRouting -->
+  <data name="LiveRoutingPageTitle" xml:space="preserve">
+    <value>Navegación en vivo</value>
+  </data>
+  <data name="LiveRoutingHeader" xml:space="preserve">
+    <value>Rutas en vivo</value>
+  </data>
+  <!-- POIs -->
+  <data name="POIsPageTitle" xml:space="preserve">
+    <value>PDI</value>
+  </data>
+  <data name="POIsHeader" xml:space="preserve">
+    <value>PDI</value>
+  </data>
+  <data name="AddPOIType" xml:space="preserve">
+    <value>Agregar tipo de PDI</value>
+  </data>
+  <data name="PointCount" xml:space="preserve">
+    <value>Cantidad de puntos</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Ver</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="DeletePOITypeConfirm" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este tipo de PDI y todas sus posiciones. ¿Está seguro de que desea eliminar el tipo de PDI</value>
+  </data>
+  <data name="DeletePOITypeSuffix" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <!-- StationRouting -->
+  <data name="StationRoutingPageTitle" xml:space="preserve">
+    <value>Navegación a la estación</value>
+  </data>
+  <data name="StationRoutingHeader" xml:space="preserve">
+    <value>Ruta a la estación</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Distancia:</value>
+  </data>
+  <data name="DurationLabel" xml:space="preserve">
+    <value>Duración:</value>
+  </data>
+  <!-- ViewType -->
+  <data name="ViewTypePageTitle" xml:space="preserve">
+    <value>Ver tipo</value>
+  </data>
+  <data name="ViewTypeHeader" xml:space="preserve">
+    <value>Ver tipo</value>
+  </data>
+  <data name="TabMap" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="TabInformation" xml:space="preserve">
+    <value>Información</value>
+  </data>
+  <data name="TabList" xml:space="preserve">
+    <value>Lista</value>
+  </data>
+  <data name="True" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="False" xml:space="preserve">
+    <value>No</value>
+  </data>
+</root>

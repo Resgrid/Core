@@ -190,19 +190,20 @@
                 preview: '@Url.Action("PreviewCallLines", "Invoicing", new { area = "User" })'
             };
             var text = {
-                remove: '@localizer["Remove"]',
-                add: '@localizer["Add"]',
-                added: '@localizer["CallAdded"]',
-                noCalls: '@localizer["NoCallsForCustomer"]',
-                loadFailed: '@localizer["LoadFailed"]',
-                saveFailed: '@localizer["SaveFailed"]',
-                invoiced: '@localizer["AlreadyInvoiced"]'
+                remove: '@JsEncoder.Encode(localizer["Remove"])',
+                add: '@JsEncoder.Encode(localizer["Add"])',
+                added: '@JsEncoder.Encode(localizer["CallAdded"])',
+                noCalls: '@JsEncoder.Encode(localizer["NoCallsForCustomer"])',
+                loadFailed: '@JsEncoder.Encode(localizer["LoadFailed"])',
+                saveFailed: '@JsEncoder.Encode(localizer["SaveFailed"])',
+                invoiced: '@JsEncoder.Encode(localizer["AlreadyInvoiced"])'
             };
             // Longer, translated sentences travel as JSON so apostrophes and quotes survive into the badges' titles.
             var timeText = JSON.parse(document.getElementById('timeSourceText').textContent);
 
             function money(v) { return (Math.round((Number(v) || 0) * 100) / 100).toFixed(2); }
-            function esc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+            // Used in attribute values as well as element text, so quotes are escaped too.
+            function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
             // Where a generated line's on-scene time came from (InvoiceLineTimeSources): 1 unit status, 2 auto-linked, 3 inferred, 4 call window.
             function timeSourceBadge(source) {
@@ -224,7 +225,7 @@
                         '<td><input type="number" step="0.01" min="0" class="form-control input-sm line-rate" value="' + esc(l.unitRate) + '"></td>' +
                         '<td class="text-center"><input type="checkbox" class="line-tax"' + (l.taxable ? ' checked' : '') + '></td>' +
                         '<td class="text-right line-amount">' + money(amount) + '</td>' +
-                        '<td class="text-right"><button type="button" class="btn btn-xs btn-danger line-remove" title="' + text.remove + '"><i class="fa fa-trash"></i></button></td>' +
+                        '<td class="text-right"><button type="button" class="btn btn-xs btn-danger line-remove" title="' + esc(text.remove) + '"><i class="fa fa-trash"></i></button></td>' +
                         '</tr>');
                 });
                 $('#totSubTotal').text(money(subTotal));
@@ -269,11 +270,11 @@
                 $('#callModal').modal('show');
                 $.getJSON(urls.calls, { id: invoiceId }).done(function (calls) {
                     var body = $('#callsTable tbody').empty();
-                    if (!calls.length) { body.append('<tr><td colspan="4" class="text-muted">' + text.noCalls + '</td></tr>'); return; }
+                    if (!calls.length) { body.append('<tr><td colspan="4" class="text-muted">' + esc(text.noCalls) + '</td></tr>'); return; }
                     calls.forEach(function (c) {
                         body.append('<tr><td>' + esc(c.Number || c.number) + '</td><td>' + esc(c.Name || c.name) + '</td><td>' + esc((c.LoggedOn || c.loggedOn || '').toString().substring(0, 16).replace('T', ' ')) + '</td>' +
-                            '<td class="text-right">' + ((c.AlreadyInvoiced || c.alreadyInvoiced) ? '<span class="label label-default">' + text.invoiced + '</span> ' : '') +
-                            '<button type="button" class="btn btn-xs btn-primary pick-call" data-id="' + esc(c.CallId || c.callId) + '">' + text.add + '</button></td></tr>');
+                            '<td class="text-right">' + ((c.AlreadyInvoiced || c.alreadyInvoiced) ? '<span class="label label-default">' + esc(text.invoiced) + '</span> ' : '') +
+                            '<button type="button" class="btn btn-xs btn-primary pick-call" data-id="' + esc(c.CallId || c.callId) + '">' + esc(text.add) + '</button></td></tr>');
                     });
                 }).fail(function () { toastr.error(text.loadFailed); });
             });

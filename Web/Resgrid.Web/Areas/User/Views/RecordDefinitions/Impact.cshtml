@@ -57,7 +57,7 @@
 			}
 			@if (canPublish)
 			{
-				<form method="post" asp-controller="RecordDefinitions" asp-action="Publish" asp-route-area="User" asp-route-key="@Model.Aggregate.Definition.DefinitionKey" asp-route-version="@Model.VersionRow.Version" onsubmit="return confirm('@localizer["DefinitionPublishConfirm"]');">
+				<form method="post" asp-controller="RecordDefinitions" asp-action="Publish" asp-route-area="User" asp-route-key="@Model.Aggregate.Definition.DefinitionKey" asp-route-version="@Model.VersionRow.Version" onsubmit="return confirm('@JsEncoder.Encode(localizer["DefinitionPublishConfirm"])');">
 					@Html.AntiForgeryToken()
 					<input type="hidden" name="rowVersion" value="@Model.VersionRow.RowVersion" />
 					<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> @localizer["DefinitionPublishNow"]</button>

@@ -50,7 +50,7 @@
                                             <td style="text-align:right;">
                                                 <a class="btn btn-primary btn-xs" asp-controller="IndoorMaps" asp-action="Floors" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> @localizer["Floors"]</a>
                                                 <a class="btn btn-info btn-xs" asp-controller="IndoorMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="IndoorMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@localizer["DeleteIndoorMapConfirm"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+                                                <a class="btn btn-danger btn-xs" asp-controller="IndoorMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteIndoorMapConfirm"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
                                             </td>
                                         </tr>
                                     }

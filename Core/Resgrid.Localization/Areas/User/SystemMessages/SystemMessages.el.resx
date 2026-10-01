@@ -153,4 +153,25 @@
   <data name="AdpEgressWarning" xml:space="preserve"><value>Αναγνωρίζω ότι τα παρεχόμενα στοιχεία εξέρχονται από το Resgrid και μπορεί να διατηρηθούν από τηλεφωνικούς παρόχους ή παραλήπτες.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Να επιτρέπεται προστατευμένο περιεχόμενο</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Το προσωπικό Resgrid ζήτησε πρόσβαση στο προστατευμένο συμβάν {0} για την υπόθεση υποστήριξης {1}. Η πρόσβαση απαιτεί ανεξάρτητη έγκριση και λήγει εντός 15 λεπτών.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Αλλαγή ασφαλείας στον λογαριασμό σας Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Γεια σας {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Γεια σας,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>Ρυθμίστηκε εφαρμογή ελέγχου ταυτότητας για σύνδεση δύο βημάτων στον λογαριασμό σας.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>Η εφαρμογή ελέγχου ταυτότητας του λογαριασμού σας αντικαταστάθηκε και όλες οι ενεργές συνεδρίες τερματίστηκαν.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>Η εφαρμογή ελέγχου ταυτότητας αφαιρέθηκε από τον λογαριασμό σας, οπότε η σύνδεση δύο βημάτων είναι απενεργοποιημένη. Όλες οι ενεργές συνεδρίες τερματίστηκαν.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Δημιουργήθηκαν νέοι κωδικοί ανάκτησης για τον λογαριασμό σας. Οι παλιοί κωδικοί δεν λειτουργούν πλέον.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>Ένας από τους κωδικούς ανάκτησής σας χρησιμοποιήθηκε για σύνδεση ή για έναρξη ανάκτησης λογαριασμού.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>Προστέθηκε νέο κλειδί πρόσβασης στον λογαριασμό σας.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>Αφαιρέθηκε ένα κλειδί πρόσβασης από τον λογαριασμό σας.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Ένα κλειδί πρόσβασης στο Resgrid Responder μπορεί τώρα να εγκρίνει συνδέσεις στις άλλες εφαρμογές σας Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Ένα κλειδί πρόσβασης στο Resgrid Responder δεν μπορεί πλέον να εγκρίνει συνδέσεις στις άλλες εφαρμογές σας Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Δηλώσατε στο Resgrid Responder ότι δεν ζητήσατε σύνδεση. Αυτή η σύνδεση σταμάτησε και τα αιτήματα έγκρισης έχουν ανασταλεί για 15 λεπτά. Κάποιος ίσως γνωρίζει τον κωδικό πρόσβασής σας, γι' αυτό αλλάξτε τον τώρα.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Αρκετά διαδοχικά αιτήματα έγκρισης απορρίφθηκαν ή έμειναν αναπάντητα, γι' αυτό τα αιτήματα έγκρισης έχουν ανασταλεί για 15 λεπτά.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Ο λογαριασμός σας ανακτήθηκε με κωδικό ανάκτησης. Ρυθμίστηκε νέα εφαρμογή ελέγχου ταυτότητας, δημιουργήθηκαν νέοι κωδικοί ανάκτησης και όλες οι ενεργές συνεδρίες τερματίστηκαν.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>Ρυθμίστηκε εφαρμογή ελέγχου ταυτότητας ή κλειδί πρόσβασης σε κοινόχρηστο tablet οχήματος ή σταθμό εργασίας. Αν κάποιος άλλος μπορεί να είδε τον κωδικό ρύθμισης ή μπορεί να χρησιμοποιήσει αυτή τη συσκευή, αντικαταστήστε την εφαρμογή ελέγχου ταυτότητας ή αφαιρέστε το κλειδί πρόσβασης από τη δική σας συσκευή.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Μια επαλήθευση στον λογαριασμό σας αναφέρθηκε ότι δεν έγινε από εσάς. Αν με αυτήν συνδέθηκε άλλη συσκευή, η συγκεκριμένη σύνδεση τερματίστηκε. Αλλάξτε τον κωδικό πρόσβασής σας και ελέγξτε τις μεθόδους σύνδεσής σας.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Πότε: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Πού: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Αν δεν ήσασταν εσείς, επαναφέρετε τώρα τον κωδικό πρόσβασής σας στο {0}, έπειτα συνδεθείτε και ελέγξτε τις μεθόδους σύνδεσής σας. Το Resgrid δεν ζητά ποτέ κωδικό ή κωδικό πρόσβασης μέσω email.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Αυτή είναι μια αυτόματη ειδοποίηση ασφαλείας για τον λογαριασμό σας Resgrid.</value></data>
 </root>

@@ -35,6 +35,37 @@ namespace Resgrid.Model
 
 		/// <summary>Set when the department exempted the calling client from the step-up prompt.</summary>
 		public bool StepUpExempt { get; set; }
+
+		/// <summary>
+		/// Contract version to issue: 1 (default) or 2. Version 2 requires <see cref="SessionId"/>,
+		/// <see cref="AuthenticationGeneration"/> and a verified <see cref="MfaMethod"/> (or an exemption), and every
+		/// reader must accept version 2 before any issuer requests it (plan section 8.2).
+		/// </summary>
+		public int Version { get; set; } = 1;
+
+		/// <summary>Version 2: <see cref="ProtectedDataGrantMfaMethods"/> value; <c>none</c> only when exempt.</summary>
+		public string MfaMethod { get; set; }
+
+		/// <summary>Version 2: opaque credential or evidence reference (required for passkey, approval and federated).</summary>
+		public string MfaCredentialId { get; set; }
+
+		/// <summary>Version 2: credential or evidence state version (required with <see cref="MfaCredentialId"/>).</summary>
+		public long? MfaStateVersion { get; set; }
+
+		/// <summary>Version 2: the account's current authentication generation.</summary>
+		public long? AuthenticationGeneration { get; set; }
+
+		/// <summary>Version 2: the shared-session lock version, for shared sessions only.</summary>
+		public long? SessionLockVersion { get; set; }
+
+		/// <summary>Version 2: true when the first factor was federated sign-in (amr <c>fed</c>) rather than a password.</summary>
+		public bool FederatedFirstFactor { get; set; }
+
+		/// <summary>
+		/// Version 2: an absolute limit the grant may not outlive, such as the session's or shift's end (plan section 9.2).
+		/// The expiry is the earliest of this, the verification plus the window, and issuance plus the window.
+		/// </summary>
+		public DateTime? NotAfterUtc { get; set; }
 	}
 
 	/// <summary>Result of a successful grant issuance. The token is sensitive-in-transit but value-free.</summary>
@@ -75,6 +106,9 @@ namespace Resgrid.Model
 		EpochRevoked = 5,
 
 		/// <summary>The grant does not carry the scope the operation requires.</summary>
-		MissingScope = 6
+		MissingScope = 6,
+
+		/// <summary>The grant names a contract version this build does not read.</summary>
+		VersionUnsupported = 7
 	}
 }

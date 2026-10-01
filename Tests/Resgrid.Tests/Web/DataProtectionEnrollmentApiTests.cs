@@ -160,6 +160,26 @@ namespace Resgrid.Tests.Web
 			});
 		}
 
+		[Test]
+		public async Task Enrollment_commands_need_mfa_within_five_minutes_not_the_data_access_window()
+		{
+			// A grant is valid for the department's whole data-access window (up to hours); its verification is not recent
+			// enough to change the protection lifecycle (passkey plan section 8.4).
+			var stale = new ProtectedDataGrant { GrantId = "grant-2", UserId = ManagingMember, DepartmentId = Department, MfaAtUtc = DateTime.UtcNow.AddMinutes(-10) };
+			_grants.Setup(x => x.ValidateGrant(MfaGrant, Department, 0, null, out stale, It.IsAny<DateTime?>()))
+				.Returns(ProtectedDataGrantValidationOutcome.Valid);
+
+			await WithServer(async client =>
+			{
+				var response = await client.PostAsync(Route + "QueueEnrollment",
+					Queue(Record(AdpEnrollmentAcknowledgements.Version, AdpEnrollmentAcknowledgements.Items)));
+
+				response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+				(await Body(response)).Value<string>("type").Should().Be("step_up_required");
+				_inserted.Should().BeNull();
+			});
+		}
+
 		private async Task WithServer(Func<HttpClient, Task> test)
 		{
 			var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Testing" });
@@ -180,6 +200,10 @@ namespace Resgrid.Tests.Web
 			builder.Services.AddSingleton(_grants.Object);
 			builder.Services.AddSingleton(new Mock<IAdpReleaseService>().Object);
 			builder.Services.AddSingleton(new Mock<IAdpAuditRepository>().Object);
+			builder.Services.AddSingleton(new Mock<IMfaEvidenceService>().Object);
+			builder.Services.AddSingleton(new Mock<IMfaPolicyService>().Object);
+			builder.Services.AddSingleton(new Mock<IAdpStepUpService>().Object);
+			builder.Services.AddSingleton(new Mock<IMfaCredentialStateService>().Object);
 
 			await using var app = builder.Build(); var previous = ApiClaims._httpContextAccessor; ApiClaims._httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 			app.UseRouting(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();

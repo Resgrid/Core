@@ -70,7 +70,7 @@
                                 @if (Model.CanManage)
                                 {
                                     <a asp-action="Employer" asp-route-affiliate="@row.WorkforceAffiliatedEntityId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                    <form method="post" asp-action="DeleteAffiliate" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceAffiliatedEntityId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                    <form method="post" asp-action="DeleteAffiliate" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.WorkforceAffiliatedEntityId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                                 }
                             </td></tr>
                         }

@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
     <value>Request deletion of your department. This is a permanent and non-reversable operation that takes 25 days to complete and needs to run after hours. During the wait period you can cancel the request if you choose.</value>
   </data>
@@ -1111,5 +1102,41 @@
   </data>
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>Aucun rôle de personnel n'est encore défini.</value>
+  </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Statut de l'unité à l'engagement</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Statut de l'unité à la libération</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>Ces statuts d'unité par défaut n'utilisent que les types d'état d'unité intégrés. Utilisez le tableau de remplacements par type d'unité ci-dessous lorsqu'un type d'unité a besoin de l'un de ses propres statuts personnalisés.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Remplacements de statut par type d'unité</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Seuls les types d'unité disposant de statuts d'unité personnalisés apparaissent ici. Laissez une valeur sur « Par défaut » pour utiliser le statut intégré défini ci-dessus pour tout le département.</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>États concernés</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Laissez vide pour « Tous les états ».</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>Tous</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>Langue de synthèse vocale</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Sélectionnez la langue ou le dialecte eSpeak-NG à utiliser pour les messages vocaux de ce département.</value>
+  </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Exiger la réinitialisation des mots de passe par e-mail</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Empêche les administrateurs de département et de groupe de choisir ou de voir le nouveau mot de passe d'un membre. Les actions de réinitialisation envoient à la place au membre un lien par e-mail à usage unique et de courte durée. Les sessions existantes sont révoquées une fois que le membre a modifié son mot de passe avec succès.</value>
   </data>
 </root>

@@ -37,15 +37,15 @@
                             }
                             @if (run.Status == (int)PayDataReportRunStatuses.Validated && Model.CanExportPayData)
                             {
-                                <form method="post" asp-action="FreezeAndExport" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@localizer["ConfirmFreeze"]');"><i class="fa fa-lock"></i> 4. @localizer["FreezeAndExport"]</button></form>
+                                <form method="post" asp-action="FreezeAndExport" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmFreeze"])');"><i class="fa fa-lock"></i> 4. @localizer["FreezeAndExport"]</button></form>
                             }
                             @if (run.IsEditable && Model.CanManagePayData || run.Status == (int)PayDataReportRunStatuses.Exported && Model.CanManagePayData)
                             {
-                                <form method="post" asp-action="VoidRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@localizer["ConfirmVoid"]');">@localizer["Void"]</button></form>
+                                <form method="post" asp-action="VoidRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmVoid"])');">@localizer["Void"]</button></form>
                             }
                             @if ((run.Status == (int)PayDataReportRunStatuses.Exported || run.Status == (int)PayDataReportRunStatuses.CertifiedExternally) && Model.CanManagePayData)
                             {
-                                <form method="post" asp-action="CreateCorrection" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('@localizer["ConfirmCorrection"]');">@localizer["CreateCorrection"]</button></form>
+                                <form method="post" asp-action="CreateCorrection" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.PayDataReportRunId" /><button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmCorrection"])');">@localizer["CreateCorrection"]</button></form>
                             }
                         </div>
                     </div>

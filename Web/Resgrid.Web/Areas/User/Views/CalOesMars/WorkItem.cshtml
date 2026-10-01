@@ -258,7 +258,7 @@
                         }
                         @if (!w.IsExternal)
                         {
-                            <form method="post" asp-action="Delete" asp-route-id="@w.CalOesMarsWorkItemId" class="m-t-sm" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                            <form method="post" asp-action="Delete" asp-route-id="@w.CalOesMarsWorkItemId" class="m-t-sm" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
                         }
                     </div>
                 </div>

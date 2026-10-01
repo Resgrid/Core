@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
     <value>Request deletion of your department. This is a permanent and non-reversable operation that takes 25 days to complete and needs to run after hours. During the wait period you can cancel the request if you choose.</value>
   </data>
@@ -1111,5 +1102,41 @@
   </data>
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>Ролі персоналу ще не визначено.</value>
+  </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Статус одиниці під час направлення на виклик</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Статус одиниці після звільнення з виклику</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>Ці стандартні статуси одиниць використовують лише вбудовані типи станів одиниць. Якщо типу одиниці потрібен один із його власних статусів, скористайтеся таблицею перевизначень за типом одиниці нижче.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Перевизначення статусів за типом одиниці</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Тут відображаються лише типи одиниць із власними статусами одиниць. Залиште значення «За замовчуванням», щоб використовувати вбудований статус для всього підрозділу, указаний вище.</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Активні стани</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Залиште порожнім для варіанта «Усі стани».</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>Мова TTS</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Виберіть мову або діалект eSpeak-NG для голосових підказок цього підрозділу.</value>
+  </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Вимагати скидання пароля через електронну пошту</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Не дає адміністраторам підрозділу та груп вибирати або бачити новий пароль учасника. Натомість під час скидання учаснику надсилається електронною поштою короткочасне одноразове посилання. Наявні сеанси відкликаються після того, як учасник успішно змінить пароль.</value>
   </data>
 </root>

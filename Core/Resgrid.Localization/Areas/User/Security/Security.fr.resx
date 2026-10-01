@@ -60,379 +60,1468 @@
   </resheader>
 
   <data name="SecurityPermissionsHeader" xml:space="preserve">
-    <value>Security and Permissions</value>
+    <value>Sécurité et autorisations</value>
   </data>
   <data name="SecurityPermissionsDescription" xml:space="preserve">
-    <value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value>
+    <value>Vous pouvez définir ici les autorisations de votre département, par exemple quels utilisateurs ou rôles peuvent créer des appels, ou qui est autorisé à créer et retirer des utilisateurs. Les modifications des autorisations prendront effet à la prochaine connexion à l'application web Resgrid.</value>
   </data>
   <data name="AuditLogsButton" xml:space="preserve">
-    <value>Audit Logs</value>
+    <value>Journaux d'audit</value>
+  </data>
+  <data name="AuditLogsTypeFilterLabel" xml:space="preserve">
+    <value>Filtrer par type d'audit</value>
+  </data>
+  <data name="AuditLogsTypeFilterAll" xml:space="preserve">
+    <value>Tous les types d'audit</value>
+  </data>
+  <data name="AuditLogsSearchHelp" xml:space="preserve">
+    <value>Recherchez par nom d'utilisateur, ID d'utilisateur ou d'audit, adresse e-mail, date/heure ou type d'audit. La recherche et le tri s'appliquent au sein du type d'audit sélectionné.</value>
+  </data>
+  <data name="AuditLogsSearchLabel" xml:space="preserve">
+    <value>Rechercher dans les journaux d'audit :</value>
+  </data>
+  <data name="AuditLogsSearchPlaceholder" xml:space="preserve">
+    <value>Nom, ID, e-mail, date/heure ou type</value>
+  </data>
+  <data name="AuditLogsColumnTimestamp" xml:space="preserve">
+    <value>Horodatage</value>
+  </data>
+  <data name="AuditLogsColumnType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="AuditLogsColumnLoggedBy" xml:space="preserve">
+    <value>Enregistré par</value>
+  </data>
+  <data name="AuditLogsColumnResult" xml:space="preserve">
+    <value>Résultat</value>
+  </data>
+  <data name="AuditLogsColumnMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="AuditLogsColumnSearchTerms" xml:space="preserve">
+    <value>Termes de recherche</value>
+  </data>
+  <data name="AuditLogsColumnActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="AuditLogsResultSuccessful" xml:space="preserve">
+    <value>Réussi</value>
+  </data>
+  <data name="AuditLogsResultFailed" xml:space="preserve">
+    <value>Échoué</value>
+  </data>
+  <data name="AuditLogsViewButton" xml:space="preserve">
+    <value>Voir</value>
+  </data>
+  <data name="AuditLogsTableInfo" xml:space="preserve">
+    <value>Affichage des entrées _START_ à _END_ sur _TOTAL_</value>
+  </data>
+  <data name="AuditLogsTableInfoEmpty" xml:space="preserve">
+    <value>Affichage des entrées 0 à 0 sur 0</value>
+  </data>
+  <data name="AuditLogsTableInfoFiltered" xml:space="preserve">
+    <value>(filtrées parmi _MAX_ entrées au total)</value>
+  </data>
+  <data name="AuditLogsTableLengthMenu" xml:space="preserve">
+    <value>Afficher _MENU_ entrées</value>
+  </data>
+  <data name="AuditLogsTableLoading" xml:space="preserve">
+    <value>Chargement…</value>
+  </data>
+  <data name="AuditLogsTableEmpty" xml:space="preserve">
+    <value>Aucune entrée de journal d'audit</value>
+  </data>
+  <data name="AuditLogsTableZeroRecords" xml:space="preserve">
+    <value>Aucune entrée de journal d'audit correspondante</value>
+  </data>
+  <data name="AuditLogsTableFirst" xml:space="preserve">
+    <value>Premier</value>
+  </data>
+  <data name="AuditLogsTableLast" xml:space="preserve">
+    <value>Dernier</value>
+  </data>
+  <data name="AuditLogsTableNext" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="AuditLogsTablePrevious" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="AuditLogsTableSortAscending" xml:space="preserve">
+    <value>: activer pour trier la colonne par ordre croissant</value>
+  </data>
+  <data name="AuditLogsTableSortDescending" xml:space="preserve">
+    <value>: activer pour trier la colonne par ordre décroissant</value>
+  </data>
+  <data name="AuditLogsSystemActor" xml:space="preserve">
+    <value>Système</value>
+  </data>
+  <data name="AuditLogsUnknownTime" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="AuditLogViewTitle" xml:space="preserve">
+    <value>Voir le journal d'audit</value>
+  </data>
+  <data name="AuditLogViewPanelTitle" xml:space="preserve">
+    <value>Journal d'audit</value>
+  </data>
+  <data name="AuditLogViewAuditLogId" xml:space="preserve">
+    <value>ID du journal d'audit :</value>
+  </data>
+  <data name="AuditLogViewDepartmentId" xml:space="preserve">
+    <value>ID du département :</value>
+  </data>
+  <data name="AuditLogViewAuditType" xml:space="preserve">
+    <value>Type d'audit :</value>
+  </data>
+  <data name="AuditLogViewLogTypeId" xml:space="preserve">
+    <value>ID du type de journal :</value>
+  </data>
+  <data name="AuditLogViewTypeDescription" xml:space="preserve">
+    <value>Description du type :</value>
+  </data>
+  <data name="AuditLogViewResult" xml:space="preserve">
+    <value>Résultat :</value>
+  </data>
+  <data name="AuditLogViewLoggedBy" xml:space="preserve">
+    <value>Enregistré par :</value>
+  </data>
+  <data name="AuditLogViewUserId" xml:space="preserve">
+    <value>ID d'utilisateur :</value>
+  </data>
+  <data name="AuditLogViewLoggedOnLocal" xml:space="preserve">
+    <value>Enregistré le (heure locale) :</value>
+  </data>
+  <data name="AuditLogViewLoggedOnUtc" xml:space="preserve">
+    <value>Enregistré le (UTC) :</value>
+  </data>
+  <data name="AuditLogViewIpAddress" xml:space="preserve">
+    <value>Adresse IP :</value>
+  </data>
+  <data name="AuditLogViewServerName" xml:space="preserve">
+    <value>Nom du serveur :</value>
+  </data>
+  <data name="AuditLogViewObjectId" xml:space="preserve">
+    <value>ID de l'objet :</value>
+  </data>
+  <data name="AuditLogViewObjectDepartmentId" xml:space="preserve">
+    <value>ID du département de l'objet :</value>
+  </data>
+  <data name="AuditLogViewUserAgent" xml:space="preserve">
+    <value>Agent utilisateur :</value>
+  </data>
+  <data name="AuditLogViewMessage" xml:space="preserve">
+    <value>Message :</value>
+  </data>
+  <data name="AuditLogViewData" xml:space="preserve">
+    <value>Données :</value>
+  </data>
+  <data name="AuditLogViewNotRecorded" xml:space="preserve">
+    <value>Non enregistré</value>
+  </data>
+  <data name="AuditLogTypeDepartmentSettingsChanged" xml:space="preserve">
+    <value>Paramètres du département modifiés</value>
+  </data>
+  <data name="AuditLogTypeUserAdded" xml:space="preserve">
+    <value>Utilisateur ajouté</value>
+  </data>
+  <data name="AuditLogTypeUserRemoved" xml:space="preserve">
+    <value>Utilisateur retiré</value>
+  </data>
+  <data name="AuditLogTypeGroupAdded" xml:space="preserve">
+    <value>Groupe ajouté</value>
+  </data>
+  <data name="AuditLogTypeGroupRemoved" xml:space="preserve">
+    <value>Groupe retiré</value>
+  </data>
+  <data name="AuditLogTypeGroupChanged" xml:space="preserve">
+    <value>Groupe modifié</value>
+  </data>
+  <data name="AuditLogTypeUnitAdded" xml:space="preserve">
+    <value>Unité ajoutée</value>
+  </data>
+  <data name="AuditLogTypeUnitRemoved" xml:space="preserve">
+    <value>Unité retirée</value>
+  </data>
+  <data name="AuditLogTypeUnitChanged" xml:space="preserve">
+    <value>Unité modifiée</value>
+  </data>
+  <data name="AuditLogTypeProfileUpdated" xml:space="preserve">
+    <value>Profil mis à jour</value>
+  </data>
+  <data name="AuditLogTypePermissionsChanged" xml:space="preserve">
+    <value>Autorisations modifiées</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionUpdated" xml:space="preserve">
+    <value>Abonnement mis à jour</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionCreated" xml:space="preserve">
+    <value>Abonnement créé</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionCancelled" xml:space="preserve">
+    <value>Abonnement annulé</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionBillingInfoUpdated" xml:space="preserve">
+    <value>Informations de facturation de l'abonnement mises à jour</value>
+  </data>
+  <data name="AuditLogTypeCallReactivated" xml:space="preserve">
+    <value>Appel réactivé</value>
+  </data>
+  <data name="AuditLogTypeUserAccountDeleted" xml:space="preserve">
+    <value>Compte utilisateur supprimé</value>
+  </data>
+  <data name="AuditLogTypeAddonSubscriptionModified" xml:space="preserve">
+    <value>Abonnement au module complémentaire modifié</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequested" xml:space="preserve">
+    <value>Suppression du département demandée</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequestedCancelled" xml:space="preserve">
+    <value>Demande de suppression du département annulée</value>
+  </data>
+  <data name="AuditLogTypeDeleteStaticShift" xml:space="preserve">
+    <value>Quart statique supprimé</value>
+  </data>
+  <data name="AuditLogTypeUpdateStaticShift" xml:space="preserve">
+    <value>Quart statique mis à jour</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusAdded" xml:space="preserve">
+    <value>Statut personnalisé ajouté</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusRemoved" xml:space="preserve">
+    <value>Statut personnalisé retiré</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusUpdated" xml:space="preserve">
+    <value>Statut personnalisé mis à jour</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusDetailUpdated" xml:space="preserve">
+    <value>Détail de statut personnalisé mis à jour</value>
+  </data>
+  <data name="AuditLogTypeCallTypeAdded" xml:space="preserve">
+    <value>Type d'appel ajouté</value>
+  </data>
+  <data name="AuditLogTypeCallTypeEdited" xml:space="preserve">
+    <value>Type d'appel modifié</value>
+  </data>
+  <data name="AuditLogTypeCallTypeRemoved" xml:space="preserve">
+    <value>Type d'appel retiré</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityAdded" xml:space="preserve">
+    <value>Priorité d'appel ajoutée</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityEdited" xml:space="preserve">
+    <value>Priorité d'appel modifiée</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityRemoved" xml:space="preserve">
+    <value>Priorité d'appel retirée</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeAdded" xml:space="preserve">
+    <value>Type d'unité ajouté</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeEdited" xml:space="preserve">
+    <value>Type d'unité modifié</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeRemoved" xml:space="preserve">
+    <value>Type d'unité retiré</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeAdded" xml:space="preserve">
+    <value>Type de certification ajouté</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeEdited" xml:space="preserve">
+    <value>Type de certification modifié</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeRemoved" xml:space="preserve">
+    <value>Type de certification retiré</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryAdded" xml:space="preserve">
+    <value>Catégorie de documents ajoutée</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryEdited" xml:space="preserve">
+    <value>Catégorie de documents modifiée</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryRemoved" xml:space="preserve">
+    <value>Catégorie de documents retirée</value>
+  </data>
+  <data name="AuditLogTypeDocumentAdded" xml:space="preserve">
+    <value>Document ajouté</value>
+  </data>
+  <data name="AuditLogTypeDocumentEdited" xml:space="preserve">
+    <value>Document modifié</value>
+  </data>
+  <data name="AuditLogTypeDocumentRemoved" xml:space="preserve">
+    <value>Document retiré</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryAdded" xml:space="preserve">
+    <value>Catégorie de notes ajoutée</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryEdited" xml:space="preserve">
+    <value>Catégorie de notes modifiée</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryRemoved" xml:space="preserve">
+    <value>Catégorie de notes retirée</value>
+  </data>
+  <data name="AuditLogTypeNoteAdded" xml:space="preserve">
+    <value>Note ajoutée</value>
+  </data>
+  <data name="AuditLogTypeNoteEdited" xml:space="preserve">
+    <value>Note modifiée</value>
+  </data>
+  <data name="AuditLogTypeNoteRemoved" xml:space="preserve">
+    <value>Note retirée</value>
+  </data>
+  <data name="AuditLogTypeContactAdded" xml:space="preserve">
+    <value>Contact ajouté</value>
+  </data>
+  <data name="AuditLogTypeContactEdited" xml:space="preserve">
+    <value>Contact modifié</value>
+  </data>
+  <data name="AuditLogTypeContactRemoved" xml:space="preserve">
+    <value>Contact retiré</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryAdded" xml:space="preserve">
+    <value>Catégorie de contacts ajoutée</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryEdited" xml:space="preserve">
+    <value>Catégorie de contacts modifiée</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryRemoved" xml:space="preserve">
+    <value>Catégorie de contacts retirée</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeAdded" xml:space="preserve">
+    <value>Type de note de contact ajouté</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeEdited" xml:space="preserve">
+    <value>Type de note de contact modifié</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeRemoved" xml:space="preserve">
+    <value>Type de note de contact retiré</value>
+  </data>
+  <data name="AuditLogTypeWorkflowAdded" xml:space="preserve">
+    <value>Flux de travail créé</value>
+  </data>
+  <data name="AuditLogTypeWorkflowEdited" xml:space="preserve">
+    <value>Flux de travail mis à jour</value>
+  </data>
+  <data name="AuditLogTypeWorkflowDeleted" xml:space="preserve">
+    <value>Flux de travail supprimé</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepAdded" xml:space="preserve">
+    <value>Étape de flux de travail ajoutée</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepEdited" xml:space="preserve">
+    <value>Étape de flux de travail mise à jour</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepDeleted" xml:space="preserve">
+    <value>Étape de flux de travail supprimée</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialAdded" xml:space="preserve">
+    <value>Identifiant de flux de travail ajouté</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialEdited" xml:space="preserve">
+    <value>Identifiant de flux de travail mis à jour</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialDeleted" xml:space="preserve">
+    <value>Identifiant de flux de travail supprimé</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationCodeSent" xml:space="preserve">
+    <value>Code de vérification des coordonnées envoyé</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationConfirmed" xml:space="preserve">
+    <value>Vérification des coordonnées confirmée</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationFailed" xml:space="preserve">
+    <value>Vérification des coordonnées échouée</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorEnabled" xml:space="preserve">
+    <value>Authentification à deux facteurs activée</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorDisabled" xml:space="preserve">
+    <value>Authentification à deux facteurs désactivée</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorLoginVerified" xml:space="preserve">
+    <value>Connexion à deux facteurs vérifiée</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorRecoveryCodeUsed" xml:space="preserve">
+    <value>Code de récupération à deux facteurs utilisé</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorStepUpVerified" xml:space="preserve">
+    <value>Authentification renforcée à deux facteurs vérifiée</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigCreated" xml:space="preserve">
+    <value>Configuration SSO créée</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigUpdated" xml:space="preserve">
+    <value>Configuration SSO mise à jour</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigDeleted" xml:space="preserve">
+    <value>Configuration SSO supprimée</value>
+  </data>
+  <data name="AuditLogTypeSsoLoginSucceeded" xml:space="preserve">
+    <value>Connexion SSO réussie</value>
+  </data>
+  <data name="AuditLogTypeSsoLoginFailed" xml:space="preserve">
+    <value>Connexion SSO échouée</value>
+  </data>
+  <data name="AuditLogTypeSsoUserProvisioned" xml:space="preserve">
+    <value>Utilisateur SSO approvisionné</value>
+  </data>
+  <data name="AuditLogTypeScimUserCreated" xml:space="preserve">
+    <value>Utilisateur SCIM créé</value>
+  </data>
+  <data name="AuditLogTypeScimUserUpdated" xml:space="preserve">
+    <value>Utilisateur SCIM mis à jour</value>
+  </data>
+  <data name="AuditLogTypeScimUserDeactivated" xml:space="preserve">
+    <value>Utilisateur SCIM désactivé</value>
+  </data>
+  <data name="AuditLogTypeScimUserDeleted" xml:space="preserve">
+    <value>Utilisateur SCIM supprimé</value>
+  </data>
+  <data name="AuditLogTypeScimAuthFailed" xml:space="preserve">
+    <value>Authentification SCIM échouée</value>
+  </data>
+  <data name="AuditLogTypeScimUserReactivated" xml:space="preserve">
+    <value>Utilisateur SCIM réactivé</value>
+  </data>
+  <data name="AuditLogTypeScimGroupListed" xml:space="preserve">
+    <value>Groupes SCIM listés</value>
+  </data>
+  <data name="AuditLogTypeScimUserListed" xml:space="preserve">
+    <value>Utilisateurs SCIM listés</value>
+  </data>
+  <data name="AuditLogTypeScimUserRetrieved" xml:space="preserve">
+    <value>Utilisateur SCIM récupéré</value>
+  </data>
+  <data name="AuditLogTypeScimBearerTokenProvisioned" xml:space="preserve">
+    <value>Jeton Bearer SCIM approvisionné</value>
+  </data>
+  <data name="AuditLogTypeScimBearerTokenRotated" xml:space="preserve">
+    <value>Jeton Bearer SCIM renouvelé</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionCreated" xml:space="preserve">
+    <value>Définition UDF créée</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionUpdated" xml:space="preserve">
+    <value>Définition UDF mise à jour</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionDeleted" xml:space="preserve">
+    <value>Définition UDF supprimée</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldAdded" xml:space="preserve">
+    <value>Champ UDF ajouté</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldUpdated" xml:space="preserve">
+    <value>Champ UDF mis à jour</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldRemoved" xml:space="preserve">
+    <value>Champ UDF retiré</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldValueSaved" xml:space="preserve">
+    <value>Valeurs de champs UDF enregistrées</value>
+  </data>
+  <data name="AuditLogTypeRouteCreated" xml:space="preserve">
+    <value>Itinéraire créé</value>
+  </data>
+  <data name="AuditLogTypeRouteUpdated" xml:space="preserve">
+    <value>Itinéraire mis à jour</value>
+  </data>
+  <data name="AuditLogTypeRouteDeleted" xml:space="preserve">
+    <value>Itinéraire supprimé</value>
+  </data>
+  <data name="AuditLogTypeRouteStarted" xml:space="preserve">
+    <value>Itinéraire démarré</value>
+  </data>
+  <data name="AuditLogTypeRouteCompleted" xml:space="preserve">
+    <value>Itinéraire terminé</value>
+  </data>
+  <data name="AuditLogTypeRouteCancelled" xml:space="preserve">
+    <value>Itinéraire annulé</value>
+  </data>
+  <data name="AuditLogTypeRoutePaused" xml:space="preserve">
+    <value>Itinéraire mis en pause</value>
+  </data>
+  <data name="AuditLogTypeRouteResumed" xml:space="preserve">
+    <value>Itinéraire repris</value>
+  </data>
+  <data name="AuditLogTypeRouteStopCheckedIn" xml:space="preserve">
+    <value>Arrivée pointée à un arrêt d'itinéraire</value>
+  </data>
+  <data name="AuditLogTypeRouteStopCheckedOut" xml:space="preserve">
+    <value>Départ pointé d'un arrêt d'itinéraire</value>
+  </data>
+  <data name="AuditLogTypeRouteStopSkipped" xml:space="preserve">
+    <value>Arrêt d'itinéraire ignoré</value>
+  </data>
+  <data name="AuditLogTypeRouteDeviationDetected" xml:space="preserve">
+    <value>Écart d'itinéraire détecté</value>
+  </data>
+  <data name="AuditLogTypeRouteDeviationAcknowledged" xml:space="preserve">
+    <value>Écart d'itinéraire acquitté</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigCreated" xml:space="preserve">
+    <value>Configuration de minuterie de pointage créée</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigUpdated" xml:space="preserve">
+    <value>Configuration de minuterie de pointage mise à jour</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigDeleted" xml:space="preserve">
+    <value>Configuration de minuterie de pointage supprimée</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideCreated" xml:space="preserve">
+    <value>Remplacement de minuterie de pointage créé</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideUpdated" xml:space="preserve">
+    <value>Remplacement de minuterie de pointage mis à jour</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideDeleted" xml:space="preserve">
+    <value>Remplacement de minuterie de pointage supprimé</value>
+  </data>
+  <data name="AuditLogTypeCheckInPerformed" xml:space="preserve">
+    <value>Pointage effectué</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerEnabledOnCall" xml:space="preserve">
+    <value>Minuterie de pointage activée sur un appel</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerDisabledOnCall" xml:space="preserve">
+    <value>Minuterie de pointage désactivée sur un appel</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInPerformed" xml:space="preserve">
+    <value>Arrivée pointée à un événement du calendrier</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckOutPerformed" xml:space="preserve">
+    <value>Départ pointé d'un événement du calendrier</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInUpdated" xml:space="preserve">
+    <value>Horaires de pointage du calendrier mis à jour</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInDeleted" xml:space="preserve">
+    <value>Pointage du calendrier supprimé</value>
+  </data>
+  <data name="AuditLogTypeCalendarAdminCheckInPerformed" xml:space="preserve">
+    <value>Pointage au calendrier effectué par un administrateur</value>
+  </data>
+  <data name="AuditLogTypeLogCreated" xml:space="preserve">
+    <value>Journal créé</value>
+  </data>
+  <data name="AuditLogTypeLogDeleted" xml:space="preserve">
+    <value>Journal supprimé</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestCreated" xml:space="preserve">
+    <value>Test de communication créé</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestUpdated" xml:space="preserve">
+    <value>Test de communication mis à jour</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestDeleted" xml:space="preserve">
+    <value>Test de communication supprimé</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestRunStarted" xml:space="preserve">
+    <value>Exécution du test de communication démarrée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceCreated" xml:space="preserve">
+    <value>Source d'alertes météorologiques créée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceUpdated" xml:space="preserve">
+    <value>Source d'alertes météorologiques mise à jour</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceDeleted" xml:space="preserve">
+    <value>Source d'alertes météorologiques supprimée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceEnabled" xml:space="preserve">
+    <value>Source d'alertes météorologiques activée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceDisabled" xml:space="preserve">
+    <value>Source d'alertes météorologiques désactivée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneCreated" xml:space="preserve">
+    <value>Zone d'alertes météorologiques créée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneUpdated" xml:space="preserve">
+    <value>Zone d'alertes météorologiques mise à jour</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneDeleted" xml:space="preserve">
+    <value>Zone d'alertes météorologiques supprimée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneEnabled" xml:space="preserve">
+    <value>Zone d'alertes météorologiques activée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneDisabled" xml:space="preserve">
+    <value>Zone d'alertes météorologiques désactivée</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSettingsChanged" xml:space="preserve">
+    <value>Paramètres des alertes météorologiques modifiés</value>
+  </data>
+  <data name="AuditLogTypeFeatureFlagChanged" xml:space="preserve">
+    <value>Indicateur de fonctionnalité modifié</value>
+  </data>
+  <data name="AuditLogTypeFeatureFlagOverrideChanged" xml:space="preserve">
+    <value>Remplacement d'indicateur de fonctionnalité modifié</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceCreated" xml:space="preserve">
+    <value>Appareil de suivi d'unité créé</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceUpdated" xml:space="preserve">
+    <value>Appareil de suivi d'unité mis à jour</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceDisabled" xml:space="preserve">
+    <value>Appareil de suivi d'unité désactivé</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceDeleted" xml:space="preserve">
+    <value>Appareil de suivi d'unité supprimé</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialCreated" xml:space="preserve">
+    <value>Identifiant de suivi d'unité créé</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialRotated" xml:space="preserve">
+    <value>Identifiant de suivi d'unité renouvelé</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialRevoked" xml:space="preserve">
+    <value>Identifiant de suivi d'unité révoqué</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequestExecuted" xml:space="preserve">
+    <value>Suppression du département exécutée</value>
+  </data>
+  <data name="AuditLogTypeChatMessageDeletedByModerator" xml:space="preserve">
+    <value>Message de discussion supprimé par un modérateur</value>
+  </data>
+  <data name="AuditLogTypeChatUserMuted" xml:space="preserve">
+    <value>Utilisateur de discussion mis en sourdine</value>
+  </data>
+  <data name="AuditLogTypeChatUserUnmuted" xml:space="preserve">
+    <value>Sourdine levée pour un utilisateur de discussion</value>
+  </data>
+  <data name="AuditLogTypeChatUserBanned" xml:space="preserve">
+    <value>Utilisateur de discussion banni</value>
+  </data>
+  <data name="AuditLogTypeChatUserUnbanned" xml:space="preserve">
+    <value>Bannissement levé pour un utilisateur de discussion</value>
+  </data>
+  <data name="AuditLogTypeChatChannelLocked" xml:space="preserve">
+    <value>Canal de discussion verrouillé</value>
+  </data>
+  <data name="AuditLogTypeChatChannelUnlocked" xml:space="preserve">
+    <value>Canal de discussion déverrouillé</value>
+  </data>
+  <data name="AuditLogTypeChatChannelArchived" xml:space="preserve">
+    <value>Canal de discussion archivé</value>
+  </data>
+  <data name="AuditLogTypeChatFlagResolved" xml:space="preserve">
+    <value>Signalement de discussion résolu</value>
+  </data>
+  <data name="AuditLogTypeChatSettingsChanged" xml:space="preserve">
+    <value>Paramètres de discussion modifiés</value>
+  </data>
+  <data name="AuditLogTypeChatExportRequested" xml:space="preserve">
+    <value>Export de discussion demandé</value>
+  </data>
+  <data name="AuditLogTypeChatExportDownloaded" xml:space="preserve">
+    <value>Export de discussion téléchargé</value>
+  </data>
+  <data name="AuditLogTypeModerationReportSubmitted" xml:space="preserve">
+    <value>Signalement de modération soumis</value>
+  </data>
+  <data name="AuditLogTypeModerationRequestReopened" xml:space="preserve">
+    <value>Demande de modération rouverte</value>
+  </data>
+  <data name="AuditLogTypeModerationRequestCompleted" xml:space="preserve">
+    <value>Demande de modération terminée</value>
+  </data>
+  <data name="AuditLogTypeModerationEvidenceDownloaded" xml:space="preserve">
+    <value>Preuve de modération téléchargée</value>
+  </data>
+  <data name="AuditLogTypePasswordResetByAdministrator" xml:space="preserve">
+    <value>Mot de passe réinitialisé par un administrateur</value>
+  </data>
+  <data name="AuditLogTypeUserAuthenticationSessionsRevoked" xml:space="preserve">
+    <value>Sessions de connexion de l'utilisateur révoquées</value>
+  </data>
+  <data name="AuditLogTypeDataProtectionStepUpExemptionsChanged" xml:space="preserve">
+    <value>Exemptions de vérification de la protection des données modifiées</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanAdded" xml:space="preserve">
+    <value>Plan d'intervention du contact ajouté</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanUpdated" xml:space="preserve">
+    <value>Plan d'intervention du contact mis à jour</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanRemoved" xml:space="preserve">
+    <value>Plan d'intervention du contact retiré</value>
+  </data>
+  <data name="AuditLogTypeContactAttachmentAdded" xml:space="preserve">
+    <value>Pièce jointe du contact ajoutée</value>
+  </data>
+  <data name="AuditLogTypeContactAttachmentRemoved" xml:space="preserve">
+    <value>Pièce jointe du contact retirée</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionAdded" xml:space="preserve">
+    <value>Définition de liste de contrôle ajoutée</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionUpdated" xml:space="preserve">
+    <value>Définition de liste de contrôle mise à jour</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionPublished" xml:space="preserve">
+    <value>Définition de liste de contrôle publiée</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionRetired" xml:space="preserve">
+    <value>Définition de liste de contrôle mise hors service</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionRemoved" xml:space="preserve">
+    <value>Définition de liste de contrôle retirée</value>
+  </data>
+  <data name="AuditLogTypeChecklistCompletionStarted" xml:space="preserve">
+    <value>Réalisation de liste de contrôle démarrée</value>
+  </data>
+  <data name="AuditLogTypeChecklistProgressSaved" xml:space="preserve">
+    <value>Progression de liste de contrôle enregistrée</value>
+  </data>
+  <data name="AuditLogTypeChecklistCompletionSubmitted" xml:space="preserve">
+    <value>Réalisation de liste de contrôle soumise</value>
+  </data>
+  <data name="AuditLogTypeChecklistWitnessAttested" xml:space="preserve">
+    <value>Liste de contrôle attestée par un témoin</value>
+  </data>
+  <data name="AuditLogTypeChecklistFileAdded" xml:space="preserve">
+    <value>Fichier de liste de contrôle ajouté</value>
+  </data>
+  <data name="AuditLogTypeChecklistFileRemoved" xml:space="preserve">
+    <value>Fichier de liste de contrôle retiré</value>
+  </data>
+  <data name="AuditLogTypeChecklistScheduleAdded" xml:space="preserve">
+    <value>Planification de liste de contrôle ajoutée</value>
+  </data>
+  <data name="AuditLogTypeChecklistScheduleUpdated" xml:space="preserve">
+    <value>Planification de liste de contrôle mise à jour</value>
+  </data>
+  <data name="AuditLogTypeChecklistOccurrenceMissed" xml:space="preserve">
+    <value>Contrôle planifié manqué</value>
+  </data>
+  <data name="AuditLogTypeChecklistOccurrenceSkipped" xml:space="preserve">
+    <value>Contrôle planifié ignoré</value>
+  </data>
+  <data name="AuditLogTypeChecklistReminderSettingsUpdated" xml:space="preserve">
+    <value>Paramètres de rappel des listes de contrôle mis à jour</value>
+  </data>
+  <data name="AuditLogTypeWorkOrderChanged" xml:space="preserve">
+    <value>Ordre de travail modifié</value>
+  </data>
+  <data name="AuditLogTypeInventoryChanged" xml:space="preserve">
+    <value>Inventaire modifié</value>
+  </data>
+  <data name="AuditLogTypeBillingProfileChanged" xml:space="preserve">
+    <value>Profil de facturation modifié</value>
+  </data>
+  <data name="AuditLogTypeRateCardChanged" xml:space="preserve">
+    <value>Grille tarifaire de facturation modifiée</value>
+  </data>
+  <data name="AuditLogTypeInvoiceCreated" xml:space="preserve">
+    <value>Facture créée</value>
+  </data>
+  <data name="AuditLogTypeInvoiceUpdated" xml:space="preserve">
+    <value>Facture mise à jour</value>
+  </data>
+  <data name="AuditLogTypeInvoiceSent" xml:space="preserve">
+    <value>Facture envoyée</value>
+  </data>
+  <data name="AuditLogTypeInvoiceVoided" xml:space="preserve">
+    <value>Facture annulée</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRecorded" xml:space="preserve">
+    <value>Paiement de facture enregistré</value>
+  </data>
+  <data name="AuditLogTypeDepartmentBillingIdentityChanged" xml:space="preserve">
+    <value>Identité de facturation du département modifiée</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionConnected" xml:space="preserve">
+    <value>Compte de paiement connecté</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionDisconnected" xml:space="preserve">
+    <value>Compte de paiement déconnecté</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionRevoked" xml:space="preserve">
+    <value>Accès au compte de paiement révoqué</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionActionRequired" xml:space="preserve">
+    <value>Action requise sur le compte de paiement</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestCreated" xml:space="preserve">
+    <value>Demande de paiement de facture créée</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRefunded" xml:space="preserve">
+    <value>Paiement de facture remboursé</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentDisputed" xml:space="preserve">
+    <value>Paiement de facture contesté</value>
+  </data>
+  <data name="AuditLogTypePaymentWebhookRejected" xml:space="preserve">
+    <value>Webhook de paiement rejeté</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestFailed" xml:space="preserve">
+    <value>Demande de paiement de facture échouée</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestExpired" xml:space="preserve">
+    <value>Demande de paiement de facture expirée</value>
+  </data>
+  <data name="AuditLogTypeCertificationAdded" xml:space="preserve">
+    <value>Certification ajoutée</value>
+  </data>
+  <data name="AuditLogTypeCertificationUpdated" xml:space="preserve">
+    <value>Certification mise à jour</value>
+  </data>
+  <data name="AuditLogTypeCertificationRemoved" xml:space="preserve">
+    <value>Certification retirée</value>
+  </data>
+  <data name="AuditLogTypeCertificationStatusChanged" xml:space="preserve">
+    <value>Statut de certification modifié</value>
+  </data>
+  <data name="AuditLogTypeCertificationVerified" xml:space="preserve">
+    <value>Certification vérifiée</value>
+  </data>
+  <data name="AuditLogTypeCertificationCreditAdded" xml:space="preserve">
+    <value>Crédit de certification ajouté</value>
+  </data>
+  <data name="AuditLogTypeCertificationCreditRemoved" xml:space="preserve">
+    <value>Crédit de certification retiré</value>
+  </data>
+  <data name="AuditLogTypeRoleCertificationRequirementChanged" xml:space="preserve">
+    <value>Exigence de certification du rôle modifiée</value>
+  </data>
+  <data name="AuditLogTypeDepartmentCertificationSettingsChanged" xml:space="preserve">
+    <value>Paramètres des certifications du département modifiés</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberAdded" xml:space="preserve">
+    <value>Membre du rôle ajouté</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberRemoved" xml:space="preserve">
+    <value>Membre du rôle retiré</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberRemovedByCertification" xml:space="preserve">
+    <value>Membre du rôle retiré pour certification échue</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationAdded" xml:space="preserve">
+    <value>Certification d'unité ajoutée</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationUpdated" xml:space="preserve">
+    <value>Certification d'unité mise à jour</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationRemoved" xml:space="preserve">
+    <value>Certification d'unité retirée</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationStatusChanged" xml:space="preserve">
+    <value>Statut de certification d'unité modifié</value>
+  </data>
+  <data name="AuditLogTypeDeploymentCreated" xml:space="preserve">
+    <value>Déploiement créé</value>
+  </data>
+  <data name="AuditLogTypeDeploymentUpdated" xml:space="preserve">
+    <value>Déploiement mis à jour</value>
+  </data>
+  <data name="AuditLogTypeDeploymentStatusChanged" xml:space="preserve">
+    <value>Statut du déploiement modifié</value>
+  </data>
+  <data name="AuditLogTypeDeploymentRosterChanged" xml:space="preserve">
+    <value>Effectif du déploiement modifié</value>
+  </data>
+  <data name="AuditLogTypeDeploymentEquipmentChanged" xml:space="preserve">
+    <value>Équipement du déploiement modifié</value>
+  </data>
+  <data name="AuditLogTypeDeploymentAttachmentAdded" xml:space="preserve">
+    <value>Fichier de déploiement ajouté</value>
+  </data>
+  <data name="AuditLogTypeDeploymentAttachmentRemoved" xml:space="preserve">
+    <value>Fichier de déploiement retiré</value>
+  </data>
+  <data name="AuditLogTypeTimeReportCreated" xml:space="preserve">
+    <value>Rapport de temps créé</value>
+  </data>
+  <data name="AuditLogTypeTimeReportUpdated" xml:space="preserve">
+    <value>Rapport de temps mis à jour</value>
+  </data>
+  <data name="AuditLogTypeTimeReportSubmitted" xml:space="preserve">
+    <value>Rapport de temps soumis</value>
+  </data>
+  <data name="AuditLogTypeTimeReportApproved" xml:space="preserve">
+    <value>Rapport de temps approuvé</value>
+  </data>
+  <data name="AuditLogTypeTimeReportVoided" xml:space="preserve">
+    <value>Rapport de temps annulé</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseAdded" xml:space="preserve">
+    <value>Dépense de déploiement ajoutée</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseUpdated" xml:space="preserve">
+    <value>Dépense de déploiement mise à jour</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseRemoved" xml:space="preserve">
+    <value>Dépense de déploiement retirée</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleCreated" xml:space="preserve">
+    <value>Grille tarifaire créée</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleUpdated" xml:space="preserve">
+    <value>Grille tarifaire mise à jour</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleDeleted" xml:space="preserve">
+    <value>Grille tarifaire supprimée</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleEntryChanged" xml:space="preserve">
+    <value>Entrée de grille tarifaire modifiée</value>
+  </data>
+  <data name="AuditLogTypeRatePremiumChanged" xml:space="preserve">
+    <value>Majoration tarifaire modifiée</value>
+  </data>
+  <data name="AuditLogTypeServiceContractCreated" xml:space="preserve">
+    <value>Contrat de service créé</value>
+  </data>
+  <data name="AuditLogTypeServiceContractUpdated" xml:space="preserve">
+    <value>Contrat de service mis à jour</value>
+  </data>
+  <data name="AuditLogTypeServiceContractStatusChanged" xml:space="preserve">
+    <value>Statut du contrat de service modifié</value>
+  </data>
+  <data name="AuditLogTypeServiceContractDeleted" xml:space="preserve">
+    <value>Contrat de service supprimé</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentAdded" xml:space="preserve">
+    <value>Document de conformité ajouté</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentUpdated" xml:space="preserve">
+    <value>Document de conformité mis à jour</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentRemoved" xml:space="preserve">
+    <value>Document de conformité retiré</value>
+  </data>
+  <data name="AuditLogTypeBidCreated" xml:space="preserve">
+    <value>Offre créée</value>
+  </data>
+  <data name="AuditLogTypeBidUpdated" xml:space="preserve">
+    <value>Offre mise à jour</value>
+  </data>
+  <data name="AuditLogTypeBidSent" xml:space="preserve">
+    <value>Offre envoyée</value>
+  </data>
+  <data name="AuditLogTypeBidAccepted" xml:space="preserve">
+    <value>Offre acceptée</value>
+  </data>
+  <data name="AuditLogTypeBidDeclined" xml:space="preserve">
+    <value>Offre refusée</value>
+  </data>
+  <data name="AuditLogTypeBidWithdrawn" xml:space="preserve">
+    <value>Offre retirée</value>
+  </data>
+  <data name="AuditLogTypeBidExpired" xml:space="preserve">
+    <value>Offre expirée</value>
+  </data>
+  <data name="AuditLogTypeBidConverted" xml:space="preserve">
+    <value>Offre convertie</value>
+  </data>
+  <data name="AuditLogTypeBidDeleted" xml:space="preserve">
+    <value>Offre supprimée</value>
+  </data>
+  <data name="AuditLogTypeTimeReportBilled" xml:space="preserve">
+    <value>Rapport de temps facturé</value>
+  </data>
+  <data name="AuditLogTypeDeploymentInvoiceGenerated" xml:space="preserve">
+    <value>Facture de déploiement générée</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgencyProfileChanged" xml:space="preserve">
+    <value>Profil d'agence Cal OES MARS modifié</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsResourceProfileChanged" xml:space="preserve">
+    <value>Profil de ressource Cal OES MARS modifié</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateProfileChanged" xml:space="preserve">
+    <value>Profil de taux Cal OES MARS modifié</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateDraftBuilt" xml:space="preserve">
+    <value>Brouillon de taux Cal OES MARS établi</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateReviewed" xml:space="preserve">
+    <value>Taux Cal OES MARS examiné</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgreementChanged" xml:space="preserve">
+    <value>Accord Cal OES MARS modifié</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgreementObserved" xml:space="preserve">
+    <value>Accord Cal OES MARS observé</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemPrepared" xml:space="preserve">
+    <value>Élément Cal OES MARS préparé</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemValidated" xml:space="preserve">
+    <value>Élément Cal OES MARS validé</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsReimbursementCalculated" xml:space="preserve">
+    <value>Remboursement Cal OES MARS calculé</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemOpenedForHandoff" xml:space="preserve">
+    <value>Élément Cal OES MARS ouvert pour transfert</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsExternalStatusObserved" xml:space="preserve">
+    <value>Statut externe Cal OES MARS observé</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsInvoiceApproved" xml:space="preserve">
+    <value>Facture Cal OES MARS approuvée</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsInvoiceRejected" xml:space="preserve">
+    <value>Facture Cal OES MARS rejetée</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsPaymentReconciled" xml:space="preserve">
+    <value>Paiement Cal OES MARS rapproché</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemDeleted" xml:space="preserve">
+    <value>Élément Cal OES MARS supprimé</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve">
+    <value>Profil employeur modifié</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve">
+    <value>Établissement modifié</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve">
+    <value>Emploi modifié</value>
+  </data>
+  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve">
+    <value>Rémunération modifiée</value>
+  </data>
+  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve">
+    <value>Données annuelles de paie importées</value>
+  </data>
+  <data name="AuditLogTypePayDataDemographicChanged" xml:space="preserve">
+    <value>Données démographiques de paie modifiées</value>
+  </data>
+  <data name="AuditLogTypePayDataReportCreated" xml:space="preserve">
+    <value>Rapport de données de paie créé</value>
+  </data>
+  <data name="AuditLogTypePayDataReportValidated" xml:space="preserve">
+    <value>Rapport de données de paie validé</value>
+  </data>
+  <data name="AuditLogTypePayDataReportFrozen" xml:space="preserve">
+    <value>Rapport de données de paie figé</value>
+  </data>
+  <data name="AuditLogTypePayDataReportExported" xml:space="preserve">
+    <value>Rapport de données de paie exporté</value>
+  </data>
+  <data name="AuditLogTypePayDataReportMarkedCertified" xml:space="preserve">
+    <value>Rapport de données de paie marqué comme certifié</value>
+  </data>
+  <data name="AuditLogTypePayDataReportCorrected" xml:space="preserve">
+    <value>Rapport de données de paie corrigé</value>
+  </data>
+  <data name="AuditLogTypeResourceCostProfileChanged" xml:space="preserve">
+    <value>Profil de coût de ressource modifié</value>
+  </data>
+  <data name="AuditLogTypeResourceUsageChanged" xml:space="preserve">
+    <value>Utilisation des ressources modifiée</value>
+  </data>
+  <data name="AuditLogTypeFieldCostRunCreated" xml:space="preserve">
+    <value>Calcul de coûts d'intervention créé</value>
+  </data>
+  <data name="AuditLogTypeFieldCostRunFrozen" xml:space="preserve">
+    <value>Calcul de coûts d'intervention figé</value>
+  </data>
+  <data name="AuditLogTypeUserReactivated" xml:space="preserve">
+    <value>Utilisateur réactivé</value>
+  </data>
+  <data name="AuditLogTypeDepartmentConfigurationChanged" xml:space="preserve">
+    <value>Configuration du département modifiée</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistReviewChanged" xml:space="preserve">
+    <value>Examen Admin Assist modifié</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistDiagnosticAccess" xml:space="preserve">
+    <value>Accès au diagnostic Admin Assist accordé</value>
+  </data>
+  <data name="AuditLogTypeAiDispatchSettingsUpdated" xml:space="preserve">
+    <value>Paramètres de la répartition par IA mis à jour</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistPlanAccess" xml:space="preserve">
+    <value>Accès au plan Admin Assist accordé</value>
+  </data>
+  <data name="AuditLogTypeDepartmentSecurityPolicyChanged" xml:space="preserve">
+    <value>Politique de sécurité modifiée</value>
   </data>
   <data name="PermissionColumn" xml:space="preserve">
-    <value>Permission</value>
+    <value>Autorisation</value>
   </data>
   <data name="NoteColumn" xml:space="preserve">
     <value>Note</value>
   </data>
   <data name="ValueColumn" xml:space="preserve">
-    <value>Value</value>
+    <value>Valeur</value>
   </data>
   <data name="RolesColumn" xml:space="preserve">
     <value>Rôles</value>
   </data>
   <data name="TwoFactorEnforcementHeader" xml:space="preserve">
-    <value>Two-Factor Authentication (2FA) Enforcement</value>
+    <value>Obligation de l'authentification à deux facteurs (2FA)</value>
   </data>
   <data name="TwoFactorEnforcementDescription" xml:space="preserve">
-    <value>Require authenticator-app 2FA for admin users. When enabled, admins who have not set up 2FA will be redirected to enroll before accessing administrative features.</value>
+    <value>Exigez la 2FA par application d'authentification pour les administrateurs. Lorsque cette option est activée, les administrateurs qui n'ont pas configuré la 2FA sont redirigés vers l'inscription avant de pouvoir accéder aux fonctions d'administration.</value>
   </data>
   <data name="Require2FAForAdminsLabel" xml:space="preserve">
-    <value>Require 2FA for Admins</value>
+    <value>Exiger la 2FA pour les administrateurs</value>
   </data>
   <data name="Require2FAForAdminsDescription" xml:space="preserve">
-    <value>Controls which admin-level users must enroll in authenticator-app 2FA (Google Authenticator, Microsoft Authenticator, Authy, etc.).</value>
+    <value>Détermine quels utilisateurs de niveau administrateur doivent s'inscrire à la 2FA par application d'authentification (Google Authenticator, Microsoft Authenticator, Authy, etc.).</value>
   </data>
   <data name="Require2FADisabled" xml:space="preserve">
-    <value>Disabled (no requirement)</value>
+    <value>Désactivé (aucune exigence)</value>
   </data>
   <data name="Require2FADeptAdmins" xml:space="preserve">
-    <value>Department Admins + Managing User</value>
+    <value>Administrateurs du département + membre gestionnaire</value>
   </data>
   <data name="Require2FAAllAdmins" xml:space="preserve">
-    <value>Department Admins + Managing User + Group Admins</value>
+    <value>Administrateurs du département + membre gestionnaire + administrateurs de groupe</value>
   </data>
   <data name="Require2FASettingSaved" xml:space="preserve">
-    <value>2FA enforcement setting saved.</value>
+    <value>Réglage d'obligation de la 2FA enregistré.</value>
   </data>
   <data name="Require2FASettingFailed" xml:space="preserve">
-    <value>Failed to save 2FA enforcement setting.</value>
+    <value>Échec de l'enregistrement du réglage d'obligation de la 2FA.</value>
   </data>
   <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: the managing user of this department does not have two-factor authentication enabled on their account. The managing user must enable 2FA before this setting can be turned on.</value>
+    <value>Impossible d'activer l'obligation de la 2FA : le membre gestionnaire de ce département n'a pas activé l'authentification à deux facteurs sur son compte. Le membre gestionnaire doit activer la 2FA avant que ce réglage puisse être activé.</value>
   </data>
   <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: you do not have two-factor authentication enabled on your own account. You must enable 2FA before you can require it for others.</value>
+    <value>Impossible d'activer l'obligation de la 2FA : vous n'avez pas activé l'authentification à deux facteurs sur votre propre compte. Vous devez activer la 2FA avant de pouvoir l'exiger des autres.</value>
   </data>
   <data name="Require2FABothMustEnable" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: neither you nor the managing user have two-factor authentication enabled. Both must enable 2FA before this setting can be turned on.</value>
+    <value>Impossible d'activer l'obligation de la 2FA : ni vous ni le membre gestionnaire n'avez activé l'authentification à deux facteurs. Vous devez tous deux activer la 2FA avant que ce réglage puisse être activé.</value>
   </data>
   <data name="Require2FASettingLocked" xml:space="preserve">
-    <value>This setting is locked until the above conditions are met.</value>
+    <value>Ce réglage est verrouillé tant que les conditions ci-dessus ne sont pas remplies.</value>
   </data>
   <data name="PermissionNameColumn" xml:space="preserve">
-    <value>Permission</value>
+    <value>Autorisation</value>
   </data>
   <data name="PermissionNoteColumn" xml:space="preserve">
     <value>Note</value>
   </data>
   <data name="PermissionSelectionColumn" xml:space="preserve">
-    <value>Selection</value>
+    <value>Sélection</value>
   </data>
   <data name="PermissionGroupOnlyColumn" xml:space="preserve">
-    <value>Group Only</value>
+    <value>Groupe uniquement</value>
   </data>
   <data name="PermissionRolesColumn" xml:space="preserve">
     <value>Rôles</value>
   </data>
   <data name="PermissionNoRoles" xml:space="preserve">
-    <value>No Roles</value>
+    <value>Aucun rôle</value>
   </data>
   <data name="PermissionNA" xml:space="preserve">
     <value>N/A</value>
   </data>
+  <data name="PermOptionEveryone" xml:space="preserve">
+    <value>Tout le monde</value>
+  </data>
+  <data name="PermOptionDepartmentAdmins" xml:space="preserve">
+    <value>Administrateurs du département</value>
+  </data>
+  <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve">
+    <value>Administrateurs du département et des groupes</value>
+  </data>
+  <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve">
+    <value>Administrateurs du département et rôles sélectionnés</value>
+  </data>
+  <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
+    <value>Administrateurs du département et des groupes, et rôles sélectionnés</value>
+  </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
-    <value>Security and Permissions</value>
+    <value>Sécurité et autorisations</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Accueil</value>
   </data>
   <data name="SecurityDescription" xml:space="preserve">
-    <value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value>
+    <value>Vous pouvez définir ici les autorisations de votre département, par exemple quels utilisateurs ou rôles peuvent créer des appels, ou qui est autorisé à créer et retirer des utilisateurs. Les modifications des autorisations prendront effet à la prochaine connexion à l'application web Resgrid.</value>
   </data>
   <data name="PermAddUsersLabel" xml:space="preserve">
-    <value>Who can Add Users</value>
+    <value>Qui peut ajouter des utilisateurs</value>
   </data>
   <data name="PermAddUsersNote" xml:space="preserve">
-    <value>This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users. But Group Admins can also be allowed to add users (limited only to the group they are an admin of).</value>
+    <value>Cette option détermine qui peut ajouter des utilisateurs/du personnel au département. Par défaut, seuls les administrateurs du département (et le membre gestionnaire) peuvent ajouter des utilisateurs. Les administrateurs de groupe peuvent toutefois aussi être autorisés à ajouter des utilisateurs (uniquement dans le groupe dont ils sont administrateurs).</value>
   </data>
   <data name="PermRemoveUsersLabel" xml:space="preserve">
-    <value>Who can Remove Users</value>
+    <value>Qui peut retirer des utilisateurs</value>
   </data>
   <data name="PermRemoveUsersNote" xml:space="preserve">
-    <value>This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users. But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).</value>
+    <value>Cette option détermine qui peut retirer des utilisateurs/du personnel du département. Par défaut, seuls les administrateurs du département (et le membre gestionnaire) peuvent retirer des utilisateurs. Les administrateurs de groupe peuvent toutefois aussi être autorisés à retirer des utilisateurs (uniquement parmi les utilisateurs du groupe dont ils sont administrateurs).</value>
   </data>
   <data name="PermCreateCallLabel" xml:space="preserve">
-    <value>Who can Create Calls</value>
+    <value>Qui peut créer des appels</value>
   </data>
   <data name="PermCreateCallNote" xml:space="preserve">
-    <value>This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.</value>
+    <value>Cette option détermine qui peut créer manuellement des appels dans le système Resgrid. Par défaut, tout le monde peut créer des appels.</value>
   </data>
   <data name="PermDeleteCallLabel" xml:space="preserve">
-    <value>Who can Delete Calls</value>
+    <value>Qui peut supprimer des appels</value>
   </data>
   <data name="PermDeleteCallNote" xml:space="preserve">
-    <value>This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.</value>
+    <value>Cette option détermine qui peut supprimer des appels du système Resgrid. Par défaut, tout le monde peut supprimer des appels.</value>
   </data>
   <data name="PermCloseCallLabel" xml:space="preserve">
-    <value>Who can Close Calls</value>
+    <value>Qui peut clôturer des appels</value>
   </data>
   <data name="PermCloseCallNote" xml:space="preserve">
-    <value>This option determines who can close calls from the Resgrid system. By default Everyone can close calls.</value>
+    <value>Cette option détermine qui peut clôturer des appels dans le système Resgrid. Par défaut, tout le monde peut clôturer des appels.</value>
   </data>
   <data name="PermAddCallDataLabel" xml:space="preserve">
-    <value>Who can Add Data To Calls</value>
+    <value>Qui peut ajouter des données aux appels</value>
   </data>
   <data name="PermAddCallDataNote" xml:space="preserve">
-    <value>This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to calls.</value>
+    <value>Cette option détermine qui peut ajouter des données, comme des images, des notes et des fichiers, aux appels dans le système Resgrid. Par défaut, tout le monde peut ajouter des données aux appels.</value>
   </data>
   <data name="PermCreateTrainingLabel" xml:space="preserve">
-    <value>Who can Create Trainings</value>
+    <value>Qui peut créer des formations</value>
   </data>
   <data name="PermCreateTrainingNote" xml:space="preserve">
-    <value>This option determines who can create trainings. By default only Department Admins can create trainings.</value>
+    <value>Cette option détermine qui peut créer des formations. Par défaut, seuls les administrateurs du département peuvent créer des formations.</value>
   </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
-    <value>Who can Add Documents</value>
+    <value>Qui peut ajouter des documents</value>
   </data>
   <data name="PermCreateDocumentNote" xml:space="preserve">
-    <value>This option determines who can add documents. By default Everyone can add documents.</value>
+    <value>Cette option détermine qui peut ajouter des documents. Par défaut, tout le monde peut ajouter des documents.</value>
   </data>
   <data name="PermCreateCalendarEntryLabel" xml:space="preserve">
-    <value>Who can Create Calendar Entries</value>
+    <value>Qui peut créer des entrées de calendrier</value>
   </data>
   <data name="PermCreateCalendarEntryNote" xml:space="preserve">
-    <value>This option determines who can create calendar entries. By default Everyone can create calendar entries.</value>
+    <value>Cette option détermine qui peut créer des entrées de calendrier. Par défaut, tout le monde peut créer des entrées de calendrier.</value>
   </data>
   <data name="PermCreateNoteLabel" xml:space="preserve">
-    <value>Who can Create Notes</value>
+    <value>Qui peut créer des notes</value>
   </data>
   <data name="PermCreateNoteNote" xml:space="preserve">
-    <value>This option determines who can create notes. By default Everyone can create notes.</value>
+    <value>Cette option détermine qui peut créer des notes. Par défaut, tout le monde peut créer des notes.</value>
   </data>
   <data name="PermCreateLogLabel" xml:space="preserve">
-    <value>Who can Add Log Entries</value>
+    <value>Qui peut ajouter des entrées de journal</value>
   </data>
   <data name="PermCreateLogNote" xml:space="preserve">
-    <value>This option determines who can add log entries. By default Everyone can add log entries.</value>
+    <value>Cette option détermine qui peut ajouter des entrées de journal. Par défaut, tout le monde peut ajouter des entrées de journal.</value>
   </data>
   <data name="PermCreateShiftLabel" xml:space="preserve">
-    <value>Who can Create Shifts</value>
+    <value>Qui peut créer des quarts</value>
   </data>
   <data name="PermCreateShiftNote" xml:space="preserve">
-    <value>This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.</value>
+    <value>Cette option détermine qui peut créer et modifier des quarts. Par défaut, seuls les administrateurs du département peuvent créer et modifier des quarts.</value>
   </data>
   <data name="PermViewPersonalInfoLabel" xml:space="preserve">
-    <value>Who can View Personal Info</value>
+    <value>Qui peut voir les informations personnelles</value>
   </data>
   <data name="PermViewPersonalInfoNote" xml:space="preserve">
-    <value>This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.</value>
+    <value>Cette option détermine qui peut voir les informations personnelles identifiables (PII) du personnel dans le système, par exemple l'adresse e-mail, les numéros de téléphone, etc. Par défaut, tout le monde peut voir ces informations.</value>
   </data>
   <data name="PermAdjustInventoryLabel" xml:space="preserve">
-    <value>Who can Adjust Inventory</value>
+    <value>Qui peut ajuster l'inventaire</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.</value>
+    <value>Cette option détermine qui peut ajuster les niveaux de stock de l'inventaire dans le système. Par défaut, tout le monde peut ajuster l'inventaire.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
-    <value>Who can see the Location of Personnel</value>
+    <value>Qui peut voir la position du personnel</value>
   </data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve">
-    <value>This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value>
+    <value>Cette option détermine qui peut voir la position du personnel sur les cartes. Pour limiter cette option aux administrateurs de groupe et aux rôles d'un groupe, vous devez cocher l'option Groupe uniquement.</value>
   </data>
   <data name="PermViewUnitLocationLabel" xml:space="preserve">
-    <value>Who can see the Location of Units</value>
+    <value>Qui peut voir la position des unités</value>
   </data>
   <data name="PermViewUnitLocationNote" xml:space="preserve">
-    <value>This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value>
+    <value>Cette option détermine qui peut voir la position des unités sur les cartes. Pour limiter cette option aux administrateurs de groupe et aux rôles d'un groupe, vous devez cocher l'option Groupe uniquement.</value>
   </data>
   <data name="PermCreateMessageLabel" xml:space="preserve">
-    <value>Who can send messages</value>
+    <value>Qui peut envoyer des messages</value>
   </data>
   <data name="PermCreateMessageNote" xml:space="preserve">
-    <value>This option determines who can create and send messages (in-system mail). By default everyone can create and send messages.</value>
+    <value>Cette option détermine qui peut créer et envoyer des messages (messagerie interne). Par défaut, tout le monde peut créer et envoyer des messages.</value>
   </data>
   <data name="PermViewGroupsUsersLabel" xml:space="preserve">
-    <value>Who can view users</value>
+    <value>Qui peut voir les utilisateurs</value>
   </data>
   <data name="PermViewGroupsUsersNote" xml:space="preserve">
-    <value>By default all users can see all other users in the system. This option allows you to limit who can see users in the system.</value>
+    <value>Par défaut, tous les utilisateurs peuvent voir tous les autres utilisateurs du système. Cette option vous permet de limiter qui peut voir les utilisateurs du système.</value>
   </data>
   <data name="PermViewGroupsUnitsLabel" xml:space="preserve">
-    <value>Who can view units</value>
+    <value>Qui peut voir les unités</value>
   </data>
   <data name="PermViewGroupsUnitsNote" xml:space="preserve">
-    <value>By default all users can see all units in the system. This option allows you to limit who can view units in the system.</value>
+    <value>Par défaut, tous les utilisateurs peuvent voir toutes les unités du système. Cette option vous permet de limiter qui peut voir les unités du système.</value>
   </data>
   <data name="PermViewContactsLabel" xml:space="preserve">
-    <value>Who can view Contacts</value>
+    <value>Qui peut voir les contacts</value>
   </data>
   <data name="PermViewContactsNote" xml:space="preserve">
-    <value>By default all users can see all contacts in the system. This option allows you to limit who can view contacts in the system. If a user cannot view Contacts they also won't be able to add them to a call.</value>
+    <value>Par défaut, tous les utilisateurs peuvent voir tous les contacts du système. Cette option vous permet de limiter qui peut voir les contacts du système. Un utilisateur qui ne peut pas voir les contacts ne pourra pas non plus les ajouter à un appel.</value>
   </data>
   <data name="PermEditContactsLabel" xml:space="preserve">
-    <value>Who can edit or create Contacts</value>
+    <value>Qui peut modifier ou créer des contacts</value>
   </data>
   <data name="PermEditContactsNote" xml:space="preserve">
-    <value>By default all users can create and edit contacts in the system. This option allows you to limit who can create or edit contacts in the system.</value>
+    <value>Par défaut, tous les utilisateurs peuvent créer et modifier des contacts dans le système. Cette option vous permet de limiter qui peut créer ou modifier des contacts dans le système.</value>
   </data>
   <data name="PermDeleteContactsLabel" xml:space="preserve">
-    <value>Who can delete Contacts</value>
+    <value>Qui peut supprimer des contacts</value>
   </data>
   <data name="PermDeleteContactsNote" xml:space="preserve">
-    <value>By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.</value>
+    <value>Par défaut, tous les utilisateurs peuvent supprimer des contacts dans le système. Cette option vous permet de limiter qui peut supprimer des contacts dans le système.</value>
   </data>
   <data name="PermCreateWorkflowLabel" xml:space="preserve">
-    <value>Who can Create/Edit Workflows</value>
+    <value>Qui peut créer/modifier des flux de travail</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>This option determines who can create, edit, and delete workflows and workflow steps. By default only Department Admins can manage workflows.</value>
+    <value>Cette option détermine qui peut créer, modifier et supprimer des flux de travail et leurs étapes. Par défaut, seuls les administrateurs du département peuvent gérer les flux de travail.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
-    <value>Who can Manage Workflow Credentials</value>
+    <value>Qui peut gérer les identifiants des flux de travail</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). By default only Department Admins can manage credentials.</value>
+    <value>Cette option détermine qui peut créer, modifier et supprimer les identifiants chiffrés utilisés par les actions des flux de travail (p. ex. mots de passe SMTP, clés API). Par défaut, seuls les administrateurs du département peuvent gérer les identifiants.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
-    <value>Who can View Workflow Runs</value>
+    <value>Qui peut voir les exécutions de flux de travail</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.</value>
+    <value>Cette option détermine qui peut voir l'historique d'exécution des flux de travail, les journaux d'exécution et les tableaux de bord d'état. Par défaut, seuls les administrateurs du département peuvent voir les exécutions de flux de travail.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
-    <value>Single Sign-On (SSO) &amp; SCIM</value>
+    <value>Authentification unique (SSO) et SCIM</value>
   </data>
   <data name="SsoPageHeader" xml:space="preserve">
-    <value>Single Sign-On &amp; Identity Provisioning</value>
+    <value>Authentification unique et approvisionnement des identités</value>
   </data>
   <data name="SsoBreadcrumb" xml:space="preserve">
     <value>SSO / SCIM</value>
   </data>
   <data name="SsoSecurityPolicyButton" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Politique de sécurité</value>
   </data>
   <data name="SsoAddOidcButton" xml:space="preserve">
-    <value>Add OIDC Config</value>
+    <value>Ajouter une configuration OIDC</value>
   </data>
   <data name="SsoAddSamlButton" xml:space="preserve">
-    <value>Add SAML 2.0 Config</value>
+    <value>Ajouter une configuration SAML 2.0</value>
   </data>
   <data name="SsoWhatIsSsoHeader" xml:space="preserve">
-    <value>What is SSO &amp; SCIM?</value>
+    <value>Qu'est-ce que le SSO et le SCIM ?</value>
   </data>
   <data name="SsoSingleSignOnHeader" xml:space="preserve">
-    <value>Single Sign-On (SSO)</value>
+    <value>Authentification unique (SSO)</value>
   </data>
   <data name="SsoSingleSignOnDescription" xml:space="preserve">
-    <value>Allow department members to log in with their existing corporate identity (Microsoft Entra ID, Okta, Google Workspace, etc.) instead of a separate Resgrid password.</value>
+    <value>Permettez aux membres du département de se connecter avec leur identité d'entreprise existante (Microsoft Entra ID, Okta, Google Workspace, etc.) au lieu d'un mot de passe Resgrid distinct.</value>
   </data>
   <data name="SsoOidcDescription" xml:space="preserve">
-    <value>OIDC — Modern protocol, ideal for Entra, Okta, Auth0, Google</value>
+    <value>OIDC — Protocole moderne, idéal pour Entra, Okta, Auth0, Google</value>
   </data>
   <data name="SsoSamlDescription" xml:space="preserve">
-    <value>SAML 2.0 — Widely supported by government &amp; enterprise IdPs</value>
+    <value>SAML 2.0 — Largement pris en charge par les IdP gouvernementaux et d'entreprise</value>
   </data>
   <data name="SsoScimHeader" xml:space="preserve">
-    <value>SCIM 2.0 Provisioning</value>
+    <value>Approvisionnement SCIM 2.0</value>
   </data>
   <data name="SsoScimDescription" xml:space="preserve">
-    <value>Automatically sync users from your identity provider. When you onboard or offboard staff in your corporate directory, Resgrid reflects those changes automatically — no manual invite/remove steps.</value>
+    <value>Synchronisez automatiquement les utilisateurs depuis votre fournisseur d'identité. Lorsque vous ajoutez ou retirez du personnel dans votre annuaire d'entreprise, Resgrid reflète automatiquement ces changements — aucune étape manuelle d'invitation ou de retrait.</value>
   </data>
   <data name="SsoScimAutoCreate" xml:space="preserve">
-    <value>Auto-create new members when added in your IdP</value>
+    <value>Créer automatiquement les nouveaux membres ajoutés dans votre IdP</value>
   </data>
   <data name="SsoScimAutoDisable" xml:space="preserve">
-    <value>Disable/remove members when deprovisioned</value>
+    <value>Désactiver/retirer les membres déprovisionnés</value>
   </data>
   <data name="SsoScimSyncNames" xml:space="preserve">
-    <value>Keep names &amp; email addresses in sync</value>
+    <value>Synchroniser les noms et adresses e-mail</value>
   </data>
   <data name="SsoSecurityPolicyHeader" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Politique de sécurité</value>
   </data>
   <data name="SsoSecurityPolicyDescription" xml:space="preserve">
-    <value>Enforce department-wide compliance controls alongside SSO:</value>
+    <value>Appliquez des contrôles de conformité à l'échelle du département en complément du SSO :</value>
   </data>
   <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve">
-    <value>Mandate MFA for all members</value>
+    <value>Imposer la MFA à tous les membres</value>
   </data>
   <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve">
-    <value>Restrict login to SSO only (disable passwords)</value>
+    <value>Limiter la connexion au SSO uniquement (désactiver les mots de passe)</value>
   </data>
   <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve">
-    <value>Limit logins to specific IP CIDR ranges</value>
+    <value>Limiter les connexions à des plages d'adresses IP CIDR spécifiques</value>
   </data>
   <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve">
-    <value>Set password expiration &amp; complexity rules</value>
+    <value>Définir des règles d'expiration et de complexité des mots de passe</value>
   </data>
   <data name="SsoSecurityPolicyDataClassification" xml:space="preserve">
-    <value>Classify data level (Unclassified / CUI / Confidential)</value>
+    <value>Classer le niveau des données (Non classifié / CUI / Confidentiel)</value>
   </data>
   <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve">
-    <value>Mobile App Discovery URL</value>
+    <value>URL de découverte pour l'application mobile</value>
   </data>
   <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve">
-    <value>The Resgrid mobile app uses this URL to discover your SSO settings before showing the login screen. Share it with your mobile team if needed.</value>
+    <value>L'application mobile Resgrid utilise cette URL pour découvrir vos paramètres SSO avant d'afficher l'écran de connexion. Partagez-la avec votre équipe mobile si nécessaire.</value>
   </data>
   <data name="SsoCopyButton" xml:space="preserve">
-    <value>Copy</value>
+    <value>Copier</value>
   </data>
   <data name="SsoCopiedToClipboard" xml:space="preserve">
-    <value>Copied to clipboard!</value>
+    <value>Copié dans le presse-papiers !</value>
   </data>
   <data name="SsoConfigurationsHeader" xml:space="preserve">
-    <value>SSO Configurations</value>
+    <value>Configurations SSO</value>
   </data>
   <data name="SsoNoConfigurationsWarning" xml:space="preserve">
-    <value>No SSO configurations yet. Use the buttons above to add OIDC or SAML 2.0.</value>
+    <value>Aucune configuration SSO pour le moment. Utilisez les boutons ci-dessus pour ajouter une configuration OIDC ou SAML 2.0.</value>
   </data>
   <data name="SsoTableColProvider" xml:space="preserve">
-    <value>Provider</value>
+    <value>Fournisseur</value>
   </data>
   <data name="SsoTableColIdentifier" xml:space="preserve">
-    <value>Identifier / Endpoint</value>
+    <value>Identifiant / point de terminaison</value>
   </data>
   <data name="SsoTableColStatus" xml:space="preserve">
     <value>Statut</value>
   </data>
   <data name="SsoTableColLocalLogin" xml:space="preserve">
-    <value>Local Login</value>
+    <value>Connexion locale</value>
   </data>
   <data name="SsoTableColAutoProvision" xml:space="preserve">
-    <value>Auto-Provision</value>
+    <value>Approvisionnement automatique</value>
   </data>
   <data name="SsoTableColScim" xml:space="preserve">
     <value>SCIM</value>
   </data>
   <data name="SsoTableColCreated" xml:space="preserve">
-    <value>Created</value>
+    <value>Date de création</value>
   </data>
   <data name="SsoTableColActions" xml:space="preserve">
     <value>Actions</value>
   </data>
   <data name="SsoStatusEnabled" xml:space="preserve">
-    <value>Enabled</value>
+    <value>Activé</value>
   </data>
   <data name="SsoStatusDisabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Désactivé</value>
   </data>
   <data name="SsoLocalLoginYes" xml:space="preserve">
     <value>Oui</value>
   </data>
   <data name="SsoLocalLoginSsoOnly" xml:space="preserve">
-    <value>SSO Only</value>
+    <value>SSO uniquement</value>
   </data>
   <data name="SsoAutoProvisionOn" xml:space="preserve">
-    <value>On</value>
+    <value>Activé</value>
   </data>
   <data name="SsoAutoProvisionOff" xml:space="preserve">
-    <value>Off</value>
+    <value>Désactivé</value>
   </data>
   <data name="SsoScimStatusActive" xml:space="preserve">
     <value>Actif</value>
   </data>
   <data name="SsoScimStatusNoToken" xml:space="preserve">
-    <value>No Token</value>
+    <value>Aucun jeton</value>
   </data>
   <data name="SsoScimStatusOff" xml:space="preserve">
-    <value>Off</value>
+    <value>Désactivé</value>
   </data>
   <data name="SsoEditButton" xml:space="preserve">
     <value>Modifier</value>
@@ -441,10 +1530,37 @@
     <value>SCIM</value>
   </data>
   <data name="SsoDeleteConfirmTitle" xml:space="preserve">
-    <value>Confirm Delete</value>
+    <value>Confirmer la suppression</value>
   </data>
   <data name="SsoDeleteConfirmMessage" xml:space="preserve">
-    <value>Are you sure you want to delete the {0} SSO configuration? This cannot be undone.</value>
+    <value>Voulez-vous vraiment supprimer la configuration SSO {0} ? Cette action est irréversible.</value>
+  </data>
+  <data name="SsoErrorInvalidProviderType" xml:space="preserve">
+    <value>Type de fournisseur non valide.</value>
+  </data>
+  <data name="SsoErrorConfigAlreadyExists" xml:space="preserve">
+    <value>Une configuration SSO pour {0} existe déjà. Utilisez Modifier pour la mettre à jour.</value>
+  </data>
+  <data name="SsoErrorOidcClientIdRequired" xml:space="preserve">
+    <value>L'ID client OIDC est requis.</value>
+  </data>
+  <data name="SsoErrorOidcAuthorityInvalid" xml:space="preserve">
+    <value>L'autorité OIDC doit être une URL HTTPS valide.</value>
+  </data>
+  <data name="SsoErrorSamlCertificateRequired" xml:space="preserve">
+    <value>Un certificat de signature de l'IdP est requis pour valider les assertions SAML.</value>
+  </data>
+  <data name="SsoErrorIdpSsoUrlInvalid" xml:space="preserve">
+    <value>L'URL d'authentification unique de l'IdP doit être une URL HTTPS valide.</value>
+  </data>
+  <data name="SsoConfigCreatedSuccess" xml:space="preserve">
+    <value>Configuration SSO {0} créée avec succès.</value>
+  </data>
+  <data name="SsoConfigUpdatedSuccess" xml:space="preserve">
+    <value>Configuration SSO mise à jour avec succès.</value>
+  </data>
+  <data name="SsoConfigDeletedSuccess" xml:space="preserve">
+    <value>Configuration SSO {0} supprimée.</value>
   </data>
   <data name="SsoDeleteCancelButton" xml:space="preserve">
     <value>Annuler</value>
@@ -453,10 +1569,10 @@
     <value>Supprimer</value>
   </data>
   <data name="SsoEditPageTitleNew" xml:space="preserve">
-    <value>New SSO Configuration</value>
+    <value>Nouvelle configuration SSO</value>
   </data>
   <data name="SsoEditPageTitleEdit" xml:space="preserve">
-    <value>Edit SSO Configuration</value>
+    <value>Modifier la configuration SSO</value>
   </data>
   <data name="SsoEditBreadcrumbNew" xml:space="preserve">
     <value>Nouveau</value>
@@ -465,226 +1581,256 @@
     <value>Modifier</value>
   </data>
   <data name="SsoEditStep1Label" xml:space="preserve">
-    <value>Step 1</value>
+    <value>Étape 1</value>
   </data>
   <data name="SsoEditStep1Header" xml:space="preserve">
-    <value>Provider &amp; Basic Settings</value>
+    <value>Fournisseur et paramètres de base</value>
   </data>
   <data name="SsoEditProviderTypeLabel" xml:space="preserve">
-    <value>Identity Provider Protocol</value>
+    <value>Protocole du fournisseur d'identité</value>
+  </data>
+  <data name="SsoEditProviderTypeOidcOption" xml:space="preserve">
+    <value>OIDC (OpenID Connect) — Microsoft Entra, Okta, Google, Auth0</value>
+  </data>
+  <data name="SsoEditProviderTypeSamlOption" xml:space="preserve">
+    <value>SAML 2.0 — La plupart des IdP d'entreprise et gouvernementaux</value>
   </data>
   <data name="SsoEditEnableLabel" xml:space="preserve">
-    <value>Enable this SSO configuration</value>
+    <value>Activer cette configuration SSO</value>
   </data>
   <data name="SsoEditEnableDescription" xml:space="preserve">
-    <value>Only one configuration per provider type is active at a time.</value>
+    <value>Une seule configuration par type de fournisseur peut être active à la fois.</value>
   </data>
   <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve">
-    <value>Allow local password login</value>
+    <value>Autoriser la connexion locale par mot de passe</value>
   </data>
   <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve">
-    <value>When checked, users can still log in with username &amp; password in addition to SSO. Disable this together with the Security Policy's Require SSO flag to enforce SSO-only login.</value>
+    <value>Si cette case est cochée, les utilisateurs peuvent toujours se connecter avec leur nom d'utilisateur et leur mot de passe en plus du SSO. Décochez-la et activez l'option Exiger le SSO de la politique de sécurité pour imposer la connexion par SSO uniquement.</value>
   </data>
   <data name="SsoEditAutoProvisionLabel" xml:space="preserve">
-    <value>Auto-provision new users</value>
+    <value>Approvisionner automatiquement les nouveaux utilisateurs</value>
   </data>
   <data name="SsoEditAutoProvisionDescription" xml:space="preserve">
-    <value>Automatically create a Resgrid account when a user authenticates via SSO for the first time and no matching email is found. Leave off to require manual invitation first.</value>
+    <value>Crée automatiquement un compte Resgrid lorsqu'un utilisateur s'authentifie par SSO pour la première fois et qu'aucune adresse e-mail correspondante n'est trouvée. Laissez désactivé pour exiger d'abord une invitation manuelle.</value>
   </data>
   <data name="SsoEditScimEnableLabel" xml:space="preserve">
-    <value>Enable SCIM 2.0 provisioning</value>
+    <value>Activer l'approvisionnement SCIM 2.0</value>
   </data>
   <data name="SsoEditScimEnableDescription" xml:space="preserve">
-    <value>Allows your IdP to automatically create/update/deactivate members. After saving, go to the SCIM Setup page to generate a bearer token.</value>
+    <value>Permet à votre IdP de créer, mettre à jour et désactiver automatiquement des membres. Après l'enregistrement, rendez-vous sur la page de configuration SCIM pour générer un jeton Bearer.</value>
   </data>
   <data name="SsoEditDefaultRankLabel" xml:space="preserve">
-    <value>Default Rank for Auto-Provisioned Users</value>
+    <value>Grade par défaut des utilisateurs approvisionnés automatiquement</value>
+  </data>
+  <data name="SsoEditDefaultRankNone" xml:space="preserve">
+    <value>(Aucun grade par défaut)</value>
   </data>
   <data name="SsoEditDefaultRankDescription" xml:space="preserve">
-    <value>Optional. Applied only when Auto-Provision creates a new member.</value>
+    <value>Facultatif. Appliqué uniquement lorsque l'approvisionnement automatique crée un nouveau membre.</value>
   </data>
   <data name="SsoEditStep2OidcLabel" xml:space="preserve">
-    <value>Step 2 — OIDC</value>
+    <value>Étape 2 — OIDC</value>
   </data>
   <data name="SsoEditStep2OidcHeader" xml:space="preserve">
-    <value>OpenID Connect Settings</value>
+    <value>Paramètres OpenID Connect</value>
   </data>
   <data name="SsoEditOidcInfoAlert" xml:space="preserve">
-    <value>Where to find these values: In your IdP, register Resgrid as a Public Client (PKCE, no client secret required for mobile) or Web App (with secret for server-side flows). Copy the Client ID and Issuer URL from the registered application.</value>
+    <value>Où trouver ces valeurs : dans votre IdP, enregistrez Resgrid comme client public (PKCE, aucun secret client requis pour le mobile) ou comme application web (avec secret pour les flux côté serveur). Copiez l'ID client et l'URL de l'émetteur depuis l'application enregistrée.</value>
   </data>
   <data name="SsoEditAuthorityLabel" xml:space="preserve">
-    <value>Authority / Issuer URL</value>
+    <value>URL de l'autorité / de l'émetteur</value>
   </data>
   <data name="SsoEditAuthorityPlaceholder" xml:space="preserve">
     <value>https://login.microsoftonline.com/{tenant-id}/v2.0</value>
   </data>
   <data name="SsoEditAuthorityDescription" xml:space="preserve">
-    <value>Examples: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value>
+    <value>Exemples : Entra ID : https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta : https://{your-domain}.okta.com/oauth2/default | Google : https://accounts.google.com</value>
   </data>
   <data name="SsoEditClientIdLabel" xml:space="preserve">
-    <value>Client ID</value>
+    <value>ID client</value>
   </data>
   <data name="SsoEditClientIdPlaceholder" xml:space="preserve">
     <value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value>
   </data>
   <data name="SsoEditClientIdDescription" xml:space="preserve">
-    <value>The public client identifier assigned by your IdP. Safe to display — not a secret.</value>
+    <value>L'identifiant client public attribué par votre IdP. Peut être affiché sans risque — ce n'est pas un secret.</value>
   </data>
   <data name="SsoEditClientSecretLabel" xml:space="preserve">
-    <value>Client Secret</value>
+    <value>Secret client</value>
   </data>
   <data name="SsoEditClientSecretStored" xml:space="preserve">
-    <value>Secret stored</value>
+    <value>Secret enregistré</value>
   </data>
   <data name="SsoEditClientSecretDescription" xml:space="preserve">
-    <value>Encrypted at rest using your department-specific key. Leave blank if using PKCE (mobile/SPA — no secret needed).</value>
+    <value>Chiffré au repos avec la clé propre à votre département. Laissez vide si vous utilisez PKCE (mobile/SPA — aucun secret nécessaire).</value>
   </data>
   <data name="SsoEditClientSecretKeepExisting" xml:space="preserve">
-    <value>Leave blank to keep the existing secret unchanged.</value>
+    <value>Laissez vide pour conserver le secret existant.</value>
   </data>
   <data name="SsoEditStep2SamlLabel" xml:space="preserve">
-    <value>Step 2 — SAML 2.0</value>
+    <value>Étape 2 — SAML 2.0</value>
   </data>
   <data name="SsoEditStep2SamlHeader" xml:space="preserve">
-    <value>SAML 2.0 Settings</value>
+    <value>Paramètres SAML 2.0</value>
   </data>
   <data name="SsoEditSamlInfoAlert" xml:space="preserve">
-    <value>Where to find these values: In your IdP, create a new SAML application. Enter the SP Entity ID and ACS URL shown below into your IdP, then paste the IdP metadata URL or certificate back here.</value>
+    <value>Où trouver ces valeurs : dans votre IdP, créez une nouvelle application SAML. Saisissez dans votre IdP l'ID d'entité SP et l'URL ACS indiqués ci-dessous, puis collez ici l'URL des métadonnées ou le certificat de l'IdP.</value>
   </data>
   <data name="SsoEditSpEntityIdLabel" xml:space="preserve">
-    <value>SP Entity ID (enter this into your IdP)</value>
+    <value>ID d'entité SP (à saisir dans votre IdP)</value>
   </data>
   <data name="SsoEditAcsUrlLabel" xml:space="preserve">
-    <value>ACS URL (Assertion Consumer Service — enter this into your IdP)</value>
+    <value>URL ACS (Assertion Consumer Service — à saisir dans votre IdP)</value>
   </data>
   <data name="SsoEditAcsUrlNote" xml:space="preserve">
-    <value>This URL uses an encrypted department token — never exposes your plain department code.</value>
+    <value>Cette URL utilise un jeton de département chiffré — votre code de département en clair n'est jamais exposé.</value>
   </data>
   <data name="SsoEditEntityIdEditableLabel" xml:space="preserve">
-    <value>SP Entity ID (editable)</value>
+    <value>ID d'entité SP (modifiable)</value>
   </data>
   <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve">
     <value>https://app.resgrid.com/saml/DEPT</value>
   </data>
   <data name="SsoEditEntityIdEditableNote" xml:space="preserve">
-    <value>Must match exactly what you entered in the IdP.</value>
+    <value>Doit correspondre exactement à ce que vous avez saisi dans l'IdP.</value>
   </data>
   <data name="SsoEditMetadataUrlLabel" xml:space="preserve">
-    <value>IdP Metadata URL</value>
+    <value>URL des métadonnées de l'IdP</value>
   </data>
   <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve">
     <value>https://idp.example.com/metadata.xml</value>
   </data>
   <data name="SsoEditMetadataUrlNote" xml:space="preserve">
-    <value>Resgrid will periodically fetch this URL to stay up to date with IdP certificates.</value>
+    <value>Resgrid récupérera périodiquement cette URL pour rester à jour avec les certificats de l'IdP.</value>
   </data>
   <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve">
-    <value>ACS URL (stored)</value>
+    <value>URL ACS (enregistrée)</value>
   </data>
   <data name="SsoEditAcsUrlStoredNote" xml:space="preserve">
-    <value>Auto-filled from the generated URL above. Modify only if you configured a different ACS URL in your IdP.</value>
+    <value>Renseignée automatiquement à partir de l'URL générée ci-dessus. Ne la modifiez que si vous avez configuré une autre URL ACS dans votre IdP.</value>
+  </data>
+  <data name="SsoEditOidcBrokerRedirectLabel" xml:space="preserve">
+    <value>URI de redirection pour la connexion lancée depuis Resgrid (à saisir dans votre fournisseur d'identité)</value>
+  </data>
+  <data name="SsoEditOidcBrokerRedirectNote" xml:space="preserve">
+    <value>Ajoutez-le à côté des URI de redirection déjà enregistrées ; les anciennes versions des applications Resgrid continuent d'utiliser les leurs.</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectLabel" xml:space="preserve">
+    <value>URI de redirection pour la connexion dans les applications Resgrid (à saisir une par une dans votre fournisseur d'identité)</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectNote" xml:space="preserve">
+    <value>Chaque application, et l'édition web de chacune, revient à sa propre adresse : enregistrez-les donc toutes. Les anciennes versions des applications, et les applications dont la connexion n'est pas lancée depuis Resgrid, les utilisent.</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectWebLabel" xml:space="preserve">
+    <value>{0} (web)</value>
+  </data>
+  <data name="SsoEditIdpSsoUrlLabel" xml:space="preserve">
+    <value>URL d'authentification unique du fournisseur d'identité</value>
+  </data>
+  <data name="SsoEditIdpSsoUrlNote" xml:space="preserve">
+    <value>L'adresse de connexion SAML du fournisseur d'identité (liaison HTTP-Redirect). Nécessaire pour les connexions lancées depuis les applications et le site web Resgrid.</value>
   </data>
   <data name="SsoEditIdpCertLabel" xml:space="preserve">
-    <value>IdP Signing Certificate (PEM)</value>
+    <value>Certificat de signature de l'IdP (PEM)</value>
   </data>
   <data name="SsoEditIdpCertStored" xml:space="preserve">
-    <value>Certificate stored</value>
+    <value>Certificat enregistré</value>
   </data>
   <data name="SsoEditIdpCertNote" xml:space="preserve">
-    <value>Encrypted at rest. Leave blank to keep the existing certificate.</value>
+    <value>Chiffré au repos. Laissez vide pour conserver le certificat existant.</value>
   </data>
   <data name="SsoEditSigningKeyLabel" xml:space="preserve">
-    <value>SP Signing Key (PEM, optional)</value>
+    <value>Clé de signature SP (PEM, facultative)</value>
   </data>
   <data name="SsoEditSigningKeyStored" xml:space="preserve">
-    <value>Key stored</value>
+    <value>Clé enregistrée</value>
   </data>
   <data name="SsoEditSigningKeyNote" xml:space="preserve">
-    <value>Encrypted at rest. Leave blank if your IdP does not require signed requests.</value>
+    <value>Chiffrée au repos. Laissez vide si votre IdP n'exige pas de requêtes signées.</value>
   </data>
   <data name="SsoEditStep3Label" xml:space="preserve">
-    <value>Step 3</value>
+    <value>Étape 3</value>
   </data>
   <data name="SsoEditStep3Header" xml:space="preserve">
-    <value>Attribute Mapping</value>
+    <value>Correspondance des attributs</value>
   </data>
   <data name="SsoEditAttrMapDescription" xml:space="preserve">
-    <value>Map claim names your IdP sends to the Resgrid user fields. Leave blank to use the standard claim URIs automatically. The value is the claim name as emitted by your IdP.</value>
+    <value>Associez les noms de revendications (claims) envoyés par votre IdP aux champs utilisateur de Resgrid. Laissez vide pour utiliser automatiquement les URI de revendication standard. La valeur est le nom de la revendication tel qu'émis par votre IdP.</value>
   </data>
   <data name="SsoEditAttrMapJsonLabel" xml:space="preserve">
-    <value>Attribute Mapping JSON</value>
+    <value>JSON de correspondance des attributs</value>
   </data>
   <data name="SsoEditAttrMapJsonNote" xml:space="preserve">
-    <value>Must be valid JSON. Use the quick-fill buttons on the right.</value>
+    <value>Doit être un JSON valide. Utilisez les boutons de remplissage rapide à droite.</value>
   </data>
   <data name="SsoEditQuickFillHeader" xml:space="preserve">
-    <value>Quick-fill presets</value>
+    <value>Préréglages de remplissage rapide</value>
   </data>
   <data name="SsoEditQuickFillDescription" xml:space="preserve">
-    <value>Click to auto-fill the mapping JSON with known defaults for your IdP.</value>
+    <value>Cliquez pour remplir automatiquement le JSON de correspondance avec les valeurs par défaut connues pour votre IdP.</value>
   </data>
   <data name="SsoEditFieldMappingHeader" xml:space="preserve">
-    <value>Supported Resgrid field keys</value>
+    <value>Clés de champ Resgrid prises en charge</value>
   </data>
   <data name="SsoEditFieldKeyColumn" xml:space="preserve">
-    <value>Key</value>
+    <value>Clé</value>
   </data>
   <data name="SsoEditFieldDescColumn" xml:space="preserve">
     <value>Description</value>
   </data>
   <data name="SsoEditFieldEmailDesc" xml:space="preserve">
-    <value>User's email address</value>
+    <value>Adresse e-mail de l'utilisateur</value>
   </data>
   <data name="SsoEditFieldFirstNameDesc" xml:space="preserve">
-    <value>Given / first name</value>
+    <value>Prénom</value>
   </data>
   <data name="SsoEditFieldLastNameDesc" xml:space="preserve">
-    <value>Surname / family name</value>
+    <value>Nom de famille</value>
   </data>
   <data name="SsoEditFieldSubjectDesc" xml:space="preserve">
-    <value>Unique IdP subject (for account linking)</value>
+    <value>Sujet (subject) unique de l'IdP (pour l'association des comptes)</value>
   </data>
   <data name="SsoEditCreateButton" xml:space="preserve">
-    <value>Create Configuration</value>
+    <value>Créer la configuration</value>
   </data>
   <data name="SsoEditSaveButton" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Enregistrer les modifications</value>
   </data>
   <data name="SsoEditCancelButton" xml:space="preserve">
     <value>Annuler</value>
   </data>
   <data name="ScimSetupPageTitle" xml:space="preserve">
-    <value>SCIM 2.0 Setup</value>
+    <value>Configuration SCIM 2.0</value>
   </data>
   <data name="ScimSetupPageHeader" xml:space="preserve">
-    <value>SCIM 2.0 Provisioning Setup</value>
+    <value>Configuration de l'approvisionnement SCIM 2.0</value>
   </data>
   <data name="ScimSetupBreadcrumb" xml:space="preserve">
-    <value>SCIM Setup</value>
+    <value>Configuration SCIM</value>
   </data>
   <data name="ScimSetupBackButton" xml:space="preserve">
-    <value>Back to SSO</value>
+    <value>Retour au SSO</value>
   </data>
   <data name="ScimSetupTokenWarningTitle" xml:space="preserve">
-    <value>Important — Copy your SCIM Bearer Token Now</value>
+    <value>Important — copiez votre jeton Bearer SCIM maintenant</value>
   </data>
   <data name="ScimSetupTokenWarningBody" xml:space="preserve">
-    <value>This token is displayed only once and cannot be retrieved again. Copy it immediately and paste it into your identity provider's SCIM configuration. If you lose it, click Rotate Token to generate a new one.</value>
+    <value>Ce jeton n'est affiché qu'une seule fois et ne peut pas être récupéré par la suite. Copiez-le immédiatement et collez-le dans la configuration SCIM de votre fournisseur d'identité. Si vous le perdez, cliquez sur Faire pivoter le jeton pour en générer un nouveau.</value>
   </data>
   <data name="ScimSetupCopyTokenButton" xml:space="preserve">
-    <value>Copy Token</value>
+    <value>Copier le jeton</value>
   </data>
   <data name="ScimSetupTokenEncryptedNote" xml:space="preserve">
-    <value>This token is stored encrypted in the Resgrid database using your department-specific encryption key.</value>
+    <value>Ce jeton est stocké chiffré dans la base de données Resgrid avec la clé de chiffrement propre à votre département.</value>
   </data>
   <data name="ScimSetupStatusHeader" xml:space="preserve">
-    <value>SCIM Status</value>
+    <value>Statut SCIM</value>
   </data>
   <data name="ScimSetupStatusProvider" xml:space="preserve">
-    <value>Provider</value>
+    <value>Fournisseur</value>
   </data>
   <data name="ScimSetupStatusEnabled" xml:space="preserve">
-    <value>SCIM Enabled</value>
+    <value>SCIM activé</value>
   </data>
   <data name="ScimSetupStatusEnabledYes" xml:space="preserve">
     <value>Oui</value>
@@ -693,61 +1839,61 @@
     <value>Non</value>
   </data>
   <data name="ScimSetupStatusBearerToken" xml:space="preserve">
-    <value>Bearer Token</value>
+    <value>Jeton Bearer</value>
   </data>
   <data name="ScimSetupStatusTokenConfigured" xml:space="preserve">
-    <value>Configured</value>
+    <value>Configuré</value>
   </data>
   <data name="ScimSetupStatusTokenNotSet" xml:space="preserve">
-    <value>Not Set</value>
+    <value>Non défini</value>
   </data>
   <data name="ScimSetupRotateTokenButton" xml:space="preserve">
-    <value>Rotate SCIM Token</value>
+    <value>Faire pivoter le jeton SCIM</value>
   </data>
   <data name="ScimSetupGenerateTokenButton" xml:space="preserve">
-    <value>Generate SCIM Token</value>
+    <value>Générer un jeton SCIM</value>
   </data>
   <data name="ScimSetupRotateTokenNote" xml:space="preserve">
-    <value>Rotating generates a new token and invalidates the old one.</value>
+    <value>La rotation génère un nouveau jeton et invalide l'ancien.</value>
   </data>
   <data name="ScimSetupRotateTokenConfirm" xml:space="preserve">
-    <value>Are you sure? Any existing SCIM integration will break until you update the token in your IdP.</value>
+    <value>Voulez-vous vraiment continuer ? Toute intégration SCIM existante cessera de fonctionner jusqu'à ce que vous mettiez à jour le jeton dans votre IdP.</value>
   </data>
   <data name="ScimSetupConnectorHeader" xml:space="preserve">
-    <value>SCIM Connector Settings</value>
+    <value>Paramètres du connecteur SCIM</value>
   </data>
   <data name="ScimSetupConnectorDescription" xml:space="preserve">
-    <value>Enter these values into your identity provider's SCIM provisioning configuration.</value>
+    <value>Saisissez ces valeurs dans la configuration d'approvisionnement SCIM de votre fournisseur d'identité.</value>
   </data>
   <data name="ScimSetupSettingColumn" xml:space="preserve">
-    <value>Setting</value>
+    <value>Paramètre</value>
   </data>
   <data name="ScimSetupValueColumn" xml:space="preserve">
-    <value>Value</value>
+    <value>Valeur</value>
   </data>
   <data name="ScimSetupBaseUrlLabel" xml:space="preserve">
-    <value>SCIM Connector Base URL</value>
+    <value>URL de base du connecteur SCIM</value>
   </data>
   <data name="ScimSetupAuthMethodLabel" xml:space="preserve">
-    <value>Authentication Method</value>
+    <value>Méthode d'authentification</value>
   </data>
   <data name="ScimSetupAuthHeaderLabel" xml:space="preserve">
-    <value>Authorization Header</value>
+    <value>En-tête d'autorisation</value>
   </data>
   <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve">
-    <value>Custom Header Name</value>
+    <value>Nom de l'en-tête personnalisé</value>
   </data>
   <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve">
-    <value>Custom Header Value</value>
+    <value>Valeur de l'en-tête personnalisé</value>
   </data>
   <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve">
-    <value>Supported Resources</value>
+    <value>Ressources prises en charge</value>
   </data>
   <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve">
-    <value>Supported Update Method</value>
+    <value>Méthode de mise à jour prise en charge</value>
   </data>
   <data name="ScimSetupGuideHeader" xml:space="preserve">
-    <value>Step-by-Step Setup Guide</value>
+    <value>Guide de configuration étape par étape</value>
   </data>
   <data name="ScimSetupTabOkta" xml:space="preserve">
     <value>Okta</value>
@@ -759,22 +1905,22 @@
     <value>Google Workspace</value>
   </data>
   <data name="ScimSetupTabGeneric" xml:space="preserve">
-    <value>Other / Generic</value>
+    <value>Autre / générique</value>
   </data>
   <data name="ScimSetupGenericHeader" xml:space="preserve">
-    <value>Any SCIM 2.0 compatible client can be configured with the following:</value>
+    <value>Tout client compatible SCIM 2.0 peut être configuré avec les éléments suivants :</value>
   </data>
   <data name="ScimSetupFieldMappingHeader" xml:space="preserve">
-    <value>Resgrid SCIM field mapping</value>
+    <value>Correspondance des champs SCIM de Resgrid</value>
   </data>
   <data name="ScimSetupParamColumn" xml:space="preserve">
-    <value>Parameter</value>
+    <value>Paramètre</value>
   </data>
   <data name="ScimSetupScimFieldColumn" xml:space="preserve">
-    <value>SCIM field</value>
+    <value>Champ SCIM</value>
   </data>
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve">
-    <value>Resgrid effect</value>
+    <value>Effet dans Resgrid</value>
   </data>
 
   <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
@@ -814,112 +1960,136 @@
   <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Pour des instructions étape par étape spécifiques à votre IdP (Okta, Microsoft Entra ID, Google Workspace) et la gestion des jetons, consultez la page de configuration SCIM pour chaque configuration.</value></data>
 
   <data name="SecurityPolicyPageTitle" xml:space="preserve">
-    <value>Department Security Policy</value>
+    <value>Politique de sécurité du département</value>
   </data>
   <data name="SecurityPolicyPageHeader" xml:space="preserve">
-    <value>Department Security Policy</value>
+    <value>Politique de sécurité du département</value>
   </data>
   <data name="SecurityPolicyBreadcrumb" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Politique de sécurité</value>
   </data>
   <data name="SecurityPolicyBackButton" xml:space="preserve">
-    <value>Back to SSO</value>
+    <value>Retour au SSO</value>
   </data>
   <data name="SecurityPolicySaveSuccess" xml:space="preserve">
-    <value>Security policy saved successfully.</value>
+    <value>Politique de sécurité enregistrée avec succès.</value>
   </data>
   <data name="SecurityPolicyNoSsoWarning" xml:space="preserve">
-    <value>No active SSO configuration. You can configure password policies below, but Require SSO cannot be enabled until you have an active SSO configuration.</value>
+    <value>Aucune configuration SSO active. Vous pouvez configurer les politiques de mot de passe ci-dessous, mais l'option Exiger le SSO ne peut pas être activée tant que vous n'avez pas de configuration SSO active.</value>
   </data>
   <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve">
-    <value>Configure SSO →</value>
+    <value>Configurer le SSO →</value>
   </data>
   <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve">
-    <value>Authentication Controls</value>
+    <value>Contrôles d'authentification</value>
   </data>
   <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve">
-    <value>Require MFA for all members</value>
+    <value>Exiger la MFA pour tous les membres</value>
   </data>
   <data name="SecurityPolicyRequireMfaNote" xml:space="preserve">
-    <value>Members who have not enrolled in MFA will be prompted to do so on next login.</value>
+    <value>Les membres qui ne sont pas inscrits à la MFA seront invités à le faire lors de leur prochaine connexion.</value>
   </data>
   <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve">
-    <value>Require SSO — disable password login</value>
+    <value>Exiger le SSO — désactiver la connexion par mot de passe</value>
   </data>
   <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve">
-    <value>Requires active SSO config</value>
+    <value>Nécessite une configuration SSO active</value>
   </data>
   <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve">
-    <value>Warning: Enabling this blocks all username/password logins. Ensure at least one admin has tested SSO login successfully before enabling.</value>
+    <value>Attention : l'activation de cette option bloque toutes les connexions par nom d'utilisateur et mot de passe. Assurez-vous qu'au moins un administrateur a testé avec succès la connexion SSO avant de l'activer.</value>
   </data>
   <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve">
-    <value>Session Timeout (minutes)</value>
+    <value>Expiration de session (minutes)</value>
   </data>
   <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve">
-    <value>0 = use system default. 480 = 8 hours.</value>
+    <value>0 = utiliser la valeur par défaut du système. 480 = 8 heures.</value>
   </data>
   <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve">
-    <value>Max Concurrent Sessions per User</value>
+    <value>Nombre max. de sessions simultanées par utilisateur</value>
   </data>
   <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve">
-    <value>0 = unlimited. Government environments typically set 1.</value>
+    <value>0 = illimité. Les environnements gouvernementaux fixent généralement cette valeur à 1.</value>
   </data>
   <data name="SecurityPolicyIpRangesLabel" xml:space="preserve">
-    <value>Allowed IP Ranges (CIDR)</value>
+    <value>Plages d'adresses IP autorisées (CIDR)</value>
   </data>
   <data name="SecurityPolicyIpRangesNote" xml:space="preserve">
-    <value>One CIDR block per line, or comma-separated. Empty = allow all. Logins from outside these ranges will be denied.</value>
+    <value>Un bloc CIDR par ligne, ou séparés par des virgules. Vide = tout autoriser. Les connexions provenant de l'extérieur de ces plages seront refusées.</value>
   </data>
   <data name="SecurityPolicyDataClassLabel" xml:space="preserve">
-    <value>Data Classification Level</value>
+    <value>Niveau de classification des données</value>
+  </data>
+  <data name="SecurityPolicyDataClassUnclassified" xml:space="preserve">
+    <value>Non classifié</value>
+  </data>
+  <data name="SecurityPolicyDataClassCui" xml:space="preserve">
+    <value>CUI - Informations non classifiées contrôlées</value>
+  </data>
+  <data name="SecurityPolicyDataClassConfidential" xml:space="preserve">
+    <value>Confidentiel</value>
   </data>
   <data name="SecurityPolicyDataClassNote" xml:space="preserve">
-    <value>Used for compliance reporting and audit logs.</value>
+    <value>Utilisé pour les rapports de conformité et les journaux d'audit.</value>
   </data>
   <data name="SecurityPolicyPasswordHeader" xml:space="preserve">
-    <value>Password Policy</value>
+    <value>Politique de mot de passe</value>
   </data>
   <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve">
-    <value>Password policies apply to local (non-SSO) logins only. If you enable Require SSO above, these settings have no effect.</value>
+    <value>Les politiques de mot de passe s'appliquent uniquement aux connexions locales (hors SSO). Si vous activez l'option Exiger le SSO ci-dessus, ces paramètres n'ont aucun effet.</value>
   </data>
   <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve">
-    <value>Password Expiration (days)</value>
+    <value>Expiration du mot de passe (jours)</value>
   </data>
   <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve">
-    <value>0 = passwords never expire. 90 is typical for CUI environments.</value>
+    <value>0 = les mots de passe n'expirent jamais. 90 est une valeur courante pour les environnements CUI.</value>
   </data>
   <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve">
-    <value>Minimum Password Length</value>
+    <value>Longueur minimale du mot de passe</value>
   </data>
   <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve">
-    <value>0 = system default (8). NIST recommends 12+; CUI requires 14+.</value>
+    <value>Minimum 8 (valeur par défaut du système). Les politiques du département peuvent uniquement l'augmenter. Le NIST recommande 12 ou plus ; CUI exige 14 ou plus.</value>
+  </data>
+  <data name="SecurityPolicySystemComplexityHeader" xml:space="preserve">
+    <value>Complexité des mots de passe imposée par le système</value>
+  </data>
+  <data name="SecurityPolicySystemComplexityNote" xml:space="preserve">
+    <value>Tous les comptes Resgrid doivent respecter la norme de complexité des mots de passe suivante. Elle ne peut pas être désactivée par la politique du département.</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule1" xml:space="preserve">
+    <value>Au moins 8 caractères (ou la longueur minimale du département définie ci-dessus)</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule2" xml:space="preserve">
+    <value>Au moins un chiffre</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule3" xml:space="preserve">
+    <value>Au moins une lettre majuscule et une lettre minuscule</value>
   </data>
   <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve">
-    <value>Require password complexity</value>
+    <value>Exiger la complexité du mot de passe</value>
   </data>
   <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve">
-    <value>Enforces at least one uppercase letter, one digit, and one special character.</value>
+    <value>Impose au moins une lettre majuscule, un chiffre et un caractère spécial.</value>
   </data>
   <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve">
-    <value>Quick presets</value>
+    <value>Préréglages rapides</value>
   </data>
   <data name="SecurityPolicyPresetGovernment" xml:space="preserve">
-    <value>Government / CUI</value>
+    <value>Gouvernement / CUI</value>
   </data>
   <data name="SecurityPolicyPresetEnterprise" xml:space="preserve">
-    <value>Standard Enterprise</value>
+    <value>Entreprise standard</value>
   </data>
   <data name="SecurityPolicyPresetMinimal" xml:space="preserve">
     <value>Minimal</value>
   </data>
   <data name="SecurityPolicySaveButton" xml:space="preserve">
-    <value>Save Security Policy</value>
+    <value>Enregistrer la politique de sécurité</value>
   </data>
   <data name="SecurityPolicyCancelButton" xml:space="preserve">
     <value>Annuler</value>
   </data>
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve">
-    <value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value>
+    <value>Impossible d'activer la connexion par SSO uniquement : aucune configuration SSO active n'existe. Créez et activez d'abord une configuration SSO.</value>
   </data>
   <data name="PwdErrorEmpty" xml:space="preserve"><value>Le mot de passe ne peut pas être vide.</value></data>
   <data name="PwdErrorNoDigit" xml:space="preserve"><value>Le mot de passe doit contenir au moins un chiffre.</value></data>
@@ -927,32 +2097,34 @@
   <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Le mot de passe doit contenir au moins une lettre minuscule.</value></data>
   <data name="PwdErrorTooShort" xml:space="preserve"><value>Le mot de passe doit comporter au moins {0} caractères.</value></data>
   <data name="PwdMinLengthTooLow" xml:space="preserve"><value>La longueur minimale du mot de passe ne peut pas être inférieure à la valeur par défaut du système de 8 caractères.</value></data>
-  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Use Calendar Sync</value></data>
-  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</value></data>
-  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Dispatch App Login</value></data>
-  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Controls who can sign in to the Dispatch app. Dispatch shows private command, unit and responder communications for every incident, so restrict this if your members are not all dispatchers.</value></data>
-  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
-  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
-  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
-  <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
-  <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
-  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
-  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
-  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
-  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>
-  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Who can reveal protected personnel information (employee IDs, emergency contacts) after two-factor verification. Defaults to Department Admins.</value></data>
-  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>View Protected Contact Data</value></data>
-  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Who can reveal protected contact information (names, phone numbers, government IDs, locations) after two-factor verification. Defaults to Department Admins.</value></data>
-  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>View Protected Operational Data</value></data>
-  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Who can reveal protected operational content (logs, form submissions, incident command notes and attachments) after two-factor verification. Defaults to Department and Group Admins.</value></data>
-  <data name="PermAdpExportLabel" xml:space="preserve"><value>Export Protected Data</value></data>
-  <data name="PermAdpExportNote" xml:space="preserve"><value>Who can export data containing protected fields. Exports leave the protection of Resgrid, so every export is separately audited. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
-  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Configure Protected Data Delivery</value></data>
-  <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
-  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
-  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermDeleteLogLabel" xml:space="preserve"><value>Supprimer des entrées de journal</value></data>
+  <data name="PermDeleteLogNote" xml:space="preserve"><value>Qui, dans votre département, est autorisé à supprimer des entrées de journal</value></data>
+  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Utiliser la synchronisation du calendrier</value></data>
+  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Détermine qui peut activer et utiliser les URL d'abonnement au calendrier pour synchroniser les événements du calendrier Resgrid avec des applications de calendrier externes.</value></data>
+  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Connexion à l'application Dispatch</value></data>
+  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Détermine qui peut se connecter à l'application Dispatch. Dispatch affiche les communications privées du commandement, des unités et des intervenants pour chaque intervention ; restreignez donc cette autorisation si vos membres ne sont pas tous des régulateurs.</value></data>
+  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Connexion à l'application de commandement</value></data>
+  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Détermine qui peut agir en tant que commandant : se connecter à l'application IC, établir le commandement de l'intervention sur un appel et consulter les tableaux de commandement. Choisir une valeur plus restreinte que Tout le monde permet aussi aux personnes sélectionnées d'aider à gérer n'importe quel tableau de commandement (affecter et déplacer des moyens, gérer les minuteries et le suivi du personnel) sans y occuper de poste ICS — pratique pour permettre aux régulateurs de prêter main-forte depuis l'application Dispatch. Tant que la valeur est Tout le monde, les actions sur le tableau restent réservées au commandant de l'intervention et aux rôles ICS attribués.</value></data>
+  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Protection avancée des données</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Ces autorisations déterminent qui peut travailler avec les données chiffrées (protégées) lorsque le module complémentaire Protection avancée des données est actif. Chaque affichage ou modification exige en plus une vérification à deux facteurs récente ; ces réglages déterminent qui peut ne serait-ce que la tenter. Contrairement à la plupart des autorisations Resgrid, les valeurs non définies appliquent par défaut la sélection restrictive affichée.</value></data>
+  <data name="PermAdpManageLabel" xml:space="preserve"><value>Gérer les paramètres de protection des données</value></data>
+  <data name="PermAdpManageNote" xml:space="preserve"><value>Qui peut modifier les paramètres de Protection avancée des données, comme la fenêtre de vérification et les options de contenu des notifications. L'achat, l'inscription et la résiliation restent toujours réservés au membre gestionnaire du département.</value></data>
+  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Afficher les données d'appel protégées</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Qui peut afficher les champs d'appel protégés (nature, adresse, coordonnées, notes) après une vérification à deux facteurs. Tout le monde par défaut, car le personnel qui intervient doit pouvoir lire l'alerte.</value></data>
+  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Modifier les données d'appel protégées</value></data>
+  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Qui peut modifier les champs d'appel protégés après une vérification à deux facteurs. Tout le monde par défaut, pour correspondre au déroulement normal des appels.</value></data>
+  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Afficher les données protégées du personnel</value></data>
+  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Qui peut afficher les informations protégées du personnel (matricules, contacts d'urgence) après une vérification à deux facteurs. Par défaut : administrateurs du département.</value></data>
+  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>Afficher les données de contact protégées</value></data>
+  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Qui peut afficher les informations de contact protégées (noms, numéros de téléphone, numéros d'identité officiels, emplacements) après une vérification à deux facteurs. Par défaut : administrateurs du département.</value></data>
+  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>Afficher les données opérationnelles protégées</value></data>
+  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Qui peut afficher le contenu opérationnel protégé (journaux, soumissions de formulaires, notes et pièces jointes du commandement de l'intervention) après une vérification à deux facteurs. Par défaut : administrateurs du département et administrateurs de groupe.</value></data>
+  <data name="PermAdpExportLabel" xml:space="preserve"><value>Exporter les données protégées</value></data>
+  <data name="PermAdpExportNote" xml:space="preserve"><value>Qui peut exporter des données contenant des champs protégés. Les exportations sortent de la protection de Resgrid ; chaque exportation fait donc l'objet d'un audit distinct. Par défaut : administrateurs du département ; Tout le monde n'est volontairement pas proposé.</value></data>
+  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Configurer la diffusion des données protégées</value></data>
+  <data name="PermAdpEgressNote" xml:space="preserve"><value>Qui peut modifier la façon dont le contenu protégé sort de Resgrid par notification push, SMS, e-mail et message vocal. Par défaut : administrateurs du département ; Tout le monde n'est volontairement pas proposé.</value></data>
+  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Accès d'urgence (bris de glace)</value></data>
+  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Qui peut utiliser la procédure d'accès d'urgence auditée aux données protégées. Elle ne fonctionne que si le bris de glace est activé dans la politique de protection du département ; elle exige un motif consigné et avertit le département. Par défaut : administrateurs du département ; Tout le monde n'est volontairement pas proposé.</value></data>
   <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Rapports</value></data>
   <data name="PermRecordsSectionNote" xml:space="preserve"><value>Ces autorisations contrôlent le module Rapports, successeur des Journaux. Comme pour la plupart des autorisations Resgrid, une ligne non définie applique la valeur par défaut affichée, qui correspond au comportement actuel des Journaux. L'activation des Rapports pour votre service copie également vos réglages Créer un journal et Supprimer un journal sur les lignes correspondantes, sauf si vous les avez déjà définis ici.</value></data>
   <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Les Rapports ne sont pas encore actifs pour ce service. Vous pouvez préparer ces réglages dès maintenant ; ils s'appliqueront une fois les Rapports activés.</value></data>
@@ -1011,5 +2183,191 @@
   </data>
   <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
     <value>Définit qui peut transférer l’inventaire entre emplacements. Par défaut, cette autorisation est réservée aux administrateurs du département.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsHeader" xml:space="preserve">
+    <value>Méthodes de second facteur</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsIntro" xml:space="preserve">
+    <value>Choisissez les méthodes de vérification qui comptent comme authentification multifacteur dans ce département. Les codes d'application d'authentification (TOTP) sont toujours acceptés : désactiver une méthode ne bloque donc personne ; les membres qui l'utilisaient doivent vérifier à nouveau.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsManagingMemberOnly" xml:space="preserve">
+    <value>Seul le membre gestionnaire du département peut modifier ces paramètres.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsNotYetAvailable" xml:space="preserve">
+    <value>Les clés d'accès ne sont pas encore disponibles sur ce système. Ces choix s'appliqueront dès qu'elles le seront.</value>
+  </data>
+  <data name="SecurityPolicyMethodNotYetAvailable" xml:space="preserve">
+    <value>Pas encore disponible</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaLabel" xml:space="preserve">
+    <value>Accepter les clés d'accès pour la connexion et les vérifications de sécurité</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaNote" xml:space="preserve">
+    <value>Une clé d'accès enregistrée dans la même application compte comme MFA pour la connexion, le changement de département et les actions sensibles.</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpLabel" xml:space="preserve">
+    <value>Accepter les clés d'accès pour les données protégées</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpNote" xml:space="preserve">
+    <value>Une clé d'accès compte comme MFA pour afficher et modifier les données protégées. Modifier ce réglage met fin à l'accès en cours aux données protégées ; les membres vérifient à nouveau.</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalLabel" xml:space="preserve">
+    <value>Accepter l'approbation depuis l'application Responder</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalNote" xml:space="preserve">
+    <value>Là où les clés d'accès sont acceptées, un membre peut approuver une connexion ou une demande de données protégées avec la clé d'accès de son application Responder. Jamais utilisé pour les modifications de sécurité. Modifier ce réglage met fin à l'accès en cours aux données protégées.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaLabel" xml:space="preserve">
+    <value>Accepter la MFA de votre fournisseur d'identité pour la connexion et les vérifications de sécurité</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaNote" xml:space="preserve">
+    <value>Nécessite une correspondance MFA testée dans votre configuration SSO.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpLabel" xml:space="preserve">
+    <value>Accepter la MFA de votre fournisseur d'identité pour les données protégées</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpNote" xml:space="preserve">
+    <value>Nécessite une correspondance MFA testée dans votre configuration SSO. Modifier ce réglage met fin à l'accès en cours aux données protégées.</value>
+  </data>
+  <data name="SecurityPolicyFederatedMappingUntested" xml:space="preserve">
+    <value>Votre configuration SSO n'a aucune correspondance MFA testée. Enregistrez une correspondance et terminez son test avant d'accepter la MFA de votre fournisseur d'identité.</value>
+  </data>
+  <data name="SecurityPolicyFederatedNeedsResgridMfa" xml:space="preserve">
+    <value>Pour accepter la MFA de votre fournisseur d'identité, vérifiez d'abord avec votre application d'authentification ou une clé d'accès. La MFA du fournisseur d'identité ne peut pas approuver cette modification.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpLabel" xml:space="preserve">
+    <value>Permettre à une vérification récente à la connexion d'ouvrir les données protégées</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpNote" xml:space="preserve">
+    <value>Les membres qui ont validé la MFA à la connexion n'ont pas à vérifier de nouveau pour afficher les données protégées pendant la fenêtre de vérification. Modifier ce réglage met fin à l'accès en cours aux données protégées.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpLabel" xml:space="preserve">
+    <value>Permettre au déverrouillage d'un appareil partagé d'ouvrir les données protégées</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpNote" xml:space="preserve">
+    <value>Sur les tablettes de véhicule et les postes de travail partagés, la vérification récente de déverrouillage de l'opérateur compte pour afficher les données protégées. Modifier ce réglage met fin à l'accès en cours aux données protégées.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesHeader" xml:space="preserve">
+    <value>Appareils partagés de véhicule et de poste de travail</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesIntro" xml:space="preserve">
+    <value>Les tablettes de véhicule et les postes de régulation partagés se verrouillent lorsque personne ne les utilise et se terminent avec la garde. Les opérateurs déverrouillent avec leur propre application d'authentification, clé d'accès ou approbation Responder, jamais avec un mot de passe conservé sur l'appareil. Une valeur plus stricte ici s'applique aussi aux sessions déjà en cours.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesManagingMemberOnly" xml:space="preserve">
+    <value>Seul le membre gestionnaire du département peut modifier la politique des appareils partagés.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesNotYetAvailable" xml:space="preserve">
+    <value>Le mode appareil partagé n'est pas encore disponible sur cette installation. Ces valeurs sont conservées, et il ne peut être imposé à une autre application tant qu'il ne l'est pas.</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockLabel" xml:space="preserve">
+    <value>Verrouiller après ce nombre de minutes d'inactivité</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockNote" xml:space="preserve">
+    <value>De 1 à {0} minutes. Seule l'activité de l'opérateur compte ; les mises à jour en arrière-plan et les alertes entrantes ne comptent pas.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftLabel" xml:space="preserve">
+    <value>Terminer la garde après ce nombre d'heures</value>
+  </data>
+  <data name="SecurityPolicySharedShiftNote" xml:space="preserve">
+    <value>De 1 à {0} heures après la connexion, quelle que soit l'activité. La garde suivante se reconnecte.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredLabel" xml:space="preserve">
+    <value>Toujours utiliser le mode partagé pour</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredNote" xml:space="preserve">
+    <value>Les sessions de ces applications dans ce département se verrouillent toujours en cas d'inactivité et se terminent avec la garde, quel que soit le réglage de l'installation. Les connexions qui n'indiquent pas leur application comptent aussi : les intégrations qui se connectent avec un mot de passe se verrouillent donc également. Utilisez des versions d'application compatibles avec le mode partagé.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredCommand" xml:space="preserve">
+    <value>IC (Commandement)</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="SecurityPolicySharedIdleOutOfRange" xml:space="preserve">
+    <value>Choisissez un verrouillage d'inactivité de 1 à {0} minutes.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftOutOfRange" xml:space="preserve">
+    <value>Choisissez une durée de garde de 1 à {0} heures.</value>
+  </data>
+  <data name="SecurityPolicySharedRequirementUnavailable" xml:space="preserve">
+    <value>Le mode appareil partagé n'est pas encore disponible sur cette installation ; il ne peut donc pas être imposé à une autre application.</value>
+  </data>
+  <data name="FederatedMfaPageTitle" xml:space="preserve">
+    <value>MFA du fournisseur d'identité</value>
+  </data>
+  <data name="FederatedMfaIntro" xml:space="preserve">
+    <value>Indiquez à Resgrid comment votre fournisseur d'identité signale qu'il a vérifié un membre avec la MFA. Là où ce département accepte la MFA de votre fournisseur d'identité, une connexion ou une vérification portant l'une de ces valeurs compte comme MFA, et les membres n'ont pas besoin d'un authentificateur Resgrid pour cela. Chaque modification doit réussir une connexion de test avant de prendre effet.</value>
+  </data>
+  <data name="FederatedMfaNoSso" xml:space="preserve">
+    <value>Configurez et activez d'abord une configuration SSO.</value>
+  </data>
+  <data name="FederatedMfaStatusEffective" xml:space="preserve">
+    <value>En vigueur : version {0}, testée le {1}.</value>
+  </data>
+  <data name="FederatedMfaStatusUntested" xml:space="preserve">
+    <value>Pas en vigueur : la version {0} n'a pas encore réussi son test.</value>
+  </data>
+  <data name="FederatedMfaStatusNone" xml:space="preserve">
+    <value>Aucune correspondance n'est enregistrée.</value>
+  </data>
+  <data name="FederatedMfaRequestHeader" xml:space="preserve">
+    <value>Ce que Resgrid demande</value>
+  </data>
+  <data name="FederatedMfaAcceptHeader" xml:space="preserve">
+    <value>Ce qui compte comme MFA</value>
+  </data>
+  <data name="FederatedMfaValuesNote" xml:space="preserve">
+    <value>Une valeur par ligne. Les valeurs doivent correspondre exactement, casse comprise. Une réponse doit porter au moins une des valeurs.</value>
+  </data>
+  <data name="FederatedMfaRequestAcrValuesLabel" xml:space="preserve">
+    <value>acr_values à demander (OIDC)</value>
+  </data>
+  <data name="FederatedMfaRequestClaimsLabel" xml:space="preserve">
+    <value>Requête claims (OIDC, JSON)</value>
+  </data>
+  <data name="FederatedMfaRequestAuthnContextLabel" xml:space="preserve">
+    <value>Références de classe RequestedAuthnContext (SAML)</value>
+  </data>
+  <data name="FederatedMfaAcceptAmrLabel" xml:space="preserve">
+    <value>Valeurs amr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrLabel" xml:space="preserve">
+    <value>Valeurs acr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrsLabel" xml:space="preserve">
+    <value>Valeurs acrs (OIDC, contexte d'authentification)</value>
+  </data>
+  <data name="FederatedMfaAcceptAuthnContextLabel" xml:space="preserve">
+    <value>Valeurs AuthnContextClassRef (SAML)</value>
+  </data>
+  <data name="FederatedMfaSaveButton" xml:space="preserve">
+    <value>Enregistrer la correspondance</value>
+  </data>
+  <data name="FederatedMfaRemoveButton" xml:space="preserve">
+    <value>Supprimer la correspondance</value>
+  </data>
+  <data name="FederatedMfaSaved" xml:space="preserve">
+    <value>Correspondance enregistrée. Elle prend effet dès qu'elle réussit une connexion de test.</value>
+  </data>
+  <data name="FederatedMfaRemoved" xml:space="preserve">
+    <value>Correspondance supprimée. La MFA de votre fournisseur d'identité ne compte plus dans ce département.</value>
+  </data>
+  <data name="FederatedMfaInvalid" xml:space="preserve">
+    <value>La correspondance n'est pas utilisable : {0}</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfa" xml:space="preserve">
+    <value>Modifier la correspondance nécessite une vérification récente avec votre application d'authentification ou une clé d'accès. La MFA de votre fournisseur d'identité ne peut pas approuver cette modification.</value>
+  </data>
+  <data name="FederatedMfaLink" xml:space="preserve">
+    <value>Correspondance MFA du fournisseur d'identité</value>
+  </data>
+  <data name="FederatedMfaTestButton" xml:space="preserve">
+    <value>Tester avec une connexion</value>
+  </data>
+  <data name="FederatedMfaTestNote" xml:space="preserve">
+    <value>Le test vous envoie maintenant vers votre fournisseur d'identité en demandant la MFA. Lorsqu'il renvoie une valeur que la correspondance compte, cette version prend effet.</value>
   </data>
 </root>

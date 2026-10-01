@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Model;
+using Resgrid.Model.Security;
 
 namespace Resgrid.Web.Areas.User.Models.Security
 {
@@ -61,6 +64,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public string MetadataUrl { get; set; }
 		public string EntityId { get; set; }
 		public string AssertionConsumerServiceUrl { get; set; }
+		public string IdpSsoUrl { get; set; }
 		public string IdpCertificate { get; set; }
 		public string SigningCertificate { get; set; }
 
@@ -80,6 +84,17 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		// ── Context for the view ──────────────────────────────────────────────
 		public string AcsUrl { get; set; }
 		public string ApiBaseUrl { get; set; }
+
+		/// <summary>The OIDC redirect URI for brokered sign-in, which the department registers with its IdP.</summary>
+		public string OidcBrokerRedirectUri { get; set; }
+
+		/// <summary>
+		/// Each app's own redirect URIs for sign-in the app runs itself (older app versions, or while brokered sign-in is off):
+		/// its native scheme, and its web edition's page where this deployment serves one. The department registers every one
+		/// with its IdP; an app can only receive a redirect on an address it owns.
+		/// </summary>
+		public IReadOnlyList<LegacyAppCallbacks.AppRedirectUri> OidcAppRedirectUris =>
+			LegacyAppCallbacks.RedirectUris(Resgrid.Config.SsoConfig.AppWebOrigins);
 	}
 
 	/// <summary>View model for the security policy page.</summary>
@@ -112,6 +127,96 @@ namespace Resgrid.Web.Areas.User.Models.Security
 
 		public int DataClassificationLevel { get; set; }
 		public SelectList DataClassificationLevels { get; set; }
+
+		// Second-factor methods (passkey plan section 10.1). Defaults match a department with no policy row.
+		public bool AllowPasskeysForLoginMfa { get; set; } = true;
+		public bool AllowPasskeysForAdp { get; set; } = true;
+		public bool AllowFederatedMfaForLoginMfa { get; set; }
+		public bool AllowFederatedMfaForAdp { get; set; }
+		public bool AllowResponderApproval { get; set; } = true;
+		public bool AcceptRecentLoginMfaForAdp { get; set; } = true;
+		public bool AcceptRecentUnlockMfaForAdp { get; set; } = true;
+
+		/// <summary>Only the managing member changes which methods are accepted; other administrators see them read-only.</summary>
+		public bool CanChangeMethodSwitches { get; set; }
+
+		/// <summary>Whether this deployment accepts passkeys yet; the switches take effect once it does.</summary>
+		public bool PasskeysAvailable { get; set; }
+		public bool ResponderApprovalAvailable { get; set; }
+		public bool ProviderStepUpAvailable { get; set; }
+
+		// ── Shared vehicle and workstation devices (passkey plan section 10.5); managing member only ──
+
+		public int SharedIdleLockMinutes { get; set; } = SharedSessionRules.DefaultIdleLockMinutes;
+		public int SharedShiftHours { get; set; } = SharedSessionRules.DefaultShiftHours;
+		public bool RequireSharedModeForUnit { get; set; }
+		public bool RequireSharedModeForCommand { get; set; }
+		public bool RequireSharedModeForDispatch { get; set; }
+
+		/// <summary>Whether this deployment offers shared-device mode yet; a new requirement can only be added once it does.</summary>
+		public bool SharedDeviceModeAvailable { get; set; }
+		public int MaxSharedIdleLockMinutes { get; set; }
+		public int MaxSharedShiftHours { get; set; }
+
+		public int SharedModeRequiredApps =>
+			(RequireSharedModeForUnit ? (int)SharedModeApps.Unit : 0) |
+			(RequireSharedModeForCommand ? (int)SharedModeApps.Command : 0) |
+			(RequireSharedModeForDispatch ? (int)SharedModeApps.Dispatch : 0);
+	}
+
+	/// <summary>
+	/// View model for the provider step-up mapping page (passkey plan section 7.8). The value lists are edited one value per
+	/// line; everything about the stored mapping (its version, test and who may change it) comes from the server, never the form.
+	/// </summary>
+	public class FederatedMfaEditView
+	{
+		public string RequestAcrValues { get; set; }
+		public string RequestClaims { get; set; }
+		public string RequestAuthnContextClassRefs { get; set; }
+		public string AcceptAmr { get; set; }
+		public string AcceptAcr { get; set; }
+		public string AcceptAcrs { get; set; }
+		public string AcceptAuthnContextClassRefs { get; set; }
+
+		public bool HasActiveSsoConfig { get; set; }
+		public bool IsOidc { get; set; }
+		public bool CanChange { get; set; }
+		public bool ProviderStepUpAvailable { get; set; }
+		public bool HasMapping { get; set; }
+		public long MappingVersion { get; set; }
+		public bool Effective { get; set; }
+		public DateTime? TestedOnUtc { get; set; }
+
+		/// <summary>The mapping the form describes. Blank lines are dropped; everything else is left for validation to judge.</summary>
+		public Resgrid.Model.Security.FederatedMfaMapping ToMapping() => new()
+		{
+			RequestAcrValues = Values(RequestAcrValues),
+			RequestClaims = string.IsNullOrWhiteSpace(RequestClaims) ? null : RequestClaims.Trim(),
+			RequestAuthnContextClassRefs = Values(RequestAuthnContextClassRefs),
+			AcceptAmr = Values(AcceptAmr),
+			AcceptAcr = Values(AcceptAcr),
+			AcceptAcrs = Values(AcceptAcrs),
+			AcceptAuthnContextClassRefs = Values(AcceptAuthnContextClassRefs)
+		};
+
+		public void CopyFrom(Resgrid.Model.Security.FederatedMfaMapping mapping)
+		{
+			RequestAcrValues = Lines(mapping?.RequestAcrValues);
+			RequestClaims = mapping?.RequestClaims;
+			RequestAuthnContextClassRefs = Lines(mapping?.RequestAuthnContextClassRefs);
+			AcceptAmr = Lines(mapping?.AcceptAmr);
+			AcceptAcr = Lines(mapping?.AcceptAcr);
+			AcceptAcrs = Lines(mapping?.AcceptAcrs);
+			AcceptAuthnContextClassRefs = Lines(mapping?.AcceptAuthnContextClassRefs);
+		}
+
+		private static List<string> Values(string lines)
+		{
+			var values = (lines ?? string.Empty).Split('\n').Select(line => line.Trim()).Where(line => line.Length > 0).ToList();
+			return values.Count == 0 ? null : values;
+		}
+
+		private static string Lines(IEnumerable<string> values) => values == null ? null : string.Join("\n", values);
 	}
 
 	/// <summary>View model for the SCIM setup page.</summary>

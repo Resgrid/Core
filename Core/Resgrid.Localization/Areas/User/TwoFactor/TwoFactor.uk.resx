@@ -155,6 +155,9 @@
   <data name="DisableConfirmationText" xml:space="preserve">
     <value>Enter your current authenticator code to confirm you wish to disable 2FA:</value>
   </data>
+  <data name="DisableBlockedByPasskeys" xml:space="preserve">
+    <value>Ви не можете вимкнути 2FA, доки маєте ключі доступу. Спершу видаліть ключі доступу, а потім вимкніть 2FA.</value>
+  </data>
   <data name="AuthenticatorCodeLabel" xml:space="preserve">
     <value>Authenticator Code</value>
   </data>
@@ -211,5 +214,422 @@
   </data>
   <data name="InvalidRecoveryCode" xml:space="preserve">
     <value>Invalid recovery code.</value>
+  </data>
+  <data name="ReplaceAuthenticatorButton" xml:space="preserve">
+    <value>Replace Authenticator</value>
+  </data>
+  <data name="ReplaceHeader" xml:space="preserve">
+    <value>Replace Your Authenticator App</value>
+  </data>
+  <data name="ReplaceInstructions" xml:space="preserve">
+    <value>Scan this new key with the authenticator app you want to use, then enter a code from it. When you confirm, your old authenticator stops working, new recovery codes are issued, and every device is signed out.</value>
+  </data>
+  <data name="ReplaceAndSignOutButton" xml:space="preserve">
+    <value>Verify, Replace and Sign Out Everywhere</value>
+  </data>
+  <data name="SignInAgainNotice" xml:space="preserve">
+    <value>Your authenticator was replaced and every session was signed out. Save these recovery codes, then sign in again with your new authenticator.</value>
+  </data>
+  <data name="SignInAgainButton" xml:space="preserve">
+    <value>Sign In Again</value>
+  </data>
+  <data name="PasskeysHeader" xml:space="preserve">
+    <value>Ключі доступу</value>
+  </data>
+  <data name="PasskeysDescription" xml:space="preserve">
+    <value>Ключ доступу підтверджує вашу особу за допомогою блокування екрана пристрою або ключа безпеки. Кожен ключ доступу працює лише в застосунку, у якому його додано; додайте тут ключ для вебверсії. Видалений ключ доступу одразу перестає працювати в Resgrid, хоча він може залишитися на пристрої чи в менеджері паролів.</value>
+  </data>
+  <data name="PasskeysNone" xml:space="preserve">
+    <value>У вас ще немає ключів доступу.</value>
+  </data>
+  <data name="PasskeysAddButton" xml:space="preserve">
+    <value>Додати ключ доступу для вебверсії</value>
+  </data>
+  <data name="PasskeysUnavailable" xml:space="preserve">
+    <value>Додавання ключів доступу для вебверсії в цьому розгортанні ще недоступне.</value>
+  </data>
+  <data name="PasskeysNeedAuthenticator" xml:space="preserve">
+    <value>Перш ніж додати ключ доступу, налаштуйте застосунок автентифікації та збережіть коди відновлення.</value>
+  </data>
+  <data name="PasskeyNameLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="PasskeyAppLabel" xml:space="preserve">
+    <value>Працює в</value>
+  </data>
+  <data name="PasskeyCreatedLabel" xml:space="preserve">
+    <value>Додано</value>
+  </data>
+  <data name="PasskeyLastUsedLabel" xml:space="preserve">
+    <value>Востаннє використано</value>
+  </data>
+  <data name="PasskeyNeverUsed" xml:space="preserve">
+    <value>Ще ні</value>
+  </data>
+  <data name="PasskeySharedWarning" xml:space="preserve">
+    <value>Додано на спільній інсталяції</value>
+  </data>
+  <data name="PasskeyRenameButton" xml:space="preserve">
+    <value>Перейменувати</value>
+  </data>
+  <data name="PasskeyRemoveButton" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="PasskeyRenamePrompt" xml:space="preserve">
+    <value>Нова назва цього ключа доступу:</value>
+  </data>
+  <data name="PasskeyRemoveConfirm" xml:space="preserve">
+    <value>Видалити цей ключ доступу? Він одразу перестане працювати в Resgrid, а сеанси, у які з ним увійшли, завершаться.</value>
+  </data>
+  <data name="PasskeyAdded" xml:space="preserve">
+    <value>Ключ доступу додано.</value>
+  </data>
+  <data name="PasskeyRemoved" xml:space="preserve">
+    <value>Ключ доступу видалено.</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Вікно ключа доступу закрито. Нічого не змінено.</value>
+  </data>
+  <data name="PasskeyNotSupported" xml:space="preserve">
+    <value>Цей браузер не підтримує ключі доступу. Скористайтеся застосунком автентифікації.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Не вдалося скористатися ключем доступу. Спробуйте ще раз або скористайтеся застосунком автентифікації.</value>
+  </data>
+  <data name="PasskeyLimitReached" xml:space="preserve">
+    <value>У вас уже максимальна дозволена кількість ключів доступу для вебверсії. Спочатку видаліть один.</value>
+  </data>
+  <data name="VerifyWithPasskeyButton" xml:space="preserve">
+    <value>Використати ключ доступу</value>
+  </data>
+  <data name="PasskeyAppWeb" xml:space="preserve">
+    <value>Вебверсія</value>
+  </data>
+  <data name="PasskeyAppResponder" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="PasskeyAppUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="PasskeyAppDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="PasskeyAppCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="PasskeyRenamed" xml:space="preserve">
+    <value>Ключ доступу перейменовано.</value>
+  </data>
+  <data name="PasskeyAlreadyRegistered" xml:space="preserve">
+    <value>Цей пристрій або ключ безпеки вже містить ключ доступу до вашого облікового запису в цьому застосунку.</value>
+  </data>
+  <data name="LoginMfaDescription" xml:space="preserve">
+    <value>Пароль прийнято. Завершіть вхід одним зі своїх способів підтвердження.</value>
+  </data>
+  <data name="ApproveWithResponderButton" xml:space="preserve">
+    <value>Схвалити в Responder</value>
+  </data>
+  <data name="ApprovalNumberLabel" xml:space="preserve">
+    <value>Відкрийте Responder на телефоні та схваліть запит. Перевірте, що він показує це число:</value>
+  </data>
+  <data name="ApprovalWaiting" xml:space="preserve">
+    <value>Очікуємо на ваше схвалення в Responder…</value>
+  </data>
+  <data name="ApprovalDenied" xml:space="preserve">
+    <value>Запит відхилено в Responder. Скористайтеся іншим способом.</value>
+  </data>
+  <data name="ApprovalExpired" xml:space="preserve">
+    <value>Запит завершився до схвалення. Почніть знову.</value>
+  </data>
+  <data name="ApprovalCancelButton" xml:space="preserve">
+    <value>Припинити очікування</value>
+  </data>
+  <data name="ApprovalUnavailable" xml:space="preserve">
+    <value>Схвалення в Responder зараз недоступне. Скористайтеся іншим способом.</value>
+  </data>
+  <data name="LoginMfaFailed" xml:space="preserve">
+    <value>Не вдалося. Спробуйте ще раз або скористайтеся іншим способом.</value>
+  </data>
+  <data name="LoginMfaExpired" xml:space="preserve">
+    <value>Вхід тривав надто довго. Увійдіть знову.</value>
+  </data>
+  <data name="LoginMfaTooManyAttempts" xml:space="preserve">
+    <value>Забагато невдалих спроб. Зачекайте кілька хвилин і увійдіть знову.</value>
+  </data>
+  <data name="LoginMfaPolicyChanged" xml:space="preserve">
+    <value>Політика входу вашого підрозділу змінилася. Увійдіть знову.</value>
+  </data>
+  <data name="LoginMfaSignInChanged" xml:space="preserve">
+    <value>Дані входу вашого облікового запису змінилися. Увійдіть знову.</value>
+  </data>
+  <data name="LoginMfaUnavailable" xml:space="preserve">
+    <value>Вхід тимчасово недоступний. Спробуйте ще раз за мить.</value>
+  </data>
+  <data name="LoginMfaInvalid" xml:space="preserve">
+    <value>Цей вхід більше не дійсний. Увійдіть знову.</value>
+  </data>
+  <data name="LoginMfaMethodUnavailable" xml:space="preserve">
+    <value>Цей спосіб підтвердження недоступний для цього входу. Скористайтеся іншим способом.</value>
+  </data>
+  <data name="LoginMfaMaximumSessions" xml:space="preserve">
+    <value>Досягнуто максимальної кількості активних сеансів вашого підрозділу. Завершіть один зі своїх сеансів або зверніться до адміністратора.</value>
+  </data>
+  <data name="LoginMfaRecoveryUsed" xml:space="preserve">
+    <value>Ви увійшли за допомогою коду відновлення. Якщо у вас більше немає застосунку автентифікації, замініть його зараз.</value>
+  </data>
+  <data name="UseAnotherMethodLink" xml:space="preserve">
+    <value>Використати інший спосіб</value>
+  </data>
+  <data name="SsoSignInLink" xml:space="preserve">
+    <value>Увійти через єдиний вхід</value>
+  </data>
+  <data name="SsoLogOnHeader" xml:space="preserve">
+    <value>Єдиний вхід</value>
+  </data>
+  <data name="SsoLogOnDescription" xml:space="preserve">
+    <value>Введіть своє ім’я користувача або код вашого підрозділу. Ви увійдете через постачальника ідентичності вашої організації.</value>
+  </data>
+  <data name="SsoUsernameLabel" xml:space="preserve">
+    <value>Ім’я користувача</value>
+  </data>
+  <data name="SsoOr" xml:space="preserve">
+    <value>або</value>
+  </data>
+  <data name="SsoDepartmentCodeLabel" xml:space="preserve">
+    <value>Код підрозділу</value>
+  </data>
+  <data name="SsoContinueButton" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="SsoUsePasswordLink" xml:space="preserve">
+    <value>Увійти з паролем</value>
+  </data>
+  <data name="SsoLogOnNeedsEntry" xml:space="preserve">
+    <value>Введіть ім’я користувача або код підрозділу.</value>
+  </data>
+  <data name="SsoUnavailable" xml:space="preserve">
+    <value>Єдиний вхід недоступний для цього входу.</value>
+  </data>
+  <data name="SsoRestart" xml:space="preserve">
+    <value>Не вдалося зіставити цей вхід із цим браузером. Почніть знову.</value>
+  </data>
+  <data name="SsoDeniedByProvider" xml:space="preserve">
+    <value>Ваш постачальник ідентичності не виконав вхід.</value>
+  </data>
+  <data name="SsoFailed" xml:space="preserve">
+    <value>Не вдалося завершити єдиний вхід. Почніть знову.</value>
+  </data>
+  <data name="SsoExpired" xml:space="preserve">
+    <value>Єдиний вхід тривав надто довго. Почніть знову.</value>
+  </data>
+  <data name="SsoAccessDenied" xml:space="preserve">
+    <value>Цей обліковий запис не може увійти тут через єдиний вхід.</value>
+  </data>
+  <data name="SsoAccountMismatch" xml:space="preserve">
+    <value>Постачальник ідентичності виконав вхід іншим обліковим записом. Почніть знову з обліковим записом, який ви використовуєте тут.</value>
+  </data>
+  <data name="SsoNotFresh" xml:space="preserve">
+    <value>Постачальник ідентичності не підтвердив новий вхід. Почніть знову.</value>
+  </data>
+  <data name="SsoProviderMfaNotConfirmed" xml:space="preserve">
+    <value>Постачальник ідентичності не підтвердив багатофакторну автентифікацію. Скористайтеся іншим способом.</value>
+  </data>
+  <data name="SsoMfaEnrollmentRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає багатофакторної автентифікації, а цей обліковий запис її ще не має. Запитайте адміністратора, як її налаштувати.</value>
+  </data>
+  <data name="VerifyWithProviderButton" xml:space="preserve">
+    <value>Підтвердити через постачальника ідентичності</value>
+  </data>
+  <data name="ReauthenticateWithSsoButton" xml:space="preserve">
+    <value>Підтвердити через єдиний вхід</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfaShort" xml:space="preserve">
+    <value>Для перевірки зіставлення потрібне недавнє підтвердження застосунком автентифікації або ключем доступу.</value>
+  </data>
+  <data name="FederatedMfaTestFailed" xml:space="preserve">
+    <value>Тестовий вхід не містив значення, яке зіставлення вважає MFA. Перевірте зіставлення та постачальника ідентичності й повторіть перевірку.</value>
+  </data>
+  <data name="FederatedMfaTestChanged" xml:space="preserve">
+    <value>Зіставлення змінилося під час перевірки. Перевірте його знову.</value>
+  </data>
+  <data name="FederatedMfaTestPassed" xml:space="preserve">
+    <value>Зіставлення пройшло перевірку й тепер чинне.</value>
+  </data>
+  <data name="LoginMfaSetupHeader" xml:space="preserve">
+    <value>Налаштуйте застосунок автентифікації</value>
+  </data>
+  <data name="LoginMfaSetupDescription" xml:space="preserve">
+    <value>Ваш підрозділ вимагає другого фактора, а цей обліковий запис його ще не має. Налаштуйте застосунок автентифікації, щоб завершити вхід.</value>
+  </data>
+  <data name="SetupCompleteButton" xml:space="preserve">
+    <value>Підтвердити й увійти</value>
+  </data>
+  <data name="SetupExpired" xml:space="preserve">
+    <value>Термін дії коду налаштування минув. Показано новий; відскануйте його знову.</value>
+  </data>
+  <data name="BackToSignInLink" xml:space="preserve">
+    <value>Повернутися до входу</value>
+  </data>
+  <data name="LostFactorLink" xml:space="preserve">
+    <value>Я втратив автентифікатор</value>
+  </data>
+  <data name="LostFactorHeader" xml:space="preserve">
+    <value>Втратили автентифікатор?</value>
+  </data>
+  <data name="LostFactorWithCodeDescription" xml:space="preserve">
+    <value>Якщо ви зберегли коди відновлення, введіть один, щоб налаштувати новий застосунок автентифікації та видалити втрачені ключі доступу. Усі сеанси завершаться, після чого ви ввійдете знову.</value>
+  </data>
+  <data name="StartRecoveryButton" xml:space="preserve">
+    <value>Замінити автентифікатор</value>
+  </data>
+  <data name="LostFactorSignInFirst" xml:space="preserve">
+    <value>Щоб використати код відновлення, спершу увійдіть із паролем або через єдиний вхід, а потім виберіть «Я втратив автентифікатор».</value>
+  </data>
+  <data name="LostFactorNoCodeHeader" xml:space="preserve">
+    <value>Немає коду відновлення?</value>
+  </data>
+  <data name="LostFactorNoCodeDescription" xml:space="preserve">
+    <value>Resgrid не може автоматично скинути втрачений автентифікатор. Попросіть адміністраторів вашого підрозділу звернутися до служби підтримки Resgrid, яка підтвердить вашу особу з підрозділом, перш ніж щось зміниться. Доти дотримуйтеся процедур вашого підрозділу.</value>
+  </data>
+  <data name="RecoveryHeader" xml:space="preserve">
+    <value>Замініть автентифікатор</value>
+  </data>
+  <data name="RecoveryDescription" xml:space="preserve">
+    <value>Налаштуйте новий застосунок автентифікації та введіть показаний код. Виберіть втрачені ключі доступу; їх буде видалено.</value>
+  </data>
+  <data name="RecoveryPasskeysLabel" xml:space="preserve">
+    <value>Ключі доступу, які слід видалити як втрачені</value>
+  </data>
+  <data name="RecoveryCompleteButton" xml:space="preserve">
+    <value>Замінити й вийти всюди</value>
+  </data>
+  <data name="RecoveryCancelButton" xml:space="preserve">
+    <value>Скасувати відновлення</value>
+  </data>
+  <data name="RecoveryCompleteHeader" xml:space="preserve">
+    <value>Автентифікатор замінено</value>
+  </data>
+  <data name="RecoveryCompleteDescription" xml:space="preserve">
+    <value>Усі сеанси завершено. Збережіть нові коди відновлення, а потім увійдіть знову з новим автентифікатором.</value>
+  </data>
+  <data name="RecoverySignInAgainButton" xml:space="preserve">
+    <value>Увійти</value>
+  </data>
+  <data name="RecoveryEnded" xml:space="preserve">
+    <value>Це відновлення більше не дійсне. Увійдіть і почніть знову.</value>
+  </data>
+  <data name="RecoveryUnavailable" xml:space="preserve">
+    <value>Відновлення тимчасово недоступне. Увійдіть і спробуйте знову з іншим кодом відновлення.</value>
+  </data>
+  <data name="RecoveryPasskeyNotFound" xml:space="preserve">
+    <value>Один із ключів доступу для видалення не ваш або вже видалений.</value>
+  </data>
+  <data name="SsoReturnContinuing" xml:space="preserve">
+    <value>Повернення зі входу вашої організації…</value>
+  </data>
+  <data name="SsoReturnContinue" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="SharedWorkstationTitle" xml:space="preserve">
+    <value>Спільна робоча станція</value>
+  </data>
+  <data name="SharedWorkstationDescription" xml:space="preserve">
+    <value>На спільній робочій станції кожен вхід у цьому браузері блокується під час бездіяльності, завершується з лімітом зміни й ніколи не запам’ятовує браузер. Кожен оператор входить під власним обліковим записом.</value>
+  </data>
+  <data name="SharedWorkstationUseLabel" xml:space="preserve">
+    <value>Використовувати цей браузер як спільну робочу станцію</value>
+  </data>
+  <data name="SharedWorkstationLabelLabel" xml:space="preserve">
+    <value>Назва робочої станції (необов’язково)</value>
+  </data>
+  <data name="SharedWorkstationLabelHelp" xml:space="preserve">
+    <value>Назва для підтримки, наприклад «Диспетчерське місце 2». Вона позначає станцію, а не людину.</value>
+  </data>
+  <data name="SharedWorkstationSaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SharedWorkstationSaved" xml:space="preserve">
+    <value>Цей браузер тепер є спільною робочою станцією. Це діє з наступного входу.</value>
+  </data>
+  <data name="SharedWorkstationRemoved" xml:space="preserve">
+    <value>Цей браузер більше не є спільною робочою станцією. Це діє з наступного входу.</value>
+  </data>
+  <data name="SharedWorkstationUnavailable" xml:space="preserve">
+    <value>Режим спільної робочої станції недоступний у цьому розгортанні Resgrid.</value>
+  </data>
+  <data name="SharedWorkstationLink" xml:space="preserve">
+    <value>Налаштування спільної робочої станції</value>
+  </data>
+  <data name="SharedWorkstationNotice" xml:space="preserve">
+    <value>Спільна робоча станція: входи тут блокуються під час бездіяльності й ніколи не запам’ятовують цей браузер.</value>
+  </data>
+  <data name="SharedWorkstationNoticeNamed" xml:space="preserve">
+    <value>Спільна робоча станція ({0}): входи тут блокуються під час бездіяльності й ніколи не запам’ятовують цей браузер.</value>
+  </data>
+  <data name="SharedLockedHeader" xml:space="preserve">
+    <value>Робочу станцію заблоковано</value>
+  </data>
+  <data name="SharedLockedIdle" xml:space="preserve">
+    <value>Цю робочу станцію заблоковано через бездіяльність.</value>
+  </data>
+  <data name="SharedLockedExplicit" xml:space="preserve">
+    <value>Цю робочу станцію заблоковано.</value>
+  </data>
+  <data name="SharedLockedOperator" xml:space="preserve">
+    <value>Увійшли як {0}</value>
+  </data>
+  <data name="SharedLockedInstruction" xml:space="preserve">
+    <value>Розблокувати може лише {0}. Усі інші: змініть оператора або завершіть зміну.</value>
+  </data>
+  <data name="SharedUnlockButton" xml:space="preserve">
+    <value>Розблокувати</value>
+  </data>
+  <data name="SharedSwitchOperatorButton" xml:space="preserve">
+    <value>Змінити оператора</value>
+  </data>
+  <data name="SharedEndShiftButton" xml:space="preserve">
+    <value>Завершити зміну</value>
+  </data>
+  <data name="SharedLockButton" xml:space="preserve">
+    <value>Заблокувати</value>
+  </data>
+  <data name="SharedStaySignedInButton" xml:space="preserve">
+    <value>Залишитися в системі</value>
+  </data>
+  <data name="SharedBarLocksIn" xml:space="preserve">
+    <value>Блокування через {0}</value>
+  </data>
+  <data name="SharedIdleWarning" xml:space="preserve">
+    <value>Ця робоча станція заблокується через {0} с через бездіяльність.</value>
+  </data>
+  <data name="SharedShiftEndsSoon" xml:space="preserve">
+    <value>Зміна завершиться через {0} хв.</value>
+  </data>
+  <data name="SharedUnlockNeedsAuthenticator" xml:space="preserve">
+    <value>Для швидкого розблокування потрібен застосунок автентифікації або інший спосіб перевірки. Завершіть зміну та увійдіть знову.</value>
+  </data>
+  <data name="SharedUnlockNeedsSso" xml:space="preserve">
+    <value>Ваш підрозділ вимагає єдиного входу. Завершіть зміну та увійдіть через SSO.</value>
+  </data>
+  <data name="SharedUnlockLockChanged" xml:space="preserve">
+    <value>Робочу станцію знову заблоковано. Розблокуйте її ще раз.</value>
+  </data>
+  <data name="SharedUnlockSessionEnded" xml:space="preserve">
+    <value>Цей сеанс завершено. Завершіть зміну та увійдіть знову.</value>
+  </data>
+  <data name="SharedUnlockTooManyAttempts" xml:space="preserve">
+    <value>Забагато спроб розблокування. Зачекайте кілька хвилин або завершіть зміну та увійдіть знову.</value>
+  </data>
+  <data name="SharedSessionUpdateFailed" xml:space="preserve">
+    <value>Не вдалося оновити сеанс. Спробуйте ще раз.</value>
+  </data>
+  <data name="SharedShiftEnded" xml:space="preserve">
+    <value>Зміна на цій спільній робочій станції завершилася. Увійдіть знову.</value>
+  </data>
+  <data name="SharedShiftEndedByOperator" xml:space="preserve">
+    <value>Зміну завершено. Ця робоча станція готова до наступного входу.</value>
+  </data>
+  <data name="SharedSwitchOperatorDone" xml:space="preserve">
+    <value>Ви вийшли. Наступний оператор може увійти зараз.</value>
   </data>
 </root>

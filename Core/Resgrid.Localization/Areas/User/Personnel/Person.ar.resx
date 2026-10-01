@@ -36,7 +36,7 @@
   <data name="FirstNameLabel" xml:space="preserve"><value>الاسم الأول</value></data>
   <data name="FirstNamePlaceholder" xml:space="preserve"><value>الاسم الأول</value></data>
   <data name="GroupLabel" xml:space="preserve"><value>المجموعة</value></data>
-  <data name="Home" xml:space="preserve"><value>الرئيسية</value></data>
+  <data name="Home" xml:space="preserve"><value>المنزل</value></data>
   <data name="IDNumberLabel" xml:space="preserve"><value>رقم الهوية</value></data>
   <data name="IDNumberPlaceholder" xml:space="preserve"><value>رقم التعريف المخصص</value></data>
   <data name="IsGroupAdminLabel" xml:space="preserve"><value>مدير المجموعة؟</value></data>
@@ -58,10 +58,10 @@
   <data name="NotifyUser" xml:space="preserve"><value>إشعار المستخدم؟</value></data>
   <data name="NotifyWarning" xml:space="preserve"><value>أزل التحديد إذا كنت لا تريد من Resgrid إشعار المستخدم بإنشاء هذا الحساب.</value></data>
   <data name="RequirePasswordChange" xml:space="preserve">
-    <value>Require Password Change</value>
+    <value>اشتراط تغيير كلمة المرور</value>
   </data>
   <data name="RequirePasswordChangeHelp" xml:space="preserve">
-    <value>User will be required to change their password on first login.</value>
+    <value>سيُطلب من المستخدم تغيير كلمة المرور عند أول تسجيل دخول.</value>
   </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve"><value>لا يوجد أفراد غير منتمين لمجموعة</value></data>
   <data name="PersonnelHeader" xml:space="preserve"><value>الأفراد</value></data>

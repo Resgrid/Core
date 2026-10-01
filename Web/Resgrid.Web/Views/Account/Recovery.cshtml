@@ -1,0 +1,78 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.FactorRecoveryViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["RecoveryHeader"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" />
+                </div>
+                <h3>@localizer["RecoveryHeader"]</h3>
+                <p>@localizer["RecoveryDescription"]</p>
+
+                <div class="ibox-content">
+                    <form asp-action="Recovery" asp-controller="Account" method="post" id="recoveryForm" autocomplete="off">
+                        @Html.AntiForgeryToken()
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        }
+                        <ol class="m-t">
+                            <li>@string.Format(localizer["SetupStep1"].Value, "Google Authenticator", "Microsoft Authenticator", "Authy")</li>
+                            <li>@localizer["SetupStep2QR"]</li>
+                        </ol>
+                        <div class="text-center m-b">
+                            <img src="@Model.QrCodeDataUrl" alt="QR code" style="max-width: 220px;" />
+                            <p><kbd id="setupKey">@Model.SharedKey</kbd></p>
+                        </div>
+                        <p>@localizer["SetupStep3"]</p>
+                        <div class="form-group">
+                            <label asp-for="Code">@localizer["AuthenticatorCodeInputLabel"]</label>
+                            <input asp-for="Code" class="form-control" autocomplete="one-time-code" inputmode="numeric" maxlength="7"
+                                   placeholder="@localizer["VerificationCodePlaceholder"]" />
+                        </div>
+                        @if (Model.Passkeys.Count > 0)
+                        {
+                            <div class="form-group" id="recoveryPasskeys">
+                                <label>@localizer["RecoveryPasskeysLabel"]</label>
+                                @foreach (var passkey in Model.Passkeys)
+                                {
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="RemovePasskeyIds" value="@passkey.Id" checked="@Model.RemovePasskeyIds.Contains(passkey.Id)" />
+                                            @passkey.Name
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <button type="submit" class="btn btn-primary block full-width m-b">@localizer["RecoveryCompleteButton"]</button>
+                    </form>
+                    <form asp-action="RecoveryCancel" asp-controller="Account" method="post" id="recoveryCancelForm">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-default block full-width">@localizer["RecoveryCancelButton"]</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ScriptsPartial")
+</body>
+</html>

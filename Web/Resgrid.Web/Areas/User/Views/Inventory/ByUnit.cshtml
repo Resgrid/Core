@@ -45,15 +45,15 @@
 {
 	<script type="text/javascript">
 		var inventoryByUnitStrings = {
-			unit: '@Html.Raw(localizer["Unit"].Value)',
-			type: '@Html.Raw(commonLocalizer["Type"].Value)',
-			amount: '@Html.Raw(localizer["Amount"].Value)',
-			group: '@Html.Raw(localizer["Group"].Value)',
-			batch: '@Html.Raw(localizer["Batch"].Value)',
-			timestamp: '@Html.Raw(commonLocalizer["Timestamp"].Value)',
-			addedBy: '@Html.Raw(localizer["AddedBy"].Value)',
-			actions: '@Html.Raw(commonLocalizer["Actions"].Value)',
-			view: '@Html.Raw(commonLocalizer["View"].Value)'
+			unit: '@JsEncoder.Encode(localizer["Unit"].Value)',
+			type: '@JsEncoder.Encode(commonLocalizer["Type"].Value)',
+			amount: '@JsEncoder.Encode(localizer["Amount"].Value)',
+			group: '@JsEncoder.Encode(localizer["Group"].Value)',
+			batch: '@JsEncoder.Encode(localizer["Batch"].Value)',
+			timestamp: '@JsEncoder.Encode(commonLocalizer["Timestamp"].Value)',
+			addedBy: '@JsEncoder.Encode(localizer["AddedBy"].Value)',
+			actions: '@JsEncoder.Encode(commonLocalizer["Actions"].Value)',
+			view: '@JsEncoder.Encode(commonLocalizer["View"].Value)'
 		};
 	</script>
 	<script src="~/js/app/internal/inventory/resgrid.inventory.byunit.js" type="text/javascript"></script>

@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddCategoryHeader" xml:space="preserve">
     <value>Agregar categoría</value>
   </data>
@@ -440,5 +431,269 @@
   <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Este contacto no se puede eliminar mientras tenga un perfil de facturación con facturas no anuladas. Anule o liquide primero las facturas.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Abrir ocupación</value>
+  </data>
+  <data name="Routes" xml:space="preserve">
+    <value>Rutas</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>Ruta</value>
+  </data>
+  <data name="StopName" xml:space="preserve">
+    <value>Nombre de la parada</value>
+  </data>
+  <data name="PriorityNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>Alta</value>
+  </data>
+  <data name="PriorityCritical" xml:space="preserve">
+    <value>Crítica</value>
+  </data>
+  <data name="PriorityOptional" xml:space="preserve">
+    <value>Opcional</value>
+  </data>
+  <data name="PreplanTitle" xml:space="preserve">
+    <value>Plan previo al incidente</value>
+  </data>
+  <data name="PreplanTab" xml:space="preserve">
+    <value>Plan previo</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>Archivos del sitio</value>
+  </data>
+  <data name="ManageFiles" xml:space="preserve">
+    <value>Administrar archivos</value>
+  </data>
+  <data name="PreplanOccupancySection" xml:space="preserve">
+    <value>Construcción y ocupación</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Tipo de construcción</value>
+  </data>
+  <data name="RoofType" xml:space="preserve">
+    <value>Tipo de cubierta</value>
+  </data>
+  <data name="OccupancyType" xml:space="preserve">
+    <value>Tipo de ocupación</value>
+  </data>
+  <data name="OccupancyHours" xml:space="preserve">
+    <value>Horario de ocupación</value>
+  </data>
+  <data name="OccupancyHoursPlaceholder" xml:space="preserve">
+    <value>p. ej. lun-vie 08:00-17:00, con personal durante la noche</value>
+  </data>
+  <data name="OccupantLoad" xml:space="preserve">
+    <value>Aforo</value>
+  </data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve">
+    <value>Ocupantes que requieren asistencia</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceYes" xml:space="preserve">
+    <value>Los ocupantes del sitio pueden necesitar asistencia para evacuar</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceNotes" xml:space="preserve">
+    <value>Quiénes, dónde y qué asistencia necesitan</value>
+  </data>
+  <data name="OccupancyNotes" xml:space="preserve">
+    <value>Notas de ocupación</value>
+  </data>
+  <data name="PreplanUtilitiesSection" xml:space="preserve">
+    <value>Cortes de suministros</value>
+  </data>
+  <data name="GasShutoff" xml:space="preserve">
+    <value>Corte de gas</value>
+  </data>
+  <data name="ElectricShutoff" xml:space="preserve">
+    <value>Corte eléctrico</value>
+  </data>
+  <data name="WaterShutoff" xml:space="preserve">
+    <value>Corte de agua</value>
+  </data>
+  <data name="UtilityNotes" xml:space="preserve">
+    <value>Notas de suministros</value>
+  </data>
+  <data name="PreplanWaterSection" xml:space="preserve">
+    <value>Suministro de agua</value>
+  </data>
+  <data name="NearestHydrant" xml:space="preserve">
+    <value>Hidrante más cercano</value>
+  </data>
+  <data name="RequiredFireFlow" xml:space="preserve">
+    <value>Caudal requerido (GPM)</value>
+  </data>
+  <data name="WaterSupplyNotes" xml:space="preserve">
+    <value>Notas de suministro de agua</value>
+  </data>
+  <data name="PreplanAccessSection" xml:space="preserve">
+    <value>Acceso</value>
+  </data>
+  <data name="KnoxBox" xml:space="preserve">
+    <value>Ubicación de la caja de llaves</value>
+  </data>
+  <data name="GateCode" xml:space="preserve">
+    <value>Código de la puerta</value>
+  </data>
+  <data name="GateCodeInfo" xml:space="preserve">
+    <value>Se almacena cifrado. Se muestra a los miembros que pueden ver este contacto y a los respondedores de las llamadas vinculadas.</value>
+  </data>
+  <data name="AlarmPanel" xml:space="preserve">
+    <value>Ubicación del panel de alarma</value>
+  </data>
+  <data name="AlarmCompany" xml:space="preserve">
+    <value>Empresa de alarmas</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Teléfono</value>
+  </data>
+  <data name="AccessNotes" xml:space="preserve">
+    <value>Notas de acceso</value>
+  </data>
+  <data name="PreplanContactsSection" xml:space="preserve">
+    <value>Contactos en el sitio</value>
+  </data>
+  <data name="EmergencyContact" xml:space="preserve">
+    <value>Contacto de emergencia</value>
+  </data>
+  <data name="SecondaryContact" xml:space="preserve">
+    <value>Contacto secundario</value>
+  </data>
+  <data name="PreplanTacticalSection" xml:space="preserve">
+    <value>Peligros y tácticas</value>
+  </data>
+  <data name="HazmatOnSite" xml:space="preserve">
+    <value>Materiales peligrosos en el sitio</value>
+  </data>
+  <data name="HazmatOnSiteYes" xml:space="preserve">
+    <value>Se almacenan o usan materiales peligrosos en el sitio</value>
+  </data>
+  <data name="GeneralHazardNotes" xml:space="preserve">
+    <value>Notas generales de peligros</value>
+  </data>
+  <data name="TacticalSummary" xml:space="preserve">
+    <value>Resumen táctico</value>
+  </data>
+  <data name="PreplanReviewSection" xml:space="preserve">
+    <value>Ciclo de revisión</value>
+  </data>
+  <data name="LastReviewed" xml:space="preserve">
+    <value>Última revisión</value>
+  </data>
+  <data name="NeverReviewed" xml:space="preserve">
+    <value>Nunca revisado</value>
+  </data>
+  <data name="MarkReviewedNow" xml:space="preserve">
+    <value>Marcar este plan previo como revisado ahora</value>
+  </data>
+  <data name="NextReviewDue" xml:space="preserve">
+    <value>Próxima revisión</value>
+  </data>
+  <data name="SavePreplan" xml:space="preserve">
+    <value>Guardar plan previo</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Peligros del inmueble</value>
+  </data>
+  <data name="PremiseHazardsInfo" xml:space="preserve">
+    <value>Peligros clasificados por tipo y gravedad. Los peligros marcados como alertas se muestran a los despachadores cuando este contacto se agrega a una llamada.</value>
+  </data>
+  <data name="AddHazard" xml:space="preserve">
+    <value>Agregar peligro</value>
+  </data>
+  <data name="EditHazard" xml:space="preserve">
+    <value>Editar peligro</value>
+  </data>
+  <data name="SaveHazard" xml:space="preserve">
+    <value>Guardar peligro</value>
+  </data>
+  <data name="DeleteHazardConfirm" xml:space="preserve">
+    <value>¿Quitar este peligro?</value>
+  </data>
+  <data name="HazardSaveError" xml:space="preserve">
+    <value>No se pudo guardar el peligro.</value>
+  </data>
+  <data name="HazardTitleRequired" xml:space="preserve">
+    <value>El peligro necesita un título.</value>
+  </data>
+  <data name="HazardShouldAlert" xml:space="preserve">
+    <value>Alertar a los despachadores cuando este contacto se agregue a una llamada</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Gravedad</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="Alert" xml:space="preserve">
+    <value>Alerta</value>
+  </data>
+  <data name="NoHazards" xml:space="preserve">
+    <value>No hay peligros del inmueble registrados.</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>Coordenadas GPS</value>
+  </data>
+  <data name="PreplanReviewOverdue" xml:space="preserve">
+    <value>La fecha de revisión del plan previo ya pasó.</value>
+  </data>
+  <data name="PreplanReviewDue" xml:space="preserve">
+    <value>Revisión de plan previo pendiente</value>
+  </data>
+  <data name="CreatePreplan" xml:space="preserve">
+    <value>Crear plan previo</value>
+  </data>
+  <data name="EditPreplan" xml:space="preserve">
+    <value>Editar plan previo</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>No se ha registrado un plan previo al incidente para este contacto.</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>No se han adjuntado archivos a este contacto.</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>Subir archivo</value>
+  </data>
+  <data name="UploadFileInfo" xml:space="preserve">
+    <value>Imágenes, PDF, documentos de Office, texto, CSV, DWG o DXF de hasta 30 MB.</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>Tipo de archivo</value>
+  </data>
+  <data name="FileTitle" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="FileTitlePlaceholder" xml:space="preserve">
+    <value>Título opcional (si se deja en blanco, se usa el nombre del archivo)</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Nombre del archivo</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="DeleteFileConfirm" xml:space="preserve">
+    <value>¿Quitar este archivo?</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Tamaño</value>
+  </data>
+  <data name="AddedOn" xml:space="preserve">
+    <value>Agregado el</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Llamadas</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notas</value>
   </data>
 </root>

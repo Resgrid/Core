@@ -21,7 +21,7 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (!Model.Aggregate.Definition.IsRetired)
 			{
-				<form method="post" asp-controller="RecordDefinitions" asp-action="Retire" asp-route-area="User" asp-route-key="@key" style="display:inline" onsubmit="var r = prompt('@localizer["DefinitionRetireReason"]'); if (!r) return false; this.querySelector('[name=reason]').value = r; return true;">
+				<form method="post" asp-controller="RecordDefinitions" asp-action="Retire" asp-route-area="User" asp-route-key="@key" style="display:inline" onsubmit="var r = prompt('@JsEncoder.Encode(localizer["DefinitionRetireReason"])'); if (!r) return false; this.querySelector('[name=reason]').value = r; return true;">
 					@Html.AntiForgeryToken()<input type="hidden" name="rowVersion" value="@Model.Aggregate.Definition.RowVersion" /><input type="hidden" name="reason" value="" />
 					<button type="submit" class="btn btn-danger"><i class="fa fa-ban"></i> @localizer["DefinitionRetire"]</button>
 				</form>
@@ -76,7 +76,7 @@
 						@await Html.PartialAsync("_JsonInputHelp", Resgrid.Web.Helpers.JsonInputHelp.For<List<RecordDefinitionFieldMapping>>("mappingJson", "[{\"FromFieldKey\":\"old_key\",\"ToFieldKey\":\"new_key\"}]", optional: true))
 						<div class="form-group"><div class="col-sm-8 col-sm-offset-2">
 							<button type="submit" class="btn btn-default" name="preview" value="true">@localizer["DefinitionMigratePreview"]</button>
-							<button type="submit" class="btn btn-warning" name="preview" value="false" onclick="return confirm('@localizer["DefinitionMigrateConfirm"]');">@localizer["DefinitionMigrateRun"]</button>
+							<button type="submit" class="btn btn-warning" name="preview" value="false" onclick="return confirm('@JsEncoder.Encode(localizer["DefinitionMigrateConfirm"])');">@localizer["DefinitionMigrateRun"]</button>
 						</div></div>
 					</form>
 				}

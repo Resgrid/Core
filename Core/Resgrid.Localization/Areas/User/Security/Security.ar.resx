@@ -8,6 +8,363 @@
   <data name="SecurityPermissionsHeader" xml:space="preserve"><value>الأمان والصلاحيات</value></data>
   <data name="SecurityPermissionsDescription" xml:space="preserve"><value>يمكنك هنا تعيين الصلاحيات لقسمك، مثل تحديد من يمكنه إنشاء البلاغات أو من هو مخوّل بإنشاء المستخدمين وإزالتهم. ستسري التغييرات على الصلاحيات عند تسجيل الدخول التالي إلى تطبيق Resgrid.</value></data>
   <data name="AuditLogsButton" xml:space="preserve"><value>سجلات التدقيق</value></data>
+  <data name="AuditLogsTypeFilterLabel" xml:space="preserve"><value>التصفية حسب نوع التدقيق</value></data>
+  <data name="AuditLogsTypeFilterAll" xml:space="preserve"><value>جميع أنواع التدقيق</value></data>
+  <data name="AuditLogsSearchHelp" xml:space="preserve"><value>ابحث باسم المستخدم، أو معرف المستخدم أو التدقيق، أو عنوان البريد الإلكتروني، أو التاريخ/الوقت، أو نوع التدقيق. يُطبَّق البحث والفرز ضمن نوع التدقيق المحدد.</value></data>
+  <data name="AuditLogsSearchLabel" xml:space="preserve"><value>البحث في سجلات التدقيق:</value></data>
+  <data name="AuditLogsSearchPlaceholder" xml:space="preserve"><value>الاسم أو المعرف أو البريد الإلكتروني أو التاريخ/الوقت أو النوع</value></data>
+  <data name="AuditLogsColumnTimestamp" xml:space="preserve"><value>الطابع الزمني</value></data>
+  <data name="AuditLogsColumnType" xml:space="preserve"><value>النوع</value></data>
+  <data name="AuditLogsColumnLoggedBy" xml:space="preserve"><value>سُجّل بواسطة</value></data>
+  <data name="AuditLogsColumnResult" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="AuditLogsColumnMessage" xml:space="preserve"><value>الرسالة</value></data>
+  <data name="AuditLogsColumnSearchTerms" xml:space="preserve"><value>مصطلحات البحث</value></data>
+  <data name="AuditLogsColumnActions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="AuditLogsResultSuccessful" xml:space="preserve"><value>ناجح</value></data>
+  <data name="AuditLogsResultFailed" xml:space="preserve"><value>فاشل</value></data>
+  <data name="AuditLogsViewButton" xml:space="preserve"><value>عرض</value></data>
+  <data name="AuditLogsTableInfo" xml:space="preserve"><value>عرض _START_ إلى _END_ من أصل _TOTAL_ إدخال</value></data>
+  <data name="AuditLogsTableInfoEmpty" xml:space="preserve"><value>عرض 0 إلى 0 من أصل 0 إدخال</value></data>
+  <data name="AuditLogsTableInfoFiltered" xml:space="preserve"><value>(تمت التصفية من إجمالي _MAX_ إدخال)</value></data>
+  <data name="AuditLogsTableLengthMenu" xml:space="preserve"><value>عرض _MENU_ إدخالات</value></data>
+  <data name="AuditLogsTableLoading" xml:space="preserve"><value>جارٍ التحميل...</value></data>
+  <data name="AuditLogsTableEmpty" xml:space="preserve"><value>لا توجد إدخالات في سجل التدقيق</value></data>
+  <data name="AuditLogsTableZeroRecords" xml:space="preserve"><value>لم يتم العثور على إدخالات مطابقة في سجل التدقيق</value></data>
+  <data name="AuditLogsTableFirst" xml:space="preserve"><value>الأول</value></data>
+  <data name="AuditLogsTableLast" xml:space="preserve"><value>الأخير</value></data>
+  <data name="AuditLogsTableNext" xml:space="preserve"><value>التالي</value></data>
+  <data name="AuditLogsTablePrevious" xml:space="preserve"><value>السابق</value></data>
+  <data name="AuditLogsTableSortAscending" xml:space="preserve"><value>: فعّل لفرز العمود تصاعدياً</value></data>
+  <data name="AuditLogsTableSortDescending" xml:space="preserve"><value>: فعّل لفرز العمود تنازلياً</value></data>
+  <data name="AuditLogsSystemActor" xml:space="preserve"><value>النظام</value></data>
+  <data name="AuditLogsUnknownTime" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="AuditLogViewTitle" xml:space="preserve"><value>عرض سجل التدقيق</value></data>
+  <data name="AuditLogViewPanelTitle" xml:space="preserve"><value>سجل التدقيق</value></data>
+  <data name="AuditLogViewAuditLogId" xml:space="preserve"><value>معرف سجل التدقيق:</value></data>
+  <data name="AuditLogViewDepartmentId" xml:space="preserve"><value>معرف القسم:</value></data>
+  <data name="AuditLogViewAuditType" xml:space="preserve"><value>نوع التدقيق:</value></data>
+  <data name="AuditLogViewLogTypeId" xml:space="preserve"><value>معرف نوع السجل:</value></data>
+  <data name="AuditLogViewTypeDescription" xml:space="preserve"><value>وصف النوع:</value></data>
+  <data name="AuditLogViewResult" xml:space="preserve"><value>النتيجة:</value></data>
+  <data name="AuditLogViewLoggedBy" xml:space="preserve"><value>سُجّل بواسطة:</value></data>
+  <data name="AuditLogViewUserId" xml:space="preserve"><value>معرف المستخدم:</value></data>
+  <data name="AuditLogViewLoggedOnLocal" xml:space="preserve"><value>وقت التسجيل (التوقيت المحلي):</value></data>
+  <data name="AuditLogViewLoggedOnUtc" xml:space="preserve"><value>وقت التسجيل (UTC):</value></data>
+  <data name="AuditLogViewIpAddress" xml:space="preserve"><value>عنوان IP:</value></data>
+  <data name="AuditLogViewServerName" xml:space="preserve"><value>اسم الخادم:</value></data>
+  <data name="AuditLogViewObjectId" xml:space="preserve"><value>معرف الكائن:</value></data>
+  <data name="AuditLogViewObjectDepartmentId" xml:space="preserve"><value>معرف قسم الكائن:</value></data>
+  <data name="AuditLogViewUserAgent" xml:space="preserve"><value>وكيل المستخدم:</value></data>
+  <data name="AuditLogViewMessage" xml:space="preserve"><value>الرسالة:</value></data>
+  <data name="AuditLogViewData" xml:space="preserve"><value>البيانات:</value></data>
+  <data name="AuditLogViewNotRecorded" xml:space="preserve"><value>غير مسجّل</value></data>
+  <data name="AuditLogTypeDepartmentSettingsChanged" xml:space="preserve"><value>تم تغيير إعدادات القسم</value></data>
+  <data name="AuditLogTypeUserAdded" xml:space="preserve"><value>تمت إضافة المستخدم</value></data>
+  <data name="AuditLogTypeUserRemoved" xml:space="preserve"><value>تمت إزالة المستخدم</value></data>
+  <data name="AuditLogTypeGroupAdded" xml:space="preserve"><value>تمت إضافة المجموعة</value></data>
+  <data name="AuditLogTypeGroupRemoved" xml:space="preserve"><value>تمت إزالة المجموعة</value></data>
+  <data name="AuditLogTypeGroupChanged" xml:space="preserve"><value>تم تغيير المجموعة</value></data>
+  <data name="AuditLogTypeUnitAdded" xml:space="preserve"><value>تمت إضافة الوحدة</value></data>
+  <data name="AuditLogTypeUnitRemoved" xml:space="preserve"><value>تمت إزالة الوحدة</value></data>
+  <data name="AuditLogTypeUnitChanged" xml:space="preserve"><value>تم تغيير الوحدة</value></data>
+  <data name="AuditLogTypeProfileUpdated" xml:space="preserve"><value>تم تحديث الملف الشخصي</value></data>
+  <data name="AuditLogTypePermissionsChanged" xml:space="preserve"><value>تم تغيير الصلاحيات</value></data>
+  <data name="AuditLogTypeSubscriptionUpdated" xml:space="preserve"><value>تم تحديث الاشتراك</value></data>
+  <data name="AuditLogTypeSubscriptionCreated" xml:space="preserve"><value>تم إنشاء الاشتراك</value></data>
+  <data name="AuditLogTypeSubscriptionCancelled" xml:space="preserve"><value>تم إلغاء الاشتراك</value></data>
+  <data name="AuditLogTypeSubscriptionBillingInfoUpdated" xml:space="preserve"><value>تم تحديث معلومات فواتير الاشتراك</value></data>
+  <data name="AuditLogTypeCallReactivated" xml:space="preserve"><value>تمت إعادة تفعيل البلاغ</value></data>
+  <data name="AuditLogTypeUserAccountDeleted" xml:space="preserve"><value>تم حذف حساب المستخدم</value></data>
+  <data name="AuditLogTypeAddonSubscriptionModified" xml:space="preserve"><value>تم تعديل اشتراك الإضافة</value></data>
+  <data name="AuditLogTypeDeleteDepartmentRequested" xml:space="preserve"><value>تم طلب حذف القسم</value></data>
+  <data name="AuditLogTypeDeleteDepartmentRequestedCancelled" xml:space="preserve"><value>تم إلغاء طلب حذف القسم</value></data>
+  <data name="AuditLogTypeDeleteStaticShift" xml:space="preserve"><value>تم حذف الوردية الثابتة</value></data>
+  <data name="AuditLogTypeUpdateStaticShift" xml:space="preserve"><value>تم تحديث الوردية الثابتة</value></data>
+  <data name="AuditLogTypeCustomStatusAdded" xml:space="preserve"><value>تمت إضافة الحالة المخصصة</value></data>
+  <data name="AuditLogTypeCustomStatusRemoved" xml:space="preserve"><value>تمت إزالة الحالة المخصصة</value></data>
+  <data name="AuditLogTypeCustomStatusUpdated" xml:space="preserve"><value>تم تحديث الحالة المخصصة</value></data>
+  <data name="AuditLogTypeCustomStatusDetailUpdated" xml:space="preserve"><value>تم تحديث تفاصيل الحالة المخصصة</value></data>
+  <data name="AuditLogTypeCallTypeAdded" xml:space="preserve"><value>تمت إضافة نوع البلاغ</value></data>
+  <data name="AuditLogTypeCallTypeEdited" xml:space="preserve"><value>تم تعديل نوع البلاغ</value></data>
+  <data name="AuditLogTypeCallTypeRemoved" xml:space="preserve"><value>تمت إزالة نوع البلاغ</value></data>
+  <data name="AuditLogTypeCallPriorityAdded" xml:space="preserve"><value>تمت إضافة أولوية البلاغ</value></data>
+  <data name="AuditLogTypeCallPriorityEdited" xml:space="preserve"><value>تم تعديل أولوية البلاغ</value></data>
+  <data name="AuditLogTypeCallPriorityRemoved" xml:space="preserve"><value>تمت إزالة أولوية البلاغ</value></data>
+  <data name="AuditLogTypeUnitTypeAdded" xml:space="preserve"><value>تمت إضافة نوع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTypeEdited" xml:space="preserve"><value>تم تعديل نوع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTypeRemoved" xml:space="preserve"><value>تمت إزالة نوع الوحدة</value></data>
+  <data name="AuditLogTypeCertificationTypeAdded" xml:space="preserve"><value>تمت إضافة نوع الشهادة</value></data>
+  <data name="AuditLogTypeCertificationTypeEdited" xml:space="preserve"><value>تم تعديل نوع الشهادة</value></data>
+  <data name="AuditLogTypeCertificationTypeRemoved" xml:space="preserve"><value>تمت إزالة نوع الشهادة</value></data>
+  <data name="AuditLogTypeDocumentCategoryAdded" xml:space="preserve"><value>تمت إضافة فئة المستندات</value></data>
+  <data name="AuditLogTypeDocumentCategoryEdited" xml:space="preserve"><value>تم تعديل فئة المستندات</value></data>
+  <data name="AuditLogTypeDocumentCategoryRemoved" xml:space="preserve"><value>تمت إزالة فئة المستندات</value></data>
+  <data name="AuditLogTypeDocumentAdded" xml:space="preserve"><value>تمت إضافة المستند</value></data>
+  <data name="AuditLogTypeDocumentEdited" xml:space="preserve"><value>تم تعديل المستند</value></data>
+  <data name="AuditLogTypeDocumentRemoved" xml:space="preserve"><value>تمت إزالة المستند</value></data>
+  <data name="AuditLogTypeNoteCategoryAdded" xml:space="preserve"><value>تمت إضافة فئة الملاحظات</value></data>
+  <data name="AuditLogTypeNoteCategoryEdited" xml:space="preserve"><value>تم تعديل فئة الملاحظات</value></data>
+  <data name="AuditLogTypeNoteCategoryRemoved" xml:space="preserve"><value>تمت إزالة فئة الملاحظات</value></data>
+  <data name="AuditLogTypeNoteAdded" xml:space="preserve"><value>تمت إضافة الملاحظة</value></data>
+  <data name="AuditLogTypeNoteEdited" xml:space="preserve"><value>تم تعديل الملاحظة</value></data>
+  <data name="AuditLogTypeNoteRemoved" xml:space="preserve"><value>تمت إزالة الملاحظة</value></data>
+  <data name="AuditLogTypeContactAdded" xml:space="preserve"><value>تمت إضافة جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactEdited" xml:space="preserve"><value>تم تعديل جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactRemoved" xml:space="preserve"><value>تمت إزالة جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactCategoryAdded" xml:space="preserve"><value>تمت إضافة فئة جهات الاتصال</value></data>
+  <data name="AuditLogTypeContactCategoryEdited" xml:space="preserve"><value>تم تعديل فئة جهات الاتصال</value></data>
+  <data name="AuditLogTypeContactCategoryRemoved" xml:space="preserve"><value>تمت إزالة فئة جهات الاتصال</value></data>
+  <data name="AuditLogTypeContactNoteTypeAdded" xml:space="preserve"><value>تمت إضافة نوع ملاحظة جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactNoteTypeEdited" xml:space="preserve"><value>تم تعديل نوع ملاحظة جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactNoteTypeRemoved" xml:space="preserve"><value>تمت إزالة نوع ملاحظة جهة الاتصال</value></data>
+  <data name="AuditLogTypeWorkflowAdded" xml:space="preserve"><value>تم إنشاء سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowEdited" xml:space="preserve"><value>تم تحديث سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowDeleted" xml:space="preserve"><value>تم حذف سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowStepAdded" xml:space="preserve"><value>تمت إضافة خطوة سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowStepEdited" xml:space="preserve"><value>تم تحديث خطوة سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowStepDeleted" xml:space="preserve"><value>تم حذف خطوة سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowCredentialAdded" xml:space="preserve"><value>تمت إضافة بيانات اعتماد سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowCredentialEdited" xml:space="preserve"><value>تم تحديث بيانات اعتماد سير العمل</value></data>
+  <data name="AuditLogTypeWorkflowCredentialDeleted" xml:space="preserve"><value>تم حذف بيانات اعتماد سير العمل</value></data>
+  <data name="AuditLogTypeContactVerificationCodeSent" xml:space="preserve"><value>تم إرسال رمز التحقق من جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactVerificationConfirmed" xml:space="preserve"><value>تم تأكيد التحقق من جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactVerificationFailed" xml:space="preserve"><value>فشل التحقق من جهة الاتصال</value></data>
+  <data name="AuditLogTypeTwoFactorEnabled" xml:space="preserve"><value>تم تفعيل المصادقة الثنائية</value></data>
+  <data name="AuditLogTypeTwoFactorDisabled" xml:space="preserve"><value>تم تعطيل المصادقة الثنائية</value></data>
+  <data name="AuditLogTypeTwoFactorLoginVerified" xml:space="preserve"><value>تم التحقق من تسجيل الدخول بالمصادقة الثنائية</value></data>
+  <data name="AuditLogTypeTwoFactorRecoveryCodeUsed" xml:space="preserve"><value>تم استخدام رمز استرداد المصادقة الثنائية</value></data>
+  <data name="AuditLogTypeTwoFactorStepUpVerified" xml:space="preserve"><value>تم التحقق الإضافي بالمصادقة الثنائية</value></data>
+  <data name="AuditLogTypeSsoConfigCreated" xml:space="preserve"><value>تم إنشاء إعداد SSO</value></data>
+  <data name="AuditLogTypeSsoConfigUpdated" xml:space="preserve"><value>تم تحديث إعداد SSO</value></data>
+  <data name="AuditLogTypeSsoConfigDeleted" xml:space="preserve"><value>تم حذف إعداد SSO</value></data>
+  <data name="AuditLogTypeSsoLoginSucceeded" xml:space="preserve"><value>نجح تسجيل الدخول عبر SSO</value></data>
+  <data name="AuditLogTypeSsoLoginFailed" xml:space="preserve"><value>فشل تسجيل الدخول عبر SSO</value></data>
+  <data name="AuditLogTypeSsoUserProvisioned" xml:space="preserve"><value>تم تزويد مستخدم SSO</value></data>
+  <data name="AuditLogTypeScimUserCreated" xml:space="preserve"><value>تم إنشاء مستخدم SCIM</value></data>
+  <data name="AuditLogTypeScimUserUpdated" xml:space="preserve"><value>تم تحديث مستخدم SCIM</value></data>
+  <data name="AuditLogTypeScimUserDeactivated" xml:space="preserve"><value>تم إلغاء تفعيل مستخدم SCIM</value></data>
+  <data name="AuditLogTypeScimUserDeleted" xml:space="preserve"><value>تم حذف مستخدم SCIM</value></data>
+  <data name="AuditLogTypeScimAuthFailed" xml:space="preserve"><value>فشلت مصادقة SCIM</value></data>
+  <data name="AuditLogTypeScimUserReactivated" xml:space="preserve"><value>تمت إعادة تفعيل مستخدم SCIM</value></data>
+  <data name="AuditLogTypeScimGroupListed" xml:space="preserve"><value>تم سرد مجموعات SCIM</value></data>
+  <data name="AuditLogTypeScimUserListed" xml:space="preserve"><value>تم سرد مستخدمي SCIM</value></data>
+  <data name="AuditLogTypeScimUserRetrieved" xml:space="preserve"><value>تم استرجاع مستخدم SCIM</value></data>
+  <data name="AuditLogTypeScimBearerTokenProvisioned" xml:space="preserve"><value>تم تزويد رمز حامل SCIM</value></data>
+  <data name="AuditLogTypeScimBearerTokenRotated" xml:space="preserve"><value>تم تدوير رمز حامل SCIM</value></data>
+  <data name="AuditLogTypeUdfDefinitionCreated" xml:space="preserve"><value>تم إنشاء تعريف UDF</value></data>
+  <data name="AuditLogTypeUdfDefinitionUpdated" xml:space="preserve"><value>تم تحديث تعريف UDF</value></data>
+  <data name="AuditLogTypeUdfDefinitionDeleted" xml:space="preserve"><value>تم حذف تعريف UDF</value></data>
+  <data name="AuditLogTypeUdfFieldAdded" xml:space="preserve"><value>تمت إضافة حقل UDF</value></data>
+  <data name="AuditLogTypeUdfFieldUpdated" xml:space="preserve"><value>تم تحديث حقل UDF</value></data>
+  <data name="AuditLogTypeUdfFieldRemoved" xml:space="preserve"><value>تمت إزالة حقل UDF</value></data>
+  <data name="AuditLogTypeUdfFieldValueSaved" xml:space="preserve"><value>تم حفظ قيم حقول UDF</value></data>
+  <data name="AuditLogTypeRouteCreated" xml:space="preserve"><value>تم إنشاء المسار</value></data>
+  <data name="AuditLogTypeRouteUpdated" xml:space="preserve"><value>تم تحديث المسار</value></data>
+  <data name="AuditLogTypeRouteDeleted" xml:space="preserve"><value>تم حذف المسار</value></data>
+  <data name="AuditLogTypeRouteStarted" xml:space="preserve"><value>تم بدء المسار</value></data>
+  <data name="AuditLogTypeRouteCompleted" xml:space="preserve"><value>تم إكمال المسار</value></data>
+  <data name="AuditLogTypeRouteCancelled" xml:space="preserve"><value>تم إلغاء المسار</value></data>
+  <data name="AuditLogTypeRoutePaused" xml:space="preserve"><value>تم إيقاف المسار مؤقتاً</value></data>
+  <data name="AuditLogTypeRouteResumed" xml:space="preserve"><value>تم استئناف المسار</value></data>
+  <data name="AuditLogTypeRouteStopCheckedIn" xml:space="preserve"><value>تم تسجيل الوصول إلى محطة المسار</value></data>
+  <data name="AuditLogTypeRouteStopCheckedOut" xml:space="preserve"><value>تم تسجيل المغادرة من محطة المسار</value></data>
+  <data name="AuditLogTypeRouteStopSkipped" xml:space="preserve"><value>تم تخطي محطة المسار</value></data>
+  <data name="AuditLogTypeRouteDeviationDetected" xml:space="preserve"><value>تم اكتشاف انحراف عن المسار</value></data>
+  <data name="AuditLogTypeRouteDeviationAcknowledged" xml:space="preserve"><value>تم تأكيد العلم بالانحراف عن المسار</value></data>
+  <data name="AuditLogTypeCheckInTimerConfigCreated" xml:space="preserve"><value>تم إنشاء تكوين مؤقت تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInTimerConfigUpdated" xml:space="preserve"><value>تم تحديث تكوين مؤقت تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInTimerConfigDeleted" xml:space="preserve"><value>تم حذف تكوين مؤقت تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInTimerOverrideCreated" xml:space="preserve"><value>تم إنشاء تجاوز مؤقت تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInTimerOverrideUpdated" xml:space="preserve"><value>تم تحديث تجاوز مؤقت تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInTimerOverrideDeleted" xml:space="preserve"><value>تم حذف تجاوز مؤقت تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInPerformed" xml:space="preserve"><value>تم تسجيل الحضور</value></data>
+  <data name="AuditLogTypeCheckInTimerEnabledOnCall" xml:space="preserve"><value>تم تفعيل مؤقت تسجيل الحضور على البلاغ</value></data>
+  <data name="AuditLogTypeCheckInTimerDisabledOnCall" xml:space="preserve"><value>تم تعطيل مؤقت تسجيل الحضور على البلاغ</value></data>
+  <data name="AuditLogTypeCalendarCheckInPerformed" xml:space="preserve"><value>تم تسجيل الحضور في حدث التقويم</value></data>
+  <data name="AuditLogTypeCalendarCheckOutPerformed" xml:space="preserve"><value>تم تسجيل الانصراف من حدث التقويم</value></data>
+  <data name="AuditLogTypeCalendarCheckInUpdated" xml:space="preserve"><value>تم تحديث أوقات تسجيل الحضور في التقويم</value></data>
+  <data name="AuditLogTypeCalendarCheckInDeleted" xml:space="preserve"><value>تم حذف تسجيل الحضور في التقويم</value></data>
+  <data name="AuditLogTypeCalendarAdminCheckInPerformed" xml:space="preserve"><value>تم تسجيل الحضور في التقويم بواسطة المسؤول</value></data>
+  <data name="AuditLogTypeLogCreated" xml:space="preserve"><value>تم إنشاء سجل التشغيل</value></data>
+  <data name="AuditLogTypeLogDeleted" xml:space="preserve"><value>تم حذف سجل التشغيل</value></data>
+  <data name="AuditLogTypeCommunicationTestCreated" xml:space="preserve"><value>تم إنشاء اختبار الاتصال</value></data>
+  <data name="AuditLogTypeCommunicationTestUpdated" xml:space="preserve"><value>تم تحديث اختبار الاتصال</value></data>
+  <data name="AuditLogTypeCommunicationTestDeleted" xml:space="preserve"><value>تم حذف اختبار الاتصال</value></data>
+  <data name="AuditLogTypeCommunicationTestRunStarted" xml:space="preserve"><value>تم بدء تشغيل اختبار الاتصال</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceCreated" xml:space="preserve"><value>تم إنشاء مصدر تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceUpdated" xml:space="preserve"><value>تم تحديث مصدر تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceDeleted" xml:space="preserve"><value>تم حذف مصدر تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceEnabled" xml:space="preserve"><value>تم تفعيل مصدر تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceDisabled" xml:space="preserve"><value>تم تعطيل مصدر تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneCreated" xml:space="preserve"><value>تم إنشاء منطقة تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneUpdated" xml:space="preserve"><value>تم تحديث منطقة تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneDeleted" xml:space="preserve"><value>تم حذف منطقة تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneEnabled" xml:space="preserve"><value>تم تفعيل منطقة تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneDisabled" xml:space="preserve"><value>تم تعطيل منطقة تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeWeatherAlertSettingsChanged" xml:space="preserve"><value>تم تغيير إعدادات تنبيهات الطقس</value></data>
+  <data name="AuditLogTypeFeatureFlagChanged" xml:space="preserve"><value>تم تغيير علامة الميزة</value></data>
+  <data name="AuditLogTypeFeatureFlagOverrideChanged" xml:space="preserve"><value>تم تغيير تجاوز علامة الميزة</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceCreated" xml:space="preserve"><value>تم إنشاء جهاز تتبع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceUpdated" xml:space="preserve"><value>تم تحديث جهاز تتبع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceDisabled" xml:space="preserve"><value>تم تعطيل جهاز تتبع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceDeleted" xml:space="preserve"><value>تم حذف جهاز تتبع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTrackingCredentialCreated" xml:space="preserve"><value>تم إنشاء بيانات اعتماد تتبع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTrackingCredentialRotated" xml:space="preserve"><value>تم تدوير بيانات اعتماد تتبع الوحدة</value></data>
+  <data name="AuditLogTypeUnitTrackingCredentialRevoked" xml:space="preserve"><value>تم إلغاء صلاحية بيانات اعتماد تتبع الوحدة</value></data>
+  <data name="AuditLogTypeDeleteDepartmentRequestExecuted" xml:space="preserve"><value>تم تنفيذ حذف القسم</value></data>
+  <data name="AuditLogTypeChatMessageDeletedByModerator" xml:space="preserve"><value>تم حذف رسالة المحادثة بواسطة المراجع</value></data>
+  <data name="AuditLogTypeChatUserMuted" xml:space="preserve"><value>تم كتم مستخدم المحادثة</value></data>
+  <data name="AuditLogTypeChatUserUnmuted" xml:space="preserve"><value>تم إلغاء كتم مستخدم المحادثة</value></data>
+  <data name="AuditLogTypeChatUserBanned" xml:space="preserve"><value>تم حظر مستخدم المحادثة</value></data>
+  <data name="AuditLogTypeChatUserUnbanned" xml:space="preserve"><value>تم إلغاء حظر مستخدم المحادثة</value></data>
+  <data name="AuditLogTypeChatChannelLocked" xml:space="preserve"><value>تم قفل قناة المحادثة</value></data>
+  <data name="AuditLogTypeChatChannelUnlocked" xml:space="preserve"><value>تم إلغاء قفل قناة المحادثة</value></data>
+  <data name="AuditLogTypeChatChannelArchived" xml:space="preserve"><value>تمت أرشفة قناة المحادثة</value></data>
+  <data name="AuditLogTypeChatFlagResolved" xml:space="preserve"><value>تم حل بلاغ المحادثة</value></data>
+  <data name="AuditLogTypeChatSettingsChanged" xml:space="preserve"><value>تم تغيير إعدادات المحادثة</value></data>
+  <data name="AuditLogTypeChatExportRequested" xml:space="preserve"><value>تم طلب تصدير المحادثة</value></data>
+  <data name="AuditLogTypeChatExportDownloaded" xml:space="preserve"><value>تم تنزيل تصدير المحادثة</value></data>
+  <data name="AuditLogTypeModerationReportSubmitted" xml:space="preserve"><value>تم تقديم بلاغ مراجعة المحتوى</value></data>
+  <data name="AuditLogTypeModerationRequestReopened" xml:space="preserve"><value>تمت إعادة فتح طلب مراجعة المحتوى</value></data>
+  <data name="AuditLogTypeModerationRequestCompleted" xml:space="preserve"><value>تم إكمال طلب مراجعة المحتوى</value></data>
+  <data name="AuditLogTypeModerationEvidenceDownloaded" xml:space="preserve"><value>تم تنزيل دليل مراجعة المحتوى</value></data>
+  <data name="AuditLogTypePasswordResetByAdministrator" xml:space="preserve"><value>تمت إعادة تعيين كلمة المرور بواسطة المسؤول</value></data>
+  <data name="AuditLogTypeUserAuthenticationSessionsRevoked" xml:space="preserve"><value>تم إلغاء صلاحية جلسات تسجيل دخول المستخدم</value></data>
+  <data name="AuditLogTypeDataProtectionStepUpExemptionsChanged" xml:space="preserve"><value>تم تغيير استثناءات التحقق الإضافي لحماية البيانات</value></data>
+  <data name="AuditLogTypeContactPreplanAdded" xml:space="preserve"><value>تمت إضافة الخطة المسبقة لجهة الاتصال</value></data>
+  <data name="AuditLogTypeContactPreplanUpdated" xml:space="preserve"><value>تم تحديث الخطة المسبقة لجهة الاتصال</value></data>
+  <data name="AuditLogTypeContactPreplanRemoved" xml:space="preserve"><value>تمت إزالة الخطة المسبقة لجهة الاتصال</value></data>
+  <data name="AuditLogTypeContactAttachmentAdded" xml:space="preserve"><value>تمت إضافة مرفق جهة الاتصال</value></data>
+  <data name="AuditLogTypeContactAttachmentRemoved" xml:space="preserve"><value>تمت إزالة مرفق جهة الاتصال</value></data>
+  <data name="AuditLogTypeChecklistDefinitionAdded" xml:space="preserve"><value>تمت إضافة تعريف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistDefinitionUpdated" xml:space="preserve"><value>تم تحديث تعريف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistDefinitionPublished" xml:space="preserve"><value>تم نشر تعريف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistDefinitionRetired" xml:space="preserve"><value>تم إيقاف استخدام تعريف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistDefinitionRemoved" xml:space="preserve"><value>تمت إزالة تعريف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistCompletionStarted" xml:space="preserve"><value>تم بدء تنفيذ قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistProgressSaved" xml:space="preserve"><value>تم حفظ تقدم قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistCompletionSubmitted" xml:space="preserve"><value>تم تقديم تنفيذ قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistWitnessAttested" xml:space="preserve"><value>تم إقرار الشاهد لقائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistFileAdded" xml:space="preserve"><value>تمت إضافة ملف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistFileRemoved" xml:space="preserve"><value>تمت إزالة ملف قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistScheduleAdded" xml:space="preserve"><value>تمت إضافة جدول قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistScheduleUpdated" xml:space="preserve"><value>تم تحديث جدول قائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistOccurrenceMissed" xml:space="preserve"><value>لم يُنفَّذ الفحص المجدول لقائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistOccurrenceSkipped" xml:space="preserve"><value>تم تخطي الفحص المجدول لقائمة التحقق</value></data>
+  <data name="AuditLogTypeChecklistReminderSettingsUpdated" xml:space="preserve"><value>تم تحديث إعدادات تذكيرات قوائم التحقق</value></data>
+  <data name="AuditLogTypeWorkOrderChanged" xml:space="preserve"><value>تم تغيير أمر العمل</value></data>
+  <data name="AuditLogTypeInventoryChanged" xml:space="preserve"><value>تم تغيير المخزون</value></data>
+  <data name="AuditLogTypeBillingProfileChanged" xml:space="preserve"><value>تم تغيير ملف الفوترة</value></data>
+  <data name="AuditLogTypeRateCardChanged" xml:space="preserve"><value>تم تغيير بطاقة الأسعار</value></data>
+  <data name="AuditLogTypeInvoiceCreated" xml:space="preserve"><value>تم إنشاء الفاتورة</value></data>
+  <data name="AuditLogTypeInvoiceUpdated" xml:space="preserve"><value>تم تحديث الفاتورة</value></data>
+  <data name="AuditLogTypeInvoiceSent" xml:space="preserve"><value>تم إرسال الفاتورة</value></data>
+  <data name="AuditLogTypeInvoiceVoided" xml:space="preserve"><value>تم إبطال الفاتورة</value></data>
+  <data name="AuditLogTypeInvoicePaymentRecorded" xml:space="preserve"><value>تم تسجيل دفعة الفاتورة</value></data>
+  <data name="AuditLogTypeDepartmentBillingIdentityChanged" xml:space="preserve"><value>تم تغيير هوية الفوترة للقسم</value></data>
+  <data name="AuditLogTypePaymentConnectionConnected" xml:space="preserve"><value>تم ربط حساب الدفع</value></data>
+  <data name="AuditLogTypePaymentConnectionDisconnected" xml:space="preserve"><value>تم فصل حساب الدفع</value></data>
+  <data name="AuditLogTypePaymentConnectionRevoked" xml:space="preserve"><value>تم إلغاء صلاحية ربط حساب الدفع</value></data>
+  <data name="AuditLogTypePaymentConnectionActionRequired" xml:space="preserve"><value>إجراء مطلوب لحساب الدفع</value></data>
+  <data name="AuditLogTypeInvoicePaymentRequestCreated" xml:space="preserve"><value>تم إنشاء طلب دفع الفاتورة</value></data>
+  <data name="AuditLogTypeInvoicePaymentRefunded" xml:space="preserve"><value>تم رد دفعة الفاتورة</value></data>
+  <data name="AuditLogTypeInvoicePaymentDisputed" xml:space="preserve"><value>تم الاعتراض على دفعة الفاتورة</value></data>
+  <data name="AuditLogTypePaymentWebhookRejected" xml:space="preserve"><value>تم رفض Webhook الدفع</value></data>
+  <data name="AuditLogTypeInvoicePaymentRequestFailed" xml:space="preserve"><value>فشل طلب دفع الفاتورة</value></data>
+  <data name="AuditLogTypeInvoicePaymentRequestExpired" xml:space="preserve"><value>انتهت صلاحية طلب دفع الفاتورة</value></data>
+  <data name="AuditLogTypeCertificationAdded" xml:space="preserve"><value>تمت إضافة الشهادة</value></data>
+  <data name="AuditLogTypeCertificationUpdated" xml:space="preserve"><value>تم تحديث الشهادة</value></data>
+  <data name="AuditLogTypeCertificationRemoved" xml:space="preserve"><value>تمت إزالة الشهادة</value></data>
+  <data name="AuditLogTypeCertificationStatusChanged" xml:space="preserve"><value>تم تغيير حالة الشهادة</value></data>
+  <data name="AuditLogTypeCertificationVerified" xml:space="preserve"><value>تم التحقق من الشهادة</value></data>
+  <data name="AuditLogTypeCertificationCreditAdded" xml:space="preserve"><value>تمت إضافة ساعات اعتماد الشهادة</value></data>
+  <data name="AuditLogTypeCertificationCreditRemoved" xml:space="preserve"><value>تمت إزالة ساعات اعتماد الشهادة</value></data>
+  <data name="AuditLogTypeRoleCertificationRequirementChanged" xml:space="preserve"><value>تم تغيير متطلب الشهادة للدور</value></data>
+  <data name="AuditLogTypeDepartmentCertificationSettingsChanged" xml:space="preserve"><value>تم تغيير إعدادات الشهادات للقسم</value></data>
+  <data name="AuditLogTypeRoleMemberAdded" xml:space="preserve"><value>تمت إضافة عضو إلى الدور</value></data>
+  <data name="AuditLogTypeRoleMemberRemoved" xml:space="preserve"><value>تمت إزالة عضو من الدور</value></data>
+  <data name="AuditLogTypeRoleMemberRemovedByCertification" xml:space="preserve"><value>تمت إزالة عضو من الدور بسبب الشهادة</value></data>
+  <data name="AuditLogTypeUnitCertificationAdded" xml:space="preserve"><value>تمت إضافة شهادة الوحدة</value></data>
+  <data name="AuditLogTypeUnitCertificationUpdated" xml:space="preserve"><value>تم تحديث شهادة الوحدة</value></data>
+  <data name="AuditLogTypeUnitCertificationRemoved" xml:space="preserve"><value>تمت إزالة شهادة الوحدة</value></data>
+  <data name="AuditLogTypeUnitCertificationStatusChanged" xml:space="preserve"><value>تم تغيير حالة شهادة الوحدة</value></data>
+  <data name="AuditLogTypeDeploymentCreated" xml:space="preserve"><value>تم إنشاء الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentUpdated" xml:space="preserve"><value>تم تحديث الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentStatusChanged" xml:space="preserve"><value>تم تغيير حالة الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentRosterChanged" xml:space="preserve"><value>تم تغيير تشكيل الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentEquipmentChanged" xml:space="preserve"><value>تم تغيير معدات الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentAttachmentAdded" xml:space="preserve"><value>تمت إضافة مرفق الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentAttachmentRemoved" xml:space="preserve"><value>تمت إزالة مرفق الانتشار</value></data>
+  <data name="AuditLogTypeTimeReportCreated" xml:space="preserve"><value>تم إنشاء تقرير الوقت</value></data>
+  <data name="AuditLogTypeTimeReportUpdated" xml:space="preserve"><value>تم تحديث تقرير الوقت</value></data>
+  <data name="AuditLogTypeTimeReportSubmitted" xml:space="preserve"><value>تم تقديم تقرير الوقت</value></data>
+  <data name="AuditLogTypeTimeReportApproved" xml:space="preserve"><value>تمت الموافقة على تقرير الوقت</value></data>
+  <data name="AuditLogTypeTimeReportVoided" xml:space="preserve"><value>تم إبطال تقرير الوقت</value></data>
+  <data name="AuditLogTypeDeploymentExpenseAdded" xml:space="preserve"><value>تمت إضافة مصروف الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentExpenseUpdated" xml:space="preserve"><value>تم تحديث مصروف الانتشار</value></data>
+  <data name="AuditLogTypeDeploymentExpenseRemoved" xml:space="preserve"><value>تمت إزالة مصروف الانتشار</value></data>
+  <data name="AuditLogTypeRateScheduleCreated" xml:space="preserve"><value>تم إنشاء جدول الأسعار</value></data>
+  <data name="AuditLogTypeRateScheduleUpdated" xml:space="preserve"><value>تم تحديث جدول الأسعار</value></data>
+  <data name="AuditLogTypeRateScheduleDeleted" xml:space="preserve"><value>تم حذف جدول الأسعار</value></data>
+  <data name="AuditLogTypeRateScheduleEntryChanged" xml:space="preserve"><value>تم تغيير بند جدول الأسعار</value></data>
+  <data name="AuditLogTypeRatePremiumChanged" xml:space="preserve"><value>تم تغيير علاوة السعر</value></data>
+  <data name="AuditLogTypeServiceContractCreated" xml:space="preserve"><value>تم إنشاء عقد الخدمة</value></data>
+  <data name="AuditLogTypeServiceContractUpdated" xml:space="preserve"><value>تم تحديث عقد الخدمة</value></data>
+  <data name="AuditLogTypeServiceContractStatusChanged" xml:space="preserve"><value>تم تغيير حالة عقد الخدمة</value></data>
+  <data name="AuditLogTypeServiceContractDeleted" xml:space="preserve"><value>تم حذف عقد الخدمة</value></data>
+  <data name="AuditLogTypeComplianceDocumentAdded" xml:space="preserve"><value>تمت إضافة مستند الامتثال</value></data>
+  <data name="AuditLogTypeComplianceDocumentUpdated" xml:space="preserve"><value>تم تحديث مستند الامتثال</value></data>
+  <data name="AuditLogTypeComplianceDocumentRemoved" xml:space="preserve"><value>تمت إزالة مستند الامتثال</value></data>
+  <data name="AuditLogTypeBidCreated" xml:space="preserve"><value>تم إنشاء العرض</value></data>
+  <data name="AuditLogTypeBidUpdated" xml:space="preserve"><value>تم تحديث العرض</value></data>
+  <data name="AuditLogTypeBidSent" xml:space="preserve"><value>تم إرسال العرض</value></data>
+  <data name="AuditLogTypeBidAccepted" xml:space="preserve"><value>تم قبول العرض</value></data>
+  <data name="AuditLogTypeBidDeclined" xml:space="preserve"><value>تم رفض العرض</value></data>
+  <data name="AuditLogTypeBidWithdrawn" xml:space="preserve"><value>تم سحب العرض</value></data>
+  <data name="AuditLogTypeBidExpired" xml:space="preserve"><value>انتهت صلاحية العرض</value></data>
+  <data name="AuditLogTypeBidConverted" xml:space="preserve"><value>تم تحويل العرض</value></data>
+  <data name="AuditLogTypeBidDeleted" xml:space="preserve"><value>تم حذف العرض</value></data>
+  <data name="AuditLogTypeTimeReportBilled" xml:space="preserve"><value>تمت فوترة تقرير الوقت</value></data>
+  <data name="AuditLogTypeDeploymentInvoiceGenerated" xml:space="preserve"><value>تم توليد فاتورة الانتشار</value></data>
+  <data name="AuditLogTypeCalOesMarsAgencyProfileChanged" xml:space="preserve"><value>تم تغيير ملف وكالة Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsResourceProfileChanged" xml:space="preserve"><value>تم تغيير ملف مورد Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsRateProfileChanged" xml:space="preserve"><value>تم تغيير ملف أسعار Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsRateDraftBuilt" xml:space="preserve"><value>تم بناء مسودة أسعار Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsRateReviewed" xml:space="preserve"><value>تمت مراجعة أسعار Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsAgreementChanged" xml:space="preserve"><value>تم تغيير اتفاقية Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsAgreementObserved" xml:space="preserve"><value>تمت ملاحظة اتفاقية Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemPrepared" xml:space="preserve"><value>تم إعداد عنصر عمل Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemValidated" xml:space="preserve"><value>تم التحقق من صحة عنصر عمل Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsReimbursementCalculated" xml:space="preserve"><value>تم حساب تعويض Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemOpenedForHandoff" xml:space="preserve"><value>تم فتح عنصر عمل Cal OES MARS للتسليم</value></data>
+  <data name="AuditLogTypeCalOesMarsExternalStatusObserved" xml:space="preserve"><value>تمت ملاحظة الحالة الخارجية في Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsInvoiceApproved" xml:space="preserve"><value>تمت الموافقة على فاتورة Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsInvoiceRejected" xml:space="preserve"><value>تم رفض فاتورة Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsPaymentReconciled" xml:space="preserve"><value>تمت تسوية دفعة Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemDeleted" xml:space="preserve"><value>تم حذف عنصر عمل Cal OES MARS</value></data>
+  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve"><value>تم تغيير ملف صاحب العمل في القوى العاملة</value></data>
+  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve"><value>تم تغيير المنشأة في القوى العاملة</value></data>
+  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve"><value>تم تغيير فترة العمل في القوى العاملة</value></data>
+  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve"><value>تم تغيير التعويض في القوى العاملة</value></data>
+  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve"><value>تم استيراد بيانات الأجور السنوية في القوى العاملة</value></data>
+  <data name="AuditLogTypePayDataDemographicChanged" xml:space="preserve"><value>تم تغيير المعلومات الديموغرافية لبيانات الأجور</value></data>
+  <data name="AuditLogTypePayDataReportCreated" xml:space="preserve"><value>تم إنشاء تقرير بيانات الأجور</value></data>
+  <data name="AuditLogTypePayDataReportValidated" xml:space="preserve"><value>تم التحقق من صحة تقرير بيانات الأجور</value></data>
+  <data name="AuditLogTypePayDataReportFrozen" xml:space="preserve"><value>تم تجميد تقرير بيانات الأجور</value></data>
+  <data name="AuditLogTypePayDataReportExported" xml:space="preserve"><value>تم تصدير تقرير بيانات الأجور</value></data>
+  <data name="AuditLogTypePayDataReportMarkedCertified" xml:space="preserve"><value>تم تعليم تقرير بيانات الأجور كمصادق عليه</value></data>
+  <data name="AuditLogTypePayDataReportCorrected" xml:space="preserve"><value>تم تصحيح تقرير بيانات الأجور</value></data>
+  <data name="AuditLogTypeResourceCostProfileChanged" xml:space="preserve"><value>تم تغيير ملف تكلفة المورد</value></data>
+  <data name="AuditLogTypeResourceUsageChanged" xml:space="preserve"><value>تم تغيير استخدام المورد</value></data>
+  <data name="AuditLogTypeFieldCostRunCreated" xml:space="preserve"><value>تم إنشاء عملية حساب التكاليف الميدانية</value></data>
+  <data name="AuditLogTypeFieldCostRunFrozen" xml:space="preserve"><value>تم تجميد عملية حساب التكاليف الميدانية</value></data>
+  <data name="AuditLogTypeUserReactivated" xml:space="preserve"><value>تمت إعادة تفعيل المستخدم</value></data>
+  <data name="AuditLogTypeDepartmentConfigurationChanged" xml:space="preserve"><value>تم تغيير تكوين القسم</value></data>
+  <data name="AuditLogTypeAdminAssistReviewChanged" xml:space="preserve"><value>تم تغيير مراجعة Admin Assist</value></data>
+  <data name="AuditLogTypeAdminAssistDiagnosticAccess" xml:space="preserve"><value>تم الوصول إلى تشخيصات Admin Assist</value></data>
+  <data name="AuditLogTypeAiDispatchSettingsUpdated" xml:space="preserve"><value>تم تحديث إعدادات الإرسال بالذكاء الاصطناعي</value></data>
+  <data name="AuditLogTypeAdminAssistPlanAccess" xml:space="preserve"><value>تم الوصول إلى خطة Admin Assist</value></data>
+  <data name="AuditLogTypeDepartmentSecurityPolicyChanged" xml:space="preserve"><value>تم تغيير سياسة الأمان</value></data>
   <data name="PermissionColumn" xml:space="preserve"><value>الصلاحية</value></data>
   <data name="NoteColumn" xml:space="preserve"><value>ملاحظة</value></data>
   <data name="ValueColumn" xml:space="preserve"><value>القيمة</value></data>
@@ -32,7 +389,13 @@
   <data name="PermissionRolesColumn" xml:space="preserve"><value>الأدوار</value></data>
   <data name="PermissionNoRoles" xml:space="preserve"><value>لا توجد أدوار</value></data>
   <data name="PermissionNA" xml:space="preserve"><value>غير قابل للتطبيق</value></data>
+  <data name="PermOptionEveryone" xml:space="preserve"><value>الجميع</value></data>
+  <data name="PermOptionDepartmentAdmins" xml:space="preserve"><value>مدراء القسم</value></data>
+  <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve"><value>مدراء القسم والمجموعات</value></data>
+  <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve"><value>مدراء القسم وأدوار محددة</value></data>
+  <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve"><value>مدراء القسم والمجموعات وأدوار محددة</value></data>
   <data name="BreadcrumbSecurity" xml:space="preserve"><value>الأمان والصلاحيات</value></data>
+  <data name="BreadcrumbHome" xml:space="preserve"><value>الرئيسية</value></data>
   <data name="SecurityDescription" xml:space="preserve"><value>يمكنك هنا تعيين الصلاحيات لقسمك، مثل تحديد من يمكنه إنشاء البلاغات أو من هو مخوّل بإنشاء المستخدمين وإزالتهم. ستسري التغييرات على الصلاحيات عند تسجيل الدخول التالي إلى تطبيق Resgrid.</value></data>
   <data name="PermAddUsersLabel" xml:space="preserve"><value>من يمكنه إضافة مستخدمين</value></data>
   <data name="PermAddUsersNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة مستخدمين/أفراد للقسم. افتراضياً يستطيع مدراء القسم فقط (والعضو المُدير) إضافة مستخدمين. يمكن السماح لمدراء المجموعات أيضاً بإضافة مستخدمين (مقيّد بالمجموعة التي يديرونها فقط).</value></data>
@@ -134,6 +497,15 @@
   <data name="SsoScimSetupButton" xml:space="preserve"><value>SCIM</value></data>
   <data name="SsoDeleteConfirmTitle" xml:space="preserve"><value>تأكيد الحذف</value></data>
   <data name="SsoDeleteConfirmMessage" xml:space="preserve"><value>هل أنت متأكد من حذف إعداد SSO الخاص بـ {0}؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="SsoErrorInvalidProviderType" xml:space="preserve"><value>نوع الموفر غير صالح.</value></data>
+  <data name="SsoErrorConfigAlreadyExists" xml:space="preserve"><value>يوجد بالفعل إعداد SSO من نوع {0}. استخدم «تعديل» لتغييره.</value></data>
+  <data name="SsoErrorOidcClientIdRequired" xml:space="preserve"><value>معرف عميل OIDC مطلوب.</value></data>
+  <data name="SsoErrorOidcAuthorityInvalid" xml:space="preserve"><value>يجب أن تكون الجهة المُصدِرة لـ OIDC رابط HTTPS صالحاً.</value></data>
+  <data name="SsoErrorSamlCertificateRequired" xml:space="preserve"><value>شهادة توقيع IdP مطلوبة للتحقق من صحة تأكيدات SAML.</value></data>
+  <data name="SsoErrorIdpSsoUrlInvalid" xml:space="preserve"><value>يجب أن يكون عنوان URL لتسجيل الدخول الموحد لدى موفر الهوية رابط HTTPS صالحاً.</value></data>
+  <data name="SsoConfigCreatedSuccess" xml:space="preserve"><value>تم إنشاء إعداد SSO من نوع {0} بنجاح.</value></data>
+  <data name="SsoConfigUpdatedSuccess" xml:space="preserve"><value>تم تحديث إعداد SSO بنجاح.</value></data>
+  <data name="SsoConfigDeletedSuccess" xml:space="preserve"><value>تم حذف إعداد SSO من نوع {0}.</value></data>
   <data name="SsoDeleteCancelButton" xml:space="preserve"><value>إلغاء</value></data>
   <data name="SsoDeleteButton" xml:space="preserve"><value>حذف</value></data>
   <data name="SsoEditPageTitleNew" xml:space="preserve"><value>إعداد SSO جديد</value></data>
@@ -143,6 +515,8 @@
   <data name="SsoEditStep1Label" xml:space="preserve"><value>الخطوة 1</value></data>
   <data name="SsoEditStep1Header" xml:space="preserve"><value>الموفر والإعدادات الأساسية</value></data>
   <data name="SsoEditProviderTypeLabel" xml:space="preserve"><value>بروتوكول موفر الهوية</value></data>
+  <data name="SsoEditProviderTypeOidcOption" xml:space="preserve"><value>OIDC (OpenID Connect) — Microsoft Entra وOkta وGoogle وAuth0</value></data>
+  <data name="SsoEditProviderTypeSamlOption" xml:space="preserve"><value>SAML 2.0 — معظم موفري الهوية في المؤسسات والجهات الحكومية</value></data>
   <data name="SsoEditEnableLabel" xml:space="preserve"><value>تفعيل إعداد SSO هذا</value></data>
   <data name="SsoEditEnableDescription" xml:space="preserve"><value>يكون إعداد واحد فقط لكل نوع موفر نشطاً في وقت واحد.</value></data>
   <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve"><value>السماح بتسجيل الدخول بكلمة مرور محلية</value></data>
@@ -152,6 +526,7 @@
   <data name="SsoEditScimEnableLabel" xml:space="preserve"><value>تفعيل إدارة هويات SCIM 2.0</value></data>
   <data name="SsoEditScimEnableDescription" xml:space="preserve"><value>يتيح لموفر هويتك إنشاء/تحديث/تعطيل الأعضاء تلقائياً. بعد الحفظ انتقل إلى صفحة إعداد SCIM لإنشاء رمز الحامل.</value></data>
   <data name="SsoEditDefaultRankLabel" xml:space="preserve"><value>الرتبة الافتراضية للمستخدمين المُزوَّدين تلقائياً</value></data>
+  <data name="SsoEditDefaultRankNone" xml:space="preserve"><value>(لا توجد رتبة افتراضية)</value></data>
   <data name="SsoEditDefaultRankDescription" xml:space="preserve"><value>اختياري. يُطبّق فقط عند إنشاء عضو جديد عبر التزويد التلقائي.</value></data>
   <data name="SsoEditStep2OidcLabel" xml:space="preserve"><value>الخطوة 2 — OIDC</value></data>
   <data name="SsoEditStep2OidcHeader" xml:space="preserve"><value>إعدادات OpenID Connect</value></data>
@@ -180,6 +555,13 @@
   <data name="SsoEditMetadataUrlNote" xml:space="preserve"><value>سيجلب Resgrid هذا الرابط بشكل دوري للبقاء محدّثاً بشهادات IdP.</value></data>
   <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve"><value>رابط ACS (المخزّن)</value></data>
   <data name="SsoEditAcsUrlStoredNote" xml:space="preserve"><value>يُملأ تلقائياً من الرابط المُنشأ أعلاه. عدّله فقط إذا أعددت رابط ACS مختلفاً في موفر هويتك.</value></data>
+  <data name="SsoEditOidcBrokerRedirectLabel" xml:space="preserve"><value>عنوان URI لإعادة التوجيه لتسجيل الدخول الذي يبدأ من Resgrid (أدخله في موفر الهوية)</value></data>
+  <data name="SsoEditOidcBrokerRedirectNote" xml:space="preserve"><value>أضفه إلى جانب أي عنوان URI لإعادة التوجيه سجلته من قبل؛ تواصل الإصدارات الأقدم من تطبيقات Resgrid استخدام عناوينها.</value></data>
+  <data name="SsoEditOidcAppRedirectLabel" xml:space="preserve"><value>عناوين URI لإعادة التوجيه لتسجيل الدخول في تطبيقات Resgrid (أدخل كلًّا منها في موفر الهوية)</value></data>
+  <data name="SsoEditOidcAppRedirectNote" xml:space="preserve"><value>يعود كل تطبيق، وكل إصدار ويب لتطبيق، إلى عنوانه الخاص، لذا سجّلها كلها. تستخدمها الإصدارات الأقدم من التطبيقات، والتطبيقات التي لا يبدأ تسجيل دخولها من Resgrid.</value></data>
+  <data name="SsoEditOidcAppRedirectWebLabel" xml:space="preserve"><value>{0} (الويب)</value></data>
+  <data name="SsoEditIdpSsoUrlLabel" xml:space="preserve"><value>عنوان URL لتسجيل الدخول الموحد لدى موفر الهوية</value></data>
+  <data name="SsoEditIdpSsoUrlNote" xml:space="preserve"><value>عنوان تسجيل الدخول عبر SAML لدى موفر الهوية (ربط HTTP-Redirect). مطلوب لتسجيل الدخول الذي يبدأ من تطبيقات Resgrid وموقعها على الويب.</value></data>
   <data name="SsoEditIdpCertLabel" xml:space="preserve"><value>شهادة توقيع IdP (PEM)</value></data>
   <data name="SsoEditIdpCertStored" xml:space="preserve"><value>الشهادة مخزّنة</value></data>
   <data name="SsoEditIdpCertNote" xml:space="preserve"><value>مشفّرة في حالة السكون. اتركها فارغة للاحتفاظ بالشهادة الحالية.</value></data>
@@ -298,6 +680,9 @@
   <data name="SecurityPolicyIpRangesLabel" xml:space="preserve"><value>نطاقات IP المسموح بها (CIDR)</value></data>
   <data name="SecurityPolicyIpRangesNote" xml:space="preserve"><value>كتلة CIDR واحدة لكل سطر أو مفصولة بفواصل. فارغ = السماح للجميع. سيُرفض تسجيل الدخول من خارج هذه النطاقات.</value></data>
   <data name="SecurityPolicyDataClassLabel" xml:space="preserve"><value>مستوى تصنيف البيانات</value></data>
+  <data name="SecurityPolicyDataClassUnclassified" xml:space="preserve"><value>غير مصنّف</value></data>
+  <data name="SecurityPolicyDataClassCui" xml:space="preserve"><value>CUI - معلومات غير مصنّفة خاضعة للرقابة</value></data>
+  <data name="SecurityPolicyDataClassConfidential" xml:space="preserve"><value>سري</value></data>
   <data name="SecurityPolicyDataClassNote" xml:space="preserve"><value>يُستخدم لتقارير الامتثال وسجلات التدقيق.</value></data>
   <data name="SecurityPolicyPasswordHeader" xml:space="preserve"><value>سياسة كلمة المرور</value></data>
   <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve"><value>تنطبق سياسات كلمة المرور على تسجيلات الدخول المحلية (غير SSO) فقط. إذا فعّلت "اشتراط SSO" أعلاه فهذه الإعدادات لن يكون لها تأثير.</value></data>
@@ -325,6 +710,8 @@
   <data name="PwdErrorNoLowercase" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل.</value></data>
   <data name="PwdErrorTooShort" xml:space="preserve"><value>يجب أن تتكون كلمة المرور من {0} أحرف على الأقل.</value></data>
   <data name="PwdMinLengthTooLow" xml:space="preserve"><value>لا يمكن أن يكون الحد الأدنى لطول كلمة المرور أقل من الإعداد الافتراضي للنظام وهو 8 أحرف.</value></data>
+  <data name="PermDeleteLogLabel" xml:space="preserve"><value>حذف إدخالات السجل</value></data>
+  <data name="PermDeleteLogNote" xml:space="preserve"><value>من يُسمح له في قسمك بحذف إدخالات السجل</value></data>
   <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Use Calendar Sync</value></data>
   <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</value></data>
   <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Dispatch App Login</value></data>
@@ -409,5 +796,191 @@
   </data>
   <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
     <value>يحدد من يمكنه تحويل المخزون بين المواقع. يُسمح افتراضيًا لمسؤولي الإدارة.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsHeader" xml:space="preserve">
+    <value>طرق العامل الثاني</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsIntro" xml:space="preserve">
+    <value>اختر طرق التحقق التي تُحتسب مصادقة متعددة العوامل في هذه الإدارة. تُقبل رموز تطبيق المصادقة (TOTP) دائمًا، لذلك لا يؤدي إيقاف أي طريقة إلى منع أحد من الدخول؛ ويُطلب من الأعضاء الذين استخدموها التحقق مرة أخرى.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsManagingMemberOnly" xml:space="preserve">
+    <value>يمكن لعضو الإدارة المسؤول فقط تغيير هذه الإعدادات.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsNotYetAvailable" xml:space="preserve">
+    <value>مفاتيح المرور غير متاحة بعد على هذا النظام. تسري هذه الخيارات عندما تصبح متاحة.</value>
+  </data>
+  <data name="SecurityPolicyMethodNotYetAvailable" xml:space="preserve">
+    <value>غير متاح بعد</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaLabel" xml:space="preserve">
+    <value>قبول مفاتيح المرور لتسجيل الدخول وعمليات التحقق الأمنية</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaNote" xml:space="preserve">
+    <value>يُحتسب مفتاح المرور المسجل في التطبيق نفسه مصادقةً متعددة العوامل لتسجيل الدخول وتبديل الإدارات والإجراءات الحساسة.</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpLabel" xml:space="preserve">
+    <value>قبول مفاتيح المرور للبيانات المحمية</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpNote" xml:space="preserve">
+    <value>يُحتسب مفتاح المرور مصادقةً متعددة العوامل لعرض البيانات المحمية وتعديلها. يؤدي تغيير هذا الإعداد إلى إنهاء الوصول الحالي إلى البيانات المحمية، فيتحقق الأعضاء مرة أخرى.</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalLabel" xml:space="preserve">
+    <value>قبول الموافقة من تطبيق Responder</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalNote" xml:space="preserve">
+    <value>حيث تُقبل مفاتيح المرور، يمكن للعضو الموافقة على طلب تسجيل دخول أو وصول إلى بيانات محمية باستخدام مفتاح المرور في تطبيق Responder لديه. لا تُستخدم أبدًا للتغييرات الأمنية. يؤدي تغيير هذا الإعداد إلى إنهاء الوصول الحالي إلى البيانات المحمية.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaLabel" xml:space="preserve">
+    <value>قبول المصادقة متعددة العوامل لدى موفر الهوية لتسجيل الدخول وعمليات التحقق الأمنية</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaNote" xml:space="preserve">
+    <value>يتطلب ربطًا مختبرًا للمصادقة متعددة العوامل في إعداد تسجيل الدخول الموحد.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpLabel" xml:space="preserve">
+    <value>قبول المصادقة متعددة العوامل لدى موفر الهوية للبيانات المحمية</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpNote" xml:space="preserve">
+    <value>يتطلب ربطًا مختبرًا للمصادقة متعددة العوامل في إعداد تسجيل الدخول الموحد. يؤدي تغيير هذا الإعداد إلى إنهاء الوصول الحالي إلى البيانات المحمية.</value>
+  </data>
+  <data name="SecurityPolicyFederatedMappingUntested" xml:space="preserve">
+    <value>لا يحتوي إعداد تسجيل الدخول الموحد لديك على ربط مختبر للمصادقة متعددة العوامل. احفظ ربطًا وأكمل اختباره قبل قبول المصادقة متعددة العوامل لدى موفر الهوية.</value>
+  </data>
+  <data name="SecurityPolicyFederatedNeedsResgridMfa" xml:space="preserve">
+    <value>لقبول المصادقة متعددة العوامل لدى موفر الهوية، تحقق أولًا باستخدام تطبيق المصادقة أو مفتاح مرور. لا يمكن للمصادقة متعددة العوامل لدى موفر الهوية الموافقة على هذا التغيير.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpLabel" xml:space="preserve">
+    <value>السماح لتحقق حديث عند تسجيل الدخول بفتح البيانات المحمية</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpNote" xml:space="preserve">
+    <value>لا يحتاج الأعضاء الذين أكملوا المصادقة متعددة العوامل عند تسجيل الدخول إلى التحقق مرة أخرى لعرض البيانات المحمية ضمن نافذة التحقق. يؤدي تغيير هذا الإعداد إلى إنهاء الوصول الحالي إلى البيانات المحمية.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpLabel" xml:space="preserve">
+    <value>السماح لإلغاء قفل جهاز مشترك بفتح البيانات المحمية</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpNote" xml:space="preserve">
+    <value>على الأجهزة اللوحية المشتركة في المركبات ومحطات العمل، يُحتسب تحقق المشغّل الحديث عند إلغاء القفل لعرض البيانات المحمية. يؤدي تغيير هذا الإعداد إلى إنهاء الوصول الحالي إلى البيانات المحمية.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesHeader" xml:space="preserve">
+    <value>الأجهزة المشتركة في المركبات ومحطات العمل</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesIntro" xml:space="preserve">
+    <value>تُقفَل الأجهزة اللوحية المشتركة في المركبات ومحطات عمل الإرسال عندما لا يستخدمها أحد، وتنتهي جلستها بانتهاء المناوبة. يلغي المشغّلون القفل باستخدام تطبيق المصادقة أو مفتاح المرور أو موافقة Responder الخاصة بهم، ولا يُستخدم أبدًا كلمة مرور محفوظة على الجهاز. تنطبق القيمة الأكثر صرامة هنا أيضًا على الجلسات الجارية.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesManagingMemberOnly" xml:space="preserve">
+    <value>يمكن لعضو الإدارة المسؤول فقط تغيير سياسة الأجهزة المشتركة.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesNotYetAvailable" xml:space="preserve">
+    <value>وضع الأجهزة المشتركة غير متاح في هذا النشر بعد. تُحفظ هذه القيم، ولا يمكن فرضه على تطبيق آخر حتى يصبح متاحًا.</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockLabel" xml:space="preserve">
+    <value>القفل بعد هذا العدد من دقائق الخمول</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockNote" xml:space="preserve">
+    <value>من 1 إلى {0} دقيقة. يُحتسب نشاط المشغّل نفسه فقط؛ ولا تُحتسب التحديثات في الخلفية والتنبيهات الواردة.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftLabel" xml:space="preserve">
+    <value>إنهاء المناوبة بعد هذا العدد من الساعات</value>
+  </data>
+  <data name="SecurityPolicySharedShiftNote" xml:space="preserve">
+    <value>من 1 إلى {0} ساعة بعد تسجيل الدخول، بغض النظر عن النشاط. تسجّل المناوبة التالية الدخول من جديد.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredLabel" xml:space="preserve">
+    <value>استخدام الوضع المشترك دائمًا لـ</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredNote" xml:space="preserve">
+    <value>تُقفَل جلسات هذه التطبيقات في هذه الإدارة دائمًا عند الخمول وتنتهي بانتهاء المناوبة، مهما كان إعداد التثبيت. وتُحتسب أيضًا عمليات تسجيل الدخول التي لا تحدد التطبيق، لذا تُقفَل كذلك عمليات التكامل التي تسجّل الدخول بكلمة مرور. استخدم إصدارات التطبيقات التي تدعم الوضع المشترك.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredCommand" xml:space="preserve">
+    <value>IC (القيادة)</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="SecurityPolicySharedIdleOutOfRange" xml:space="preserve">
+    <value>اختر مدة قفل عند الخمول من 1 إلى {0} دقيقة.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftOutOfRange" xml:space="preserve">
+    <value>اختر طول مناوبة من 1 إلى {0} ساعة.</value>
+  </data>
+  <data name="SecurityPolicySharedRequirementUnavailable" xml:space="preserve">
+    <value>وضع الأجهزة المشتركة غير متاح في هذا النشر بعد، لذا لا يمكن فرضه على تطبيق آخر.</value>
+  </data>
+  <data name="FederatedMfaPageTitle" xml:space="preserve">
+    <value>المصادقة متعددة العوامل لدى موفر الهوية</value>
+  </data>
+  <data name="FederatedMfaIntro" xml:space="preserve">
+    <value>أخبر Resgrid بالطريقة التي يُبلغ بها موفر الهوية لديك أنه تحقق من العضو بالمصادقة متعددة العوامل. حيث تقبل هذه الإدارة المصادقة متعددة العوامل لدى موفر الهوية، يُحتسب تسجيل الدخول أو التحقق الذي يحمل إحدى هذه القيم مصادقةً متعددة العوامل، ولا يحتاج الأعضاء إلى أداة مصادقة من Resgrid لذلك. يجب أن يجتاز كل تغيير تسجيل دخول تجريبيًا قبل أن يسري.</value>
+  </data>
+  <data name="FederatedMfaNoSso" xml:space="preserve">
+    <value>أعدّ إعداد تسجيل دخول موحد وفعّله أولًا.</value>
+  </data>
+  <data name="FederatedMfaStatusEffective" xml:space="preserve">
+    <value>ساري: الإصدار {0}، تم اختباره في {1}.</value>
+  </data>
+  <data name="FederatedMfaStatusUntested" xml:space="preserve">
+    <value>غير ساري: لم يجتز الإصدار {0} اختباره بعد.</value>
+  </data>
+  <data name="FederatedMfaStatusNone" xml:space="preserve">
+    <value>لا يوجد ربط محفوظ.</value>
+  </data>
+  <data name="FederatedMfaRequestHeader" xml:space="preserve">
+    <value>ما يطلبه Resgrid</value>
+  </data>
+  <data name="FederatedMfaAcceptHeader" xml:space="preserve">
+    <value>ما يُحتسب مصادقة متعددة العوامل</value>
+  </data>
+  <data name="FederatedMfaValuesNote" xml:space="preserve">
+    <value>قيمة واحدة في كل سطر. تتم مطابقة القيم تمامًا، بما في ذلك حالة الأحرف. يجب أن تحمل الاستجابة قيمة واحدة مدرجة على الأقل.</value>
+  </data>
+  <data name="FederatedMfaRequestAcrValuesLabel" xml:space="preserve">
+    <value>قيم acr_values المطلوبة (OIDC)</value>
+  </data>
+  <data name="FederatedMfaRequestClaimsLabel" xml:space="preserve">
+    <value>طلب claims (OIDC، بصيغة JSON)</value>
+  </data>
+  <data name="FederatedMfaRequestAuthnContextLabel" xml:space="preserve">
+    <value>مراجع فئات RequestedAuthnContext (SAML)</value>
+  </data>
+  <data name="FederatedMfaAcceptAmrLabel" xml:space="preserve">
+    <value>قيم amr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrLabel" xml:space="preserve">
+    <value>قيم acr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrsLabel" xml:space="preserve">
+    <value>قيم acrs (OIDC، سياق المصادقة)</value>
+  </data>
+  <data name="FederatedMfaAcceptAuthnContextLabel" xml:space="preserve">
+    <value>قيم AuthnContextClassRef (SAML)</value>
+  </data>
+  <data name="FederatedMfaSaveButton" xml:space="preserve">
+    <value>حفظ الربط</value>
+  </data>
+  <data name="FederatedMfaRemoveButton" xml:space="preserve">
+    <value>إزالة الربط</value>
+  </data>
+  <data name="FederatedMfaSaved" xml:space="preserve">
+    <value>تم حفظ الربط. يسري بعد اجتيازه تسجيل دخول تجريبيًا.</value>
+  </data>
+  <data name="FederatedMfaRemoved" xml:space="preserve">
+    <value>تمت إزالة الربط. لم تعد المصادقة متعددة العوامل لدى موفر الهوية تُحتسب في هذه الإدارة.</value>
+  </data>
+  <data name="FederatedMfaInvalid" xml:space="preserve">
+    <value>لا يمكن استخدام الربط: {0}</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfa" xml:space="preserve">
+    <value>يتطلب تغيير الربط تحققًا حديثًا باستخدام تطبيق المصادقة أو مفتاح مرور. لا يمكن للمصادقة متعددة العوامل لدى موفر الهوية الموافقة على هذا التغيير.</value>
+  </data>
+  <data name="FederatedMfaLink" xml:space="preserve">
+    <value>ربط المصادقة متعددة العوامل لدى موفر الهوية</value>
+  </data>
+  <data name="FederatedMfaTestButton" xml:space="preserve">
+    <value>اختبار بتسجيل الدخول</value>
+  </data>
+  <data name="FederatedMfaTestNote" xml:space="preserve">
+    <value>يرسلك الاختبار الآن إلى موفر الهوية مع طلب المصادقة متعددة العوامل. عندما يُرجع قيمة يحتسبها الربط، يسري هذا الإصدار.</value>
   </data>
 </root>

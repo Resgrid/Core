@@ -128,7 +128,7 @@
 						</dl>
 						<form method="post" asp-controller="Department" asp-action="RemoveProfileLogo" asp-route-area="User" class="m-b-md">
 							@Html.AntiForgeryToken()
-							<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@localizer["ProfileRemoveLogo"]?');">@localizer["ProfileRemoveLogo"]</button>
+							<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ProfileRemoveLogo"])?');">@localizer["ProfileRemoveLogo"]</button>
 						</form>
 					}
 					else
@@ -154,7 +154,7 @@
 						<p><code style="word-break:break-all;">@Model.PublicMastheadUrl</code></p>
 						<form method="post" asp-controller="Department" asp-action="RegenerateProfileMediaKey" asp-route-area="User">
 							@Html.AntiForgeryToken()
-							<button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('@localizer["ProfileRegenerateKey"]?');">@localizer["ProfileRegenerateKey"]</button>
+							<button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('@JsEncoder.Encode(localizer["ProfileRegenerateKey"])?');">@localizer["ProfileRegenerateKey"]</button>
 						</form>
 					</div>
 				</div>

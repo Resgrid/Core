@@ -231,4 +231,280 @@
   <data name="RequiredHeader" xml:space="preserve">
     <value>مطلوب؟</value>
   </data>
+  <data name="AddTrackingBinding" xml:space="preserve">
+    <value>إضافة ربط تتبع</value>
+  </data>
+  <data name="AllowedSourceCidrs" xml:space="preserve">
+    <value>شبكات المصدر المسموح بها</value>
+  </data>
+  <data name="AllowedSourceCidrsHelp" xml:space="preserve">
+    <value>نطاقات CIDR اختيارية من IPv4 أو IPv6، مفصولة بفواصل، يُسمح لها بإرسال المواقع لجهاز التتبع هذا.</value>
+  </data>
+  <data name="AuthenticationMode" xml:space="preserve">
+    <value>وضع المصادقة</value>
+  </data>
+  <data name="BasicUsername" xml:space="preserve">
+    <value>اسم المستخدم لمصادقة Basic</value>
+  </data>
+  <data name="BasicUsernameRequired" xml:space="preserve">
+    <value>اسم المستخدم لمصادقة Basic مطلوب.</value>
+  </data>
+  <data name="CertificationStatus" xml:space="preserve">
+    <value>حالة التصديق</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="CreateCredential" xml:space="preserve">
+    <value>إنشاء بيانات اعتماد</value>
+  </data>
+  <data name="CredentialPrefix" xml:space="preserve">
+    <value>بادئة بيانات الاعتماد</value>
+  </data>
+  <data name="CredentialSaved" xml:space="preserve">
+    <value>لقد حفظت بيانات الاعتماد هذه</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>بيانات الاعتماد</value>
+  </data>
+  <data name="CredentialToken" xml:space="preserve">
+    <value>رمز بيانات الاعتماد</value>
+  </data>
+  <data name="CustomHeaderRequired" xml:space="preserve">
+    <value>اسم الترويسة المخصصة مطلوب.</value>
+  </data>
+  <data name="DeleteTrackingWarning" xml:space="preserve">
+    <value>هل تريد إزالة ربط التتبع هذا؟ ستُبطَل بيانات الاعتماد الخاصة به وسيتوقف عن قبول المواقع.</value>
+  </data>
+  <data name="DeviceIdentifier" xml:space="preserve">
+    <value>معرّف الجهاز</value>
+  </data>
+  <data name="DeviceIdentifierHelp" xml:space="preserve">
+    <value>استخدم المعرّف الذي يرسله الجهاز أو خدمة إعادة التوجيه. يُوحَّد تنسيقه قبل التخزين.</value>
+  </data>
+  <data name="DisableTracking" xml:space="preserve">
+    <value>تعطيل التتبع</value>
+  </data>
+  <data name="DisableTrackingWarning" xml:space="preserve">
+    <value>هل تريد تعطيل هذا الربط وإبطال جميع بيانات الاعتماد الخاصة به؟</value>
+  </data>
+  <data name="EditTrackingBinding" xml:space="preserve">
+    <value>تعديل ربط التتبع</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>نقطة نهاية HTTPS</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>إصدار البرنامج الثابت</value>
+  </data>
+  <data name="HardwareTracking" xml:space="preserve">
+    <value>تتبع GPS عبر الأجهزة</value>
+  </data>
+  <data name="HardwareTrackingDescription" xml:space="preserve">
+    <value>اربط جهاز تتبع أو خدمة إعادة توجيه بهذه الوحدة، وأصدر بيانات الاعتماد، وراقب حالة التسليم.</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>اسم الترويسة</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>قيمة الترويسة</value>
+  </data>
+  <data name="LastErrorCode" xml:space="preserve">
+    <value>آخر رمز خطأ</value>
+  </data>
+  <data name="LastReceived" xml:space="preserve">
+    <value>آخر استلام</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>آخر ظهور</value>
+  </data>
+  <data name="LastUsed" xml:space="preserve">
+    <value>آخر استخدام</value>
+  </data>
+  <data name="LastValidFix" xml:space="preserve">
+    <value>آخر تحديد موقع صالح</value>
+  </data>
+  <data name="JsonPayload" xml:space="preserve">
+    <value>حمولة JSON</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>أبداً</value>
+  </data>
+  <data name="NoCredentials" xml:space="preserve">
+    <value>لم تُصدَر أي بيانات اعتماد لهذا الربط.</value>
+  </data>
+  <data name="NoTrackingBindings" xml:space="preserve">
+    <value>لم تُهيَّأ أي عمليات ربط لتتبع الأجهزة لهذه الوحدة.</value>
+  </data>
+  <data name="OneTimeCredentialHeader" xml:space="preserve">
+    <value>حفظ بيانات اعتماد التتبع</value>
+  </data>
+  <data name="OneTimeCredentialWarning" xml:space="preserve">
+    <value>تُعرض بيانات الاعتماد هذه مرة واحدة فقط. انسخ نقطة النهاية والسر إلى إعدادات جهاز التتبع قبل مغادرة هذه الصفحة.</value>
+  </data>
+  <data name="Protocol" xml:space="preserve">
+    <value>البروتوكول</value>
+  </data>
+  <data name="PreviewJson" xml:space="preserve">
+    <value>التحقق من JSON التجريبي</value>
+  </data>
+  <data name="PreviewJsonMalformed" xml:space="preserve">
+    <value>حمولة JSON غير سليمة البنية، أو تحتوي على حقول مكررة، أو تتجاوز حد التداخل.</value>
+  </data>
+  <data name="PreviewJsonPositionInvalid" xml:space="preserve">
+    <value>يتطلب كل موقع قيمة eventId غير فارغة وقيمتين صالحتين لخط العرض وخط الطول.</value>
+  </data>
+  <data name="PreviewJsonPositionsRequired" xml:space="preserve">
+    <value>يجب أن تحتوي الدفعة على كائن موقع JSON واحد على الأقل.</value>
+  </data>
+  <data name="PreviewJsonRequired" xml:space="preserve">
+    <value>أدخل حمولة JSON للتحقق منها.</value>
+  </data>
+  <data name="PreviewJsonSuccess" xml:space="preserve">
+    <value>عدد المواقع التي قبلها محلل المعاينة: {0}. لم يُوضع أي شيء في قائمة الانتظار ولم يُخزَّن أي شيء.</value>
+  </data>
+  <data name="PreviewJsonTooLarge" xml:space="preserve">
+    <value>تتجاوز حمولة JSON حد حجم الطلب المهيأ.</value>
+  </data>
+  <data name="PreviewJsonTooManyPositions" xml:space="preserve">
+    <value>تتجاوز دفعة JSON حد المواقع المهيأ.</value>
+  </data>
+  <data name="RevokeCredential" xml:space="preserve">
+    <value>إبطال</value>
+  </data>
+  <data name="RevokeCredentialWarning" xml:space="preserve">
+    <value>هل تريد إبطال بيانات الاعتماد هذه؟ لن يتمكن المُرسِل من استخدامها بعد الآن.</value>
+  </data>
+  <data name="RetryExpectation" xml:space="preserve">
+    <value>سلوك إعادة المحاولة المتوقع:</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>مُبطَلة</value>
+  </data>
+  <data name="RotateCredential" xml:space="preserve">
+    <value>تدوير</value>
+  </data>
+  <data name="SaveTrackingBinding" xml:space="preserve">
+    <value>حفظ ربط التتبع</value>
+  </data>
+  <data name="SendTestJson" xml:space="preserve">
+    <value>إرسال JSON تجريبي</value>
+  </data>
+  <data name="SendTestJsonDescription" xml:space="preserve">
+    <value>تحقّق من حمولة Resgrid JSON عامة دون مصادقتها أو وضعها في قائمة الانتظار أو تخزينها. هذه المعاينة متاحة فقط لمسؤولي القسم خارج بيئة الإنتاج.</value>
+  </data>
+  <data name="SetupInstructions" xml:space="preserve">
+    <value>تعليمات الإعداد</value>
+  </data>
+  <data name="SecondaryIdentifier" xml:space="preserve">
+    <value>المعرّف الثانوي</value>
+  </data>
+  <data name="SelectTrackingProfile" xml:space="preserve">
+    <value>اختر ملف تعريف تتبع مصدَّقًا</value>
+  </data>
+  <data name="SelectValidTrackingProfile" xml:space="preserve">
+    <value>اختر ملف تعريف تتبع مصدَّقًا.</value>
+  </data>
+  <data name="SourcePriority" xml:space="preserve">
+    <value>أولوية المصدر</value>
+  </data>
+  <data name="TrackingBindingActions" xml:space="preserve">
+    <value>إجراءات ربط التتبع</value>
+  </data>
+  <data name="TrackingBindingCreatedMessage" xml:space="preserve">
+    <value>تم إنشاء ربط التتبع. أنشئ بيانات اعتماد لإكمال الإعداد.</value>
+  </data>
+  <data name="TrackingBindingDeletedMessage" xml:space="preserve">
+    <value>تمت إزالة ربط التتبع.</value>
+  </data>
+  <data name="TrackingBindingDisabledMessage" xml:space="preserve">
+    <value>تم تعطيل ربط التتبع وإبطال بيانات الاعتماد الخاصة به.</value>
+  </data>
+  <data name="TrackingBindingUpdatedMessage" xml:space="preserve">
+    <value>تم تحديث ربط التتبع.</value>
+  </data>
+  <data name="TrackingCredentialRevokedMessage" xml:space="preserve">
+    <value>تم إبطال بيانات اعتماد التتبع.</value>
+  </data>
+  <data name="TrackingDisplayName" xml:space="preserve">
+    <value>الاسم المعروض</value>
+  </data>
+  <data name="TrackingEnabled" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="TrackingIdentifierRequired" xml:space="preserve">
+    <value>معرّف الجهاز مطلوب لملف التعريف المحدد.</value>
+  </data>
+  <data name="TrackingProfile" xml:space="preserve">
+    <value>ملف تعريف التتبع</value>
+  </data>
+  <data name="TrackingStatus" xml:space="preserve">
+    <value>حالة التتبع</value>
+  </data>
+  <data name="Transport" xml:space="preserve">
+    <value>آلية النقل</value>
+  </data>
+  <data name="UnsupportedTrackingAuth" xml:space="preserve">
+    <value>وضع المصادقة المحدد غير مدعوم في ملف تعريف التتبع هذا.</value>
+  </data>
+  <data name="ViewTrackingStatus" xml:space="preserve">
+    <value>عرض حالة التتبع</value>
+  </data>
+  <data name="AuthModeBearer" xml:space="preserve">
+    <value>رمز Bearer</value>
+  </data>
+  <data name="AuthModeBasic" xml:space="preserve">
+    <value>مصادقة Basic</value>
+  </data>
+  <data name="AuthModeCustomHeader" xml:space="preserve">
+    <value>ترويسة مخصصة</value>
+  </data>
+  <data name="AuthModeCapabilityPath" xml:space="preserve">
+    <value>عنوان URL يتضمن الرمز في المسار</value>
+  </data>
+  <data name="TransportNativeHttps" xml:space="preserve">
+    <value>HTTPS أصلي</value>
+  </data>
+  <data name="TransportManagedHttpsJson" xml:space="preserve">
+    <value>HTTPS مُدار (JSON)</value>
+  </data>
+  <data name="TransportNativeTcpUdp" xml:space="preserve">
+    <value>TCP/UDP أصلي</value>
+  </data>
+  <data name="TransportProtocolGateway" xml:space="preserve">
+    <value>بوابة البروتوكول</value>
+  </data>
+  <data name="DeviceStatusNeverSeen" xml:space="preserve">
+    <value>لم يظهر بعد</value>
+  </data>
+  <data name="DeviceStatusOnline" xml:space="preserve">
+    <value>متصل</value>
+  </data>
+  <data name="DeviceStatusStale" xml:space="preserve">
+    <value>لا توجد بيانات حديثة</value>
+  </data>
+  <data name="DeviceStatusError" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="DeviceStatusDisabled" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="CertificationCandidate" xml:space="preserve">
+    <value>مرشّح</value>
+  </data>
+  <data name="CertificationFixtureVerified" xml:space="preserve">
+    <value>تم التحقق باستخدام بيانات نموذجية</value>
+  </data>
+  <data name="CertificationHardwareVerified" xml:space="preserve">
+    <value>تم التحقق على الأجهزة</value>
+  </data>
+  <data name="CertificationCertified" xml:space="preserve">
+    <value>مصدَّق</value>
+  </data>
+  <data name="CertificationDeprecated" xml:space="preserve">
+    <value>مُهمَل</value>
+  </data>
 </root>

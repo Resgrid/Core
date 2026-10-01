@@ -59,67 +59,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="ActionNote" xml:space="preserve">
-    <value>Action Note (Optional)</value>
+    <value>Примітка до дії (необов'язково)</value>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Дії</value>
   </data>
   <data name="AreYouSureResetAll" xml:space="preserve">
-    <value>Are you sure you want to reset all personnel status to Available?</value>
+    <value>Ви дійсно бажаєте скинути статус усього персоналу на "Доступний"?</value>
   </data>
   <data name="CollapseGroups" xml:space="preserve">
-    <value>Collapse Groups (Once)</value>
+    <value>Згорнути групи (одноразово)</value>
   </data>
   <data name="ConfirmSetStandByGroup" xml:space="preserve">
-    <value>CONFIRM: Are you sure you want to reset all the users group to the Standing By state? Group:</value>
+    <value>ПІДТВЕРДЖЕННЯ: Ви дійсно бажаєте скинути всіх користувачів групи до стану "В очікуванні"? Група:</value>
   </data>
   <data name="ConfirmStatusReset" xml:space="preserve">
-    <value>Confirm Status Reset</value>
+    <value>Підтвердьте скидання статусу</value>
   </data>
   <data name="DepartmentCode" xml:space="preserve">
-    <value>Department Code:</value>
+    <value>Код підрозділу:</value>
   </data>
   <data name="DepartmentId" xml:space="preserve">
-    <value>Department Id:</value>
+    <value>ID підрозділу:</value>
   </data>
   <data name="DepartmentInfo" xml:space="preserve">
-    <value>Department Info</value>
+    <value>Інформація про підрозділ</value>
   </data>
   <data name="ResetAll" xml:space="preserve">
-    <value>Reset all to Available</value>
+    <value>Скинути всіх на "Доступний"</value>
   </data>
   <data name="ResetGroupStandingBy" xml:space="preserve">
-    <value>Reset group to Standing By</value>
+    <value>Скинути групу до "В очікуванні"</value>
   </data>
   <data name="ResetStatusButton" xml:space="preserve">
-    <value>Reset Status</value>
+    <value>Скинути статус</value>
   </data>
   <data name="SetCurrentAction" xml:space="preserve">
-    <value>Set Current Action</value>
+    <value>Встановити поточну дію</value>
   </data>
   <data name="SetStaffingLevel" xml:space="preserve">
-    <value>Set Staffing Level</value>
+    <value>Встановити рівень готовності</value>
   </data>
   <data name="StaffingLevel" xml:space="preserve">
-    <value>Staffing Level</value>
+    <value>Рівень готовності</value>
   </data>
   <data name="StaffingLevelSubmit" xml:space="preserve">
-    <value>Set Staffing Level</value>
+    <value>Встановити рівень готовності</value>
   </data>
   <data name="TextNumber" xml:space="preserve">
-    <value>Text Number:</value>
+    <value>Номер для SMS:</value>
   </data>
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
-    <value>Toggle Collapse Groups (Saves)</value>
+    <value>Згорнути/розгорнути групи (зберігається)</value>
   </data>
 </root>

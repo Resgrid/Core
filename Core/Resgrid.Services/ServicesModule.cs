@@ -284,6 +284,28 @@ namespace Resgrid.Services
 			// SSO / Security Policy
 			builder.RegisterType<DepartmentSsoService>().As<IDepartmentSsoService>().InstancePerLifetimeScope();
 			builder.RegisterType<UserSessionService>().As<IUserSessionService>().InstancePerLifetimeScope();
+			builder.RegisterType<SharedSessionService>().As<ISharedSessionService>().InstancePerLifetimeScope();
+			builder.RegisterType<MfaActivityService>().As<IMfaActivityService>().InstancePerLifetimeScope();
+			builder.RegisterType<MfaCredentialStateService>().As<IMfaCredentialStateService>().InstancePerLifetimeScope();
+			builder.RegisterType<AdpStepUpService>().As<IAdpStepUpService>().InstancePerLifetimeScope();
+
+			// Passkey plan Phase 1 slice 2: MFA evidence, single-use ceremony challenges and the per-client relying parties.
+			// The registry parses static config once; the gates only report ON when that configuration validated.
+			builder.RegisterType<MfaEvidenceService>().As<IMfaEvidenceService>().InstancePerLifetimeScope();
+			builder.RegisterType<MfaPolicyService>().As<IMfaPolicyService>().InstancePerLifetimeScope();
+			builder.RegisterType<AuthenticationChallengeService>().As<IAuthenticationChallengeService>().InstancePerLifetimeScope();
+			builder.Register(_ => new RelyingPartyRegistry()).As<IRelyingPartyRegistry>().SingleInstance();
+			builder.RegisterType<PasskeyFeatureGates>().As<IPasskeyFeatureGates>().SingleInstance();
+			// Needs IPasskeyProvider from Resgrid.Providers.Authentication, which only the ceremony hosts (Web, API) load.
+			builder.RegisterType<PasskeyService>().As<IPasskeyService>().InstancePerLifetimeScope();
+			builder.RegisterType<MfaLoginTransactionService>().As<IMfaLoginTransactionService>().InstancePerLifetimeScope();
+			builder.RegisterType<MfaApprovalService>().As<IMfaApprovalService>().InstancePerLifetimeScope();
+			builder.RegisterType<FactorRecoveryService>().As<IFactorRecoveryService>().InstancePerLifetimeScope();
+			builder.RegisterType<SecurityNoticeService>().As<ISecurityNoticeService>().InstancePerLifetimeScope();
+			builder.RegisterType<MfaAccountCleanupService>().As<IMfaAccountCleanupService>().InstancePerLifetimeScope();
+			builder.Register(_ => new SsoReturnTargetRegistry()).As<ISsoReturnTargetRegistry>().SingleInstance();
+			// Needs IOidcProviderClient from Resgrid.Providers.Authentication, loaded by Web and API.
+			builder.RegisterType<SsoBrokerService>().As<ISsoBrokerService>().InstancePerLifetimeScope();
 			builder.RegisterType<ClientSessionMetadataParser>().As<IClientSessionMetadataParser>().SingleInstance();
 			builder.RegisterType<LocalIpLocationProvider>().As<IIpLocationProvider>().SingleInstance();
 			builder.RegisterType<ExternalIdentityLinkService>().As<IExternalIdentityLinkService>().InstancePerLifetimeScope();
@@ -298,6 +320,8 @@ namespace Resgrid.Services
 			builder.RegisterType<DepartmentKeyService>().As<IDepartmentKeyService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectedFieldCryptoService>().As<IProtectedFieldCryptoService>().SingleInstance();
 			builder.RegisterType<ProtectedDataGrantService>().As<IProtectedDataGrantService>().SingleInstance();
+			// Dedicated session-assertion key (passkey workbook section 6.2): Web and API mint, the broker validates.
+			builder.RegisterType<BrokerSessionAssertionService>().As<IBrokerSessionAssertionService>().SingleInstance();
 			builder.RegisterType<DepartmentMemberSensitiveDataService>().As<IDepartmentMemberSensitiveDataService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentMemberEmergencyContactService>().As<IDepartmentMemberEmergencyContactService>().InstancePerLifetimeScope();
 			builder.RegisterType<MemberProfileRelocationService>().As<IMemberProfileRelocationService>().InstancePerLifetimeScope();

@@ -54,7 +54,7 @@
                         if (Model.Contacts != null && Model.Contacts.Any())
                         {
                             @Html.Raw("<div id='contactsTab-1' class='contactsTabPannel'>")
-                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_0'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th><th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_0'>")
 
                             foreach (var c in Model.Contacts)
                             {
@@ -69,7 +69,7 @@
                         }
                         else
                         {
-                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoContactsInDepartment"]}</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoContactsInDepartment"].Value)}</h3></div>")
                         }
                     }
 
@@ -84,7 +84,7 @@
                                 {
                                     @Html.Raw("<div id='contactsTab" + Model.ContactCategories[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
 
-                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.ContactCategories[i].ContactCategoryId}'>")
+                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th><th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.ContactCategories[i].ContactCategoryId}'>")
 
 
                                     foreach (var c in categoryContacts)
@@ -100,7 +100,7 @@
                                 else
                                 {
                                     @Html.Raw("<div id='contactsTab' class='contactsTabPannel' style='display: none;'>")
-                                    @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoContactsInThisCategory"]}</h3></div>")
+                                    @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoContactsInThisCategory"].Value)}</h3></div>")
                                     @Html.Raw("</div>")
                                 }
                             }
@@ -115,6 +115,8 @@
 @{
     void ContactsTableButtonTemplate(Contact c)
     {
+        // Razor does not encode text built inside Html.Raw: every contact field and label below goes through
+        // Html.Encode, which also escapes apostrophes for the single-quoted attributes.
         string timestamp;
         if (c.EditedOn.HasValue)
         {
@@ -126,24 +128,24 @@
         }
 
         var reviewBadge = Model.PreplanReviewOverdueContactIds != null && Model.PreplanReviewOverdueContactIds.Contains(c.ContactId)
-            ? " <span class='badge badge-warning' title='" + localizer["PreplanReviewOverdue"] + "'>" + localizer["PreplanReviewDue"] + "</span>"
+            ? " <span class='badge badge-warning' title='" + Html.Encode(localizer["PreplanReviewOverdue"].Value) + "'>" + Html.Encode(localizer["PreplanReviewDue"].Value) + "</span>"
             : "";
-        @Html.Raw("<tr><td></td><td>" + c.GetName() + reviewBadge + "</td><td>" + c.GetTypeName() + "</td><td>" + c.GetCategoryName() + "</td><td>" + timestamp + "</td>")
+        @Html.Raw("<tr><td></td><td>" + Html.Encode(c.GetName()) + reviewBadge + "</td><td>" + Html.Encode(c.GetTypeName()) + "</td><td>" + Html.Encode(c.GetCategoryName()) + "</td><td>" + Html.Encode(timestamp) + "</td>")
 
         @Html.Raw("<td>")
 
         @if (ClaimsAuthorizationHelper.CanViewContacts())
         {
-            @Html.Raw($"<a type='button' href='{@Url.Action("View", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-primary'>{@localizer["ViewContact"]}</a>&nbsp;")
+            @Html.Raw($"<a type='button' href='{@Url.Action("View", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-primary'>{Html.Encode(localizer["ViewContact"].Value)}</a>&nbsp;")
         }
         @if (ClaimsAuthorizationHelper.CanEditContacts())
         {
-            @Html.Raw($"<a type='button' href='{@Url.Action("Edit", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-warning'>{@commonLocalizer["Edit"]}</a>&nbsp;")
+            @Html.Raw($"<a type='button' href='{@Url.Action("Edit", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-warning'>{Html.Encode(commonLocalizer["Edit"].Value)}</a>&nbsp;")
             ;
         }
         @if (ClaimsAuthorizationHelper.CanDeleteContacts())
         {
-            @Html.Raw($"<a type='button' href='{@Url.Action("Delete", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-danger' data-confirm='{@localizer["DeleteUnitWarning"]} {c.GetName()}?' rel='nofollow'>{@commonLocalizer["Delete"]}</a>")
+            @Html.Raw($"<a type='button' href='{@Url.Action("Delete", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-danger' data-confirm='{Html.Encode(localizer["DeleteUnitWarning"].Value)} {Html.Encode(c.GetName())}?' rel='nofollow'>{Html.Encode(commonLocalizer["Delete"].Value)}</a>")
             ;
         }
     }

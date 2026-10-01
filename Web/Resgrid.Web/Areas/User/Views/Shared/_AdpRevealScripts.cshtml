@@ -1,5 +1,7 @@
 @using System.Collections.Generic
 @model Resgrid.Web.Areas.User.Models.AdpRevealView
+@inject Resgrid.Model.Services.ISsoBrokerService ssoBroker
+@inject Resgrid.Model.Services.ISsoReturnTargetRegistry ssoReturnTargets
 @*
 	Step-up modal + reveal module wiring (plan 7.2). Render inside the host view's Scripts
 	section, paired with _AdpRevealBanner in the body. The grant issued by VerifyStepUp lives in
@@ -30,6 +32,17 @@
                     <label for="adpStepUpCode">@commonLocalizer["AdpVerificationCode"]</label>
                     <input type="text" class="form-control" id="adpStepUpCode" maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
                 </div>
+                @* Other ways to verify, shown only when the server lists them for this user and department (passkey plan section 7.5). *@
+                <div class="form-group">
+                    <button type="button" class="btn btn-default" id="adpUsePasskey" style="display: none;"><i class="fa fa-key"></i> @commonLocalizer["AdpUsePasskey"]</button>
+                    <button type="button" class="btn btn-default" id="adpUseResponder" style="display: none;"><i class="fa fa-mobile"></i> @commonLocalizer["AdpUseResponder"]</button>
+                    <button type="button" class="btn btn-default" id="adpUseProvider" style="display: none;"><i class="fa fa-id-badge"></i> @commonLocalizer["AdpUseProvider"]</button>
+                </div>
+                <div class="well" id="adpApprovalPanel" style="display: none;" aria-live="polite">
+                    <p>@commonLocalizer["AdpApprovalInstructions"]</p>
+                    <p class="text-center" id="adpApprovalNumber" style="font-size: 32px; font-weight: bold; letter-spacing: 4px;"></p>
+                    <p class="text-muted" id="adpApprovalStatus"></p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
@@ -40,6 +53,7 @@
 </div>
 
 <form id="adpAntiForgeryForm">@Html.AntiForgeryToken()</form>
+<script src="~/js/app/common/passkeys/resgrid.passkeys.js" type="text/javascript"></script>
 <script src="~/js/app/internal/dataprotection/resgrid.adp.reveal.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
@@ -48,6 +62,16 @@
             @* Asked before the prompt is shown; answers step_up_required unless the department has
                exempted this app, in which case it returns a grant directly (plan 3.3). *@
             requestGrantUrl: '@Url.Action("RequestGrant", "DataProtection", new { area = "User" })',
+            methodsUrl: '@Url.Action("StepUpMethods", "DataProtection", new { area = "User" })',
+            passkeyOptionsUrl: '@Url.Action("PasskeyOptions", "DataProtection", new { area = "User" })',
+            verifyPasskeyUrl: '@Url.Action("VerifyPasskey", "DataProtection", new { area = "User" })',
+            requestApprovalUrl: '@Url.Action("RequestApproval", "DataProtection", new { area = "User" })',
+            approvalStatusUrl: '@Url.Action("ApprovalStatus", "DataProtection", new { area = "User" })',
+            completeApprovalUrl: '@Url.Action("CompleteApproval", "DataProtection", new { area = "User" })',
+            @* Provider step-up runs in a popup through the department's identity provider and hands the grant back (plan section 7.8). *@
+            federatedUrl: @Html.Raw(Resgrid.Web.Helpers.WebSsoRoundTrip.IsAvailable(ssoBroker, ssoReturnTargets)
+                ? "'" + Url.Action("SsoSessionBegin", "Account", new { area = "" }) + "'"
+                : "null"),
             @* A page with no per-record reveal endpoint (its values come from the API through its
                own component) leaves these unset; step-up alone is the whole job and the host
                reloads through onRevealed. *@
@@ -71,7 +95,13 @@
                 generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value)),
                 expiring: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpExpiringWarning"].Value)),
                 expired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpExpiredWarning"].Value)),
-                renew: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpReverify"].Value))
+                renew: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpReverify"].Value)),
+                passkey_cancelled: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpPasskeyCancelled"].Value)),
+                passkey_failed: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpPasskeyFailed"].Value)),
+                approval_waiting: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpApprovalWaiting"].Value)),
+                approval_denied: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpApprovalDenied"].Value)),
+                approval_expired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpApprovalExpired"].Value)),
+                provider_popup_blocked: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpProviderPopupBlocked"].Value))
             },
             onRevealed: function (values) {
                 if (typeof window.resgridAdpPageRevealed === 'function')

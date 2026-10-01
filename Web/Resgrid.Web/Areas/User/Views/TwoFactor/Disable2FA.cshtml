@@ -20,6 +20,16 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
+                    @if (Model.BlockedByPasskeys)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle"></i>
+                            @localizer["DisableBlockedByPasskeys"]
+                        </div>
+                        <a asp-action="Index" class="btn btn-default">@commonLocalizer["Cancel"]</a>
+                    }
+                    else
+                    {
                     <div class="alert alert-warning">
                         <i class="fa fa-exclamation-triangle"></i>
                         @localizer["DisableWarning"]
@@ -47,6 +57,7 @@
                             </div>
                         </div>
                     </form>
+                    }
                 </div>
             </div>
         </div>

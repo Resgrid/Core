@@ -59,127 +59,394 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddLog" xml:space="preserve">
-    <value>Add Log</value>
+    <value>Додати запис</value>
   </data>
   <data name="AddRole" xml:space="preserve">
-    <value>Add Role</value>
+    <value>Додати роль</value>
   </data>
   <data name="AddUnitLogHeader" xml:space="preserve">
-    <value>Add Unit Log</value>
+    <value>Додати запис до журналу одиниці</value>
   </data>
   <data name="AreYouSure" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this unit?</value>
+    <value>Ви дійсно бажаєте остаточно видалити всі статуси цієї одиниці?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
-    <value>Clear out all Statuses For Unit</value>
+    <value>Очистити всі статуси одиниці</value>
   </data>
   <data name="DeleteAll" xml:space="preserve">
-    <value>Delete All</value>
+    <value>Видалити все</value>
   </data>
   <data name="DeleteUnitWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this unit. Are you sure you want to delete the unit</value>
+    <value>ПОПЕРЕДЖЕННЯ: цю одиницю буде видалено остаточно. Ви дійсно бажаєте видалити одиницю</value>
   </data>
   <data name="EditUnitHeader" xml:space="preserve">
-    <value>Edit Unit</value>
+    <value>Редагувати одиницю</value>
   </data>
   <data name="EventsFor" xml:space="preserve">
-    <value>Events for</value>
+    <value>Події для</value>
   </data>
   <data name="GenerateReport" xml:space="preserve">
-    <value>Generate Report</value>
+    <value>Сформувати звіт</value>
   </data>
   <data name="LogBodyLabel" xml:space="preserve">
-    <value>Log Body (Narrative)</value>
+    <value>Текст запису (опис)</value>
   </data>
   <data name="LogBodyPlaceholder" xml:space="preserve">
-    <value>A Narrative for the unit log</value>
+    <value>Опис для журналу одиниці</value>
   </data>
   <data name="Logs" xml:space="preserve">
     <value>Журнали</value>
   </data>
   <data name="NewUnitHeader" xml:space="preserve">
-    <value>New Unit</value>
+    <value>Нова одиниця</value>
   </data>
   <data name="NotOccupied" xml:space="preserve">
-    <value>Not Occupied</value>
+    <value>Не зайнято</value>
   </data>
   <data name="NoUnGroupedUnits" xml:space="preserve">
-    <value>No Un-Grouped Units</value>
+    <value>Немає незгрупованих одиниць</value>
   </data>
   <data name="NoUnitsInDepartment" xml:space="preserve">
-    <value>No Units in Department</value>
+    <value>У підрозділі немає одиниць</value>
   </data>
   <data name="NoUnitsInThisGroup" xml:space="preserve">
-    <value>No Units in this Group</value>
+    <value>У цій групі немає одиниць</value>
   </data>
   <data name="NoUnitsToStaff" xml:space="preserve">
-    <value>To set staffing on units you need to have Units created and Roles (i.e. Driver, Operator, etc) created within those units. </value>
+    <value>Щоб налаштувати укомплектованість одиниць, потрібно створити одиниці та ролі (наприклад, водій, оператор тощо) у цих одиницях. </value>
   </data>
   <data name="RemoveThisRole" xml:space="preserve">
-    <value>Remove this role</value>
+    <value>Видалити цю роль</value>
   </data>
   <data name="RoleName" xml:space="preserve">
-    <value>Role Name</value>
+    <value>Назва ролі</value>
   </data>
   <data name="RoleNameHeader" xml:space="preserve">
-    <value>Role Name</value>
+    <value>Назва ролі</value>
   </data>
   <data name="SelectUnit" xml:space="preserve">
-    <value>Select Unit</value>
+    <value>Виберіть одиницю</value>
   </data>
   <data name="SetMultipleUnitStatusHeader" xml:space="preserve">
-    <value>Set Status for Units</value>
+    <value>Встановити статус одиниць</value>
   </data>
   <data name="SetStatus" xml:space="preserve">
-    <value>Set Status</value>
+    <value>Встановити статус</value>
   </data>
   <data name="SetStatusForSelectedUnits" xml:space="preserve">
-    <value>Set Status for Selected Units</value>
+    <value>Встановити статус вибраних одиниць</value>
   </data>
   <data name="SetUnitStatusHeader" xml:space="preserve">
-    <value>Set Unit Status</value>
+    <value>Встановити статус одиниці</value>
   </data>
   <data name="UnitsListStateWarning" xml:space="preserve">
-    <value>You have selected a unit, only other units with the same custom (or default) states can be selected.</value>
+    <value>Ви вибрали одиницю, тому можна вибрати лише інші одиниці з тими самими власними (або стандартними) статусами.</value>
   </data>
   <data name="UnitStaffing" xml:space="preserve">
-    <value>Unit Staffing</value>
+    <value>Укомплектованість одиниць</value>
   </data>
   <data name="UnitStaffingHeader" xml:space="preserve">
-    <value>Unit Staffing</value>
+    <value>Укомплектованість одиниць</value>
   </data>
   <data name="ViewEvents" xml:space="preserve">
-    <value>View Events</value>
+    <value>Переглянути події</value>
   </data>
   <data name="ViewUnitEventsHeader" xml:space="preserve">
-    <value>View Unit Events</value>
+    <value>Переглянути події одиниці</value>
   </data>
   <data name="ViewUnitLogsHeader" xml:space="preserve">
-    <value>View Unit Logs</value>
+    <value>Переглянути журнали одиниці</value>
   </data>
   <data name="YesImSure" xml:space="preserve">
-    <value>Yes I'm sure</value>
+    <value>Так, підтверджую</value>
   </data>
   <data name="YouCanAddType1" xml:space="preserve">
-    <value>You can add a new Type</value>
+    <value>Ви можете додати новий тип</value>
   </data>
   <data name="YouCanAddType2" xml:space="preserve">
-    <value>here</value>
+    <value>тут</value>
   </data>
   <data name="RequiredPersonnelRoleHeader" xml:space="preserve">
     <value>Необхідна роль персоналу</value>
   </data>
   <data name="RequiredHeader" xml:space="preserve">
     <value>Обов'язково?</value>
+  </data>
+  <data name="AddTrackingBinding" xml:space="preserve">
+    <value>Додати прив'язку відстеження</value>
+  </data>
+  <data name="AllowedSourceCidrs" xml:space="preserve">
+    <value>Дозволені мережі-джерела</value>
+  </data>
+  <data name="AllowedSourceCidrsHelp" xml:space="preserve">
+    <value>Необов'язкові діапазони CIDR IPv4 або IPv6 через кому, з яких дозволено надсилати позиції для цього трекера.</value>
+  </data>
+  <data name="AuthenticationMode" xml:space="preserve">
+    <value>Режим автентифікації</value>
+  </data>
+  <data name="BasicUsername" xml:space="preserve">
+    <value>Ім'я користувача для автентифікації Basic</value>
+  </data>
+  <data name="BasicUsernameRequired" xml:space="preserve">
+    <value>Потрібно вказати ім'я користувача для автентифікації Basic.</value>
+  </data>
+  <data name="CertificationStatus" xml:space="preserve">
+    <value>Статус сертифікації</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="CreateCredential" xml:space="preserve">
+    <value>Створити облікові дані</value>
+  </data>
+  <data name="CredentialPrefix" xml:space="preserve">
+    <value>Префікс облікових даних</value>
+  </data>
+  <data name="CredentialSaved" xml:space="preserve">
+    <value>Облікові дані збережено</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>Облікові дані</value>
+  </data>
+  <data name="CredentialToken" xml:space="preserve">
+    <value>Токен облікових даних</value>
+  </data>
+  <data name="CustomHeaderRequired" xml:space="preserve">
+    <value>Потрібно вказати назву власного заголовка.</value>
+  </data>
+  <data name="DeleteTrackingWarning" xml:space="preserve">
+    <value>Видалити цю прив'язку відстеження? Її облікові дані буде відкликано, і вона перестане приймати позиції.</value>
+  </data>
+  <data name="DeviceIdentifier" xml:space="preserve">
+    <value>Ідентифікатор пристрою</value>
+  </data>
+  <data name="DeviceIdentifierHelp" xml:space="preserve">
+    <value>Використовуйте ідентифікатор, який надсилає пристрій або служба пересилання. Перед збереженням його буде нормалізовано.</value>
+  </data>
+  <data name="DisableTracking" xml:space="preserve">
+    <value>Вимкнути відстеження</value>
+  </data>
+  <data name="DisableTrackingWarning" xml:space="preserve">
+    <value>Вимкнути цю прив'язку та відкликати всі її облікові дані?</value>
+  </data>
+  <data name="EditTrackingBinding" xml:space="preserve">
+    <value>Редагувати прив'язку відстеження</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>Кінцева точка HTTPS</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Діє до</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Версія прошивки</value>
+  </data>
+  <data name="HardwareTracking" xml:space="preserve">
+    <value>Апаратне GPS-відстеження</value>
+  </data>
+  <data name="HardwareTrackingDescription" xml:space="preserve">
+    <value>Прив'яжіть апаратний трекер або службу пересилання до цієї одиниці, видайте облікові дані та відстежуйте стан доставки.</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>Назва заголовка</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>Значення заголовка</value>
+  </data>
+  <data name="LastErrorCode" xml:space="preserve">
+    <value>Останній код помилки</value>
+  </data>
+  <data name="LastReceived" xml:space="preserve">
+    <value>Останнє отримання</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>Остання активність</value>
+  </data>
+  <data name="LastUsed" xml:space="preserve">
+    <value>Останнє використання</value>
+  </data>
+  <data name="LastValidFix" xml:space="preserve">
+    <value>Остання дійсна позиція</value>
+  </data>
+  <data name="JsonPayload" xml:space="preserve">
+    <value>Корисне навантаження JSON</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Ніколи</value>
+  </data>
+  <data name="NoCredentials" xml:space="preserve">
+    <value>Для цієї прив'язки ще не видано облікових даних.</value>
+  </data>
+  <data name="NoTrackingBindings" xml:space="preserve">
+    <value>Для цієї одиниці не налаштовано прив'язок апаратного відстеження.</value>
+  </data>
+  <data name="OneTimeCredentialHeader" xml:space="preserve">
+    <value>Збережіть облікові дані відстеження</value>
+  </data>
+  <data name="OneTimeCredentialWarning" xml:space="preserve">
+    <value>Ці облікові дані показуються лише один раз. Перш ніж залишити цю сторінку, скопіюйте кінцеву точку та секрет у конфігурацію трекера.</value>
+  </data>
+  <data name="Protocol" xml:space="preserve">
+    <value>Протокол</value>
+  </data>
+  <data name="PreviewJson" xml:space="preserve">
+    <value>Перевірити тестовий JSON</value>
+  </data>
+  <data name="PreviewJsonMalformed" xml:space="preserve">
+    <value>Корисне навантаження JSON має неправильний формат, містить повторювані поля або перевищує ліміт вкладеності.</value>
+  </data>
+  <data name="PreviewJsonPositionInvalid" xml:space="preserve">
+    <value>Кожна позиція повинна мати непорожній eventId і дійсні значення широти та довготи.</value>
+  </data>
+  <data name="PreviewJsonPositionsRequired" xml:space="preserve">
+    <value>Пакет повинен містити щонайменше один об'єкт позиції JSON.</value>
+  </data>
+  <data name="PreviewJsonRequired" xml:space="preserve">
+    <value>Введіть корисне навантаження JSON для перевірки.</value>
+  </data>
+  <data name="PreviewJsonSuccess" xml:space="preserve">
+    <value>Парсер попереднього перегляду прийняв позицій: {0}. Нічого не поставлено в чергу й не збережено.</value>
+  </data>
+  <data name="PreviewJsonTooLarge" xml:space="preserve">
+    <value>Корисне навантаження JSON перевищує налаштований ліміт розміру запиту.</value>
+  </data>
+  <data name="PreviewJsonTooManyPositions" xml:space="preserve">
+    <value>Пакет JSON перевищує налаштований ліміт кількості позицій.</value>
+  </data>
+  <data name="RevokeCredential" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="RevokeCredentialWarning" xml:space="preserve">
+    <value>Відкликати ці облікові дані? Відправник більше не зможе ними користуватися.</value>
+  </data>
+  <data name="RetryExpectation" xml:space="preserve">
+    <value>Очікувані повторні спроби:</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="RotateCredential" xml:space="preserve">
+    <value>Замінити</value>
+  </data>
+  <data name="SaveTrackingBinding" xml:space="preserve">
+    <value>Зберегти прив'язку відстеження</value>
+  </data>
+  <data name="SendTestJson" xml:space="preserve">
+    <value>Надіслати тестовий JSON</value>
+  </data>
+  <data name="SendTestJsonDescription" xml:space="preserve">
+    <value>Перевірте загальне корисне навантаження Resgrid JSON без автентифікації, постановки в чергу чи збереження. Цей попередній перегляд доступний лише адміністраторам підрозділу і лише поза робочим середовищем.</value>
+  </data>
+  <data name="SetupInstructions" xml:space="preserve">
+    <value>Інструкції з налаштування</value>
+  </data>
+  <data name="SecondaryIdentifier" xml:space="preserve">
+    <value>Додатковий ідентифікатор</value>
+  </data>
+  <data name="SelectTrackingProfile" xml:space="preserve">
+    <value>Виберіть сертифікований профіль відстеження</value>
+  </data>
+  <data name="SelectValidTrackingProfile" xml:space="preserve">
+    <value>Виберіть сертифікований профіль відстеження.</value>
+  </data>
+  <data name="SourcePriority" xml:space="preserve">
+    <value>Пріоритет джерела</value>
+  </data>
+  <data name="TrackingBindingActions" xml:space="preserve">
+    <value>Дії з прив'язкою відстеження</value>
+  </data>
+  <data name="TrackingBindingCreatedMessage" xml:space="preserve">
+    <value>Прив'язку відстеження створено. Згенеруйте облікові дані, щоб завершити налаштування.</value>
+  </data>
+  <data name="TrackingBindingDeletedMessage" xml:space="preserve">
+    <value>Прив'язку відстеження видалено.</value>
+  </data>
+  <data name="TrackingBindingDisabledMessage" xml:space="preserve">
+    <value>Прив'язку відстеження вимкнено, а її облікові дані відкликано.</value>
+  </data>
+  <data name="TrackingBindingUpdatedMessage" xml:space="preserve">
+    <value>Прив'язку відстеження оновлено.</value>
+  </data>
+  <data name="TrackingCredentialRevokedMessage" xml:space="preserve">
+    <value>Облікові дані відстеження відкликано.</value>
+  </data>
+  <data name="TrackingDisplayName" xml:space="preserve">
+    <value>Відображувана назва</value>
+  </data>
+  <data name="TrackingEnabled" xml:space="preserve">
+    <value>Увімкнено</value>
+  </data>
+  <data name="TrackingIdentifierRequired" xml:space="preserve">
+    <value>Для вибраного профілю потрібно вказати ідентифікатор пристрою.</value>
+  </data>
+  <data name="TrackingProfile" xml:space="preserve">
+    <value>Профіль відстеження</value>
+  </data>
+  <data name="TrackingStatus" xml:space="preserve">
+    <value>Стан відстеження</value>
+  </data>
+  <data name="Transport" xml:space="preserve">
+    <value>Транспорт</value>
+  </data>
+  <data name="UnsupportedTrackingAuth" xml:space="preserve">
+    <value>Вибраний режим автентифікації не підтримується цим профілем відстеження.</value>
+  </data>
+  <data name="ViewTrackingStatus" xml:space="preserve">
+    <value>Переглянути стан відстеження</value>
+  </data>
+  <data name="AuthModeBearer" xml:space="preserve">
+    <value>Токен Bearer</value>
+  </data>
+  <data name="AuthModeBasic" xml:space="preserve">
+    <value>Автентифікація Basic</value>
+  </data>
+  <data name="AuthModeCustomHeader" xml:space="preserve">
+    <value>Власний заголовок</value>
+  </data>
+  <data name="AuthModeCapabilityPath" xml:space="preserve">
+    <value>URL-адреса з токеном у шляху</value>
+  </data>
+  <data name="TransportNativeHttps" xml:space="preserve">
+    <value>Нативний HTTPS</value>
+  </data>
+  <data name="TransportManagedHttpsJson" xml:space="preserve">
+    <value>Керований HTTPS (JSON)</value>
+  </data>
+  <data name="TransportNativeTcpUdp" xml:space="preserve">
+    <value>Нативний TCP/UDP</value>
+  </data>
+  <data name="TransportProtocolGateway" xml:space="preserve">
+    <value>Шлюз протоколу</value>
+  </data>
+  <data name="DeviceStatusNeverSeen" xml:space="preserve">
+    <value>Ще не було активності</value>
+  </data>
+  <data name="DeviceStatusOnline" xml:space="preserve">
+    <value>У мережі</value>
+  </data>
+  <data name="DeviceStatusStale" xml:space="preserve">
+    <value>Немає свіжих даних</value>
+  </data>
+  <data name="DeviceStatusError" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="DeviceStatusDisabled" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="CertificationCandidate" xml:space="preserve">
+    <value>Кандидат</value>
+  </data>
+  <data name="CertificationFixtureVerified" xml:space="preserve">
+    <value>Перевірено на тестових даних</value>
+  </data>
+  <data name="CertificationHardwareVerified" xml:space="preserve">
+    <value>Перевірено на обладнанні</value>
+  </data>
+  <data name="CertificationCertified" xml:space="preserve">
+    <value>Сертифіковано</value>
+  </data>
+  <data name="CertificationDeprecated" xml:space="preserve">
+    <value>Виведено з ужитку</value>
   </data>
 </root>
